@@ -346,6 +346,75 @@ export default function PayrollCalculatorPage() {
     doc.text("Total Aportes Empleador", 25, yPos);
     doc.text(formatCurrency(result.total_employer_contributions), pageWidth - 50, yPos, { align: "right" });
     
+    yPos += 15;
+
+    // ISR Reference Table Section
+    doc.setFillColor(255, 251, 235); // amber-50
+    doc.rect(15, yPos - 5, pageWidth - 30, 8, 'F');
+    
+    doc.setFontSize(11);
+    doc.setTextColor(146, 64, 14); // amber-800
+    doc.setFont("helvetica", "bold");
+    doc.text("TABLA DE ISR - DGII 2024/2025 (Referencia)", 20, yPos);
+    
+    yPos += 12;
+    
+    // Table header
+    doc.setFillColor(254, 243, 199); // amber-100
+    doc.rect(20, yPos - 4, pageWidth - 40, 10, 'F');
+    
+    doc.setFontSize(8);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont("helvetica", "bold");
+    doc.text("Renta Neta Anual (RD$)", 25, yPos + 2);
+    doc.text("Tasa", pageWidth / 2, yPos + 2, { align: "center" });
+    doc.text("Impuesto", pageWidth - 35, yPos + 2, { align: "right" });
+    
+    yPos += 10;
+    
+    // ISR brackets table data
+    const isrBrackets = [
+      { range: "0 - 416,220.00", rate: "Exento", tax: "RD$0.00", highlight: result.isr_bracket === "Exento (0%)" },
+      { range: "416,220.01 - 624,329.00", rate: "15%", tax: "15% del excedente de RD$416,220.01", highlight: result.isr_bracket === "15%" },
+      { range: "624,329.01 - 867,123.00", rate: "20%", tax: "RD$31,216.35 + 20% excedente de RD$624,329.01", highlight: result.isr_bracket === "20%" },
+      { range: "867,123.01 en adelante", rate: "25%", tax: "RD$79,776.15 + 25% excedente de RD$867,123.01", highlight: result.isr_bracket === "25%" },
+    ];
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+    
+    isrBrackets.forEach((bracket, index) => {
+      // Highlight the current bracket
+      if (bracket.highlight) {
+        doc.setFillColor(187, 247, 208); // green-200
+        doc.rect(20, yPos - 3, pageWidth - 40, 8, 'F');
+        doc.setTextColor(22, 101, 52); // green-800
+      } else {
+        doc.setTextColor(75, 85, 99); // gray-600
+      }
+      
+      doc.text(bracket.range, 25, yPos + 2);
+      doc.text(bracket.rate, pageWidth / 2, yPos + 2, { align: "center" });
+      doc.text(bracket.tax, pageWidth - 25, yPos + 2, { align: "right" });
+      
+      yPos += 8;
+    });
+    
+    // Show employee's calculation
+    yPos += 5;
+    doc.setFillColor(236, 253, 245); // emerald-50
+    doc.rect(20, yPos - 3, pageWidth - 40, 18, 'F');
+    
+    doc.setFontSize(8);
+    doc.setTextColor(6, 95, 70); // emerald-800
+    doc.setFont("helvetica", "bold");
+    doc.text("Su cálculo:", 25, yPos + 3);
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+    doc.text(`Base gravable mensual: ${formatCurrency(result.isr_taxable_base)} (Ingresos - TSS 5.94%)`, 25, yPos + 10);
+    doc.text(`Base anualizada: ${formatCurrency(result.isr_annual_taxable)} | Tramo aplicado: ${result.isr_bracket} | ISR anual: ${formatCurrency(result.isr_annual)} | ISR mensual: ${formatCurrency(result.isr_monthly)}`, 25, yPos + 16);
+    
     // Footer
     doc.setFontSize(8);
     doc.setTextColor(150, 150, 150);
