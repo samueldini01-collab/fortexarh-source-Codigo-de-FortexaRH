@@ -430,6 +430,16 @@ class PayrollCalculatorResult(BaseModel):
     # Employee deductions (TSS)
     sfs_employee: float  # 3.07%
     afp_employee: float  # 2.87%
+    total_tss_employee: float
+    
+    # ISR (Impuesto Sobre la Renta)
+    isr_taxable_base: float  # Base gravable (ingresos - TSS)
+    isr_annual_taxable: float  # Base anualizada
+    isr_annual: float  # ISR anual calculado
+    isr_monthly: float  # ISR mensual a retener
+    isr_bracket: str  # Tramo de impuesto aplicado
+    
+    # Total employee deductions (TSS + ISR)
     total_employee_deductions: float
     
     # Additional deductions
