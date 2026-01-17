@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth, API } from "@/App";
 import axios from "axios";
@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -24,8 +25,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, FileText, Edit, Trash2, Copy, Eye, FileSignature, Mail, Award, BookOpen } from "lucide-react";
+import { Plus, FileText, Edit, Trash2, Copy, Eye, FileSignature, Mail, Award, BookOpen, Download, PenTool, FilePlus, Check } from "lucide-react";
 import { toast } from "sonner";
+import SignatureCanvas from "react-signature-canvas";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 const templateTypes = [
   { value: "contract", label: "Contrato", icon: FileSignature, color: "bg-blue-100 text-blue-700" },
@@ -41,11 +45,17 @@ const defaultVariables = [
 
 export default function TemplatesPage() {
   const [templates, setTemplates] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isGenerateOpen, setIsGenerateOpen] = useState(false);
+  const [isSignOpen, setIsSignOpen] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState(null);
-  const [previewContent, setPreviewContent] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [selectedEmployee, setSelectedEmployee] = useState("");
+  const [generatedContent, setGeneratedContent] = useState("");
+  const [activeTab, setActiveTab] = useState("templates");
   const [formData, setFormData] = useState({
     name: "",
     template_type: "contract",
@@ -54,20 +64,25 @@ export default function TemplatesPage() {
     is_active: true
   });
   const { getAuthHeaders } = useAuth();
+  const signatureRef = useRef(null);
+  const documentRef = useRef(null);
 
   useEffect(() => {
-    fetchTemplates();
+    fetchData();
   }, []);
 
-  const fetchTemplates = async () => {
+  const fetchData = async () => {
     try {
-      const response = await axios.get(`${API}/templates`, {
-        headers: getAuthHeaders(),
-        withCredentials: true
-      });
-      setTemplates(response.data);
+      const [templatesRes, employeesRes, docsRes] = await Promise.all([
+        axios.get(`${API}/templates`, { headers: getAuthHeaders(), withCredentials: true }),
+        axios.get(`${API}/employees`, { headers: getAuthHeaders(), withCredentials: true }),
+        axios.get(`${API}/documents`, { headers: getAuthHeaders(), withCredentials: true })
+      ]);
+      setTemplates(templatesRes.data);
+      setEmployees(employeesRes.data);
+      setDocuments(docsRes.data);
     } catch (error) {
-      toast.error("Error al cargar plantillas");
+      toast.error("Error al cargar datos");
     } finally {
       setLoading(false);
     }
@@ -76,10 +91,8 @@ export default function TemplatesPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Extract variables from content
       const variableMatches = formData.content.match(/\{\{[^}]+\}\}/g) || [];
       const variables = [...new Set(variableMatches)];
-      
       const data = { ...formData, variables };
 
       if (editingTemplate) {
@@ -98,7 +111,7 @@ export default function TemplatesPage() {
       
       setIsDialogOpen(false);
       resetForm();
-      fetchTemplates();
+      fetchData();
     } catch (error) {
       toast.error(error.response?.data?.detail || "Error al guardar");
     }
@@ -124,7 +137,7 @@ export default function TemplatesPage() {
         withCredentials: true
       });
       toast.success("Plantilla eliminada");
-      fetchTemplates();
+      fetchData();
     } catch (error) {
       toast.error("Error al eliminar");
     }
@@ -143,32 +156,123 @@ export default function TemplatesPage() {
         withCredentials: true
       });
       toast.success("Plantilla duplicada");
-      fetchTemplates();
+      fetchData();
     } catch (error) {
       toast.error("Error al duplicar");
     }
   };
 
-  const handlePreview = (template) => {
-    // Replace variables with sample data for preview
-    let content = template.content;
-    const sampleData = {
-      "{{nombre_empleado}}": "Juan Pérez García",
-      "{{puesto}}": "Desarrollador Senior",
-      "{{departamento}}": "Tecnología",
-      "{{fecha_ingreso}}": "01/01/2024",
-      "{{salario}}": "$25,000.00",
+  const openGenerateDialog = (template) => {
+    setSelectedTemplate(template);
+    setSelectedEmployee("");
+    setGeneratedContent("");
+    setIsGenerateOpen(true);
+  };
+
+  const generateDocument = () => {
+    if (!selectedEmployee) {
+      toast.error("Selecciona un empleado");
+      return;
+    }
+    
+    const employee = employees.find(e => e.employee_id === selectedEmployee);
+    if (!employee) return;
+
+    let content = selectedTemplate.content;
+    const replacements = {
+      "{{nombre_empleado}}": `${employee.first_name} ${employee.last_name}`,
+      "{{puesto}}": employee.position,
+      "{{departamento}}": employee.department,
+      "{{fecha_ingreso}}": employee.hire_date,
+      "{{salario}}": `$${employee.salary.toLocaleString('es-MX')}`,
       "{{nombre_empresa}}": "FortexaRH S.A.",
-      "{{fecha_actual}}": new Date().toLocaleDateString('es-MX'),
+      "{{fecha_actual}}": new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' }),
       "{{direccion_empresa}}": "Av. Principal #123, Ciudad"
     };
-    
-    Object.entries(sampleData).forEach(([key, value]) => {
+
+    Object.entries(replacements).forEach(([key, value]) => {
       content = content.replace(new RegExp(key.replace(/[{}]/g, '\\$&'), 'g'), value);
     });
+
+    setGeneratedContent(content);
+  };
+
+  const downloadPDF = async () => {
+    if (!documentRef.current) return;
     
-    setPreviewContent(content);
-    setIsPreviewOpen(true);
+    toast.loading("Generando PDF...");
+    
+    try {
+      const canvas = await html2canvas(documentRef.current, {
+        scale: 2,
+        useCORS: true,
+        logging: false
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = 190;
+      const pageHeight = 277;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 10;
+
+      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      const fileName = `${selectedTemplate?.name || 'documento'}_${new Date().toISOString().split('T')[0]}.pdf`;
+      pdf.save(fileName);
+      toast.dismiss();
+      toast.success("PDF descargado correctamente");
+    } catch (error) {
+      toast.dismiss();
+      toast.error("Error al generar PDF");
+    }
+  };
+
+  const openSignDialog = () => {
+    setIsSignOpen(true);
+  };
+
+  const clearSignature = () => {
+    if (signatureRef.current) {
+      signatureRef.current.clear();
+    }
+  };
+
+  const saveSignedDocument = async () => {
+    if (!signatureRef.current || signatureRef.current.isEmpty()) {
+      toast.error("Por favor firma el documento");
+      return;
+    }
+
+    const signatureData = signatureRef.current.toDataURL();
+    
+    try {
+      await axios.post(`${API}/documents`, {
+        template_id: selectedTemplate.template_id,
+        employee_id: selectedEmployee,
+        content: generatedContent,
+        signature_data: signatureData
+      }, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      
+      toast.success("Documento firmado y guardado");
+      setIsSignOpen(false);
+      setIsGenerateOpen(false);
+      fetchData();
+    } catch (error) {
+      toast.error("Error al guardar documento");
+    }
   };
 
   const resetForm = () => {
@@ -192,212 +296,308 @@ export default function TemplatesPage() {
   const getTypeInfo = (type) => templateTypes.find(t => t.value === type);
 
   return (
-    <DashboardLayout title="Plantillas de Documentos">
+    <DashboardLayout title="Plantillas y Documentos">
       <div className="space-y-6" data-testid="templates-page">
-        {/* Header Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {templateTypes.map((type) => {
-            const count = templates.filter(t => t.template_type === type.value).length;
-            const Icon = type.icon;
-            return (
-              <Card key={type.value} className="border-slate-200">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${type.color}`}>
-                      <Icon className="w-5 h-5" />
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <div className="flex justify-between items-center mb-4">
+            <TabsList>
+              <TabsTrigger value="templates" data-testid="tab-templates">
+                <FileText className="w-4 h-4 mr-2" />
+                Plantillas
+              </TabsTrigger>
+              <TabsTrigger value="documents" data-testid="tab-documents">
+                <FileSignature className="w-4 h-4 mr-2" />
+                Documentos Generados
+              </TabsTrigger>
+            </TabsList>
+
+            {activeTab === "templates" && (
+              <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
+                <DialogTrigger asChild>
+                  <Button className="bg-slate-900 hover:bg-slate-800" data-testid="add-template-btn">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Nueva Plantilla
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="heading">
+                      {editingTemplate ? "Editar Plantilla" : "Nueva Plantilla"}
+                    </DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Nombre de la Plantilla</Label>
+                        <Input
+                          value={formData.name}
+                          onChange={(e) => setFormData({...formData, name: e.target.value})}
+                          placeholder="Ej: Contrato de trabajo indefinido..."
+                          required
+                          data-testid="template-name"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Tipo de Documento</Label>
+                        <Select value={formData.template_type} onValueChange={(v) => setFormData({...formData, template_type: v})}>
+                          <SelectTrigger data-testid="template-type">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {templateTypes.map(type => (
+                              <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-2xl font-bold text-slate-900">{count}</p>
-                      <p className="text-sm text-slate-500">{type.label}s</p>
+                    
+                    <div className="space-y-2">
+                      <Label>Variables Disponibles</Label>
+                      <div className="flex flex-wrap gap-2 p-3 bg-slate-50 rounded-lg">
+                        {defaultVariables.map((variable) => (
+                          <button
+                            key={variable}
+                            type="button"
+                            onClick={() => insertVariable(variable)}
+                            className="px-2 py-1 text-xs font-mono bg-white border border-slate-200 rounded hover:bg-slate-100 transition-colors"
+                          >
+                            {variable}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                    
+                    <div className="space-y-2">
+                      <Label>Contenido de la Plantilla</Label>
+                      <Textarea
+                        value={formData.content}
+                        onChange={(e) => setFormData({...formData, content: e.target.value})}
+                        placeholder="Escribe el contenido de tu plantilla aquí..."
+                        rows={12}
+                        className="font-mono text-sm"
+                        required
+                        data-testid="template-content"
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2">
+                      <div className="space-y-0.5">
+                        <Label>Plantilla Activa</Label>
+                        <p className="text-sm text-slate-500">Disponible para generar documentos</p>
+                      </div>
+                      <Switch
+                        checked={formData.is_active}
+                        onCheckedChange={(v) => setFormData({...formData, is_active: v})}
+                      />
+                    </div>
+                    
+                    <div className="flex justify-end gap-3 pt-4">
+                      <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                        Cancelar
+                      </Button>
+                      <Button type="submit" className="bg-slate-900 hover:bg-slate-800" data-testid="save-template-btn">
+                        {editingTemplate ? "Actualizar" : "Crear"} Plantilla
+                      </Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
+
+          {/* Templates Tab */}
+          <TabsContent value="templates">
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Array(6).fill(0).map((_, i) => <Skeleton key={i} className="h-48 w-full" />)}
+              </div>
+            ) : templates.length === 0 ? (
+              <Card className="border-slate-200">
+                <CardContent className="text-center py-12">
+                  <FileText className="w-16 h-16 mx-auto mb-4 text-slate-300" />
+                  <p className="text-slate-500 mb-2">No hay plantillas creadas</p>
                 </CardContent>
               </Card>
-            );
-          })}
-        </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {templates.map((template) => {
+                  const typeInfo = getTypeInfo(template.template_type);
+                  const Icon = typeInfo?.icon || FileText;
+                  return (
+                    <Card key={template.template_id} className="border-slate-200 hover:shadow-md transition-shadow">
+                      <CardHeader className="pb-2">
+                        <div className="flex items-start justify-between">
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${typeInfo?.color}`}>
+                            <Icon className="w-5 h-5" />
+                          </div>
+                          <Badge variant={template.is_active ? "default" : "secondary"}>
+                            {template.is_active ? "Activa" : "Inactiva"}
+                          </Badge>
+                        </div>
+                        <CardTitle className="text-lg mt-3">{template.name}</CardTitle>
+                        <p className="text-sm text-slate-500">{typeInfo?.label}</p>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-sm text-slate-600 line-clamp-2 mb-4">
+                          {template.content.substring(0, 100)}...
+                        </p>
+                        
+                        <div className="flex gap-2">
+                          <Button 
+                            variant="default" 
+                            size="sm" 
+                            className="flex-1 bg-emerald-600 hover:bg-emerald-700" 
+                            onClick={() => openGenerateDialog(template)}
+                            data-testid={`generate-${template.template_id}`}
+                          >
+                            <FilePlus className="w-4 h-4 mr-1" />
+                            Generar
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => handleEdit(template)}>
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => handleDuplicate(template)}>
+                            <Copy className="w-4 h-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" className="text-red-600 hover:bg-red-50" onClick={() => handleDelete(template.template_id)}>
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+          </TabsContent>
 
-        {/* Actions */}
-        <div className="flex justify-end">
-          <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
-            <DialogTrigger asChild>
-              <Button className="bg-slate-900 hover:bg-slate-800" data-testid="add-template-btn">
-                <Plus className="w-4 h-4 mr-2" />
-                Nueva Plantilla
+          {/* Documents Tab */}
+          <TabsContent value="documents">
+            {documents.length === 0 ? (
+              <Card className="border-slate-200">
+                <CardContent className="text-center py-12">
+                  <FileSignature className="w-16 h-16 mx-auto mb-4 text-slate-300" />
+                  <p className="text-slate-500">No hay documentos generados</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {documents.map((doc) => (
+                  <Card key={doc.document_id} className="border-slate-200">
+                    <CardHeader className="pb-2">
+                      <div className="flex items-start justify-between">
+                        <FileText className="w-8 h-8 text-slate-400" />
+                        <Badge variant={doc.is_signed ? "default" : "secondary"} className={doc.is_signed ? "bg-emerald-600" : ""}>
+                          {doc.is_signed ? (
+                            <><Check className="w-3 h-3 mr-1" /> Firmado</>
+                          ) : "Sin firmar"}
+                        </Badge>
+                      </div>
+                      <CardTitle className="text-lg mt-2">{doc.template_name}</CardTitle>
+                      <p className="text-sm text-slate-500">{doc.employee_name}</p>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-xs text-slate-400 mb-4">
+                        Creado: {new Date(doc.created_at).toLocaleDateString('es-MX')}
+                        {doc.signed_at && <> • Firmado: {new Date(doc.signed_at).toLocaleDateString('es-MX')}</>}
+                      </p>
+                      {doc.signature_data && (
+                        <div className="border rounded-lg p-2 mb-3 bg-slate-50">
+                          <img src={doc.signature_data} alt="Firma" className="h-12 object-contain mx-auto" />
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
+
+        {/* Generate Document Dialog */}
+        <Dialog open={isGenerateOpen} onOpenChange={setIsGenerateOpen}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="heading">Generar Documento: {selectedTemplate?.name}</DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-4 mt-4">
+              <div className="space-y-2">
+                <Label>Seleccionar Empleado</Label>
+                <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
+                  <SelectTrigger data-testid="select-employee-generate">
+                    <SelectValue placeholder="Seleccionar empleado" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {employees.map(emp => (
+                      <SelectItem key={emp.employee_id} value={emp.employee_id}>
+                        {emp.first_name} {emp.last_name} - {emp.position}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <Button onClick={generateDocument} className="w-full" data-testid="generate-doc-btn">
+                <FilePlus className="w-4 h-4 mr-2" />
+                Generar Documento
               </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="heading">
-                  {editingTemplate ? "Editar Plantilla" : "Nueva Plantilla"}
-                </DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Nombre de la Plantilla</Label>
-                    <Input
-                      value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      placeholder="Ej: Contrato de trabajo indefinido..."
-                      required
-                      data-testid="template-name"
-                    />
+              
+              {generatedContent && (
+                <>
+                  <div ref={documentRef} className="p-8 bg-white border border-slate-200 rounded-lg shadow-inner min-h-[400px]">
+                    <div className="prose prose-slate max-w-none whitespace-pre-wrap text-sm">
+                      {generatedContent}
+                    </div>
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label>Tipo de Documento</Label>
-                    <Select value={formData.template_type} onValueChange={(v) => setFormData({...formData, template_type: v})}>
-                      <SelectTrigger data-testid="template-type">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {templateTypes.map(type => (
-                          <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  <div className="flex gap-3">
+                    <Button onClick={downloadPDF} className="flex-1 bg-blue-600 hover:bg-blue-700" data-testid="download-pdf-btn">
+                      <Download className="w-4 h-4 mr-2" />
+                      Descargar PDF
+                    </Button>
+                    <Button onClick={openSignDialog} className="flex-1 bg-emerald-600 hover:bg-emerald-700" data-testid="sign-doc-btn">
+                      <PenTool className="w-4 h-4 mr-2" />
+                      Firmar Documento
+                    </Button>
                   </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label>Variables Disponibles</Label>
-                  <div className="flex flex-wrap gap-2 p-3 bg-slate-50 rounded-lg">
-                    {defaultVariables.map((variable) => (
-                      <button
-                        key={variable}
-                        type="button"
-                        onClick={() => insertVariable(variable)}
-                        className="px-2 py-1 text-xs font-mono bg-white border border-slate-200 rounded hover:bg-slate-100 transition-colors"
-                      >
-                        {variable}
-                      </button>
-                    ))}
-                  </div>
-                  <p className="text-xs text-slate-500">Haz clic en una variable para insertarla en el contenido</p>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label>Contenido de la Plantilla</Label>
-                  <Textarea
-                    value={formData.content}
-                    onChange={(e) => setFormData({...formData, content: e.target.value})}
-                    placeholder="Escribe el contenido de tu plantilla aquí. Usa las variables como {{nombre_empleado}} para datos dinámicos..."
-                    rows={12}
-                    className="font-mono text-sm"
-                    required
-                    data-testid="template-content"
-                  />
-                </div>
-                
-                <div className="flex items-center justify-between py-2">
-                  <div className="space-y-0.5">
-                    <Label>Plantilla Activa</Label>
-                    <p className="text-sm text-slate-500">Disponible para generar documentos</p>
-                  </div>
-                  <Switch
-                    checked={formData.is_active}
-                    onCheckedChange={(v) => setFormData({...formData, is_active: v})}
-                    data-testid="template-active"
-                  />
-                </div>
-                
-                <div className="flex justify-end gap-3 pt-4">
-                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                    Cancelar
-                  </Button>
-                  <Button type="submit" className="bg-slate-900 hover:bg-slate-800" data-testid="save-template-btn">
-                    {editingTemplate ? "Actualizar" : "Crear"} Plantilla
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
-        </div>
+                </>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
 
-        {/* Templates Grid */}
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array(6).fill(0).map((_, i) => <Skeleton key={i} className="h-48 w-full" />)}
-          </div>
-        ) : templates.length === 0 ? (
-          <Card className="border-slate-200">
-            <CardContent className="text-center py-12">
-              <FileText className="w-16 h-16 mx-auto mb-4 text-slate-300" />
-              <p className="text-slate-500 mb-2">No hay plantillas creadas</p>
-              <p className="text-sm text-slate-400">Crea plantillas para contratos, cartas y otros documentos</p>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {templates.map((template) => {
-              const typeInfo = getTypeInfo(template.template_type);
-              const Icon = typeInfo?.icon || FileText;
-              return (
-                <Card key={template.template_id} className="border-slate-200 hover:shadow-md transition-shadow" data-testid={`template-card-${template.template_id}`}>
-                  <CardHeader className="pb-2">
-                    <div className="flex items-start justify-between">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${typeInfo?.color}`}>
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <Badge variant={template.is_active ? "default" : "secondary"}>
-                        {template.is_active ? "Activa" : "Inactiva"}
-                      </Badge>
-                    </div>
-                    <CardTitle className="text-lg mt-3">{template.name}</CardTitle>
-                    <p className="text-sm text-slate-500">{typeInfo?.label}</p>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-slate-600 line-clamp-3 mb-4">
-                      {template.content.substring(0, 150)}...
-                    </p>
-                    
-                    {template.variables.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-4">
-                        {template.variables.slice(0, 3).map((v, i) => (
-                          <span key={i} className="px-1.5 py-0.5 text-xs font-mono bg-slate-100 rounded">
-                            {v}
-                          </span>
-                        ))}
-                        {template.variables.length > 3 && (
-                          <span className="px-1.5 py-0.5 text-xs text-slate-500">
-                            +{template.variables.length - 3} más
-                          </span>
-                        )}
-                      </div>
-                    )}
-                    
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" className="flex-1" onClick={() => handlePreview(template)}>
-                        <Eye className="w-4 h-4 mr-1" />
-                        Ver
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => handleEdit(template)}>
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => handleDuplicate(template)}>
-                        <Copy className="w-4 h-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" className="text-red-600 hover:bg-red-50" onClick={() => handleDelete(template.template_id)}>
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Preview Dialog */}
-        <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+        {/* Signature Dialog */}
+        <Dialog open={isSignOpen} onOpenChange={setIsSignOpen}>
+          <DialogContent className="max-w-lg">
             <DialogHeader>
-              <DialogTitle className="heading">Vista Previa del Documento</DialogTitle>
+              <DialogTitle className="heading">Firma Electrónica</DialogTitle>
             </DialogHeader>
-            <div className="mt-4 p-6 bg-white border border-slate-200 rounded-lg shadow-inner">
-              <div className="prose prose-slate max-w-none whitespace-pre-wrap">
-                {previewContent}
+            
+            <div className="space-y-4 mt-4">
+              <p className="text-sm text-slate-600">Firma en el recuadro de abajo con tu mouse o dedo:</p>
+              
+              <div className="border-2 border-dashed border-slate-300 rounded-lg bg-white">
+                <SignatureCanvas
+                  ref={signatureRef}
+                  canvasProps={{
+                    width: 450,
+                    height: 200,
+                    className: "signature-canvas w-full"
+                  }}
+                  backgroundColor="white"
+                />
+              </div>
+              
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={clearSignature} className="flex-1">
+                  Limpiar
+                </Button>
+                <Button onClick={saveSignedDocument} className="flex-1 bg-emerald-600 hover:bg-emerald-700" data-testid="save-signature-btn">
+                  <Check className="w-4 h-4 mr-2" />
+                  Guardar Firmado
+                </Button>
               </div>
             </div>
           </DialogContent>
