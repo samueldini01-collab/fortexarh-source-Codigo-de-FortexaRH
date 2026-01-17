@@ -320,38 +320,70 @@ class OrgNodeUpdatePosition(BaseModel):
 
 # ===================== ACCOUNTING & PAYROLL CALCULATOR MODELS =====================
 
+# Dominican Republic Payroll Rates (TSS - Tesorería de la Seguridad Social)
+# Employee deductions
+SFS_EMPLOYEE_RATE = 0.0307  # Seguro Familiar de Salud 3.07%
+AFP_EMPLOYEE_RATE = 0.0287  # Administradora de Fondo de Pensiones 2.87%
+
+# Employer contributions
+SFS_EMPLOYER_RATE = 0.0709  # Seguro Familiar de Salud 7.09%
+AFP_EMPLOYER_RATE = 0.0710  # Fondo de Pensiones 7.10%
+SRL_EMPLOYER_RATE = 0.01    # Seguro de Riesgos Laborales 1%
+INFOTEP_EMPLOYER_RATE = 0.01 # INFOTEP 1%
+
 class PayrollCalculatorInput(BaseModel):
-    employee_id: str
+    employee_id: Optional[str] = None
+    employee_name: Optional[str] = None
     base_salary: float
     days_worked: int = 30
     hours_extra: float = 0
     hour_rate: float = 0
     bonuses: float = 0
     commissions: float = 0
-    vacation_days: int = 0
-    sick_days: int = 0
-    # Deductions
+    # Additional deductions
     loan_deduction: float = 0
     other_deductions: float = 0
-    # Tax rates (can be overridden)
-    isr_rate: float = 0.15
-    social_security_rate: float = 0.0625
-    health_insurance: float = 0
 
 class PayrollCalculatorResult(BaseModel):
-    gross_salary: float
-    extra_hours_pay: float
+    # Input data
+    employee_name: Optional[str] = None
+    base_salary: float
+    days_worked: int
+    hours_extra: float
+    hour_rate: float
     bonuses: float
     commissions: float
+    
+    # Calculated earnings
+    proportional_salary: float
+    extra_hours_pay: float
     total_earnings: float
-    isr_tax: float
-    social_security: float
-    health_insurance: float
+    
+    # Employee deductions (TSS)
+    sfs_employee: float  # 3.07%
+    afp_employee: float  # 2.87%
+    total_employee_deductions: float
+    
+    # Additional deductions
     loan_deduction: float
     other_deductions: float
+    total_other_deductions: float
+    
+    # Total deductions
     total_deductions: float
+    
+    # Net salary
     net_salary: float
-    breakdown: Dict[str, float]
+    
+    # Employer contributions (for reporting)
+    sfs_employer: float  # 7.09%
+    afp_employer: float  # 7.10%
+    srl_employer: float  # 1%
+    infotep_employer: float  # 1%
+    total_employer_contributions: float
+    
+    # Summary breakdown
+    breakdown: Dict[str, Any]
 
 class JournalLineItem(BaseModel):
     account_code: str
@@ -1620,6 +1652,169 @@ async def get_document(document_id: str, current_user: dict = Depends(get_curren
     if not doc:
         raise HTTPException(status_code=404, detail="Documento no encontrado")
     return doc
+
+# ===================== PAYROLL CALCULATOR (Dominican Republic) =====================
+
+@api_router.post("/payroll-calculator")
+async def calculate_payroll(data: PayrollCalculatorInput, current_user: dict = Depends(get_current_user)):
+    """
+    Calculate payroll with Dominican Republic deductions:
+    - Employee: SFS 3.07%, AFP 2.87%
+    - Employer: SFS 7.09%, AFP 7.10%, SRL 1%, INFOTEP 1%
+    """
+    # Calculate proportional salary based on days worked
+    daily_rate = data.base_salary / 30
+    proportional_salary = daily_rate * data.days_worked
+    
+    # Calculate extra hours pay
+    extra_hours_pay = data.hours_extra * data.hour_rate
+    
+    # Total earnings
+    total_earnings = proportional_salary + extra_hours_pay + data.bonuses + data.commissions
+    
+    # Employee deductions (TSS)
+    sfs_employee = round(total_earnings * SFS_EMPLOYEE_RATE, 2)
+    afp_employee = round(total_earnings * AFP_EMPLOYEE_RATE, 2)
+    total_employee_deductions = round(sfs_employee + afp_employee, 2)
+    
+    # Additional deductions
+    total_other_deductions = round(data.loan_deduction + data.other_deductions, 2)
+    
+    # Total deductions
+    total_deductions = round(total_employee_deductions + total_other_deductions, 2)
+    
+    # Net salary
+    net_salary = round(total_earnings - total_deductions, 2)
+    
+    # Employer contributions (for reference)
+    sfs_employer = round(total_earnings * SFS_EMPLOYER_RATE, 2)
+    afp_employer = round(total_earnings * AFP_EMPLOYER_RATE, 2)
+    srl_employer = round(total_earnings * SRL_EMPLOYER_RATE, 2)
+    infotep_employer = round(total_earnings * INFOTEP_EMPLOYER_RATE, 2)
+    total_employer_contributions = round(sfs_employer + afp_employer + srl_employer + infotep_employer, 2)
+    
+    result = PayrollCalculatorResult(
+        employee_name=data.employee_name,
+        base_salary=data.base_salary,
+        days_worked=data.days_worked,
+        hours_extra=data.hours_extra,
+        hour_rate=data.hour_rate,
+        bonuses=data.bonuses,
+        commissions=data.commissions,
+        proportional_salary=round(proportional_salary, 2),
+        extra_hours_pay=round(extra_hours_pay, 2),
+        total_earnings=round(total_earnings, 2),
+        sfs_employee=sfs_employee,
+        afp_employee=afp_employee,
+        total_employee_deductions=total_employee_deductions,
+        loan_deduction=data.loan_deduction,
+        other_deductions=data.other_deductions,
+        total_other_deductions=total_other_deductions,
+        total_deductions=total_deductions,
+        net_salary=net_salary,
+        sfs_employer=sfs_employer,
+        afp_employer=afp_employer,
+        srl_employer=srl_employer,
+        infotep_employer=infotep_employer,
+        total_employer_contributions=total_employer_contributions,
+        breakdown={
+            "ingresos": {
+                "salario_proporcional": round(proportional_salary, 2),
+                "horas_extra": round(extra_hours_pay, 2),
+                "bonificaciones": data.bonuses,
+                "comisiones": data.commissions,
+                "total_ingresos": round(total_earnings, 2)
+            },
+            "deducciones_empleado": {
+                "sfs_3_07": sfs_employee,
+                "afp_2_87": afp_employee,
+                "total_tss": total_employee_deductions
+            },
+            "otras_deducciones": {
+                "prestamos": data.loan_deduction,
+                "otras": data.other_deductions,
+                "total_otras": total_other_deductions
+            },
+            "aportes_empleador": {
+                "sfs_7_09": sfs_employer,
+                "afp_7_10": afp_employer,
+                "srl_1": srl_employer,
+                "infotep_1": infotep_employer,
+                "total_aportes": total_employer_contributions
+            },
+            "resumen": {
+                "total_ingresos": round(total_earnings, 2),
+                "total_deducciones": total_deductions,
+                "salario_neto": net_salary
+            }
+        }
+    )
+    
+    return result
+
+@api_router.post("/payroll-calculator/save")
+async def save_payroll_calculation(data: PayrollCalculatorInput, current_user: dict = Depends(get_current_user)):
+    """Save a payroll calculation to create an actual payroll record"""
+    # First calculate
+    daily_rate = data.base_salary / 30
+    proportional_salary = daily_rate * data.days_worked
+    extra_hours_pay = data.hours_extra * data.hour_rate
+    total_earnings = proportional_salary + extra_hours_pay + data.bonuses + data.commissions
+    
+    sfs_employee = round(total_earnings * SFS_EMPLOYEE_RATE, 2)
+    afp_employee = round(total_earnings * AFP_EMPLOYEE_RATE, 2)
+    total_employee_deductions = sfs_employee + afp_employee
+    total_other_deductions = data.loan_deduction + data.other_deductions
+    total_deductions = total_employee_deductions + total_other_deductions
+    net_salary = round(total_earnings - total_deductions, 2)
+    
+    # Get employee info
+    employee_name = data.employee_name or "Sin asignar"
+    if data.employee_id:
+        employee = await db.employees.find_one(
+            {"employee_id": data.employee_id, "company_id": current_user.get("company_id")},
+            {"_id": 0}
+        )
+        if employee:
+            employee_name = f"{employee['first_name']} {employee['last_name']}"
+    
+    # Save calculation record
+    calc_id = f"calc_{uuid.uuid4().hex[:12]}"
+    calculation = {
+        "calculation_id": calc_id,
+        "company_id": current_user.get("company_id"),
+        "employee_id": data.employee_id,
+        "employee_name": employee_name,
+        "base_salary": data.base_salary,
+        "days_worked": data.days_worked,
+        "hours_extra": data.hours_extra,
+        "hour_rate": data.hour_rate,
+        "bonuses": data.bonuses,
+        "commissions": data.commissions,
+        "proportional_salary": round(proportional_salary, 2),
+        "extra_hours_pay": round(extra_hours_pay, 2),
+        "total_earnings": round(total_earnings, 2),
+        "sfs_employee": sfs_employee,
+        "afp_employee": afp_employee,
+        "total_employee_deductions": round(total_employee_deductions, 2),
+        "loan_deduction": data.loan_deduction,
+        "other_deductions": data.other_deductions,
+        "total_deductions": round(total_deductions, 2),
+        "net_salary": net_salary,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.payroll_calculations.insert_one(calculation)
+    
+    return {"calculation_id": calc_id, "message": "Cálculo guardado correctamente", "net_salary": net_salary}
+
+@api_router.get("/payroll-calculations")
+async def get_payroll_calculations(current_user: dict = Depends(get_current_user)):
+    """Get all saved payroll calculations for the company"""
+    calculations = await db.payroll_calculations.find(
+        {"company_id": current_user.get("company_id")},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    return calculations
 
 # ===================== ORGANIGRAMA DRAG & DROP =====================
 
