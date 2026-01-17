@@ -122,7 +122,8 @@ class TestPayrollCalculatorEndpoint:
         # Verify breakdown structure exists
         assert "breakdown" in data
         assert "ingresos" in data["breakdown"]
-        assert "deducciones_empleado" in data["breakdown"]
+        assert "deducciones_tss" in data["breakdown"]  # TSS deductions
+        assert "isr" in data["breakdown"]  # ISR section
         assert "aportes_empleador" in data["breakdown"]
         assert "resumen" in data["breakdown"]
     
