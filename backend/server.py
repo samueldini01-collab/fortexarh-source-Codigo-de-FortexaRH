@@ -236,6 +236,65 @@ class CheckoutRequest(BaseModel):
     plan_id: str
     origin_url: str
 
+# ===================== NEW MODELS: ORGANIGRAMA, PAYROLL CONFIG, TEMPLATES =====================
+
+class OrgNodeCreate(BaseModel):
+    employee_id: Optional[str] = None
+    title: str
+    department: str
+    parent_id: Optional[str] = None
+    level: int = 0
+
+class OrgNodeResponse(BaseModel):
+    node_id: str
+    company_id: str
+    employee_id: Optional[str] = None
+    employee_name: Optional[str] = None
+    title: str
+    department: str
+    parent_id: Optional[str] = None
+    level: int
+    children: List[str] = []
+
+class PayrollConfigCreate(BaseModel):
+    name: str
+    config_type: str  # earning, deduction, tax
+    calculation_type: str  # fixed, percentage
+    value: float
+    is_taxable: bool = True
+    is_active: bool = True
+    description: Optional[str] = None
+
+class PayrollConfigResponse(BaseModel):
+    config_id: str
+    company_id: str
+    name: str
+    config_type: str
+    calculation_type: str
+    value: float
+    is_taxable: bool
+    is_active: bool
+    description: Optional[str] = None
+    created_at: datetime
+
+class TemplateCreate(BaseModel):
+    name: str
+    template_type: str  # contract, letter, certificate, policy
+    content: str
+    variables: List[str] = []
+    is_active: bool = True
+
+class TemplateResponse(BaseModel):
+    template_id: str
+    company_id: str
+    name: str
+    template_type: str
+    content: str
+    variables: List[str]
+    is_active: bool
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
 # ===================== AUTH HELPERS =====================
 
 def hash_password(password: str) -> str:
