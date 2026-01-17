@@ -143,8 +143,9 @@ Sistema SaaS de gestión de Recursos Humanos y Nómina. El sistema debe venderse
 ---
 
 ## Test Coverage
-- `/app/tests/test_payroll_calculator.py` - 18 tests para calculadora de nómina
-- `/app/test_reports/iteration_2.json` - Último reporte de testing
+- `/app/tests/test_payroll_calculator.py` - 18 tests para calculadora (TSS)
+- `/app/tests/test_isr_calculation.py` - 13 tests para ISR (DGII)
+- `/app/test_reports/iteration_3.json` - Último reporte: 31/31 tests pasando
 
 ## Files Structure
 ```
