@@ -28,7 +28,8 @@ import {
   CreditCard,
   Network,
   Settings2,
-  FileText
+  FileText,
+  Calculator
 } from "lucide-react";
 
 const navigation = [
@@ -36,6 +37,7 @@ const navigation = [
   { name: "Empleados", href: "/employees", icon: Users },
   { name: "Organigrama", href: "/organigrama", icon: Network },
   { name: "Nómina", href: "/payroll", icon: DollarSign },
+  { name: "Calculadora", href: "/payroll-calculator", icon: Calculator },
   { name: "Config. Nómina", href: "/payroll-config", icon: Settings2 },
   { name: "Asistencias", href: "/attendance", icon: Clock },
   { name: "Vacaciones", href: "/vacations", icon: Calendar },
