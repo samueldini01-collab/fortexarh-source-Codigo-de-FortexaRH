@@ -5,6 +5,7 @@ from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
+import asyncio
 from pathlib import Path
 from pydantic import BaseModel, Field, EmailStr
 from typing import List, Optional, Dict, Any
@@ -13,6 +14,7 @@ from datetime import datetime, timezone, timedelta
 import jwt
 import bcrypt
 import httpx
+import resend
 from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionResponse, CheckoutSessionRequest
 
 ROOT_DIR = Path(__file__).parent
@@ -26,6 +28,16 @@ db = client[os.environ['DB_NAME']]
 JWT_SECRET = os.environ.get('JWT_SECRET', 'hrflow_secret_key_2024')
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_HOURS = 24 * 7
+
+# Resend configuration
+resend.api_key = os.environ.get('RESEND_API_KEY', '')
+SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
+
+# QuickBooks configuration
+QB_CLIENT_ID = os.environ.get('QUICKBOOKS_CLIENT_ID', '')
+QB_CLIENT_SECRET = os.environ.get('QUICKBOOKS_CLIENT_SECRET', '')
+QB_REALM_ID = os.environ.get('QUICKBOOKS_REALM_ID', '')
+QB_REDIRECT_URI = os.environ.get('QUICKBOOKS_REDIRECT_URI', '')
 
 app = FastAPI(title="FortexaRH SaaS API")
 api_router = APIRouter(prefix="/api")
