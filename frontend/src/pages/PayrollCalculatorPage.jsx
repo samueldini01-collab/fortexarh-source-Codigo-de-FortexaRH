@@ -706,7 +706,7 @@ export default function PayrollCalculatorPage() {
                       </div>
                       {result.isr_monthly > 0 && (
                         <div className="text-xs text-slate-500 mt-1">
-                          Base gravable anual: {formatCurrency(result.isr_annual_taxable)} | ISR anual: {formatCurrency(result.isr_annual)}
+                          Calculado sobre salario bruto: {formatCurrency(result.isr_taxable_base)}
                         </div>
                       )}
                       
