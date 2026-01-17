@@ -579,8 +579,10 @@ export default function PayrollCalculatorPage() {
 
                   {/* Employee Deductions */}
                   <div className="bg-red-50 rounded-lg p-4 space-y-2">
-                    <h4 className="font-semibold text-red-800">Deducciones del Empleado (TSS)</h4>
+                    <h4 className="font-semibold text-red-800">Deducciones del Empleado</h4>
                     <div className="space-y-1 text-sm">
+                      {/* TSS Section */}
+                      <p className="text-xs text-red-600 font-medium mb-1">Seguridad Social (TSS)</p>
                       <div className="flex justify-between">
                         <span className="text-slate-600">SFS (3.07%)</span>
                         <span className="font-medium text-red-600">-{formatCurrency(result.sfs_employee)}</span>
@@ -589,9 +591,29 @@ export default function PayrollCalculatorPage() {
                         <span className="text-slate-600">AFP (2.87%)</span>
                         <span className="font-medium text-red-600">-{formatCurrency(result.afp_employee)}</span>
                       </div>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-slate-500">Subtotal TSS</span>
+                        <span className="font-medium text-red-500">-{formatCurrency(result.total_tss_employee)}</span>
+                      </div>
+                      
+                      {/* ISR Section */}
+                      <Separator className="my-2" />
+                      <p className="text-xs text-red-600 font-medium mb-1">Impuesto Sobre la Renta (ISR)</p>
+                      <div className="flex justify-between">
+                        <span className="text-slate-600">ISR Mensual ({result.isr_bracket})</span>
+                        <span className="font-medium text-red-600">-{formatCurrency(result.isr_monthly)}</span>
+                      </div>
+                      {result.isr_monthly > 0 && (
+                        <div className="text-xs text-slate-500 mt-1">
+                          Base gravable anual: {formatCurrency(result.isr_annual_taxable)} | ISR anual: {formatCurrency(result.isr_annual)}
+                        </div>
+                      )}
+                      
+                      {/* Other Deductions */}
                       {(result.loan_deduction > 0 || result.other_deductions > 0) && (
                         <>
                           <Separator className="my-2" />
+                          <p className="text-xs text-red-600 font-medium mb-1">Otras Deducciones</p>
                           {result.loan_deduction > 0 && (
                             <div className="flex justify-between">
                               <span className="text-slate-600">Préstamos</span>
@@ -600,7 +622,7 @@ export default function PayrollCalculatorPage() {
                           )}
                           {result.other_deductions > 0 && (
                             <div className="flex justify-between">
-                              <span className="text-slate-600">Otras Deducciones</span>
+                              <span className="text-slate-600">Otras</span>
                               <span className="font-medium text-red-600">-{formatCurrency(result.other_deductions)}</span>
                             </div>
                           )}
