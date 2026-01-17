@@ -27,7 +27,7 @@ JWT_SECRET = os.environ.get('JWT_SECRET', 'hrflow_secret_key_2024')
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_HOURS = 24 * 7
 
-app = FastAPI(title="HRflow SaaS API")
+app = FastAPI(title="FortexaRH SaaS API")
 api_router = APIRouter(prefix="/api")
 security = HTTPBearer(auto_error=False)
 
