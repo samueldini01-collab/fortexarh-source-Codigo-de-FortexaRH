@@ -1,0 +1,151 @@
+{
+  "design_system": {
+    "identity": {
+      "name": "HRflow SaaS",
+      "tone": "Professional, Efficient, Trustworthy, Corporate",
+      "theme_strategy": "Light Mode Primary (Corporate Standard) with Dark Mode Support",
+      "core_values": ["Clarity", "Security", "Efficiency"]
+    },
+    "typography": {
+      "font_family": {
+        "headings": "Plus Jakarta Sans, sans-serif",
+        "body": "Inter, sans-serif",
+        "mono": "JetBrains Mono, monospace"
+      },
+      "scale": {
+        "h1": "text-4xl font-bold tracking-tight",
+        "h2": "text-3xl font-semibold tracking-tight",
+        "h3": "text-2xl font-semibold",
+        "h4": "text-xl font-medium",
+        "body_lg": "text-lg leading-relaxed",
+        "body_base": "text-base leading-normal",
+        "body_sm": "text-sm leading-normal text-muted-foreground",
+        "caption": "text-xs text-muted-foreground uppercase tracking-wider"
+      }
+    },
+    "colors": {
+      "palette": {
+        "primary": {
+          "DEFAULT": "#0F172A",
+          "foreground": "#F8FAFC",
+          "description": "Deep Slate Blue - Authority & Trust"
+        },
+        "secondary": {
+          "DEFAULT": "#10B981",
+          "foreground": "#FFFFFF",
+          "description": "Emerald Green - Growth, Payroll, Success"
+        },
+        "accent": {
+          "DEFAULT": "#F1F5F9",
+          "foreground": "#0F172A",
+          "description": "Light Slate - Backgrounds & Subtle Interactions"
+        },
+        "destructive": {
+          "DEFAULT": "#EF4444",
+          "foreground": "#FFFFFF"
+        },
+        "background": "#FFFFFF",
+        "surface": "#F8FAFC",
+        "border": "#E2E8F0"
+      },
+      "usage_rules": {
+        "gradients": "Minimal usage. Only for subtle hero backgrounds or active states. No full-screen gradients.",
+        "text_contrast": "Headings in Slate-900, Body in Slate-600. Never use pure black.",
+        "status_colors": {
+          "success": "text-emerald-600 bg-emerald-50 border-emerald-200",
+          "warning": "text-amber-600 bg-amber-50 border-amber-200",
+          "error": "text-red-600 bg-red-50 border-red-200",
+          "info": "text-blue-600 bg-blue-50 border-blue-200"
+        }
+      }
+    },
+    "layout": {
+      "spacing": {
+        "container_padding": "p-6 md:p-8 lg:p-12",
+        "section_gap": "gap-8",
+        "component_gap": "gap-4"
+      },
+      "grid_systems": {
+        "dashboard": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6",
+        "form": "grid grid-cols-1 md:grid-cols-2 gap-6",
+        "card_grid": "grid grid-cols-1 md:grid-cols-3 gap-6"
+      },
+      "containers": {
+        "main_wrapper": "max-w-7xl mx-auto w-full",
+        "dashboard_card": "bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200"
+      }
+    },
+    "components": {
+      "buttons": {
+        "primary": "bg-slate-900 text-white hover:bg-slate-800 shadow-sm rounded-md px-4 py-2 font-medium transition-all",
+        "secondary": "bg-white text-slate-900 border border-slate-200 hover:bg-slate-50 shadow-sm rounded-md px-4 py-2 font-medium",
+        "ghost": "text-slate-600 hover:bg-slate-100 hover:text-slate-900 rounded-md px-4 py-2"
+      },
+      "cards": {
+        "style": "bg-white border border-slate-200 rounded-xl shadow-sm",
+        "header": "p-6 border-b border-slate-100",
+        "content": "p-6"
+      },
+      "inputs": {
+        "style": "border-slate-200 focus:ring-2 focus:ring-slate-900/20 focus:border-slate-900 rounded-md bg-white"
+      },
+      "navigation": {
+        "sidebar": "bg-slate-900 text-slate-300 w-64 fixed h-full",
+        "sidebar_link": "flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 hover:text-white transition-colors",
+        "sidebar_active": "bg-slate-800 text-white font-medium"
+      }
+    },
+    "visual_enhancers": {
+      "shadows": {
+        "card": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+        "dropdown": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)"
+      },
+      "borders": "1px solid #E2E8F0",
+      "radius": "rounded-lg (0.5rem) for inputs/buttons, rounded-xl (0.75rem) for cards"
+    },
+    "assets": {
+      "icons": "Lucide React (already installed)",
+      "images": {
+        "landing_hero": {
+          "url": "https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxNzV8MHwxfHNlYXJjaHwyfHxkaXZlcnNlJTIwY29ycG9yYXRlJTIwdGVhbSUyMHdvcmtpbmclMjBpbiUyMG1vZGVybiUyMG9mZmljZXxlbnwwfHx8fDE3Njg2ODM3Mzd8MA&ixlib=rb-4.1.0&q=85",
+          "alt": "Diverse corporate team working in modern office",
+          "usage": "Landing page hero section background or side image"
+        },
+        "feature_hr": {
+          "url": "https://images.unsplash.com/photo-1758518727820-28491c194bee?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHwzfHxwcm9mZXNzaW9uYWwlMjBociUyMG1hbmFnZXIlMjBtZWV0aW5nJTIwd2l0aCUyMGVtcGxveWVlfGVufDB8fHx8MTc2ODY4MzczOXww&ixlib=rb-4.1.0&q=85",
+          "alt": "HR Manager meeting with employee",
+          "usage": "HR Management feature section"
+        },
+        "feature_deal": {
+          "url": "https://images.unsplash.com/photo-1752159684779-0639174cdfac?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODd8MHwxfHNlYXJjaHwyfHxidXNpbmVzcyUyMGhhbmRzaGFrZSUyMGNsb3NlJTIwdXB8ZW58MHx8fHwxNzY4NjgzNzQxfDA&ixlib=rb-4.1.0&q=85",
+          "alt": "Business handshake close up",
+          "usage": "Recruitment or Partnership section"
+        }
+      }
+    }
+  },
+  "implementation_guide": {
+    "tech_stack": {
+      "framework": "React",
+      "styling": "Tailwind CSS",
+      "components": "Shadcn UI",
+      "icons": "Lucide React",
+      "charts": "Recharts"
+    },
+    "file_structure_rules": {
+      "components": "Use named exports. Place in /src/components/ui for generic, /src/components/features for specific.",
+      "pages": "Use default exports. Place in /src/pages.",
+      "layouts": "Create Layout components (DashboardLayout, AuthLayout) in /src/layouts."
+    },
+    "universal_guidelines": [
+      "Use 'Plus Jakarta Sans' for headings to give a modern corporate feel.",
+      "Ensure all data tables have pagination and search/filter capabilities.",
+      "Use Skeleton loaders for data fetching states.",
+      "Dashboard widgets must be interactive (hover states, clickable details).",
+      "Forms must have client-side validation (Zod recommended if available, otherwise standard HTML5).",
+      "Mobile responsiveness is critical - Sidebar must collapse to a hamburger menu on mobile.",
+      "Do not use full-screen gradients. Use white/light grey backgrounds for cleanliness.",
+      "All interactive elements must have `data-testid` attributes."
+    ]
+  }
+}
