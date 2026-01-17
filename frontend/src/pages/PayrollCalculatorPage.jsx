@@ -372,12 +372,12 @@ export default function PayrollCalculatorPage() {
     
     yPos += 10;
     
-    // ISR brackets table data
+    // ISR brackets table data - MONTHLY values (DGII 2026)
     const isrBrackets = [
-      { range: "0 - 416,220.00", rate: "Exento", tax: "RD$0.00", highlight: result.isr_bracket === "Exento (0%)" },
-      { range: "416,220.01 - 624,329.00", rate: "15%", tax: "15% del excedente de RD$416,220.01", highlight: result.isr_bracket === "15%" },
-      { range: "624,329.01 - 867,123.00", rate: "20%", tax: "RD$31,216.00 + 20% excedente de RD$624,329.01", highlight: result.isr_bracket === "20%" },
-      { range: "867,123.01 en adelante", rate: "25%", tax: "RD$79,776.00 + 25% excedente de RD$867,123.01", highlight: result.isr_bracket === "25%" },
+      { range: "0 - 34,685.00", rate: "Exento", tax: "RD$0.00", highlight: result.isr_bracket === "Exento (0%)" },
+      { range: "34,685.01 - 52,027.42", rate: "15%", tax: "15% del excedente de RD$34,685.01", highlight: result.isr_bracket === "15%" },
+      { range: "52,027.43 - 72,260.25", rate: "20%", tax: "RD$2,601.33 + 20% excedente de RD$52,027.42", highlight: result.isr_bracket === "20%" },
+      { range: "72,260.26 en adelante", rate: "25%", tax: "RD$6,648.00 + 25% excedente de RD$72,260.25", highlight: result.isr_bracket === "25%" },
     ];
     
     doc.setFont("helvetica", "normal");
