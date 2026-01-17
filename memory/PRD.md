@@ -46,15 +46,20 @@ Sistema SaaS de gestión de Recursos Humanos y Nómina. El sistema debe venderse
 - [x] **Configuración de Nómina** - Conceptos de ingresos/deducciones
 - [x] **Plantillas** - Crear plantillas, generar documentos con variables, firmas electrónicas
 
-### ✅ Calculadora de Nómina (NEW - Jan 17, 2026)
+### ✅ Calculadora de Nómina (Jan 17, 2026)
 - [x] Cálculos TSS República Dominicana
   - Deducciones empleado: SFS 3.07%, AFP 2.87%
   - Aportes empleador: SFS 7.09%, AFP 7.10%, SRL 1%, INFOTEP 1%
+- [x] **ISR (Impuesto Sobre la Renta) según DGII**
+  - Tramos progresivos: Exento (0%), 15%, 20%, 25%
+  - Umbrales anuales: 416,220 | 624,329 | 867,123
+  - Cálculo: Base gravable = Ingresos - TSS (5.94%)
+  - Anualización y división por 12 para ISR mensual
 - [x] Formulario con: salario base, días trabajados, horas extra, bonificaciones, comisiones, préstamos
-- [x] Visualización de resultados (ingresos, deducciones, salario neto, aportes empleador)
-- [x] Exportación a PDF
+- [x] Visualización de resultados (ingresos, deducciones TSS, ISR, salario neto, aportes empleador)
+- [x] Exportación a PDF (incluye ISR)
 - [x] Guardar cálculos en base de datos
-- [x] 18/18 tests pasando
+- [x] 31/31 tests pasando (TSS + ISR)
 
 ### ✅ Integraciones
 - [x] Stripe para pagos (test key)
