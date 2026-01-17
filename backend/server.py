@@ -324,12 +324,80 @@ class OrgNodeUpdatePosition(BaseModel):
 # Employee deductions
 SFS_EMPLOYEE_RATE = 0.0307  # Seguro Familiar de Salud 3.07%
 AFP_EMPLOYEE_RATE = 0.0287  # Administradora de Fondo de Pensiones 2.87%
+TSS_EMPLOYEE_TOTAL = SFS_EMPLOYEE_RATE + AFP_EMPLOYEE_RATE  # 5.94% (used for ISR base)
 
 # Employer contributions
 SFS_EMPLOYER_RATE = 0.0709  # Seguro Familiar de Salud 7.09%
 AFP_EMPLOYER_RATE = 0.0710  # Fondo de Pensiones 7.10%
 SRL_EMPLOYER_RATE = 0.01    # Seguro de Riesgos Laborales 1%
 INFOTEP_EMPLOYER_RATE = 0.01 # INFOTEP 1%
+
+# ISR (Impuesto Sobre la Renta) - DGII Tables 2024/2025
+# Annual thresholds
+ISR_ANNUAL_EXEMPT = 416220.00  # Exento hasta este monto anual
+ISR_ANNUAL_BRACKET_1 = 624329.00  # 15% sobre excedente de 416,220.01
+ISR_ANNUAL_BRACKET_2 = 867123.00  # 20% sobre excedente de 624,329.01
+# Above 867,123.01 = 25% sobre excedente
+
+def calculate_isr_monthly(gross_monthly: float) -> dict:
+    """
+    Calculate ISR (Impuesto Sobre la Renta) based on DGII tables.
+    
+    Method:
+    1. Subtract TSS contributions from gross salary to get taxable base
+    2. Annualize the taxable base
+    3. Apply progressive tax brackets
+    4. Divide annual tax by 12 to get monthly ISR
+    
+    Returns dict with: taxable_base, annual_taxable, isr_annual, isr_monthly, tax_bracket
+    """
+    # Step 1: Calculate taxable base (gross - TSS employee contributions)
+    tss_deductions = gross_monthly * TSS_EMPLOYEE_TOTAL
+    taxable_base_monthly = gross_monthly - tss_deductions
+    
+    # Step 2: Annualize
+    annual_taxable = taxable_base_monthly * 12
+    
+    # Step 3: Apply progressive tax brackets
+    isr_annual = 0.0
+    tax_bracket = "Exento"
+    
+    if annual_taxable <= ISR_ANNUAL_EXEMPT:
+        # Exempt
+        isr_annual = 0.0
+        tax_bracket = "Exento (0%)"
+    elif annual_taxable <= ISR_ANNUAL_BRACKET_1:
+        # 15% on excess over 416,220.01
+        excess = annual_taxable - ISR_ANNUAL_EXEMPT
+        isr_annual = excess * 0.15
+        tax_bracket = "15%"
+    elif annual_taxable <= ISR_ANNUAL_BRACKET_2:
+        # First bracket: RD$31,216.35 (15% of 208,109 = 624,329 - 416,220)
+        # Plus 20% on excess over 624,329.01
+        first_bracket_tax = (ISR_ANNUAL_BRACKET_1 - ISR_ANNUAL_EXEMPT) * 0.15
+        excess = annual_taxable - ISR_ANNUAL_BRACKET_1
+        isr_annual = first_bracket_tax + (excess * 0.20)
+        tax_bracket = "20%"
+    else:
+        # First bracket: RD$31,216.35
+        # Second bracket: RD$48,558.80 (20% of 242,794 = 867,123 - 624,329)
+        # Plus 25% on excess over 867,123.01
+        first_bracket_tax = (ISR_ANNUAL_BRACKET_1 - ISR_ANNUAL_EXEMPT) * 0.15
+        second_bracket_tax = (ISR_ANNUAL_BRACKET_2 - ISR_ANNUAL_BRACKET_1) * 0.20
+        excess = annual_taxable - ISR_ANNUAL_BRACKET_2
+        isr_annual = first_bracket_tax + second_bracket_tax + (excess * 0.25)
+        tax_bracket = "25%"
+    
+    # Step 4: Get monthly ISR
+    isr_monthly = round(isr_annual / 12, 2)
+    
+    return {
+        "taxable_base_monthly": round(taxable_base_monthly, 2),
+        "annual_taxable": round(annual_taxable, 2),
+        "isr_annual": round(isr_annual, 2),
+        "isr_monthly": isr_monthly,
+        "tax_bracket": tax_bracket
+    }
 
 class PayrollCalculatorInput(BaseModel):
     employee_id: Optional[str] = None
