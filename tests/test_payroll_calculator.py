@@ -73,7 +73,7 @@ class TestPayrollCalculatorEndpoint:
     """Tests for POST /api/payroll-calculator endpoint"""
     
     def test_basic_calculation_50000_salary(self, api_client):
-        """Test basic calculation with 50000 base salary - verify TSS rates"""
+        """Test basic calculation with 50000 base salary - verify TSS rates and ISR"""
         response = api_client.post(
             f"{BASE_URL}/api/payroll-calculator",
             json={
@@ -95,7 +95,18 @@ class TestPayrollCalculatorEndpoint:
         # Verify employee deductions (TSS)
         assert data["sfs_employee"] == 1535.0, f"SFS Employee should be 1535 (3.07% of 50000), got {data['sfs_employee']}"
         assert data["afp_employee"] == 1435.0, f"AFP Employee should be 1435 (2.87% of 50000), got {data['afp_employee']}"
-        assert data["total_employee_deductions"] == 2970.0, f"Total employee deductions should be 2970, got {data['total_employee_deductions']}"
+        assert data["total_tss_employee"] == 2970.0, f"Total TSS employee should be 2970, got {data['total_tss_employee']}"
+        
+        # Verify ISR is calculated (50000 salary is in 15% bracket)
+        assert "isr_monthly" in data, "Response should contain isr_monthly"
+        assert "isr_bracket" in data, "Response should contain isr_bracket"
+        assert data["isr_monthly"] > 0, f"ISR should be > 0 for 50000 salary, got {data['isr_monthly']}"
+        assert "15%" in data["isr_bracket"], f"Should be 15% bracket, got {data['isr_bracket']}"
+        
+        # Verify total_employee_deductions = TSS + ISR
+        expected_employee_deductions = data["total_tss_employee"] + data["isr_monthly"]
+        assert abs(data["total_employee_deductions"] - expected_employee_deductions) < 1, \
+            f"Total employee deductions should be TSS + ISR = {expected_employee_deductions}, got {data['total_employee_deductions']}"
         
         # Verify employer contributions
         assert data["sfs_employer"] == 3545.0, f"SFS Employer should be 3545 (7.09% of 50000), got {data['sfs_employer']}"
@@ -104,9 +115,9 @@ class TestPayrollCalculatorEndpoint:
         assert data["infotep_employer"] == 500.0, f"INFOTEP should be 500 (1% of 50000), got {data['infotep_employer']}"
         assert data["total_employer_contributions"] == 8095.0, f"Total employer contributions should be 8095, got {data['total_employer_contributions']}"
         
-        # Verify net salary
-        expected_net = 50000 - 2970  # 47030
-        assert data["net_salary"] == expected_net, f"Net salary should be {expected_net}, got {data['net_salary']}"
+        # Verify net salary = total_earnings - total_deductions
+        expected_net = data["total_earnings"] - data["total_deductions"]
+        assert abs(data["net_salary"] - expected_net) < 1, f"Net salary should be {expected_net}, got {data['net_salary']}"
         
         # Verify breakdown structure exists
         assert "breakdown" in data
