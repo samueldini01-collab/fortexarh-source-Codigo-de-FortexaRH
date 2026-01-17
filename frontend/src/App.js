@@ -18,6 +18,9 @@ import RecruitmentPage from "@/pages/RecruitmentPage";
 import ReportsPage from "@/pages/ReportsPage";
 import SettingsPage from "@/pages/SettingsPage";
 import PricingPage from "@/pages/PricingPage";
+import OrganigramaPage from "@/pages/OrganigramaPage";
+import PayrollConfigPage from "@/pages/PayrollConfigPage";
+import TemplatesPage from "@/pages/TemplatesPage";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
@@ -204,6 +207,9 @@ function AppRouter() {
       <Route path="/recruitment" element={<ProtectedRoute><RecruitmentPage /></ProtectedRoute>} />
       <Route path="/reports" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
       <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+      <Route path="/organigrama" element={<ProtectedRoute><OrganigramaPage /></ProtectedRoute>} />
+      <Route path="/payroll-config" element={<ProtectedRoute><PayrollConfigPage /></ProtectedRoute>} />
+      <Route path="/templates" element={<ProtectedRoute><TemplatesPage /></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
