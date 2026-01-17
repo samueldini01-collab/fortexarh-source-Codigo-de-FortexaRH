@@ -376,8 +376,8 @@ export default function PayrollCalculatorPage() {
     const isrBrackets = [
       { range: "0 - 416,220.00", rate: "Exento", tax: "RD$0.00", highlight: result.isr_bracket === "Exento (0%)" },
       { range: "416,220.01 - 624,329.00", rate: "15%", tax: "15% del excedente de RD$416,220.01", highlight: result.isr_bracket === "15%" },
-      { range: "624,329.01 - 867,123.00", rate: "20%", tax: "RD$31,216.35 + 20% excedente de RD$624,329.01", highlight: result.isr_bracket === "20%" },
-      { range: "867,123.01 en adelante", rate: "25%", tax: "RD$79,776.15 + 25% excedente de RD$867,123.01", highlight: result.isr_bracket === "25%" },
+      { range: "624,329.01 - 867,123.00", rate: "20%", tax: "RD$31,216.00 + 20% excedente de RD$624,329.01", highlight: result.isr_bracket === "20%" },
+      { range: "867,123.01 en adelante", rate: "25%", tax: "RD$79,776.00 + 25% excedente de RD$867,123.01", highlight: result.isr_bracket === "25%" },
     ];
     
     doc.setFont("helvetica", "normal");
