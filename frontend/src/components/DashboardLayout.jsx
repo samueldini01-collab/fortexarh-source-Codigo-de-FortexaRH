@@ -25,17 +25,23 @@ import {
   X,
   ChevronDown,
   Bell,
-  CreditCard
+  CreditCard,
+  Network,
+  Settings2,
+  FileText
 } from "lucide-react";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Empleados", href: "/employees", icon: Users },
+  { name: "Organigrama", href: "/organigrama", icon: Network },
   { name: "Nómina", href: "/payroll", icon: DollarSign },
+  { name: "Config. Nómina", href: "/payroll-config", icon: Settings2 },
   { name: "Asistencias", href: "/attendance", icon: Clock },
   { name: "Vacaciones", href: "/vacations", icon: Calendar },
   { name: "Evaluaciones", href: "/evaluations", icon: Target },
   { name: "Reclutamiento", href: "/recruitment", icon: Briefcase },
+  { name: "Plantillas", href: "/templates", icon: FileText },
   { name: "Reportes", href: "/reports", icon: BarChart3 },
 ];
 
