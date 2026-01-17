@@ -68,7 +68,7 @@ export default function PricingPage() {
               <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
                 <Users className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-slate-900 heading">HRflow</span>
+              <span className="text-xl font-bold text-slate-900 heading">FortexaRH</span>
             </Link>
             <div className="flex items-center gap-3">
               {user ? (
@@ -207,7 +207,7 @@ export default function PricingPage() {
       {/* Footer */}
       <footer className="py-8 px-4 border-t border-slate-200 bg-white">
         <div className="max-w-7xl mx-auto text-center text-slate-500 text-sm">
-          © {new Date().getFullYear()} HRflow. Todos los derechos reservados.
+          © {new Date().getFullYear()} FortexaRH. Todos los derechos reservados.
         </div>
       </footer>
     </div>

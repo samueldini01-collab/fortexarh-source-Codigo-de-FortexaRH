@@ -67,7 +67,7 @@ export default function RegisterPage() {
             <div className="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center">
               <Users className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-bold text-slate-900 heading">HRflow</span>
+            <span className="text-2xl font-bold text-slate-900 heading">FortexaRH</span>
           </Link>
         </div>
 

@@ -66,7 +66,7 @@ export default function LandingPage() {
               <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
                 <Users className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-slate-900 heading">HRflow</span>
+              <span className="text-xl font-bold text-slate-900 heading">FortexaRH</span>
             </Link>
             <nav className="hidden md:flex items-center gap-8">
               <a href="#features" className="text-slate-600 hover:text-slate-900 transition-colors">Características</a>
@@ -233,7 +233,7 @@ export default function LandingPage() {
                 <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
                   <Users className="w-5 h-5 text-slate-900" />
                 </div>
-                <span className="text-xl font-bold heading">HRflow</span>
+                <span className="text-xl font-bold heading">FortexaRH</span>
               </div>
               <p className="text-slate-400 text-sm">
                 Sistema de gestión de recursos humanos y nómina para empresas modernas.
@@ -262,7 +262,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="border-t border-slate-800 pt-8 text-center text-slate-400 text-sm">
-            © {new Date().getFullYear()} HRflow. Todos los derechos reservados.
+            © {new Date().getFullYear()} FortexaRH. Todos los derechos reservados.
           </div>
         </div>
       </footer>
