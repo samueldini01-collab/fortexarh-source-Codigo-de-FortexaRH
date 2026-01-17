@@ -355,7 +355,7 @@ export default function PayrollCalculatorPage() {
     doc.setFontSize(11);
     doc.setTextColor(146, 64, 14); // amber-800
     doc.setFont("helvetica", "bold");
-    doc.text("TABLA DE ISR - DGII 2024/2025 (Referencia)", 20, yPos);
+    doc.text("TABLA DE ISR - DGII 2026 (Referencia)", 20, yPos);
     
     yPos += 12;
     
