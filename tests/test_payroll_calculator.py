@@ -1,9 +1,14 @@
 """
-Payroll Calculator API Tests - Dominican Republic TSS Calculations
+Payroll Calculator API Tests - Dominican Republic TSS & ISR Calculations
 Tests for POST /api/payroll-calculator and POST /api/payroll-calculator/save endpoints
 TSS Rates:
 - Employee: SFS 3.07%, AFP 2.87%
 - Employer: SFS 7.09%, AFP 7.10%, SRL 1%, INFOTEP 1%
+ISR (DGII Tables):
+- Exento: up to RD$416,220 annual
+- 15%: RD$416,220.01 - RD$624,329
+- 20%: RD$624,329.01 - RD$867,123
+- 25%: above RD$867,123.01
 """
 import pytest
 import requests
@@ -14,10 +19,14 @@ BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://staffpulse-30.previe
 # TSS Rates for Dominican Republic
 SFS_EMPLOYEE_RATE = 0.0307  # 3.07%
 AFP_EMPLOYEE_RATE = 0.0287  # 2.87%
+TSS_EMPLOYEE_TOTAL = SFS_EMPLOYEE_RATE + AFP_EMPLOYEE_RATE  # 5.94%
 SFS_EMPLOYER_RATE = 0.0709  # 7.09%
 AFP_EMPLOYER_RATE = 0.0710  # 7.10%
 SRL_EMPLOYER_RATE = 0.01    # 1%
 INFOTEP_EMPLOYER_RATE = 0.01  # 1%
+
+# ISR Thresholds
+ISR_ANNUAL_EXEMPT = 416220.00
 
 
 @pytest.fixture(scope="module")
