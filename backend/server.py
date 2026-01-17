@@ -318,6 +318,80 @@ class OrgNodeUpdatePosition(BaseModel):
     parent_id: Optional[str] = None
     level: int
 
+# ===================== ACCOUNTING & PAYROLL CALCULATOR MODELS =====================
+
+class PayrollCalculatorInput(BaseModel):
+    employee_id: str
+    base_salary: float
+    days_worked: int = 30
+    hours_extra: float = 0
+    hour_rate: float = 0
+    bonuses: float = 0
+    commissions: float = 0
+    vacation_days: int = 0
+    sick_days: int = 0
+    # Deductions
+    loan_deduction: float = 0
+    other_deductions: float = 0
+    # Tax rates (can be overridden)
+    isr_rate: float = 0.15
+    social_security_rate: float = 0.0625
+    health_insurance: float = 0
+
+class PayrollCalculatorResult(BaseModel):
+    gross_salary: float
+    extra_hours_pay: float
+    bonuses: float
+    commissions: float
+    total_earnings: float
+    isr_tax: float
+    social_security: float
+    health_insurance: float
+    loan_deduction: float
+    other_deductions: float
+    total_deductions: float
+    net_salary: float
+    breakdown: Dict[str, float]
+
+class JournalLineItem(BaseModel):
+    account_code: str
+    account_name: str
+    cost_center: Optional[str] = None
+    debit: float = 0
+    credit: float = 0
+    reference: Optional[str] = None
+    description: Optional[str] = None
+
+class JournalEntryCreate(BaseModel):
+    payroll_id: str
+    transaction_date: str
+    description: str
+    lines: List[JournalLineItem]
+
+class JournalEntryResponse(BaseModel):
+    entry_id: str
+    company_id: str
+    payroll_id: str
+    transaction_date: str
+    description: str
+    lines: List[Dict]
+    total_debit: float
+    total_credit: float
+    status: str
+    quickbooks_id: Optional[str] = None
+    created_at: datetime
+
+class EmailDocumentRequest(BaseModel):
+    document_id: str
+    recipient_email: EmailStr
+    subject: Optional[str] = None
+    message: Optional[str] = None
+
+class TemplateVersionCreate(BaseModel):
+    template_id: str
+    content: str
+    change_description: str
+
 # ===================== AUTH HELPERS =====================
 
 def hash_password(password: str) -> str:
