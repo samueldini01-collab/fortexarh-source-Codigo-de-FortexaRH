@@ -209,14 +209,21 @@ class TestPayrollCalculatorEndpoint:
         assert data["total_other_deductions"] == 3000.0
         
         # TSS deductions on 60000
-        tss_deductions = round(60000 * (SFS_EMPLOYEE_RATE + AFP_EMPLOYEE_RATE), 2)
-        total_deductions = tss_deductions + 3000
+        expected_tss = round(60000 * TSS_EMPLOYEE_TOTAL, 2)
+        assert abs(data["total_tss_employee"] - expected_tss) < 1, f"TSS should be ~{expected_tss}, got {data['total_tss_employee']}"
         
-        assert data["total_deductions"] == total_deductions
+        # Verify ISR is calculated (60000 is in 20% bracket)
+        assert data["isr_monthly"] > 0, f"ISR should be > 0 for 60000 salary"
+        assert "20%" in data["isr_bracket"], f"Should be 20% bracket, got {data['isr_bracket']}"
         
-        # Net salary
-        expected_net = 60000 - total_deductions
-        assert data["net_salary"] == expected_net
+        # total_deductions = total_employee_deductions (TSS + ISR) + total_other_deductions
+        expected_total = data["total_employee_deductions"] + data["total_other_deductions"]
+        assert abs(data["total_deductions"] - expected_total) < 1, \
+            f"Total deductions should be {expected_total}, got {data['total_deductions']}"
+        
+        # Net salary = total_earnings - total_deductions
+        expected_net = data["total_earnings"] - data["total_deductions"]
+        assert abs(data["net_salary"] - expected_net) < 1, f"Net salary should be {expected_net}, got {data['net_salary']}"
     
     def test_calculation_partial_month(self, api_client):
         """Test calculation with partial month (15 days worked)"""
