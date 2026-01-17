@@ -295,6 +295,17 @@ class TemplateResponse(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
+class GeneratedDocumentCreate(BaseModel):
+    template_id: str
+    employee_id: str
+    content: str
+    signature_data: Optional[str] = None
+
+class OrgNodeUpdatePosition(BaseModel):
+    node_id: str
+    parent_id: Optional[str] = None
+    level: int
+
 # ===================== AUTH HELPERS =====================
 
 def hash_password(password: str) -> str:
