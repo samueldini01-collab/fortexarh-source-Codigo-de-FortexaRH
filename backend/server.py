@@ -1253,6 +1253,219 @@ async def get_attendance_report(year: int, month: int, current_user: dict = Depe
         }
     }
 
+# ===================== ORGANIGRAMA ROUTES =====================
+
+@api_router.get("/organigrama")
+async def get_organigrama(current_user: dict = Depends(get_current_user)):
+    nodes = await db.org_nodes.find(
+        {"company_id": current_user.get("company_id")},
+        {"_id": 0}
+    ).to_list(1000)
+    return nodes
+
+@api_router.post("/organigrama")
+async def create_org_node(data: OrgNodeCreate, current_user: dict = Depends(get_current_user)):
+    company_id = current_user.get("company_id")
+    
+    employee_name = None
+    if data.employee_id:
+        employee = await db.employees.find_one(
+            {"employee_id": data.employee_id, "company_id": company_id},
+            {"_id": 0}
+        )
+        if employee:
+            employee_name = f"{employee['first_name']} {employee['last_name']}"
+    
+    node_id = f"node_{uuid.uuid4().hex[:12]}"
+    node = {
+        "node_id": node_id,
+        "company_id": company_id,
+        "employee_id": data.employee_id,
+        "employee_name": employee_name,
+        "title": data.title,
+        "department": data.department,
+        "parent_id": data.parent_id,
+        "level": data.level,
+        "children": [],
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.org_nodes.insert_one(node)
+    
+    # Update parent's children array
+    if data.parent_id:
+        await db.org_nodes.update_one(
+            {"node_id": data.parent_id},
+            {"$push": {"children": node_id}}
+        )
+    
+    return {"node_id": node_id, "message": "Nodo creado correctamente"}
+
+@api_router.put("/organigrama/{node_id}")
+async def update_org_node(node_id: str, data: OrgNodeCreate, current_user: dict = Depends(get_current_user)):
+    company_id = current_user.get("company_id")
+    
+    employee_name = None
+    if data.employee_id:
+        employee = await db.employees.find_one(
+            {"employee_id": data.employee_id, "company_id": company_id},
+            {"_id": 0}
+        )
+        if employee:
+            employee_name = f"{employee['first_name']} {employee['last_name']}"
+    
+    result = await db.org_nodes.update_one(
+        {"node_id": node_id, "company_id": company_id},
+        {"$set": {
+            "employee_id": data.employee_id,
+            "employee_name": employee_name,
+            "title": data.title,
+            "department": data.department,
+            "parent_id": data.parent_id,
+            "level": data.level
+        }}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Nodo no encontrado")
+    return {"message": "Nodo actualizado correctamente"}
+
+@api_router.delete("/organigrama/{node_id}")
+async def delete_org_node(node_id: str, current_user: dict = Depends(get_current_user)):
+    company_id = current_user.get("company_id")
+    
+    # Get the node to find its parent
+    node = await db.org_nodes.find_one({"node_id": node_id, "company_id": company_id}, {"_id": 0})
+    if not node:
+        raise HTTPException(status_code=404, detail="Nodo no encontrado")
+    
+    # Remove from parent's children
+    if node.get("parent_id"):
+        await db.org_nodes.update_one(
+            {"node_id": node["parent_id"]},
+            {"$pull": {"children": node_id}}
+        )
+    
+    # Delete the node
+    await db.org_nodes.delete_one({"node_id": node_id, "company_id": company_id})
+    
+    # Optionally: reassign children to parent or delete them
+    await db.org_nodes.update_many(
+        {"parent_id": node_id, "company_id": company_id},
+        {"$set": {"parent_id": node.get("parent_id")}}
+    )
+    
+    return {"message": "Nodo eliminado correctamente"}
+
+# ===================== PAYROLL CONFIG ROUTES =====================
+
+@api_router.get("/payroll-config")
+async def get_payroll_configs(current_user: dict = Depends(get_current_user)):
+    configs = await db.payroll_configs.find(
+        {"company_id": current_user.get("company_id")},
+        {"_id": 0}
+    ).to_list(1000)
+    return configs
+
+@api_router.post("/payroll-config")
+async def create_payroll_config(data: PayrollConfigCreate, current_user: dict = Depends(get_current_user)):
+    config_id = f"pconfig_{uuid.uuid4().hex[:12]}"
+    config = {
+        "config_id": config_id,
+        "company_id": current_user.get("company_id"),
+        **data.model_dump(),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.payroll_configs.insert_one(config)
+    return {"config_id": config_id, "message": "Configuración creada correctamente"}
+
+@api_router.put("/payroll-config/{config_id}")
+async def update_payroll_config(config_id: str, data: PayrollConfigCreate, current_user: dict = Depends(get_current_user)):
+    result = await db.payroll_configs.update_one(
+        {"config_id": config_id, "company_id": current_user.get("company_id")},
+        {"$set": data.model_dump()}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Configuración no encontrada")
+    return {"message": "Configuración actualizada correctamente"}
+
+@api_router.delete("/payroll-config/{config_id}")
+async def delete_payroll_config(config_id: str, current_user: dict = Depends(get_current_user)):
+    result = await db.payroll_configs.delete_one(
+        {"config_id": config_id, "company_id": current_user.get("company_id")}
+    )
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Configuración no encontrada")
+    return {"message": "Configuración eliminada correctamente"}
+
+# ===================== TEMPLATES ROUTES =====================
+
+@api_router.get("/templates")
+async def get_templates(current_user: dict = Depends(get_current_user)):
+    templates = await db.templates.find(
+        {"company_id": current_user.get("company_id")},
+        {"_id": 0}
+    ).to_list(1000)
+    return templates
+
+@api_router.post("/templates")
+async def create_template(data: TemplateCreate, current_user: dict = Depends(get_current_user)):
+    template_id = f"tmpl_{uuid.uuid4().hex[:12]}"
+    template = {
+        "template_id": template_id,
+        "company_id": current_user.get("company_id"),
+        **data.model_dump(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": None
+    }
+    await db.templates.insert_one(template)
+    return {"template_id": template_id, "message": "Plantilla creada correctamente"}
+
+@api_router.get("/templates/{template_id}")
+async def get_template(template_id: str, current_user: dict = Depends(get_current_user)):
+    template = await db.templates.find_one(
+        {"template_id": template_id, "company_id": current_user.get("company_id")},
+        {"_id": 0}
+    )
+    if not template:
+        raise HTTPException(status_code=404, detail="Plantilla no encontrada")
+    return template
+
+@api_router.put("/templates/{template_id}")
+async def update_template(template_id: str, data: TemplateCreate, current_user: dict = Depends(get_current_user)):
+    result = await db.templates.update_one(
+        {"template_id": template_id, "company_id": current_user.get("company_id")},
+        {"$set": {
+            **data.model_dump(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Plantilla no encontrada")
+    return {"message": "Plantilla actualizada correctamente"}
+
+@api_router.delete("/templates/{template_id}")
+async def delete_template(template_id: str, current_user: dict = Depends(get_current_user)):
+    result = await db.templates.delete_one(
+        {"template_id": template_id, "company_id": current_user.get("company_id")}
+    )
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Plantilla no encontrada")
+    return {"message": "Plantilla eliminada correctamente"}
+
+@api_router.post("/templates/{template_id}/generate")
+async def generate_document(template_id: str, variables: Dict[str, str], current_user: dict = Depends(get_current_user)):
+    template = await db.templates.find_one(
+        {"template_id": template_id, "company_id": current_user.get("company_id")},
+        {"_id": 0}
+    )
+    if not template:
+        raise HTTPException(status_code=404, detail="Plantilla no encontrada")
+    
+    content = template["content"]
+    for var, value in variables.items():
+        content = content.replace(f"{{{{{var}}}}}", value)
+    
+    return {"content": content, "template_name": template["name"]}
+
 # ===================== MAIN APP =====================
 
 app.include_router(api_router)
