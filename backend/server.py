@@ -1861,11 +1861,19 @@ async def save_payroll_calculation(data: PayrollCalculatorInput, current_user: d
     extra_hours_pay = data.hours_extra * data.hour_rate
     total_earnings = proportional_salary + extra_hours_pay + data.bonuses + data.commissions
     
+    # TSS deductions
     sfs_employee = round(total_earnings * SFS_EMPLOYEE_RATE, 2)
     afp_employee = round(total_earnings * AFP_EMPLOYEE_RATE, 2)
-    total_employee_deductions = sfs_employee + afp_employee
+    total_tss_employee = sfs_employee + afp_employee
+    
+    # ISR calculation
+    isr_result = calculate_isr_monthly(total_earnings)
+    isr_monthly = isr_result["isr_monthly"]
+    
+    # Total employee deductions (TSS + ISR)
+    total_employee_deductions = round(total_tss_employee + isr_monthly, 2)
     total_other_deductions = data.loan_deduction + data.other_deductions
-    total_deductions = total_employee_deductions + total_other_deductions
+    total_deductions = round(total_employee_deductions + total_other_deductions, 2)
     net_salary = round(total_earnings - total_deductions, 2)
     
     # Get employee info
@@ -1896,10 +1904,13 @@ async def save_payroll_calculation(data: PayrollCalculatorInput, current_user: d
         "total_earnings": round(total_earnings, 2),
         "sfs_employee": sfs_employee,
         "afp_employee": afp_employee,
-        "total_employee_deductions": round(total_employee_deductions, 2),
+        "total_tss_employee": round(total_tss_employee, 2),
+        "isr_monthly": isr_monthly,
+        "isr_bracket": isr_result["tax_bracket"],
+        "total_employee_deductions": total_employee_deductions,
         "loan_deduction": data.loan_deduction,
         "other_deductions": data.other_deductions,
-        "total_deductions": round(total_deductions, 2),
+        "total_deductions": total_deductions,
         "net_salary": net_salary,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
