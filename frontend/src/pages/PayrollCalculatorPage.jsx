@@ -159,7 +159,7 @@ export default function PayrollCalculatorPage() {
     
     doc.setFontSize(12);
     doc.setFont("helvetica", "normal");
-    doc.text("Cálculo de Nómina", pageWidth - 20, 25, { align: "right" });
+    doc.text("Cálculo de Nómina RD", pageWidth - 20, 25, { align: "right" });
     
     yPos = 55;
 
@@ -222,48 +222,80 @@ export default function PayrollCalculatorPage() {
     
     doc.setFontSize(12);
     doc.setTextColor(153, 27, 27); // red-800
-    doc.text("DEDUCCIONES DEL EMPLEADO (TSS)", 20, yPos);
+    doc.text("DEDUCCIONES DEL EMPLEADO", 20, yPos);
     
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
     
     yPos += 10;
-    const employeeDeductions = [
-      ["Seguro Familiar de Salud (SFS) - 3.07%", formatCurrency(result.sfs_employee)],
-      ["Fondo de Pensiones (AFP) - 2.87%", formatCurrency(result.afp_employee)],
+    
+    // TSS Deductions
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.text("Seguridad Social (TSS):", 25, yPos);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    yPos += 7;
+    
+    const tssDeductions = [
+      ["  SFS (3.07%)", formatCurrency(result.sfs_employee)],
+      ["  AFP (2.87%)", formatCurrency(result.afp_employee)],
     ];
     
-    employeeDeductions.forEach(([label, value]) => {
+    tssDeductions.forEach(([label, value]) => {
       doc.text(label, 25, yPos);
       doc.text(value, pageWidth - 50, yPos, { align: "right" });
-      yPos += 7;
+      yPos += 6;
     });
     
-    doc.setFont("helvetica", "bold");
-    doc.text("Subtotal TSS", 25, yPos);
-    doc.text(formatCurrency(result.total_employee_deductions), pageWidth - 50, yPos, { align: "right" });
+    doc.text("  Subtotal TSS", 25, yPos);
+    doc.text(formatCurrency(result.total_tss_employee), pageWidth - 50, yPos, { align: "right" });
+    yPos += 10;
     
-    yPos += 12;
+    // ISR Section
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.text("Impuesto Sobre la Renta (ISR):", 25, yPos);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    yPos += 7;
+    
+    doc.text(`  ISR Mensual (${result.isr_bracket})`, 25, yPos);
+    doc.text(formatCurrency(result.isr_monthly), pageWidth - 50, yPos, { align: "right" });
+    yPos += 6;
+    
+    if (result.isr_monthly > 0) {
+      doc.setFontSize(8);
+      doc.setTextColor(100, 100, 100);
+      doc.text(`  Base gravable anual: ${formatCurrency(result.isr_annual_taxable)} | ISR anual: ${formatCurrency(result.isr_annual)}`, 25, yPos);
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(10);
+      yPos += 8;
+    }
 
     // Other Deductions
-    doc.setFont("helvetica", "normal");
     if (result.loan_deduction > 0 || result.other_deductions > 0) {
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
       doc.text("Otras Deducciones:", 25, yPos);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
       yPos += 7;
       
       if (result.loan_deduction > 0) {
         doc.text("  Préstamos", 25, yPos);
         doc.text(formatCurrency(result.loan_deduction), pageWidth - 50, yPos, { align: "right" });
-        yPos += 7;
+        yPos += 6;
       }
       if (result.other_deductions > 0) {
         doc.text("  Otras", 25, yPos);
         doc.text(formatCurrency(result.other_deductions), pageWidth - 50, yPos, { align: "right" });
-        yPos += 7;
+        yPos += 6;
       }
     }
     
+    yPos += 4;
     doc.setFont("helvetica", "bold");
     doc.text("Total Deducciones", 25, yPos);
     doc.text(formatCurrency(result.total_deductions), pageWidth - 50, yPos, { align: "right" });
@@ -297,16 +329,16 @@ export default function PayrollCalculatorPage() {
     
     yPos += 10;
     const employerContributions = [
-      ["Seguro Familiar de Salud (SFS) - 7.09%", formatCurrency(result.sfs_employer)],
-      ["Fondo de Pensiones (AFP) - 7.10%", formatCurrency(result.afp_employer)],
-      ["Seguro de Riesgos Laborales (SRL) - 1%", formatCurrency(result.srl_employer)],
-      ["INFOTEP - 1%", formatCurrency(result.infotep_employer)],
+      ["SFS (7.09%)", formatCurrency(result.sfs_employer)],
+      ["AFP (7.10%)", formatCurrency(result.afp_employer)],
+      ["SRL (1%)", formatCurrency(result.srl_employer)],
+      ["INFOTEP (1%)", formatCurrency(result.infotep_employer)],
     ];
     
     employerContributions.forEach(([label, value]) => {
       doc.text(label, 25, yPos);
       doc.text(value, pageWidth - 50, yPos, { align: "right" });
-      yPos += 7;
+      yPos += 6;
     });
     
     doc.setFont("helvetica", "bold");
