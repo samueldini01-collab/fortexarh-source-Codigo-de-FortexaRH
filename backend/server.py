@@ -1737,7 +1737,7 @@ async def get_document(document_id: str, current_user: dict = Depends(get_curren
 async def calculate_payroll(data: PayrollCalculatorInput, current_user: dict = Depends(get_current_user)):
     """
     Calculate payroll with Dominican Republic deductions:
-    - Employee: SFS 3.07%, AFP 2.87%
+    - Employee: SFS 3.07%, AFP 2.87%, ISR (según tablas DGII)
     - Employer: SFS 7.09%, AFP 7.10%, SRL 1%, INFOTEP 1%
     """
     # Calculate proportional salary based on days worked
@@ -1753,7 +1753,14 @@ async def calculate_payroll(data: PayrollCalculatorInput, current_user: dict = D
     # Employee deductions (TSS)
     sfs_employee = round(total_earnings * SFS_EMPLOYEE_RATE, 2)
     afp_employee = round(total_earnings * AFP_EMPLOYEE_RATE, 2)
-    total_employee_deductions = round(sfs_employee + afp_employee, 2)
+    total_tss_employee = round(sfs_employee + afp_employee, 2)
+    
+    # Calculate ISR based on DGII tables
+    isr_result = calculate_isr_monthly(total_earnings)
+    isr_monthly = isr_result["isr_monthly"]
+    
+    # Total employee deductions (TSS + ISR)
+    total_employee_deductions = round(total_tss_employee + isr_monthly, 2)
     
     # Additional deductions
     total_other_deductions = round(data.loan_deduction + data.other_deductions, 2)
@@ -1784,6 +1791,12 @@ async def calculate_payroll(data: PayrollCalculatorInput, current_user: dict = D
         total_earnings=round(total_earnings, 2),
         sfs_employee=sfs_employee,
         afp_employee=afp_employee,
+        total_tss_employee=total_tss_employee,
+        isr_taxable_base=isr_result["taxable_base_monthly"],
+        isr_annual_taxable=isr_result["annual_taxable"],
+        isr_annual=isr_result["isr_annual"],
+        isr_monthly=isr_monthly,
+        isr_bracket=isr_result["tax_bracket"],
         total_employee_deductions=total_employee_deductions,
         loan_deduction=data.loan_deduction,
         other_deductions=data.other_deductions,
@@ -1803,10 +1816,17 @@ async def calculate_payroll(data: PayrollCalculatorInput, current_user: dict = D
                 "comisiones": data.commissions,
                 "total_ingresos": round(total_earnings, 2)
             },
-            "deducciones_empleado": {
+            "deducciones_tss": {
                 "sfs_3_07": sfs_employee,
                 "afp_2_87": afp_employee,
-                "total_tss": total_employee_deductions
+                "total_tss": total_tss_employee
+            },
+            "isr": {
+                "base_gravable_mensual": isr_result["taxable_base_monthly"],
+                "base_anualizada": isr_result["annual_taxable"],
+                "isr_anual": isr_result["isr_annual"],
+                "isr_mensual": isr_monthly,
+                "tramo_impositivo": isr_result["tax_bracket"]
             },
             "otras_deducciones": {
                 "prestamos": data.loan_deduction,
@@ -1822,6 +1842,8 @@ async def calculate_payroll(data: PayrollCalculatorInput, current_user: dict = D
             },
             "resumen": {
                 "total_ingresos": round(total_earnings, 2),
+                "total_deducciones_empleado": total_employee_deductions,
+                "total_otras_deducciones": total_other_deductions,
                 "total_deducciones": total_deductions,
                 "salario_neto": net_salary
             }
