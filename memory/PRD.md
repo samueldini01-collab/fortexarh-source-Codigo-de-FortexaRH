@@ -57,7 +57,10 @@ Sistema SaaS de gestión de Recursos Humanos y Nómina. El sistema debe venderse
   - Anualización y división por 12 para ISR mensual
 - [x] Formulario con: salario base, días trabajados, horas extra, bonificaciones, comisiones, préstamos
 - [x] Visualización de resultados (ingresos, deducciones TSS, ISR, salario neto, aportes empleador)
-- [x] Exportación a PDF (incluye ISR)
+- [x] **Exportación a PDF con tabla ISR DGII**
+  - Tabla de referencia con los 4 tramos
+  - Tramo del empleado resaltado en verde
+  - Detalle del cálculo personal
 - [x] Guardar cálculos en base de datos
 - [x] 31/31 tests pasando (TSS + ISR)
 
