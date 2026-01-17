@@ -407,12 +407,12 @@ export default function OrganigramaPage() {
                   
                   <div className="space-y-2">
                     <Label>Empleado Asignado (opcional)</Label>
-                    <Select value={formData.employee_id} onValueChange={(v) => setFormData({...formData, employee_id: v})}>
+                    <Select value={formData.employee_id || "none"} onValueChange={(v) => setFormData({...formData, employee_id: v === "none" ? "" : v})}>
                       <SelectTrigger data-testid="node-employee">
                         <SelectValue placeholder="Seleccionar empleado" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Sin asignar</SelectItem>
+                        <SelectItem value="none">Sin asignar</SelectItem>
                         {employees.map(emp => (
                           <SelectItem key={emp.employee_id} value={emp.employee_id}>
                             {emp.first_name} {emp.last_name}
@@ -424,12 +424,12 @@ export default function OrganigramaPage() {
                   
                   <div className="space-y-2">
                     <Label>Reporta a (Superior)</Label>
-                    <Select value={formData.parent_id} onValueChange={(v) => setFormData({...formData, parent_id: v})}>
+                    <Select value={formData.parent_id || "none"} onValueChange={(v) => setFormData({...formData, parent_id: v === "none" ? "" : v})}>
                       <SelectTrigger data-testid="node-parent">
                         <SelectValue placeholder="Sin superior (raíz)" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Sin superior (raíz)</SelectItem>
+                        <SelectItem value="none">Sin superior (raíz)</SelectItem>
                         {nodes.filter(n => n.node_id !== editingNode?.node_id).map(node => (
                           <SelectItem key={node.node_id} value={node.node_id}>
                             {node.title} - {node.department}
