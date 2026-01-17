@@ -332,22 +332,26 @@ AFP_EMPLOYER_RATE = 0.0710  # Fondo de Pensiones 7.10%
 SRL_EMPLOYER_RATE = 0.01    # Seguro de Riesgos Laborales 1%
 INFOTEP_EMPLOYER_RATE = 0.01 # INFOTEP 1%
 
-# ISR (Impuesto Sobre la Renta) - DGII Tables 2024/2025
+# ISR (Impuesto Sobre la Renta) - DGII Tables 2026
 # Annual thresholds
-ISR_ANNUAL_EXEMPT = 416220.00  # Exento hasta este monto anual
+ISR_ANNUAL_EXEMPT = 416220.00  # Exento hasta este monto anual (RD$34,685 mensual)
 ISR_ANNUAL_BRACKET_1 = 624329.00  # 15% sobre excedente de 416,220.01
 ISR_ANNUAL_BRACKET_2 = 867123.00  # 20% sobre excedente de 624,329.01
 # Above 867,123.01 = 25% sobre excedente
 
+# Fixed tax amounts per DGII 2026
+ISR_FIXED_BRACKET_2 = 31216.00  # Monto fijo para tramo 20%
+ISR_FIXED_BRACKET_3 = 79776.00  # Monto fijo para tramo 25%
+
 def calculate_isr_monthly(gross_monthly: float) -> dict:
     """
-    Calculate ISR (Impuesto Sobre la Renta) based on DGII tables.
+    Calculate ISR (Impuesto Sobre la Renta) based on DGII 2026 tables.
     
-    Method:
-    1. Subtract TSS contributions from gross salary to get taxable base
-    2. Annualize the taxable base
-    3. Apply progressive tax brackets
-    4. Divide annual tax by 12 to get monthly ISR
+    Escala salarial para retenciones ISR 2026:
+    - Rentas hasta RD$416,220.00: Exento
+    - Rentas desde RD$416,220.01 hasta RD$624,329.00: 15% del excedente
+    - Rentas desde RD$624,329.01 hasta RD$867,123.00: RD$31,216.00 + 20% del excedente
+    - Rentas desde RD$867,123.01 en adelante: RD$79,776.00 + 25% del excedente
     
     Returns dict with: taxable_base, annual_taxable, isr_annual, isr_monthly, tax_bracket
     """
@@ -358,34 +362,28 @@ def calculate_isr_monthly(gross_monthly: float) -> dict:
     # Step 2: Annualize
     annual_taxable = taxable_base_monthly * 12
     
-    # Step 3: Apply progressive tax brackets
+    # Step 3: Apply progressive tax brackets (DGII 2026)
     isr_annual = 0.0
     tax_bracket = "Exento"
     
     if annual_taxable <= ISR_ANNUAL_EXEMPT:
-        # Exempt
+        # Exento: Rentas hasta RD$416,220.00
         isr_annual = 0.0
         tax_bracket = "Exento (0%)"
     elif annual_taxable <= ISR_ANNUAL_BRACKET_1:
-        # 15% on excess over 416,220.01
+        # 15%: Rentas desde RD$416,220.01 hasta RD$624,329.00
         excess = annual_taxable - ISR_ANNUAL_EXEMPT
         isr_annual = excess * 0.15
         tax_bracket = "15%"
     elif annual_taxable <= ISR_ANNUAL_BRACKET_2:
-        # First bracket: RD$31,216.35 (15% of 208,109 = 624,329 - 416,220)
-        # Plus 20% on excess over 624,329.01
-        first_bracket_tax = (ISR_ANNUAL_BRACKET_1 - ISR_ANNUAL_EXEMPT) * 0.15
+        # 20%: RD$31,216.00 + 20% del excedente de RD$624,329.01
         excess = annual_taxable - ISR_ANNUAL_BRACKET_1
-        isr_annual = first_bracket_tax + (excess * 0.20)
+        isr_annual = ISR_FIXED_BRACKET_2 + (excess * 0.20)
         tax_bracket = "20%"
     else:
-        # First bracket: RD$31,216.35
-        # Second bracket: RD$48,558.80 (20% of 242,794 = 867,123 - 624,329)
-        # Plus 25% on excess over 867,123.01
-        first_bracket_tax = (ISR_ANNUAL_BRACKET_1 - ISR_ANNUAL_EXEMPT) * 0.15
-        second_bracket_tax = (ISR_ANNUAL_BRACKET_2 - ISR_ANNUAL_BRACKET_1) * 0.20
+        # 25%: RD$79,776.00 + 25% del excedente de RD$867,123.01
         excess = annual_taxable - ISR_ANNUAL_BRACKET_2
-        isr_annual = first_bracket_tax + second_bracket_tax + (excess * 0.25)
+        isr_annual = ISR_FIXED_BRACKET_3 + (excess * 0.25)
         tax_bracket = "25%"
     
     # Step 4: Get monthly ISR
