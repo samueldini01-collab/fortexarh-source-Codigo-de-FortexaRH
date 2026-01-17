@@ -1,0 +1,158 @@
+{
+  "timestamp": "2026-01-17T21:16:12.484688",
+  "total_tests": 30,
+  "passed_tests": 30,
+  "success_rate": 100.0,
+  "results": [
+    {
+      "test": "User Registration",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "User Login",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Current User",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Subscription Plans",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Current Subscription",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Company Info",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Update Company Info",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Employees List",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Create Employee",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Specific Employee",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Update Employee",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Payrolls List",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Create Payroll",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Approve Payroll",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Pay Payroll",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Attendances List",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Create Attendance",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Vacations List",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Create Vacation Request",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Approve Vacation",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Evaluations List",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Create Evaluation",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Job Postings List",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Create Job Posting",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Candidates List",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Create Candidate",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Dashboard Stats",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Payroll Report",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Attendance Report",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Delete Test Employee",
+      "success": true,
+      "details": "Status: 200"
+    }
+  ]
+}
