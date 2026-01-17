@@ -295,24 +295,24 @@ SUBSCRIPTION_PLANS = {
     },
     "basic": {
         "plan_id": "basic",
-        "name": "Plan Básico",
-        "base_price": 29.0,
-        "price_per_employee": 3.0,
+        "name": "FortexaRH Básico",
+        "base_price": 10.0,
+        "price_per_employee": 1.5,
         "max_employees": 50,
         "features": ["Hasta 50 empleados", "Gestión de empleados", "Nómina básica", "Asistencias", "Vacaciones", "Soporte por email"]
     },
     "pro": {
         "plan_id": "pro",
-        "name": "Plan Profesional",
-        "base_price": 79.0,
-        "price_per_employee": 2.0,
+        "name": "FortexaRH Pro",
+        "base_price": 20.0,
+        "price_per_employee": 1.5,
         "max_employees": 200,
         "features": ["Hasta 200 empleados", "Todas las funciones básicas", "Evaluaciones de desempeño", "Reclutamiento", "Reportes avanzados", "Soporte prioritario"]
     },
     "enterprise": {
         "plan_id": "enterprise",
-        "name": "Plan Empresarial",
-        "base_price": 199.0,
+        "name": "FortexaRH Enterprise",
+        "base_price": 76.0,
         "price_per_employee": 1.5,
         "max_employees": 9999,
         "features": ["Empleados ilimitados", "Todas las funciones", "API personalizada", "Soporte 24/7", "Gerente de cuenta dedicado", "Capacitación incluida"]

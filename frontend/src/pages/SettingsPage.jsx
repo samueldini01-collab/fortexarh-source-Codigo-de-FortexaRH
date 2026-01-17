@@ -79,21 +79,21 @@ export default function SettingsPage() {
   const plans = [
     {
       id: "basic",
-      name: "Plan Básico",
-      price: "$29/mes + $3/empleado",
+      name: "FortexaRH Básico",
+      price: "$10/mes + $1.5/empleado",
       features: ["Hasta 50 empleados", "Gestión de empleados", "Nómina básica", "Asistencias", "Vacaciones", "Soporte por email"]
     },
     {
       id: "pro",
-      name: "Plan Profesional",
-      price: "$79/mes + $2/empleado",
+      name: "FortexaRH Pro",
+      price: "$20/mes + $1.5/empleado",
       popular: true,
       features: ["Hasta 200 empleados", "Todas las funciones básicas", "Evaluaciones de desempeño", "Reclutamiento", "Reportes avanzados", "Soporte prioritario"]
     },
     {
       id: "enterprise",
-      name: "Plan Empresarial",
-      price: "$199/mes + $1.5/empleado",
+      name: "FortexaRH Enterprise",
+      price: "$76/mes + $1.5/empleado",
       features: ["Empleados ilimitados", "Todas las funciones", "API personalizada", "Soporte 24/7", "Gerente de cuenta dedicado", "Capacitación incluida"]
     }
   ];
