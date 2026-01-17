@@ -366,9 +366,9 @@ export default function PayrollCalculatorPage() {
     doc.setFontSize(8);
     doc.setTextColor(0, 0, 0);
     doc.setFont("helvetica", "bold");
-    doc.text("Renta Neta Anual (RD$)", 25, yPos + 2);
+    doc.text("Salario Mensual (RD$)", 25, yPos + 2);
     doc.text("Tasa", pageWidth / 2, yPos + 2, { align: "center" });
-    doc.text("Impuesto", pageWidth - 35, yPos + 2, { align: "right" });
+    doc.text("Retención", pageWidth - 35, yPos + 2, { align: "right" });
     
     yPos += 10;
     
