@@ -1477,6 +1477,101 @@ async def generate_document(template_id: str, variables: Dict[str, str], current
     
     return {"content": content, "template_name": template["name"]}
 
+# ===================== GENERATED DOCUMENTS & SIGNATURES =====================
+
+@api_router.get("/documents")
+async def get_documents(current_user: dict = Depends(get_current_user)):
+    docs = await db.generated_documents.find(
+        {"company_id": current_user.get("company_id")},
+        {"_id": 0}
+    ).to_list(1000)
+    return docs
+
+@api_router.post("/documents")
+async def save_document(data: GeneratedDocumentCreate, current_user: dict = Depends(get_current_user)):
+    company_id = current_user.get("company_id")
+    
+    template = await db.templates.find_one({"template_id": data.template_id}, {"_id": 0})
+    employee = await db.employees.find_one({"employee_id": data.employee_id, "company_id": company_id}, {"_id": 0})
+    
+    doc_id = f"doc_{uuid.uuid4().hex[:12]}"
+    document = {
+        "document_id": doc_id,
+        "company_id": company_id,
+        "template_id": data.template_id,
+        "template_name": template["name"] if template else "Documento",
+        "employee_id": data.employee_id,
+        "employee_name": f"{employee['first_name']} {employee['last_name']}" if employee else "Sin asignar",
+        "content": data.content,
+        "signature_data": data.signature_data,
+        "is_signed": bool(data.signature_data),
+        "signed_at": datetime.now(timezone.utc).isoformat() if data.signature_data else None,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.generated_documents.insert_one(document)
+    return {"document_id": doc_id, "message": "Documento guardado correctamente"}
+
+@api_router.put("/documents/{document_id}/sign")
+async def sign_document(document_id: str, signature_data: str, current_user: dict = Depends(get_current_user)):
+    result = await db.generated_documents.update_one(
+        {"document_id": document_id, "company_id": current_user.get("company_id")},
+        {"$set": {
+            "signature_data": signature_data,
+            "is_signed": True,
+            "signed_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Documento no encontrado")
+    return {"message": "Documento firmado correctamente"}
+
+@api_router.get("/documents/{document_id}")
+async def get_document(document_id: str, current_user: dict = Depends(get_current_user)):
+    doc = await db.generated_documents.find_one(
+        {"document_id": document_id, "company_id": current_user.get("company_id")},
+        {"_id": 0}
+    )
+    if not doc:
+        raise HTTPException(status_code=404, detail="Documento no encontrado")
+    return doc
+
+# ===================== ORGANIGRAMA DRAG & DROP =====================
+
+@api_router.put("/organigrama/reorder")
+async def reorder_org_nodes(updates: List[OrgNodeUpdatePosition], current_user: dict = Depends(get_current_user)):
+    company_id = current_user.get("company_id")
+    
+    for update in updates:
+        # Get old node data
+        old_node = await db.org_nodes.find_one({"node_id": update.node_id, "company_id": company_id}, {"_id": 0})
+        if not old_node:
+            continue
+        
+        old_parent_id = old_node.get("parent_id")
+        new_parent_id = update.parent_id
+        
+        # Remove from old parent's children
+        if old_parent_id:
+            await db.org_nodes.update_one(
+                {"node_id": old_parent_id},
+                {"$pull": {"children": update.node_id}}
+            )
+        
+        # Add to new parent's children
+        if new_parent_id:
+            await db.org_nodes.update_one(
+                {"node_id": new_parent_id},
+                {"$addToSet": {"children": update.node_id}}
+            )
+        
+        # Update node
+        await db.org_nodes.update_one(
+            {"node_id": update.node_id, "company_id": company_id},
+            {"$set": {"parent_id": new_parent_id, "level": update.level}}
+        )
+    
+    return {"message": "Organigrama actualizado correctamente"}
+
 # ===================== MAIN APP =====================
 
 app.include_router(api_router)
