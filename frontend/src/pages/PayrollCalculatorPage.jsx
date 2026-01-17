@@ -352,9 +352,9 @@ export default function PayrollCalculatorPage() {
                 <Building2 className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <h3 className="font-semibold text-blue-900">Cálculo según TSS República Dominicana</h3>
+                <h3 className="font-semibold text-blue-900">Cálculo según DGII y TSS - República Dominicana</h3>
                 <p className="text-sm text-blue-700 mt-1">
-                  Deducciones del empleado: SFS 3.07% + AFP 2.87% | Aportes del empleador: SFS 7.09% + AFP 7.10% + SRL 1% + INFOTEP 1%
+                  <strong>TSS:</strong> SFS 3.07% + AFP 2.87% | <strong>ISR:</strong> Según tablas DGII (15%, 20%, 25%) | <strong>Empleador:</strong> SFS 7.09% + AFP 7.10% + SRL 1% + INFOTEP 1%
                 </p>
               </div>
             </div>
