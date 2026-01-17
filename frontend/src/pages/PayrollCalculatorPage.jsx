@@ -403,7 +403,7 @@ export default function PayrollCalculatorPage() {
     // Show employee's calculation
     yPos += 5;
     doc.setFillColor(236, 253, 245); // emerald-50
-    doc.rect(20, yPos - 3, pageWidth - 40, 18, 'F');
+    doc.rect(20, yPos - 3, pageWidth - 40, 14, 'F');
     
     doc.setFontSize(8);
     doc.setTextColor(6, 95, 70); // emerald-800
@@ -412,8 +412,7 @@ export default function PayrollCalculatorPage() {
     
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7);
-    doc.text(`Base gravable mensual: ${formatCurrency(result.isr_taxable_base)} (Ingresos - TSS 5.94%)`, 25, yPos + 10);
-    doc.text(`Base anualizada: ${formatCurrency(result.isr_annual_taxable)} | Tramo aplicado: ${result.isr_bracket} | ISR anual: ${formatCurrency(result.isr_annual)} | ISR mensual: ${formatCurrency(result.isr_monthly)}`, 25, yPos + 16);
+    doc.text(`Salario bruto mensual: ${formatCurrency(result.isr_taxable_base)} | Tramo: ${result.isr_bracket} | ISR mensual: ${formatCurrency(result.isr_monthly)}`, 25, yPos + 10);
     
     // Footer
     doc.setFontSize(8);
