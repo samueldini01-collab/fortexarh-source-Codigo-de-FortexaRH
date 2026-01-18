@@ -1998,6 +1998,7 @@ DEFAULT_PAYROLL_ACCOUNTS = [
     {"code": "2203", "name": "Retenciones ISR Empleados", "account_type": "liability"},
     {"code": "2204", "name": "Aportes TSS por Pagar", "account_type": "liability"},
     {"code": "2205", "name": "Préstamos por Pagar", "account_type": "liability"},
+    {"code": "2206", "name": "Otras Deducciones por Pagar", "account_type": "liability"},
     {"code": "1101", "name": "Banco - Cuenta Nómina", "account_type": "asset"},
 ]
 
