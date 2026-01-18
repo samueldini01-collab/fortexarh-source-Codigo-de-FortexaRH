@@ -520,6 +520,41 @@ class TemplateVersionCreate(BaseModel):
     content: str
     change_description: str
 
+# ===================== ACCOUNTING MODELS =====================
+
+class JournalEntryLine(BaseModel):
+    account_code: str
+    account_name: str
+    description: str
+    debit: float = 0
+    credit: float = 0
+
+class JournalEntryCreate(BaseModel):
+    entry_date: str
+    reference: str
+    description: str
+    period: str  # "2026-01" format
+    entry_type: str = "payroll"  # payroll, adjustment, closing
+    lines: List[JournalEntryLine]
+    payroll_id: Optional[str] = None
+    notes: Optional[str] = None
+
+class JournalEntryUpdate(BaseModel):
+    entry_date: Optional[str] = None
+    reference: Optional[str] = None
+    description: Optional[str] = None
+    period: Optional[str] = None
+    lines: Optional[List[JournalEntryLine]] = None
+    notes: Optional[str] = None
+    status: Optional[str] = None  # draft, posted, voided
+
+class AccountCreate(BaseModel):
+    code: str
+    name: str
+    account_type: str  # asset, liability, equity, income, expense
+    parent_code: Optional[str] = None
+    description: Optional[str] = None
+
 # ===================== AUTH HELPERS =====================
 
 def hash_password(password: str) -> str:
