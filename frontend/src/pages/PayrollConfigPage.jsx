@@ -5,398 +5,438 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, Settings2, DollarSign, Percent, Minus, Edit, Trash2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { 
+  Clock, 
+  DollarSign, 
+  Building2, 
+  FileText, 
+  AlertCircle,
+  ChevronDown,
+  Save,
+  RotateCcw,
+  HelpCircle,
+  Info
+} from "lucide-react";
 import { toast } from "sonner";
-
-const configTypes = [
-  { value: "earning", label: "Percepción", icon: DollarSign, color: "text-emerald-600 bg-emerald-50" },
-  { value: "deduction", label: "Deducción", icon: Minus, color: "text-red-600 bg-red-50" },
-  { value: "tax", label: "Impuesto", icon: Percent, color: "text-amber-600 bg-amber-50" }
-];
-
-const calculationTypes = [
-  { value: "fixed", label: "Monto Fijo" },
-  { value: "percentage", label: "Porcentaje" }
-];
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function PayrollConfigPage() {
-  const [configs, setConfigs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingConfig, setEditingConfig] = useState(null);
-  const [activeTab, setActiveTab] = useState("earning");
-  const [formData, setFormData] = useState({
-    name: "",
-    config_type: "earning",
-    calculation_type: "fixed",
-    value: "",
-    is_taxable: true,
-    is_active: true,
-    description: ""
+  const [saving, setSaving] = useState(false);
+  const [isrExpanded, setIsrExpanded] = useState(false);
+  
+  // Configuration state
+  const [config, setConfig] = useState({
+    // Overtime rates
+    overtime_day: 35,
+    overtime_night: 15,
+    overtime_weekend: 100,
+    overtime_holiday: 100,
+    
+    // Employee deductions
+    afp_employee: 2.87,
+    sfs_employee: 3.04,
+    
+    // Employer contributions
+    afp_employer: 7.10,
+    sfs_employer: 7.09,
+    srl_employer: 1,
+    infotep_employer: 1,
+    
+    // ISR Configuration
+    isr_min_salary: 416220.01,
+    isr_mid_salary: 624329.04,
+    isr_max_salary: 867123.01,
+    isr_min_rate: 15,
+    isr_mid_rate: 20,
+    isr_max_rate: 25,
+    isr_mid_fixed: 31216.00,
+    isr_max_fixed: 79776.00
   });
+
+  const [originalConfig, setOriginalConfig] = useState(null);
   const { getAuthHeaders } = useAuth();
 
   useEffect(() => {
-    fetchConfigs();
+    fetchConfig();
   }, []);
 
-  const fetchConfigs = async () => {
+  const fetchConfig = async () => {
     try {
-      const response = await axios.get(`${API}/payroll-config`, {
+      const response = await axios.get(`${API}/payroll-settings`, {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      setConfigs(response.data);
+      if (response.data) {
+        setConfig(response.data);
+        setOriginalConfig(response.data);
+      }
     } catch (error) {
-      toast.error("Error al cargar configuraciones");
+      // If no config exists, use defaults
+      setOriginalConfig(config);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSave = async () => {
+    setSaving(true);
     try {
-      const data = {
-        ...formData,
-        value: parseFloat(formData.value)
-      };
-
-      if (editingConfig) {
-        await axios.put(`${API}/payroll-config/${editingConfig.config_id}`, data, {
-          headers: getAuthHeaders(),
-          withCredentials: true
-        });
-        toast.success("Configuración actualizada");
-      } else {
-        await axios.post(`${API}/payroll-config`, data, {
-          headers: getAuthHeaders(),
-          withCredentials: true
-        });
-        toast.success("Configuración creada");
-      }
-      
-      setIsDialogOpen(false);
-      resetForm();
-      fetchConfigs();
-    } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al guardar");
-    }
-  };
-
-  const handleEdit = (config) => {
-    setEditingConfig(config);
-    setFormData({
-      name: config.name,
-      config_type: config.config_type,
-      calculation_type: config.calculation_type,
-      value: config.value.toString(),
-      is_taxable: config.is_taxable,
-      is_active: config.is_active,
-      description: config.description || ""
-    });
-    setIsDialogOpen(true);
-  };
-
-  const handleDelete = async (configId) => {
-    if (!window.confirm("¿Eliminar esta configuración?")) return;
-    try {
-      await axios.delete(`${API}/payroll-config/${configId}`, {
+      await axios.post(`${API}/payroll-settings`, config, {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Configuración eliminada");
-      fetchConfigs();
+      setOriginalConfig(config);
+      toast.success("Configuración guardada correctamente");
     } catch (error) {
-      toast.error("Error al eliminar");
+      toast.error("Error al guardar la configuración");
+    } finally {
+      setSaving(false);
     }
   };
 
-  const resetForm = () => {
-    setEditingConfig(null);
-    setFormData({
-      name: "",
-      config_type: activeTab,
-      calculation_type: "fixed",
-      value: "",
-      is_taxable: true,
-      is_active: true,
-      description: ""
-    });
+  const handleRestore = () => {
+    if (originalConfig) {
+      setConfig(originalConfig);
+      toast.info("Configuración restaurada");
+    }
   };
 
-  const openDialogForType = (type) => {
-    setFormData({ ...formData, config_type: type });
-    setIsDialogOpen(true);
+  const updateConfig = (field, value) => {
+    setConfig(prev => ({
+      ...prev,
+      [field]: parseFloat(value) || 0
+    }));
   };
 
-  const filteredConfigs = configs.filter(c => c.config_type === activeTab);
+  const InputWithTooltip = ({ label, field, value, tooltip, suffix = "%" }) => (
+    <div className="space-y-2">
+      <div className="flex items-center gap-1">
+        <Label className="text-sm text-slate-600">{label}</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="max-w-xs text-xs">{tooltip}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+      <div className="relative">
+        <Input
+          type="number"
+          step="0.01"
+          value={value}
+          onChange={(e) => updateConfig(field, e.target.value)}
+          className="pr-8 bg-white border-slate-200"
+        />
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+          {suffix}
+        </span>
+      </div>
+    </div>
+  );
 
-  const getTypeInfo = (type) => configTypes.find(t => t.value === type);
+  const CurrencyInput = ({ label, field, value, tooltip }) => (
+    <div className="space-y-2">
+      <div className="flex items-center gap-1">
+        <Label className="text-sm text-slate-600">{label}</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="max-w-xs text-xs">{tooltip}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+      <div className="relative">
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+          DOP
+        </span>
+        <Input
+          type="number"
+          step="0.01"
+          value={value}
+          onChange={(e) => updateConfig(field, e.target.value)}
+          className="pl-12 bg-white border-slate-200"
+        />
+      </div>
+    </div>
+  );
+
+  if (loading) {
+    return (
+      <DashboardLayout title="Configuración de Nómina">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout title="Configuración de Nómina">
-      <div className="space-y-6" data-testid="payroll-config-page">
-        {/* Header Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {configTypes.map((type) => {
-            const count = configs.filter(c => c.config_type === type.value).length;
-            const Icon = type.icon;
-            return (
-              <Card key={type.value} className={`border-slate-200`}>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-slate-500">{type.label}es</p>
-                      <p className="text-3xl font-bold text-slate-900">{count}</p>
-                    </div>
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${type.color}`}>
-                      <Icon className="w-6 h-6" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
+      <div className="space-y-6 max-w-4xl" data-testid="payroll-config-page">
+        {/* Header */}
+        <div>
+          <p className="text-slate-500">
+            Configura las tasas y montos para el cálculo automático de nómina
+          </p>
         </div>
 
-        {/* Tabs and Content */}
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <div className="flex justify-between items-center mb-4">
-            <TabsList>
-              {configTypes.map((type) => (
-                <TabsTrigger key={type.value} value={type.value} data-testid={`tab-${type.value}`}>
-                  {type.label}es
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            
-            <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
-              <DialogTrigger asChild>
-                <Button className="bg-slate-900 hover:bg-slate-800" onClick={() => openDialogForType(activeTab)} data-testid="add-config-btn">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Agregar {getTypeInfo(activeTab)?.label}
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle className="heading">
-                    {editingConfig ? "Editar" : "Nueva"} {getTypeInfo(formData.config_type)?.label}
-                  </DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-                  <div className="space-y-2">
-                    <Label>Nombre</Label>
-                    <Input
-                      value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      placeholder="Ej: Bono de productividad, IMSS, ISR..."
-                      required
-                      data-testid="config-name"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label>Tipo de Configuración</Label>
-                    <Select value={formData.config_type} onValueChange={(v) => setFormData({...formData, config_type: v})}>
-                      <SelectTrigger data-testid="config-type">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {configTypes.map(type => (
-                          <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Tipo de Cálculo</Label>
-                      <Select value={formData.calculation_type} onValueChange={(v) => setFormData({...formData, calculation_type: v})}>
-                        <SelectTrigger data-testid="config-calc-type">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {calculationTypes.map(type => (
-                            <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label>Valor {formData.calculation_type === "percentage" ? "(%)" : "($)"}</Label>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        value={formData.value}
-                        onChange={(e) => setFormData({...formData, value: e.target.value})}
-                        placeholder={formData.calculation_type === "percentage" ? "15" : "500"}
-                        required
-                        data-testid="config-value"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label>Descripción (opcional)</Label>
-                    <Textarea
-                      value={formData.description}
-                      onChange={(e) => setFormData({...formData, description: e.target.value})}
-                      placeholder="Descripción de esta configuración..."
-                      data-testid="config-description"
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between py-2">
-                    <div className="space-y-0.5">
-                      <Label>¿Es gravable?</Label>
-                      <p className="text-sm text-slate-500">Aplica impuestos sobre este concepto</p>
-                    </div>
-                    <Switch
-                      checked={formData.is_taxable}
-                      onCheckedChange={(v) => setFormData({...formData, is_taxable: v})}
-                      data-testid="config-taxable"
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between py-2">
-                    <div className="space-y-0.5">
-                      <Label>Activo</Label>
-                      <p className="text-sm text-slate-500">Incluir en cálculos de nómina</p>
-                    </div>
-                    <Switch
-                      checked={formData.is_active}
-                      onCheckedChange={(v) => setFormData({...formData, is_active: v})}
-                      data-testid="config-active"
-                    />
-                  </div>
-                  
-                  <div className="flex justify-end gap-3 pt-4">
-                    <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                      Cancelar
-                    </Button>
-                    <Button type="submit" className="bg-slate-900 hover:bg-slate-800" data-testid="save-config-btn">
-                      {editingConfig ? "Actualizar" : "Crear"}
-                    </Button>
-                  </div>
-                </form>
-              </DialogContent>
-            </Dialog>
+        {/* Important Info Banner */}
+        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-semibold text-emerald-800">Información Importante</h4>
+              <p className="text-sm text-emerald-700 mt-1">
+                Esta configuración afecta todos los cálculos de nómina para todos los empleados. 
+                Los cambios se aplicarán inmediatamente a todos los cálculos existentes. 
+                <strong> NO AFECTARÁ NÓMINAS PREVIAMENTE CREADAS.</strong>
+              </p>
+            </div>
           </div>
+        </div>
 
-          {configTypes.map((type) => (
-            <TabsContent key={type.value} value={type.value}>
-              <Card className="border-slate-200">
-                <CardContent className="p-0">
-                  {loading ? (
-                    <div className="p-6 space-y-4">
-                      {Array(5).fill(0).map((_, i) => <Skeleton key={i} className="h-12 w-full" />)}
+        {/* Overtime Rates */}
+        <Card className="border-slate-200">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Clock className="w-4 h-4 text-blue-600" />
+              </div>
+              <CardTitle className="text-lg">Tasas de Horas Extras</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <InputWithTooltip
+                label="Horas Extras Diurnas"
+                field="overtime_day"
+                value={config.overtime_day}
+                tooltip="Porcentaje adicional sobre el salario hora para horas extras trabajadas durante el día"
+              />
+              <InputWithTooltip
+                label="Horas Extras Nocturnas"
+                field="overtime_night"
+                value={config.overtime_night}
+                tooltip="Porcentaje adicional sobre el salario hora para horas extras trabajadas en horario nocturno"
+              />
+              <InputWithTooltip
+                label="Horas Extras Fines de Semana"
+                field="overtime_weekend"
+                value={config.overtime_weekend}
+                tooltip="Porcentaje adicional sobre el salario hora para horas extras trabajadas en fines de semana"
+              />
+              <InputWithTooltip
+                label="Horas Extras Días Feriados"
+                field="overtime_holiday"
+                value={config.overtime_holiday}
+                tooltip="Porcentaje adicional sobre el salario hora para horas extras trabajadas en días feriados"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Employee Deductions */}
+        <Card className="border-slate-200">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                <DollarSign className="w-4 h-4 text-red-600" />
+              </div>
+              <CardTitle className="text-lg">Deducciones del Empleado</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputWithTooltip
+                label="AFP - Empleado (%)"
+                field="afp_employee"
+                value={config.afp_employee}
+                tooltip="Aporte del empleado al fondo de pensiones (Administradora de Fondos de Pensiones)"
+              />
+              <InputWithTooltip
+                label="SFS - Empleado (%)"
+                field="sfs_employee"
+                value={config.sfs_employee}
+                tooltip="Aporte del empleado al Seguro Familiar de Salud"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Employer Contributions */}
+        <Card className="border-slate-200">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                <Building2 className="w-4 h-4 text-purple-600" />
+              </div>
+              <CardTitle className="text-lg">Aportes del Empleador</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <InputWithTooltip
+                label="AFP - Empleador (%)"
+                field="afp_employer"
+                value={config.afp_employer}
+                tooltip="Aporte del empleador al fondo de pensiones"
+              />
+              <InputWithTooltip
+                label="SFS - Empleador (%)"
+                field="sfs_employer"
+                value={config.sfs_employer}
+                tooltip="Aporte del empleador al Seguro Familiar de Salud"
+              />
+              <InputWithTooltip
+                label="Seguro de Riesgo Laboral SRL (%)"
+                field="srl_employer"
+                value={config.srl_employer}
+                tooltip="Aporte del empleador al Seguro de Riesgos Laborales"
+              />
+              <InputWithTooltip
+                label="INFOTEP (%)"
+                field="infotep_employer"
+                value={config.infotep_employer}
+                tooltip="Aporte del empleador al Instituto Nacional de Formación Técnico Profesional"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* ISR Configuration */}
+        <Card className="border-slate-200">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
+                <FileText className="w-4 h-4 text-amber-600" />
+              </div>
+              <CardTitle className="text-lg">Configuración del ISR (Impuesto Sobre la Renta)</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* ISR Explanation Collapsible */}
+            <Collapsible open={isrExpanded} onOpenChange={setIsrExpanded}>
+              <CollapsibleTrigger className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700">
+                <ChevronDown className={`w-4 h-4 transition-transform ${isrExpanded ? 'rotate-180' : ''}`} />
+                Ver explicación de los rangos de ISR
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-3">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-start gap-2">
+                    <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h5 className="font-semibold text-blue-900">Cómo funciona el ISR</h5>
+                      <ul className="mt-2 space-y-1 text-sm text-blue-800">
+                        <li><strong>Rango 1:</strong> Hasta el monto mínimo anual - Exento de ISR</li>
+                        <li><strong>Rango 2:</strong> Entre mínimo y medio - Se aplica el porcentaje mínimo sobre el excedente</li>
+                        <li><strong>Rango 3:</strong> Entre medio y máximo - Se aplica monto fijo medio + porcentaje medio sobre el excedente</li>
+                        <li><strong>Rango 4:</strong> Más del máximo - Se aplica monto fijo máximo + porcentaje máximo sobre el excedente</li>
+                      </ul>
                     </div>
-                  ) : filteredConfigs.length === 0 ? (
-                    <div className="text-center py-12">
-                      <Settings2 className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                      <p className="text-slate-500">No hay {type.label.toLowerCase()}es configuradas</p>
-                    </div>
-                  ) : (
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Nombre</TableHead>
-                          <TableHead>Tipo de Cálculo</TableHead>
-                          <TableHead>Valor</TableHead>
-                          <TableHead>Gravable</TableHead>
-                          <TableHead>Estado</TableHead>
-                          <TableHead className="text-right">Acciones</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {filteredConfigs.map((config) => (
-                          <TableRow key={config.config_id} data-testid={`config-row-${config.config_id}`}>
-                            <TableCell>
-                              <div>
-                                <p className="font-medium">{config.name}</p>
-                                {config.description && (
-                                  <p className="text-sm text-slate-500">{config.description}</p>
-                                )}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              {config.calculation_type === "fixed" ? "Monto Fijo" : "Porcentaje"}
-                            </TableCell>
-                            <TableCell className="font-medium">
-                              {config.calculation_type === "fixed" 
-                                ? `$${config.value.toLocaleString('es-MX')}`
-                                : `${config.value}%`
-                              }
-                            </TableCell>
-                            <TableCell>
-                              <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                                config.is_taxable ? 'bg-amber-50 text-amber-700' : 'bg-slate-50 text-slate-600'
-                              }`}>
-                                {config.is_taxable ? "Sí" : "No"}
-                              </span>
-                            </TableCell>
-                            <TableCell>
-                              <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                                config.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'
-                              }`}>
-                                {config.is_active ? "Activo" : "Inactivo"}
-                              </span>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <div className="flex justify-end gap-2">
-                                <Button variant="ghost" size="sm" onClick={() => handleEdit(config)}>
-                                  <Edit className="w-4 h-4" />
-                                </Button>
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  className="text-red-600 hover:bg-red-50"
-                                  onClick={() => handleDelete(config.config_id)}
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-          ))}
-        </Tabs>
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* ISR Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CurrencyInput
+                label="Salario Anual Mínimo (Exento)"
+                field="isr_min_salary"
+                value={config.isr_min_salary}
+                tooltip="Salario anual hasta el cual el empleado está exento de ISR"
+              />
+              <InputWithTooltip
+                label="Tasa ISR Mínima (%)"
+                field="isr_min_rate"
+                value={config.isr_min_rate}
+                tooltip="Tasa de ISR aplicada al rango entre mínimo y medio"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CurrencyInput
+                label="Salario Anual Medio"
+                field="isr_mid_salary"
+                value={config.isr_mid_salary}
+                tooltip="Límite superior del segundo rango de ISR"
+              />
+              <InputWithTooltip
+                label="Tasa ISR Media (%)"
+                field="isr_mid_rate"
+                value={config.isr_mid_rate}
+                tooltip="Tasa de ISR aplicada al rango entre medio y máximo"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CurrencyInput
+                label="Monto Fijo Medio"
+                field="isr_mid_fixed"
+                value={config.isr_mid_fixed}
+                tooltip="Monto fijo de ISR para el rango medio"
+              />
+              <CurrencyInput
+                label="Salario Anual Máximo"
+                field="isr_max_salary"
+                value={config.isr_max_salary}
+                tooltip="Límite superior del tercer rango de ISR"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputWithTooltip
+                label="Tasa ISR Máxima (%)"
+                field="isr_max_rate"
+                value={config.isr_max_rate}
+                tooltip="Tasa de ISR aplicada al rango superior al máximo"
+              />
+              <CurrencyInput
+                label="Monto Fijo Máximo"
+                field="isr_max_fixed"
+                value={config.isr_max_fixed}
+                tooltip="Monto fijo de ISR para el rango máximo"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Action Buttons */}
+        <div className="flex justify-center gap-4 pt-4">
+          <Button 
+            onClick={handleSave} 
+            disabled={saving}
+            className="bg-blue-600 hover:bg-blue-700 px-8"
+          >
+            <Save className="w-4 h-4 mr-2" />
+            {saving ? "Guardando..." : "Guardar Configuración"}
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={handleRestore}
+            className="px-8"
+          >
+            <RotateCcw className="w-4 h-4 mr-2" />
+            Restaurar
+          </Button>
+        </div>
       </div>
     </DashboardLayout>
   );
