@@ -26,7 +26,7 @@ Sistema SaaS de gestión de Recursos Humanos y Nómina. El sistema debe venderse
 
 ---
 
-## Implemented Features (Jan 2026)
+## Implemented Features
 
 ### ✅ Módulos Base
 - [x] Landing Page
@@ -53,33 +53,33 @@ Sistema SaaS de gestión de Recursos Humanos y Nómina. El sistema debe venderse
 - [x] Validación de balance (débitos = créditos)
 - [x] Estados de asiento: Borrador, Contabilizado, Anulado
 - [x] Filtros por período y estado
-- [x] Asientos incluyen:
-  - Gastos de nómina (sueldos, horas extra, bonos, comisiones)
-  - Aportes patronales TSS
-  - Retenciones empleados (SFS, AFP, ISR)
-  - Préstamos y otras deducciones
-  - Sueldo neto por pagar
 
-### ✅ Branding FortexaRH (Jan 18, 2026)
-- [x] Logo integrado en: Landing, Login, Register, Dashboard (sidebar)
-- [x] Favicon personalizado en la barra del navegador
-- [x] Títulos y metadatos actualizados
+### ✅ Calculadora de Nómina (Jan 18, 2026)
 - [x] Cálculos TSS República Dominicana
   - Deducciones empleado: SFS 3.07%, AFP 2.87%
   - Aportes empleador: SFS 7.09%, AFP 7.10%, SRL 1%, INFOTEP 1%
 - [x] **ISR (Impuesto Sobre la Renta) según DGII**
   - Tramos progresivos: Exento (0%), 15%, 20%, 25%
-  - Umbrales anuales: 416,220 | 624,329 | 867,123
-  - Cálculo: Base gravable = Ingresos - TSS (5.94%)
-  - Anualización y división por 12 para ISR mensual
-- [x] Formulario con: salario base, días trabajados, horas extra, bonificaciones, comisiones, préstamos
-- [x] Visualización de resultados (ingresos, deducciones TSS, ISR, salario neto, aportes empleador)
-- [x] **Exportación a PDF con tabla ISR DGII**
-  - Tabla de referencia con los 4 tramos
-  - Tramo del empleado resaltado en verde
-  - Detalle del cálculo personal
+  - Lookup table con valores DGII 2023
+- [x] Exportación a PDF con tabla ISR DGII
 - [x] Guardar cálculos en base de datos
-- [x] 31/31 tests pasando (TSS + ISR)
+
+### ✅ EmployeesPage Rediseñado (Jan 18, 2026)
+- [x] Formulario multi-tab con 6 pestañas:
+  - **Datos Principales**: nombre, apellido, email, teléfono, whatsapp, nacionalidad, tipo documento, número documento, género, fecha nacimiento, estado civil, estado, dirección, ciudad, foto
+  - **Contrato**: posición, departamento, fecha ingreso, tipo contrato, fecha salida, salario, supervisor, horario, excluir de nómina, fecha último aumento
+  - **Descuentos**: AFP (2.87%), SFS (3.04%), ISR (calculado), descuentos adicionales (tipo, descripción, monto, porcentaje)
+  - **Documentos**: Placeholder para subir archivos
+  - **Forma de Pago**: salario bruto, frecuencia de pago, método de pago, banco, tipo cuenta, número cuenta
+  - **Contacto de Emergencia**: hasta 3 contactos (nombre, relación, teléfono, whatsapp, dirección)
+- [x] Backend actualizado con modelo Employee expandido
+- [x] 16/16 tests backend pasando
+- [x] UI completamente funcional
+
+### ✅ Branding FortexaRH (Jan 18, 2026)
+- [x] Logo integrado en: Landing, Login, Register, Dashboard (sidebar)
+- [x] Favicon personalizado en la barra del navegador
+- [x] Títulos y metadatos actualizados
 
 ### ✅ Integraciones
 - [x] Stripe para pagos (test key)
@@ -90,7 +90,7 @@ Sistema SaaS de gestión de Recursos Humanos y Nómina. El sistema debe venderse
 ## Pending Features (Backlog)
 
 ### P0 - Alta Prioridad
-- [ ] **Módulo de Contabilidad** - Asientos contables de nómina, editables
+- [ ] **PayrollConfigPage Testing** - Verificar el rediseño funciona correctamente
 - [ ] **Integración QuickBooks** - Enviar asientos contables (credenciales diferidas)
 - [ ] **Envío de documentos por email** - Integración Resend con Emergent LLM Key
 - [ ] **Versionado de Plantillas** - Historial de cambios en plantillas
@@ -117,9 +117,9 @@ Sistema SaaS de gestión de Recursos Humanos y Nómina. El sistema debe venderse
 - GET /api/auth/me
 - POST /api/auth/logout
 
-### Employees
+### Employees (EXPANDED)
 - GET /api/employees
-- POST /api/employees
+- POST /api/employees (all new fields)
 - GET /api/employees/{id}
 - PUT /api/employees/{id}
 - DELETE /api/employees/{id}
@@ -134,6 +134,10 @@ Sistema SaaS de gestión de Recursos Humanos y Nómina. El sistema debe venderse
 - POST /api/payroll-calculator
 - POST /api/payroll-calculator/save
 - GET /api/payroll-calculations
+
+### Payroll Settings
+- GET /api/payroll-settings
+- POST /api/payroll-settings
 
 ### Organigrama
 - GET /api/organigrama
@@ -162,10 +166,63 @@ Sistema SaaS de gestión de Recursos Humanos y Nómina. El sistema debe venderse
 
 ---
 
+## DB Schema - Employee Model (Expanded)
+
+```javascript
+{
+  employee_id: string,
+  company_id: string,
+  // Datos Principales
+  first_name: string,
+  last_name: string,
+  email: string,
+  phone: string,
+  whatsapp: string,
+  nationality: string,
+  document_type: string, // Cédula, Pasaporte, Residencia
+  document_number: string,
+  gender: string,
+  birth_date: string,
+  marital_status: string,
+  status: string, // active, inactive, on_leave
+  address: string,
+  city: string,
+  photo_url: string,
+  // Contrato
+  position: string,
+  department: string,
+  hire_date: string,
+  contract_type: string, // Indefinido, Temporal, Por Obra, Pasantía, Medio Tiempo
+  contract_end_date: string,
+  salary: float,
+  supervisor: string,
+  work_schedule: string,
+  exclude_from_payroll: boolean,
+  last_raise_date: string,
+  // Descuentos
+  afp_discount: boolean,
+  sfs_discount: boolean,
+  isr_discount: boolean,
+  additional_deductions: [{ type, description, amount, is_percentage }],
+  // Forma de Pago
+  payment_method: string,
+  payment_frequency: string,
+  bank_name: string,
+  account_type: string,
+  account_number: string,
+  // Emergencia
+  emergency_contacts: [{ name, relationship, phone, whatsapp, address }], // max 3
+  created_at: datetime
+}
+```
+
+---
+
 ## Test Coverage
 - `/app/tests/test_payroll_calculator.py` - 18 tests para calculadora (TSS)
 - `/app/tests/test_isr_calculation.py` - 13 tests para ISR (DGII)
-- `/app/test_reports/iteration_3.json` - Último reporte: 31/31 tests pasando
+- `/app/tests/test_employees_crud.py` - 16 tests para Employee CRUD
+- `/app/test_reports/iteration_4.json` - Último reporte: 16/16 tests pasando
 
 ## Files Structure
 ```
@@ -178,10 +235,20 @@ Sistema SaaS de gestión de Recursos Humanos y Nómina. El sistema debe venderse
 │       ├── App.js
 │       ├── components/DashboardLayout.jsx
 │       └── pages/
-│           ├── PayrollCalculatorPage.jsx (NEW)
+│           ├── EmployeesPage.jsx (REDESIGNED with multi-tab form)
+│           ├── PayrollCalculatorPage.jsx
+│           ├── AccountingPage.jsx
 │           └── ... (otros módulos)
 ├── tests/
-│   └── test_payroll_calculator.py
+│   ├── test_payroll_calculator.py
+│   ├── test_isr_calculation.py
+│   └── test_employees_crud.py
 └── memory/
     └── PRD.md
 ```
+
+---
+
+## Test Credentials
+- Email: test@test.com
+- Password: test123
