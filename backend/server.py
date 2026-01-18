@@ -1980,6 +1980,429 @@ async def get_payroll_calculations(current_user: dict = Depends(get_current_user
     ).sort("created_at", -1).to_list(100)
     return calculations
 
+# ===================== ACCOUNTING MODULE =====================
+
+# Default chart of accounts for payroll
+DEFAULT_PAYROLL_ACCOUNTS = [
+    {"code": "5101", "name": "Gastos de Sueldos y Salarios", "account_type": "expense"},
+    {"code": "5102", "name": "Gastos de Horas Extra", "account_type": "expense"},
+    {"code": "5103", "name": "Gastos de Bonificaciones", "account_type": "expense"},
+    {"code": "5104", "name": "Gastos de Comisiones", "account_type": "expense"},
+    {"code": "5201", "name": "Aportes Patronales SFS", "account_type": "expense"},
+    {"code": "5202", "name": "Aportes Patronales AFP", "account_type": "expense"},
+    {"code": "5203", "name": "Aportes Patronales SRL", "account_type": "expense"},
+    {"code": "5204", "name": "Aportes Patronales INFOTEP", "account_type": "expense"},
+    {"code": "2101", "name": "Sueldos por Pagar", "account_type": "liability"},
+    {"code": "2201", "name": "Retenciones SFS Empleados", "account_type": "liability"},
+    {"code": "2202", "name": "Retenciones AFP Empleados", "account_type": "liability"},
+    {"code": "2203", "name": "Retenciones ISR Empleados", "account_type": "liability"},
+    {"code": "2204", "name": "Aportes TSS por Pagar", "account_type": "liability"},
+    {"code": "2205", "name": "Préstamos por Pagar", "account_type": "liability"},
+    {"code": "1101", "name": "Banco - Cuenta Nómina", "account_type": "asset"},
+]
+
+@api_router.get("/accounting/accounts")
+async def get_chart_of_accounts(current_user: dict = Depends(get_current_user)):
+    """Get chart of accounts for the company"""
+    company_id = current_user.get("company_id")
+    
+    # Check if company has accounts, if not create default payroll accounts
+    accounts = await db.accounts.find({"company_id": company_id}, {"_id": 0}).to_list(100)
+    
+    if not accounts:
+        # Create default accounts
+        for acc in DEFAULT_PAYROLL_ACCOUNTS:
+            account = {
+                "account_id": f"acc_{uuid.uuid4().hex[:8]}",
+                "company_id": company_id,
+                **acc,
+                "balance": 0,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+            await db.accounts.insert_one(account)
+        
+        accounts = await db.accounts.find({"company_id": company_id}, {"_id": 0}).to_list(100)
+    
+    return sorted(accounts, key=lambda x: x.get("code", ""))
+
+@api_router.post("/accounting/accounts")
+async def create_account(data: AccountCreate, current_user: dict = Depends(get_current_user)):
+    """Create a new account in the chart of accounts"""
+    company_id = current_user.get("company_id")
+    
+    # Check if code already exists
+    existing = await db.accounts.find_one({"company_id": company_id, "code": data.code})
+    if existing:
+        raise HTTPException(status_code=400, detail="Ya existe una cuenta con este código")
+    
+    account = {
+        "account_id": f"acc_{uuid.uuid4().hex[:8]}",
+        "company_id": company_id,
+        "code": data.code,
+        "name": data.name,
+        "account_type": data.account_type,
+        "parent_code": data.parent_code,
+        "description": data.description,
+        "balance": 0,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.accounts.insert_one(account)
+    
+    return {"account_id": account["account_id"], "message": "Cuenta creada correctamente"}
+
+@api_router.get("/accounting/journal-entries")
+async def get_journal_entries(
+    period: Optional[str] = None,
+    status: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get journal entries, optionally filtered by period and status"""
+    company_id = current_user.get("company_id")
+    
+    query = {"company_id": company_id}
+    if period:
+        query["period"] = period
+    if status:
+        query["status"] = status
+    
+    entries = await db.journal_entries.find(query, {"_id": 0}).sort("entry_date", -1).to_list(100)
+    return entries
+
+@api_router.get("/accounting/journal-entries/{entry_id}")
+async def get_journal_entry(entry_id: str, current_user: dict = Depends(get_current_user)):
+    """Get a specific journal entry"""
+    entry = await db.journal_entries.find_one(
+        {"entry_id": entry_id, "company_id": current_user.get("company_id")},
+        {"_id": 0}
+    )
+    if not entry:
+        raise HTTPException(status_code=404, detail="Asiento no encontrado")
+    return entry
+
+@api_router.post("/accounting/journal-entries")
+async def create_journal_entry(data: JournalEntryCreate, current_user: dict = Depends(get_current_user)):
+    """Create a new journal entry"""
+    company_id = current_user.get("company_id")
+    
+    # Validate that debits equal credits
+    total_debits = sum(line.debit for line in data.lines)
+    total_credits = sum(line.credit for line in data.lines)
+    
+    if abs(total_debits - total_credits) > 0.01:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"El asiento no está balanceado. Débitos: {total_debits:.2f}, Créditos: {total_credits:.2f}"
+        )
+    
+    entry_id = f"je_{uuid.uuid4().hex[:12]}"
+    
+    entry = {
+        "entry_id": entry_id,
+        "company_id": company_id,
+        "entry_date": data.entry_date,
+        "reference": data.reference,
+        "description": data.description,
+        "period": data.period,
+        "entry_type": data.entry_type,
+        "lines": [line.dict() for line in data.lines],
+        "payroll_id": data.payroll_id,
+        "notes": data.notes,
+        "total_debits": round(total_debits, 2),
+        "total_credits": round(total_credits, 2),
+        "status": "draft",
+        "created_by": current_user.get("user_id"),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.journal_entries.insert_one(entry)
+    
+    return {"entry_id": entry_id, "message": "Asiento creado correctamente"}
+
+@api_router.put("/accounting/journal-entries/{entry_id}")
+async def update_journal_entry(entry_id: str, data: JournalEntryUpdate, current_user: dict = Depends(get_current_user)):
+    """Update a journal entry (only if status is 'draft')"""
+    company_id = current_user.get("company_id")
+    
+    entry = await db.journal_entries.find_one({"entry_id": entry_id, "company_id": company_id})
+    if not entry:
+        raise HTTPException(status_code=404, detail="Asiento no encontrado")
+    
+    if entry.get("status") == "posted":
+        raise HTTPException(status_code=400, detail="No se puede editar un asiento contabilizado")
+    
+    update_data = {}
+    if data.entry_date is not None:
+        update_data["entry_date"] = data.entry_date
+    if data.reference is not None:
+        update_data["reference"] = data.reference
+    if data.description is not None:
+        update_data["description"] = data.description
+    if data.period is not None:
+        update_data["period"] = data.period
+    if data.notes is not None:
+        update_data["notes"] = data.notes
+    if data.status is not None:
+        update_data["status"] = data.status
+    
+    if data.lines is not None:
+        # Validate balance
+        total_debits = sum(line.debit for line in data.lines)
+        total_credits = sum(line.credit for line in data.lines)
+        
+        if abs(total_debits - total_credits) > 0.01:
+            raise HTTPException(
+                status_code=400,
+                detail=f"El asiento no está balanceado. Débitos: {total_debits:.2f}, Créditos: {total_credits:.2f}"
+            )
+        
+        update_data["lines"] = [line.dict() for line in data.lines]
+        update_data["total_debits"] = round(total_debits, 2)
+        update_data["total_credits"] = round(total_credits, 2)
+    
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    update_data["updated_by"] = current_user.get("user_id")
+    
+    await db.journal_entries.update_one(
+        {"entry_id": entry_id, "company_id": company_id},
+        {"$set": update_data}
+    )
+    
+    return {"message": "Asiento actualizado correctamente"}
+
+@api_router.post("/accounting/journal-entries/{entry_id}/post")
+async def post_journal_entry(entry_id: str, current_user: dict = Depends(get_current_user)):
+    """Post (contabilizar) a journal entry"""
+    company_id = current_user.get("company_id")
+    
+    entry = await db.journal_entries.find_one({"entry_id": entry_id, "company_id": company_id})
+    if not entry:
+        raise HTTPException(status_code=404, detail="Asiento no encontrado")
+    
+    if entry.get("status") == "posted":
+        raise HTTPException(status_code=400, detail="El asiento ya está contabilizado")
+    
+    await db.journal_entries.update_one(
+        {"entry_id": entry_id, "company_id": company_id},
+        {"$set": {
+            "status": "posted",
+            "posted_at": datetime.now(timezone.utc).isoformat(),
+            "posted_by": current_user.get("user_id")
+        }}
+    )
+    
+    return {"message": "Asiento contabilizado correctamente"}
+
+@api_router.delete("/accounting/journal-entries/{entry_id}")
+async def delete_journal_entry(entry_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete a journal entry (only if status is 'draft')"""
+    company_id = current_user.get("company_id")
+    
+    entry = await db.journal_entries.find_one({"entry_id": entry_id, "company_id": company_id})
+    if not entry:
+        raise HTTPException(status_code=404, detail="Asiento no encontrado")
+    
+    if entry.get("status") == "posted":
+        raise HTTPException(status_code=400, detail="No se puede eliminar un asiento contabilizado")
+    
+    await db.journal_entries.delete_one({"entry_id": entry_id, "company_id": company_id})
+    
+    return {"message": "Asiento eliminado correctamente"}
+
+@api_router.post("/accounting/generate-payroll-entry")
+async def generate_payroll_journal_entry(
+    payroll_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Generate a journal entry from a payroll calculation"""
+    company_id = current_user.get("company_id")
+    
+    # Get the payroll calculation
+    calculation = await db.payroll_calculations.find_one(
+        {"calculation_id": payroll_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    
+    if not calculation:
+        raise HTTPException(status_code=404, detail="Cálculo de nómina no encontrado")
+    
+    # Generate journal entry lines
+    lines = []
+    
+    # Expense accounts (debits)
+    if calculation.get("proportional_salary", 0) > 0:
+        lines.append({
+            "account_code": "5101",
+            "account_name": "Gastos de Sueldos y Salarios",
+            "description": f"Salario - {calculation.get('employee_name', 'Empleado')}",
+            "debit": calculation.get("proportional_salary", 0),
+            "credit": 0
+        })
+    
+    if calculation.get("extra_hours_pay", 0) > 0:
+        lines.append({
+            "account_code": "5102",
+            "account_name": "Gastos de Horas Extra",
+            "description": f"Horas extra - {calculation.get('employee_name', 'Empleado')}",
+            "debit": calculation.get("extra_hours_pay", 0),
+            "credit": 0
+        })
+    
+    if calculation.get("bonuses", 0) > 0:
+        lines.append({
+            "account_code": "5103",
+            "account_name": "Gastos de Bonificaciones",
+            "description": f"Bonificación - {calculation.get('employee_name', 'Empleado')}",
+            "debit": calculation.get("bonuses", 0),
+            "credit": 0
+        })
+    
+    if calculation.get("commissions", 0) > 0:
+        lines.append({
+            "account_code": "5104",
+            "account_name": "Gastos de Comisiones",
+            "description": f"Comisión - {calculation.get('employee_name', 'Empleado')}",
+            "debit": calculation.get("commissions", 0),
+            "credit": 0
+        })
+    
+    # Employer contributions (debits)
+    total_earnings = calculation.get("total_earnings", 0)
+    sfs_employer = round(total_earnings * SFS_EMPLOYER_RATE, 2)
+    afp_employer = round(total_earnings * AFP_EMPLOYER_RATE, 2)
+    srl_employer = round(total_earnings * SRL_EMPLOYER_RATE, 2)
+    infotep_employer = round(total_earnings * INFOTEP_EMPLOYER_RATE, 2)
+    
+    if sfs_employer > 0:
+        lines.append({
+            "account_code": "5201",
+            "account_name": "Aportes Patronales SFS",
+            "description": f"Aporte patronal SFS (7.09%)",
+            "debit": sfs_employer,
+            "credit": 0
+        })
+    
+    if afp_employer > 0:
+        lines.append({
+            "account_code": "5202",
+            "account_name": "Aportes Patronales AFP",
+            "description": f"Aporte patronal AFP (7.10%)",
+            "debit": afp_employer,
+            "credit": 0
+        })
+    
+    if srl_employer > 0:
+        lines.append({
+            "account_code": "5203",
+            "account_name": "Aportes Patronales SRL",
+            "description": f"Aporte patronal SRL (1%)",
+            "debit": srl_employer,
+            "credit": 0
+        })
+    
+    if infotep_employer > 0:
+        lines.append({
+            "account_code": "5204",
+            "account_name": "Aportes Patronales INFOTEP",
+            "description": f"Aporte patronal INFOTEP (1%)",
+            "debit": infotep_employer,
+            "credit": 0
+        })
+    
+    # Liability accounts (credits)
+    if calculation.get("sfs_employee", 0) > 0:
+        lines.append({
+            "account_code": "2201",
+            "account_name": "Retenciones SFS Empleados",
+            "description": f"Retención SFS (3.07%) - {calculation.get('employee_name', 'Empleado')}",
+            "debit": 0,
+            "credit": calculation.get("sfs_employee", 0)
+        })
+    
+    if calculation.get("afp_employee", 0) > 0:
+        lines.append({
+            "account_code": "2202",
+            "account_name": "Retenciones AFP Empleados",
+            "description": f"Retención AFP (2.87%) - {calculation.get('employee_name', 'Empleado')}",
+            "debit": 0,
+            "credit": calculation.get("afp_employee", 0)
+        })
+    
+    if calculation.get("isr_monthly", 0) > 0:
+        lines.append({
+            "account_code": "2203",
+            "account_name": "Retenciones ISR Empleados",
+            "description": f"Retención ISR - {calculation.get('employee_name', 'Empleado')}",
+            "debit": 0,
+            "credit": calculation.get("isr_monthly", 0)
+        })
+    
+    # TSS employer contributions payable
+    total_employer_tss = sfs_employer + afp_employer + srl_employer + infotep_employer
+    if total_employer_tss > 0:
+        lines.append({
+            "account_code": "2204",
+            "account_name": "Aportes TSS por Pagar",
+            "description": f"Aportes patronales TSS por pagar",
+            "debit": 0,
+            "credit": total_employer_tss
+        })
+    
+    if calculation.get("loan_deduction", 0) > 0:
+        lines.append({
+            "account_code": "2205",
+            "account_name": "Préstamos por Pagar",
+            "description": f"Descuento préstamo - {calculation.get('employee_name', 'Empleado')}",
+            "debit": 0,
+            "credit": calculation.get("loan_deduction", 0)
+        })
+    
+    # Net salary payable
+    if calculation.get("net_salary", 0) > 0:
+        lines.append({
+            "account_code": "2101",
+            "account_name": "Sueldos por Pagar",
+            "description": f"Sueldo neto - {calculation.get('employee_name', 'Empleado')}",
+            "debit": 0,
+            "credit": calculation.get("net_salary", 0)
+        })
+    
+    # Create the journal entry
+    entry_id = f"je_{uuid.uuid4().hex[:12]}"
+    today = datetime.now(timezone.utc)
+    period = today.strftime("%Y-%m")
+    
+    total_debits = sum(line["debit"] for line in lines)
+    total_credits = sum(line["credit"] for line in lines)
+    
+    entry = {
+        "entry_id": entry_id,
+        "company_id": company_id,
+        "entry_date": today.strftime("%Y-%m-%d"),
+        "reference": f"NOM-{payroll_id}",
+        "description": f"Nómina - {calculation.get('employee_name', 'Empleado')}",
+        "period": period,
+        "entry_type": "payroll",
+        "lines": lines,
+        "payroll_id": payroll_id,
+        "notes": f"Asiento generado automáticamente desde cálculo de nómina",
+        "total_debits": round(total_debits, 2),
+        "total_credits": round(total_credits, 2),
+        "status": "draft",
+        "created_by": current_user.get("user_id"),
+        "created_at": today.isoformat(),
+        "updated_at": today.isoformat()
+    }
+    
+    await db.journal_entries.insert_one(entry)
+    
+    return {
+        "entry_id": entry_id,
+        "message": "Asiento contable generado correctamente",
+        "total_debits": round(total_debits, 2),
+        "total_credits": round(total_credits, 2)
+    }
+
 # ===================== ORGANIGRAMA DRAG & DROP =====================
 
 @api_router.put("/organigrama/reorder")
