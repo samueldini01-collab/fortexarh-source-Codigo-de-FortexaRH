@@ -29,7 +29,8 @@ import {
   Network,
   Settings2,
   FileText,
-  Calculator
+  Calculator,
+  BookOpen
 } from "lucide-react";
 
 const navigation = [
@@ -38,6 +39,7 @@ const navigation = [
   { name: "Organigrama", href: "/organigrama", icon: Network },
   { name: "Nómina", href: "/payroll", icon: DollarSign },
   { name: "Calculadora", href: "/payroll-calculator", icon: Calculator },
+  { name: "Contabilidad", href: "/accounting", icon: BookOpen },
   { name: "Config. Nómina", href: "/payroll-config", icon: Settings2 },
   { name: "Asistencias", href: "/attendance", icon: Clock },
   { name: "Vacaciones", href: "/vacations", icon: Calendar },
