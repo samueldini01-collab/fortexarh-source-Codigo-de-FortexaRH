@@ -63,11 +63,12 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-8">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 mb-4">
-            <div className="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center">
-              <Users className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-2xl font-bold text-slate-900 heading">FortexaRH</span>
+          <Link to="/" className="inline-block mb-4">
+            <img 
+              src="/fortexarh-logo.png" 
+              alt="FortexaRH" 
+              className="h-16 w-auto mx-auto"
+            />
           </Link>
         </div>
 
