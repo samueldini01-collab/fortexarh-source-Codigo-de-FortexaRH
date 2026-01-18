@@ -2357,6 +2357,15 @@ async def generate_payroll_journal_entry(
             "credit": calculation.get("loan_deduction", 0)
         })
     
+    if calculation.get("other_deductions", 0) > 0:
+        lines.append({
+            "account_code": "2206",
+            "account_name": "Otras Deducciones por Pagar",
+            "description": f"Otras deducciones - {calculation.get('employee_name', 'Empleado')}",
+            "debit": 0,
+            "credit": calculation.get("other_deductions", 0)
+        })
+    
     # Net salary payable
     if calculation.get("net_salary", 0) > 0:
         lines.append({
