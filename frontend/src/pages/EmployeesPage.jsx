@@ -5,11 +5,10 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -37,8 +36,6 @@ import {
   Search, 
   Edit, 
   Trash2, 
-  Mail, 
-  Phone, 
   User,
   FileText,
   CreditCard,
@@ -47,7 +44,9 @@ import {
   Calendar,
   Building2,
   Percent,
-  Upload
+  Phone,
+  Lock,
+  X
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -57,7 +56,9 @@ const genders = ["Masculino", "Femenino", "Otro"];
 const maritalStatuses = ["Soltero/a", "Casado/a", "Divorciado/a", "Viudo/a", "Unión Libre"];
 const contractTypes = ["Indefinido", "Temporal", "Por Obra", "Pasantía", "Medio Tiempo"];
 const paymentMethods = ["Transferencia Bancaria", "Cheque", "Efectivo"];
-const banks = ["Banco Popular", "Banco BHD León", "Banreservas", "Banco Santa Cruz", "Scotiabank", "Banco Promerica", "Otro"];
+const paymentFrequencies = ["Quincenal", "Mensual", "Semanal"];
+const deductionTypes = ["Préstamo Empresa", "Préstamo Cooperativa", "Seguro Adicional", "Pensión Alimenticia", "Embargo", "Otro"];
+const relationshipTypes = ["Esposo/a", "Padre", "Madre", "Hijo/a", "Hermano/a", "Amigo/a", "Otro"];
 
 const initialFormData = {
   // Datos Principales
@@ -86,26 +87,41 @@ const initialFormData = {
   salary: "",
   supervisor: "",
   work_schedule: "Lunes a Viernes 8:00 AM - 5:00 PM",
+  exclude_from_payroll: false,
+  last_raise_date: "",
   
   // Descuentos
   afp_discount: true,
   sfs_discount: true,
   isr_discount: true,
-  loan_discount: 0,
-  other_discounts: 0,
-  discount_notes: "",
+  additional_deductions: [],
   
   // Forma de Pago
   payment_method: "Transferencia Bancaria",
+  payment_frequency: "Quincenal",
   bank_name: "",
   account_type: "Ahorros",
   account_number: "",
   
-  // Contacto de Emergencia
-  emergency_contact_name: "",
-  emergency_contact_relationship: "",
-  emergency_contact_phone: "",
-  emergency_contact_address: ""
+  // Contactos de Emergencia
+  emergency_contacts: []
+};
+
+// Formulario para nuevo descuento adicional
+const initialDeductionForm = {
+  type: "Préstamo Empresa",
+  description: "",
+  amount: "",
+  is_percentage: false
+};
+
+// Formulario para nuevo contacto de emergencia
+const initialEmergencyContactForm = {
+  name: "",
+  relationship: "",
+  phone: "",
+  whatsapp: "",
+  address: ""
 };
 
 export default function EmployeesPage() {
@@ -116,6 +132,8 @@ export default function EmployeesPage() {
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [activeTab, setActiveTab] = useState("datos");
   const [formData, setFormData] = useState(initialFormData);
+  const [newDeduction, setNewDeduction] = useState(initialDeductionForm);
+  const [newEmergencyContact, setNewEmergencyContact] = useState(initialEmergencyContactForm);
   const { getAuthHeaders } = useAuth();
 
   useEffect(() => {
@@ -142,9 +160,7 @@ export default function EmployeesPage() {
     try {
       const data = {
         ...formData,
-        salary: parseFloat(formData.salary) || 0,
-        loan_discount: parseFloat(formData.loan_discount) || 0,
-        other_discounts: parseFloat(formData.other_discounts) || 0
+        salary: parseFloat(formData.salary) || 0
       };
 
       if (editingEmployee) {
@@ -188,16 +204,69 @@ export default function EmployeesPage() {
     setFormData(initialFormData);
     setEditingEmployee(null);
     setActiveTab("datos");
+    setNewDeduction(initialDeductionForm);
+    setNewEmergencyContact(initialEmergencyContactForm);
   };
 
   const openEditDialog = (employee) => {
     setEditingEmployee(employee);
     setFormData({
       ...initialFormData,
-      ...employee
+      ...employee,
+      additional_deductions: employee.additional_deductions || [],
+      emergency_contacts: employee.emergency_contacts || []
     });
     setActiveTab("datos");
     setIsDialogOpen(true);
+  };
+
+  // Add new deduction
+  const addDeduction = () => {
+    if (!newDeduction.amount) {
+      toast.error("Ingrese un monto para el descuento");
+      return;
+    }
+    setFormData({
+      ...formData,
+      additional_deductions: [
+        ...formData.additional_deductions,
+        { ...newDeduction, amount: parseFloat(newDeduction.amount) || 0 }
+      ]
+    });
+    setNewDeduction(initialDeductionForm);
+  };
+
+  // Remove deduction
+  const removeDeduction = (index) => {
+    setFormData({
+      ...formData,
+      additional_deductions: formData.additional_deductions.filter((_, i) => i !== index)
+    });
+  };
+
+  // Add emergency contact
+  const addEmergencyContact = () => {
+    if (!newEmergencyContact.name || !newEmergencyContact.phone) {
+      toast.error("Nombre y teléfono son requeridos");
+      return;
+    }
+    if (formData.emergency_contacts.length >= 3) {
+      toast.error("Máximo 3 contactos de emergencia permitidos");
+      return;
+    }
+    setFormData({
+      ...formData,
+      emergency_contacts: [...formData.emergency_contacts, { ...newEmergencyContact }]
+    });
+    setNewEmergencyContact(initialEmergencyContactForm);
+  };
+
+  // Remove emergency contact
+  const removeEmergencyContact = (index) => {
+    setFormData({
+      ...formData,
+      emergency_contacts: formData.emergency_contacts.filter((_, i) => i !== index)
+    });
   };
 
   const filteredEmployees = employees.filter(emp =>
@@ -238,11 +307,13 @@ export default function EmployeesPage() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
+              data-testid="search-employees"
             />
           </div>
           <Button 
             onClick={() => { resetForm(); setIsDialogOpen(true); }}
             className="bg-slate-900 hover:bg-slate-800"
+            data-testid="add-employee-btn"
           >
             <Plus className="w-4 h-4 mr-2" />
             Nuevo Empleado
@@ -344,7 +415,7 @@ export default function EmployeesPage() {
                 </TableHeader>
                 <TableBody>
                   {filteredEmployees.map(emp => (
-                    <TableRow key={emp.employee_id}>
+                    <TableRow key={emp.employee_id} data-testid={`employee-row-${emp.employee_id}`}>
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <Avatar className="w-10 h-10">
@@ -368,6 +439,7 @@ export default function EmployeesPage() {
                           variant="ghost"
                           size="icon"
                           onClick={() => openEditDialog(emp)}
+                          data-testid={`edit-employee-${emp.employee_id}`}
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
@@ -376,6 +448,7 @@ export default function EmployeesPage() {
                           size="icon"
                           onClick={() => handleDelete(emp.employee_id)}
                           className="text-red-600 hover:text-red-700"
+                          data-testid={`delete-employee-${emp.employee_id}`}
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -398,31 +471,47 @@ export default function EmployeesPage() {
             </DialogHeader>
 
             <form onSubmit={handleSubmit}>
+              {/* Progress indicator */}
+              <div className="mb-4">
+                <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-blue-500 transition-all duration-300"
+                    style={{ 
+                      width: activeTab === "datos" ? "16%" : 
+                             activeTab === "contrato" ? "33%" :
+                             activeTab === "descuentos" ? "50%" :
+                             activeTab === "documentos" ? "66%" :
+                             activeTab === "pago" ? "83%" : "100%"
+                    }}
+                  />
+                </div>
+              </div>
+
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid grid-cols-6 w-full mb-6">
-                  <TabsTrigger value="datos" className="text-xs">
+                  <TabsTrigger value="datos" className="text-xs" data-testid="tab-datos">
                     <User className="w-3 h-3 mr-1" />
                     Datos Principales
                   </TabsTrigger>
-                  <TabsTrigger value="contrato" className="text-xs">
+                  <TabsTrigger value="contrato" className="text-xs" data-testid="tab-contrato">
                     <FileText className="w-3 h-3 mr-1" />
                     Contrato
                   </TabsTrigger>
-                  <TabsTrigger value="descuentos" className="text-xs">
+                  <TabsTrigger value="descuentos" className="text-xs" data-testid="tab-descuentos">
                     <Percent className="w-3 h-3 mr-1" />
-                    % Descuentos
+                    Descuentos
                   </TabsTrigger>
-                  <TabsTrigger value="documentos" className="text-xs">
-                    <Upload className="w-3 h-3 mr-1" />
+                  <TabsTrigger value="documentos" className="text-xs" data-testid="tab-documentos">
+                    <FileText className="w-3 h-3 mr-1" />
                     Documentos
                   </TabsTrigger>
-                  <TabsTrigger value="pago" className="text-xs">
+                  <TabsTrigger value="pago" className="text-xs" data-testid="tab-pago">
                     <CreditCard className="w-3 h-3 mr-1" />
                     Forma de Pago
                   </TabsTrigger>
-                  <TabsTrigger value="emergencia" className="text-xs">
+                  <TabsTrigger value="emergencia" className="text-xs" data-testid="tab-emergencia">
                     <Phone className="w-3 h-3 mr-1" />
-                    Emergencia
+                    Contacto de Emergencia
                   </TabsTrigger>
                 </TabsList>
 
@@ -431,69 +520,76 @@ export default function EmployeesPage() {
                   {/* Photo */}
                   <div className="flex justify-center mb-4">
                     <div className="text-center">
-                      <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mx-auto border-2 border-dashed border-slate-300 cursor-pointer hover:bg-slate-50 transition-colors">
+                      <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mx-auto border-2 border-dashed border-slate-300 cursor-pointer hover:bg-slate-50 transition-colors relative">
                         {formData.photo_url ? (
                           <img src={formData.photo_url} alt="Profile" className="w-full h-full rounded-full object-cover" />
                         ) : (
                           <Camera className="w-8 h-8 text-slate-400" />
                         )}
+                        <div className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-md border">
+                          <Camera className="w-4 h-4 text-slate-500" />
+                        </div>
                       </div>
                       <p className="text-xs text-slate-500 mt-2">Foto de Perfil</p>
-                      <p className="text-xs text-slate-400">Max 2MB, JPG, PNG</p>
+                      <p className="text-xs text-slate-400">Max 2MB. JPG, PNG</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Nombre(s) *</Label>
+                      <Label>Nombre(s) <span className="text-red-500">*</span></Label>
                       <Input
                         value={formData.first_name}
                         onChange={(e) => setFormData({...formData, first_name: e.target.value})}
                         placeholder="Ej. Juan Carlos"
                         required
+                        data-testid="input-first-name"
+                        className="bg-slate-50 border-slate-200 focus:bg-white"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Apellidos *</Label>
+                      <Label>Apellidos <span className="text-red-500">*</span></Label>
                       <Input
                         value={formData.last_name}
                         onChange={(e) => setFormData({...formData, last_name: e.target.value})}
                         placeholder="Ej. Pérez Rodriguez"
                         required
+                        data-testid="input-last-name"
+                        className="bg-slate-50 border-slate-200 focus:bg-white"
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Email <span className="text-red-500">*</span></Label>
+                    <Input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      placeholder="juan@empresa.com"
+                      required
+                      data-testid="input-email"
+                      className="bg-slate-50 border-slate-200 focus:bg-white"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <Label>Email *</Label>
-                      <Input
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        placeholder="juan@empresa.com"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="flex items-center gap-1">
-                        <Phone className="w-3 h-3" /> Teléfono
-                      </Label>
+                      <Label>Teléfono</Label>
                       <Input
                         value={formData.phone}
                         onChange={(e) => setFormData({...formData, phone: e.target.value})}
                         placeholder="809-555-0000"
+                        className="bg-slate-50 border-slate-200 focus:bg-white"
                       />
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>WhatsApp</Label>
                       <Input
                         value={formData.whatsapp}
                         onChange={(e) => setFormData({...formData, whatsapp: e.target.value})}
                         placeholder="809-555-0000"
+                        className="bg-slate-50 border-slate-200 focus:bg-white"
                       />
                     </div>
                     <div className="space-y-2">
@@ -502,6 +598,7 @@ export default function EmployeesPage() {
                         value={formData.nationality}
                         onChange={(e) => setFormData({...formData, nationality: e.target.value})}
                         placeholder="Dominicana"
+                        className="bg-slate-50 border-slate-200 focus:bg-white"
                       />
                     </div>
                   </div>
@@ -510,7 +607,7 @@ export default function EmployeesPage() {
                     <div className="space-y-2">
                       <Label>Tipo Documento</Label>
                       <Select value={formData.document_type} onValueChange={(v) => setFormData({...formData, document_type: v})}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-slate-50 border-slate-200">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -521,48 +618,65 @@ export default function EmployeesPage() {
                       </Select>
                     </div>
                     <div className="space-y-2 md:col-span-2">
-                      <Label>Número de Documento *</Label>
+                      <Label>Número de Documento <span className="text-red-500">*</span></Label>
                       <Input
                         value={formData.document_number}
                         onChange={(e) => setFormData({...formData, document_number: e.target.value})}
                         placeholder="001-0000000-0"
                         required
+                        className="bg-slate-50 border-slate-200 focus:bg-white"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <Label>Género</Label>
-                      <Select value={formData.gender} onValueChange={(v) => setFormData({...formData, gender: v})}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Seleccione" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {genders.map(g => (
-                            <SelectItem key={g} value={g}>{g}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
                       <Label>Fecha Nacimiento</Label>
                       <Input
                         type="date"
                         value={formData.birth_date}
                         onChange={(e) => setFormData({...formData, birth_date: e.target.value})}
+                        className="bg-slate-50 border-slate-200 focus:bg-white"
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Estado Civil</Label>
                       <Select value={formData.marital_status} onValueChange={(v) => setFormData({...formData, marital_status: v})}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-slate-50 border-slate-200">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           {maritalStatuses.map(s => (
                             <SelectItem key={s} value={s}>{s}</SelectItem>
                           ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Estado</Label>
+                      <Select value={formData.status} onValueChange={(v) => setFormData({...formData, status: v})}>
+                        <SelectTrigger className="bg-slate-50 border-slate-200">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="active">
+                            <span className="flex items-center gap-2">
+                              <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                              Activo
+                            </span>
+                          </SelectItem>
+                          <SelectItem value="inactive">
+                            <span className="flex items-center gap-2">
+                              <span className="w-2 h-2 bg-slate-400 rounded-full"></span>
+                              Inactivo
+                            </span>
+                          </SelectItem>
+                          <SelectItem value="on_leave">
+                            <span className="flex items-center gap-2">
+                              <span className="w-2 h-2 bg-amber-500 rounded-full"></span>
+                              En Licencia
+                            </span>
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -575,6 +689,7 @@ export default function EmployeesPage() {
                         value={formData.address}
                         onChange={(e) => setFormData({...formData, address: e.target.value})}
                         placeholder="Calle Principal #123, Sector"
+                        className="bg-slate-50 border-slate-200 focus:bg-white"
                       />
                     </div>
                     <div className="space-y-2">
@@ -583,35 +698,21 @@ export default function EmployeesPage() {
                         value={formData.city}
                         onChange={(e) => setFormData({...formData, city: e.target.value})}
                         placeholder="Santo Domingo"
+                        className="bg-slate-50 border-slate-200 focus:bg-white"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Estado</Label>
-                    <Select value={formData.status} onValueChange={(v) => setFormData({...formData, status: v})}>
-                      <SelectTrigger>
-                        <SelectValue />
+                    <Label>Género</Label>
+                    <Select value={formData.gender} onValueChange={(v) => setFormData({...formData, gender: v})}>
+                      <SelectTrigger className="bg-slate-50 border-slate-200">
+                        <SelectValue placeholder="Seleccione" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="active">
-                          <span className="flex items-center gap-2">
-                            <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                            Activo
-                          </span>
-                        </SelectItem>
-                        <SelectItem value="inactive">
-                          <span className="flex items-center gap-2">
-                            <span className="w-2 h-2 bg-slate-400 rounded-full"></span>
-                            Inactivo
-                          </span>
-                        </SelectItem>
-                        <SelectItem value="on_leave">
-                          <span className="flex items-center gap-2">
-                            <span className="w-2 h-2 bg-amber-500 rounded-full"></span>
-                            En Licencia
-                          </span>
-                        </SelectItem>
+                        {genders.map(g => (
+                          <SelectItem key={g} value={g}>{g}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -619,20 +720,79 @@ export default function EmployeesPage() {
 
                 {/* Tab 2: Contrato */}
                 <TabsContent value="contrato" className="space-y-4">
+                  <Card className="bg-slate-50 border-slate-200">
+                    <CardContent className="p-4">
+                      <h4 className="font-semibold text-slate-700 mb-1">Resumen Contractual</h4>
+                      <p className="text-sm text-slate-500">Defina los términos de contratación y fechas clave para la relación laboral.</p>
+                    </CardContent>
+                  </Card>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Posición / Cargo *</Label>
+                      <Label>Tipo de Contrato</Label>
+                      <Select value={formData.contract_type} onValueChange={(v) => setFormData({...formData, contract_type: v})}>
+                        <SelectTrigger className="bg-slate-50 border-slate-200">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {contractTypes.map(type => (
+                            <SelectItem key={type} value={type}>{type}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Fecha de Ingreso <span className="text-red-500">*</span></Label>
+                      <Input
+                        type="date"
+                        value={formData.hire_date}
+                        onChange={(e) => setFormData({...formData, hire_date: e.target.value})}
+                        required
+                        className="bg-slate-50 border-slate-200 focus:bg-white"
+                        data-testid="input-hire-date"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Fecha Último Aumento</Label>
+                      <Input
+                        type="date"
+                        value={formData.last_raise_date}
+                        onChange={(e) => setFormData({...formData, last_raise_date: e.target.value})}
+                        className="bg-slate-50 border-slate-200 focus:bg-white"
+                      />
+                      <p className="text-xs text-slate-500">Usado para calcular antigüedad salarial</p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Fecha de Salida</Label>
+                      <Input
+                        type="date"
+                        value={formData.contract_end_date}
+                        onChange={(e) => setFormData({...formData, contract_end_date: e.target.value})}
+                        className="bg-slate-50 border-slate-200 focus:bg-white"
+                      />
+                      <p className="text-xs text-slate-500">Solo llenar si el empleado ha sido desvinculado</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Posición / Cargo <span className="text-red-500">*</span></Label>
                       <Input
                         value={formData.position}
                         onChange={(e) => setFormData({...formData, position: e.target.value})}
                         placeholder="Ej. Analista de Sistemas"
                         required
+                        className="bg-slate-50 border-slate-200 focus:bg-white"
+                        data-testid="input-position"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Departamento *</Label>
+                      <Label>Departamento <span className="text-red-500">*</span></Label>
                       <Select value={formData.department} onValueChange={(v) => setFormData({...formData, department: v})}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-slate-50 border-slate-200" data-testid="select-department">
                           <SelectValue placeholder="Seleccione departamento" />
                         </SelectTrigger>
                         <SelectContent>
@@ -644,150 +804,153 @@ export default function EmployeesPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Fecha de Ingreso *</Label>
-                      <Input
-                        type="date"
-                        value={formData.hire_date}
-                        onChange={(e) => setFormData({...formData, hire_date: e.target.value})}
-                        required
-                      />
+                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200">
+                    <div>
+                      <p className="font-medium text-slate-700">Excluir de Nómina Automática</p>
+                      <p className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded mt-1 inline-block">
+                        Al activar esta opción, este empleado no aparecerá en la generación masiva de nómina.
+                      </p>
                     </div>
-                    <div className="space-y-2">
-                      <Label>Tipo de Contrato</Label>
-                      <Select value={formData.contract_type} onValueChange={(v) => setFormData({...formData, contract_type: v})}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {contractTypes.map(type => (
-                            <SelectItem key={type} value={type}>{type}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  {formData.contract_type !== "Indefinido" && (
-                    <div className="space-y-2">
-                      <Label>Fecha Fin de Contrato</Label>
-                      <Input
-                        type="date"
-                        value={formData.contract_end_date}
-                        onChange={(e) => setFormData({...formData, contract_end_date: e.target.value})}
-                      />
-                    </div>
-                  )}
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Salario Mensual (RD$) *</Label>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        value={formData.salary}
-                        onChange={(e) => setFormData({...formData, salary: e.target.value})}
-                        placeholder="0.00"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Supervisor Directo</Label>
-                      <Input
-                        value={formData.supervisor}
-                        onChange={(e) => setFormData({...formData, supervisor: e.target.value})}
-                        placeholder="Nombre del supervisor"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Horario de Trabajo</Label>
-                    <Input
-                      value={formData.work_schedule}
-                      onChange={(e) => setFormData({...formData, work_schedule: e.target.value})}
-                      placeholder="Ej. Lunes a Viernes 8:00 AM - 5:00 PM"
+                    <Switch
+                      checked={formData.exclude_from_payroll}
+                      onCheckedChange={(checked) => setFormData({...formData, exclude_from_payroll: checked})}
                     />
                   </div>
                 </TabsContent>
 
                 {/* Tab 3: Descuentos */}
                 <TabsContent value="descuentos" className="space-y-4">
-                  <div className="bg-slate-50 rounded-lg p-4 space-y-4">
-                    <h4 className="font-semibold text-slate-700">Deducciones de Ley</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                  <div>
+                    <h4 className="font-semibold text-slate-700 mb-4">Deducciones de Ley (Automáticas)</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between p-3 border-b border-slate-100">
                         <div>
-                          <p className="font-medium">AFP (2.87%)</p>
-                          <p className="text-xs text-slate-500">Fondo de Pensiones</p>
+                          <p className="font-medium text-slate-600">SFS</p>
+                          <p className="text-sm text-slate-500">Seguro Familiar de Salud</p>
                         </div>
-                        <input
-                          type="checkbox"
-                          checked={formData.afp_discount}
-                          onChange={(e) => setFormData({...formData, afp_discount: e.target.checked})}
-                          className="w-5 h-5 accent-emerald-600"
-                        />
+                        <div className="flex items-center gap-2 text-slate-500">
+                          <span>3.04%</span>
+                          <Lock className="w-4 h-4" />
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                      <div className="flex items-center justify-between p-3 border-b border-slate-100">
                         <div>
-                          <p className="font-medium">SFS (3.04%)</p>
-                          <p className="text-xs text-slate-500">Seguro de Salud</p>
+                          <p className="font-medium text-slate-600">AFP</p>
+                          <p className="text-sm text-slate-500">Administradora Fondos de Pensiones</p>
                         </div>
-                        <input
-                          type="checkbox"
-                          checked={formData.sfs_discount}
-                          onChange={(e) => setFormData({...formData, sfs_discount: e.target.checked})}
-                          className="w-5 h-5 accent-emerald-600"
-                        />
+                        <div className="flex items-center gap-2 text-slate-500">
+                          <span>2.87%</span>
+                          <Lock className="w-4 h-4" />
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                      <div className="flex items-center justify-between p-3">
                         <div>
-                          <p className="font-medium">ISR</p>
-                          <p className="text-xs text-slate-500">Impuesto Sobre la Renta</p>
+                          <p className="font-medium text-slate-600">ISR</p>
+                          <p className="text-sm text-slate-500">Impuesto Sobre la Renta</p>
                         </div>
-                        <input
-                          type="checkbox"
-                          checked={formData.isr_discount}
-                          onChange={(e) => setFormData({...formData, isr_discount: e.target.checked})}
-                          className="w-5 h-5 accent-emerald-600"
-                        />
+                        <div className="flex items-center gap-2 text-slate-500">
+                          <span>Calculado</span>
+                          <Lock className="w-4 h-4" />
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-slate-50 rounded-lg p-4 space-y-4">
-                    <h4 className="font-semibold text-slate-700">Otros Descuentos</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Descuento por Préstamo (RD$)</Label>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          value={formData.loan_discount}
-                          onChange={(e) => setFormData({...formData, loan_discount: e.target.value})}
-                          placeholder="0.00"
-                        />
+                  <div>
+                    <h4 className="font-semibold text-slate-700 mb-4">Descuentos Adicionales</h4>
+                    
+                    {formData.additional_deductions.length === 0 ? (
+                      <div className="bg-slate-50 rounded-lg p-6 text-center border border-slate-200 border-dashed">
+                        <p className="text-slate-500 italic">No hay descuentos adicionales registrados</p>
                       </div>
-                      <div className="space-y-2">
-                        <Label>Otros Descuentos (RD$)</Label>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          value={formData.other_discounts}
-                          onChange={(e) => setFormData({...formData, other_discounts: e.target.value})}
-                          placeholder="0.00"
-                        />
+                    ) : (
+                      <div className="space-y-2 mb-4">
+                        {formData.additional_deductions.map((ded, index) => (
+                          <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                            <div>
+                              <p className="font-medium">{ded.type}</p>
+                              <p className="text-sm text-slate-500">{ded.description}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono">
+                                {ded.is_percentage ? `${ded.amount}%` : formatCurrency(ded.amount)}
+                              </span>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => removeDeduction(index)}
+                                className="text-red-500 hover:text-red-600 h-8 w-8"
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Notas sobre Descuentos</Label>
-                      <Textarea
-                        value={formData.discount_notes}
-                        onChange={(e) => setFormData({...formData, discount_notes: e.target.value})}
-                        placeholder="Ej. Préstamo de caja de ahorro, cuota 15 de 24..."
-                        rows={2}
-                      />
+                    )}
+
+                    {/* Add new deduction form */}
+                    <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                      <p className="text-blue-700 font-medium mb-3">+ AGREGAR DESCUENTO</p>
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                        <div className="space-y-1">
+                          <Label className="text-xs text-slate-600">Tipo</Label>
+                          <Select 
+                            value={newDeduction.type} 
+                            onValueChange={(v) => setNewDeduction({...newDeduction, type: v})}
+                          >
+                            <SelectTrigger className="bg-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {deductionTypes.map(type => (
+                                <SelectItem key={type} value={type}>{type}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs text-slate-600">Descripción</Label>
+                          <Input
+                            value={newDeduction.description}
+                            onChange={(e) => setNewDeduction({...newDeduction, description: e.target.value})}
+                            placeholder="Ej. Cuota 1/10"
+                            className="bg-white"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs text-slate-600">Monto / %</Label>
+                          <div className="flex gap-2">
+                            <Input
+                              type="number"
+                              step="0.01"
+                              value={newDeduction.amount}
+                              onChange={(e) => setNewDeduction({...newDeduction, amount: e.target.value})}
+                              placeholder="0.00"
+                              className="bg-white"
+                            />
+                            <Button
+                              type="button"
+                              variant={newDeduction.is_percentage ? "default" : "outline"}
+                              size="icon"
+                              onClick={() => setNewDeduction({...newDeduction, is_percentage: !newDeduction.is_percentage})}
+                              className="shrink-0"
+                            >
+                              {newDeduction.is_percentage ? "%" : "$"}
+                            </Button>
+                          </div>
+                        </div>
+                        <div className="flex items-end">
+                          <Button
+                            type="button"
+                            onClick={addDeduction}
+                            className="w-full bg-blue-500 hover:bg-blue-600"
+                          >
+                            Agregar
+                          </Button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </TabsContent>
@@ -795,15 +958,15 @@ export default function EmployeesPage() {
                 {/* Tab 4: Documentos */}
                 <TabsContent value="documentos" className="space-y-4">
                   <div className="text-center py-12 bg-slate-50 rounded-lg border-2 border-dashed border-slate-300">
-                    <Upload className="w-12 h-12 mx-auto mb-4 text-slate-400" />
-                    <h4 className="font-semibold text-slate-700 mb-2">Subir Documentos</h4>
+                    <FileText className="w-12 h-12 mx-auto mb-4 text-slate-400" />
+                    <h4 className="font-semibold text-slate-700 mb-2">Documentos del Empleado</h4>
                     <p className="text-sm text-slate-500 mb-4">
                       Arrastre archivos aquí o haga clic para seleccionar
                     </p>
                     <p className="text-xs text-slate-400">
                       PDF, JPG, PNG hasta 5MB. Ej: Cédula, Contrato, Cartas, etc.
                     </p>
-                    <Button variant="outline" className="mt-4">
+                    <Button variant="outline" className="mt-4" type="button">
                       Seleccionar Archivos
                     </Button>
                   </div>
@@ -814,40 +977,83 @@ export default function EmployeesPage() {
 
                 {/* Tab 5: Forma de Pago */}
                 <TabsContent value="pago" className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Método de Pago</Label>
-                    <Select value={formData.payment_method} onValueChange={(v) => setFormData({...formData, payment_method: v})}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {paymentMethods.map(method => (
-                          <SelectItem key={method} value={method}>{method}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Salario Mensual Bruto <span className="text-red-500">*</span></Label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">$</span>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={formData.salary}
+                          onChange={(e) => setFormData({...formData, salary: e.target.value})}
+                          placeholder="0.00"
+                          required
+                          className="pl-8 bg-slate-50 border-slate-200 focus:bg-white"
+                          data-testid="input-salary"
+                        />
+                      </div>
+                      <p className="text-xs text-slate-500">Moneda base: DOP (Peso Dominicano)</p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Frecuencia de Pago</Label>
+                      <Select 
+                        value={formData.payment_frequency} 
+                        onValueChange={(v) => setFormData({...formData, payment_frequency: v})}
+                      >
+                        <SelectTrigger className="bg-slate-50 border-slate-200">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {paymentFrequencies.map(freq => (
+                            <SelectItem key={freq} value={freq}>{freq}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
-                  {formData.payment_method === "Transferencia Bancaria" && (
-                    <>
+                  <div className="space-y-4 pt-4 border-t">
+                    <h4 className="font-medium text-slate-700 flex items-center gap-2">
+                      <CreditCard className="w-4 h-4" />
+                      Información Bancaria
+                    </h4>
+                    
+                    <div className="space-y-2">
+                      <Label>Método de Pago</Label>
+                      <Select 
+                        value={formData.payment_method} 
+                        onValueChange={(v) => setFormData({...formData, payment_method: v})}
+                      >
+                        <SelectTrigger className="bg-slate-50 border-slate-200">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {paymentMethods.map(method => (
+                            <SelectItem key={method} value={method}>{method}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {formData.payment_method === "Transferencia Bancaria" && (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label>Banco</Label>
-                          <Select value={formData.bank_name} onValueChange={(v) => setFormData({...formData, bank_name: v})}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Seleccione banco" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {banks.map(bank => (
-                                <SelectItem key={bank} value={bank}>{bank}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <Input
+                            value={formData.bank_name}
+                            onChange={(e) => setFormData({...formData, bank_name: e.target.value})}
+                            placeholder="Nombre del banco"
+                            className="bg-slate-50 border-slate-200 focus:bg-white"
+                          />
                         </div>
                         <div className="space-y-2">
                           <Label>Tipo de Cuenta</Label>
-                          <Select value={formData.account_type} onValueChange={(v) => setFormData({...formData, account_type: v})}>
-                            <SelectTrigger>
+                          <Select 
+                            value={formData.account_type} 
+                            onValueChange={(v) => setFormData({...formData, account_type: v})}
+                          >
+                            <SelectTrigger className="bg-slate-50 border-slate-200">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -856,67 +1062,139 @@ export default function EmployeesPage() {
                             </SelectContent>
                           </Select>
                         </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Número de Cuenta</Label>
+                          <Input
+                            value={formData.account_number}
+                            onChange={(e) => setFormData({...formData, account_number: e.target.value})}
+                            placeholder="Número de cuenta bancaria"
+                            className="bg-slate-50 border-slate-200 focus:bg-white"
+                          />
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <Label>Número de Cuenta</Label>
-                        <Input
-                          value={formData.account_number}
-                          onChange={(e) => setFormData({...formData, account_number: e.target.value})}
-                          placeholder="Número de cuenta bancaria"
-                        />
-                      </div>
-                    </>
-                  )}
+                    )}
+                  </div>
                 </TabsContent>
 
                 {/* Tab 6: Contacto de Emergencia */}
                 <TabsContent value="emergencia" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Nombre Completo</Label>
-                      <Input
-                        value={formData.emergency_contact_name}
-                        onChange={(e) => setFormData({...formData, emergency_contact_name: e.target.value})}
-                        placeholder="Nombre del contacto de emergencia"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Parentesco / Relación</Label>
-                      <Input
-                        value={formData.emergency_contact_relationship}
-                        onChange={(e) => setFormData({...formData, emergency_contact_relationship: e.target.value})}
-                        placeholder="Ej. Esposo/a, Padre, Madre, Hermano/a"
-                      />
-                    </div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="font-semibold text-slate-700">Contactos de Emergencia</h4>
+                    <span className="text-sm text-slate-500">{formData.emergency_contacts.length} / 3 Agregados</span>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Teléfono</Label>
-                      <Input
-                        value={formData.emergency_contact_phone}
-                        onChange={(e) => setFormData({...formData, emergency_contact_phone: e.target.value})}
-                        placeholder="809-555-0000"
-                      />
+
+                  {/* Existing contacts */}
+                  {formData.emergency_contacts.length > 0 && (
+                    <div className="space-y-2 mb-4">
+                      {formData.emergency_contacts.map((contact, index) => (
+                        <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                          <div>
+                            <p className="font-medium">{contact.name}</p>
+                            <p className="text-sm text-slate-500">{contact.relationship} • {contact.phone}</p>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => removeEmergencyContact(index)}
+                            className="text-red-500 hover:text-red-600 h-8 w-8"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ))}
                     </div>
-                    <div className="space-y-2">
-                      <Label>Dirección</Label>
-                      <Input
-                        value={formData.emergency_contact_address}
-                        onChange={(e) => setFormData({...formData, emergency_contact_address: e.target.value})}
-                        placeholder="Dirección del contacto"
-                      />
+                  )}
+
+                  {/* Add new contact form */}
+                  {formData.emergency_contacts.length < 3 && (
+                    <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                      <p className="text-blue-700 font-medium mb-3">NUEVO CONTACTO</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Nombre Completo <span className="text-red-500">*</span></Label>
+                          <Input
+                            value={newEmergencyContact.name}
+                            onChange={(e) => setNewEmergencyContact({...newEmergencyContact, name: e.target.value})}
+                            placeholder="Ej. Maria Perez"
+                            className="bg-white"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Relación / Parentesco <span className="text-red-500">*</span></Label>
+                          <Select 
+                            value={newEmergencyContact.relationship} 
+                            onValueChange={(v) => setNewEmergencyContact({...newEmergencyContact, relationship: v})}
+                          >
+                            <SelectTrigger className="bg-white">
+                              <SelectValue placeholder="Seleccionar..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {relationshipTypes.map(rel => (
+                                <SelectItem key={rel} value={rel}>{rel}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Teléfono Principal <span className="text-red-500">*</span></Label>
+                          <Input
+                            value={newEmergencyContact.phone}
+                            onChange={(e) => setNewEmergencyContact({...newEmergencyContact, phone: e.target.value})}
+                            placeholder="809-000-0000"
+                            className="bg-white"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>WhatsApp (Opcional)</Label>
+                          <Input
+                            value={newEmergencyContact.whatsapp}
+                            onChange={(e) => setNewEmergencyContact({...newEmergencyContact, whatsapp: e.target.value})}
+                            placeholder="809-000-0000"
+                            className="bg-white"
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Dirección Física (Opcional)</Label>
+                          <Input
+                            value={newEmergencyContact.address}
+                            onChange={(e) => setNewEmergencyContact({...newEmergencyContact, address: e.target.value})}
+                            placeholder="Calle, Número, Sector..."
+                            className="bg-white"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex justify-end mt-4">
+                        <Button
+                          type="button"
+                          onClick={addEmergencyContact}
+                          className="bg-blue-500 hover:bg-blue-600"
+                        >
+                          + Agregar Contacto
+                        </Button>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </TabsContent>
               </Tabs>
 
               {/* Form Actions */}
-              <div className="flex justify-end gap-3 mt-6 pt-4 border-t">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+              <div className="flex justify-end gap-3 mt-6 pt-4 border-t bg-slate-50 -mx-6 -mb-6 px-6 py-4 rounded-b-lg">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => setIsDialogOpen(false)}
+                  className="border-blue-500 text-blue-500 hover:bg-blue-50"
+                >
                   Cancelar
                 </Button>
-                <Button type="submit" className="bg-slate-900 hover:bg-slate-800">
-                  {editingEmployee ? "Guardar Cambios" : "Guardar"}
+                <Button 
+                  type="submit" 
+                  className="bg-emerald-600 hover:bg-emerald-700"
+                  data-testid="submit-employee"
+                >
+                  <FileText className="w-4 h-4 mr-2" />
+                  Guardar
                 </Button>
               </div>
             </form>
