@@ -46,7 +46,24 @@ Sistema SaaS de gestión de Recursos Humanos y Nómina. El sistema debe venderse
 - [x] **Configuración de Nómina** - Conceptos de ingresos/deducciones
 - [x] **Plantillas** - Crear plantillas, generar documentos con variables, firmas electrónicas
 
-### ✅ Calculadora de Nómina (Jan 17, 2026)
+### ✅ Módulo de Contabilidad (Jan 18, 2026)
+- [x] Plan de cuentas predefinido para nómina (16 cuentas)
+- [x] CRUD de asientos contables (crear, editar, eliminar)
+- [x] Generación automática de asientos desde cálculos de nómina
+- [x] Validación de balance (débitos = créditos)
+- [x] Estados de asiento: Borrador, Contabilizado, Anulado
+- [x] Filtros por período y estado
+- [x] Asientos incluyen:
+  - Gastos de nómina (sueldos, horas extra, bonos, comisiones)
+  - Aportes patronales TSS
+  - Retenciones empleados (SFS, AFP, ISR)
+  - Préstamos y otras deducciones
+  - Sueldo neto por pagar
+
+### ✅ Branding FortexaRH (Jan 18, 2026)
+- [x] Logo integrado en: Landing, Login, Register, Dashboard (sidebar)
+- [x] Favicon personalizado en la barra del navegador
+- [x] Títulos y metadatos actualizados
 - [x] Cálculos TSS República Dominicana
   - Deducciones empleado: SFS 3.07%, AFP 2.87%
   - Aportes empleador: SFS 7.09%, AFP 7.10%, SRL 1%, INFOTEP 1%
