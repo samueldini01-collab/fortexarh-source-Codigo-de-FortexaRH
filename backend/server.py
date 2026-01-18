@@ -1617,6 +1617,62 @@ async def delete_org_node(node_id: str, current_user: dict = Depends(get_current
 
 # ===================== PAYROLL CONFIG ROUTES =====================
 
+class PayrollSettingsModel(BaseModel):
+    # Overtime rates
+    overtime_day: float = 35
+    overtime_night: float = 15
+    overtime_weekend: float = 100
+    overtime_holiday: float = 100
+    
+    # Employee deductions
+    afp_employee: float = 2.87
+    sfs_employee: float = 3.04
+    
+    # Employer contributions
+    afp_employer: float = 7.10
+    sfs_employer: float = 7.09
+    srl_employer: float = 1
+    infotep_employer: float = 1
+    
+    # ISR Configuration
+    isr_min_salary: float = 416220.01
+    isr_mid_salary: float = 624329.04
+    isr_max_salary: float = 867123.01
+    isr_min_rate: float = 15
+    isr_mid_rate: float = 20
+    isr_max_rate: float = 25
+    isr_mid_fixed: float = 31216.00
+    isr_max_fixed: float = 79776.00
+
+@api_router.get("/payroll-settings")
+async def get_payroll_settings(current_user: dict = Depends(get_current_user)):
+    """Get global payroll settings for the company"""
+    settings = await db.payroll_settings.find_one(
+        {"company_id": current_user.get("company_id")},
+        {"_id": 0}
+    )
+    return settings
+
+@api_router.post("/payroll-settings")
+async def save_payroll_settings(data: PayrollSettingsModel, current_user: dict = Depends(get_current_user)):
+    """Save or update global payroll settings"""
+    company_id = current_user.get("company_id")
+    
+    settings = {
+        "company_id": company_id,
+        **data.model_dump(),
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "updated_by": current_user.get("user_id")
+    }
+    
+    await db.payroll_settings.update_one(
+        {"company_id": company_id},
+        {"$set": settings},
+        upsert=True
+    )
+    
+    return {"message": "Configuración guardada correctamente"}
+
 @api_router.get("/payroll-config")
 async def get_payroll_configs(current_user: dict = Depends(get_current_user)):
     configs = await db.payroll_configs.find(
