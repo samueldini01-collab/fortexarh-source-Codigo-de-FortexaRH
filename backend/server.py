@@ -2576,10 +2576,21 @@ async def reorder_org_nodes(updates: List[OrgNodeUpdatePosition], current_user: 
 
 app.include_router(api_router)
 
+cors_origins = os.environ.get('CORS_ORIGINS', '')
+if cors_origins and cors_origins != '*':
+    origins_list = cors_origins.split(',')
+else:
+    # Default development origins
+    origins_list = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://talentforge-36.preview.emergentagent.com"
+    ]
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_origins=origins_list,
     allow_methods=["*"],
     allow_headers=["*"],
 )
