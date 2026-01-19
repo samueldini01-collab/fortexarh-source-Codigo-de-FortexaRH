@@ -1449,29 +1449,45 @@ async def update_candidate_stage(candidate_id: str, stage: str, current_user: di
 # ===================== SUBSCRIPTION & PAYMENT ROUTES =====================
 # NOTE: Main subscription endpoints are defined later in the file (line ~4850)
 
+class CheckoutRequest(BaseModel):
+    plan_id: str
+    employee_count: int = 1
+    origin_url: str
+
 @api_router.post("/checkout")
 async def create_checkout(data: CheckoutRequest, request: Request, current_user: dict = Depends(get_current_user)):
+    """Create Stripe checkout session for subscription payment"""
     plan = SUBSCRIPTION_PLANS.get(data.plan_id)
     if not plan or data.plan_id == "trial":
-        raise HTTPException(status_code=400, detail="Invalid plan")
+        raise HTTPException(status_code=400, detail="Plan inválido")
     
-    company = await db.companies.find_one(
-        {"company_id": current_user.get("company_id")},
-        {"_id": 0}
-    )
-    employee_count = company.get("employee_count", 0) if company else 0
+    company_id = current_user.get("company_id")
+    user_id = current_user.get("user_id")
     
-    # Calculate total amount
-    amount = plan["base_price"] + (employee_count * plan["price_per_employee"])
+    # Validate employee count
+    employee_count = max(1, data.employee_count)
+    if plan.get("max_employees") and plan["max_employees"] != 9999:
+        employee_count = min(employee_count, plan["max_employees"])
+    
+    # Calculate total amount (base + employees)
+    base_price = float(plan.get("base_price", 0))
+    price_per_employee = float(plan.get("price_per_employee", 0))
+    amount = base_price + (employee_count * price_per_employee)
+    
+    # Ensure amount is at least $1.00 for Stripe
+    amount = max(1.00, round(amount, 2))
     
     api_key = os.environ.get('STRIPE_API_KEY')
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Stripe no configurado")
+    
     host_url = data.origin_url
     webhook_url = f"{str(request.base_url)}api/webhook/stripe"
     
     stripe_checkout = StripeCheckout(api_key=api_key, webhook_url=webhook_url)
     
-    success_url = f"{host_url}/dashboard?session_id={{CHECKOUT_SESSION_ID}}"
-    cancel_url = f"{host_url}/pricing"
+    success_url = f"{host_url}/subscriptions?session_id={{CHECKOUT_SESSION_ID}}&status=success"
+    cancel_url = f"{host_url}/subscriptions?status=cancelled"
     
     checkout_request = CheckoutSessionRequest(
         amount=float(amount),
@@ -1479,72 +1495,174 @@ async def create_checkout(data: CheckoutRequest, request: Request, current_user:
         success_url=success_url,
         cancel_url=cancel_url,
         metadata={
-            "company_id": current_user.get("company_id"),
-            "user_id": current_user["user_id"],
-            "plan_id": data.plan_id
+            "company_id": company_id,
+            "user_id": user_id,
+            "plan_id": data.plan_id,
+            "plan_name": plan.get("name", data.plan_id),
+            "employee_count": str(employee_count),
+            "base_price": str(base_price),
+            "price_per_employee": str(price_per_employee),
+            "total_amount": str(amount)
         }
     )
     
-    session = await stripe_checkout.create_checkout_session(checkout_request)
+    try:
+        session = await stripe_checkout.create_checkout_session(checkout_request)
+    except Exception as e:
+        logging.error(f"Stripe checkout error: {e}")
+        raise HTTPException(status_code=500, detail="Error al crear sesión de pago")
     
-    # Create payment transaction record
+    # Create payment transaction record BEFORE redirect
+    transaction_id = f"txn_{uuid.uuid4().hex[:12]}"
     await db.payment_transactions.insert_one({
-        "transaction_id": f"txn_{uuid.uuid4().hex[:12]}",
+        "transaction_id": transaction_id,
         "session_id": session.session_id,
-        "company_id": current_user.get("company_id"),
-        "user_id": current_user["user_id"],
+        "company_id": company_id,
+        "user_id": user_id,
         "plan_id": data.plan_id,
+        "plan_name": plan.get("name", data.plan_id),
+        "employee_count": employee_count,
         "amount": amount,
         "currency": "usd",
         "payment_status": "initiated",
         "created_at": datetime.now(timezone.utc).isoformat()
     })
     
-    return {"url": session.url, "session_id": session.session_id}
+    return {"checkout_url": session.url, "session_id": session.session_id}
 
 @api_router.get("/checkout/status/{session_id}")
 async def get_checkout_status(session_id: str, current_user: dict = Depends(get_current_user)):
+    """Poll payment status and update subscription if paid"""
     api_key = os.environ.get('STRIPE_API_KEY')
     stripe_checkout = StripeCheckout(api_key=api_key, webhook_url="")
     
-    status = await stripe_checkout.get_checkout_status(session_id)
-    
-    # Check if already processed
+    # Check if already processed to avoid duplicate processing
     transaction = await db.payment_transactions.find_one(
         {"session_id": session_id},
         {"_id": 0}
     )
     
-    if transaction and transaction.get("payment_status") == "paid":
+    if not transaction:
+        raise HTTPException(status_code=404, detail="Transacción no encontrada")
+    
+    if transaction.get("payment_status") == "paid":
         return {
             "status": "complete",
             "payment_status": "paid",
-            "already_processed": True
+            "already_processed": True,
+            "plan_id": transaction.get("plan_id"),
+            "message": "Pago ya procesado exitosamente"
         }
     
-    # Update transaction status
+    try:
+        status = await stripe_checkout.get_checkout_status(session_id)
+    except Exception as e:
+        logging.error(f"Error checking checkout status: {e}")
+        return {
+            "status": "pending",
+            "payment_status": "pending",
+            "message": "Verificando estado del pago..."
+        }
+    
+    # Process successful payment
     if status.payment_status == "paid":
+        # Update transaction
         await db.payment_transactions.update_one(
             {"session_id": session_id},
-            {"$set": {"payment_status": "paid", "paid_at": datetime.now(timezone.utc).isoformat()}}
+            {"$set": {
+                "payment_status": "paid", 
+                "paid_at": datetime.now(timezone.utc).isoformat(),
+                "stripe_status": status.status
+            }}
         )
         
-        # Update company subscription
-        if transaction:
-            await db.companies.update_one(
-                {"company_id": transaction["company_id"]},
-                {"$set": {"subscription_plan": transaction["plan_id"]}}
-            )
+        # Activate subscription
+        await activate_subscription(
+            company_id=transaction["company_id"],
+            plan_id=transaction["plan_id"],
+            employee_count=transaction.get("employee_count", 1),
+            session_id=session_id
+        )
+        
+        return {
+            "status": "complete",
+            "payment_status": "paid",
+            "plan_id": transaction.get("plan_id"),
+            "message": "¡Pago exitoso! Su suscripción ha sido activada."
+        }
+    
+    # Handle expired sessions
+    if status.status == "expired":
+        await db.payment_transactions.update_one(
+            {"session_id": session_id},
+            {"$set": {"payment_status": "expired"}}
+        )
+        return {
+            "status": "expired",
+            "payment_status": "expired",
+            "message": "La sesión de pago ha expirado. Intente nuevamente."
+        }
     
     return {
         "status": status.status,
         "payment_status": status.payment_status,
         "amount_total": status.amount_total,
-        "currency": status.currency
+        "currency": status.currency,
+        "message": "Procesando pago..."
     }
+
+async def activate_subscription(company_id: str, plan_id: str, employee_count: int, session_id: str):
+    """Activate or upgrade subscription after successful payment"""
+    plan = SUBSCRIPTION_PLANS.get(plan_id)
+    if not plan:
+        logging.error(f"Invalid plan_id: {plan_id}")
+        return
+    
+    now = datetime.now(timezone.utc)
+    period_end = now + timedelta(days=30)
+    
+    # Update company
+    await db.companies.update_one(
+        {"company_id": company_id},
+        {"$set": {
+            "subscription_plan": plan_id,
+            "employee_count": employee_count
+        }}
+    )
+    
+    # Update or create subscription
+    subscription_data = {
+        "plan_id": plan_id,
+        "plan_name": plan.get("name", plan_id),
+        "status": "active",
+        "employee_count": employee_count,
+        "base_price": plan.get("base_price", 0),
+        "employee_price": plan.get("price_per_employee", 0),
+        "total_monthly": plan.get("base_price", 0) + (employee_count * plan.get("price_per_employee", 0)),
+        "billing_cycle": "monthly",
+        "current_period_start": now.isoformat(),
+        "current_period_end": period_end.isoformat(),
+        "last_payment_session": session_id,
+        "updated_at": now.isoformat()
+    }
+    
+    existing_sub = await db.subscriptions.find_one({"company_id": company_id})
+    if existing_sub:
+        await db.subscriptions.update_one(
+            {"company_id": company_id},
+            {"$set": subscription_data}
+        )
+    else:
+        subscription_data["subscription_id"] = f"sub_{uuid.uuid4().hex[:12]}"
+        subscription_data["company_id"] = company_id
+        subscription_data["created_at"] = now.isoformat()
+        await db.subscriptions.insert_one(subscription_data)
+    
+    logging.info(f"Subscription activated: company={company_id}, plan={plan_id}, employees={employee_count}")
 
 @api_router.post("/webhook/stripe")
 async def stripe_webhook(request: Request):
+    """Handle Stripe webhook events"""
     body = await request.body()
     signature = request.headers.get("Stripe-Signature", "")
     
@@ -1554,26 +1672,40 @@ async def stripe_webhook(request: Request):
     try:
         webhook_response = await stripe_checkout.handle_webhook(body, signature)
         
+        logging.info(f"Webhook received: event={webhook_response.event_type}, session={webhook_response.session_id}, status={webhook_response.payment_status}")
+        
         if webhook_response.payment_status == "paid":
-            await db.payment_transactions.update_one(
-                {"session_id": webhook_response.session_id},
-                {"$set": {"payment_status": "paid", "paid_at": datetime.now(timezone.utc).isoformat()}}
-            )
-            
+            # Check if already processed
             transaction = await db.payment_transactions.find_one(
                 {"session_id": webhook_response.session_id},
                 {"_id": 0}
             )
-            if transaction:
-                await db.companies.update_one(
-                    {"company_id": transaction["company_id"]},
-                    {"$set": {"subscription_plan": transaction["plan_id"]}}
+            
+            if transaction and transaction.get("payment_status") != "paid":
+                # Update transaction
+                await db.payment_transactions.update_one(
+                    {"session_id": webhook_response.session_id},
+                    {"$set": {
+                        "payment_status": "paid", 
+                        "paid_at": datetime.now(timezone.utc).isoformat(),
+                        "webhook_event_id": webhook_response.event_id
+                    }}
+                )
+                
+                # Activate subscription
+                await activate_subscription(
+                    company_id=transaction["company_id"],
+                    plan_id=transaction["plan_id"],
+                    employee_count=transaction.get("employee_count", 1),
+                    session_id=webhook_response.session_id
                 )
         
-        return {"status": "ok"}
+        return {"status": "ok", "event_id": webhook_response.event_id}
+    
     except Exception as e:
         logging.error(f"Webhook error: {e}")
-        return {"status": "error"}
+        # Return 200 to prevent Stripe from retrying
+        return {"status": "error", "message": str(e)}
 
 # ===================== DASHBOARD STATS =====================
 
