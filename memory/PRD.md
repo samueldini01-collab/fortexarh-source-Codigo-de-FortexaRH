@@ -150,12 +150,8 @@ DELETE /api/accounting/journal-entries/{id}/with-payroll  - Eliminar + nómina
 
 ## 📋 Pending Features (Backlog)
 
-### P0 - Alta Prioridad (Fase 2)
-- [ ] **Generación de Archivos TSS**:
-  - Archivo de Autodeterminación TSS (formato plant_autodeter_v5.3.xls)
-  - Archivo de Novedades TSS (formato plant_nov_v5.1.xls)
-- [ ] **Formularios Tributarios**: IR-3, IR-4 (basados en imágenes proporcionadas)
-- [ ] Exportación de nómina a PDF
+### P0 - Alta Prioridad
+- [ ] Exportación de nómina a PDF (formato similar al Excel actual)
 
 ### P1 - Media Prioridad
 - [ ] Templates de Nómina Recurrentes
