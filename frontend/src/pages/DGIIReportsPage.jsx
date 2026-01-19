@@ -360,52 +360,61 @@ export default function DGIIReportsPage() {
             <ul className="list-disc list-inside space-y-1 text-blue-700">
               <li><strong>IR-4</strong>: Detalle de empleados que alimenta la declaración IR-3</li>
               <li><strong>IR-3</strong>: Declaración mensual de retenciones de ISR a asalariados</li>
+              <li><strong>IR-13</strong>: Declaración anual que consolida todos los IR-4 del año</li>
               <li>Recuerde presentar el IR-3 antes del día 10 de cada mes</li>
             </ul>
           </div>
         </div>
 
-        {/* Report Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {REPORT_TYPES.map(report => {
-            const Icon = report.icon;
-            const colorClasses = {
-              blue: { bg: 'bg-blue-50', icon: 'text-blue-500', border: 'border-blue-200' },
-              emerald: { bg: 'bg-emerald-50', icon: 'text-emerald-500', border: 'border-emerald-200' },
-              purple: { bg: 'bg-purple-50', icon: 'text-purple-500', border: 'border-purple-200' },
-              amber: { bg: 'bg-amber-50', icon: 'text-amber-500', border: 'border-amber-200' }
-            };
-            const colors = colorClasses[report.color];
-            
-            return (
-              <Card 
-                key={report.id}
-                className={`border-2 ${selectedPeriod ? 'hover:shadow-md transition-shadow' : 'opacity-60'}`}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-4">
-                      <div className={`w-12 h-12 rounded-xl ${colors.bg} flex items-center justify-center`}>
-                        <Icon className={`w-6 h-6 ${colors.icon}`} />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-bold text-lg text-slate-800">{report.name}</h3>
-                          <Badge variant="outline" className="text-xs">Excel</Badge>
+        {/* Tabs for Monthly and Annual Reports */}
+        <Tabs defaultValue="monthly" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 max-w-md">
+            <TabsTrigger value="monthly">Reportes Mensuales</TabsTrigger>
+            <TabsTrigger value="annual">Reporte Anual</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="monthly" className="mt-4">
+            {/* Monthly Report Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {MONTHLY_REPORTS.map(report => {
+                const Icon = report.icon;
+                const colorClasses = {
+                  blue: { bg: 'bg-blue-50', icon: 'text-blue-500', border: 'border-blue-200' },
+                  emerald: { bg: 'bg-emerald-50', icon: 'text-emerald-500', border: 'border-emerald-200' },
+                  purple: { bg: 'bg-purple-50', icon: 'text-purple-500', border: 'border-purple-200' },
+                  amber: { bg: 'bg-amber-50', icon: 'text-amber-500', border: 'border-amber-200' }
+                };
+                const colors = colorClasses[report.color];
+                
+                return (
+                  <Card 
+                    key={report.id}
+                    className={`border-2 ${selectedPeriod ? 'hover:shadow-md transition-shadow' : 'opacity-60'}`}
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start gap-4">
+                          <div className={`w-12 h-12 rounded-xl ${colors.bg} flex items-center justify-center`}>
+                            <Icon className={`w-6 h-6 ${colors.icon}`} />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="font-bold text-lg text-slate-800">{report.name}</h3>
+                              <Badge variant="outline" className="text-xs">Excel</Badge>
+                            </div>
+                            <p className="text-sm font-medium text-slate-700">{report.title}</p>
+                            <p className="text-sm text-slate-500 mt-1">{report.description}</p>
+                          </div>
                         </div>
-                        <p className="text-sm font-medium text-slate-700">{report.title}</p>
-                        <p className="text-sm text-slate-500 mt-1">{report.description}</p>
                       </div>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-4 flex justify-end">
-                    <Button
-                      onClick={() => handleDownload(report.id)}
-                      disabled={!selectedPeriod || downloading === report.id}
-                      className="gap-2"
-                      data-testid={`download-${report.id}`}
-                    >
+                      
+                      <div className="mt-4 flex justify-end">
+                        <Button
+                          onClick={() => handleDownload(report.id)}
+                          disabled={!selectedPeriod || downloading === report.id}
+                          className="gap-2"
+                          data-testid={`download-${report.id}`}
+                        >
                       {downloading === report.id ? (
                         <>
                           <RefreshCw className="w-4 h-4 animate-spin" />
