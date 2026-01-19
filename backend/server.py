@@ -1794,12 +1794,19 @@ async def get_checkout_status(session_id: str, current_user: dict = Depends(get_
             }}
         )
         
+        # Get user info for emails
+        user = await db.users.find_one({"company_id": transaction["company_id"]}, {"_id": 0, "email": 1, "name": 1})
+        user_email = user.get("email") if user else None
+        user_name = user.get("name") if user else None
+        
         # Activate subscription
         await activate_subscription(
             company_id=transaction["company_id"],
             plan_id=transaction["plan_id"],
             employee_count=transaction.get("employee_count", 1),
-            session_id=session_id
+            session_id=session_id,
+            user_email=user_email,
+            user_name=user_name
         )
         
         return {
