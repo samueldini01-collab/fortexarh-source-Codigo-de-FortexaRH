@@ -75,7 +75,7 @@ export default function RegisterPage() {
         <Card className="shadow-lg border-slate-200">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl heading">Crear Cuenta</CardTitle>
-            <CardDescription>Comienza tu prueba gratuita de 14 días</CardDescription>
+            <CardDescription>Comienza tu prueba gratuita de 5 días</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -214,7 +214,7 @@ export default function RegisterPage() {
             <div className="mt-6 space-y-2">
               <div className="flex items-center gap-2 text-sm text-slate-600">
                 <Check className="w-4 h-4 text-emerald-500" />
-                14 días de prueba gratuita
+                5 días de prueba gratuita
               </div>
               <div className="flex items-center gap-2 text-sm text-slate-600">
                 <Check className="w-4 h-4 text-emerald-500" />
