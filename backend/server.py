@@ -1883,33 +1883,40 @@ async def create_checkout(data: CheckoutRequest, request: Request, current_user:
     if not api_key:
         raise HTTPException(status_code=500, detail="Stripe no configurado")
     
+    stripe.api_key = api_key
     host_url = data.origin_url
-    webhook_url = f"{str(request.base_url)}api/webhook/stripe"
-    
-    stripe_checkout = StripeCheckout(api_key=api_key, webhook_url=webhook_url)
     
     success_url = f"{host_url}/subscriptions?session_id={{CHECKOUT_SESSION_ID}}&status=success"
     cancel_url = f"{host_url}/subscriptions?status=cancelled"
     
-    checkout_request = CheckoutSessionRequest(
-        amount=float(amount),
-        currency="usd",
-        success_url=success_url,
-        cancel_url=cancel_url,
-        metadata={
-            "company_id": company_id,
-            "user_id": user_id,
-            "plan_id": data.plan_id,
-            "plan_name": plan.get("name", data.plan_id),
-            "employee_count": str(employee_count),
-            "base_price": str(base_price),
-            "price_per_employee": str(price_per_employee),
-            "total_amount": str(amount)
-        }
-    )
-    
     try:
-        session = await stripe_checkout.create_checkout_session(checkout_request)
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            line_items=[{
+                "price_data": {
+                    "currency": "usd",
+                    "unit_amount": int(amount * 100),  # Stripe uses cents
+                    "product_data": {
+                        "name": plan.get("name", data.plan_id),
+                        "description": f"Suscripción mensual - {employee_count} empleado(s)"
+                    }
+                },
+                "quantity": 1
+            }],
+            mode="payment",
+            success_url=success_url,
+            cancel_url=cancel_url,
+            metadata={
+                "company_id": company_id,
+                "user_id": user_id,
+                "plan_id": data.plan_id,
+                "plan_name": plan.get("name", data.plan_id),
+                "employee_count": str(employee_count),
+                "base_price": str(base_price),
+                "price_per_employee": str(price_per_employee),
+                "total_amount": str(amount)
+            }
+        )
     except Exception as e:
         logging.error(f"Stripe checkout error: {e}")
         raise HTTPException(status_code=500, detail="Error al crear sesión de pago")
@@ -1918,7 +1925,7 @@ async def create_checkout(data: CheckoutRequest, request: Request, current_user:
     transaction_id = f"txn_{uuid.uuid4().hex[:12]}"
     await db.payment_transactions.insert_one({
         "transaction_id": transaction_id,
-        "session_id": session.session_id,
+        "session_id": session.id,
         "company_id": company_id,
         "user_id": user_id,
         "plan_id": data.plan_id,
@@ -1930,7 +1937,7 @@ async def create_checkout(data: CheckoutRequest, request: Request, current_user:
         "created_at": datetime.now(timezone.utc).isoformat()
     })
     
-    return {"checkout_url": session.url, "session_id": session.session_id}
+    return {"checkout_url": session.url, "session_id": session.id}
 
 @api_router.get("/checkout/status/{session_id}")
 async def get_checkout_status(session_id: str, current_user: dict = Depends(get_current_user)):
