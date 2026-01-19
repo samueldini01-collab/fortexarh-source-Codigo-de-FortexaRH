@@ -1452,6 +1452,142 @@ class CheckoutRequest(BaseModel):
     employee_count: int = 1
     origin_url: str
 
+class PublicCheckoutRequest(BaseModel):
+    plan_id: str
+    employee_count: int = 1
+    origin_url: str
+
+# ===================== PUBLIC CHECKOUT (No auth required - Pay first, then register) =====================
+
+@api_router.post("/public/checkout")
+async def create_public_checkout(data: PublicCheckoutRequest, request: Request):
+    """Create Stripe checkout session for NEW users (pay first, register after)"""
+    plan = SUBSCRIPTION_PLANS.get(data.plan_id)
+    if not plan or data.plan_id == "trial":
+        raise HTTPException(status_code=400, detail="Plan inválido")
+    
+    # Validate employee count
+    employee_count = max(1, data.employee_count)
+    if plan.get("max_employees") and plan["max_employees"] != 9999:
+        employee_count = min(employee_count, plan["max_employees"])
+    
+    # Calculate total amount (base + employees)
+    base_price = float(plan.get("base_price", 0))
+    price_per_employee = float(plan.get("price_per_employee", 0))
+    amount = base_price + (employee_count * price_per_employee)
+    
+    # Ensure amount is at least $1.00 for Stripe
+    amount = max(1.00, round(amount, 2))
+    
+    api_key = os.environ.get('STRIPE_API_KEY')
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Stripe no configurado")
+    
+    host_url = data.origin_url
+    webhook_url = f"{str(request.base_url)}api/webhook/stripe"
+    
+    stripe_checkout = StripeCheckout(api_key=api_key, webhook_url=webhook_url)
+    
+    # Redirect to registration page after successful payment
+    success_url = f"{host_url}/register?session_id={{CHECKOUT_SESSION_ID}}&plan={data.plan_id}&employees={employee_count}&payment=success"
+    cancel_url = f"{host_url}/#pricing"
+    
+    # Generate a temporary checkout ID
+    checkout_id = f"pchk_{uuid.uuid4().hex[:12]}"
+    
+    checkout_request = CheckoutSessionRequest(
+        amount=float(amount),
+        currency="usd",
+        success_url=success_url,
+        cancel_url=cancel_url,
+        metadata={
+            "checkout_id": checkout_id,
+            "plan_id": data.plan_id,
+            "plan_name": plan.get("name", data.plan_id),
+            "employee_count": str(employee_count),
+            "base_price": str(base_price),
+            "price_per_employee": str(price_per_employee),
+            "total_amount": str(amount),
+            "type": "new_registration"
+        }
+    )
+    
+    try:
+        session = await stripe_checkout.create_checkout_session(checkout_request)
+    except Exception as e:
+        logging.error(f"Stripe checkout error: {e}")
+        raise HTTPException(status_code=500, detail="Error al crear sesión de pago")
+    
+    # Create pending checkout record (not linked to user yet)
+    await db.pending_checkouts.insert_one({
+        "checkout_id": checkout_id,
+        "session_id": session.session_id,
+        "plan_id": data.plan_id,
+        "plan_name": plan.get("name", data.plan_id),
+        "employee_count": employee_count,
+        "amount": amount,
+        "currency": "usd",
+        "payment_status": "pending",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "expires_at": (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat()
+    })
+    
+    return {"checkout_url": session.url, "session_id": session.session_id}
+
+@api_router.get("/public/checkout/verify/{session_id}")
+async def verify_public_checkout(session_id: str):
+    """Verify a public checkout payment status (no auth required)"""
+    api_key = os.environ.get('STRIPE_API_KEY')
+    stripe_checkout = StripeCheckout(api_key=api_key, webhook_url="")
+    
+    # Check pending checkout record
+    pending = await db.pending_checkouts.find_one(
+        {"session_id": session_id},
+        {"_id": 0}
+    )
+    
+    if not pending:
+        raise HTTPException(status_code=404, detail="Sesión de pago no encontrada")
+    
+    # If already used for registration
+    if pending.get("used_for_registration"):
+        raise HTTPException(status_code=400, detail="Este pago ya fue utilizado para crear una cuenta")
+    
+    try:
+        status = await stripe_checkout.get_checkout_status(session_id)
+    except Exception as e:
+        logging.error(f"Error checking checkout status: {e}")
+        return {
+            "valid": False,
+            "payment_status": "pending",
+            "message": "Verificando estado del pago..."
+        }
+    
+    if status.payment_status == "paid":
+        # Update pending checkout
+        await db.pending_checkouts.update_one(
+            {"session_id": session_id},
+            {"$set": {"payment_status": "paid", "paid_at": datetime.now(timezone.utc).isoformat()}}
+        )
+        
+        return {
+            "valid": True,
+            "payment_status": "paid",
+            "plan_id": pending.get("plan_id"),
+            "plan_name": pending.get("plan_name"),
+            "employee_count": pending.get("employee_count"),
+            "amount": pending.get("amount"),
+            "message": "Pago verificado. Puede proceder a crear su cuenta."
+        }
+    
+    return {
+        "valid": False,
+        "payment_status": status.payment_status,
+        "message": "El pago aún no ha sido completado."
+    }
+
+# ===================== AUTHENTICATED CHECKOUT =====================
+
 @api_router.post("/checkout")
 async def create_checkout(data: CheckoutRequest, request: Request, current_user: dict = Depends(get_current_user)):
     """Create Stripe checkout session for subscription payment"""
