@@ -262,7 +262,34 @@ export default function PayrollV2Page() {
         { headers: getAuthHeaders(), withCredentials: true }
       );
       toast.success(`Nómina pagada. Asiento #${response.data.entry_number} generado.`);
+      
+      // Generate and download bank file if selected
+      if (generateBankFile && selectedPaymentBank) {
+        try {
+          const bankResponse = await axios.get(
+            `${API}/bank-files/generate/${selectedPeriod.period_id}/${selectedPaymentBank}`,
+            { headers: getAuthHeaders(), withCredentials: true, responseType: 'blob' }
+          );
+          
+          const bank = paymentBanks.find(b => b.id === selectedPaymentBank);
+          const ext = bank?.format === 'CSV' ? 'csv' : 'txt';
+          const blob = new Blob([bankResponse.data]);
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `nomina_${selectedPaymentBank}_${selectedPeriod.period_id}.${ext}`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          toast.success(`Archivo bancario ${bank?.name} descargado`);
+        } catch (bankError) {
+          toast.error("Error al generar archivo bancario");
+        }
+      }
+      
       setShowPayDialog(false);
+      setSelectedPaymentBank("");
       fetchPeriods();
     } catch (error) {
       toast.error(error.response?.data?.detail || "Error");
