@@ -52,13 +52,20 @@ import { toast } from "sonner";
 
 const departments = ["Administración", "Ventas", "Marketing", "TI", "Recursos Humanos", "Finanzas", "Operaciones", "Legal", "Producción", "Logística"];
 const documentTypes = ["Cédula", "Pasaporte", "Residencia"];
-const genders = ["Masculino", "Femenino", "Otro"];
+const genders = ["Masculino", "Femenino"];
 const maritalStatuses = ["Soltero/a", "Casado/a", "Divorciado/a", "Viudo/a", "Unión Libre"];
 const contractTypes = ["Indefinido", "Temporal", "Por Obra", "Pasantía", "Medio Tiempo"];
 const paymentMethods = ["Transferencia Bancaria", "Cheque", "Efectivo"];
 const paymentFrequencies = ["Quincenal", "Mensual", "Semanal"];
 const deductionTypes = ["Préstamo Empresa", "Préstamo Cooperativa", "Seguro Adicional", "Pensión Alimenticia", "Embargo", "Otro"];
 const relationshipTypes = ["Esposo/a", "Padre", "Madre", "Hijo/a", "Hermano/a", "Amigo/a", "Otro"];
+const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+const countries = [
+  "República Dominicana", "Estados Unidos", "España", "México", "Colombia", "Venezuela", "Argentina", "Chile", 
+  "Perú", "Ecuador", "Cuba", "Puerto Rico", "Haití", "Brasil", "Panamá", "Costa Rica", "Guatemala", 
+  "Honduras", "El Salvador", "Nicaragua", "Paraguay", "Uruguay", "Bolivia", "Canadá", "Francia", 
+  "Alemania", "Italia", "Reino Unido", "Portugal", "China", "Japón", "Corea del Sur", "India", "Otro"
+];
 
 const initialFormData = {
   // Datos Principales
@@ -67,12 +74,15 @@ const initialFormData = {
   email: "",
   phone: "",
   whatsapp: "",
-  nationality: "Dominicana",
+  nationality: "República Dominicana",
   document_type: "Cédula",
   document_number: "",
   gender: "",
   birth_date: "",
   marital_status: "Soltero/a",
+  blood_type: "",
+  weight: "",
+  height: "",
   status: "active",
   address: "",
   city: "Santo Domingo",
