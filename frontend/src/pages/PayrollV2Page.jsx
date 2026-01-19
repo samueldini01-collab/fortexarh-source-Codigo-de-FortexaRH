@@ -198,7 +198,11 @@ export default function PayrollV2Page() {
 
   const handleCreatePeriod = async () => {
     try {
-      await axios.post(`${API}/payroll-v2/periods`, newPeriodForm, { headers: getAuthHeaders(), withCredentials: true });
+      const dataToSend = {
+        ...newPeriodForm,
+        department_filter: newPeriodForm.department_filter === "all" ? null : newPeriodForm.department_filter
+      };
+      await axios.post(`${API}/payroll-v2/periods`, dataToSend, { headers: getAuthHeaders(), withCredentials: true });
       toast.success("Período creado correctamente");
       setShowNewPeriod(false);
       fetchPeriods();
