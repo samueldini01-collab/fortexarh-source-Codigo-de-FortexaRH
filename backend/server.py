@@ -2688,9 +2688,9 @@ async def create_payroll_period(data: PayrollPeriodCreateV2, current_user: dict 
     company_id = current_user.get("company_id")
     
     # Determinar tipo de nómina
-    payroll_type = getattr(data, 'payroll_type', 'REG')
-    department_filter = getattr(data, 'department_filter', None)
-    employee_ids = getattr(data, 'employee_ids', None)
+    payroll_type = data.payroll_type or 'REG'
+    department_filter = data.department_filter
+    employee_ids = data.employee_ids
     
     period_id = f"period_{uuid.uuid4().hex[:12]}"
     period = {
