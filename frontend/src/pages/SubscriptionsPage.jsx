@@ -534,6 +534,61 @@ export default function SubscriptionsPage() {
           </CardContent>
         </Card>
 
+        {/* Invoice History */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Receipt className="w-5 h-5" />
+                  Historial de Facturas
+                </CardTitle>
+                <CardDescription>Registro de todos tus pagos</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {invoices.length === 0 ? (
+              <div className="text-center py-8 text-slate-500">
+                <FileText className="w-12 h-12 mx-auto text-slate-300 mb-3" />
+                <p>No hay facturas disponibles</p>
+                <p className="text-sm">Las facturas aparecerán aquí después de realizar un pago</p>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Factura</TableHead>
+                    <TableHead>Fecha</TableHead>
+                    <TableHead>Plan</TableHead>
+                    <TableHead>Empleados</TableHead>
+                    <TableHead className="text-right">Total</TableHead>
+                    <TableHead>Estado</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {invoices.map((invoice) => (
+                    <TableRow key={invoice.invoice_id}>
+                      <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
+                      <TableCell>{invoice.paid_at || formatDate(invoice.created_at)}</TableCell>
+                      <TableCell>{invoice.plan_name}</TableCell>
+                      <TableCell>{invoice.employee_count}</TableCell>
+                      <TableCell className="text-right font-semibold text-emerald-600">
+                        {formatCurrency(invoice.total)}
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={invoice.status === 'paid' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}>
+                          {invoice.status === 'paid' ? 'Pagada' : 'Pendiente'}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Change Plan Dialog - Shows all plans */}
         <Dialog open={showChangePlan} onOpenChange={setShowChangePlan}>
           <DialogContent className="max-w-3xl">
