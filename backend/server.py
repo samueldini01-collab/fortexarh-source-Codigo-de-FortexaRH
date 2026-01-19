@@ -30,6 +30,11 @@ stripe.api_key = _stripe_key
 # Import email service
 from email_service import send_payment_confirmation_email, send_welcome_email, send_invoice_email
 
+# Import modular routers
+from routes.loans import router as loans_router, init_router as init_loans_router
+from routes.subscriptions import router as subscriptions_router, init_router as init_subscriptions_router
+from routes.roles import router as roles_router, init_router as init_roles_router
+
 # MongoDB connection with production-ready settings
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(
