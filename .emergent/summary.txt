@@ -23,7 +23,7 @@ The user wants to create a SaaS (Software as a Service) Human Resources and payr
     - Advanced payroll processing ().
     - Automatic, synchronized generation of journal entries in the Accounting module.
 - **Compliance & Reporting:**
-    - Generation of Dominican Republic-specific files: TSS (, ) and tax forms (IR-3, IR-17).
+    - Generation of Dominican Republic-specific files: TSS (, ) and tax forms (IR-3, IR-17). This session added IR-4 and IR-13.
 - **Company & UI Customization:**
     - A configuration module to update company info, logo, and brand colors.
     - A feature to customize the main navigation menu.
@@ -38,85 +38,86 @@ The user wants to create a SaaS (Software as a Service) Human Resources and payr
 **User's preferred language**: Spanish (Español)
 
 **what currently exists?**
-The project is a full-stack FastAPI/React application. Previous work established a solid foundation with modules for advanced payroll, compliance file generation, an organization chart, and company/UI customization.
-
-This session focused on making the application production-ready by implementing the core monetization and user onboarding flows. A critical deployment blocker was fixed by adding a  endpoint and refactoring the backend startup sequence. The subscription model was overhauled to a Pay First, Register Later system, where users complete a Stripe payment before creating an account. The application is now fully integrated with **live production keys** for both Stripe (payments) and Resend (transactional emails). The UI for subscription management and the landing page were enhanced, and legal pages (Terms, Privacy) were added. The agent has repeatedly guided the user on how to use the platform's Deploy button to push the application to production.
+The application is a full-stack FastAPI/React system with a Pay First, Register Later user flow using live Stripe and Resend keys. This session added several key features: PDF invoice downloads, a complete UI and backend for custom role management, and generation of Dominican Republic tax forms IR-4 and IR-13. A critical production deployment issue was diagnosed and resolved; the system was incorrectly using Stripe's test keys in production due to a proxy layer, which was fixed by switching to the direct Stripe SDK and implementing a robust fallback to ensure production keys are always used. The agent also began scaffolding modules for subscription cancellation and employee loans.
 
 **Last working item**:
-- **Last item agent was working:** The agent received and configured a new production Stripe Secret Key from the user. After updating the  file and restarting the backend, the agent verified the key was active and confirmed the system was ready for deployment. The user's primary pending action is to initiate the deployment.
-- **Status:** USER VERIFICATION PENDING
-- **Agent Testing Done:** Y
-- **Which testing method agent to use?** NA
+- **Last item agent was working:** The agent was in the initial phase of building two features simultaneously: **Subscription Cancellation** and the **Employee Loans Module**. It had already added the backend API endpoints for both features directly into the monolithic  file and created a basic placeholder page () for the loans module on the frontend.
+- **Status:** IN PROGRESS
+- **Agent Testing Done:** N
+- **Which testing method agent to use?** both (The new features will require both backend and frontend testing once completed).
 - **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
-- **Issue 1:** The  file is a monolith and continues to grow, increasing technical debt and making maintenance difficult. (Priority: P1)
-- **Issue 2:** The frontend code has  ESLint warnings that have not been addressed. (Priority: P2)
+- **Issue 1:** Monolithic  file (Priority: P1)
+- **Issue 2:** Unresolved frontend ESLint warnings (Priority: P2)
 
 **Issues Detail:**
-- **Issue 1: Monolithic **
-    - **Attempted fixes:** The agent identified and removed some duplicated code blocks within the file but continued to add new, complex logic (public checkout, webhooks, invoice history) directly to it instead of creating separate router files.
-    - **Next debug checklist:** Plan and execute a refactor to move API endpoints into a structured  directory, organized by feature (e.g., , ).
-    - **Why fix this issue and what will be achieved with the fix?** Refactoring will improve code organization, reduce complexity, prevent bugs from conflicting code, and make the application scalable and easier to maintain.
+- **Issue 1:**
+    - **Attempted fixes:** The agent created a  and  directory structure but abandoned this approach. It then proceeded to add all new features from this session (PDF generation, custom roles, DGII reports, subscription cancellation, loans) directly into , significantly increasing its size and complexity.
+    - **Next debug checklist:**
+        1. Create new router files in  for the features currently being built (e.g., , ).
+        2. Move the newly created endpoint logic from  into these respective router files.
+        3. Import and include these new routers in the main  file.
+        4. Plan the incremental migration of other functionalities (e.g., roles, DGII reports) out of .
+    - **Why fix this issue and what will be achieved with the fix?** The  file is over 6,000 lines and is becoming unmaintainable. Refactoring is critical for scalability, stability, and ease of future development.
     - **Status:** NOT STARTED
     - **Is recurring issue?** Y
     - **Should Test frontend/backend/both after fix?** backend
-    - **Blocked on other issue:** None.
-- **Issue 2: ESLint Warnings**
-    - **Attempted fixes:** None.
+- **Issue 2:**
+    - **Attempted fixes:** The agent ran the linter and identified  warnings but dismissed them as non-critical and did not apply fixes.
     - **Next debug checklist:**
-        1. Navigate to .
+        1. Navigate to the  directory.
         2. Run yarn run v1.22.22
-info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command..
-        3. Manually review any remaining warnings and apply the suggested fixes to ensure correct dependency management in React hooks.
-    - **Why fix this issue and what will be achieved with the fix?** Fixes potential bugs related to stale state and improves code quality.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command. to auto-correct what is possible.
+        3. Manually review the dependency arrays for  and  hooks in  and  to resolve the remaining warnings.
+    - **Why fix this issue and what will be achieved with the fix?** Resolving these warnings prevents subtle bugs related to stale state and incorrect component re-renders.
     - **Status:** NOT STARTED
     - **Is recurring issue?** Y
     - **Should Test frontend/backend/both after fix?** frontend
-    - **Blocked on other issue:** None.
 
 **In progress Task List**:
-- None
+- **Task 1: Complete Subscription Cancellation Flow (P0)**
+    - **Where to resume:** Backend endpoints are defined in . The frontend  needs to be updated to add a cancellation button and implement the UI for the retention flow (offering a discount) and an exit survey.
+    - **What will be achieved with this?** A critical self-service feature for a SaaS product, allowing users to manage their subscriptions and providing valuable churn feedback.
+    - **Status:** IN PROGRESS
+    - **Should Test frontend/backend/both after fix?** both
+- **Task 2: Complete Employee Loans Module (P1)**
+    - **Where to resume:** Backend endpoints and data models are defined in . The  file is a placeholder and needs a full UI for creating, viewing, and managing loans. A link must be added to the  sidebar. The payroll calculation logic must also be updated to automatically handle loan deductions.
+    - **What will be achieved with this?** Implements a core HR feature requested by the user, adding significant value to the platform.
+    - **Status:** IN PROGRESS
+    - **Should Test frontend/backend/both after fix?** both
 
 **Upcoming and Future Tasks**
-- **Upcoming Tasks:**
-    - **P0: User-Initiated Deployment:** The user needs to deploy the application to their custom domain () using the platform's Deploy button. The agent should be prepared to assist with any deployment errors.
-    - **P1: Implement Subscription Cancellation:** Add UI and backend logic to allow users to cancel their Stripe subscription from the .
-    - **P1: Enhance Invoice History:** Implement functionality to view/download PDF invoices for past payments.
-    - **P1: Implement Custom Roles:** Build the UI and backend logic for the Create Custom Roles sub-module (Enterprise plan only).
-    - **P2: Generate DGII Tax Forms:** Implement the logic for generating IR-3 and IR-17 reports.
-- **Future Tasks:**
-    - **P2: Refactor **.
-    - **P2: Enterprise Integrations:** Implement integrations with QuickBooks, SAP, Oracle, etc.
+- **Upcoming Tasks (Approved by User):**
+    - **P1: Automated Notifications & Reminders:** Implement email notifications for payroll payment dates, DGII deadlines, and employee contract expirations.
+    - **P1: Advanced Metrics Dashboard:** Create a dashboard with charts for payroll trends, employee turnover, and cost per employee.
+    - **P2: Bank File Generation:** Implement functionality to generate payroll payment files for major Dominican banks (Popular, BHD, Reservas).
+- **Future Tasks (Backlog):**
+    - **P2: Refactor **. (Also a high-priority pending issue).
+    - **P2: Enterprise Integrations:** QuickBooks (deferred by user), SAP, Oracle, Dynamics.
     - **P2: Employee Self-Service Portal.**
     - **P2: Custom Document & Letter Generation.**
+    - **P3: Add IR-13 (Annual Summary) Notification:** Implement a notification to remind users to file the IR-13.
 
 **Completed work in this session**
-- **Deployment Readiness:** Resolved a critical deployment error by adding a  endpoint and reorganizing 's startup logic.
-- **Pay First, Register Later Flow:** Implemented a full pre-payment user onboarding journey, including a new  page.
-- **Stripe Production Integration:** Successfully configured live Stripe keys (Publishable, Secret, Webhook Secret) and implemented a secure webhook handler with signature verification.
-- **Resend Email Integration:** Configured Resend with a live API key and implemented automated welcome and payment confirmation emails via a new  module.
-- **Subscription Model Update:** Changed the registration from a free plan to a 5-day restricted trial.
-- **Subscription UI Overhaul:** Rewrote  to fix multiple bugs and add a new Invoice History section.
-- **Landing Page Enhancements:** Added a Contact section, Terms of Service and Privacy Policy pages, a custom favicon, and a Contact link in the main navigation.
-- **Code Cleanup:** Identified and removed duplicated endpoints () and data models (, ) from the monolithic .
-- **Testing:** Successfully ran a comprehensive test suite () covering the new subscription and registration logic.
+- **Feature: PDF Invoice Downloads:** Added backend logic with  and a download button on the .
+- **Feature: Custom Roles Management:** Implemented full backend CRUD endpoints and a new  on the frontend for role management.
+- **Feature: DGII Tax Form Generation:** Implemented backend logic and frontend UI to generate and download IR-4 (monthly detail) and IR-13 (annual summary) reports.
+- **Bugfix (Critical): Resolved Production Payment Issue:**
+    - Diagnosed and fixed an issue causing Stripe to operate in Test Mode in the production deployment.
+    - Replaced the  library with the direct  SDK to bypass a proxy layer.
+    - Implemented a fallback in the code to enforce the use of the live Stripe key, making the configuration more robust.
+- **Bugfix (Critical): Resolved Deployment Timeout:**
+    - Fixed a deployment failure by making the  endpoint independent of the database.
+    - Added FastAPI / events for improved database connection management.
+- **Testing:** Successfully used the testing agent to validate the PDF invoice, custom roles, and DGII report features (, , ).
 
 **Earlier issues found/mentioned but not fixed**
-- **Issue 1: ESLint Warnings in Frontend**
-    - **Debug checklist:** Run yarn run v1.22.22
-info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command. in the  directory.
-    - **Why to solve this issue and what will be achieved with this?** Improves code quality and prevents potential state-related bugs in React components.
-    - **Should Test frontend/backend/both after fix:** frontend
-    - **Is recurring issue?** Y
-- **Issue 2:  Monolith**
-    - **Debug checklist:** Break down  into a router-based architecture.
-    - **Why to solve this issue and what will be achieved with this?** Crucial for long-term maintainability and scalability.
-    - **Should Test frontend/backend/both after fix:** backend
-    - **Is recurring issue?** Y
+- **Issue 1: Monolithic :** This issue was identified in the previous session and was exacerbated in this one as more features were added to the same file.
+- **Issue 2: ESLint Warnings in Frontend:** These warnings were identified in the previous session and were ignored again in this one.
 
 **Known issue recurrence from previous fork**
-- None.
+- The technical debt from the monolithic  and the frontend ESLint warnings are both recurring issues from the previous session.
 
 **Code Architecture**
 
@@ -124,87 +125,81 @@ info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this comm
 **Key Technical Concepts**
 - **Backend:** FastAPI, MongoDB (), Pydantic.
 - **Frontend:** React, React Router, Tailwind CSS, Shadcn/UI.
-- **Payments:** **Stripe (Production)** for checkout sessions and webhook handling with signature verification.
-- **Email:** **Resend** for transactional emails (welcome, payment confirmation).
-- **Deployment:** A  endpoint has been added for Kubernetes health checks.
+- **PDF Generation:**  library.
+- **Payments:** Direct  Python SDK (migrated away from ).
+- **Deployment:** FastAPI / events for robust production database connections.
 
 **key DB schema**
-- **Subscription:** { , , ,  }
-- **User:** { , , ,  }
-- **transactions:** { , , , , ,  } (NEW)
-- **invoices:** { , , , ,  } (NEW)
+- **loans:** { , , , , , , , : [...] } (NEW)
 
 **changes in tech stack**
-- **Backend:**  library added to .
+- **Backend:**  dependency added for PDF generation. The application now uses the official  Python SDK directly, moving away from .
 
 **All files of reference**
 - **Created:**
-    - : Handles all email sending logic via Resend.
-    - : Page for selecting plan options before payment.
-    - : Legal terms page.
-    - : Legal privacy policy page.
-    - : Brand favicon.
+    - 
+    - 
+    - 
 - **Updated/Rewritten:**
-    - : Heavily modified to add the  endpoint, public checkout, Stripe webhook with signature verification, Resend email triggers, invoice history, and cleanup of duplicate code.
-    - : Updated with production keys for Stripe and Resend.
-    - : Completely rewritten to fix UI bugs, fetch data correctly, and display invoice history.
-    - : Updated to link Buy Plan buttons to  and added a new contact section and footer.
-    - : Modified to handle registration after a successful payment, using a .
-    - : Added routes for , ,  and updated the  to support the new registration flow.
-    - : Enhanced to apply feature restrictions based on the user's subscription status.
+    - : Heavily modified to add endpoints for PDF invoices, custom roles, DGII reports (IR-4, IR-13), subscription cancellation, employee loans, and a critical fix to use the Stripe SDK directly. Size has grown significantly.
+    - : Updated with logic to generate IR-4 and IR-13 Excel files.
+    - : Updated to include a Download PDF button for invoices.
+    - : Added routes for the new  and .
+    - : Added sidebar links for the new pages.
 
 **Areas that need refactoring**:
--  is the highest priority. The agent added significant logic for payments, webhooks, and emails directly into this file, making it more unmanageable. It must be broken down into a proper router-based architecture.
+- ** is the highest priority.** It is now dangerously large and complex. The agent's attempt to start refactoring was abandoned, making the problem worse. All new backend development should be done in separate, dedicated router files.
 
 **key api endpoints**
--  (GET): New health check for Kubernetes.
--  (POST): New endpoint to create a Stripe session for unauthenticated users.
--  (GET): New endpoint to check the status of a payment before account creation.
--  (POST): Updated to use a webhook secret for signature verification.
--  (POST): Updated to accept an optional  to link a new user to a completed payment.
--  (GET): New endpoint to fetch a user's invoice history.
+-  (GET): Download an invoice as a PDF.
+- ,  (GET, POST, PUT, DELETE): CRUD endpoints for custom roles.
+-  (GET): Download the IR-4 report.
+-  (GET): Download the IR-13 annual report.
+-  (GET): Debug endpoint to check the production configuration status (e.g., Stripe mode).
+-  (POST): Initiates subscription cancellation.
+-  (GET, POST): CRUD endpoints for employee loans.
 
 **Critical Info for New Agent**
-- **LIVE KEYS ARE CONFIGURED:** The application is using **production** keys for Stripe and Resend. Exercise extreme caution. Do not trigger real payments unless necessary for testing.
-- **USER GOAL IS DEPLOYMENT:** The user's primary objective now is to deploy the application to . Your first task will likely be to support this process. The agent has already fixed the known deployment blockers ( endpoint).
-- **NEW ONBOARDING FLOW:** The user registration process has fundamentally changed to a Pay First, Register Later model. Understand this flow before making any changes to authentication or subscription logic.
-- **REFACTOR SERVER.PY:** Do not add any more logic to . Any new backend development must start with creating new router files in a  directory to begin chipping away at the monolith.
+- **Stripe Production Issue is Resolved:** A critical bug causing Stripe to run in Test Mode in production has been fixed by switching to the direct Stripe SDK and ensuring the live key is used. The user has confirmed the environment variable is now set correctly. Be aware of this history if any payment-related issues arise.
+- **User-Approved Roadmap:** The user has selected a clear set of high-priority features to implement next: Subscription Cancellation, Automated Notifications, an Advanced Metrics Dashboard, Bank File Generation, and an Employee Loans module. The first two have been started.
+- **Refactor  Urgently:** Do not add any more logic to . Resume the refactoring effort immediately by moving the newly added loan and subscription endpoints into separate router files before continuing their implementation. This technical debt is the biggest risk to the project's stability.
 
 **documents and test reports created in this job**
 - 
 - 
+- 
+- 
 
 **Last 10 User Messages and any pending HUMAN messages**
-10. **User:** Asks to configure Resend for confirmation emails. (Status: **RESOLVED**)
-9. **Agent:** Asks for Resend API key and sender email. (Status: **RESOLVED**)
-8. **User:** Provides Resend API key and sender emails. (Status: **RESOLVED**)
-7. **Agent:** Implements Resend integration for welcome and payment confirmation emails. (Status: **RESOLVED**)
-6. **User:** Asks if the app is ready for deployment. (Status: **RESOLVED**)
-5. **Agent:** Confirms the app is ready and guides the user on how to use the Deploy button. (Status: **RESOLVED**)
-4. **User:** Provides a new Stripe Secret Key. (Status: **RESOLVED**)
-3. **Agent:** Updates the  file with the new key, restarts the backend, and confirms readiness for deployment. (Status: **RESOLVED**)
-2. **User:** Asks the agent to deploy to . (Status: **RESOLVED**)
-1. **Agent:** Explains that deployment must be initiated by the user via the Deploy button in the UI and reiterates the steps. (Status: **PENDING USER ACTION**)
+10. **User:** Which improvements do you recommend for the system? (Status: **RESOLVED**)
+9. **Agent:** Provided a detailed list of potential improvements, categorized by priority. (Status: **RESOLVED**)
+8. **User:** Selected 5 high-priority improvements to implement now. (Status: **RESOLVED**)
+7. **Agent:** Created a phased plan to implement the requested features and asked for confirmation. (Status: **RESOLVED**)
+6. **User:** leave it for later (in response to implementing QuickBooks integration now). (Status: **RESOLVED**)
+5. **Agent:** Acknowledged the user's choice and started Phase 1: Subscription Cancellation. (Status: **IN PROGRESS**)
+4. ... (Agent continues implementation of multiple features) ...
+3. ... (User reports deployment/payment issues, agent debugs and resolves them) ...
+2. **User:** Confirms that the Stripe  key has been added to the environment variables. (Status: **RESOLVED**)
+1. **Agent:** Confirmed the configuration is now correct and asked the user to verify the deployment. (Status: **PENDING USER VERIFICATION**)
 
 **Project Health Check:**
 - **Broken:** None.
-- **Mocked:** The Enterprise integrations (QuickBooks, SAP, Oracle) remain placeholders. The invoice history feature is basic (lacks PDF download). The subscription cancellation flow is not implemented.
+- **Mocked:** The Enterprise integrations (QuickBooks, SAP, Oracle) remain placeholders. The newly started modules for Loans and Automated Notifications are not yet functional.
 
 **3rd Party Integrations**
-- **Stripe (Payments):** ✅ **PRODUCTION KEYS CONFIGURED.** Used for the Pay First checkout flow and webhook-driven subscription activation.
-- **Resend (Email):** ✅ **PRODUCTION KEY CONFIGURED.** Used for sending welcome and payment confirmation emails.
-- **Emergent-managed Google Auth (Authentication):** Integrated for social login.
-- **QuickBooks Online, SAP, Oracle, Dynamics:** Implementation pending.
+- **Stripe (Payments):** ✅ **PRODUCTION KEYS CONFIGURED & VERIFIED.** Now uses the direct  Python SDK.
+- **Resend (Email):** ✅ **PRODUCTION KEY CONFIGURED.**
+- **Emergent-managed Google Auth (Authentication):** Integrated.
 
 **Testing status**
-- **Testing agent used after significant changes:** YES ( was created and passed for the new subscription flow).
+- **Testing agent used after significant changes:** YES (Used for PDF invoices, custom roles, and DGII reports).
 - **Troubleshoot agent used after agent stuck in loop:** NO
-- **Test files created:**  (created by testing agent).
+- **Test files created:** Test files were generated by the testing agent in .
 - **Known regressions:** None.
 
 **Credentials to test flow:**
-To test authenticated routes, first complete the checkout flow via the landing page to create a payment session. For testing without real payment, you can manually create a user and subscription in the database or adapt the existing test user flow. The agent created  with a token that can be used for authenticated endpoint testing.
+Use the standard checkout flow starting from the landing page to create a test user. The user  may also exist from previous sessions.
 
 **What agent forgot to execute**
-- The recurring ESLint warnings () in the frontend were not addressed.
-- The agent did not begin refactoring the  monolith, instead adding more logic to it.</analysis>
+- **Refactor :** The agent started to create a router structure but abandoned it and continued to add over a thousand lines of new code to the monolithic file, significantly worsening the technical debt.
+- **Fix ESLint warnings:** The agent identified but ignored  warnings in the frontend code.</analysis>
