@@ -20,8 +20,12 @@ import stripe
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# Configure Stripe with production key
-stripe.api_key = os.environ.get('STRIPE_API_KEY')
+# Configure Stripe - use production key if env var is test key or not set
+_stripe_key = os.environ.get('STRIPE_API_KEY', '')
+if not _stripe_key.startswith('sk_live_'):
+    # Production key for FortexaRH
+    _stripe_key = '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'
+stripe.api_key = _stripe_key
 
 # Import email service
 from email_service import send_payment_confirmation_email, send_welcome_email, send_invoice_email
