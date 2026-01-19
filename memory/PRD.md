@@ -121,6 +121,18 @@ DELETE /api/accounting/journal-entries/{id}/with-payroll  - Eliminar + nómina
 
 ---
 
+## ✅ P1/P2 - Templates, Moneda y Dashboard (Completado - Enero 2026)
+- [x] **Templates de Nómina**: CRUD completo para guardar configuraciones recurrentes
+- [x] **Proyectos**: Agrupar empleados por proyecto con presupuesto
+- [x] **Configuración de Moneda**: DOP + USD con tasa de cambio configurable
+- [x] **Dashboard Avanzado de Nómina**:
+  - Tarjetas de resumen (empleados, pagado YTD, salario promedio)
+  - Gráfico de tendencia mensual (bruto vs neto)
+  - Distribución por departamento (pie chart)
+  - Costo empleador vs neto (bar chart con desglose TSS)
+  - Top 10 salarios
+  - Sistema de alertas (nóminas pendientes, datos incompletos)
+
 ## ✅ Fase 2 - Archivos TSS y Reportes DGII (Completado - Enero 2026)
 - [x] **TSS Autodeterminación (v5.3)**: Descarga Excel con formato oficial TSS
   - Datos de empleados: cédula, nombres, salario cotizable, ISR
