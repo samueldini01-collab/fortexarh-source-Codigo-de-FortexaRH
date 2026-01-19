@@ -3261,11 +3261,11 @@ async def generate_period_journal_entry(period_id: str, current_user: dict, is_r
             "credit": totals["additional_deductions"]
         })
     
-    # Crédito a Banco por el neto pagado
+    # Crédito a Banco por el neto pagado (usando la cuenta seleccionada)
     if totals["net_salary"] > 0:
         lines.append({
-            "account_code": "1101",
-            "account_name": "Banco - Cuenta Nómina",
+            "account_code": bank_account_code,
+            "account_name": bank_account_name,
             "description": "Pago neto a empleados",
             "debit": 0,
             "credit": totals["net_salary"]
