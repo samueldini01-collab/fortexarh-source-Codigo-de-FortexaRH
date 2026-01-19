@@ -78,7 +78,8 @@ export default function LandingPage() {
             </Link>
             <nav className="hidden md:flex items-center gap-8">
               <a href="#features" className="text-slate-600 hover:text-slate-900 transition-colors">Características</a>
-              <Link to="/pricing" className="text-slate-600 hover:text-slate-900 transition-colors">Precios</Link>
+              <a href="#pricing" className="text-slate-600 hover:text-slate-900 transition-colors">Precios</a>
+              <a href="#contact" className="text-slate-600 hover:text-slate-900 transition-colors">Contacto</a>
             </nav>
             <div className="flex items-center gap-3">
               <Link to="/login">
