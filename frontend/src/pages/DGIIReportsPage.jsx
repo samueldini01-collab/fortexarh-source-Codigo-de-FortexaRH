@@ -71,6 +71,7 @@ export default function DGIIReportsPage() {
   
   useEffect(() => {
     fetchPeriods();
+    fetchAvailableYears();
   }, []);
 
   useEffect(() => {
