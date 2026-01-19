@@ -220,7 +220,8 @@ async def create_custom_role(data: CustomRoleCreate, current_user: dict = Depend
     await db.custom_roles.insert_one(role)
     
     # Return without _id
-    del role["_id"] if "_id" in role else None
+    if "_id" in role:
+        del role["_id"]
     
     return {
         "role_id": role_id, 
