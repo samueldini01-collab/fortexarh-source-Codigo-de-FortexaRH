@@ -3015,6 +3015,326 @@ async def delete_payroll_entry(entry_id: str, current_user: dict = Depends(get_c
     
     return {"message": "Entrada eliminada correctamente"}
 
+# ===================== NOVEDADES DE NÓMINA =====================
+
+@api_router.get("/payroll-v2/novelty-types")
+async def get_novelty_types(current_user: dict = Depends(get_current_user)):
+    """Obtener tipos de novedades disponibles"""
+    return PAYROLL_NOVELTY_TYPES
+
+@api_router.get("/payroll-v2/payroll-types")
+async def get_payroll_types(current_user: dict = Depends(get_current_user)):
+    """Obtener tipos de nómina disponibles"""
+    return PAYROLL_TYPES
+
+@api_router.post("/payroll-v2/entries/{entry_id}/novelties")
+async def add_novelty_to_entry(entry_id: str, novelty: PayrollNoveltyCreate, current_user: dict = Depends(get_current_user)):
+    """Agregar una novedad (ingreso o deducción adicional) a una entrada de nómina"""
+    company_id = current_user.get("company_id")
+    
+    entry = await db.payroll_entries.find_one(
+        {"entry_id": entry_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not entry:
+        raise HTTPException(status_code=404, detail="Entrada no encontrada")
+    
+    # Verificar que el período no esté pagado
+    period = await db.payroll_periods.find_one(
+        {"period_id": entry["period_id"], "company_id": company_id},
+        {"_id": 0}
+    )
+    if period and period.get("status") == "paid":
+        raise HTTPException(status_code=400, detail="No se puede modificar una nómina pagada")
+    
+    novelty_id = f"nov_{uuid.uuid4().hex[:8]}"
+    novelty_data = {
+        "novelty_id": novelty_id,
+        "novelty_type": novelty.novelty_type,
+        "code": novelty.code,
+        "name": novelty.name,
+        "description": novelty.description,
+        "amount": novelty.amount,
+        "is_percentage": novelty.is_percentage,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Obtener novedades actuales
+    current_novelties = entry.get("novelties", [])
+    current_novelties.append(novelty_data)
+    
+    # Recalcular totales
+    income_novelties = [n for n in current_novelties if n["novelty_type"] == "income"]
+    deduction_novelties = [n for n in current_novelties if n["novelty_type"] == "deduction"]
+    
+    total_income_novelties = sum(n["amount"] for n in income_novelties if not n.get("is_percentage"))
+    total_deduction_novelties = sum(n["amount"] for n in deduction_novelties if not n.get("is_percentage"))
+    
+    # Actualizar salario bruto y neto
+    base_income = (
+        entry.get("base_salary", 0) +
+        entry.get("overtime_day_amount", 0) +
+        entry.get("overtime_night_amount", 0) +
+        entry.get("overtime_weekend_amount", 0) +
+        entry.get("overtime_holiday_amount", 0) +
+        entry.get("bonuses", 0) +
+        entry.get("commissions", 0)
+    )
+    
+    new_gross = base_income + total_income_novelties
+    
+    # Recalcular deducciones
+    sfs = round(new_gross * SFS_EMPLOYEE_RATE, 2)
+    afp = round(new_gross * AFP_EMPLOYEE_RATE, 2)
+    isr_result = calculate_isr_monthly(new_gross)
+    isr = isr_result["isr_monthly"]
+    
+    total_deductions = sfs + afp + isr + total_deduction_novelties + entry.get("total_additional_deductions", 0)
+    net_salary = new_gross - total_deductions
+    
+    await db.payroll_entries.update_one(
+        {"entry_id": entry_id, "company_id": company_id},
+        {"$set": {
+            "novelties": current_novelties,
+            "total_income_novelties": round(total_income_novelties, 2),
+            "total_deduction_novelties": round(total_deduction_novelties, 2),
+            "gross_salary": round(new_gross, 2),
+            "sfs_employee": sfs,
+            "afp_employee": afp,
+            "isr": isr,
+            "total_deductions": round(total_deductions, 2),
+            "net_salary": round(net_salary, 2),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    # Actualizar totales del período
+    await update_period_totals(entry["period_id"], company_id)
+    
+    return {"novelty_id": novelty_id, "message": "Novedad agregada correctamente"}
+
+@api_router.delete("/payroll-v2/entries/{entry_id}/novelties/{novelty_id}")
+async def delete_novelty_from_entry(entry_id: str, novelty_id: str, current_user: dict = Depends(get_current_user)):
+    """Eliminar una novedad de una entrada de nómina"""
+    company_id = current_user.get("company_id")
+    
+    entry = await db.payroll_entries.find_one(
+        {"entry_id": entry_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not entry:
+        raise HTTPException(status_code=404, detail="Entrada no encontrada")
+    
+    # Filtrar novedades
+    current_novelties = entry.get("novelties", [])
+    updated_novelties = [n for n in current_novelties if n.get("novelty_id") != novelty_id]
+    
+    if len(updated_novelties) == len(current_novelties):
+        raise HTTPException(status_code=404, detail="Novedad no encontrada")
+    
+    # Recalcular totales
+    income_novelties = [n for n in updated_novelties if n["novelty_type"] == "income"]
+    deduction_novelties = [n for n in updated_novelties if n["novelty_type"] == "deduction"]
+    
+    total_income_novelties = sum(n["amount"] for n in income_novelties if not n.get("is_percentage"))
+    total_deduction_novelties = sum(n["amount"] for n in deduction_novelties if not n.get("is_percentage"))
+    
+    # Actualizar salario bruto y neto
+    base_income = (
+        entry.get("base_salary", 0) +
+        entry.get("overtime_day_amount", 0) +
+        entry.get("overtime_night_amount", 0) +
+        entry.get("overtime_weekend_amount", 0) +
+        entry.get("overtime_holiday_amount", 0) +
+        entry.get("bonuses", 0) +
+        entry.get("commissions", 0)
+    )
+    
+    new_gross = base_income + total_income_novelties
+    
+    # Recalcular deducciones
+    sfs = round(new_gross * SFS_EMPLOYEE_RATE, 2)
+    afp = round(new_gross * AFP_EMPLOYEE_RATE, 2)
+    isr_result = calculate_isr_monthly(new_gross)
+    isr = isr_result["isr_monthly"]
+    
+    total_deductions = sfs + afp + isr + total_deduction_novelties + entry.get("total_additional_deductions", 0)
+    net_salary = new_gross - total_deductions
+    
+    await db.payroll_entries.update_one(
+        {"entry_id": entry_id, "company_id": company_id},
+        {"$set": {
+            "novelties": updated_novelties,
+            "total_income_novelties": round(total_income_novelties, 2),
+            "total_deduction_novelties": round(total_deduction_novelties, 2),
+            "gross_salary": round(new_gross, 2),
+            "sfs_employee": sfs,
+            "afp_employee": afp,
+            "isr": isr,
+            "total_deductions": round(total_deductions, 2),
+            "net_salary": round(net_salary, 2),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    # Actualizar totales del período
+    await update_period_totals(entry["period_id"], company_id)
+    
+    return {"message": "Novedad eliminada correctamente"}
+
+@api_router.get("/payroll-v2/periods/{period_id}/export/excel")
+async def export_period_to_excel(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Exportar período a formato Excel (JSON para procesamiento en frontend)"""
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    # Preparar datos para Excel
+    excel_data = {
+        "period": period,
+        "columns": [
+            "No.", "Cédula", "Nombres y Apellidos", "Cargo", "Departamento",
+            "Salario Base", "Comisiones", "Bonos", "H.E. Diurnas", "H.E. Nocturnas",
+            "H.E. F.S.", "H.E. Feriados", "Otros Ingresos", "Total Ingresos",
+            "SFS (3.04%)", "AFP (2.87%)", "ISR", "Otros Descuentos",
+            "Total Descuentos", "Neto a Pagar"
+        ],
+        "rows": []
+    }
+    
+    for i, entry in enumerate(entries):
+        total_overtime = (
+            entry.get("overtime_day_amount", 0) +
+            entry.get("overtime_night_amount", 0) +
+            entry.get("overtime_weekend_amount", 0) +
+            entry.get("overtime_holiday_amount", 0)
+        )
+        
+        row = {
+            "no": i + 1,
+            "cedula": entry.get("employee_document", ""),
+            "nombre": entry.get("employee_name", ""),
+            "cargo": entry.get("position", ""),
+            "departamento": entry.get("department", ""),
+            "salario_base": entry.get("base_salary", 0),
+            "comisiones": entry.get("commissions", 0),
+            "bonos": entry.get("bonuses", 0),
+            "he_diurnas": entry.get("overtime_day_amount", 0),
+            "he_nocturnas": entry.get("overtime_night_amount", 0),
+            "he_finsemana": entry.get("overtime_weekend_amount", 0),
+            "he_feriados": entry.get("overtime_holiday_amount", 0),
+            "otros_ingresos": entry.get("total_income_novelties", 0),
+            "total_ingresos": entry.get("gross_salary", 0),
+            "sfs": entry.get("sfs_employee", 0),
+            "afp": entry.get("afp_employee", 0),
+            "isr": entry.get("isr", 0),
+            "otros_descuentos": entry.get("total_additional_deductions", 0) + entry.get("total_deduction_novelties", 0),
+            "total_descuentos": entry.get("total_deductions", 0),
+            "neto": entry.get("net_salary", 0),
+            "novelties": entry.get("novelties", [])
+        }
+        excel_data["rows"].append(row)
+    
+    # Calcular totales
+    excel_data["totals"] = {
+        "salario_base": sum(r["salario_base"] for r in excel_data["rows"]),
+        "comisiones": sum(r["comisiones"] for r in excel_data["rows"]),
+        "bonos": sum(r["bonos"] for r in excel_data["rows"]),
+        "total_ingresos": sum(r["total_ingresos"] for r in excel_data["rows"]),
+        "sfs": sum(r["sfs"] for r in excel_data["rows"]),
+        "afp": sum(r["afp"] for r in excel_data["rows"]),
+        "isr": sum(r["isr"] for r in excel_data["rows"]),
+        "total_descuentos": sum(r["total_descuentos"] for r in excel_data["rows"]),
+        "neto": sum(r["neto"] for r in excel_data["rows"])
+    }
+    
+    return excel_data
+
+@api_router.get("/payroll-v2/periods/{period_id}/export/tss")
+async def export_period_to_tss(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Exportar período al formato TSS para Autodeterminación"""
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    # Obtener datos de la empresa
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    # Formato TSS Autodeterminación
+    tss_data = {
+        "header": {
+            "rnc_cedula": company.get("rnc", "") if company else "",
+            "periodo": f"{period['month']:02d}{period['year']}",  # MMAAAA
+            "version": "5.3",
+            "num_empleados": len(entries)
+        },
+        "employees": []
+    }
+    
+    for entry in entries:
+        # Obtener datos del empleado
+        employee = await db.employees.find_one(
+            {"employee_id": entry["employee_id"], "company_id": company_id},
+            {"_id": 0}
+        )
+        
+        emp_data = {
+            "clave_nomina": entry.get("entry_id", "")[:8],
+            "tipo_doc": "C",  # C = Cédula, P = Pasaporte, N = NSS
+            "numero_doc": entry.get("employee_document", "").replace("-", ""),
+            "nombres": employee.get("first_name", "") if employee else entry.get("employee_name", "").split()[0],
+            "primer_apellido": employee.get("last_name", "").split()[0] if employee else "",
+            "segundo_apellido": employee.get("last_name", "").split()[-1] if employee and len(employee.get("last_name", "").split()) > 1 else "",
+            "sexo": "M" if employee and employee.get("gender") == "Masculino" else "F",
+            "fecha_nacimiento": employee.get("birth_date", "") if employee else "",
+            "salario_cotizable_sdss": entry.get("gross_salary", 0),
+            "aporte_voluntario": 0,
+            "salario_isr": entry.get("gross_salary", 0),
+            "tipo_ingreso": "Normal",
+            "otras_remuneraciones": entry.get("total_income_novelties", 0),
+            "remuneracion_otros_agentes": 0,
+            "saldo_favor": 0,
+            "regalia_pascual": 0,
+            "preaviso_cesantia": 0,
+            "retencion_pension": 0,
+            "salario_infotep": entry.get("gross_salary", 0)
+        }
+        tss_data["employees"].append(emp_data)
+    
+    # Calcular resumen de contribuciones
+    tss_data["summary"] = {
+        "total_salario_cotizable": sum(e["salario_cotizable_sdss"] for e in tss_data["employees"]),
+        "total_aporte_sfs_empleado": sum(entry.get("sfs_employee", 0) for entry in entries),
+        "total_aporte_afp_empleado": sum(entry.get("afp_employee", 0) for entry in entries),
+        "total_aporte_sfs_empleador": sum(entry.get("sfs_employer", 0) for entry in entries),
+        "total_aporte_afp_empleador": sum(entry.get("afp_employer", 0) for entry in entries),
+        "total_srl": sum(entry.get("srl_employer", 0) for entry in entries),
+        "total_infotep": sum(entry.get("infotep_employer", 0) for entry in entries),
+        "total_isr": sum(entry.get("isr", 0) for entry in entries)
+    }
+    
+    return tss_data
+
 @api_router.post("/payroll-v2/periods/{period_id}/calculate")
 async def calculate_period(period_id: str, current_user: dict = Depends(get_current_user)):
     """Calcular/recalcular todas las nóminas del período"""
