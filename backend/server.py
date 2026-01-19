@@ -4743,6 +4743,389 @@ async def get_currency_summary(current_user: dict = Depends(get_current_user)):
     
     return currency_summary
 
+# ===================== SUBSCRIPTION ENDPOINTS =====================
+
+@api_router.get("/plans")
+async def get_subscription_plans():
+    """Obtener todos los planes de suscripción disponibles"""
+    return list(SUBSCRIPTION_PLANS.values())
+
+@api_router.get("/subscription")
+async def get_company_subscription(current_user: dict = Depends(get_current_user)):
+    """Obtener la suscripción actual de la empresa"""
+    company_id = current_user.get("company_id")
+    
+    subscription = await db.subscriptions.find_one(
+        {"company_id": company_id},
+        {"_id": 0}
+    )
+    
+    if not subscription:
+        # Create default free trial subscription
+        subscription = {
+            "subscription_id": f"sub_{uuid.uuid4().hex[:12]}",
+            "company_id": company_id,
+            "plan_id": "basic",
+            "plan_name": SUBSCRIPTION_PLANS["basic"]["name"],
+            "status": "trial",  # trial, active, cancelled, expired
+            "employee_count": 5,
+            "additional_users": 0,
+            "billing_cycle": "monthly",
+            "base_price": SUBSCRIPTION_PLANS["basic"]["base_price"],
+            "employee_price": SUBSCRIPTION_PLANS["basic"]["price_per_employee"],
+            "total_monthly": 5 + (5 * 1.50),
+            "trial_ends_at": (datetime.now(timezone.utc) + timedelta(days=14)).isoformat(),
+            "current_period_start": datetime.now(timezone.utc).isoformat(),
+            "current_period_end": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.subscriptions.insert_one(subscription)
+    
+    # Get plan details
+    plan = SUBSCRIPTION_PLANS.get(subscription.get("plan_id", "basic"), SUBSCRIPTION_PLANS["basic"])
+    subscription["plan_details"] = plan
+    
+    # Count current employees and users
+    employee_count = await db.employees.count_documents({"company_id": company_id, "status": "active"})
+    user_count = await db.users.count_documents({"company_id": company_id})
+    
+    subscription["current_employees"] = employee_count
+    subscription["current_users"] = user_count
+    subscription["max_employees"] = plan["max_employees"]
+    subscription["included_users"] = plan["included_users"]
+    
+    return subscription
+
+@api_router.post("/subscription")
+async def create_subscription(data: SubscriptionCreate, current_user: dict = Depends(get_current_user)):
+    """Crear o actualizar suscripción"""
+    company_id = current_user.get("company_id")
+    
+    plan = SUBSCRIPTION_PLANS.get(data.plan_id)
+    if not plan:
+        raise HTTPException(status_code=400, detail="Plan no válido")
+    
+    # Check employee limit
+    if plan["max_employees"] > 0 and data.employee_count > plan["max_employees"]:
+        raise HTTPException(status_code=400, detail=f"El plan {plan['name']} permite máximo {plan['max_employees']} empleados")
+    
+    # Calculate total
+    base = plan["base_price"]
+    employee_cost = data.employee_count * plan["price_per_employee"]
+    additional_users_cost = data.additional_users * ADDITIONAL_USER_PRICE
+    total_monthly = base + employee_cost + additional_users_cost
+    
+    subscription = {
+        "subscription_id": f"sub_{uuid.uuid4().hex[:12]}",
+        "company_id": company_id,
+        "plan_id": data.plan_id,
+        "plan_name": plan["name"],
+        "status": "active",
+        "employee_count": data.employee_count,
+        "additional_users": data.additional_users,
+        "billing_cycle": data.billing_cycle,
+        "base_price": base,
+        "employee_price": plan["price_per_employee"],
+        "additional_users_cost": additional_users_cost,
+        "total_monthly": total_monthly,
+        "current_period_start": datetime.now(timezone.utc).isoformat(),
+        "current_period_end": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Upsert subscription
+    await db.subscriptions.update_one(
+        {"company_id": company_id},
+        {"$set": subscription},
+        upsert=True
+    )
+    
+    return {"message": "Suscripción actualizada", "subscription": subscription}
+
+@api_router.put("/subscription")
+async def update_subscription(data: SubscriptionUpdate, current_user: dict = Depends(get_current_user)):
+    """Actualizar suscripción (cambiar plan, empleados, cancelar, renovar)"""
+    company_id = current_user.get("company_id")
+    
+    subscription = await db.subscriptions.find_one({"company_id": company_id}, {"_id": 0})
+    if not subscription:
+        raise HTTPException(status_code=404, detail="Suscripción no encontrada")
+    
+    updates = {}
+    
+    # Handle actions
+    if data.action == "cancel":
+        updates["status"] = "cancelled"
+        updates["cancelled_at"] = datetime.now(timezone.utc).isoformat()
+    elif data.action == "renew":
+        updates["status"] = "active"
+        updates["current_period_start"] = datetime.now(timezone.utc).isoformat()
+        updates["current_period_end"] = (datetime.now(timezone.utc) + timedelta(days=30)).isoformat()
+    
+    # Update plan
+    if data.plan_id:
+        plan = SUBSCRIPTION_PLANS.get(data.plan_id)
+        if not plan:
+            raise HTTPException(status_code=400, detail="Plan no válido")
+        updates["plan_id"] = data.plan_id
+        updates["plan_name"] = plan["name"]
+        updates["base_price"] = plan["base_price"]
+        updates["employee_price"] = plan["price_per_employee"]
+    
+    # Update employee count
+    if data.employee_count is not None:
+        current_plan = SUBSCRIPTION_PLANS.get(data.plan_id or subscription["plan_id"])
+        if current_plan["max_employees"] > 0 and data.employee_count > current_plan["max_employees"]:
+            raise HTTPException(status_code=400, detail=f"El plan permite máximo {current_plan['max_employees']} empleados")
+        updates["employee_count"] = data.employee_count
+    
+    # Update additional users
+    if data.additional_users is not None:
+        updates["additional_users"] = data.additional_users
+        updates["additional_users_cost"] = data.additional_users * ADDITIONAL_USER_PRICE
+    
+    # Recalculate total
+    plan_id = updates.get("plan_id", subscription["plan_id"])
+    plan = SUBSCRIPTION_PLANS[plan_id]
+    emp_count = updates.get("employee_count", subscription.get("employee_count", 1))
+    add_users = updates.get("additional_users", subscription.get("additional_users", 0))
+    
+    updates["total_monthly"] = plan["base_price"] + (emp_count * plan["price_per_employee"]) + (add_users * ADDITIONAL_USER_PRICE)
+    updates["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.subscriptions.update_one(
+        {"company_id": company_id},
+        {"$set": updates}
+    )
+    
+    return {"message": "Suscripción actualizada correctamente"}
+
+@api_router.get("/subscription/check-access")
+async def check_subscription_access(current_user: dict = Depends(get_current_user)):
+    """Verificar si el usuario tiene acceso al sistema según su suscripción"""
+    company_id = current_user.get("company_id")
+    
+    subscription = await db.subscriptions.find_one({"company_id": company_id}, {"_id": 0})
+    
+    if not subscription:
+        return {"has_access": True, "status": "trial", "message": "Período de prueba"}
+    
+    status = subscription.get("status", "active")
+    
+    if status == "cancelled" or status == "expired":
+        return {
+            "has_access": False,
+            "status": status,
+            "message": "Su suscripción está cancelada o vencida. Por favor renueve para continuar.",
+            "redirect_to": "/subscriptions"
+        }
+    
+    # Check if trial expired
+    if status == "trial":
+        trial_ends = subscription.get("trial_ends_at")
+        if trial_ends:
+            trial_end_date = datetime.fromisoformat(trial_ends.replace("Z", "+00:00"))
+            if datetime.now(timezone.utc) > trial_end_date:
+                await db.subscriptions.update_one(
+                    {"company_id": company_id},
+                    {"$set": {"status": "expired"}}
+                )
+                return {
+                    "has_access": False,
+                    "status": "expired",
+                    "message": "Su período de prueba ha terminado. Por favor seleccione un plan.",
+                    "redirect_to": "/subscriptions"
+                }
+    
+    return {"has_access": True, "status": status, "plan": subscription.get("plan_id")}
+
+# ===================== SYSTEM USERS MANAGEMENT =====================
+
+@api_router.get("/system-users")
+async def get_system_users(current_user: dict = Depends(get_current_user)):
+    """Obtener usuarios del sistema de la empresa"""
+    company_id = current_user.get("company_id")
+    
+    users = await db.users.find(
+        {"company_id": company_id},
+        {"_id": 0, "password_hash": 0}
+    ).to_list(100)
+    
+    return users
+
+@api_router.post("/system-users")
+async def create_system_user(data: SystemUserCreate, current_user: dict = Depends(get_current_user)):
+    """Crear un nuevo usuario del sistema"""
+    company_id = current_user.get("company_id")
+    
+    # Check subscription user limit
+    subscription = await db.subscriptions.find_one({"company_id": company_id}, {"_id": 0})
+    if subscription:
+        plan = SUBSCRIPTION_PLANS.get(subscription.get("plan_id", "basic"))
+        max_users = plan["included_users"] + subscription.get("additional_users", 0)
+        current_users = await db.users.count_documents({"company_id": company_id})
+        
+        if current_users >= max_users:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Ha alcanzado el límite de usuarios ({max_users}). Actualice su plan o compre usuarios adicionales."
+            )
+    
+    # Check if email already exists
+    existing = await db.users.find_one({"email": data.email})
+    if existing:
+        raise HTTPException(status_code=400, detail="El email ya está registrado")
+    
+    # Hash password
+    password_hash = bcrypt.hashpw(data.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    user_id = f"user_{uuid.uuid4().hex[:12]}"
+    user = {
+        "user_id": user_id,
+        "company_id": company_id,
+        "email": data.email,
+        "name": data.name,
+        "password_hash": password_hash,
+        "role": data.role,
+        "modules": data.modules,
+        "is_active": data.is_active,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "created_by": current_user.get("user_id")
+    }
+    
+    await db.users.insert_one(user)
+    
+    # Log activity
+    await db.user_activities.insert_one({
+        "activity_id": f"act_{uuid.uuid4().hex[:8]}",
+        "user_id": current_user.get("user_id"),
+        "company_id": company_id,
+        "action": "create_user",
+        "target_user_id": user_id,
+        "details": f"Creó usuario {data.name} ({data.email})",
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+    
+    return {"user_id": user_id, "message": "Usuario creado correctamente"}
+
+@api_router.put("/system-users/{user_id}")
+async def update_system_user(user_id: str, data: SystemUserUpdate, current_user: dict = Depends(get_current_user)):
+    """Actualizar un usuario del sistema"""
+    company_id = current_user.get("company_id")
+    
+    updates = {}
+    if data.name is not None:
+        updates["name"] = data.name
+    if data.role is not None:
+        updates["role"] = data.role
+    if data.modules is not None:
+        updates["modules"] = data.modules
+    if data.is_active is not None:
+        updates["is_active"] = data.is_active
+    
+    updates["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.users.update_one(
+        {"user_id": user_id, "company_id": company_id},
+        {"$set": updates}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    return {"message": "Usuario actualizado"}
+
+@api_router.delete("/system-users/{user_id}")
+async def delete_system_user(user_id: str, current_user: dict = Depends(get_current_user)):
+    """Eliminar un usuario del sistema"""
+    company_id = current_user.get("company_id")
+    
+    # Cannot delete yourself
+    if user_id == current_user.get("user_id"):
+        raise HTTPException(status_code=400, detail="No puede eliminarse a sí mismo")
+    
+    result = await db.users.delete_one({"user_id": user_id, "company_id": company_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    return {"message": "Usuario eliminado"}
+
+@api_router.get("/system-users/{user_id}/activities")
+async def get_user_activities(user_id: str, current_user: dict = Depends(get_current_user)):
+    """Obtener historial de actividades de un usuario"""
+    company_id = current_user.get("company_id")
+    
+    activities = await db.user_activities.find(
+        {"user_id": user_id, "company_id": company_id},
+        {"_id": 0}
+    ).sort("timestamp", -1).to_list(100)
+    
+    return activities
+
+@api_router.get("/user-activities")
+async def get_all_activities(current_user: dict = Depends(get_current_user)):
+    """Obtener todas las actividades de la empresa"""
+    company_id = current_user.get("company_id")
+    
+    activities = await db.user_activities.find(
+        {"company_id": company_id},
+        {"_id": 0}
+    ).sort("timestamp", -1).to_list(500)
+    
+    return activities
+
+# ===================== CUSTOM ROLES (Enterprise only) =====================
+
+@api_router.get("/roles")
+async def get_custom_roles(current_user: dict = Depends(get_current_user)):
+    """Obtener roles personalizados (solo Enterprise)"""
+    company_id = current_user.get("company_id")
+    
+    # Check if enterprise plan
+    subscription = await db.subscriptions.find_one({"company_id": company_id}, {"_id": 0})
+    if subscription and subscription.get("plan_id") != "enterprise":
+        return {"roles": [], "message": "Los roles personalizados solo están disponibles en el plan Enterprise"}
+    
+    roles = await db.custom_roles.find(
+        {"company_id": company_id},
+        {"_id": 0}
+    ).to_list(50)
+    
+    return {"roles": roles}
+
+@api_router.post("/roles")
+async def create_custom_role(data: CustomRoleCreate, current_user: dict = Depends(get_current_user)):
+    """Crear rol personalizado (solo Enterprise)"""
+    company_id = current_user.get("company_id")
+    
+    # Check if enterprise plan
+    subscription = await db.subscriptions.find_one({"company_id": company_id}, {"_id": 0})
+    if not subscription or subscription.get("plan_id") != "enterprise":
+        raise HTTPException(status_code=403, detail="Los roles personalizados solo están disponibles en el plan Enterprise")
+    
+    role_id = f"role_{uuid.uuid4().hex[:8]}"
+    role = {
+        "role_id": role_id,
+        "company_id": company_id,
+        **data.dict(),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.custom_roles.insert_one(role)
+    return {"role_id": role_id, "message": "Rol creado correctamente"}
+
+@api_router.delete("/roles/{role_id}")
+async def delete_custom_role(role_id: str, current_user: dict = Depends(get_current_user)):
+    """Eliminar rol personalizado"""
+    company_id = current_user.get("company_id")
+    
+    result = await db.custom_roles.delete_one({"role_id": role_id, "company_id": company_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Rol no encontrado")
+    
+    return {"message": "Rol eliminado"}
+
 # ===================== MAIN APP =====================
 
 app.include_router(api_router)
