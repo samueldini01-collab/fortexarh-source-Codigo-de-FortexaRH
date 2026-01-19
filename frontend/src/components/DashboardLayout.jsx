@@ -530,6 +530,20 @@ export default function DashboardLayout({ children, title }) {
           </DialogHeader>
           
           <div className="py-4">
+            {/* Show which plan is needed */}
+            {blockedFeature && (
+              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-700">
+                  {["Reclutamiento", "Portal autoservicio empleados", "Evaluaciones", "Organigrama"].includes(blockedFeature)
+                    ? <><strong>"{blockedFeature}"</strong> está disponible en los planes <strong>Pro</strong> y <strong>Enterprise</strong></>
+                    : ["Roles"].includes(blockedFeature)
+                      ? <><strong>"{blockedFeature}"</strong> está disponible en el plan <strong>Enterprise</strong></>
+                      : <><strong>"{blockedFeature}"</strong> requiere un plan superior</>
+                  }
+                </p>
+              </div>
+            )}
+            
             <div className="bg-gradient-to-br from-purple-50 to-white p-4 rounded-xl border border-purple-100">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
@@ -543,15 +557,15 @@ export default function DashboardLayout({ children, title }) {
               <ul className="space-y-2 text-sm text-slate-600 mb-4">
                 <li className="flex items-center gap-2">
                   <Zap className="w-4 h-4 text-purple-500" />
-                  Gestión ilimitada de empleados
+                  Reclutamiento y evaluaciones
                 </li>
                 <li className="flex items-center gap-2">
                   <Zap className="w-4 h-4 text-purple-500" />
-                  Nómina completa y contabilidad
+                  Portal de autoservicio para empleados
                 </li>
                 <li className="flex items-center gap-2">
                   <Zap className="w-4 h-4 text-purple-500" />
-                  Reportes avanzados
+                  Organigrama y reportes avanzados
                 </li>
               </ul>
             </div>
@@ -568,7 +582,7 @@ export default function DashboardLayout({ children, title }) {
                 navigate('/subscriptions');
               }}
             >
-              Ver Planes
+              Ver Planes y Precios
             </Button>
           </DialogFooter>
         </DialogContent>
