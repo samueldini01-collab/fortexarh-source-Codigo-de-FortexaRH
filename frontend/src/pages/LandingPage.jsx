@@ -110,7 +110,7 @@ export default function LandingPage() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link to="/register">
                   <Button size="lg" className="bg-slate-900 hover:bg-slate-800 text-base px-8" data-testid="hero-cta-btn">
-                    Prueba Gratis 14 Días
+                    Prueba Gratis 5 Días
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
