@@ -236,7 +236,7 @@ export default function LandingPage() {
               Planes y Precios
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Elige el plan que mejor se adapte al tamaño de tu empresa. Todos incluyen 14 días de prueba gratis.
+              Elige el plan que mejor se adapte al tamaño de tu empresa. Prueba gratis por 5 días o compra directamente.
             </p>
           </div>
           
