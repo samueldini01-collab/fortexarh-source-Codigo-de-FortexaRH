@@ -5923,10 +5923,12 @@ async def generate_report(
         summary["totalAmount"] = sum(p.get("gross_salary", 0) for p in payrolls)
         
     elif report_type == "employees":
-        del query["status"]  # Status is different field
+        emp_query = {"company_id": company_id}
+        if department != "Todos":
+            emp_query["department"] = department
         if status != "all":
-            query["status"] = status
-        employees = await db.employees.find(query, {"_id": 0}).to_list(1000)
+            emp_query["status"] = status
+        employees = await db.employees.find(emp_query, {"_id": 0}).to_list(1000)
         for emp in employees:
             data.append({
                 "name": f"{emp.get('first_name', '')} {emp.get('last_name', '')}",
