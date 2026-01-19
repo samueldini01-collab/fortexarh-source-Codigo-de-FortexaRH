@@ -1613,11 +1613,18 @@ async def create_org_node(data: OrgNodeCreate, current_user: dict = Depends(get_
     node = {
         "node_id": node_id,
         "company_id": company_id,
+        "name": data.name,
+        "code": data.code or data.name[:4].upper() if data.name else None,
+        "node_type": data.node_type or "unit",
+        "position_title": data.position_title or data.title,
+        "description": data.description,
         "employee_id": data.employee_id,
         "employee_name": employee_name,
-        "title": data.title,
-        "department": data.department,
         "parent_id": data.parent_id,
+        "positions_count": data.positions_count,
+        # Legacy fields
+        "title": data.title or data.name,
+        "department": data.department or data.name,
         "level": data.level,
         "children": [],
         "created_at": datetime.now(timezone.utc).isoformat()
