@@ -1820,7 +1820,7 @@ async def get_checkout_status(session_id: str, current_user: dict = Depends(get_
         "message": "Procesando pago..."
     }
 
-async def activate_subscription(company_id: str, plan_id: str, employee_count: int, session_id: str, user_email: str = None):
+async def activate_subscription(company_id: str, plan_id: str, employee_count: int, session_id: str, user_email: str = None, user_name: str = None):
     """Activate or upgrade subscription after successful payment"""
     plan = SUBSCRIPTION_PLANS.get(plan_id)
     if not plan:
@@ -1843,6 +1843,10 @@ async def activate_subscription(company_id: str, plan_id: str, employee_count: i
             "employee_count": employee_count
         }}
     )
+    
+    # Get company name for invoice
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0, "name": 1})
+    company_name = company.get("name", "N/A") if company else "N/A"
     
     # Update or create subscription
     subscription_data = {
@@ -1880,6 +1884,7 @@ async def activate_subscription(company_id: str, plan_id: str, employee_count: i
         "invoice_id": invoice_id,
         "invoice_number": invoice_number,
         "company_id": company_id,
+        "company_name": company_name,
         "session_id": session_id,
         "plan_id": plan_id,
         "plan_name": plan.get("name", plan_id),
@@ -1887,19 +1892,47 @@ async def activate_subscription(company_id: str, plan_id: str, employee_count: i
         "base_price": base_price,
         "price_per_employee": price_per_employee,
         "subtotal": total_amount,
-        "tax": 0,  # Can add tax calculation later
+        "tax": 0,
         "total": total_amount,
         "currency": "USD",
         "status": "paid",
-        "period_start": now.isoformat(),
-        "period_end": period_end.isoformat(),
-        "paid_at": now.isoformat(),
+        "period_start": now.strftime("%d/%m/%Y"),
+        "period_end": period_end.strftime("%d/%m/%Y"),
+        "paid_at": now.strftime("%d/%m/%Y %H:%M"),
         "created_at": now.isoformat()
     }
     
     await db.invoices.insert_one(invoice_data)
     
     logging.info(f"Subscription activated: company={company_id}, plan={plan_id}, employees={employee_count}, invoice={invoice_number}")
+    
+    # Send confirmation emails (non-blocking)
+    if user_email:
+        asyncio.create_task(send_payment_confirmation_email(
+            recipient_email=user_email,
+            recipient_name=user_name or "Cliente",
+            plan_name=plan.get("name", plan_id),
+            amount=total_amount,
+            employee_count=employee_count,
+            invoice_number=invoice_number,
+            period_start=now.strftime("%d/%m/%Y"),
+            period_end=period_end.strftime("%d/%m/%Y")
+        ))
+        
+        asyncio.create_task(send_invoice_email(
+            recipient_email=user_email,
+            recipient_name=user_name or "Cliente",
+            company_name=company_name,
+            invoice_number=invoice_number,
+            plan_name=plan.get("name", plan_id),
+            base_price=base_price,
+            employee_count=employee_count,
+            price_per_employee=price_per_employee,
+            total=total_amount,
+            period_start=now.strftime("%d/%m/%Y"),
+            period_end=period_end.strftime("%d/%m/%Y"),
+            paid_at=now.strftime("%d/%m/%Y %H:%M")
+        ))
     
     return invoice_data
 
