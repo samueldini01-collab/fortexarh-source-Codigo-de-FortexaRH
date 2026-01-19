@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "@/App";
+import { useAuth, useSubscription } from "@/App";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
@@ -49,7 +49,11 @@ import {
   EyeOff,
   RotateCcw,
   Save,
-  UserCog
+  UserCog,
+  Lock,
+  AlertTriangle,
+  Crown,
+  Zap
 } from "lucide-react";
 
 // Default navigation items
