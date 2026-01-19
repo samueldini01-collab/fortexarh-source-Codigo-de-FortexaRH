@@ -267,6 +267,11 @@ export default function DashboardLayout({ children, title }) {
                 const isLocked = !hasAccess && item.featureKey !== "subscriptions" && item.featureKey !== "settings";
                 
                 if (isLocked) {
+                  // Determine which plan is needed
+                  const needsPro = ["evaluations", "recruitment", "organigrama", "employee_portal"].includes(item.featureKey);
+                  const needsEnterprise = ["custom_roles", "api"].includes(item.featureKey);
+                  const requiredPlan = needsEnterprise ? "Enterprise" : needsPro ? "Pro" : "Superior";
+                  
                   return (
                     <button
                       key={item.id}
@@ -274,11 +279,17 @@ export default function DashboardLayout({ children, title }) {
                         setBlockedFeature(item.name);
                         setShowUpgradeModal(true);
                       }}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-50 cursor-not-allowed"
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-amber-50 hover:text-amber-600 transition-colors group"
+                      title={`Disponible en plan ${requiredPlan}`}
                     >
-                      <Icon className="w-5 h-5 text-slate-300" />
+                      <Icon className="w-5 h-5 text-slate-300 group-hover:text-amber-400" />
                       <span className="flex-1 text-left">{item.name}</span>
-                      <Lock className="w-4 h-4 text-slate-300" />
+                      <span className="flex items-center gap-1">
+                        <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded font-medium hidden group-hover:inline">
+                          {requiredPlan}
+                        </span>
+                        <Lock className="w-4 h-4 text-slate-300 group-hover:text-amber-500" />
+                      </span>
                     </button>
                   );
                 }
