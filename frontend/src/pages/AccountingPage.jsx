@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -28,80 +29,114 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { 
   BookOpen, 
   Plus, 
   Edit, 
   Trash2, 
-  Check, 
-  X, 
   FileText, 
-  Calculator,
   DollarSign,
   ArrowUpRight,
   ArrowDownRight,
-  RefreshCw
+  RefreshCw,
+  Search,
+  Download,
+  Settings,
+  Link2,
+  AlertTriangle,
+  CheckCircle,
+  X
 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AccountingPage() {
+  const [activeTab, setActiveTab] = useState("asientos");
   const [entries, setEntries] = useState([]);
   const [accounts, setAccounts] = useState([]);
-  const [calculations, setCalculations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showNewEntry, setShowNewEntry] = useState(false);
   const [showEditEntry, setShowEditEntry] = useState(false);
+  const [showEditAccount, setShowEditAccount] = useState(false);
+  const [showNewAccount, setShowNewAccount] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
-  const [filterPeriod, setFilterPeriod] = useState("");
+  const [selectedAccount, setSelectedAccount] = useState(null);
+  
+  // Filters
+  const [searchNumber, setSearchNumber] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   
-  const [newEntry, setNewEntry] = useState({
+  // Entry form
+  const [entryForm, setEntryForm] = useState({
     entry_date: new Date().toISOString().split('T')[0],
     reference: "",
     description: "",
     period: new Date().toISOString().slice(0, 7),
-    entry_type: "payroll",
+    entry_type: "manual",
     notes: "",
     lines: [
       { account_code: "", account_name: "", description: "", debit: 0, credit: 0 }
     ]
+  });
+  
+  // Account form
+  const [accountForm, setAccountForm] = useState({
+    code: "",
+    name: "",
+    account_type: "expense",
+    parent_code: "",
+    description: ""
   });
 
   const { getAuthHeaders } = useAuth();
 
   useEffect(() => {
     fetchData();
-  }, [filterPeriod, filterStatus]);
+  }, []);
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      let entriesUrl = `${API}/accounting/journal-entries`;
-      const params = new URLSearchParams();
-      if (filterPeriod) params.append("period", filterPeriod);
-      if (filterStatus) params.append("status", filterStatus);
-      if (params.toString()) entriesUrl += `?${params.toString()}`;
-
-      const [entriesRes, accountsRes, calcsRes] = await Promise.all([
-        axios.get(entriesUrl, { headers: getAuthHeaders(), withCredentials: true }),
-        axios.get(`${API}/accounting/accounts`, { headers: getAuthHeaders(), withCredentials: true }),
-        axios.get(`${API}/payroll-calculations`, { headers: getAuthHeaders(), withCredentials: true })
+      const [entriesRes, accountsRes] = await Promise.all([
+        axios.get(`${API}/accounting/journal-entries`, { headers: getAuthHeaders(), withCredentials: true }),
+        axios.get(`${API}/accounting/accounts`, { headers: getAuthHeaders(), withCredentials: true })
       ]);
-      
       setEntries(entriesRes.data);
       setAccounts(accountsRes.data);
-      setCalculations(calcsRes.data);
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Error al cargar datos");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (searchNumber) params.append("entry_number", searchNumber);
+      if (startDate) params.append("start_date", startDate);
+      if (endDate) params.append("end_date", endDate);
+      
+      const response = await axios.get(`${API}/accounting/journal-entries/search?${params.toString()}`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      setEntries(response.data);
+    } catch (error) {
+      toast.error("Error al buscar asientos");
+    }
+  };
+
+  const clearSearch = () => {
+    setSearchNumber("");
+    setStartDate("");
+    setEndDate("");
+    fetchData();
   };
 
   const formatCurrency = (value) => {
@@ -112,23 +147,23 @@ export default function AccountingPage() {
     }).format(value || 0);
   };
 
+  // Entry line management
   const addLine = () => {
-    setNewEntry({
-      ...newEntry,
-      lines: [...newEntry.lines, { account_code: "", account_name: "", description: "", debit: 0, credit: 0 }]
+    setEntryForm({
+      ...entryForm,
+      lines: [...entryForm.lines, { account_code: "", account_name: "", description: "", debit: 0, credit: 0 }]
     });
   };
 
   const removeLine = (index) => {
-    const lines = newEntry.lines.filter((_, i) => i !== index);
-    setNewEntry({ ...newEntry, lines });
+    const lines = entryForm.lines.filter((_, i) => i !== index);
+    setEntryForm({ ...entryForm, lines });
   };
 
   const updateLine = (index, field, value) => {
-    const lines = [...newEntry.lines];
+    const lines = [...entryForm.lines];
     lines[index] = { ...lines[index], [field]: field === 'debit' || field === 'credit' ? parseFloat(value) || 0 : value };
     
-    // If selecting account, auto-fill account name
     if (field === 'account_code') {
       const account = accounts.find(a => a.code === value);
       if (account) {
@@ -136,40 +171,28 @@ export default function AccountingPage() {
       }
     }
     
-    setNewEntry({ ...newEntry, lines });
+    setEntryForm({ ...entryForm, lines });
   };
 
-  const getTotalDebits = () => {
-    return newEntry.lines.reduce((sum, line) => sum + (parseFloat(line.debit) || 0), 0);
-  };
+  const getTotalDebits = () => entryForm.lines.reduce((sum, line) => sum + (parseFloat(line.debit) || 0), 0);
+  const getTotalCredits = () => entryForm.lines.reduce((sum, line) => sum + (parseFloat(line.credit) || 0), 0);
+  const isBalanced = () => Math.abs(getTotalDebits() - getTotalCredits()) < 0.01;
 
-  const getTotalCredits = () => {
-    return newEntry.lines.reduce((sum, line) => sum + (parseFloat(line.credit) || 0), 0);
-  };
-
-  const isBalanced = () => {
-    return Math.abs(getTotalDebits() - getTotalCredits()) < 0.01;
-  };
-
+  // Entry CRUD
   const handleCreateEntry = async () => {
     if (!isBalanced()) {
-      toast.error("El asiento debe estar balanceado");
+      toast.error("El asiento no está balanceado");
       return;
     }
-
-    if (newEntry.lines.some(l => !l.account_code)) {
-      toast.error("Todas las líneas deben tener una cuenta seleccionada");
-      return;
-    }
-
+    
     try {
-      await axios.post(`${API}/accounting/journal-entries`, newEntry, {
+      await axios.post(`${API}/accounting/journal-entries`, entryForm, {
         headers: getAuthHeaders(),
         withCredentials: true
       });
       toast.success("Asiento creado correctamente");
       setShowNewEntry(false);
-      resetNewEntry();
+      resetEntryForm();
       fetchData();
     } catch (error) {
       toast.error(error.response?.data?.detail || "Error al crear asiento");
@@ -177,13 +200,13 @@ export default function AccountingPage() {
   };
 
   const handleUpdateEntry = async () => {
-    if (!selectedEntry) return;
-
+    if (!selectedEntry || !isBalanced()) {
+      toast.error("El asiento no está balanceado");
+      return;
+    }
+    
     try {
-      await axios.put(`${API}/accounting/journal-entries/${selectedEntry.entry_id}`, {
-        ...selectedEntry,
-        lines: selectedEntry.lines
-      }, {
+      await axios.put(`${API}/accounting/journal-entries/${selectedEntry.entry_id}`, entryForm, {
         headers: getAuthHeaders(),
         withCredentials: true
       });
@@ -196,325 +219,511 @@ export default function AccountingPage() {
     }
   };
 
-  const handlePostEntry = async (entryId) => {
+  const handleDeleteEntry = async (entry) => {
+    const hasPayroll = entry.payroll_period_id;
+    const message = hasPayroll 
+      ? "¿Eliminar este asiento y la nómina asociada?" 
+      : "¿Eliminar este asiento contable?";
+    
+    if (!confirm(message)) return;
+    
     try {
-      await axios.post(`${API}/accounting/journal-entries/${entryId}/post`, {}, {
-        headers: getAuthHeaders(),
-        withCredentials: true
-      });
-      toast.success("Asiento contabilizado correctamente");
-      fetchData();
-    } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al contabilizar");
-    }
-  };
-
-  const handleDeleteEntry = async (entryId) => {
-    if (!confirm("¿Está seguro de eliminar este asiento?")) return;
-
-    try {
-      await axios.delete(`${API}/accounting/journal-entries/${entryId}`, {
+      const endpoint = hasPayroll 
+        ? `/accounting/journal-entries/${entry.entry_id}/with-payroll`
+        : `/accounting/journal-entries/${entry.entry_id}`;
+      
+      await axios.delete(`${API}${endpoint}`, {
         headers: getAuthHeaders(),
         withCredentials: true
       });
       toast.success("Asiento eliminado correctamente");
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al eliminar");
+      toast.error(error.response?.data?.detail || "Error al eliminar asiento");
     }
   };
 
-  const handleGenerateFromPayroll = async (calculationId) => {
-    try {
-      const response = await axios.post(
-        `${API}/accounting/generate-payroll-entry?payroll_id=${calculationId}`,
-        {},
-        { headers: getAuthHeaders(), withCredentials: true }
-      );
-      toast.success("Asiento generado correctamente");
-      fetchData();
-    } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al generar asiento");
-    }
+  const openEditEntry = (entry) => {
+    setSelectedEntry(entry);
+    setEntryForm({
+      entry_date: entry.entry_date,
+      reference: entry.reference || "",
+      description: entry.description || "",
+      period: entry.period || "",
+      entry_type: entry.entry_type || "manual",
+      notes: entry.notes || "",
+      lines: entry.lines || []
+    });
+    setShowEditEntry(true);
   };
 
-  const resetNewEntry = () => {
-    setNewEntry({
+  const resetEntryForm = () => {
+    setEntryForm({
       entry_date: new Date().toISOString().split('T')[0],
       reference: "",
       description: "",
       period: new Date().toISOString().slice(0, 7),
-      entry_type: "payroll",
+      entry_type: "manual",
       notes: "",
       lines: [{ account_code: "", account_name: "", description: "", debit: 0, credit: 0 }]
     });
   };
 
+  // Account CRUD
+  const handleCreateAccount = async () => {
+    try {
+      await axios.post(`${API}/accounting/accounts`, accountForm, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      toast.success("Cuenta creada correctamente");
+      setShowNewAccount(false);
+      resetAccountForm();
+      fetchData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al crear cuenta");
+    }
+  };
+
+  const handleUpdateAccount = async () => {
+    if (!selectedAccount) return;
+    
+    try {
+      await axios.put(`${API}/accounting/accounts/${selectedAccount.account_id}`, accountForm, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      toast.success("Cuenta actualizada correctamente");
+      setShowEditAccount(false);
+      setSelectedAccount(null);
+      fetchData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al actualizar cuenta");
+    }
+  };
+
+  const handleDeleteAccount = async (accountId) => {
+    if (!confirm("¿Eliminar esta cuenta contable?")) return;
+    
+    try {
+      await axios.delete(`${API}/accounting/accounts/${accountId}`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      toast.success("Cuenta eliminada");
+      fetchData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al eliminar cuenta");
+    }
+  };
+
+  const handleResetAccounts = async () => {
+    if (!confirm("¿Restablecer todas las cuentas a valores predeterminados? Esto eliminará las cuentas actuales.")) return;
+    
+    try {
+      await axios.post(`${API}/accounting/accounts/reset-defaults`, {}, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      toast.success("Cuentas restablecidas");
+      fetchData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al restablecer cuentas");
+    }
+  };
+
+  const openEditAccount = (account) => {
+    setSelectedAccount(account);
+    setAccountForm({
+      code: account.code,
+      name: account.name,
+      account_type: account.account_type,
+      parent_code: account.parent_code || "",
+      description: account.description || ""
+    });
+    setShowEditAccount(true);
+  };
+
+  const resetAccountForm = () => {
+    setAccountForm({
+      code: "",
+      name: "",
+      account_type: "expense",
+      parent_code: "",
+      description: ""
+    });
+  };
+
+  // Export functions
+  const exportToCSV = (entry) => {
+    let csv = "Fecha,Cuenta,Descripción,Débito,Crédito\n";
+    entry.lines.forEach(line => {
+      csv += `${entry.entry_date},"${line.account_code} - ${line.account_name}","${line.description}",${line.debit},${line.credit}\n`;
+    });
+    csv += `,,Total,${entry.total_debits},${entry.total_credits}\n`;
+    
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `asiento_${entry.entry_number || entry.entry_id}.csv`;
+    link.click();
+    toast.success("CSV descargado");
+  };
+
+  const exportToExcel = async (entry) => {
+    // Simplified - creates a CSV that Excel can open
+    exportToCSV(entry);
+  };
+
   const getStatusBadge = (status) => {
     switch (status) {
       case 'draft':
-        return <Badge variant="outline" className="text-yellow-600 border-yellow-300">Borrador</Badge>;
+        return <Badge variant="outline" className="border-slate-400">Borrador</Badge>;
       case 'posted':
         return <Badge className="bg-emerald-100 text-emerald-700">Contabilizado</Badge>;
       case 'voided':
-        return <Badge variant="destructive">Anulado</Badge>;
+        return <Badge className="bg-red-100 text-red-700">Anulado</Badge>;
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="secondary">{status}</Badge>;
     }
+  };
+
+  const getAccountTypeBadge = (type) => {
+    switch (type) {
+      case 'expense':
+        return <Badge className="bg-red-100 text-red-700">Gasto</Badge>;
+      case 'asset':
+        return <Badge className="bg-blue-100 text-blue-700">Activo</Badge>;
+      case 'liability':
+        return <Badge className="bg-amber-100 text-amber-700">Pasivo</Badge>;
+      case 'income':
+        return <Badge className="bg-emerald-100 text-emerald-700">Ingreso</Badge>;
+      case 'equity':
+        return <Badge className="bg-purple-100 text-purple-700">Capital</Badge>;
+      default:
+        return <Badge variant="secondary">{type}</Badge>;
+    }
+  };
+
+  // Stats
+  const stats = {
+    totalEntries: entries.length,
+    totalDebits: entries.reduce((sum, e) => sum + (e.total_debits || 0), 0),
+    totalCredits: entries.reduce((sum, e) => sum + (e.total_credits || 0), 0),
+    payrollEntries: entries.filter(e => e.payroll_period_id).length
   };
 
   return (
     <DashboardLayout title="Contabilidad">
       <div className="space-y-6" data-testid="accounting-page">
-        {/* Summary Cards */}
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-800">Módulo Contable</h1>
+            <p className="text-slate-500">Asientos de diario y plan de cuentas</p>
+          </div>
+          <Button onClick={fetchData} variant="outline" size="sm">
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Actualizar
+          </Button>
+        </div>
+
+        {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="border-slate-200">
+          <Card className="border-l-4 border-l-blue-500">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-500">Total Asientos</p>
-                  <p className="text-2xl font-bold">{entries.length}</p>
+                  <p className="text-2xl font-bold">{stats.totalEntries}</p>
                 </div>
-                <BookOpen className="w-8 h-8 text-slate-300" />
+                <FileText className="w-8 h-8 text-blue-300" />
               </div>
             </CardContent>
           </Card>
-          <Card className="border-slate-200">
+          <Card className="border-l-4 border-l-emerald-500">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Borradores</p>
-                  <p className="text-2xl font-bold text-yellow-600">
-                    {entries.filter(e => e.status === 'draft').length}
-                  </p>
+                  <p className="text-sm text-slate-500">Total Débitos</p>
+                  <p className="text-xl font-bold text-emerald-600">{formatCurrency(stats.totalDebits)}</p>
                 </div>
-                <FileText className="w-8 h-8 text-yellow-300" />
+                <ArrowUpRight className="w-8 h-8 text-emerald-300" />
               </div>
             </CardContent>
           </Card>
-          <Card className="border-slate-200">
+          <Card className="border-l-4 border-l-red-500">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Contabilizados</p>
-                  <p className="text-2xl font-bold text-emerald-600">
-                    {entries.filter(e => e.status === 'posted').length}
-                  </p>
+                  <p className="text-sm text-slate-500">Total Créditos</p>
+                  <p className="text-xl font-bold text-red-600">{formatCurrency(stats.totalCredits)}</p>
                 </div>
-                <Check className="w-8 h-8 text-emerald-300" />
+                <ArrowDownRight className="w-8 h-8 text-red-300" />
               </div>
             </CardContent>
           </Card>
-          <Card className="border-slate-200">
+          <Card className="border-l-4 border-l-purple-500">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Cálculos Pendientes</p>
-                  <p className="text-2xl font-bold text-blue-600">{calculations.length}</p>
+                  <p className="text-sm text-slate-500">De Nómina</p>
+                  <p className="text-2xl font-bold text-purple-600">{stats.payrollEntries}</p>
                 </div>
-                <Calculator className="w-8 h-8 text-blue-300" />
+                <Link2 className="w-8 h-8 text-purple-300" />
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Actions and Filters */}
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Select value={filterPeriod} onValueChange={setFilterPeriod}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Período" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">Todos</SelectItem>
-                <SelectItem value={new Date().toISOString().slice(0, 7)}>Este mes</SelectItem>
-                <SelectItem value={new Date(Date.now() - 30*24*60*60*1000).toISOString().slice(0, 7)}>Mes anterior</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Estado" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">Todos</SelectItem>
-                <SelectItem value="draft">Borrador</SelectItem>
-                <SelectItem value="posted">Contabilizado</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button variant="outline" size="icon" onClick={fetchData}>
-              <RefreshCw className="w-4 h-4" />
-            </Button>
-          </div>
-          <Button onClick={() => setShowNewEntry(true)} className="bg-slate-900 hover:bg-slate-800">
-            <Plus className="w-4 h-4 mr-2" />
-            Nuevo Asiento
-          </Button>
-        </div>
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid grid-cols-2 w-full max-w-md">
+            <TabsTrigger value="asientos">Asientos de Diario</TabsTrigger>
+            <TabsTrigger value="cuentas">Catálogo de Cuentas</TabsTrigger>
+          </TabsList>
 
-        {/* Payroll Calculations for Quick Entry Generation */}
-        {calculations.length > 0 && (
-          <Card className="border-blue-200 bg-blue-50/50">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Calculator className="w-5 h-5" />
-                Generar Asientos desde Cálculos de Nómina
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {calculations.slice(0, 5).map(calc => (
-                  <Button
-                    key={calc.calculation_id}
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleGenerateFromPayroll(calc.calculation_id)}
-                    className="text-xs"
-                  >
-                    <DollarSign className="w-3 h-3 mr-1" />
-                    {calc.employee_name} - {formatCurrency(calc.net_salary)}
+          {/* Asientos Tab */}
+          <TabsContent value="asientos" className="space-y-4">
+            {/* Search and Filters */}
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex flex-wrap gap-4 items-end">
+                  <div className="space-y-1">
+                    <Label className="text-xs text-slate-500">Buscar por Número</Label>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <Input 
+                        className="pl-9 w-40" 
+                        placeholder="000001"
+                        value={searchNumber}
+                        onChange={(e) => setSearchNumber(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs text-slate-500">Fecha Inicio</Label>
+                    <Input 
+                      type="date" 
+                      className="w-40"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs text-slate-500">Fecha Fin</Label>
+                    <Input 
+                      type="date" 
+                      className="w-40"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                    />
+                  </div>
+                  <Button onClick={handleSearch}>
+                    <Search className="w-4 h-4 mr-2" />
+                    Buscar
                   </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+                  <Button variant="outline" onClick={clearSearch}>
+                    Limpiar
+                  </Button>
+                  <div className="flex-1" />
+                  <Button onClick={() => { resetEntryForm(); setShowNewEntry(true); }}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Nuevo Asiento
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
 
-        {/* Journal Entries Table */}
-        <Card className="border-slate-200">
-          <CardHeader>
-            <CardTitle className="heading">Asientos Contables</CardTitle>
-            <CardDescription>Lista de asientos de diario</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="text-center py-8 text-slate-500">Cargando...</div>
-            ) : entries.length === 0 ? (
-              <div className="text-center py-12">
-                <BookOpen className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                <p className="text-slate-500">No hay asientos contables</p>
-                <Button 
-                  variant="link" 
-                  onClick={() => setShowNewEntry(true)}
-                  className="mt-2"
-                >
-                  Crear primer asiento
-                </Button>
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Fecha</TableHead>
-                    <TableHead>Referencia</TableHead>
-                    <TableHead>Descripción</TableHead>
-                    <TableHead className="text-right">Débitos</TableHead>
-                    <TableHead className="text-right">Créditos</TableHead>
-                    <TableHead>Estado</TableHead>
-                    <TableHead className="text-right">Acciones</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {entries.map(entry => (
-                    <TableRow key={entry.entry_id}>
-                      <TableCell>{entry.entry_date}</TableCell>
-                      <TableCell className="font-mono text-sm">{entry.reference}</TableCell>
-                      <TableCell>{entry.description}</TableCell>
-                      <TableCell className="text-right font-mono">
-                        {formatCurrency(entry.total_debits)}
-                      </TableCell>
-                      <TableCell className="text-right font-mono">
-                        {formatCurrency(entry.total_credits)}
-                      </TableCell>
-                      <TableCell>{getStatusBadge(entry.status)}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-1">
-                          {entry.status === 'draft' && (
-                            <>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => {
-                                  setSelectedEntry(entry);
-                                  setShowEditEntry(true);
-                                }}
-                              >
+            {/* Entries Table */}
+            <Card>
+              <CardContent className="p-0">
+                {loading ? (
+                  <div className="p-8 space-y-4">
+                    {[1, 2, 3].map(i => (
+                      <div key={i} className="h-16 bg-slate-100 rounded animate-pulse" />
+                    ))}
+                  </div>
+                ) : entries.length === 0 ? (
+                  <div className="text-center py-12">
+                    <BookOpen className="w-12 h-12 mx-auto mb-4 text-slate-300" />
+                    <p className="text-slate-500">No hay asientos de diario</p>
+                    <Button variant="link" onClick={() => { resetEntryForm(); setShowNewEntry(true); }}>
+                      Crear primer asiento
+                    </Button>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-24">Número</TableHead>
+                        <TableHead>Fecha</TableHead>
+                        <TableHead>Referencia</TableHead>
+                        <TableHead>Descripción</TableHead>
+                        <TableHead className="text-right">Débito</TableHead>
+                        <TableHead className="text-right">Crédito</TableHead>
+                        <TableHead>Estado</TableHead>
+                        <TableHead className="text-right">Acciones</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {entries.map(entry => (
+                        <TableRow key={entry.entry_id}>
+                          <TableCell>
+                            <span className="font-mono font-bold text-blue-600">
+                              #{entry.entry_number || '-'}
+                            </span>
+                          </TableCell>
+                          <TableCell>{entry.entry_date}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              {entry.reference}
+                              {entry.payroll_period_id && (
+                                <Badge variant="outline" className="text-xs border-purple-300 text-purple-600">
+                                  <Link2 className="w-3 h-3 mr-1" />
+                                  Nómina
+                                </Badge>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell className="max-w-xs truncate">{entry.description}</TableCell>
+                          <TableCell className="text-right font-mono">{formatCurrency(entry.total_debits)}</TableCell>
+                          <TableCell className="text-right font-mono">{formatCurrency(entry.total_credits)}</TableCell>
+                          <TableCell>{getStatusBadge(entry.status)}</TableCell>
+                          <TableCell>
+                            <div className="flex justify-end gap-1">
+                              <Button size="icon" variant="ghost" onClick={() => exportToCSV(entry)} title="Exportar CSV">
+                                <Download className="w-4 h-4" />
+                              </Button>
+                              <Button size="icon" variant="ghost" onClick={() => openEditEntry(entry)} title="Editar">
                                 <Edit className="w-4 h-4" />
                               </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handlePostEntry(entry.entry_id)}
-                                className="text-emerald-600 hover:text-emerald-700"
-                              >
-                                <Check className="w-4 h-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleDeleteEntry(entry.entry_id)}
-                                className="text-red-600 hover:text-red-700"
-                              >
+                              <Button size="icon" variant="ghost" className="text-red-500" onClick={() => handleDeleteEntry(entry)} title="Eliminar">
                                 <Trash2 className="w-4 h-4" />
                               </Button>
-                            </>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* New Entry Dialog */}
-        <Dialog open={showNewEntry} onOpenChange={setShowNewEntry}>
+          {/* Cuentas Tab */}
+          <TabsContent value="cuentas" className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Catálogo de Cuentas</h3>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={handleResetAccounts}>
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Restablecer Predeterminadas
+                </Button>
+                <Button onClick={() => { resetAccountForm(); setShowNewAccount(true); }}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Nueva Cuenta
+                </Button>
+              </div>
+            </div>
+
+            <Card>
+              <CardContent className="p-0">
+                {accounts.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Settings className="w-12 h-12 mx-auto mb-4 text-slate-300" />
+                    <p className="text-slate-500">No hay cuentas configuradas</p>
+                    <Button variant="link" onClick={handleResetAccounts}>
+                      Cargar cuentas predeterminadas
+                    </Button>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Código</TableHead>
+                        <TableHead>Nombre</TableHead>
+                        <TableHead>Tipo</TableHead>
+                        <TableHead>Descripción</TableHead>
+                        <TableHead className="text-right">Acciones</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {accounts.map(account => (
+                        <TableRow key={account.account_id}>
+                          <TableCell className="font-mono font-bold">{account.code}</TableCell>
+                          <TableCell>{account.name}</TableCell>
+                          <TableCell>{getAccountTypeBadge(account.account_type)}</TableCell>
+                          <TableCell className="text-slate-500 max-w-xs truncate">
+                            {account.description || "-"}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex justify-end gap-1">
+                              <Button size="icon" variant="ghost" onClick={() => openEditAccount(account)}>
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button size="icon" variant="ghost" className="text-red-500" onClick={() => handleDeleteAccount(account.account_id)}>
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        {/* New/Edit Entry Dialog */}
+        <Dialog open={showNewEntry || showEditEntry} onOpenChange={(open) => { if (!open) { setShowNewEntry(false); setShowEditEntry(false); setSelectedEntry(null); } }}>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Nuevo Asiento Contable</DialogTitle>
-              <DialogDescription>Complete los datos del asiento de diario</DialogDescription>
+              <DialogTitle>{showEditEntry ? "Editar Asiento" : "Nuevo Asiento de Diario"}</DialogTitle>
+              <DialogDescription>
+                {showEditEntry ? "Modifique los datos del asiento contable" : "Complete los datos para crear un nuevo asiento"}
+              </DialogDescription>
             </DialogHeader>
-            
+
             <div className="space-y-4">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="space-y-2">
                   <Label>Fecha</Label>
-                  <Input
-                    type="date"
-                    value={newEntry.entry_date}
-                    onChange={(e) => setNewEntry({...newEntry, entry_date: e.target.value})}
+                  <Input 
+                    type="date" 
+                    value={entryForm.entry_date}
+                    onChange={(e) => setEntryForm({...entryForm, entry_date: e.target.value})}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Referencia</Label>
-                  <Input
-                    value={newEntry.reference}
-                    onChange={(e) => setNewEntry({...newEntry, reference: e.target.value})}
-                    placeholder="NOM-001"
+                  <Input 
+                    value={entryForm.reference}
+                    onChange={(e) => setEntryForm({...entryForm, reference: e.target.value})}
+                    placeholder="Ej: FAC-001"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Período</Label>
-                  <Input
-                    type="month"
-                    value={newEntry.period}
-                    onChange={(e) => setNewEntry({...newEntry, period: e.target.value})}
+                  <Input 
+                    type="month" 
+                    value={entryForm.period}
+                    onChange={(e) => setEntryForm({...entryForm, period: e.target.value})}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Tipo</Label>
-                  <Select 
-                    value={newEntry.entry_type} 
-                    onValueChange={(v) => setNewEntry({...newEntry, entry_type: v})}
-                  >
+                  <Select value={entryForm.entry_type} onValueChange={(v) => setEntryForm({...entryForm, entry_type: v})}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="manual">Manual</SelectItem>
                       <SelectItem value="payroll">Nómina</SelectItem>
                       <SelectItem value="adjustment">Ajuste</SelectItem>
-                      <SelectItem value="closing">Cierre</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -522,121 +731,120 @@ export default function AccountingPage() {
 
               <div className="space-y-2">
                 <Label>Descripción</Label>
-                <Input
-                  value={newEntry.description}
-                  onChange={(e) => setNewEntry({...newEntry, description: e.target.value})}
+                <Input 
+                  value={entryForm.description}
+                  onChange={(e) => setEntryForm({...entryForm, description: e.target.value})}
                   placeholder="Descripción del asiento"
                 />
               </div>
 
-              <Separator />
-
+              {/* Lines */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label>Líneas del Asiento</Label>
-                  <Button variant="outline" size="sm" onClick={addLine}>
+                  <Button type="button" variant="outline" size="sm" onClick={addLine}>
                     <Plus className="w-4 h-4 mr-1" />
                     Agregar Línea
                   </Button>
                 </div>
-                
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Cuenta</TableHead>
-                      <TableHead>Descripción</TableHead>
-                      <TableHead className="text-right">Débito</TableHead>
-                      <TableHead className="text-right">Crédito</TableHead>
-                      <TableHead></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {newEntry.lines.map((line, index) => (
-                      <TableRow key={index}>
-                        <TableCell>
-                          <Select
-                            value={line.account_code}
-                            onValueChange={(v) => updateLine(index, 'account_code', v)}
-                          >
-                            <SelectTrigger className="w-48">
-                              <SelectValue placeholder="Seleccionar cuenta" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {accounts.map(acc => (
-                                <SelectItem key={acc.code} value={acc.code}>
-                                  {acc.code} - {acc.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            value={line.description}
-                            onChange={(e) => updateLine(index, 'description', e.target.value)}
-                            placeholder="Descripción"
-                            className="w-full"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            type="number"
-                            step="0.01"
-                            value={line.debit || ""}
-                            onChange={(e) => updateLine(index, 'debit', e.target.value)}
-                            className="w-28 text-right"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            type="number"
-                            step="0.01"
-                            value={line.credit || ""}
-                            onChange={(e) => updateLine(index, 'credit', e.target.value)}
-                            className="w-28 text-right"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          {newEntry.lines.length > 1 && (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => removeLine(index)}
-                              className="text-red-600"
-                            >
-                              <X className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
 
-                <div className="flex justify-end gap-8 pt-4 border-t">
-                  <div className="text-right">
-                    <p className="text-sm text-slate-500">Total Débitos</p>
-                    <p className="text-lg font-bold">{formatCurrency(getTotalDebits())}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-slate-500">Total Créditos</p>
-                    <p className="text-lg font-bold">{formatCurrency(getTotalCredits())}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-slate-500">Diferencia</p>
-                    <p className={`text-lg font-bold ${isBalanced() ? 'text-emerald-600' : 'text-red-600'}`}>
-                      {formatCurrency(Math.abs(getTotalDebits() - getTotalCredits()))}
-                      {isBalanced() && <Check className="inline w-4 h-4 ml-1" />}
-                    </p>
-                  </div>
+                <div className="border rounded-lg overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-slate-50">
+                        <TableHead className="w-40">Cuenta</TableHead>
+                        <TableHead>Descripción</TableHead>
+                        <TableHead className="w-32 text-right">Débito</TableHead>
+                        <TableHead className="w-32 text-right">Crédito</TableHead>
+                        <TableHead className="w-12"></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {entryForm.lines.map((line, index) => (
+                        <TableRow key={index}>
+                          <TableCell>
+                            <Select 
+                              value={line.account_code} 
+                              onValueChange={(v) => updateLine(index, 'account_code', v)}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Cuenta" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {accounts.map(acc => (
+                                  <SelectItem key={acc.code} value={acc.code}>
+                                    {acc.code} - {acc.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
+                          <TableCell>
+                            <Input 
+                              value={line.description}
+                              onChange={(e) => updateLine(index, 'description', e.target.value)}
+                              placeholder="Detalle"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Input 
+                              type="number"
+                              step="0.01"
+                              className="text-right"
+                              value={line.debit || ""}
+                              onChange={(e) => updateLine(index, 'debit', e.target.value)}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Input 
+                              type="number"
+                              step="0.01"
+                              className="text-right"
+                              value={line.credit || ""}
+                              onChange={(e) => updateLine(index, 'credit', e.target.value)}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            {entryForm.lines.length > 1 && (
+                              <Button type="button" variant="ghost" size="icon" onClick={() => removeLine(index)}>
+                                <X className="w-4 h-4 text-red-500" />
+                              </Button>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {/* Totals Row */}
+                      <TableRow className="bg-slate-50 font-bold">
+                        <TableCell colSpan={2} className="text-right">TOTALES:</TableCell>
+                        <TableCell className="text-right font-mono">{formatCurrency(getTotalDebits())}</TableCell>
+                        <TableCell className="text-right font-mono">{formatCurrency(getTotalCredits())}</TableCell>
+                        <TableCell></TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </div>
+
+                {/* Balance indicator */}
+                <div className={`flex items-center gap-2 p-3 rounded-lg ${isBalanced() ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
+                  {isBalanced() ? (
+                    <>
+                      <CheckCircle className="w-5 h-5" />
+                      <span>Asiento balanceado</span>
+                    </>
+                  ) : (
+                    <>
+                      <AlertTriangle className="w-5 h-5" />
+                      <span>Diferencia: {formatCurrency(Math.abs(getTotalDebits() - getTotalCredits()))}</span>
+                    </>
+                  )}
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label>Notas</Label>
-                <Textarea
-                  value={newEntry.notes}
-                  onChange={(e) => setNewEntry({...newEntry, notes: e.target.value})}
+                <Label>Notas (Opcional)</Label>
+                <Textarea 
+                  value={entryForm.notes}
+                  onChange={(e) => setEntryForm({...entryForm, notes: e.target.value})}
                   placeholder="Notas adicionales..."
                   rows={2}
                 />
@@ -644,117 +852,91 @@ export default function AccountingPage() {
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowNewEntry(false)}>
+              <Button variant="outline" onClick={() => { setShowNewEntry(false); setShowEditEntry(false); }}>
                 Cancelar
               </Button>
               <Button 
-                onClick={handleCreateEntry} 
+                onClick={showEditEntry ? handleUpdateEntry : handleCreateEntry}
                 disabled={!isBalanced()}
-                className="bg-slate-900 hover:bg-slate-800"
               >
-                Crear Asiento
+                {showEditEntry ? "Guardar Cambios" : "Crear Asiento"}
               </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
-        {/* Edit Entry Dialog */}
-        <Dialog open={showEditEntry} onOpenChange={setShowEditEntry}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        {/* New/Edit Account Dialog */}
+        <Dialog open={showNewAccount || showEditAccount} onOpenChange={(open) => { if (!open) { setShowNewAccount(false); setShowEditAccount(false); setSelectedAccount(null); } }}>
+          <DialogContent>
             <DialogHeader>
-              <DialogTitle>Editar Asiento Contable</DialogTitle>
-              <DialogDescription>Modifique los datos del asiento</DialogDescription>
+              <DialogTitle>{showEditAccount ? "Editar Cuenta" : "Nueva Cuenta Contable"}</DialogTitle>
+              <DialogDescription>
+                {showEditAccount ? "Modifique los datos de la cuenta" : "Complete los datos para crear una nueva cuenta"}
+              </DialogDescription>
             </DialogHeader>
-            
-            {selectedEntry && (
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="space-y-2">
-                    <Label>Fecha</Label>
-                    <Input
-                      type="date"
-                      value={selectedEntry.entry_date}
-                      onChange={(e) => setSelectedEntry({...selectedEntry, entry_date: e.target.value})}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Referencia</Label>
-                    <Input
-                      value={selectedEntry.reference}
-                      onChange={(e) => setSelectedEntry({...selectedEntry, reference: e.target.value})}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Período</Label>
-                    <Input
-                      type="month"
-                      value={selectedEntry.period}
-                      onChange={(e) => setSelectedEntry({...selectedEntry, period: e.target.value})}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Estado</Label>
-                    <Badge className="mt-2">{selectedEntry.status}</Badge>
-                  </div>
-                </div>
 
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Descripción</Label>
-                  <Input
-                    value={selectedEntry.description}
-                    onChange={(e) => setSelectedEntry({...selectedEntry, description: e.target.value})}
+                  <Label>Código</Label>
+                  <Input 
+                    value={accountForm.code}
+                    onChange={(e) => setAccountForm({...accountForm, code: e.target.value})}
+                    placeholder="Ej: 5101"
                   />
                 </div>
-
-                <Separator />
-
-                <div>
-                  <Label className="mb-2 block">Líneas del Asiento</Label>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Cuenta</TableHead>
-                        <TableHead>Descripción</TableHead>
-                        <TableHead className="text-right">Débito</TableHead>
-                        <TableHead className="text-right">Crédito</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {selectedEntry.lines?.map((line, index) => (
-                        <TableRow key={index}>
-                          <TableCell className="font-mono text-sm">
-                            {line.account_code} - {line.account_name}
-                          </TableCell>
-                          <TableCell>{line.description}</TableCell>
-                          <TableCell className="text-right font-mono">
-                            {line.debit > 0 ? formatCurrency(line.debit) : '-'}
-                          </TableCell>
-                          <TableCell className="text-right font-mono">
-                            {line.credit > 0 ? formatCurrency(line.credit) : '-'}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-
                 <div className="space-y-2">
-                  <Label>Notas</Label>
-                  <Textarea
-                    value={selectedEntry.notes || ""}
-                    onChange={(e) => setSelectedEntry({...selectedEntry, notes: e.target.value})}
-                    rows={2}
-                  />
+                  <Label>Tipo de Cuenta</Label>
+                  <Select value={accountForm.account_type} onValueChange={(v) => setAccountForm({...accountForm, account_type: v})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="asset">Activo</SelectItem>
+                      <SelectItem value="liability">Pasivo</SelectItem>
+                      <SelectItem value="equity">Capital</SelectItem>
+                      <SelectItem value="income">Ingreso</SelectItem>
+                      <SelectItem value="expense">Gasto</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
-            )}
+
+              <div className="space-y-2">
+                <Label>Nombre de la Cuenta</Label>
+                <Input 
+                  value={accountForm.name}
+                  onChange={(e) => setAccountForm({...accountForm, name: e.target.value})}
+                  placeholder="Ej: Gastos de Sueldos y Salarios"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Código Padre (Opcional)</Label>
+                <Input 
+                  value={accountForm.parent_code}
+                  onChange={(e) => setAccountForm({...accountForm, parent_code: e.target.value})}
+                  placeholder="Ej: 51"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Descripción (Opcional)</Label>
+                <Textarea 
+                  value={accountForm.description}
+                  onChange={(e) => setAccountForm({...accountForm, description: e.target.value})}
+                  placeholder="Descripción de la cuenta..."
+                  rows={2}
+                />
+              </div>
+            </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowEditEntry(false)}>
+              <Button variant="outline" onClick={() => { setShowNewAccount(false); setShowEditAccount(false); }}>
                 Cancelar
               </Button>
-              <Button onClick={handleUpdateEntry} className="bg-slate-900 hover:bg-slate-800">
-                Guardar Cambios
+              <Button onClick={showEditAccount ? handleUpdateAccount : handleCreateAccount}>
+                {showEditAccount ? "Guardar Cambios" : "Crear Cuenta"}
               </Button>
             </DialogFooter>
           </DialogContent>
