@@ -23,6 +23,7 @@ import PayrollConfigPage from "@/pages/PayrollConfigPage";
 import TemplatesPage from "@/pages/TemplatesPage";
 import PayrollCalculatorPage from "@/pages/PayrollCalculatorPage";
 import AccountingPage from "@/pages/AccountingPage";
+import PayrollV2Page from "@/pages/PayrollV2Page";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
