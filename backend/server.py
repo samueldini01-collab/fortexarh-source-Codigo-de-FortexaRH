@@ -948,6 +948,15 @@ async def register(user_data: UserCreate, response: Response):
     
     token = create_jwt_token(user_id, user_data.email)
     
+    # Send welcome email (non-blocking)
+    if user_data.company_name:
+        asyncio.create_task(send_welcome_email(
+            recipient_email=user_data.email,
+            recipient_name=user_data.name,
+            company_name=user_data.company_name,
+            plan_name=plan_name
+        ))
+    
     return {
         "token": token,
         "user": {
