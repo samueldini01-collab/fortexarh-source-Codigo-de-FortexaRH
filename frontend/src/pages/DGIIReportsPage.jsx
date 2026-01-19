@@ -432,7 +432,116 @@ export default function DGIIReportsPage() {
               </Card>
             );
           })}
-        </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="annual" className="mt-4">
+            {/* Year Selector */}
+            <Card className="mb-4">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CalendarDays className="w-5 h-5" />
+                  Seleccionar Año Fiscal
+                </CardTitle>
+                <CardDescription>
+                  Elija el año para generar la declaración anual IR-13
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {availableYears.length === 0 ? (
+                  <div className="text-center py-8 text-slate-500">
+                    <AlertCircle className="w-12 h-12 mx-auto text-slate-300 mb-3" />
+                    <p className="font-medium">No hay años disponibles</p>
+                    <p className="text-sm">Procese nóminas para generar reportes anuales</p>
+                  </div>
+                ) : (
+                  <div className="max-w-xs">
+                    <label className="text-sm font-medium text-slate-700 mb-2 block">
+                      Año Fiscal
+                    </label>
+                    <Select 
+                      value={selectedYear?.toString() || ""} 
+                      onValueChange={(val) => setSelectedYear(parseInt(val))}
+                    >
+                      <SelectTrigger data-testid="year-selector">
+                        <SelectValue placeholder="Seleccione un año" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableYears.map(yearInfo => (
+                          <SelectItem key={yearInfo.year} value={yearInfo.year.toString()}>
+                            {yearInfo.year} ({yearInfo.periods_count} períodos)
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Annual Report Card */}
+            {ANNUAL_REPORTS.map(report => {
+              const Icon = report.icon;
+              return (
+                <Card 
+                  key={report.id}
+                  className={`border-2 border-rose-200 ${selectedYear ? 'hover:shadow-md transition-shadow' : 'opacity-60'}`}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-4">
+                        <div className="w-14 h-14 rounded-xl bg-rose-50 flex items-center justify-center">
+                          <Icon className="w-7 h-7 text-rose-500" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-bold text-xl text-slate-800">{report.name}</h3>
+                            <Badge variant="outline" className="text-xs">Excel</Badge>
+                            <Badge className="bg-rose-100 text-rose-700 text-xs">Anual</Badge>
+                          </div>
+                          <p className="text-sm font-medium text-slate-700">{report.title}</p>
+                          <p className="text-sm text-slate-500 mt-1 max-w-lg">{report.description}</p>
+                          
+                          {selectedYear && (
+                            <div className="mt-3 bg-slate-50 rounded-lg p-3">
+                              <p className="text-sm text-slate-600">
+                                <strong>Año seleccionado:</strong> {selectedYear}
+                              </p>
+                              <p className="text-xs text-slate-500 mt-1">
+                                Este reporte incluirá: Detalle anual por empleado, Resumen mensual, y Declaración para firma
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4 flex justify-end">
+                      <Button
+                        onClick={() => handleDownloadAnnual(report.id)}
+                        disabled={!selectedYear || downloading === report.id}
+                        className="gap-2 bg-rose-600 hover:bg-rose-700"
+                        data-testid={`download-${report.id}`}
+                      >
+                        {downloading === report.id ? (
+                          <>
+                            <RefreshCw className="w-4 h-4 animate-spin" />
+                            Generando...
+                          </>
+                        ) : (
+                          <>
+                            <Download className="w-4 h-4" />
+                            Descargar {report.name} - {selectedYear || 'Seleccione año'}
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </TabsContent>
+        </Tabs>
 
         {/* Instructions */}
         <Card>
@@ -440,7 +549,7 @@ export default function DGIIReportsPage() {
             <CardTitle>Instrucciones de Uso</CardTitle>
           </CardHeader>
           <CardContent className="prose prose-sm max-w-none">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <h4 className="font-semibold text-slate-800 mb-2">Formularios DGII (IR-3, IR-4)</h4>
                 <ol className="list-decimal list-inside text-sm text-slate-600 space-y-2">
@@ -460,6 +569,16 @@ export default function DGIIReportsPage() {
                   <li>Valide los archivos en el portal TSS (tss.gob.do)</li>
                   <li>Corrija cualquier error indicado</li>
                   <li>Envíe los archivos antes del día 3 de cada mes</li>
+                </ol>
+              </div>
+              <div>
+                <h4 className="font-semibold text-slate-800 mb-2">Declaración Anual IR-13</h4>
+                <ol className="list-decimal list-inside text-sm text-slate-600 space-y-2">
+                  <li>Seleccione el año fiscal en la pestaña "Reporte Anual"</li>
+                  <li>Descargue el <strong>IR-13</strong></li>
+                  <li>Revise el detalle por empleado y resumen mensual</li>
+                  <li>Complete la declaración en la Oficina Virtual</li>
+                  <li>Presente antes del 28 de febrero del año siguiente</li>
                 </ol>
               </div>
             </div>
