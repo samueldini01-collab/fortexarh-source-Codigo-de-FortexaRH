@@ -37,7 +37,7 @@ const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Empleados", href: "/employees", icon: Users },
   { name: "Organigrama", href: "/organigrama", icon: Network },
-  { name: "Nómina", href: "/payroll", icon: DollarSign },
+  { name: "Nómina", href: "/payroll-v2", icon: DollarSign },
   { name: "Calculadora", href: "/payroll-calculator", icon: Calculator },
   { name: "Contabilidad", href: "/accounting", icon: BookOpen },
   { name: "Config. Nómina", href: "/payroll-config", icon: Settings2 },
