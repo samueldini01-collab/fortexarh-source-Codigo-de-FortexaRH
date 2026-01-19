@@ -5887,22 +5887,18 @@ async def generate_report(
     """Generate custom report data"""
     company_id = current_user.get("company_id")
     
-    query = {"company_id": company_id}
-    
-    if department != "Todos":
-        query["department"] = department
-    if status != "all":
-        query["status"] = status
-    if employee_id:
-        query["employee_id"] = employee_id
-    
     data = []
     columns = []
     summary = {"totalRecords": 0, "totalAmount": 0}
     
     if report_type == "payroll":
+        query = {"company_id": company_id}
+        if department != "Todos":
+            query["department"] = department
         if period_id:
             query["period_id"] = period_id
+        if employee_id:
+            query["employee_id"] = employee_id
         payrolls = await db.payroll_entries.find(query, {"_id": 0}).to_list(1000)
         
         # Get employee names
