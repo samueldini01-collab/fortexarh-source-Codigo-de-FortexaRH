@@ -157,7 +157,7 @@ export default function Dashboard() {
             
             {/* Close button */}
             <button 
-              onClick={() => setShowProBanner(false)}
+              onClick={handleCloseBanner}
               className="absolute top-4 right-4 p-1 hover:bg-white/20 rounded-full transition-colors"
               aria-label="Cerrar banner"
             >
