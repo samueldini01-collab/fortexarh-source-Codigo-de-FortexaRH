@@ -764,7 +764,7 @@ SUBSCRIPTION_PLANS = {
         "trial_days": 5,
         "features": ["1 empleado máximo", "Calculadora de nómina", "5 días de prueba"],
         "allowed_features": ["payroll_calculator", "dashboard"],
-        "restricted_features": ["employees", "attendance", "vacations", "evaluations", "recruitment", "reports", "organigrama", "accounting"]
+        "restricted_features": ["employees", "attendance", "vacations", "evaluations", "recruitment", "reports", "organigrama", "accounting", "employee_portal"]
     },
     "basic": {
         "plan_id": "basic",
@@ -775,9 +775,9 @@ SUBSCRIPTION_PLANS = {
         "max_users": 3,
         "included_users": 3,
         "trial_days": 0,
-        "features": ["Hasta 50 empleados", "3 usuarios incluidos", "Gestión de empleados", "Nómina básica", "Asistencias y vacaciones", "Calculadora de nómina", "Reportes básicos", "Exportación Excel/CSV", "Soporte por email", "Integración FortexaERP"],
+        "features": ["Hasta 50 empleados", "3 usuarios incluidos", "Gestión de empleados", "Nómina básica", "Asistencias y vacaciones", "Calculadora de nómina", "Módulo de préstamos", "Reportes básicos", "Exportación Excel/CSV", "Soporte por email", "Integración FortexaERP"],
         "allowed_features": ["all_basic"],
-        "restricted_features": ["evaluations", "recruitment", "organigrama", "advanced_reports", "integrations_pro"]
+        "restricted_features": ["evaluations", "recruitment", "organigrama", "advanced_reports", "integrations_pro", "employee_portal"]
     },
     "pro": {
         "plan_id": "pro",
@@ -788,7 +788,7 @@ SUBSCRIPTION_PLANS = {
         "max_users": 5,
         "included_users": 5,
         "trial_days": 0,
-        "features": ["Hasta 200 empleados", "5 usuarios incluidos", "Todo lo del plan Básico", "Evaluaciones de desempeño", "Módulo de reclutamiento", "Organigrama intuitivo", "Reportes avanzados", "Integración QuickBooks", "Soporte prioritario"],
+        "features": ["Hasta 200 empleados", "5 usuarios incluidos", "Todo lo del plan Básico", "Evaluaciones de desempeño", "Módulo de reclutamiento", "Portal autoservicio empleados", "Organigrama intuitivo", "Reportes avanzados", "Integración QuickBooks", "Soporte prioritario"],
         "allowed_features": ["all_pro"],
         "restricted_features": ["custom_roles", "api", "advanced_workflows", "integrations_enterprise"]
     },
@@ -808,6 +808,9 @@ SUBSCRIPTION_PLANS = {
 }
 
 # Feature access mapping based on plan
+# loans: available in ALL plans (basic, pro, enterprise)
+# recruitment: Pro and Enterprise only
+# employee_portal: Pro and Enterprise only
 FEATURE_ACCESS = {
     "trial": {
         "dashboard": True,
@@ -820,6 +823,8 @@ FEATURE_ACCESS = {
         "reports": False,
         "organigrama": False,
         "accounting": False,
+        "loans": False,
+        "employee_portal": False,
         "subscriptions": True,
         "settings": True
     },
@@ -834,6 +839,8 @@ FEATURE_ACCESS = {
         "reports": True,
         "organigrama": False,
         "accounting": True,
+        "loans": True,
+        "employee_portal": False,
         "subscriptions": True,
         "settings": True
     },
@@ -848,6 +855,8 @@ FEATURE_ACCESS = {
         "reports": True,
         "organigrama": True,
         "accounting": True,
+        "loans": True,
+        "employee_portal": True,
         "subscriptions": True,
         "settings": True
     },
@@ -862,6 +871,8 @@ FEATURE_ACCESS = {
         "reports": True,
         "organigrama": True,
         "accounting": True,
+        "loans": True,
+        "employee_portal": True,
         "subscriptions": True,
         "settings": True,
         "custom_roles": True,
