@@ -340,9 +340,7 @@ class SubscriptionPlan(BaseModel):
     max_employees: int
     features: List[str]
 
-class CheckoutRequest(BaseModel):
-    plan_id: str
-    origin_url: str
+# CheckoutRequest is defined later in the subscription section
 
 # ===================== NEW MODELS: ORGANIGRAMA, PAYROLL CONFIG, TEMPLATES =====================
 
