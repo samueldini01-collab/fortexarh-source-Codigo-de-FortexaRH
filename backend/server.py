@@ -70,9 +70,16 @@ else:
 @app.get("/health")
 async def health_check():
     """Health check endpoint for Kubernetes liveness/readiness probes"""
+    return {"status": "healthy"}
+
+@app.get("/health/db")
+async def health_check_db():
+    """Extended health check with database connectivity (for debugging)"""
     try:
-        await db.command("ping")
+        await asyncio.wait_for(db.command("ping"), timeout=5.0)
         return {"status": "healthy", "database": "connected"}
+    except asyncio.TimeoutError:
+        return {"status": "degraded", "database": "timeout"}
     except Exception as e:
         return {"status": "unhealthy", "database": "disconnected", "error": str(e)}
 
