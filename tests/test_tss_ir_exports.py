@@ -312,3 +312,21 @@ class TestTSSGeneratorFunctions:
         content = response.content
         assert content[:4] == b'\xd0\xcf\x11\xe0', "Not a valid XLS file"
         print("IR-17: Valid XLS format confirmed")
+    
+    def test_excel_file_structure_ir4(self):
+        """Verify IR-4 Excel has correct structure"""
+        response = self.session.get(f"{BASE_URL}/api/payroll-v2/periods")
+        periods = response.json()
+        paid_periods = [p for p in periods if p.get("status") == "paid"]
+        
+        if not paid_periods:
+            pytest.skip("No paid periods")
+        
+        period_id = paid_periods[0]["period_id"]
+        response = self.session.get(f"{BASE_URL}/api/payroll-v2/periods/{period_id}/export/ir4")
+        
+        assert response.status_code == 200
+        
+        content = response.content
+        assert content[:4] == b'\xd0\xcf\x11\xe0', "Not a valid XLS file"
+        print("IR-4: Valid XLS format confirmed")
