@@ -3091,7 +3091,7 @@ async def pay_period(period_id: str, payment_data: PayrollPaymentRequest = None,
         "entry_number": journal_result["entry_number"]
     }
 
-async def generate_period_journal_entry(period_id: str, current_user: dict, is_regeneration: bool = False):
+async def generate_period_journal_entry(period_id: str, current_user: dict, is_regeneration: bool = False, bank_account_code: str = "1101"):
     """Generar asiento contable para un período de nómina completo"""
     company_id = current_user.get("company_id")
     
@@ -3107,6 +3107,13 @@ async def generate_period_journal_entry(period_id: str, current_user: dict, is_r
     
     if not entries:
         raise HTTPException(status_code=400, detail="No hay empleados en este período")
+    
+    # Obtener nombre de la cuenta bancaria
+    bank_account = await db.accounts.find_one(
+        {"company_id": company_id, "code": bank_account_code},
+        {"_id": 0}
+    )
+    bank_account_name = bank_account.get("name", "Banco - Cuenta Nómina") if bank_account else "Banco - Cuenta Nómina"
     
     # Sumar todos los valores
     totals = {
