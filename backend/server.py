@@ -1163,6 +1163,86 @@ async def update_company(data: CompanyCreate, current_user: dict = Depends(get_c
         raise HTTPException(status_code=404, detail="Company not found")
     return {"message": "Company updated successfully"}
 
+
+@api_router.put("/company/settings")
+async def update_company_settings(data: dict, current_user: dict = Depends(get_current_user)):
+    """Update company settings including branding, appearance, and notifications"""
+    company_id = current_user.get("company_id")
+    
+    updates = {}
+    
+    # Handle company general info
+    if "company" in data:
+        company_data = data["company"]
+        for field in ["name", "rnc", "industry", "tagline", "description", "email", "phone", "address", "website", "logo_url"]:
+            if field in company_data:
+                updates[field] = company_data[field]
+    
+    # Handle appearance settings
+    if "appearance" in data:
+        updates["appearance"] = data["appearance"]
+    
+    # Handle branding settings
+    if "branding" in data:
+        updates["branding"] = data["branding"]
+    
+    # Handle notification settings
+    if "notifications" in data:
+        updates["notifications"] = data["notifications"]
+    
+    updates["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.companies.update_one(
+        {"company_id": company_id},
+        {"$set": updates}
+    )
+    
+    return {"message": "Settings updated successfully"}
+
+
+@api_router.get("/company/settings")
+async def get_company_settings(current_user: dict = Depends(get_current_user)):
+    """Get all company settings"""
+    company_id = current_user.get("company_id")
+    
+    company = await db.companies.find_one(
+        {"company_id": company_id},
+        {"_id": 0}
+    )
+    
+    if not company:
+        raise HTTPException(status_code=404, detail="Company not found")
+    
+    return {
+        "company": {
+            "name": company.get("name", ""),
+            "rnc": company.get("rnc", ""),
+            "industry": company.get("industry", ""),
+            "tagline": company.get("tagline", ""),
+            "description": company.get("description", ""),
+            "email": company.get("email", ""),
+            "phone": company.get("phone", ""),
+            "address": company.get("address", ""),
+            "website": company.get("website", ""),
+            "logo_url": company.get("logo_url", "")
+        },
+        "appearance": company.get("appearance", {
+            "primaryColor": "#1e3a5f",
+            "secondaryColor": "#3b82f6",
+            "accentColor": "#10b981"
+        }),
+        "branding": company.get("branding", {
+            "showLogoInReports": True,
+            "showLogoInEmails": True,
+            "footerText": ""
+        }),
+        "notifications": company.get("notifications", {
+            "emailNotifications": True,
+            "payrollReminders": True,
+            "employeeUpdates": True
+        })
+    }
+
 # ===================== EMPLOYEES ROUTES =====================
 
 @api_router.get("/employees")
