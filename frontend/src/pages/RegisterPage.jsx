@@ -1,14 +1,22 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "@/App";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useAuth, API } from "@/App";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Mail, Lock, User, Building2, AlertCircle, Check } from "lucide-react";
+import { Users, Mail, Lock, User, Building2, AlertCircle, Check, CheckCircle2, Loader2, CreditCard } from "lucide-react";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 
 export default function RegisterPage() {
+  const [searchParams] = useSearchParams();
+  const sessionId = searchParams.get("session_id");
+  const paymentStatus = searchParams.get("payment");
+  const planFromUrl = searchParams.get("plan");
+  const employeesFromUrl = searchParams.get("employees");
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -17,9 +25,38 @@ export default function RegisterPage() {
     company_name: ""
   });
   const [loading, setLoading] = useState(false);
+  const [verifyingPayment, setVerifyingPayment] = useState(false);
+  const [paymentVerified, setPaymentVerified] = useState(false);
+  const [paymentInfo, setPaymentInfo] = useState(null);
   const [error, setError] = useState("");
   const { register } = useAuth();
   const navigate = useNavigate();
+
+  // Verify payment on mount if session_id is present
+  useEffect(() => {
+    if (sessionId && paymentStatus === "success") {
+      verifyPayment();
+    }
+  }, [sessionId, paymentStatus]);
+
+  const verifyPayment = async () => {
+    setVerifyingPayment(true);
+    try {
+      const response = await axios.get(`${API}/public/checkout/verify/${sessionId}`);
+      if (response.data.valid && response.data.payment_status === "paid") {
+        setPaymentVerified(true);
+        setPaymentInfo(response.data);
+        toast.success("¡Pago verificado! Complete su registro para activar su cuenta.");
+      } else {
+        toast.error("El pago aún no ha sido confirmado. Intente nuevamente.");
+      }
+    } catch (error) {
+      console.error("Error verifying payment:", error);
+      toast.error(error.response?.data?.detail || "Error al verificar el pago");
+    } finally {
+      setVerifyingPayment(false);
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -42,8 +79,31 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      await register(formData.email, formData.password, formData.name, formData.company_name);
-      toast.success("¡Cuenta creada exitosamente!");
+      // Include payment_session_id if this is a paid registration
+      const registrationData = {
+        email: formData.email,
+        password: formData.password,
+        name: formData.name,
+        company_name: formData.company_name
+      };
+      
+      if (paymentVerified && sessionId) {
+        registrationData.payment_session_id = sessionId;
+      }
+      
+      await register(
+        registrationData.email, 
+        registrationData.password, 
+        registrationData.name, 
+        registrationData.company_name,
+        registrationData.payment_session_id
+      );
+      
+      if (paymentVerified) {
+        toast.success("¡Cuenta creada y plan activado exitosamente!");
+      } else {
+        toast.success("¡Cuenta creada exitosamente!");
+      }
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.detail || "Error al crear la cuenta");
