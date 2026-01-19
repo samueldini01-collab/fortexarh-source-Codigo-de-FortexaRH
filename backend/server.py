@@ -3046,9 +3046,14 @@ async def regenerate_period_journal_entry(period_id: str, company_id: str, curre
     await generate_period_journal_entry(period_id, current_user, is_regeneration=True)
 
 @api_router.post("/payroll-v2/periods/{period_id}/pay")
-async def pay_period(period_id: str, current_user: dict = Depends(get_current_user)):
+async def pay_period(period_id: str, payment_data: PayrollPaymentRequest = None, current_user: dict = Depends(get_current_user)):
     """Pagar el período y generar asiento contable"""
     company_id = current_user.get("company_id")
+    
+    # Obtener código de cuenta bancaria (por defecto 1101)
+    bank_account_code = "1101"
+    if payment_data and payment_data.bank_account_code:
+        bank_account_code = payment_data.bank_account_code
     
     period = await db.payroll_periods.find_one(
         {"period_id": period_id, "company_id": company_id},
@@ -3060,8 +3065,8 @@ async def pay_period(period_id: str, current_user: dict = Depends(get_current_us
     if period.get("status") not in ["calculated", "approved"]:
         raise HTTPException(status_code=400, detail="El período debe estar calculado o aprobado para pagarlo")
     
-    # Generar asiento contable
-    journal_result = await generate_period_journal_entry(period_id, current_user)
+    # Generar asiento contable con la cuenta bancaria seleccionada
+    journal_result = await generate_period_journal_entry(period_id, current_user, bank_account_code=bank_account_code)
     
     # Actualizar estado del período
     await db.payroll_periods.update_one(
