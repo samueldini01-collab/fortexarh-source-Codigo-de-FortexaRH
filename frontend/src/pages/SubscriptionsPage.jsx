@@ -564,6 +564,7 @@ export default function SubscriptionsPage() {
                     <TableHead>Empleados</TableHead>
                     <TableHead className="text-right">Total</TableHead>
                     <TableHead>Estado</TableHead>
+                    <TableHead className="text-center">Acciones</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -580,6 +581,17 @@ export default function SubscriptionsPage() {
                         <Badge className={invoice.status === 'paid' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}>
                           {invoice.status === 'paid' ? 'Pagada' : 'Pendiente'}
                         </Badge>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleDownloadInvoice(invoice.invoice_id, invoice.invoice_number)}
+                          data-testid={`download-invoice-${invoice.invoice_id}`}
+                        >
+                          <Download className="w-4 h-4 mr-1" />
+                          PDF
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
