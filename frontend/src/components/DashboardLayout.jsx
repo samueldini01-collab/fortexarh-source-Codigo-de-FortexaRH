@@ -57,7 +57,8 @@ import {
   Shield,
   Wallet,
   TrendingUp,
-  FileBarChart
+  FileBarChart,
+  FileCheck
 } from "lucide-react";
 
 // Default navigation items with feature mapping
@@ -73,6 +74,7 @@ const DEFAULT_NAVIGATION = [
   { id: "dgii-reports", name: "Reportes DGII", href: "/dgii-reports", icon: FileText, visible: true, featureKey: "reports" },
   { id: "metrics-dashboard", name: "Métricas", href: "/metrics-dashboard", icon: TrendingUp, visible: true, featureKey: "reports" },
   { id: "reports-advanced", name: "Reportes Avanzados", href: "/reports-advanced", icon: FileBarChart, visible: true, featureKey: "reports" },
+  { id: "documents", name: "Documentos", href: "/documents", icon: FileCheck, visible: true, featureKey: "employees" },
   { id: "payroll-config", name: "Config. Nómina", href: "/payroll-config", icon: Settings2, visible: true, featureKey: "employees" },
   { id: "attendance", name: "Asistencias", href: "/attendance", icon: Clock, visible: true, featureKey: "attendance" },
   { id: "vacations", name: "Vacaciones", href: "/vacations", icon: Calendar, visible: true, featureKey: "vacations" },
