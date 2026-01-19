@@ -202,6 +202,43 @@ export default function DGIIReportsPage() {
     }
   };
 
+  const handleDownloadAnnual = async (reportType) => {
+    if (!selectedYear) {
+      toast.error("Seleccione un año primero");
+      return;
+    }
+
+    setDownloading(reportType);
+    
+    try {
+      const endpoint = `/payroll-v2/annual-report/ir13/${selectedYear}`;
+      const filename = `IR13_Declaracion_Anual_${selectedYear}.xls`;
+
+      const response = await axios.get(`${API}${endpoint}`, {
+        headers: getAuthHeaders(),
+        withCredentials: true,
+        responseType: 'blob'
+      });
+
+      const blob = new Blob([response.data], { type: 'application/vnd.ms-excel' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success(`IR-13 Año ${selectedYear} descargado correctamente`);
+    } catch (error) {
+      console.error("Error downloading annual report:", error);
+      toast.error(error.response?.data?.detail || "Error al descargar el reporte anual");
+    } finally {
+      setDownloading(null);
+    }
+  };
+
   const getMonthName = (month) => {
     const months = [
       'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
