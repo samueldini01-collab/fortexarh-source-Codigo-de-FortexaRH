@@ -15,10 +15,13 @@ import jwt
 import bcrypt
 import httpx
 import resend
-from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionResponse, CheckoutSessionRequest
+import stripe
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
+
+# Configure Stripe with production key
+stripe.api_key = os.environ.get('STRIPE_API_KEY')
 
 # Import email service
 from email_service import send_payment_confirmation_email, send_welcome_email, send_invoice_email
