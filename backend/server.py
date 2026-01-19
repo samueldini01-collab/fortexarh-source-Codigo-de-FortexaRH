@@ -913,10 +913,10 @@ async def register(user_data: UserCreate, response: Response):
         if pending.get("payment_status") != "paid":
             # Try to verify with Stripe
             api_key = os.environ.get('STRIPE_API_KEY')
-            stripe_checkout = StripeCheckout(api_key=api_key, webhook_url="")
+            stripe.api_key = api_key
             try:
-                status = await stripe_checkout.get_checkout_status(user_data.payment_session_id)
-                if status.payment_status != "paid":
+                session = stripe.checkout.Session.retrieve(user_data.payment_session_id)
+                if session.payment_status != "paid":
                     raise HTTPException(status_code=400, detail="El pago aún no ha sido completado")
                 # Update pending checkout
                 await db.pending_checkouts.update_one(
