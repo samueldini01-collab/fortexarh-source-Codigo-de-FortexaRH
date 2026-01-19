@@ -2777,11 +2777,19 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
     if not period:
         raise HTTPException(status_code=404, detail="Período no encontrado")
     
-    # Obtener empleados activos no excluidos
-    employees = await db.employees.find(
-        {"company_id": company_id, "status": "active", "exclude_from_payroll": {"$ne": True}},
-        {"_id": 0}
-    ).to_list(1000)
+    # Construir query de empleados
+    employee_query = {"company_id": company_id, "status": "active", "exclude_from_payroll": {"$ne": True}}
+    
+    # Aplicar filtro por departamento si existe
+    if period.get("department_filter"):
+        employee_query["department"] = period["department_filter"]
+    
+    # Aplicar filtro por IDs específicos si existe
+    if period.get("employee_ids") and len(period["employee_ids"]) > 0:
+        employee_query["employee_id"] = {"$in": period["employee_ids"]}
+    
+    # Obtener empleados según filtros
+    employees = await db.employees.find(employee_query, {"_id": 0}).to_list(1000)
     
     # Obtener entradas ya existentes
     existing_entries = await db.payroll_entries.find(
@@ -2791,14 +2799,28 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
     existing_employee_ids = {e["employee_id"] for e in existing_entries}
     
     added_count = 0
+    payroll_type = period.get("payroll_type", "REG")
+    
     for emp in employees:
         if emp["employee_id"] in existing_employee_ids:
             continue
         
-        # Calcular salario proporcional si es quincenal
+        # Calcular salario según tipo de nómina y período
         salary = emp.get("salary", 0)
-        if period.get("period_type", "").startswith("quincenal"):
-            salary = salary / 2  # Mitad del salario mensual
+        
+        if payroll_type == "REG":
+            # Nómina regular - proporcional si es quincenal
+            if period.get("period_type", "").startswith("quincenal"):
+                salary = salary / 2
+        elif payroll_type == "REG13":
+            # Regalía pascual - salario completo mensual
+            salary = emp.get("salary", 0)
+        elif payroll_type == "BONO":
+            # Bono - empezar en 0, se agrega manualmente
+            salary = 0
+        elif payroll_type == "VAC":
+            # Vacaciones - calcular según días
+            salary = emp.get("salary", 0) / 23.83 * 14  # 14 días de vacaciones
         
         entry_id = f"pe_{uuid.uuid4().hex[:12]}"
         entry = {
@@ -2810,6 +2832,7 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
             "employee_document": emp.get("document_number", ""),
             "department": emp.get("department", ""),
             "position": emp.get("position", ""),
+            "payroll_type": payroll_type,
             # Ingresos
             "base_salary": salary,
             "overtime_day_hours": 0,
