@@ -4,6 +4,7 @@ Tests for:
 - GET /api/payroll-v2/periods/{id}/export/tss-autodeterminacion
 - GET /api/payroll-v2/periods/{id}/export/tss-novedades
 - GET /api/payroll-v2/periods/{id}/export/ir3
+- GET /api/payroll-v2/periods/{id}/export/ir4 (NEW - Detalle Mensual de Retenciones)
 - GET /api/payroll-v2/periods/{id}/export/ir17
 """
 import pytest
