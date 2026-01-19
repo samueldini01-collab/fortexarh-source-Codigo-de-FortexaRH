@@ -36,6 +36,7 @@ from routes.subscriptions import router as subscriptions_router, init_router as 
 from routes.roles import router as roles_router, init_router as init_roles_router
 from routes.bank_files import router as bank_files_router, init_router as init_bank_files_router
 from routes.employee_portal import router as employee_portal_router, init_router as init_employee_portal_router
+from routes.documents import router as documents_router, init_router as init_documents_router
 
 # MongoDB connection with production-ready settings
 mongo_url = os.environ['MONGO_URL']
@@ -6067,6 +6068,7 @@ init_subscriptions_router(db, get_current_user, SUBSCRIPTION_PLANS, FEATURE_ACCE
 init_roles_router(db, get_current_user)
 init_bank_files_router(db, get_current_user)
 init_employee_portal_router(db)
+init_documents_router(db, get_current_user)
 
 # Include modular routers in api_router
 api_router.include_router(loans_router)
@@ -6074,6 +6076,7 @@ api_router.include_router(subscriptions_router)
 api_router.include_router(roles_router)
 api_router.include_router(bank_files_router)
 api_router.include_router(employee_portal_router)
+api_router.include_router(documents_router)
 
 # Include the API router
 app.include_router(api_router)
