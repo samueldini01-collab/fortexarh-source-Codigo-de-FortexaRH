@@ -1417,37 +1417,12 @@ async def update_candidate_stage(candidate_id: str, stage: str, current_user: di
     return {"message": "Candidate stage updated successfully"}
 
 # ===================== SUBSCRIPTION & PAYMENT ROUTES =====================
-
-@api_router.get("/plans")
-async def get_plans():
-    return list(SUBSCRIPTION_PLANS.values())
-
-@api_router.get("/subscription")
-async def get_subscription(current_user: dict = Depends(get_current_user)):
-    company = await db.companies.find_one(
-        {"company_id": current_user.get("company_id")},
-        {"_id": 0}
-    )
-    if not company:
-        raise HTTPException(status_code=404, detail="Company not found")
-    
-    plan_id = company.get("subscription_plan", "basic")
-    plan = SUBSCRIPTION_PLANS.get(plan_id, SUBSCRIPTION_PLANS["basic"])
-    employee_count = company.get("employee_count", 0)
-    
-    monthly_cost = plan["base_price"] + (employee_count * plan["price_per_employee"])
-    
-    return {
-        "current_plan": plan,
-        "employee_count": employee_count,
-        "monthly_cost": monthly_cost,
-        "next_billing_date": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat()
-    }
+# NOTE: Main subscription endpoints are defined later in the file (line ~4850)
 
 @api_router.post("/checkout")
 async def create_checkout(data: CheckoutRequest, request: Request, current_user: dict = Depends(get_current_user)):
     plan = SUBSCRIPTION_PLANS.get(data.plan_id)
-    if not plan or data.plan_id == "free":
+    if not plan or data.plan_id == "trial":
         raise HTTPException(status_code=400, detail="Invalid plan")
     
     company = await db.companies.find_one(
