@@ -3729,9 +3729,27 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
         isr_result = calculate_isr_monthly(salary)
         entry["isr"] = isr_result["isr_monthly"]
         
-        # Calcular totales
+        # Obtener deducciones de préstamos activos
+        loan_deduction = 0
+        active_loans = await db.loans.find({
+            "employee_id": emp["employee_id"],
+            "company_id": company_id,
+            "status": "active",
+            "deduct_from_payroll": True
+        }, {"_id": 0}).to_list(10)
+        
+        for loan in active_loans:
+            monthly_payment = loan.get("monthly_payment", 0)
+            remaining = loan.get("remaining_balance", 0)
+            # Deduct the lesser of monthly payment or remaining balance
+            deduction = min(monthly_payment, remaining)
+            loan_deduction += deduction
+        
+        entry["loan_deduction"] = round(loan_deduction, 2)
+        
+        # Calcular totales (incluir deducciones de préstamos)
         entry["total_deductions"] = round(
-            entry["sfs_employee"] + entry["afp_employee"] + entry["isr"] + entry["total_additional_deductions"],
+            entry["sfs_employee"] + entry["afp_employee"] + entry["isr"] + entry["total_additional_deductions"] + entry["loan_deduction"],
             2
         )
         entry["net_salary"] = round(entry["gross_salary"] - entry["total_deductions"], 2)
