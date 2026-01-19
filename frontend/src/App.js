@@ -31,6 +31,7 @@ import SubscriptionsPage from "@/pages/SubscriptionsPage";
 import UsersManagementPage from "@/pages/UsersManagementPage";
 import TermsPage from "@/pages/TermsPage";
 import PrivacyPage from "@/pages/PrivacyPage";
+import RolesPage from "@/pages/RolesPage";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
