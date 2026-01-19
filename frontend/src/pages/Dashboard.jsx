@@ -27,8 +27,11 @@ import { toast } from "sonner";
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showProBanner, setShowProBanner] = useState(true);
-  const { getAuthHeaders } = useAuth();
+  // Check localStorage for banner preference
+  const [showProBanner, setShowProBanner] = useState(() => {
+    return localStorage.getItem('fortexarh_hide_pro_banner') !== 'true';
+  });
+  const { getAuthHeaders, user } = useAuth();
   const { subscription, getCurrentPlan } = useSubscription();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -36,6 +39,20 @@ export default function Dashboard() {
   // Check if user is on basic or trial plan (show upgrade banner)
   const currentPlan = getCurrentPlan();
   const shouldShowUpgradeBanner = currentPlan === "basic" || currentPlan === "trial";
+
+  // Get greeting based on time of day
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Buenos días";
+    if (hour < 18) return "Buenas tardes";
+    return "Buenas noches";
+  };
+  
+  // Handle banner close with localStorage
+  const handleCloseBanner = () => {
+    setShowProBanner(false);
+    localStorage.setItem('fortexarh_hide_pro_banner', 'true');
+  };
 
   useEffect(() => {
     // Check for payment success
