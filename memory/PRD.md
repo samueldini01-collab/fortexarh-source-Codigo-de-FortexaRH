@@ -16,6 +16,8 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 │   ├── subscriptions.py # Suscripciones y cancelación
 │   ├── roles.py        # Roles personalizados Enterprise
 │   ├── bank_files.py   # Generación archivos bancarios
+│   ├── employee_portal.py # Portal autoservicio empleados
+│   ├── documents.py    # Generación de documentos y cartas
 │   └── invoices.py     # Facturas
 ├── services/
 │   └── pdf_service.py  # Generación de PDFs
@@ -28,8 +30,11 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 /app/frontend/src/pages/
 ├── LoansPage.jsx              # Préstamos (COMPLETO)
 ├── SubscriptionsPage.jsx      # Suscripciones + Cancelación (COMPLETO)
-├── MetricsDashboardPage.jsx   # Dashboard métricas (NUEVO)
-├── ReportsAdvancedPage.jsx    # Reportes avanzados (NUEVO)
+├── MetricsDashboardPage.jsx   # Dashboard métricas (COMPLETO)
+├── ReportsAdvancedPage.jsx    # Reportes avanzados (COMPLETO)
+├── DocumentsPage.jsx          # Generación documentos (NUEVO)
+├── EmployeePortalPage.jsx     # Portal empleados (NUEVO)
+├── PayrollV2Page.jsx          # Nómina con selector banco (ACTUALIZADO)
 ├── RolesPage.jsx              # Roles personalizados
 ├── DGIIReportsPage.jsx        # Reportes DGII
 └── ...
@@ -37,76 +42,79 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 
 ## Lo Implementado en Esta Sesión (2025-01-19)
 
-### ✅ 1. UI de Cancelación de Suscripción (COMPLETO)
-- Modal con flujo de 3 pasos: Oferta retención → Encuesta → Confirmación
-- Oferta de 20% descuento por 3 meses
-- Encuesta de motivo de cancelación
-- Emails de confirmación
-- Botón de reactivar para suscripciones canceladas
+### ✅ 1. Selector de Banco en UI de Nómina (P1) - COMPLETADO
+- Dropdown para seleccionar banco (Popular, BHD, Banreservas)
+- Generación y descarga automática de archivo bancario al pagar nómina
+- Checkbox para activar/desactivar generación de archivo
+- Formatos: TXT pipe-delimited (Popular), TXT fixed-width (BHD), CSV (Banreservas)
 
-### ✅ 2. Dashboard de Métricas Avanzadas (COMPLETO)
-- Gráficos con Recharts (AreaChart, BarChart, PieChart)
-- KPIs: Nómina mensual, empleados, préstamos, costo/empleado
-- Tendencia de nómina (12 meses)
-- Costos por departamento
-- Distribución de empleados
-- Estado de préstamos
-- Tabla comparativa mensual
+### ✅ 2. Portal de Autoservicio para Empleados (P2) - COMPLETADO
+- Sistema de login independiente usando cédula del empleado
+- Primera vez: contraseña = número de cédula
+- Funcionalidades:
+  - Dashboard con resumen (salario, vacaciones, préstamos)
+  - Ver recibos de pago (historial)
+  - Consultar balance de vacaciones
+  - Solicitar vacaciones
+  - Ver préstamos activos con progreso de pago
+  - Actualizar datos de contacto y bancarios
+- JWT separado con `portal_type: employee`
 
-### ✅ 3. Generación de Archivos Bancarios (COMPLETO)
-Backend endpoints:
-- `GET /api/bank-files/banks` - Lista de bancos disponibles
-- `GET /api/bank-files/generate/{period_id}/{bank_id}` - Generar archivo
-- `GET /api/bank-files/history` - Historial de archivos
-
-Bancos soportados:
-- **Banco Popular Dominicano** (TXT pipe-delimited)
-- **BHD León** (TXT fixed-width)
-- **Banreservas** (CSV)
-
-### ✅ 4. Deducciones de Préstamos en Nómina (COMPLETO)
-- Cálculo automático de cuotas pendientes en payroll calculation
-- Campo `loan_deduction` añadido a payroll entries
-- Actualización automática de saldo de préstamos al pagar nómina
-- Registro de pagos automáticos con referencia al período
-
-### ✅ 5. Módulo de Reportes Avanzados (COMPLETO)
-- 6 tipos de reporte: Nómina, Empleados, Préstamos, Asistencias, Vacaciones, Departamento
-- Filtros: Fechas, departamento, estado, empleado, período
-- Filtros personalizados guardables (localStorage)
-- Exportación: Excel, PDF, CSV
-- Tabla de resultados con totales
+### ✅ 3. Generación de Documentos y Cartas (P2) - COMPLETADO
+- 5 plantillas predefinidas para República Dominicana:
+  - **Constancia de Trabajo**: Certificación de empleo actual
+  - **Carta de Recomendación**: Para ex-empleados
+  - **Certificado de Ingresos**: Para préstamos bancarios
+  - **Notificación de Aumento Salarial**: Comunicación oficial
+  - **Carta de Terminación Laboral**: Con cálculo de liquidación
+- Editor de plantillas personalizadas
+- Variables dinámicas con sintaxis {{variable}}
+- Historial de documentos generados
+- Vista previa e impresión
+- Categorías: Constancias, Cartas, Certificados, Notificaciones
 
 ## Endpoints Nuevos
 
 | Endpoint | Descripción |
 |----------|-------------|
+| `GET /api/doc-generator/categories` | Categorías de documentos |
+| `GET /api/doc-generator/templates` | Plantillas disponibles |
+| `GET /api/doc-generator/templates/{id}` | Plantilla específica |
+| `POST /api/doc-generator/templates` | Crear plantilla |
+| `PUT /api/doc-generator/templates/{id}` | Actualizar plantilla |
+| `DELETE /api/doc-generator/templates/{id}` | Eliminar plantilla |
+| `POST /api/doc-generator/generate` | Generar documento |
+| `GET /api/doc-generator/history` | Historial de documentos |
+| `POST /api/employee-portal/login` | Login de empleados |
+| `GET /api/employee-portal/profile` | Perfil del empleado |
+| `PUT /api/employee-portal/profile` | Actualizar perfil |
+| `GET /api/employee-portal/payslips` | Recibos de pago |
+| `GET /api/employee-portal/vacations/balance` | Balance vacaciones |
+| `GET /api/employee-portal/vacations/requests` | Solicitudes vacaciones |
+| `POST /api/employee-portal/vacations/request` | Nueva solicitud |
+| `GET /api/employee-portal/loans` | Préstamos del empleado |
+| `GET /api/employee-portal/dashboard` | Dashboard resumen |
 | `GET /api/bank-files/banks` | Bancos disponibles |
 | `GET /api/bank-files/generate/{period_id}/{bank_id}` | Generar archivo |
-| `GET /api/stats/payroll-trend` | Tendencia nómina por año |
-| `GET /api/stats/employees` | Estadísticas empleados |
-| `GET /api/reports/generate` | Generar reporte personalizado |
 
 ## Rutas Frontend Nuevas
 
 | Ruta | Página |
 |------|--------|
-| `/metrics-dashboard` | Dashboard de métricas |
-| `/reports-advanced` | Reportes avanzados |
+| `/documents` | Generación de documentos |
+| `/employee-portal` | Portal de autoservicio |
 
 ## Backlog Pendiente
 
 ### P1 - Alto
-- [ ] Notificaciones automáticas (fechas de pago, vencimientos DGII)
-- [ ] Selector de banco en UI de pago de nómina
+- [ ] Notificaciones automáticas (fechas de pago, vencimientos DGII, contratos)
 
 ### P2 - Medio
 - [ ] Integraciones Enterprise (QuickBooks, SAP, Oracle)
-- [ ] Portal de autoservicio para empleados
 - [ ] Corregir warnings de ESLint
 
 ### P3 - Bajo
-- [ ] Generación de documentos/cartas personalizadas
+- [ ] Completar refactorización de server.py
 - [ ] Notificación de vencimiento IR-13
 
 ## Integraciones
@@ -115,7 +123,9 @@ Bancos soportados:
 - ✅ **Google Auth** (Emergent-managed)
 
 ## Testing
-- `/app/test_reports/iteration_11.json` - Última ejecución
+- `/app/test_reports/iteration_12.json` - Última ejecución
+- 21 tests ejecutados: 20 pasados, 1 skip (empleado sin documento)
 
 ## Credenciales de Prueba
-- `test_refactor@fortexa.com` / `test123`
+- Admin: `test_refactor@fortexa.com` / `test123`
+- Employee Portal: Usa la cédula del empleado como usuario y contraseña (primera vez)
