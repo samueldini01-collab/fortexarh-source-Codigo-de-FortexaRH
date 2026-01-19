@@ -27,8 +27,13 @@ import { toast } from "sonner";
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { getAuthHeaders } = useAuth();
+  const [showProBanner, setShowProBanner] = useState(true);
+  const { getAuthHeaders, user } = useAuth();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  
+  // Check if user is on basic plan
+  const isBasicPlan = user?.subscription?.plan_id === "basic";
 
   useEffect(() => {
     // Check for payment success
