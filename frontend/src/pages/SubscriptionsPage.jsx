@@ -17,9 +17,18 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { 
   Check, X, CreditCard, Users, Building2, Zap, Shield, Clock,
-  AlertTriangle, RefreshCw, ArrowUpRight, Crown, Rocket, Globe, Loader2, CheckCircle2
+  AlertTriangle, RefreshCw, ArrowUpRight, Crown, Rocket, Globe, Loader2, CheckCircle2,
+  FileText, Download, Receipt
 } from "lucide-react";
 import { toast } from "sonner";
 
