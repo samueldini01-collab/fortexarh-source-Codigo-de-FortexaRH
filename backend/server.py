@@ -2165,6 +2165,10 @@ class PayrollPeriodProcess(BaseModel):
     """Para procesar/calcular todas las nóminas de un período"""
     period_id: str
 
+class PayrollPaymentRequest(BaseModel):
+    """Solicitud de pago de nómina con cuenta bancaria seleccionada"""
+    bank_account_code: Optional[str] = "1101"
+
 class CompanyBankConfigCreate(BaseModel):
     """Configuración de cuenta bancaria de la empresa para pagos"""
     bank_name: str
