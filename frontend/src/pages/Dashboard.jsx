@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/DashboardLayout";
-import { useAuth, API } from "@/App";
+import { useAuth, useSubscription, API } from "@/App";
 import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,12 +28,14 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showProBanner, setShowProBanner] = useState(true);
-  const { getAuthHeaders, subscription } = useAuth();
+  const { getAuthHeaders } = useAuth();
+  const { subscription, getCurrentPlan } = useSubscription();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   
   // Check if user is on basic or trial plan (show upgrade banner)
-  const shouldShowUpgradeBanner = subscription?.plan_id === "basic" || subscription?.plan_id === "trial";
+  const currentPlan = getCurrentPlan();
+  const shouldShowUpgradeBanner = currentPlan === "basic" || currentPlan === "trial";
 
   useEffect(() => {
     // Check for payment success
