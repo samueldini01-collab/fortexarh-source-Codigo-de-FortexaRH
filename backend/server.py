@@ -1989,6 +1989,50 @@ async def get_invoice(invoice_id: str, current_user: dict = Depends(get_current_
     
     return invoice
 
+
+@api_router.get("/invoices/{invoice_id}/pdf")
+async def download_invoice_pdf(invoice_id: str, current_user: dict = Depends(get_current_user)):
+    """Download invoice as PDF"""
+    company_id = current_user.get("company_id")
+    
+    # Get invoice
+    invoice = await db.invoices.find_one(
+        {"invoice_id": invoice_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    
+    if not invoice:
+        raise HTTPException(status_code=404, detail="Factura no encontrada")
+    
+    # Get company info
+    company = await db.companies.find_one(
+        {"company_id": company_id},
+        {"_id": 0}
+    )
+    
+    try:
+        from services.pdf_service import generate_invoice_pdf
+        pdf_bytes = generate_invoice_pdf(invoice, company)
+        
+        invoice_number = invoice.get('invoice_number', invoice_id)
+        filename = f"Factura_{invoice_number}.pdf"
+        
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}",
+                "Content-Length": str(len(pdf_bytes))
+            }
+        )
+    except ImportError as e:
+        logging.error(f"PDF service import error: {e}")
+        raise HTTPException(status_code=500, detail="Servicio de PDF no disponible")
+    except Exception as e:
+        logging.error(f"PDF generation error: {e}")
+        raise HTTPException(status_code=500, detail="Error al generar el PDF")
+
+
 @api_router.post("/webhook/stripe")
 async def stripe_webhook(request: Request):
     """Handle Stripe webhook events"""
