@@ -717,18 +717,55 @@ export default function EmployeesPage() {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label>Género</Label>
-                    <Select value={formData.gender} onValueChange={(v) => setFormData({...formData, gender: v})}>
-                      <SelectTrigger className="bg-slate-50 border-slate-200">
-                        <SelectValue placeholder="Seleccione" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {genders.map(g => (
-                          <SelectItem key={g} value={g}>{g}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="space-y-2">
+                      <Label>Género</Label>
+                      <Select value={formData.gender} onValueChange={(v) => setFormData({...formData, gender: v})}>
+                        <SelectTrigger className="bg-slate-50 border-slate-200">
+                          <SelectValue placeholder="Seleccione" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {genders.map(g => (
+                            <SelectItem key={g} value={g}>{g}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Tipo de Sangre</Label>
+                      <Select value={formData.blood_type || ""} onValueChange={(v) => setFormData({...formData, blood_type: v})}>
+                        <SelectTrigger className="bg-slate-50 border-slate-200">
+                          <SelectValue placeholder="Seleccione" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {bloodTypes.map(bt => (
+                            <SelectItem key={bt} value={bt}>{bt}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Peso (libras)</Label>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        value={formData.weight || ""}
+                        onChange={(e) => setFormData({...formData, weight: e.target.value})}
+                        placeholder="Ej: 150"
+                        className="bg-slate-50 border-slate-200 focus:bg-white"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Estatura (metros)</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={formData.height || ""}
+                        onChange={(e) => setFormData({...formData, height: e.target.value})}
+                        placeholder="Ej: 1.75"
+                        className="bg-slate-50 border-slate-200 focus:bg-white"
+                      />
+                    </div>
                   </div>
                 </TabsContent>
 
