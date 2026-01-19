@@ -4852,8 +4852,9 @@ async def get_currency_summary(current_user: dict = Depends(get_current_user)):
 
 @api_router.get("/plans")
 async def get_subscription_plans():
-    """Obtener todos los planes de suscripción disponibles"""
-    return list(SUBSCRIPTION_PLANS.values())
+    """Obtener todos los planes de suscripción disponibles (excluyendo trial)"""
+    # Only return paid plans, not trial
+    return [plan for plan in SUBSCRIPTION_PLANS.values() if plan["plan_id"] != "trial"]
 
 @api_router.get("/subscription")
 async def get_company_subscription(current_user: dict = Depends(get_current_user)):
@@ -4866,28 +4867,29 @@ async def get_company_subscription(current_user: dict = Depends(get_current_user
     )
     
     if not subscription:
-        # Create default free trial subscription
+        # Create default trial subscription (5 days, 1 employee max)
+        trial_ends_at = (datetime.now(timezone.utc) + timedelta(days=5)).isoformat()
         subscription = {
             "subscription_id": f"sub_{uuid.uuid4().hex[:12]}",
             "company_id": company_id,
-            "plan_id": "basic",
-            "plan_name": SUBSCRIPTION_PLANS["basic"]["name"],
-            "status": "trial",  # trial, active, cancelled, expired
-            "employee_count": 5,
+            "plan_id": "trial",
+            "plan_name": "Prueba Gratuita",
+            "status": "trial",
+            "employee_count": 1,
             "additional_users": 0,
             "billing_cycle": "monthly",
-            "base_price": SUBSCRIPTION_PLANS["basic"]["base_price"],
-            "employee_price": SUBSCRIPTION_PLANS["basic"]["price_per_employee"],
-            "total_monthly": 5 + (5 * 1.50),
-            "trial_ends_at": (datetime.now(timezone.utc) + timedelta(days=14)).isoformat(),
+            "base_price": 0.0,
+            "employee_price": 0.0,
+            "total_monthly": 0.0,
+            "trial_ends_at": trial_ends_at,
             "current_period_start": datetime.now(timezone.utc).isoformat(),
-            "current_period_end": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat(),
+            "current_period_end": trial_ends_at,
             "created_at": datetime.now(timezone.utc).isoformat()
         }
         await db.subscriptions.insert_one(subscription)
     
     # Get plan details
-    plan = SUBSCRIPTION_PLANS.get(subscription.get("plan_id", "basic"), SUBSCRIPTION_PLANS["basic"])
+    plan = SUBSCRIPTION_PLANS.get(subscription.get("plan_id", "trial"), SUBSCRIPTION_PLANS["trial"])
     subscription["plan_details"] = plan
     
     # Count current employees and users
@@ -4896,8 +4898,28 @@ async def get_company_subscription(current_user: dict = Depends(get_current_user
     
     subscription["current_employees"] = employee_count
     subscription["current_users"] = user_count
-    subscription["max_employees"] = plan["max_employees"]
-    subscription["included_users"] = plan["included_users"]
+    subscription["max_employees"] = plan.get("max_employees", 1)
+    subscription["included_users"] = plan.get("included_users", 1)
+    
+    # Check if trial has expired
+    if subscription.get("status") == "trial" and subscription.get("trial_ends_at"):
+        trial_ends = datetime.fromisoformat(subscription["trial_ends_at"].replace("Z", "+00:00"))
+        if datetime.now(timezone.utc) > trial_ends:
+            subscription["status"] = "expired"
+            # Update in database
+            await db.subscriptions.update_one(
+                {"company_id": company_id},
+                {"$set": {"status": "expired"}}
+            )
+    
+    # Calculate days remaining for trial
+    if subscription.get("trial_ends_at"):
+        trial_ends = datetime.fromisoformat(subscription["trial_ends_at"].replace("Z", "+00:00"))
+        days_remaining = (trial_ends - datetime.now(timezone.utc)).days
+        subscription["trial_days_remaining"] = max(0, days_remaining)
+    
+    # Get feature access for this plan
+    subscription["feature_access"] = FEATURE_ACCESS.get(subscription.get("plan_id", "trial"), FEATURE_ACCESS["trial"])
     
     return subscription
 
