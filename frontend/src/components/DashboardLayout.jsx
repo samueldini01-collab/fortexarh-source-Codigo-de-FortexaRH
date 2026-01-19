@@ -501,6 +501,67 @@ export default function DashboardLayout({ children, title }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Upgrade Modal */}
+      <Dialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Lock className="w-5 h-5 text-amber-500" />
+              Función Bloqueada
+            </DialogTitle>
+            <DialogDescription>
+              {isTrialExpired() 
+                ? "Tu período de prueba ha terminado. Selecciona un plan para acceder a todas las funciones."
+                : `La función "${blockedFeature}" no está disponible en tu plan actual.`
+              }
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <div className="bg-gradient-to-br from-purple-50 to-white p-4 rounded-xl border border-purple-100">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                  <Crown className="w-5 h-5 text-purple-600" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-slate-800">Actualiza tu Plan</h4>
+                  <p className="text-xs text-slate-500">Desbloquea todas las funciones</p>
+                </div>
+              </div>
+              <ul className="space-y-2 text-sm text-slate-600 mb-4">
+                <li className="flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-purple-500" />
+                  Gestión ilimitada de empleados
+                </li>
+                <li className="flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-purple-500" />
+                  Nómina completa y contabilidad
+                </li>
+                <li className="flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-purple-500" />
+                  Reportes avanzados
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <DialogFooter className="flex gap-2">
+            <Button variant="outline" onClick={() => setShowUpgradeModal(false)}>
+              Cancelar
+            </Button>
+            <Button 
+              className="bg-purple-600 hover:bg-purple-700"
+              onClick={() => {
+                setShowUpgradeModal(false);
+                navigate('/subscriptions');
+              }}
+            >
+              Ver Planes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
