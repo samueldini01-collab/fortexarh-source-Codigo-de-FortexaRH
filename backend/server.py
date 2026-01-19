@@ -1817,7 +1817,7 @@ async def get_checkout_status(session_id: str, current_user: dict = Depends(get_
         "message": "Procesando pago..."
     }
 
-async def activate_subscription(company_id: str, plan_id: str, employee_count: int, session_id: str):
+async def activate_subscription(company_id: str, plan_id: str, employee_count: int, session_id: str, user_email: str = None):
     """Activate or upgrade subscription after successful payment"""
     plan = SUBSCRIPTION_PLANS.get(plan_id)
     if not plan:
@@ -1826,6 +1826,11 @@ async def activate_subscription(company_id: str, plan_id: str, employee_count: i
     
     now = datetime.now(timezone.utc)
     period_end = now + timedelta(days=30)
+    
+    # Calculate amounts
+    base_price = plan.get("base_price", 0)
+    price_per_employee = plan.get("price_per_employee", 0)
+    total_amount = base_price + (employee_count * price_per_employee)
     
     # Update company
     await db.companies.update_one(
@@ -1842,9 +1847,9 @@ async def activate_subscription(company_id: str, plan_id: str, employee_count: i
         "plan_name": plan.get("name", plan_id),
         "status": "active",
         "employee_count": employee_count,
-        "base_price": plan.get("base_price", 0),
-        "employee_price": plan.get("price_per_employee", 0),
-        "total_monthly": plan.get("base_price", 0) + (employee_count * plan.get("price_per_employee", 0)),
+        "base_price": base_price,
+        "employee_price": price_per_employee,
+        "total_monthly": total_amount,
         "billing_cycle": "monthly",
         "current_period_start": now.isoformat(),
         "current_period_end": period_end.isoformat(),
@@ -1864,7 +1869,73 @@ async def activate_subscription(company_id: str, plan_id: str, employee_count: i
         subscription_data["created_at"] = now.isoformat()
         await db.subscriptions.insert_one(subscription_data)
     
-    logging.info(f"Subscription activated: company={company_id}, plan={plan_id}, employees={employee_count}")
+    # Create invoice record
+    invoice_id = f"inv_{uuid.uuid4().hex[:12]}"
+    invoice_number = f"FRH-{now.strftime('%Y%m')}-{uuid.uuid4().hex[:6].upper()}"
+    
+    invoice_data = {
+        "invoice_id": invoice_id,
+        "invoice_number": invoice_number,
+        "company_id": company_id,
+        "session_id": session_id,
+        "plan_id": plan_id,
+        "plan_name": plan.get("name", plan_id),
+        "employee_count": employee_count,
+        "base_price": base_price,
+        "price_per_employee": price_per_employee,
+        "subtotal": total_amount,
+        "tax": 0,  # Can add tax calculation later
+        "total": total_amount,
+        "currency": "USD",
+        "status": "paid",
+        "period_start": now.isoformat(),
+        "period_end": period_end.isoformat(),
+        "paid_at": now.isoformat(),
+        "created_at": now.isoformat()
+    }
+    
+    await db.invoices.insert_one(invoice_data)
+    
+    logging.info(f"Subscription activated: company={company_id}, plan={plan_id}, employees={employee_count}, invoice={invoice_number}")
+    
+    return invoice_data
+
+# ===================== INVOICE ENDPOINTS =====================
+
+@api_router.get("/invoices")
+async def get_invoices(current_user: dict = Depends(get_current_user)):
+    """Get all invoices for the company"""
+    company_id = current_user.get("company_id")
+    
+    invoices = await db.invoices.find(
+        {"company_id": company_id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    
+    return invoices
+
+@api_router.get("/invoices/{invoice_id}")
+async def get_invoice(invoice_id: str, current_user: dict = Depends(get_current_user)):
+    """Get a specific invoice"""
+    company_id = current_user.get("company_id")
+    
+    invoice = await db.invoices.find_one(
+        {"invoice_id": invoice_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    
+    if not invoice:
+        raise HTTPException(status_code=404, detail="Factura no encontrada")
+    
+    # Get company info for invoice
+    company = await db.companies.find_one(
+        {"company_id": company_id},
+        {"_id": 0, "name": 1}
+    )
+    
+    invoice["company_name"] = company.get("name", "") if company else ""
+    
+    return invoice
 
 @api_router.post("/webhook/stripe")
 async def stripe_webhook(request: Request):
