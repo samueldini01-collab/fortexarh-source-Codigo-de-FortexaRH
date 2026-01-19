@@ -2105,24 +2105,73 @@ async def get_payroll_calculations(current_user: dict = Depends(get_current_user
 # ===================== ACCOUNTING MODULE =====================
 
 # Default chart of accounts for payroll
+# Cuentas contables predefinidas para nómina según requisitos del usuario
 DEFAULT_PAYROLL_ACCOUNTS = [
-    {"code": "5101", "name": "Gastos de Sueldos y Salarios", "account_type": "expense"},
-    {"code": "5102", "name": "Gastos de Horas Extra", "account_type": "expense"},
-    {"code": "5103", "name": "Gastos de Bonificaciones", "account_type": "expense"},
-    {"code": "5104", "name": "Gastos de Comisiones", "account_type": "expense"},
-    {"code": "5201", "name": "Aportes Patronales SFS", "account_type": "expense"},
-    {"code": "5202", "name": "Aportes Patronales AFP", "account_type": "expense"},
-    {"code": "5203", "name": "Aportes Patronales SRL", "account_type": "expense"},
-    {"code": "5204", "name": "Aportes Patronales INFOTEP", "account_type": "expense"},
-    {"code": "2101", "name": "Sueldos por Pagar", "account_type": "liability"},
-    {"code": "2201", "name": "Retenciones SFS Empleados", "account_type": "liability"},
-    {"code": "2202", "name": "Retenciones AFP Empleados", "account_type": "liability"},
-    {"code": "2203", "name": "Retenciones ISR Empleados", "account_type": "liability"},
-    {"code": "2204", "name": "Aportes TSS por Pagar", "account_type": "liability"},
-    {"code": "2205", "name": "Préstamos por Pagar", "account_type": "liability"},
-    {"code": "2206", "name": "Otras Deducciones por Pagar", "account_type": "liability"},
-    {"code": "1101", "name": "Banco - Cuenta Nómina", "account_type": "asset"},
+    # Gastos (Deudores - se debitan al procesar nómina)
+    {"code": "5101", "name": "Gastos de Sueldos y Salarios", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "5102", "name": "Gastos de Horas Extras Diurnas", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "5103", "name": "Gastos de Horas Extras Nocturnas", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "5104", "name": "Gastos de Horas Extras Fines de Semana", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "5105", "name": "Gastos de Horas Extras Días Feriados", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "5106", "name": "Gastos de Bonificaciones", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "5107", "name": "Gastos de Comisiones", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    # Aportes Patronales (Gastos adicionales)
+    {"code": "5201", "name": "Aportes Patronales SFS (7.09%)", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "5202", "name": "Aportes Patronales AFP (7.10%)", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "5203", "name": "Aportes Patronales SRL (1%)", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "5204", "name": "Aportes Patronales INFOTEP (1%)", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    # Pasivos (Acreedores - se acreditan al procesar nómina)
+    {"code": "2201", "name": "Deducciones SFS por Pagar (3.04%)", "account_type": "liability", "normal_balance": "credit", "is_payroll_account": True},
+    {"code": "2202", "name": "Deducciones AFP por Pagar (2.87%)", "account_type": "liability", "normal_balance": "credit", "is_payroll_account": True},
+    {"code": "2203", "name": "Retención ISR por Pagar", "account_type": "liability", "normal_balance": "credit", "is_payroll_account": True},
+    {"code": "2204", "name": "Descuentos Adicionales por Pagar", "account_type": "liability", "normal_balance": "credit", "is_payroll_account": True},
+    {"code": "2205", "name": "Aportes TSS por Pagar", "account_type": "liability", "normal_balance": "credit", "is_payroll_account": True},
+    # Banco (Activo - normalmente débito, pero se acredita al pagar nómina)
+    {"code": "1101", "name": "Banco - Cuenta Nómina", "account_type": "asset", "normal_balance": "debit", "is_payroll_account": True, "is_bank_account": True},
 ]
+
+# ===================== NUEVO SISTEMA DE NÓMINA COMPLETO =====================
+
+class PayrollPeriodCreate(BaseModel):
+    """Período de nómina (quincenal/mensual)"""
+    period_type: str  # "quincenal_1", "quincenal_2", "mensual"
+    year: int
+    month: int
+    start_date: str
+    end_date: str
+    description: Optional[str] = None
+
+class PayrollEntryCreate(BaseModel):
+    """Entrada de nómina individual por empleado"""
+    period_id: str
+    employee_id: str
+    # Ingresos
+    base_salary: float
+    overtime_day_hours: float = 0
+    overtime_day_rate: float = 35  # % sobre hora normal
+    overtime_night_hours: float = 0
+    overtime_night_rate: float = 15  # % sobre hora normal
+    overtime_weekend_hours: float = 0
+    overtime_weekend_rate: float = 100  # % sobre hora normal
+    overtime_holiday_hours: float = 0
+    overtime_holiday_rate: float = 100  # % sobre hora normal
+    bonuses: float = 0
+    commissions: float = 0
+    other_income: float = 0
+    # Descuentos adicionales (del perfil del empleado o manuales)
+    additional_deductions: Optional[List[Dict[str, Any]]] = []
+
+class PayrollPeriodProcess(BaseModel):
+    """Para procesar/calcular todas las nóminas de un período"""
+    period_id: str
+
+class CompanyBankConfigCreate(BaseModel):
+    """Configuración de cuenta bancaria de la empresa para pagos"""
+    bank_name: str
+    account_number: str
+    account_type: str  # "corriente", "ahorros"
+    account_code: str = "1101"  # Código contable asociado
+    is_default: bool = True
 
 @api_router.get("/accounting/accounts")
 async def get_chart_of_accounts(current_user: dict = Depends(get_current_user)):
