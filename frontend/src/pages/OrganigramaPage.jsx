@@ -289,6 +289,30 @@ export default function OrganigramaPage() {
     }
   };
 
+  // Update node (edit)
+  const handleUpdateNode = async () => {
+    if (!editingNode) return;
+    
+    try {
+      await axios.put(`${API}/organigrama/${editingNode.node_id}`, {
+        name: editingNode.name,
+        code: editingNode.code,
+        description: editingNode.description || "",
+        parent_id: editingNode.parent_id,
+        position_title: editingNode.position_title,
+        employee_id: editingNode.employee_id
+      }, { headers: getAuthHeaders(), withCredentials: true });
+      
+      toast.success("Elemento actualizado correctamente");
+      setEditingNode(null);
+      fetchData();
+    } catch (error) {
+      const detail = error.response?.data?.detail;
+      const errorMsg = typeof detail === 'string' ? detail : "Error al actualizar";
+      toast.error(errorMsg);
+    }
+  };
+
   // Apply template
   const applyTemplate = async () => {
     if (!selectedTemplate) return;
