@@ -88,12 +88,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-        CORSMiddleware,
-        allow_credentials=True,
-        allow_origins=origins_list,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
 
 # Health check endpoint for Kubernetes (must be defined early, no /api prefix)
 @app.get("/health")
