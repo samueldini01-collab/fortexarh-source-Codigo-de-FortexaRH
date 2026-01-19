@@ -33,6 +33,7 @@ import TermsPage from "@/pages/TermsPage";
 import PrivacyPage from "@/pages/PrivacyPage";
 import RolesPage from "@/pages/RolesPage";
 import DGIIReportsPage from "@/pages/DGIIReportsPage";
+import LoansPage from "@/pages/LoansPage";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
