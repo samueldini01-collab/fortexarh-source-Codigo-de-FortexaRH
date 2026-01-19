@@ -1,62 +1,41 @@
 # FortexaRH - Sistema SaaS de RRHH y Nómina
 
-## Problema Original
-Sistema SaaS de Recursos Humanos y Nómina para República Dominicana con suscripción mensual.
+## Lo Implementado - Última Sesión (2025-01-19)
 
-## Lo Implementado
+### IR-13 Declaración Anual de Retenciones ✅ NUEVO
+- **Endpoint:** `GET /api/payroll-v2/annual-report/ir13/{year}`
+- **Función:** Consolida todos los IR-4 mensuales del año fiscal
+- **Excel con 3 hojas:**
+  1. **IR-13 Detalle Anual** - Totales por empleado (Sueldo, AFP, SFS, ISR anuales)
+  2. **Resumen Mensual** - Desglose de los 12 meses con estados
+  3. **Declaración** - Formulario resumen para firma y presentación DGII
 
-### 2025-01-19 - Formularios DGII (IR-3, IR-4)
-- ✅ **IR-4 (Detalle Mensual de Retenciones)** - Nuevo endpoint `GET /api/payroll-v2/periods/{id}/export/ir4`
-  - Genera Excel con detalle por empleado: Cédula, Sueldo Bruto, Otros Ingresos, Aportes TSS, ISR
-  - Incluye hoja de resumen para alimentar IR-3
-- ✅ **IR-3 (ya existía)** - Declaración de retenciones de asalariados
-- ✅ **Nueva página DGIIReportsPage** - UI para descargar todos los reportes fiscales
-  - Selector de período con auto-selección del más reciente
-  - 4 tipos de reportes: IR-3, IR-4, TSS Autodeterminación, TSS Novedades
-  - Instrucciones de uso integradas
-- ✅ **Testing**: 14/14 pruebas backend pasadas
+### Endpoint de Años Disponibles ✅ NUEVO
+- **Endpoint:** `GET /api/payroll-v2/available-years`
+- Retorna años con períodos de nómina y cantidad de períodos por año
 
-### 2025-01-19 - Facturas PDF y Roles Personalizados
-- ✅ Descarga de Facturas PDF con reportlab
-- ✅ Gestión de Roles Personalizados (Enterprise) - CRUD completo
-- ✅ Nueva página RolesPage.jsx
+### UI Actualizada - DGIIReportsPage ✅
+- **Tabs:** "Reportes Mensuales" y "Reporte Anual"
+- **Selector de Año:** Para generar IR-13
+- **Instrucciones:** Actualizadas con proceso IR-13
 
-### Anteriormente Completado
-- Flujo "Pagar Primero, Registrarse Después"
-- Integración Stripe (producción)
-- Integración Resend para emails
-- Payroll V2 con períodos
-- Generación archivos TSS
-- Módulo de Organigrama
-- Autenticación JWT y Google OAuth
+### Formularios DGII Mensuales (Ya implementados)
+- IR-3, IR-4, TSS Autodeterminación, TSS Novedades
 
-## Arquitectura
+### Testing
+- 14/14 pruebas backend pasadas (IR-13)
+- Frontend verificado funcionando
 
-```
-/app/
-├── backend/
-│   ├── server.py           # API principal FastAPI (5700+ líneas)
-│   ├── tss_generator.py    # ACTUALIZADO - Añadido create_ir4_report
-│   ├── email_service.py
-│   ├── services/
-│   │   └── pdf_service.py
-│   └── tests/
-│       └── test_tss_ir_exports.py  # NUEVO - 14 tests
-└── frontend/
-    └── src/pages/
-        ├── DGIIReportsPage.jsx     # NUEVO
-        ├── RolesPage.jsx           # NUEVO
-        └── SubscriptionsPage.jsx   # + Descarga PDF
-```
-
-## APIs Clave - Reportes DGII
+## APIs de Reportes DGII
 
 | Endpoint | Descripción |
 |----------|-------------|
-| `GET /api/payroll-v2/periods/{id}/export/ir3` | Declaración retenciones ISR |
-| `GET /api/payroll-v2/periods/{id}/export/ir4` | **NUEVO** - Detalle mensual retenciones |
-| `GET /api/payroll-v2/periods/{id}/export/tss-autodeterminacion` | Archivo TSS v5.3 |
-| `GET /api/payroll-v2/periods/{id}/export/tss-novedades` | Archivo TSS v5.1 |
+| `GET /api/payroll-v2/periods/{id}/export/ir3` | IR-3 Mensual |
+| `GET /api/payroll-v2/periods/{id}/export/ir4` | IR-4 Detalle Mensual |
+| `GET /api/payroll-v2/annual-report/ir13/{year}` | **NUEVO** IR-13 Anual |
+| `GET /api/payroll-v2/available-years` | **NUEVO** Años disponibles |
+| `GET /api/payroll-v2/periods/{id}/export/tss-autodeterminacion` | TSS v5.3 |
+| `GET /api/payroll-v2/periods/{id}/export/tss-novedades` | TSS v5.1 |
 
 ## Backlog Pendiente
 
@@ -67,7 +46,6 @@ Sistema SaaS de Recursos Humanos y Nómina para República Dominicana con suscri
 ### P2 - Medio
 - Refactorizar server.py (mover a routers)
 - Integraciones Enterprise (QuickBooks, SAP)
-- Portal autoservicio empleados
 
 ## Integraciones Configuradas
 - ✅ Stripe (Producción)
