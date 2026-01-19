@@ -2230,6 +2230,10 @@ class PayrollPeriodCreateV2(BaseModel):
     description: Optional[str] = None
     department_filter: Optional[str] = None  # Filtrar por departamento específico
     employee_ids: Optional[List[str]] = None  # Lista específica de empleados
+    currency: str = "DOP"  # DOP o USD
+    exchange_rate: Optional[float] = None  # Tasa de cambio si es USD
+    project_id: Optional[str] = None  # Filtrar por proyecto
+    template_id: Optional[str] = None  # Template usado para crear
 
 class CompanyBankConfigCreate(BaseModel):
     """Configuración de cuenta bancaria de la empresa para pagos"""
@@ -2238,6 +2242,44 @@ class CompanyBankConfigCreate(BaseModel):
     account_type: str  # "corriente", "ahorros"
     account_code: str = "1101"  # Código contable asociado
     is_default: bool = True
+
+# ===================== PAYROLL TEMPLATES =====================
+
+class PayrollTemplateCreate(BaseModel):
+    """Template de nómina recurrente"""
+    name: str
+    description: Optional[str] = None
+    period_type: str  # "quincenal_1", "quincenal_2", "mensual"
+    payroll_type: str = "REG"
+    department_filter: Optional[str] = None
+    project_id: Optional[str] = None
+    employee_ids: Optional[List[str]] = None
+    currency: str = "DOP"
+    default_exchange_rate: Optional[float] = None
+    is_active: bool = True
+
+# ===================== PROJECTS =====================
+
+class ProjectCreate(BaseModel):
+    """Proyecto para agrupar empleados y nóminas"""
+    name: str
+    code: str
+    description: Optional[str] = None
+    client_name: Optional[str] = None
+    budget: Optional[float] = None
+    currency: str = "DOP"
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    is_active: bool = True
+
+# ===================== CURRENCY CONFIG =====================
+
+class CurrencyConfigCreate(BaseModel):
+    """Configuración de moneda y tasa de cambio"""
+    currency_code: str  # "USD", "EUR"
+    exchange_rate: float  # Tasa respecto a DOP
+    effective_date: str
+    is_active: bool = True
 
 @api_router.get("/accounting/accounts")
 async def get_chart_of_accounts(current_user: dict = Depends(get_current_user)):
