@@ -832,38 +832,105 @@ async def register(user_data: UserCreate, response: Response):
     
     user_id = f"user_{uuid.uuid4().hex[:12]}"
     company_id = None
+    plan_id = "trial"
+    plan_name = "Prueba Gratuita"
+    employee_count = 1
+    subscription_status = "trial"
+    paid_checkout = None
+    
+    # Check if this is a paid registration
+    if user_data.payment_session_id:
+        # Verify the payment
+        pending = await db.pending_checkouts.find_one(
+            {"session_id": user_data.payment_session_id},
+            {"_id": 0}
+        )
+        
+        if not pending:
+            raise HTTPException(status_code=400, detail="Sesión de pago no encontrada")
+        
+        if pending.get("used_for_registration"):
+            raise HTTPException(status_code=400, detail="Este pago ya fue utilizado para crear una cuenta")
+        
+        if pending.get("payment_status") != "paid":
+            # Try to verify with Stripe
+            api_key = os.environ.get('STRIPE_API_KEY')
+            stripe_checkout = StripeCheckout(api_key=api_key, webhook_url="")
+            try:
+                status = await stripe_checkout.get_checkout_status(user_data.payment_session_id)
+                if status.payment_status != "paid":
+                    raise HTTPException(status_code=400, detail="El pago aún no ha sido completado")
+                # Update pending checkout
+                await db.pending_checkouts.update_one(
+                    {"session_id": user_data.payment_session_id},
+                    {"$set": {"payment_status": "paid", "paid_at": datetime.now(timezone.utc).isoformat()}}
+                )
+            except Exception as e:
+                logging.error(f"Error verifying payment: {e}")
+                raise HTTPException(status_code=400, detail="Error al verificar el pago")
+        
+        # Use the plan from the payment
+        plan_id = pending.get("plan_id", "basic")
+        plan_name = pending.get("plan_name", "FortexaRH Básico")
+        employee_count = pending.get("employee_count", 1)
+        subscription_status = "active"
+        paid_checkout = pending
+        
+        # Mark checkout as used
+        await db.pending_checkouts.update_one(
+            {"session_id": user_data.payment_session_id},
+            {"$set": {"used_for_registration": True, "used_at": datetime.now(timezone.utc).isoformat()}}
+        )
     
     if user_data.company_name:
         company_id = f"comp_{uuid.uuid4().hex[:12]}"
-        trial_ends_at = (datetime.now(timezone.utc) + timedelta(days=5)).isoformat()
+        now = datetime.now(timezone.utc)
+        
+        if subscription_status == "trial":
+            trial_ends_at = (now + timedelta(days=5)).isoformat()
+            period_end = trial_ends_at
+        else:
+            trial_ends_at = None
+            period_end = (now + timedelta(days=30)).isoformat()
+        
+        # Get plan details
+        plan = SUBSCRIPTION_PLANS.get(plan_id, SUBSCRIPTION_PLANS["trial"])
         
         await db.companies.insert_one({
             "company_id": company_id,
             "name": user_data.company_name,
-            "subscription_plan": "trial",
-            "employee_count": 0,
+            "subscription_plan": plan_id,
+            "employee_count": employee_count if subscription_status == "active" else 0,
             "trial_ends_at": trial_ends_at,
-            "created_at": datetime.now(timezone.utc).isoformat()
+            "created_at": now.isoformat()
         })
         
-        # Create trial subscription
-        await db.subscriptions.insert_one({
+        # Create subscription
+        subscription_data = {
             "subscription_id": f"sub_{uuid.uuid4().hex[:12]}",
             "company_id": company_id,
-            "plan_id": "trial",
-            "plan_name": "Prueba Gratuita",
-            "status": "trial",
-            "employee_count": 1,
+            "plan_id": plan_id,
+            "plan_name": plan_name,
+            "status": subscription_status,
+            "employee_count": employee_count,
             "additional_users": 0,
             "billing_cycle": "monthly",
-            "base_price": 0.0,
-            "employee_price": 0.0,
-            "total_monthly": 0.0,
-            "trial_ends_at": trial_ends_at,
-            "current_period_start": datetime.now(timezone.utc).isoformat(),
-            "current_period_end": trial_ends_at,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        })
+            "base_price": plan.get("base_price", 0),
+            "employee_price": plan.get("price_per_employee", 0),
+            "total_monthly": plan.get("base_price", 0) + (employee_count * plan.get("price_per_employee", 0)) if subscription_status == "active" else 0,
+            "current_period_start": now.isoformat(),
+            "current_period_end": period_end,
+            "created_at": now.isoformat()
+        }
+        
+        if trial_ends_at:
+            subscription_data["trial_ends_at"] = trial_ends_at
+        
+        if paid_checkout:
+            subscription_data["payment_session_id"] = user_data.payment_session_id
+            subscription_data["paid_amount"] = paid_checkout.get("amount")
+        
+        await db.subscriptions.insert_one(subscription_data)
     
     user_doc = {
         "user_id": user_id,
@@ -886,6 +953,10 @@ async def register(user_data: UserCreate, response: Response):
             "name": user_data.name,
             "company_id": company_id,
             "role": "admin"
+        },
+        "subscription": {
+            "plan_id": plan_id,
+            "status": subscription_status
         }
     }
 
