@@ -2584,6 +2584,912 @@ async def generate_payroll_journal_entry(
         "total_credits": round(total_credits, 2)
     }
 
+# ===================== NUEVO SISTEMA DE NÓMINA CON ASIENTOS =====================
+
+def get_next_journal_number(company_id: str, existing_entries: list) -> str:
+    """Genera el siguiente número de asiento de diario (000001, 000002, etc.)"""
+    if not existing_entries:
+        return "000001"
+    
+    # Extraer números existentes
+    numbers = []
+    for entry in existing_entries:
+        try:
+            num = int(entry.get("entry_number", "0"))
+            numbers.append(num)
+        except:
+            pass
+    
+    if not numbers:
+        return "000001"
+    
+    next_num = max(numbers) + 1
+    return str(next_num).zfill(6)
+
+@api_router.get("/payroll-v2/periods")
+async def get_payroll_periods(current_user: dict = Depends(get_current_user)):
+    """Obtener todos los períodos de nómina"""
+    company_id = current_user.get("company_id")
+    periods = await db.payroll_periods.find(
+        {"company_id": company_id},
+        {"_id": 0}
+    ).sort("start_date", -1).to_list(100)
+    return periods
+
+@api_router.post("/payroll-v2/periods")
+async def create_payroll_period(data: PayrollPeriodCreate, current_user: dict = Depends(get_current_user)):
+    """Crear un nuevo período de nómina"""
+    company_id = current_user.get("company_id")
+    
+    period_id = f"period_{uuid.uuid4().hex[:12]}"
+    period = {
+        "period_id": period_id,
+        "company_id": company_id,
+        "period_type": data.period_type,
+        "year": data.year,
+        "month": data.month,
+        "start_date": data.start_date,
+        "end_date": data.end_date,
+        "description": data.description or f"Nómina {data.period_type} - {data.month}/{data.year}",
+        "status": "open",  # open, calculated, approved, paid
+        "total_gross": 0,
+        "total_deductions": 0,
+        "total_net": 0,
+        "employee_count": 0,
+        "journal_entry_id": None,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "created_by": current_user.get("user_id")
+    }
+    await db.payroll_periods.insert_one(period)
+    
+    return {"period_id": period_id, "message": "Período creado correctamente"}
+
+@api_router.get("/payroll-v2/periods/{period_id}")
+async def get_payroll_period(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Obtener un período de nómina específico con sus entradas"""
+    company_id = current_user.get("company_id")
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    # Obtener entradas del período
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    period["entries"] = entries
+    return period
+
+@api_router.delete("/payroll-v2/periods/{period_id}")
+async def delete_payroll_period(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Eliminar un período de nómina y su asiento contable asociado"""
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    # Eliminar asiento contable asociado si existe
+    if period.get("journal_entry_id"):
+        await db.journal_entries.delete_one({"entry_id": period["journal_entry_id"], "company_id": company_id})
+    
+    # Eliminar todas las entradas del período
+    await db.payroll_entries.delete_many({"period_id": period_id, "company_id": company_id})
+    
+    # Eliminar el período
+    await db.payroll_periods.delete_one({"period_id": period_id, "company_id": company_id})
+    
+    return {"message": "Período y asiento contable eliminados correctamente"}
+
+@api_router.post("/payroll-v2/periods/{period_id}/add-employees")
+async def add_employees_to_period(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Agregar todos los empleados activos al período de nómina"""
+    company_id = current_user.get("company_id")
+    
+    # Verificar período existe
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    # Obtener empleados activos no excluidos
+    employees = await db.employees.find(
+        {"company_id": company_id, "status": "active", "exclude_from_payroll": {"$ne": True}},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    # Obtener entradas ya existentes
+    existing_entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    existing_employee_ids = {e["employee_id"] for e in existing_entries}
+    
+    added_count = 0
+    for emp in employees:
+        if emp["employee_id"] in existing_employee_ids:
+            continue
+        
+        # Calcular salario proporcional si es quincenal
+        salary = emp.get("salary", 0)
+        if period.get("period_type", "").startswith("quincenal"):
+            salary = salary / 2  # Mitad del salario mensual
+        
+        entry_id = f"pe_{uuid.uuid4().hex[:12]}"
+        entry = {
+            "entry_id": entry_id,
+            "period_id": period_id,
+            "company_id": company_id,
+            "employee_id": emp["employee_id"],
+            "employee_name": f"{emp['first_name']} {emp['last_name']}",
+            "employee_document": emp.get("document_number", ""),
+            "department": emp.get("department", ""),
+            "position": emp.get("position", ""),
+            # Ingresos
+            "base_salary": salary,
+            "overtime_day_hours": 0,
+            "overtime_day_amount": 0,
+            "overtime_night_hours": 0,
+            "overtime_night_amount": 0,
+            "overtime_weekend_hours": 0,
+            "overtime_weekend_amount": 0,
+            "overtime_holiday_hours": 0,
+            "overtime_holiday_amount": 0,
+            "bonuses": 0,
+            "commissions": 0,
+            "other_income": 0,
+            "gross_salary": salary,
+            # Deducciones TSS
+            "sfs_employee": round(salary * SFS_EMPLOYEE_RATE, 2),
+            "afp_employee": round(salary * AFP_EMPLOYEE_RATE, 2),
+            "isr": 0,  # Se calcula después
+            # Descuentos adicionales del perfil
+            "additional_deductions": emp.get("additional_deductions", []),
+            "total_additional_deductions": sum(d.get("amount", 0) for d in emp.get("additional_deductions", []) if not d.get("is_percentage")),
+            # Totales
+            "total_deductions": 0,
+            "net_salary": 0,
+            # Aportes patronales
+            "sfs_employer": round(salary * SFS_EMPLOYER_RATE, 2),
+            "afp_employer": round(salary * AFP_EMPLOYER_RATE, 2),
+            "srl_employer": round(salary * SRL_EMPLOYER_RATE, 2),
+            "infotep_employer": round(salary * INFOTEP_EMPLOYER_RATE, 2),
+            "total_employer_contributions": 0,
+            # Estado
+            "status": "draft",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        # Calcular ISR
+        isr_result = calculate_isr_monthly(salary)
+        entry["isr"] = isr_result["isr_monthly"]
+        
+        # Calcular totales
+        entry["total_deductions"] = round(
+            entry["sfs_employee"] + entry["afp_employee"] + entry["isr"] + entry["total_additional_deductions"],
+            2
+        )
+        entry["net_salary"] = round(entry["gross_salary"] - entry["total_deductions"], 2)
+        entry["total_employer_contributions"] = round(
+            entry["sfs_employer"] + entry["afp_employer"] + entry["srl_employer"] + entry["infotep_employer"],
+            2
+        )
+        
+        await db.payroll_entries.insert_one(entry)
+        added_count += 1
+    
+    # Actualizar totales del período
+    await update_period_totals(period_id, company_id)
+    
+    return {"message": f"{added_count} empleados agregados al período", "added": added_count}
+
+async def update_period_totals(period_id: str, company_id: str):
+    """Actualizar totales del período"""
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    total_gross = sum(e.get("gross_salary", 0) for e in entries)
+    total_deductions = sum(e.get("total_deductions", 0) for e in entries)
+    total_net = sum(e.get("net_salary", 0) for e in entries)
+    
+    await db.payroll_periods.update_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"$set": {
+            "total_gross": round(total_gross, 2),
+            "total_deductions": round(total_deductions, 2),
+            "total_net": round(total_net, 2),
+            "employee_count": len(entries),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+
+@api_router.get("/payroll-v2/entries/{entry_id}")
+async def get_payroll_entry(entry_id: str, current_user: dict = Depends(get_current_user)):
+    """Obtener una entrada de nómina específica"""
+    company_id = current_user.get("company_id")
+    entry = await db.payroll_entries.find_one(
+        {"entry_id": entry_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not entry:
+        raise HTTPException(status_code=404, detail="Entrada no encontrada")
+    return entry
+
+@api_router.put("/payroll-v2/entries/{entry_id}")
+async def update_payroll_entry(entry_id: str, data: PayrollEntryCreate, current_user: dict = Depends(get_current_user)):
+    """Actualizar una entrada de nómina (horas extra, bonos, etc.)"""
+    company_id = current_user.get("company_id")
+    
+    entry = await db.payroll_entries.find_one(
+        {"entry_id": entry_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not entry:
+        raise HTTPException(status_code=404, detail="Entrada no encontrada")
+    
+    # Obtener período para verificar si está abierto
+    period = await db.payroll_periods.find_one(
+        {"period_id": entry["period_id"], "company_id": company_id},
+        {"_id": 0}
+    )
+    if period and period.get("status") == "paid":
+        raise HTTPException(status_code=400, detail="No se puede modificar una nómina pagada")
+    
+    # Calcular valores de horas extra
+    hourly_rate = data.base_salary / 23.83 / 8  # Días hábiles promedio / horas
+    
+    overtime_day_amount = round(data.overtime_day_hours * hourly_rate * (1 + data.overtime_day_rate / 100), 2)
+    overtime_night_amount = round(data.overtime_night_hours * hourly_rate * (1 + data.overtime_night_rate / 100), 2)
+    overtime_weekend_amount = round(data.overtime_weekend_hours * hourly_rate * (1 + data.overtime_weekend_rate / 100), 2)
+    overtime_holiday_amount = round(data.overtime_holiday_hours * hourly_rate * (1 + data.overtime_holiday_rate / 100), 2)
+    
+    gross_salary = (
+        data.base_salary + 
+        overtime_day_amount + 
+        overtime_night_amount + 
+        overtime_weekend_amount + 
+        overtime_holiday_amount +
+        data.bonuses + 
+        data.commissions + 
+        data.other_income
+    )
+    
+    # Calcular deducciones TSS
+    sfs_employee = round(gross_salary * SFS_EMPLOYEE_RATE, 2)
+    afp_employee = round(gross_salary * AFP_EMPLOYEE_RATE, 2)
+    
+    # Calcular ISR
+    isr_result = calculate_isr_monthly(gross_salary)
+    isr = isr_result["isr_monthly"]
+    
+    # Descuentos adicionales
+    total_additional = sum(d.get("amount", 0) for d in (data.additional_deductions or []) if not d.get("is_percentage"))
+    
+    total_deductions = round(sfs_employee + afp_employee + isr + total_additional, 2)
+    net_salary = round(gross_salary - total_deductions, 2)
+    
+    # Aportes patronales
+    sfs_employer = round(gross_salary * SFS_EMPLOYER_RATE, 2)
+    afp_employer = round(gross_salary * AFP_EMPLOYER_RATE, 2)
+    srl_employer = round(gross_salary * SRL_EMPLOYER_RATE, 2)
+    infotep_employer = round(gross_salary * INFOTEP_EMPLOYER_RATE, 2)
+    
+    update_data = {
+        "base_salary": data.base_salary,
+        "overtime_day_hours": data.overtime_day_hours,
+        "overtime_day_amount": overtime_day_amount,
+        "overtime_night_hours": data.overtime_night_hours,
+        "overtime_night_amount": overtime_night_amount,
+        "overtime_weekend_hours": data.overtime_weekend_hours,
+        "overtime_weekend_amount": overtime_weekend_amount,
+        "overtime_holiday_hours": data.overtime_holiday_hours,
+        "overtime_holiday_amount": overtime_holiday_amount,
+        "bonuses": data.bonuses,
+        "commissions": data.commissions,
+        "other_income": data.other_income,
+        "gross_salary": round(gross_salary, 2),
+        "sfs_employee": sfs_employee,
+        "afp_employee": afp_employee,
+        "isr": isr,
+        "additional_deductions": data.additional_deductions or [],
+        "total_additional_deductions": total_additional,
+        "total_deductions": total_deductions,
+        "net_salary": net_salary,
+        "sfs_employer": sfs_employer,
+        "afp_employer": afp_employer,
+        "srl_employer": srl_employer,
+        "infotep_employer": infotep_employer,
+        "total_employer_contributions": round(sfs_employer + afp_employer + srl_employer + infotep_employer, 2),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.payroll_entries.update_one(
+        {"entry_id": entry_id, "company_id": company_id},
+        {"$set": update_data}
+    )
+    
+    # Actualizar totales del período
+    await update_period_totals(entry["period_id"], company_id)
+    
+    # Si el período tiene asiento contable, actualizarlo
+    if period and period.get("journal_entry_id"):
+        await regenerate_period_journal_entry(period["period_id"], company_id, current_user)
+    
+    return {"message": "Entrada actualizada correctamente"}
+
+@api_router.delete("/payroll-v2/entries/{entry_id}")
+async def delete_payroll_entry(entry_id: str, current_user: dict = Depends(get_current_user)):
+    """Eliminar una entrada de nómina"""
+    company_id = current_user.get("company_id")
+    
+    entry = await db.payroll_entries.find_one(
+        {"entry_id": entry_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not entry:
+        raise HTTPException(status_code=404, detail="Entrada no encontrada")
+    
+    period_id = entry["period_id"]
+    
+    await db.payroll_entries.delete_one({"entry_id": entry_id, "company_id": company_id})
+    
+    # Actualizar totales
+    await update_period_totals(period_id, company_id)
+    
+    return {"message": "Entrada eliminada correctamente"}
+
+@api_router.post("/payroll-v2/periods/{period_id}/calculate")
+async def calculate_period(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Calcular/recalcular todas las nóminas del período"""
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    # Recalcular cada entrada
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    for entry in entries:
+        gross = entry.get("gross_salary", 0)
+        if gross <= 0:
+            continue
+            
+        sfs = round(gross * SFS_EMPLOYEE_RATE, 2)
+        afp = round(gross * AFP_EMPLOYEE_RATE, 2)
+        isr_result = calculate_isr_monthly(gross)
+        isr = isr_result["isr_monthly"]
+        additional = entry.get("total_additional_deductions", 0)
+        
+        total_ded = round(sfs + afp + isr + additional, 2)
+        net = round(gross - total_ded, 2)
+        
+        await db.payroll_entries.update_one(
+            {"entry_id": entry["entry_id"]},
+            {"$set": {
+                "sfs_employee": sfs,
+                "afp_employee": afp,
+                "isr": isr,
+                "total_deductions": total_ded,
+                "net_salary": net,
+                "sfs_employer": round(gross * SFS_EMPLOYER_RATE, 2),
+                "afp_employer": round(gross * AFP_EMPLOYER_RATE, 2),
+                "srl_employer": round(gross * SRL_EMPLOYER_RATE, 2),
+                "infotep_employer": round(gross * INFOTEP_EMPLOYER_RATE, 2),
+                "status": "calculated"
+            }}
+        )
+    
+    await update_period_totals(period_id, company_id)
+    
+    await db.payroll_periods.update_one(
+        {"period_id": period_id},
+        {"$set": {"status": "calculated", "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"message": "Período calculado correctamente"}
+
+@api_router.post("/payroll-v2/periods/{period_id}/approve")
+async def approve_period(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Aprobar el período de nómina"""
+    company_id = current_user.get("company_id")
+    
+    result = await db.payroll_periods.update_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"$set": {
+            "status": "approved",
+            "approved_at": datetime.now(timezone.utc).isoformat(),
+            "approved_by": current_user.get("user_id")
+        }}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    return {"message": "Período aprobado correctamente"}
+
+async def regenerate_period_journal_entry(period_id: str, company_id: str, current_user: dict):
+    """Regenerar el asiento contable del período"""
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        return
+    
+    # Eliminar asiento anterior si existe
+    if period.get("journal_entry_id"):
+        await db.journal_entries.delete_one({"entry_id": period["journal_entry_id"], "company_id": company_id})
+    
+    # Crear nuevo asiento
+    await generate_period_journal_entry(period_id, current_user, is_regeneration=True)
+
+@api_router.post("/payroll-v2/periods/{period_id}/pay")
+async def pay_period(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Pagar el período y generar asiento contable"""
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    if period.get("status") not in ["calculated", "approved"]:
+        raise HTTPException(status_code=400, detail="El período debe estar calculado o aprobado para pagarlo")
+    
+    # Generar asiento contable
+    journal_result = await generate_period_journal_entry(period_id, current_user)
+    
+    # Actualizar estado del período
+    await db.payroll_periods.update_one(
+        {"period_id": period_id},
+        {"$set": {
+            "status": "paid",
+            "journal_entry_id": journal_result["entry_id"],
+            "paid_at": datetime.now(timezone.utc).isoformat(),
+            "paid_by": current_user.get("user_id")
+        }}
+    )
+    
+    # Actualizar estado de las entradas
+    await db.payroll_entries.update_many(
+        {"period_id": period_id, "company_id": company_id},
+        {"$set": {"status": "paid"}}
+    )
+    
+    return {
+        "message": "Nómina pagada y asiento contable generado",
+        "journal_entry_id": journal_result["entry_id"],
+        "entry_number": journal_result["entry_number"]
+    }
+
+async def generate_period_journal_entry(period_id: str, current_user: dict, is_regeneration: bool = False):
+    """Generar asiento contable para un período de nómina completo"""
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    if not entries:
+        raise HTTPException(status_code=400, detail="No hay empleados en este período")
+    
+    # Sumar todos los valores
+    totals = {
+        "base_salary": 0,
+        "overtime_day": 0,
+        "overtime_night": 0,
+        "overtime_weekend": 0,
+        "overtime_holiday": 0,
+        "bonuses": 0,
+        "commissions": 0,
+        "sfs_employee": 0,
+        "afp_employee": 0,
+        "isr": 0,
+        "additional_deductions": 0,
+        "net_salary": 0,
+        "sfs_employer": 0,
+        "afp_employer": 0,
+        "srl_employer": 0,
+        "infotep_employer": 0
+    }
+    
+    for e in entries:
+        totals["base_salary"] += e.get("base_salary", 0)
+        totals["overtime_day"] += e.get("overtime_day_amount", 0)
+        totals["overtime_night"] += e.get("overtime_night_amount", 0)
+        totals["overtime_weekend"] += e.get("overtime_weekend_amount", 0)
+        totals["overtime_holiday"] += e.get("overtime_holiday_amount", 0)
+        totals["bonuses"] += e.get("bonuses", 0)
+        totals["commissions"] += e.get("commissions", 0)
+        totals["sfs_employee"] += e.get("sfs_employee", 0)
+        totals["afp_employee"] += e.get("afp_employee", 0)
+        totals["isr"] += e.get("isr", 0)
+        totals["additional_deductions"] += e.get("total_additional_deductions", 0)
+        totals["net_salary"] += e.get("net_salary", 0)
+        totals["sfs_employer"] += e.get("sfs_employer", 0)
+        totals["afp_employer"] += e.get("afp_employer", 0)
+        totals["srl_employer"] += e.get("srl_employer", 0)
+        totals["infotep_employer"] += e.get("infotep_employer", 0)
+    
+    # Redondear totales
+    for key in totals:
+        totals[key] = round(totals[key], 2)
+    
+    # Crear líneas del asiento
+    lines = []
+    
+    # DÉBITOS (Gastos)
+    if totals["base_salary"] > 0:
+        lines.append({
+            "account_code": "5101",
+            "account_name": "Gastos de Sueldos y Salarios",
+            "description": "Salarios del período",
+            "debit": totals["base_salary"],
+            "credit": 0
+        })
+    
+    if totals["overtime_day"] > 0:
+        lines.append({
+            "account_code": "5102",
+            "account_name": "Gastos de Horas Extras Diurnas",
+            "description": "Horas extras diurnas",
+            "debit": totals["overtime_day"],
+            "credit": 0
+        })
+    
+    if totals["overtime_night"] > 0:
+        lines.append({
+            "account_code": "5103",
+            "account_name": "Gastos de Horas Extras Nocturnas",
+            "description": "Horas extras nocturnas",
+            "debit": totals["overtime_night"],
+            "credit": 0
+        })
+    
+    if totals["overtime_weekend"] > 0:
+        lines.append({
+            "account_code": "5104",
+            "account_name": "Gastos de Horas Extras Fines de Semana",
+            "description": "Horas extras fin de semana",
+            "debit": totals["overtime_weekend"],
+            "credit": 0
+        })
+    
+    if totals["overtime_holiday"] > 0:
+        lines.append({
+            "account_code": "5105",
+            "account_name": "Gastos de Horas Extras Días Feriados",
+            "description": "Horas extras días feriados",
+            "debit": totals["overtime_holiday"],
+            "credit": 0
+        })
+    
+    if totals["bonuses"] > 0:
+        lines.append({
+            "account_code": "5106",
+            "account_name": "Gastos de Bonificaciones",
+            "description": "Bonificaciones del período",
+            "debit": totals["bonuses"],
+            "credit": 0
+        })
+    
+    if totals["commissions"] > 0:
+        lines.append({
+            "account_code": "5107",
+            "account_name": "Gastos de Comisiones",
+            "description": "Comisiones del período",
+            "debit": totals["commissions"],
+            "credit": 0
+        })
+    
+    # CRÉDITOS (Pasivos y Banco)
+    if totals["sfs_employee"] > 0:
+        lines.append({
+            "account_code": "2201",
+            "account_name": "Deducciones SFS por Pagar (3.04%)",
+            "description": "Retención SFS empleados",
+            "debit": 0,
+            "credit": totals["sfs_employee"]
+        })
+    
+    if totals["afp_employee"] > 0:
+        lines.append({
+            "account_code": "2202",
+            "account_name": "Deducciones AFP por Pagar (2.87%)",
+            "description": "Retención AFP empleados",
+            "debit": 0,
+            "credit": totals["afp_employee"]
+        })
+    
+    if totals["isr"] > 0:
+        lines.append({
+            "account_code": "2203",
+            "account_name": "Retención ISR por Pagar",
+            "description": "Retención ISR empleados",
+            "debit": 0,
+            "credit": totals["isr"]
+        })
+    
+    if totals["additional_deductions"] > 0:
+        lines.append({
+            "account_code": "2204",
+            "account_name": "Descuentos Adicionales por Pagar",
+            "description": "Préstamos, cooperativas, etc.",
+            "debit": 0,
+            "credit": totals["additional_deductions"]
+        })
+    
+    # Crédito a Banco por el neto pagado
+    if totals["net_salary"] > 0:
+        lines.append({
+            "account_code": "1101",
+            "account_name": "Banco - Cuenta Nómina",
+            "description": "Pago neto a empleados",
+            "debit": 0,
+            "credit": totals["net_salary"]
+        })
+    
+    # Calcular totales
+    total_debits = sum(line["debit"] for line in lines)
+    total_credits = sum(line["credit"] for line in lines)
+    
+    # Obtener siguiente número de asiento
+    existing_entries = await db.journal_entries.find(
+        {"company_id": company_id},
+        {"entry_number": 1}
+    ).to_list(10000)
+    entry_number = get_next_journal_number(company_id, existing_entries)
+    
+    entry_id = f"je_{uuid.uuid4().hex[:12]}"
+    today = datetime.now(timezone.utc)
+    
+    entry = {
+        "entry_id": entry_id,
+        "entry_number": entry_number,
+        "company_id": company_id,
+        "entry_date": today.strftime("%Y-%m-%d"),
+        "reference": f"NOM-{period['period_type']}-{period['year']}-{period['month']:02d}",
+        "description": f"Nómina {period.get('description', '')} - {len(entries)} empleados",
+        "period": f"{period['year']}-{period['month']:02d}",
+        "entry_type": "payroll",
+        "lines": lines,
+        "payroll_period_id": period_id,
+        "employee_count": len(entries),
+        "notes": f"Asiento generado automáticamente al pagar nómina",
+        "total_debits": round(total_debits, 2),
+        "total_credits": round(total_credits, 2),
+        "status": "posted",  # Publicado automáticamente al pagar
+        "created_by": current_user.get("user_id"),
+        "created_at": today.isoformat(),
+        "updated_at": today.isoformat()
+    }
+    
+    await db.journal_entries.insert_one(entry)
+    
+    # Actualizar período con ID del asiento
+    await db.payroll_periods.update_one(
+        {"period_id": period_id},
+        {"$set": {"journal_entry_id": entry_id}}
+    )
+    
+    return {
+        "entry_id": entry_id,
+        "entry_number": entry_number,
+        "total_debits": round(total_debits, 2),
+        "total_credits": round(total_credits, 2)
+    }
+
+# ===================== CONFIGURACIÓN DE BANCO EMPRESA =====================
+
+@api_router.get("/company/bank-config")
+async def get_company_bank_config(current_user: dict = Depends(get_current_user)):
+    """Obtener configuración de cuenta bancaria de la empresa"""
+    company_id = current_user.get("company_id")
+    config = await db.company_bank_config.find_one(
+        {"company_id": company_id},
+        {"_id": 0}
+    )
+    return config
+
+@api_router.post("/company/bank-config")
+async def save_company_bank_config(data: CompanyBankConfigCreate, current_user: dict = Depends(get_current_user)):
+    """Guardar configuración de cuenta bancaria"""
+    company_id = current_user.get("company_id")
+    
+    config = {
+        "company_id": company_id,
+        "bank_name": data.bank_name,
+        "account_number": data.account_number,
+        "account_type": data.account_type,
+        "account_code": data.account_code,
+        "is_default": data.is_default,
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.company_bank_config.update_one(
+        {"company_id": company_id},
+        {"$set": config},
+        upsert=True
+    )
+    
+    return {"message": "Configuración guardada correctamente"}
+
+# ===================== CRUD CUENTAS CONTABLES =====================
+
+@api_router.put("/accounting/accounts/{account_id}")
+async def update_account(account_id: str, data: AccountCreate, current_user: dict = Depends(get_current_user)):
+    """Actualizar una cuenta contable"""
+    company_id = current_user.get("company_id")
+    
+    result = await db.accounts.update_one(
+        {"account_id": account_id, "company_id": company_id},
+        {"$set": {
+            "code": data.code,
+            "name": data.name,
+            "account_type": data.account_type,
+            "parent_code": data.parent_code,
+            "description": data.description,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Cuenta no encontrada")
+    
+    return {"message": "Cuenta actualizada correctamente"}
+
+@api_router.delete("/accounting/accounts/{account_id}")
+async def delete_account(account_id: str, current_user: dict = Depends(get_current_user)):
+    """Eliminar una cuenta contable"""
+    company_id = current_user.get("company_id")
+    
+    result = await db.accounts.delete_one(
+        {"account_id": account_id, "company_id": company_id}
+    )
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Cuenta no encontrada")
+    
+    return {"message": "Cuenta eliminada correctamente"}
+
+@api_router.post("/accounting/accounts/reset-defaults")
+async def reset_default_accounts(current_user: dict = Depends(get_current_user)):
+    """Resetear cuentas a las predefinidas"""
+    company_id = current_user.get("company_id")
+    
+    # Eliminar cuentas existentes
+    await db.accounts.delete_many({"company_id": company_id})
+    
+    # Crear cuentas predefinidas
+    for acc in DEFAULT_PAYROLL_ACCOUNTS:
+        account = {
+            "account_id": f"acc_{uuid.uuid4().hex[:8]}",
+            "company_id": company_id,
+            **acc,
+            "balance": 0,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.accounts.insert_one(account)
+    
+    return {"message": "Cuentas restablecidas a valores predeterminados"}
+
+# ===================== SINCRONIZACIÓN NÓMINA-ASIENTO =====================
+
+@api_router.delete("/accounting/journal-entries/{entry_id}/with-payroll")
+async def delete_journal_entry_with_payroll(entry_id: str, current_user: dict = Depends(get_current_user)):
+    """Eliminar asiento contable y su período de nómina asociado"""
+    company_id = current_user.get("company_id")
+    
+    entry = await db.journal_entries.find_one(
+        {"entry_id": entry_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not entry:
+        raise HTTPException(status_code=404, detail="Asiento no encontrado")
+    
+    # Si tiene período asociado, eliminarlo también
+    if entry.get("payroll_period_id"):
+        period_id = entry["payroll_period_id"]
+        # Eliminar entradas del período
+        await db.payroll_entries.delete_many({"period_id": period_id, "company_id": company_id})
+        # Eliminar período
+        await db.payroll_periods.delete_one({"period_id": period_id, "company_id": company_id})
+    
+    # Eliminar asiento
+    await db.journal_entries.delete_one({"entry_id": entry_id, "company_id": company_id})
+    
+    return {"message": "Asiento contable y nómina eliminados correctamente"}
+
+# ===================== EXPORTACIÓN DE ASIENTOS =====================
+
+@api_router.get("/accounting/journal-entries/{entry_id}/export")
+async def export_journal_entry(entry_id: str, format: str = "json", current_user: dict = Depends(get_current_user)):
+    """Exportar un asiento contable (preparar datos para Excel/CSV/PDF)"""
+    company_id = current_user.get("company_id")
+    
+    entry = await db.journal_entries.find_one(
+        {"entry_id": entry_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not entry:
+        raise HTTPException(status_code=404, detail="Asiento no encontrado")
+    
+    # Preparar datos para exportación
+    export_data = {
+        "numero": entry.get("entry_number", ""),
+        "fecha": entry.get("entry_date", ""),
+        "referencia": entry.get("reference", ""),
+        "descripcion": entry.get("description", ""),
+        "lineas": []
+    }
+    
+    for line in entry.get("lines", []):
+        export_data["lineas"].append({
+            "cuenta_codigo": line.get("account_code", ""),
+            "cuenta_nombre": line.get("account_name", ""),
+            "descripcion": line.get("description", ""),
+            "debito": line.get("debit", 0),
+            "credito": line.get("credit", 0)
+        })
+    
+    export_data["total_debitos"] = entry.get("total_debits", 0)
+    export_data["total_creditos"] = entry.get("total_credits", 0)
+    
+    return export_data
+
+@api_router.get("/accounting/journal-entries/search")
+async def search_journal_entries(
+    entry_number: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Buscar asientos por número o rango de fechas"""
+    company_id = current_user.get("company_id")
+    
+    query = {"company_id": company_id}
+    
+    if entry_number:
+        query["entry_number"] = {"$regex": entry_number, "$options": "i"}
+    
+    if start_date:
+        query["entry_date"] = {"$gte": start_date}
+    
+    if end_date:
+        if "entry_date" in query:
+            query["entry_date"]["$lte"] = end_date
+        else:
+            query["entry_date"] = {"$lte": end_date}
+    
+    entries = await db.journal_entries.find(query, {"_id": 0}).sort("entry_number", -1).to_list(100)
+    return entries
+
 # ===================== ORGANIGRAMA DRAG & DROP =====================
 
 @api_router.put("/organigrama/reorder")
