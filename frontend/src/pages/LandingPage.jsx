@@ -9,10 +9,13 @@ import {
   Briefcase, 
   BarChart3, 
   Check, 
+  X,
   ArrowRight,
   Shield,
   Zap,
-  Globe
+  Globe,
+  Rocket,
+  Crown
 } from "lucide-react";
 
 const features = [
