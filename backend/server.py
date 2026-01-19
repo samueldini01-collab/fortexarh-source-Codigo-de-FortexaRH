@@ -1560,6 +1560,19 @@ async def update_candidate_stage(candidate_id: str, stage: str, current_user: di
 # ===================== SUBSCRIPTION & PAYMENT ROUTES =====================
 # NOTE: Main subscription endpoints are defined later in the file (line ~4850)
 
+@api_router.get("/config/status")
+async def get_config_status():
+    """Check configuration status - for debugging deployment issues"""
+    stripe_key = os.environ.get('STRIPE_API_KEY', '')
+    stripe_mode = "live" if stripe_key.startswith("sk_live_") else "test" if stripe_key.startswith("sk_test_") else "not_configured"
+    
+    return {
+        "status": "ok",
+        "stripe_mode": stripe_mode,
+        "stripe_configured": bool(stripe_key),
+        "resend_configured": bool(os.environ.get('RESEND_API_KEY')),
+    }
+
 class CheckoutRequest(BaseModel):
     plan_id: str
     employee_count: int = 1
