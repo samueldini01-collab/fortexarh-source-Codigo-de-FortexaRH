@@ -2946,7 +2946,37 @@ class CustomRoleCreate(BaseModel):
     name: str
     description: Optional[str] = None
     modules: List[str] = []
-    permissions: Dict[str, List[str]] = {}  # module: [read, write, delete]
+    permissions: Dict[str, List[str]] = {}  # module: [view, create, edit, delete]
+    color: Optional[str] = "#3b82f6"
+
+class CustomRoleUpdate(BaseModel):
+    """Actualización de rol personalizado"""
+    name: Optional[str] = None
+    description: Optional[str] = None
+    modules: Optional[List[str]] = None
+    permissions: Optional[Dict[str, List[str]]] = None
+    color: Optional[str] = None
+    is_active: Optional[bool] = None
+
+# Default modules for roles
+ROLE_MODULES = [
+    {"id": "dashboard", "name": "Dashboard", "description": "Panel principal"},
+    {"id": "employees", "name": "Empleados", "description": "Gestión de empleados"},
+    {"id": "payroll", "name": "Nómina", "description": "Procesamiento de nómina"},
+    {"id": "attendance", "name": "Asistencias", "description": "Control de asistencias"},
+    {"id": "vacations", "name": "Vacaciones", "description": "Gestión de vacaciones"},
+    {"id": "evaluations", "name": "Evaluaciones", "description": "Evaluaciones de desempeño"},
+    {"id": "recruitment", "name": "Reclutamiento", "description": "Gestión de candidatos"},
+    {"id": "organigrama", "name": "Organigrama", "description": "Estructura organizacional"},
+    {"id": "accounting", "name": "Contabilidad", "description": "Entradas de diario"},
+    {"id": "reports", "name": "Reportes", "description": "Generación de reportes"},
+    {"id": "settings", "name": "Configuración", "description": "Ajustes de la empresa"},
+    {"id": "subscriptions", "name": "Suscripciones", "description": "Gestión del plan"},
+    {"id": "users", "name": "Usuarios", "description": "Administración de usuarios"},
+]
+
+ROLE_PERMISSION_TYPES = ["view", "create", "edit", "delete"]
+
 async def get_chart_of_accounts(current_user: dict = Depends(get_current_user)):
     """Get chart of accounts for the company"""
     company_id = current_user.get("company_id")
