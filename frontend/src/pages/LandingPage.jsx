@@ -15,7 +15,11 @@ import {
   Zap,
   Globe,
   Rocket,
-  Crown
+  Crown,
+  MapPin,
+  Mail,
+  Phone,
+  Clock3
 } from "lucide-react";
 
 const features = [
