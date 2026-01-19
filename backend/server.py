@@ -80,6 +80,7 @@ class UserCreate(BaseModel):
     password: str
     name: str
     company_name: Optional[str] = None
+    payment_session_id: Optional[str] = None  # For paid registrations
 
 class UserLogin(BaseModel):
     email: EmailStr
