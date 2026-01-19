@@ -54,6 +54,7 @@ export default function SubscriptionsPage() {
   const [checkingPayment, setCheckingPayment] = useState(false);
   const [subscription, setSubscription] = useState(null);
   const [plans, setPlans] = useState([]);
+  const [invoices, setInvoices] = useState([]);
   const [showChangePlan, setShowChangePlan] = useState(false);
   const [showAdjustEmployees, setShowAdjustEmployees] = useState(false);
   const [showAddUsers, setShowAddUsers] = useState(false);
@@ -78,7 +79,20 @@ export default function SubscriptionsPage() {
 
   useEffect(() => {
     fetchData();
+    fetchInvoices();
   }, []);
+
+  const fetchInvoices = async () => {
+    try {
+      const response = await axios.get(`${API}/invoices`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      setInvoices(response.data || []);
+    } catch (error) {
+      console.error("Error fetching invoices:", error);
+    }
+  };
 
   // Poll payment status after returning from Stripe
   const pollPaymentStatus = async (sessionId, attempts = 0) => {
