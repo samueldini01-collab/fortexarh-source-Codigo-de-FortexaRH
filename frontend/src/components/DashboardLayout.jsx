@@ -55,7 +55,9 @@ import {
   Crown,
   Zap,
   Shield,
-  Wallet
+  Wallet,
+  TrendingUp,
+  FileBarChart
 } from "lucide-react";
 
 // Default navigation items with feature mapping
