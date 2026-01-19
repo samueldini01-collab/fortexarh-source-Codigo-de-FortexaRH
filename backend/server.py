@@ -317,10 +317,17 @@ class CheckoutRequest(BaseModel):
 # ===================== NEW MODELS: ORGANIGRAMA, PAYROLL CONFIG, TEMPLATES =====================
 
 class OrgNodeCreate(BaseModel):
-    employee_id: Optional[str] = None
-    title: str
-    department: str
+    name: str
+    code: Optional[str] = None
+    node_type: str = "unit"  # "unit" or "position"
     parent_id: Optional[str] = None
+    employee_id: Optional[str] = None
+    position_title: Optional[str] = None
+    description: Optional[str] = None
+    positions_count: Optional[int] = None
+    # Legacy fields for compatibility
+    title: Optional[str] = None
+    department: Optional[str] = None
     level: int = 0
 
 class OrgNodeResponse(BaseModel):
