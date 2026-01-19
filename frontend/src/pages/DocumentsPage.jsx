@@ -95,10 +95,10 @@ export default function DocumentsPage() {
     setLoading(true);
     try {
       const [templatesRes, employeesRes, historyRes, categoriesRes] = await Promise.all([
-        axios.get(`${API}/documents/templates`, { headers: getAuthHeaders(), withCredentials: true }),
+        axios.get(`${API}/doc-generator/templates`, { headers: getAuthHeaders(), withCredentials: true }),
         axios.get(`${API}/employees`, { headers: getAuthHeaders(), withCredentials: true }),
-        axios.get(`${API}/documents/history`, { headers: getAuthHeaders(), withCredentials: true }),
-        axios.get(`${API}/documents/categories`, { headers: getAuthHeaders(), withCredentials: true })
+        axios.get(`${API}/doc-generator/history`, { headers: getAuthHeaders(), withCredentials: true }),
+        axios.get(`${API}/doc-generator/categories`, { headers: getAuthHeaders(), withCredentials: true })
       ]);
       setTemplates(templatesRes.data);
       setEmployees(employeesRes.data);
@@ -119,7 +119,7 @@ export default function DocumentsPage() {
     
     setGenerating(true);
     try {
-      const response = await axios.post(`${API}/documents/generate`, {
+      const response = await axios.post(`${API}/doc-generator/generate`, {
         template_id: selectedTemplate.template_id,
         employee_id: selectedEmployee,
         custom_values: customValues,
@@ -176,7 +176,7 @@ export default function DocumentsPage() {
     if (!confirm("¿Eliminar este documento del historial?")) return;
     
     try {
-      await axios.delete(`${API}/documents/history/${documentId}`, { 
+      await axios.delete(`${API}/doc-generator/history/${documentId}`, { 
         headers: getAuthHeaders(), withCredentials: true 
       });
       toast.success("Documento eliminado");
@@ -188,7 +188,7 @@ export default function DocumentsPage() {
 
   const handleViewHistoryDocument = async (documentId) => {
     try {
-      const response = await axios.get(`${API}/documents/history/${documentId}`, { 
+      const response = await axios.get(`${API}/doc-generator/history/${documentId}`, { 
         headers: getAuthHeaders(), withCredentials: true 
       });
       setPreviewContent(response.data.content);
@@ -207,12 +207,12 @@ export default function DocumentsPage() {
     
     try {
       if (editingTemplate) {
-        await axios.put(`${API}/documents/templates/${editingTemplate.template_id}`, templateForm, {
+        await axios.put(`${API}/doc-generator/templates/${editingTemplate.template_id}`, templateForm, {
           headers: getAuthHeaders(), withCredentials: true
         });
         toast.success("Plantilla actualizada");
       } else {
-        await axios.post(`${API}/documents/templates`, templateForm, {
+        await axios.post(`${API}/doc-generator/templates`, templateForm, {
           headers: getAuthHeaders(), withCredentials: true
         });
         toast.success("Plantilla creada");
@@ -242,7 +242,7 @@ export default function DocumentsPage() {
     if (!confirm("¿Eliminar esta plantilla?")) return;
     
     try {
-      await axios.delete(`${API}/documents/templates/${templateId}`, {
+      await axios.delete(`${API}/doc-generator/templates/${templateId}`, {
         headers: getAuthHeaders(), withCredentials: true
       });
       toast.success("Plantilla eliminada");
