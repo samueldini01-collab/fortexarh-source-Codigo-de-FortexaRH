@@ -32,8 +32,8 @@ export default function Dashboard() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   
-  // Check if user is on basic plan
-  const isBasicPlan = user?.subscription?.plan_id === "basic";
+  // Check if user is on basic or trial plan (show upgrade banner)
+  const shouldShowUpgradeBanner = user?.subscription?.plan_id === "basic" || user?.subscription?.plan_id === "trial";
 
   useEffect(() => {
     // Check for payment success
@@ -129,8 +129,8 @@ export default function Dashboard() {
     <DashboardLayout title="Dashboard">
       <div className="space-y-8" data-testid="dashboard-page">
         
-        {/* Pro Plan Promotional Banner - Only for Basic plan users */}
-        {isBasicPlan && showProBanner && (
+        {/* Pro Plan Promotional Banner - For Basic and Trial users */}
+        {shouldShowUpgradeBanner && showProBanner && (
           <div className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-700 rounded-2xl p-6 text-white shadow-lg">
             {/* Background decoration */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
