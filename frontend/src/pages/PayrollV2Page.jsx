@@ -394,6 +394,83 @@ export default function PayrollV2Page() {
     }
   };
 
+  // Download TSS Autodeterminación Excel file
+  const handleDownloadTSSAutodeterminacion = async (periodId) => {
+    try {
+      const response = await axios.get(`${API}/payroll-v2/periods/${periodId}/export/tss-autodeterminacion`, {
+        headers: getAuthHeaders(),
+        withCredentials: true,
+        responseType: 'blob'
+      });
+      const blob = new Blob([response.data], { type: 'application/vnd.ms-excel' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `TSS_Autodeterminacion.xls`;
+      link.click();
+      toast.success("TSS Autodeterminación descargado");
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al descargar TSS Autodeterminación");
+    }
+  };
+
+  // Download TSS Novedades Excel file
+  const handleDownloadTSSNovedades = async (periodId) => {
+    try {
+      const response = await axios.get(`${API}/payroll-v2/periods/${periodId}/export/tss-novedades`, {
+        headers: getAuthHeaders(),
+        withCredentials: true,
+        responseType: 'blob'
+      });
+      const blob = new Blob([response.data], { type: 'application/vnd.ms-excel' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `TSS_Novedades.xls`;
+      link.click();
+      toast.success("TSS Novedades descargado");
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al descargar TSS Novedades");
+    }
+  };
+
+  // Download IR-3 Excel file
+  const handleDownloadIR3 = async (periodId) => {
+    try {
+      const response = await axios.get(`${API}/payroll-v2/periods/${periodId}/export/ir3`, {
+        headers: getAuthHeaders(),
+        withCredentials: true,
+        responseType: 'blob'
+      });
+      const blob = new Blob([response.data], { type: 'application/vnd.ms-excel' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `IR3_Retenciones.xls`;
+      link.click();
+      toast.success("IR-3 descargado");
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al descargar IR-3");
+    }
+  };
+
+  // Download IR-17 Excel file
+  const handleDownloadIR17 = async (periodId) => {
+    try {
+      const response = await axios.get(`${API}/payroll-v2/periods/${periodId}/export/ir17`, {
+        headers: getAuthHeaders(),
+        withCredentials: true,
+        responseType: 'blob'
+      });
+      const blob = new Blob([response.data], { type: 'application/vnd.ms-excel' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `IR17_Declaracion.xls`;
+      link.click();
+      toast.success("IR-17 descargado");
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al descargar IR-17");
+    }
+  };
+
+  // Legacy TSS export (JSON/CSV)
   const handleExportTSS = async (periodId) => {
     try {
       const response = await axios.get(`${API}/payroll-v2/periods/${periodId}/export/tss`, { headers: getAuthHeaders(), withCredentials: true });
