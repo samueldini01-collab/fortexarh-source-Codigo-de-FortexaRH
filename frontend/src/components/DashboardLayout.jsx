@@ -49,7 +49,6 @@ import {
   EyeOff,
   RotateCcw,
   Save,
-  CreditCard,
   UserCog
 } from "lucide-react";
 
