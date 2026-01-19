@@ -2010,7 +2010,7 @@ async def get_checkout_status(session_id: str, current_user: dict = Depends(get_
         }
     
     # Handle expired sessions
-    if status.status == "expired":
+    if status_value == "expired":
         await db.payment_transactions.update_one(
             {"session_id": session_id},
             {"$set": {"payment_status": "expired"}}
@@ -2022,10 +2022,8 @@ async def get_checkout_status(session_id: str, current_user: dict = Depends(get_
         }
     
     return {
-        "status": status.status,
-        "payment_status": status.payment_status,
-        "amount_total": status.amount_total,
-        "currency": status.currency,
+        "status": status_value,
+        "payment_status": payment_status,
         "message": "Procesando pago..."
     }
 
