@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth, API } from "@/App";
 import axios from "axios";
@@ -18,7 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { 
   Check, X, CreditCard, Users, Building2, Zap, Shield, Clock,
-  AlertTriangle, RefreshCw, ArrowUpRight, Crown, Rocket, Globe, Loader2
+  AlertTriangle, RefreshCw, ArrowUpRight, Crown, Rocket, Globe, Loader2, CheckCircle2
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -38,20 +39,81 @@ const PLAN_COLORS = {
 
 export default function SubscriptionsPage() {
   const { getAuthHeaders } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [processingPayment, setProcessingPayment] = useState(false);
+  const [checkingPayment, setCheckingPayment] = useState(false);
   const [subscription, setSubscription] = useState(null);
   const [plans, setPlans] = useState([]);
   const [showChangePlan, setShowChangePlan] = useState(false);
   const [showAdjustEmployees, setShowAdjustEmployees] = useState(false);
   const [showAddUsers, setShowAddUsers] = useState(false);
+  const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [employeeCount, setEmployeeCount] = useState(5);
   const [additionalUsers, setAdditionalUsers] = useState(0);
 
+  // Check for payment return from Stripe
+  useEffect(() => {
+    const sessionId = searchParams.get('session_id');
+    const status = searchParams.get('status');
+    
+    if (sessionId && status === 'success') {
+      pollPaymentStatus(sessionId);
+    } else if (status === 'cancelled') {
+      toast.info("Pago cancelado");
+      // Clear URL params
+      setSearchParams({});
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     fetchData();
   }, []);
+
+  // Poll payment status after returning from Stripe
+  const pollPaymentStatus = async (sessionId, attempts = 0) => {
+    const maxAttempts = 10;
+    const pollInterval = 2000;
+
+    if (attempts >= maxAttempts) {
+      toast.error("No se pudo verificar el estado del pago. Por favor contacte soporte.");
+      setCheckingPayment(false);
+      setSearchParams({});
+      return;
+    }
+
+    setCheckingPayment(true);
+
+    try {
+      const response = await axios.get(`${API}/checkout/status/${sessionId}`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+
+      if (response.data.payment_status === 'paid') {
+        setCheckingPayment(false);
+        setShowPaymentSuccess(true);
+        toast.success("¡Pago exitoso! Su suscripción ha sido activada.");
+        // Clear URL params
+        setSearchParams({});
+        // Refresh subscription data
+        fetchData();
+        return;
+      } else if (response.data.status === 'expired') {
+        setCheckingPayment(false);
+        toast.error("La sesión de pago ha expirado. Intente nuevamente.");
+        setSearchParams({});
+        return;
+      }
+
+      // Continue polling
+      setTimeout(() => pollPaymentStatus(sessionId, attempts + 1), pollInterval);
+    } catch (error) {
+      console.error("Error checking payment status:", error);
+      setTimeout(() => pollPaymentStatus(sessionId, attempts + 1), pollInterval);
+    }
+  };
 
   const fetchData = async () => {
     setLoading(true);
