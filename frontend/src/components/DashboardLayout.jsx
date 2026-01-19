@@ -56,24 +56,24 @@ import {
   Zap
 } from "lucide-react";
 
-// Default navigation items
+// Default navigation items with feature mapping
 const DEFAULT_NAVIGATION = [
-  { id: "dashboard", name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, visible: true },
-  { id: "employees", name: "Empleados", href: "/employees", icon: Users, visible: true },
-  { id: "organigrama", name: "Organigrama", href: "/organigrama", icon: Network, visible: true },
-  { id: "payroll-v2", name: "Nómina", href: "/payroll-v2", icon: DollarSign, visible: true },
-  { id: "payroll-dashboard", name: "Dashboard Nómina", href: "/payroll-dashboard", icon: BarChart3, visible: true },
-  { id: "payroll-calculator", name: "Calculadora", href: "/payroll-calculator", icon: Calculator, visible: true },
-  { id: "accounting", name: "Contabilidad", href: "/accounting", icon: BookOpen, visible: true },
-  { id: "payroll-config", name: "Config. Nómina", href: "/payroll-config", icon: Settings2, visible: true },
-  { id: "attendance", name: "Asistencias", href: "/attendance", icon: Clock, visible: true },
-  { id: "vacations", name: "Vacaciones", href: "/vacations", icon: Calendar, visible: true },
-  { id: "evaluations", name: "Evaluaciones", href: "/evaluations", icon: Target, visible: true },
-  { id: "recruitment", name: "Reclutamiento", href: "/recruitment", icon: Briefcase, visible: true },
-  { id: "templates", name: "Plantillas", href: "/templates", icon: FileText, visible: true },
-  { id: "users-management", name: "Usuarios", href: "/users-management", icon: UserCog, visible: true },
-  { id: "subscriptions", name: "Suscripción", href: "/subscriptions", icon: CreditCard, visible: true },
-  { id: "company-config", name: "Configuración", href: "/company-config", icon: Building2, visible: true },
+  { id: "dashboard", name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, visible: true, featureKey: "dashboard" },
+  { id: "employees", name: "Empleados", href: "/employees", icon: Users, visible: true, featureKey: "employees" },
+  { id: "organigrama", name: "Organigrama", href: "/organigrama", icon: Network, visible: true, featureKey: "organigrama" },
+  { id: "payroll-v2", name: "Nómina", href: "/payroll-v2", icon: DollarSign, visible: true, featureKey: "employees" },
+  { id: "payroll-dashboard", name: "Dashboard Nómina", href: "/payroll-dashboard", icon: BarChart3, visible: true, featureKey: "reports" },
+  { id: "payroll-calculator", name: "Calculadora", href: "/payroll-calculator", icon: Calculator, visible: true, featureKey: "payroll_calculator" },
+  { id: "accounting", name: "Contabilidad", href: "/accounting", icon: BookOpen, visible: true, featureKey: "accounting" },
+  { id: "payroll-config", name: "Config. Nómina", href: "/payroll-config", icon: Settings2, visible: true, featureKey: "employees" },
+  { id: "attendance", name: "Asistencias", href: "/attendance", icon: Clock, visible: true, featureKey: "attendance" },
+  { id: "vacations", name: "Vacaciones", href: "/vacations", icon: Calendar, visible: true, featureKey: "vacations" },
+  { id: "evaluations", name: "Evaluaciones", href: "/evaluations", icon: Target, visible: true, featureKey: "evaluations" },
+  { id: "recruitment", name: "Reclutamiento", href: "/recruitment", icon: Briefcase, visible: true, featureKey: "recruitment" },
+  { id: "templates", name: "Plantillas", href: "/templates", icon: FileText, visible: true, featureKey: "employees" },
+  { id: "users-management", name: "Usuarios", href: "/users-management", icon: UserCog, visible: true, featureKey: "settings" },
+  { id: "subscriptions", name: "Suscripción", href: "/subscriptions", icon: CreditCard, visible: true, featureKey: "subscriptions" },
+  { id: "company-config", name: "Configuración", href: "/company-config", icon: Building2, visible: true, featureKey: "settings" },
 ];
 
 // Local storage key
@@ -84,7 +84,10 @@ export default function DashboardLayout({ children, title }) {
   const [showMenuEditor, setShowMenuEditor] = useState(false);
   const [menuItems, setMenuItems] = useState(DEFAULT_NAVIGATION);
   const [editingItems, setEditingItems] = useState([]);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [blockedFeature, setBlockedFeature] = useState(null);
   const { user, logout } = useAuth();
+  const { subscription, canAccessFeature, isTrialExpired, getTrialDaysRemaining, isOnTrial, getCurrentPlan } = useSubscription();
   const location = useLocation();
   const navigate = useNavigate();
 
