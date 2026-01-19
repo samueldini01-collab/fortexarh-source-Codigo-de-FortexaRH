@@ -1031,6 +1031,102 @@ export default function OrganigramaPage() {
 
         {/* Template Wizard */}
         {renderTemplateWizard()}
+
+        {/* Edit Node Dialog */}
+        <Dialog open={!!editingNode} onOpenChange={(open) => !open && setEditingNode(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {editingNode?.node_type === "unit" ? "Editar Unidad/Departamento" : "Editar Posición"}
+              </DialogTitle>
+              <DialogDescription>
+                Modifique los datos del elemento seleccionado
+              </DialogDescription>
+            </DialogHeader>
+            {editingNode && (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>{editingNode.node_type === "unit" ? "Nombre de la Unidad *" : "Título del Cargo *"}</Label>
+                  <Input 
+                    value={editingNode.node_type === "unit" ? editingNode.name : editingNode.position_title}
+                    onChange={(e) => setEditingNode({
+                      ...editingNode, 
+                      name: editingNode.node_type === "unit" ? e.target.value : editingNode.name,
+                      position_title: editingNode.node_type === "position" ? e.target.value : editingNode.position_title
+                    })}
+                    placeholder={editingNode.node_type === "unit" ? "Nombre de la unidad" : "Título del cargo"}
+                  />
+                </div>
+                
+                {editingNode.node_type === "unit" && (
+                  <div className="space-y-2">
+                    <Label>Código</Label>
+                    <Input 
+                      value={editingNode.code || ""}
+                      onChange={(e) => setEditingNode({...editingNode, code: e.target.value.toUpperCase()})}
+                      placeholder="Ej: RRHH, FIN, IT"
+                      maxLength={10}
+                    />
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <Label>Unidad Padre</Label>
+                  <Select 
+                    value={editingNode.parent_id || "none"} 
+                    onValueChange={(v) => setEditingNode({...editingNode, parent_id: v === "none" ? null : v})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Ninguna (raíz)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Ninguna (raíz)</SelectItem>
+                      {nodes.filter(n => n.node_type === "unit" && n.node_id !== editingNode.node_id).map(node => (
+                        <SelectItem key={node.node_id} value={node.node_id}>{node.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {editingNode.node_type === "position" && (
+                  <div className="space-y-2">
+                    <Label>Empleado Asignado</Label>
+                    <Select 
+                      value={editingNode.employee_id || "none"} 
+                      onValueChange={(v) => setEditingNode({...editingNode, employee_id: v === "none" ? null : v})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Vacante" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">Vacante</SelectItem>
+                        {employees.map(emp => (
+                          <SelectItem key={emp.employee_id} value={emp.employee_id}>
+                            {emp.first_name} {emp.last_name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <Label>Descripción</Label>
+                  <Textarea 
+                    value={editingNode.description || ""}
+                    onChange={(e) => setEditingNode({...editingNode, description: e.target.value})}
+                    placeholder="Descripción del elemento..."
+                    rows={3}
+                  />
+                </div>
+              </div>
+            )}
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setEditingNode(null)}>Cancelar</Button>
+              <Button onClick={handleUpdateNode}>Guardar Cambios</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );
