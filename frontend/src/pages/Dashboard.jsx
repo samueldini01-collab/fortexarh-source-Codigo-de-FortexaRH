@@ -61,8 +61,11 @@ export default function Dashboard() {
       checkPaymentStatus(sessionId);
     }
     
-    fetchStats();
-  }, []);
+    // Only fetch stats if user is authenticated
+    if (user) {
+      fetchStats();
+    }
+  }, [user]);
 
   const checkPaymentStatus = async (sessionId) => {
     try {
