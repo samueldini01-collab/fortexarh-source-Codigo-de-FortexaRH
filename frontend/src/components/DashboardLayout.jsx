@@ -209,10 +209,69 @@ export default function DashboardLayout({ children, title }) {
 
           {/* Navigation */}
           <nav className="flex-1 px-3 py-4 overflow-y-auto">
+            {/* Trial/Subscription Banner */}
+            {isOnTrial() && (
+              <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                <div className="flex items-center gap-2 text-amber-700 text-sm font-medium">
+                  <AlertTriangle className="w-4 h-4" />
+                  Prueba gratuita
+                </div>
+                <p className="text-xs text-amber-600 mt-1">
+                  {getTrialDaysRemaining()} días restantes
+                </p>
+                <Button 
+                  size="sm" 
+                  className="w-full mt-2 bg-amber-600 hover:bg-amber-700 text-xs"
+                  onClick={() => navigate('/subscriptions')}
+                >
+                  Actualizar Plan
+                </Button>
+              </div>
+            )}
+            
+            {isTrialExpired() && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center gap-2 text-red-700 text-sm font-medium">
+                  <AlertTriangle className="w-4 h-4" />
+                  Prueba expirada
+                </div>
+                <p className="text-xs text-red-600 mt-1">
+                  Selecciona un plan para continuar
+                </p>
+                <Button 
+                  size="sm" 
+                  className="w-full mt-2 bg-red-600 hover:bg-red-700 text-xs"
+                  onClick={() => navigate('/subscriptions')}
+                >
+                  Ver Planes
+                </Button>
+              </div>
+            )}
+            
             <div className="space-y-1">
               {visibleMenuItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.href;
+                const hasAccess = canAccessFeature(item.featureKey);
+                const isLocked = !hasAccess && item.featureKey !== "subscriptions" && item.featureKey !== "settings";
+                
+                if (isLocked) {
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setBlockedFeature(item.name);
+                        setShowUpgradeModal(true);
+                      }}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-50 cursor-not-allowed"
+                    >
+                      <Icon className="w-5 h-5 text-slate-300" />
+                      <span className="flex-1 text-left">{item.name}</span>
+                      <Lock className="w-4 h-4 text-slate-300" />
+                    </button>
+                  );
+                }
+                
                 return (
                   <Link
                     key={item.id}
