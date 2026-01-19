@@ -269,7 +269,11 @@ export default function OrganigramaPage() {
       setNewPosition({ title: "", unit_id: null, employee_id: null, description: "" });
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al crear posición");
+      const detail = error.response?.data?.detail;
+      const errorMsg = typeof detail === 'string' ? detail : 
+                       Array.isArray(detail) ? detail.map(d => d.msg).join(', ') :
+                       detail?.msg || "Error al crear posición";
+      toast.error(errorMsg);
     }
   };
 
@@ -288,6 +292,8 @@ export default function OrganigramaPage() {
   // Apply template
   const applyTemplate = async () => {
     if (!selectedTemplate) return;
+    
+    setLoading(true);
     
     try {
       // Create units recursively
