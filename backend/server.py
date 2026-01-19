@@ -4454,6 +4454,113 @@ async def export_ir4_excel(period_id: str, current_user: dict = Depends(get_curr
     )
 
 
+@api_router.get("/payroll-v2/annual-report/ir13/{year}")
+async def export_ir13_excel(year: int, current_user: dict = Depends(get_current_user)):
+    """Descargar reporte IR-13 (Declaración Anual de Retenciones) en Excel"""
+    company_id = current_user.get("company_id")
+    
+    # Get all periods for the year
+    periods = await db.payroll_periods.find(
+        {"company_id": company_id, "year": year},
+        {"_id": 0}
+    ).to_list(12)
+    
+    if not periods:
+        raise HTTPException(status_code=404, detail=f"No hay períodos de nómina para el año {year}")
+    
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    
+    # Collect all payroll entries for the year
+    period_ids = [p["period_id"] for p in periods]
+    all_entries = await db.payroll_entries.find(
+        {"period_id": {"$in": period_ids}, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(10000)
+    
+    # Aggregate by employee for annual totals
+    employee_annual = {}
+    for entry in all_entries:
+        emp_id = entry.get("employee_id")
+        if emp_id not in employee_annual:
+            employee_annual[emp_id] = {
+                "cedula": entry.get("employee_document", ""),
+                "tipo_doc": "C",
+                "nombre_completo": entry.get("employee_name", ""),
+                "sueldo_anual": 0,
+                "otros_ingresos": 0,
+                "regalia_pascual": 0,
+                "afp_anual": 0,
+                "sfs_anual": 0,
+                "isr_anual": 0,
+                "meses_laborados": 0
+            }
+        
+        emp = employee_annual[emp_id]
+        emp["sueldo_anual"] += entry.get("gross_salary", 0)
+        emp["otros_ingresos"] += entry.get("bonuses", 0) + entry.get("commissions", 0)
+        emp["afp_anual"] += entry.get("afp_employee", 0)
+        emp["sfs_anual"] += entry.get("sfs_employee", 0)
+        emp["isr_anual"] += entry.get("isr", 0)
+        emp["meses_laborados"] += 1
+    
+    employees_list = list(employee_annual.values())
+    
+    # Monthly summary
+    monthly_summary = []
+    for month in range(1, 13):
+        period = next((p for p in periods if p.get("month") == month), None)
+        if period:
+            period_entries = [e for e in all_entries if e.get("period_id") == period["period_id"]]
+            monthly_summary.append({
+                "month": month,
+                "employee_count": len(period_entries),
+                "total_sueldos": sum(e.get("gross_salary", 0) for e in period_entries),
+                "otros_ingresos": sum(e.get("bonuses", 0) + e.get("commissions", 0) for e in period_entries),
+                "total_tss": sum(e.get("afp_employee", 0) + e.get("sfs_employee", 0) for e in period_entries),
+                "isr_retenido": sum(e.get("isr", 0) for e in period_entries),
+                "status": period.get("status", "pending")
+            })
+        else:
+            monthly_summary.append({
+                "month": month,
+                "employee_count": 0,
+                "total_sueldos": 0,
+                "otros_ingresos": 0,
+                "total_tss": 0,
+                "isr_retenido": 0,
+                "status": "pending"
+            })
+    
+    rnc = company.get("rnc", "") if company else ""
+    company_name = company.get("name", "") if company else ""
+    
+    from tss_generator import create_ir13_report
+    excel_file = create_ir13_report(rnc, company_name, year, employees_list, monthly_summary)
+    
+    filename = f"IR13_Declaracion_Anual_{year}.xls"
+    return Response(
+        content=excel_file.getvalue(),
+        media_type="application/vnd.ms-excel",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+
+@api_router.get("/payroll-v2/available-years")
+async def get_available_years(current_user: dict = Depends(get_current_user)):
+    """Obtener años disponibles con períodos de nómina"""
+    company_id = current_user.get("company_id")
+    
+    pipeline = [
+        {"$match": {"company_id": company_id}},
+        {"$group": {"_id": "$year", "periods_count": {"$sum": 1}}},
+        {"$sort": {"_id": -1}}
+    ]
+    
+    result = await db.payroll_periods.aggregate(pipeline).to_list(20)
+    
+    years = [{"year": r["_id"], "periods_count": r["periods_count"]} for r in result]
+    return years
+
+
 @api_router.post("/payroll-v2/periods/{period_id}/calculate")
 async def calculate_period(period_id: str, current_user: dict = Depends(get_current_user)):
     """Calcular/recalcular todas las nóminas del período"""
