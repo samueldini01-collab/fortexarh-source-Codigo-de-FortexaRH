@@ -466,6 +466,27 @@ export default function LoansPage() {
                   />
                 </div>
                 <div>
+                  <Label>Moneda</Label>
+                  <Select 
+                    value={formData.currency} 
+                    onValueChange={(v) => setFormData({...formData, currency: v})}
+                  >
+                    <SelectTrigger data-testid="loan-currency">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {currencies.map(c => (
+                        <SelectItem key={c.code} value={c.code}>
+                          {c.symbol} {c.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
                   <Label>Tasa de Interés Anual (%)</Label>
                   <Input 
                     type="number"
