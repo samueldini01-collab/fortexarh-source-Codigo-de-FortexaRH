@@ -377,10 +377,10 @@ export default function LoansPage() {
                           <p className="text-sm text-slate-500">{loan.employee_position}</p>
                         </div>
                       </TableCell>
-                      <TableCell className="font-semibold">{formatCurrency(loan.amount)}</TableCell>
-                      <TableCell>{formatCurrency(loan.monthly_payment)}</TableCell>
+                      <TableCell className="font-semibold">{formatCurrency(loan.amount, loan.currency)}</TableCell>
+                      <TableCell>{formatCurrency(loan.monthly_payment, loan.currency)}</TableCell>
                       <TableCell className="font-semibold text-amber-600">
-                        {formatCurrency(loan.remaining_balance)}
+                        {formatCurrency(loan.remaining_balance, loan.currency)}
                       </TableCell>
                       <TableCell>
                         <div className="w-full bg-slate-100 rounded-full h-2">
