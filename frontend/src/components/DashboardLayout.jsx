@@ -73,6 +73,7 @@ const DEFAULT_NAVIGATION = [
   { id: "recruitment", name: "Reclutamiento", href: "/recruitment", icon: Briefcase, visible: true, featureKey: "recruitment" },
   { id: "templates", name: "Plantillas", href: "/templates", icon: FileText, visible: true, featureKey: "employees" },
   { id: "users-management", name: "Usuarios", href: "/users-management", icon: UserCog, visible: true, featureKey: "settings" },
+  { id: "roles", name: "Roles", href: "/roles", icon: Shield, visible: true, featureKey: "custom_roles" },
   { id: "subscriptions", name: "Suscripción", href: "/subscriptions", icon: CreditCard, visible: true, featureKey: "subscriptions" },
   { id: "company-config", name: "Configuración", href: "/company-config", icon: Building2, visible: true, featureKey: "settings" },
 ];
