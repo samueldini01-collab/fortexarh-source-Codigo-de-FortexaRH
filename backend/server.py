@@ -1674,13 +1674,13 @@ async def create_public_checkout(data: PublicCheckoutRequest, request: Request):
         "expires_at": (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat()
     })
     
-    return {"checkout_url": session.url, "session_id": session.session_id}
+    return {"checkout_url": session.url, "session_id": session.id}
 
 @api_router.get("/public/checkout/verify/{session_id}")
 async def verify_public_checkout(session_id: str):
     """Verify a public checkout payment status (no auth required)"""
     api_key = os.environ.get('STRIPE_API_KEY')
-    stripe_checkout = StripeCheckout(api_key=api_key, webhook_url="")
+    stripe.api_key = api_key
     
     # Check pending checkout record
     pending = await db.pending_checkouts.find_one(
@@ -1696,7 +1696,16 @@ async def verify_public_checkout(session_id: str):
         raise HTTPException(status_code=400, detail="Este pago ya fue utilizado para crear una cuenta")
     
     try:
-        status = await stripe_checkout.get_checkout_status(session_id)
+        # Use direct Stripe SDK to check session status
+        session = stripe.checkout.Session.retrieve(session_id)
+        payment_status = session.payment_status
+    except stripe.error.StripeError as e:
+        logging.error(f"Error checking checkout status: {e}")
+        return {
+            "valid": False,
+            "payment_status": "pending",
+            "message": "Verificando estado del pago..."
+        }
     except Exception as e:
         logging.error(f"Error checking checkout status: {e}")
         return {
@@ -1705,7 +1714,7 @@ async def verify_public_checkout(session_id: str):
             "message": "Verificando estado del pago..."
         }
     
-    if status.payment_status == "paid":
+    if payment_status == "paid":
         # Update pending checkout
         await db.pending_checkouts.update_one(
             {"session_id": session_id},
