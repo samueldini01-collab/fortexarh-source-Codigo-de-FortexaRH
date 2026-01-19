@@ -322,8 +322,10 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppRouter />
-        <Toaster position="top-right" richColors />
+        <SubscriptionProvider>
+          <AppRouter />
+          <Toaster position="top-right" richColors />
+        </SubscriptionProvider>
       </AuthProvider>
     </BrowserRouter>
   );
