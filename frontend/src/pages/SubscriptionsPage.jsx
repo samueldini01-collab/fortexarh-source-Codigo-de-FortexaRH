@@ -729,6 +729,40 @@ export default function SubscriptionsPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Payment Success Dialog */}
+        <Dialog open={showPaymentSuccess} onOpenChange={setShowPaymentSuccess}>
+          <DialogContent className="sm:max-w-md">
+            <div className="text-center py-6">
+              <div className="w-16 h-16 mx-auto rounded-full bg-emerald-100 flex items-center justify-center mb-4">
+                <CheckCircle2 className="w-10 h-10 text-emerald-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">¡Pago Exitoso!</h2>
+              <p className="text-slate-600 mb-6">
+                Su suscripción ha sido activada correctamente. Ahora tiene acceso a todas las funciones de su plan.
+              </p>
+              <Button 
+                className="w-full bg-emerald-600 hover:bg-emerald-700"
+                onClick={() => setShowPaymentSuccess(false)}
+              >
+                Continuar
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Checking Payment Modal */}
+        <Dialog open={checkingPayment} onOpenChange={() => {}}>
+          <DialogContent className="sm:max-w-md">
+            <div className="text-center py-6">
+              <Loader2 className="w-12 h-12 mx-auto text-blue-500 animate-spin mb-4" />
+              <h2 className="text-xl font-bold text-slate-900 mb-2">Verificando Pago</h2>
+              <p className="text-slate-600">
+                Por favor espere mientras confirmamos su pago...
+              </p>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );
