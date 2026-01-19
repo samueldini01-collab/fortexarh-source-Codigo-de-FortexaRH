@@ -610,6 +610,7 @@ async def generate_document(data: DocumentGenerateRequest, request: Request):
         "company_rnc": company.get("rnc", "") if company else "",
         "company_address": company.get("address", "") if company else "",
         "company_phone": company.get("phone", "") if company else "",
+        "company_logo": company.get("logo", "") if company else "",
         
         # Employee info
         "employee_name": f"{employee.get('first_name', '')} {employee.get('last_name', '')}".strip(),
