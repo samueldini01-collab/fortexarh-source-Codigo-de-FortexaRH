@@ -34,7 +34,7 @@ export default function MetricsDashboardPage() {
     setLoading(true);
     try {
       const [statsRes, payrollRes, loansRes, employeesRes] = await Promise.all([
-        axios.get(`${API}/stats/dashboard`, { headers: getAuthHeaders(), withCredentials: true }),
+        axios.get(`${API}/dashboard/stats`, { headers: getAuthHeaders(), withCredentials: true }),
         axios.get(`${API}/stats/payroll-trend?year=${selectedYear}`, { headers: getAuthHeaders(), withCredentials: true }).catch(() => ({ data: [] })),
         axios.get(`${API}/loans/summary`, { headers: getAuthHeaders(), withCredentials: true }).catch(() => ({ data: null })),
         axios.get(`${API}/stats/employees`, { headers: getAuthHeaders(), withCredentials: true }).catch(() => ({ data: null }))
