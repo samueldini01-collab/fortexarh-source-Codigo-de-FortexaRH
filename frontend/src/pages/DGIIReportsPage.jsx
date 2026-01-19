@@ -6,13 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   FileText, Download, Calendar, Building2, FileSpreadsheet, 
-  AlertCircle, RefreshCw, CheckCircle2, Info
+  AlertCircle, RefreshCw, CheckCircle2, Info, CalendarDays
 } from "lucide-react";
 import { toast } from "sonner";
 
-const REPORT_TYPES = [
+const MONTHLY_REPORTS = [
   {
     id: "ir3",
     name: "IR-3",
@@ -47,12 +48,25 @@ const REPORT_TYPES = [
   }
 ];
 
+const ANNUAL_REPORTS = [
+  {
+    id: "ir13",
+    name: "IR-13",
+    title: "Declaración Anual de Retenciones",
+    description: "Consolida todos los IR-4 mensuales del año fiscal. Incluye detalle por empleado y resumen mensual.",
+    icon: CalendarDays,
+    color: "rose"
+  }
+];
+
 export default function DGIIReportsPage() {
   const { getAuthHeaders } = useAuth();
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(null);
   const [periods, setPeriods] = useState([]);
   const [selectedPeriod, setSelectedPeriod] = useState(null);
+  const [availableYears, setAvailableYears] = useState([]);
+  const [selectedYear, setSelectedYear] = useState(null);
   const [periodDetails, setPeriodDetails] = useState(null);
   
   useEffect(() => {
