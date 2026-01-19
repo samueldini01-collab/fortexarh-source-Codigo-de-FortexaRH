@@ -192,6 +192,7 @@ class TestTSSIRExports:
             "tss-autodeterminacion",
             "tss-novedades",
             "ir3",
+            "ir4",
             "ir17"
         ]
         
