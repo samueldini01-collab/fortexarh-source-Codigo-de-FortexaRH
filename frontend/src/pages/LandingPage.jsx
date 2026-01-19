@@ -316,7 +316,7 @@ export default function LandingPage() {
               </ul>
               
               <div className="space-y-2">
-                <Link to="/register?plan=pro">
+                <Link to="/checkout?plan=pro">
                   <Button className="w-full bg-purple-600 hover:bg-purple-700" data-testid="buy-pro-btn">Comprar Plan</Button>
                 </Link>
                 <Link to="/register">
