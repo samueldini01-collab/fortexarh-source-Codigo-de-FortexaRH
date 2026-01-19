@@ -124,6 +124,25 @@ export default function DGIIReportsPage() {
     }
   };
 
+  const fetchAvailableYears = async () => {
+    try {
+      const response = await axios.get(`${API}/payroll-v2/available-years`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      
+      const years = Array.isArray(response.data) ? response.data : [];
+      setAvailableYears(years);
+      
+      // Auto-select most recent year
+      if (years.length > 0) {
+        setSelectedYear(years[0].year);
+      }
+    } catch (error) {
+      console.error("Error fetching available years:", error);
+    }
+  };
+
   const handleDownload = async (reportType) => {
     if (!selectedPeriod) {
       toast.error("Seleccione un período primero");
