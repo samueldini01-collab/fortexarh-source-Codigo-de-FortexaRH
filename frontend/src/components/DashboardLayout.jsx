@@ -191,6 +191,70 @@ export default function DashboardLayout({ children, title }) {
     return name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
   };
 
+  // Global search function
+  const handleGlobalSearch = async (query) => {
+    if (!query || query.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+    
+    setSearchLoading(true);
+    try {
+      const response = await axios.get(`${API}/search?q=${encodeURIComponent(query)}`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      setSearchResults(response.data.results || []);
+    } catch (error) {
+      console.error("Search error:", error);
+      // Fallback: search in navigation items
+      const navResults = DEFAULT_NAVIGATION.filter(item => 
+        item.name.toLowerCase().includes(query.toLowerCase())
+      ).map(item => ({
+        type: "navigation",
+        title: item.name,
+        description: `Ir a ${item.name}`,
+        href: item.href,
+        icon: item.icon
+      }));
+      setSearchResults(navResults);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+
+  // Debounced search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchQuery) handleGlobalSearch(searchQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Keyboard shortcut for search (Ctrl+K or Cmd+K)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setShowSearchModal(true);
+      }
+      if (e.key === 'Escape') {
+        setShowSearchModal(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const handleSearchResultClick = (result) => {
+    setShowSearchModal(false);
+    setSearchQuery("");
+    setSearchResults([]);
+    if (result.href) {
+      navigate(result.href);
+    }
+  };
+
   // Filter visible menu items
   const visibleMenuItems = menuItems.filter(item => item.visible);
 
