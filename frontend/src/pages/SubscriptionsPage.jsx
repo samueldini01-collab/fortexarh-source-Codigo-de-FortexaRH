@@ -50,6 +50,7 @@ const PLAN_COLORS = {
 
 export default function SubscriptionsPage() {
   const { getAuthHeaders } = useAuth();
+  const { refreshSubscription } = useSubscription();
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [processingPayment, setProcessingPayment] = useState(false);
