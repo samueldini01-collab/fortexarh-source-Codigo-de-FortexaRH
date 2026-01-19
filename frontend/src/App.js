@@ -28,6 +28,8 @@ import PayrollDashboardPage from "@/pages/PayrollDashboardPage";
 import CompanyConfigPage from "@/pages/CompanyConfigPage";
 import SubscriptionsPage from "@/pages/SubscriptionsPage";
 import UsersManagementPage from "@/pages/UsersManagementPage";
+import TermsPage from "@/pages/TermsPage";
+import PrivacyPage from "@/pages/PrivacyPage";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
