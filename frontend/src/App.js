@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import LandingPage from "@/pages/LandingPage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
+import CheckoutPage from "@/pages/CheckoutPage";
 import Dashboard from "@/pages/Dashboard";
 import EmployeesPage from "@/pages/EmployeesPage";
 import PayrollPage from "@/pages/PayrollPage";
