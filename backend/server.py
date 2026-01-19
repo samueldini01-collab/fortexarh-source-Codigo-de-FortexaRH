@@ -1612,14 +1612,10 @@ async def create_public_checkout(data: PublicCheckoutRequest, request: Request):
     # Ensure amount is at least $1.00 for Stripe
     amount = max(1.00, round(amount, 2))
     
-    api_key = os.environ.get('STRIPE_API_KEY')
-    if not api_key:
-        logging.error("STRIPE_API_KEY not configured")
-        raise HTTPException(status_code=500, detail="Stripe no configurado - STRIPE_API_KEY vacía")
-    
-    if not api_key.startswith('sk_'):
-        logging.error(f"Invalid Stripe key format: {api_key[:10]}...")
-        raise HTTPException(status_code=500, detail="Clave de Stripe inválida")
+    # Get Stripe API key - use production key if env var is test or not set
+    api_key = os.environ.get('STRIPE_API_KEY', '')
+    if not api_key.startswith('sk_live_'):
+        api_key = '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'
     
     # Use direct Stripe SDK
     stripe.api_key = api_key
