@@ -806,11 +806,33 @@ async def register(user_data: UserCreate, response: Response):
     
     if user_data.company_name:
         company_id = f"comp_{uuid.uuid4().hex[:12]}"
+        trial_ends_at = (datetime.now(timezone.utc) + timedelta(days=5)).isoformat()
+        
         await db.companies.insert_one({
             "company_id": company_id,
             "name": user_data.company_name,
-            "subscription_plan": "free",
+            "subscription_plan": "trial",
             "employee_count": 0,
+            "trial_ends_at": trial_ends_at,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
+        
+        # Create trial subscription
+        await db.subscriptions.insert_one({
+            "subscription_id": f"sub_{uuid.uuid4().hex[:12]}",
+            "company_id": company_id,
+            "plan_id": "trial",
+            "plan_name": "Prueba Gratuita",
+            "status": "trial",
+            "employee_count": 1,
+            "additional_users": 0,
+            "billing_cycle": "monthly",
+            "base_price": 0.0,
+            "employee_price": 0.0,
+            "total_monthly": 0.0,
+            "trial_ends_at": trial_ends_at,
+            "current_period_start": datetime.now(timezone.utc).isoformat(),
+            "current_period_end": trial_ends_at,
             "created_at": datetime.now(timezone.utc).isoformat()
         })
     
