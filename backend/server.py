@@ -1612,10 +1612,10 @@ async def create_public_checkout(data: PublicCheckoutRequest, request: Request):
     if not api_key:
         raise HTTPException(status_code=500, detail="Stripe no configurado")
     
-    host_url = data.origin_url
-    webhook_url = f"{str(request.base_url)}api/webhook/stripe"
+    # Use direct Stripe SDK
+    stripe.api_key = api_key
     
-    stripe_checkout = StripeCheckout(api_key=api_key, webhook_url=webhook_url)
+    host_url = data.origin_url
     
     # Redirect to registration page after successful payment
     success_url = f"{host_url}/register?session_id={{CHECKOUT_SESSION_ID}}&plan={data.plan_id}&employees={employee_count}&payment=success"
@@ -1624,25 +1624,38 @@ async def create_public_checkout(data: PublicCheckoutRequest, request: Request):
     # Generate a temporary checkout ID
     checkout_id = f"pchk_{uuid.uuid4().hex[:12]}"
     
-    checkout_request = CheckoutSessionRequest(
-        amount=float(amount),
-        currency="usd",
-        success_url=success_url,
-        cancel_url=cancel_url,
-        metadata={
-            "checkout_id": checkout_id,
-            "plan_id": data.plan_id,
-            "plan_name": plan.get("name", data.plan_id),
-            "employee_count": str(employee_count),
-            "base_price": str(base_price),
-            "price_per_employee": str(price_per_employee),
-            "total_amount": str(amount),
-            "type": "new_registration"
-        }
-    )
-    
     try:
-        session = await stripe_checkout.create_checkout_session(checkout_request)
+        # Create Stripe checkout session directly using the SDK
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': f"Plan {plan.get('name', data.plan_id)}",
+                        'description': f"Suscripción mensual - {employee_count} empleados",
+                    },
+                    'unit_amount': int(amount * 100),  # Stripe expects cents
+                },
+                'quantity': 1,
+            }],
+            mode='payment',
+            success_url=success_url,
+            cancel_url=cancel_url,
+            metadata={
+                "checkout_id": checkout_id,
+                "plan_id": data.plan_id,
+                "plan_name": plan.get("name", data.plan_id),
+                "employee_count": str(employee_count),
+                "base_price": str(base_price),
+                "price_per_employee": str(price_per_employee),
+                "total_amount": str(amount),
+                "type": "new_registration"
+            }
+        )
+    except stripe.error.StripeError as e:
+        logging.error(f"Stripe checkout error: {e}")
+        raise HTTPException(status_code=500, detail="Error al crear sesión de pago")
     except Exception as e:
         logging.error(f"Stripe checkout error: {e}")
         raise HTTPException(status_code=500, detail="Error al crear sesión de pago")
@@ -1650,7 +1663,7 @@ async def create_public_checkout(data: PublicCheckoutRequest, request: Request):
     # Create pending checkout record (not linked to user yet)
     await db.pending_checkouts.insert_one({
         "checkout_id": checkout_id,
-        "session_id": session.session_id,
+        "session_id": session.id,
         "plan_id": data.plan_id,
         "plan_name": plan.get("name", data.plan_id),
         "employee_count": employee_count,
