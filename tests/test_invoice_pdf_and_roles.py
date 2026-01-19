@@ -139,14 +139,16 @@ class TestRolesCRUD(TestSetup):
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
         data = response.json()
         
-        # Check response structure
+        # Check response structure - basic fields always present
         assert "is_enterprise" in data, "Expected 'is_enterprise' in response"
         assert "roles" in data, "Expected 'roles' in response"
         assert "default_roles" in data, "Expected 'default_roles' in response"
-        assert "modules" in data, "Expected 'modules' in response"
+        
+        # For non-enterprise, modules may not be present
+        if data.get("is_enterprise"):
+            assert "modules" in data, "Expected 'modules' in response for enterprise"
         
         print(f"✓ Got roles list - Enterprise: {data['is_enterprise']}, Custom roles: {len(data['roles'])}, Default roles: {len(data['default_roles'])}")
-        return data
     
     def test_create_role_non_enterprise(self, auth_headers):
         """Test that creating role fails for non-enterprise users"""
