@@ -171,8 +171,12 @@ const AuthProvider = ({ children }) => {
     return userData;
   };
 
-  const register = async (email, password, name, company_name) => {
-    const response = await axios.post(`${API}/auth/register`, { email, password, name, company_name });
+  const register = async (email, password, name, company_name, payment_session_id = null) => {
+    const payload = { email, password, name, company_name };
+    if (payment_session_id) {
+      payload.payment_session_id = payment_session_id;
+    }
+    const response = await axios.post(`${API}/auth/register`, payload);
     const { token: newToken, user: userData } = response.data;
     localStorage.setItem("token", newToken);
     localStorage.setItem("user", JSON.stringify(userData));
