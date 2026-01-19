@@ -611,7 +611,7 @@ export default function PayrollV2Page() {
                     <div className="flex justify-between items-start">
                       <div>
                         <h2 className="text-2xl font-bold">{companyName}</h2>
-                        <p className="text-slate-300 mt-1">NÓMINA DE PAGO {getPayrollTypeBadge(selectedPeriod.payroll_type)}</p>
+                        <div className="text-slate-300 mt-1 flex items-center gap-2">NÓMINA DE PAGO {getPayrollTypeBadge(selectedPeriod.payroll_type)}</div>
                         <p className="text-sm text-slate-400 mt-2">{selectedPeriod.description} • {selectedPeriod.start_date} al {selectedPeriod.end_date}</p>
                       </div>
                       <div className="text-right">
