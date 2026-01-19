@@ -225,6 +225,229 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Pricing Section */}
+      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 heading mb-4">
+              Planes y Precios
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Elige el plan que mejor se adapte al tamaño de tu empresa. Todos incluyen 14 días de prueba gratis.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            {/* Plan Básico */}
+            <div className="rounded-2xl border-2 border-slate-200 p-8 hover:border-slate-300 transition-all">
+              <div className="text-center mb-6">
+                <div className="w-14 h-14 mx-auto rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white mb-4">
+                  <Rocket className="w-7 h-7" />
+                </div>
+                <h3 className="text-2xl font-bold heading">FortexaRH Básico</h3>
+                <p className="text-slate-500 mt-1">Para pequeñas empresas</p>
+                <div className="mt-4">
+                  <span className="text-4xl font-bold">$5</span>
+                  <span className="text-slate-500">/mes</span>
+                  <p className="text-sm text-slate-500">+ $1.50 por empleado</p>
+                </div>
+              </div>
+              
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Hasta 50 empleados</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />3 usuarios incluidos</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Gestión de empleados</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Nómina básica</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Asistencias y vacaciones</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Calculadora de nómina</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Reportes básicos</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Exportación Excel/CSV</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Soporte por email</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Integración FortexaERP</li>
+              </ul>
+              
+              <Link to="/register">
+                <Button className="w-full" variant="outline">Comenzar Gratis</Button>
+              </Link>
+            </div>
+            
+            {/* Plan Pro (Popular) */}
+            <div className="rounded-2xl border-2 border-purple-500 p-8 relative bg-purple-50">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                <span className="bg-purple-500 text-white px-4 py-1 rounded-full text-sm font-medium">Más Popular</span>
+              </div>
+              
+              <div className="text-center mb-6">
+                <div className="w-14 h-14 mx-auto rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white mb-4">
+                  <Zap className="w-7 h-7" />
+                </div>
+                <h3 className="text-2xl font-bold heading">FortexaRH Pro</h3>
+                <p className="text-slate-500 mt-1">Para empresas en crecimiento</p>
+                <div className="mt-4">
+                  <span className="text-4xl font-bold">$10</span>
+                  <span className="text-slate-500">/mes</span>
+                  <p className="text-sm text-slate-500">+ $1.50 por empleado</p>
+                </div>
+              </div>
+              
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Hasta 200 empleados</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />5 usuarios incluidos</li>
+                <li className="flex items-center gap-2 text-sm font-medium"><Check className="w-4 h-4 text-emerald-500" />Todo lo del plan Básico</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Evaluaciones de desempeño</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Módulo de reclutamiento</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Organigrama intuitivo</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Reportes avanzados</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Integración QuickBooks</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Soporte prioritario</li>
+              </ul>
+              
+              <Link to="/register">
+                <Button className="w-full bg-purple-600 hover:bg-purple-700">Comenzar Gratis</Button>
+              </Link>
+            </div>
+            
+            {/* Plan Enterprise */}
+            <div className="rounded-2xl border-2 border-slate-200 p-8 hover:border-slate-300 transition-all bg-gradient-to-br from-amber-50 to-white">
+              <div className="text-center mb-6">
+                <div className="w-14 h-14 mx-auto rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white mb-4">
+                  <Crown className="w-7 h-7" />
+                </div>
+                <h3 className="text-2xl font-bold heading">FortexaRH Enterprise</h3>
+                <p className="text-slate-500 mt-1">Para grandes corporaciones</p>
+                <div className="mt-4">
+                  <span className="text-4xl font-bold">$20</span>
+                  <span className="text-slate-500">/mes</span>
+                  <p className="text-sm text-slate-500">+ $1.50 por empleado</p>
+                </div>
+              </div>
+              
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Empleados ilimitados</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />7 usuarios incluidos</li>
+                <li className="flex items-center gap-2 text-sm font-medium"><Check className="w-4 h-4 text-emerald-500" />Todo lo del plan Pro</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Roles personalizados</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Múltiples administradores</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />API personalizada</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Flujos de trabajo avanzados</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Integración SAP/Oracle/Dynamics</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Soporte 24/7</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Gerente de cuenta dedicado</li>
+              </ul>
+              
+              <Link to="/register">
+                <Button className="w-full" variant="outline">Contactar Ventas</Button>
+              </Link>
+            </div>
+          </div>
+          
+          {/* Comparison Table */}
+          <div className="overflow-x-auto">
+            <h3 className="text-2xl font-bold text-center mb-8 heading">Comparación de Planes</h3>
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="border-b-2 border-slate-200">
+                  <th className="text-left py-4 px-4 font-semibold">Característica</th>
+                  <th className="text-center py-4 px-4 font-semibold text-blue-600">Básico</th>
+                  <th className="text-center py-4 px-4 font-semibold text-purple-600">Pro</th>
+                  <th className="text-center py-4 px-4 font-semibold text-amber-600">Enterprise</th>
+                </tr>
+              </thead>
+              <tbody className="text-sm">
+                <tr className="border-b border-slate-100">
+                  <td className="py-3 px-4">Precio base mensual</td>
+                  <td className="py-3 px-4 text-center">$5</td>
+                  <td className="py-3 px-4 text-center">$10</td>
+                  <td className="py-3 px-4 text-center">$20</td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50">
+                  <td className="py-3 px-4">Precio por empleado</td>
+                  <td className="py-3 px-4 text-center">$1.50</td>
+                  <td className="py-3 px-4 text-center">$1.50</td>
+                  <td className="py-3 px-4 text-center">$1.50</td>
+                </tr>
+                <tr className="border-b border-slate-100">
+                  <td className="py-3 px-4">Usuarios incluidos</td>
+                  <td className="py-3 px-4 text-center">3</td>
+                  <td className="py-3 px-4 text-center">5</td>
+                  <td className="py-3 px-4 text-center">7</td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50">
+                  <td className="py-3 px-4">Máximo de empleados</td>
+                  <td className="py-3 px-4 text-center">50</td>
+                  <td className="py-3 px-4 text-center">200</td>
+                  <td className="py-3 px-4 text-center">Ilimitado</td>
+                </tr>
+                <tr className="border-b border-slate-100">
+                  <td className="py-3 px-4">Gestión de empleados</td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50">
+                  <td className="py-3 px-4">Nómina y calculadora</td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100">
+                  <td className="py-3 px-4">Evaluaciones de desempeño</td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50">
+                  <td className="py-3 px-4">Reclutamiento</td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100">
+                  <td className="py-3 px-4">Organigrama</td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50">
+                  <td className="py-3 px-4">Integración QuickBooks</td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100">
+                  <td className="py-3 px-4">Roles personalizados</td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50">
+                  <td className="py-3 px-4">API personalizada</td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100">
+                  <td className="py-3 px-4">Integración SAP/Oracle</td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50">
+                  <td className="py-3 px-4">Soporte</td>
+                  <td className="py-3 px-4 text-center">Email</td>
+                  <td className="py-3 px-4 text-center">Prioritario</td>
+                  <td className="py-3 px-4 text-center">24/7 + Gerente dedicado</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <p className="text-center text-slate-500 mt-8 text-sm">
+            * Usuarios adicionales disponibles a $2.50/mes por usuario
+          </p>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="py-12 px-4 sm:px-6 lg:px-8 bg-slate-900 text-white">
         <div className="max-w-7xl mx-auto">
