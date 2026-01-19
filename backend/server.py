@@ -6111,6 +6111,20 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+@app.on_event("startup")
+async def startup_db_client():
+    """Initialize database connection on startup"""
+    try:
+        # Test database connection with timeout
+        await asyncio.wait_for(db.command("ping"), timeout=10.0)
+        logger.info("Database connection established successfully")
+    except asyncio.TimeoutError:
+        logger.warning("Database connection timeout during startup - will retry on first request")
+    except Exception as e:
+        logger.warning(f"Database connection error during startup: {e} - will retry on first request")
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
+    logger.info("Database connection closed")
+
