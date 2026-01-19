@@ -91,6 +91,20 @@ async def health_check_db():
     except Exception as e:
         return {"status": "unhealthy", "database": "disconnected", "error": str(e)}
 
+@app.get("/health/config")
+async def health_check_config():
+    """Check configuration status (for debugging deployment issues)"""
+    stripe_key = os.environ.get('STRIPE_API_KEY', '')
+    stripe_mode = "live" if stripe_key.startswith("sk_live_") else "test" if stripe_key.startswith("sk_test_") else "not_configured"
+    
+    return {
+        "status": "healthy",
+        "stripe_mode": stripe_mode,
+        "stripe_key_prefix": stripe_key[:12] + "..." if len(stripe_key) > 12 else "missing",
+        "resend_configured": bool(os.environ.get('RESEND_API_KEY')),
+        "db_name": os.environ.get('DB_NAME', 'not_set'),
+    }
+
 # ===================== MODELS =====================
 
 class UserCreate(BaseModel):
