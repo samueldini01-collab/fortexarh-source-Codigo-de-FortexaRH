@@ -1070,24 +1070,86 @@ export default function PayrollV2Page() {
 
         {/* Pay Dialog */}
         <Dialog open={showPayDialog} onOpenChange={setShowPayDialog}>
-          <DialogContent>
-            <DialogHeader><DialogTitle className="flex items-center gap-2"><Wallet className="w-5 h-5 text-emerald-600" />Pagar Nómina</DialogTitle>
-              <DialogDescription>Seleccione la cuenta bancaria</DialogDescription></DialogHeader>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Wallet className="w-5 h-5 text-emerald-600" />
+                Pagar Nómina
+              </DialogTitle>
+              <DialogDescription>Configure el pago y archivo bancario</DialogDescription>
+            </DialogHeader>
             {selectedPeriod && (
               <div className="space-y-4">
-                <div className="p-4 bg-slate-50 rounded-lg"><p className="font-semibold">{selectedPeriod.description}</p><p className="text-sm text-slate-500 mt-1">{selectedPeriod.employee_count} empleados</p>
-                  <div className="mt-3 p-3 bg-emerald-100 rounded-lg"><p className="text-sm text-emerald-700">Total a Pagar</p><p className="text-2xl font-bold text-emerald-800">{formatCurrency(selectedPeriod.total_net)}</p></div>
+                <div className="p-4 bg-slate-50 rounded-lg">
+                  <p className="font-semibold">{selectedPeriod.description}</p>
+                  <p className="text-sm text-slate-500 mt-1">{selectedPeriod.employee_count} empleados</p>
+                  <div className="mt-3 p-3 bg-emerald-100 rounded-lg">
+                    <p className="text-sm text-emerald-700">Total a Pagar</p>
+                    <p className="text-2xl font-bold text-emerald-800">{formatCurrency(selectedPeriod.total_net)}</p>
+                  </div>
                 </div>
-                <div className="space-y-2"><Label>Cuenta Bancaria</Label>
+                
+                <div className="space-y-2">
+                  <Label>Cuenta Contable</Label>
                   <Select value={selectedBankAccount} onValueChange={setSelectedBankAccount}>
-                    <SelectTrigger><SelectValue placeholder="Seleccione" /></SelectTrigger>
-                    <SelectContent>{bankAccounts.map(acc => (<SelectItem key={acc.code} value={acc.code}>{acc.code} - {acc.name}</SelectItem>))}</SelectContent>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccione cuenta" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {bankAccounts.map(acc => (
+                        <SelectItem key={acc.code} value={acc.code}>{acc.code} - {acc.name}</SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
+                </div>
+                
+                <div className="border-t pt-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label className="flex items-center gap-2">
+                      <FileSpreadsheet className="w-4 h-4 text-blue-500" />
+                      Generar archivo bancario
+                    </Label>
+                    <input 
+                      type="checkbox" 
+                      checked={generateBankFile} 
+                      onChange={(e) => setGenerateBankFile(e.target.checked)}
+                      className="w-4 h-4 rounded border-slate-300"
+                    />
+                  </div>
+                  
+                  {generateBankFile && (
+                    <div className="space-y-2 pl-6">
+                      <Label className="text-sm">Banco para archivo de pago</Label>
+                      <Select value={selectedPaymentBank} onValueChange={setSelectedPaymentBank}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccione banco" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {paymentBanks.map(bank => (
+                            <SelectItem key={bank.id} value={bank.id}>
+                              {bank.name} ({bank.format})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <p className="text-xs text-slate-500">
+                        Se descargará automáticamente el archivo para carga en el banco
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
-            <DialogFooter><Button variant="outline" onClick={() => setShowPayDialog(false)}>Cancelar</Button>
-              <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={handlePayPeriod} disabled={!selectedBankAccount}><CreditCard className="w-4 h-4 mr-2" />Confirmar Pago</Button>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowPayDialog(false)}>Cancelar</Button>
+              <Button 
+                className="bg-emerald-600 hover:bg-emerald-700" 
+                onClick={handlePayPeriod} 
+                disabled={!selectedBankAccount || (generateBankFile && !selectedPaymentBank)}
+              >
+                <CreditCard className="w-4 h-4 mr-2" />
+                Confirmar Pago
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
