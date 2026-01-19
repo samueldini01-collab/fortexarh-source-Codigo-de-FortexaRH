@@ -5129,6 +5129,17 @@ async def delete_custom_role(role_id: str, current_user: dict = Depends(get_curr
 
 # ===================== MAIN APP =====================
 
+# Health check endpoint for Kubernetes (no /api prefix)
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Kubernetes liveness/readiness probes"""
+    try:
+        # Test MongoDB connection
+        await db.command("ping")
+        return {"status": "healthy", "database": "connected"}
+    except Exception as e:
+        return {"status": "unhealthy", "database": "disconnected", "error": str(e)}
+
 app.include_router(api_router)
 
 cors_origins = os.environ.get('CORS_ORIGINS', '')
