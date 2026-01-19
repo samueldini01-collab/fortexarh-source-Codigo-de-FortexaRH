@@ -137,6 +137,29 @@ class TestTSSIRExports:
         assert content_length > 1000, f"File too small: {content_length} bytes"
         print(f"IR-3 downloaded: {content_length} bytes")
     
+    def test_ir4_export_success(self):
+        """Test IR-4 (Detalle Mensual de Retenciones) Excel export for paid period"""
+        response = self.session.get(f"{BASE_URL}/api/payroll-v2/periods")
+        assert response.status_code == 200
+        
+        periods = response.json()
+        paid_periods = [p for p in periods if p.get("status") == "paid"]
+        
+        if not paid_periods:
+            pytest.skip("No paid periods available for testing")
+        
+        period_id = paid_periods[0]["period_id"]
+        response = self.session.get(f"{BASE_URL}/api/payroll-v2/periods/{period_id}/export/ir4")
+        
+        assert response.status_code == 200
+        assert "application/vnd.ms-excel" in response.headers.get("Content-Type", "")
+        assert "Content-Disposition" in response.headers
+        assert "IR4_Detalle_Retenciones" in response.headers.get("Content-Disposition", "")
+        
+        content_length = len(response.content)
+        assert content_length > 1000, f"File too small: {content_length} bytes"
+        print(f"IR-4 downloaded: {content_length} bytes")
+    
     def test_ir17_export_success(self):
         """Test IR-17 (Declaración) Excel export for paid period"""
         response = self.session.get(f"{BASE_URL}/api/payroll-v2/periods")
