@@ -10,7 +10,7 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 ### Backend (FastAPI + MongoDB)
 ```
 /app/backend/
-├── server.py           # API principal (5,767 líneas - refactorizado)
+├── server.py           # API principal (5,767 líneas - refactorizado desde 6,838)
 ├── routes/             # Routers modulares
 │   ├── loans.py        # Módulo de préstamos a empleados (362 líneas)
 │   ├── subscriptions.py # Suscripciones y cancelación (608 líneas)
@@ -44,6 +44,7 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
   - `routes/subscriptions.py` - Suscripciones, cancelación, retención
   - `routes/roles.py` - Roles personalizados (Enterprise)
 - **Patrón de inyección:** Uso de `Request` para autenticación en routers modulares
+- **Testing:** 20/20 tests passed (100%)
 
 ### ✅ Módulo de Préstamos a Empleados (COMPLETO)
 **Backend Endpoints:**
@@ -70,12 +71,6 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 - `POST /api/subscription/cancel` - Cancelar con encuesta
 - `POST /api/subscription/reactivate` - Reactivar suscripción
 
-**Funcionalidades:**
-- Flujo de retención con oferta de 20% por 3 meses
-- Encuesta de cancelación para analytics
-- Emails de confirmación
-- Acceso hasta fin del período de facturación
-
 ## APIs de Reportes DGII
 
 | Endpoint | Descripción |
@@ -83,7 +78,6 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 | `GET /api/payroll-v2/periods/{id}/export/ir3` | IR-3 Mensual |
 | `GET /api/payroll-v2/periods/{id}/export/ir4` | IR-4 Detalle Mensual |
 | `GET /api/payroll-v2/annual-report/ir13/{year}` | IR-13 Anual |
-| `GET /api/payroll-v2/available-years` | Años disponibles |
 | `GET /api/payroll-v2/periods/{id}/export/tss-autodeterminacion` | TSS v5.3 |
 | `GET /api/payroll-v2/periods/{id}/export/tss-novedades` | TSS v5.1 |
 
@@ -106,16 +100,16 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 ### P0 - Crítico
 - [x] Refactorizar server.py (COMPLETADO)
 - [x] Completar módulo de préstamos (COMPLETADO)
-- [x] Completar cancelación de suscripción (COMPLETADO)
+- [x] Completar cancelación de suscripción backend (COMPLETADO)
 
 ### P1 - Alto
 - [ ] UI de cancelación en SubscriptionsPage.jsx
 - [ ] Notificaciones automáticas (fechas de pago, vencimientos DGII)
 - [ ] Dashboard de métricas avanzadas (gráficos)
 - [ ] Generación de archivos bancarios (Popular, BHD, Reservas)
+- [ ] Integrar deducciones de préstamos en cálculo de nómina
 
 ### P2 - Medio
-- [ ] Integrar deducciones de préstamos en cálculo de nómina
 - [ ] Corregir warnings de ESLint en frontend
 - [ ] Integraciones Enterprise (QuickBooks, SAP, Oracle)
 - [ ] Portal de autoservicio para empleados
@@ -124,10 +118,9 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 - [ ] Generación de documentos/cartas personalizadas
 - [ ] Notificación de vencimiento IR-13
 
+## Testing
+- `/app/test_reports/iteration_11.json` - Loans, Subscriptions, Roles APIs (20/20 tests)
+- `/app/tests/test_loans_subscriptions_roles.py` - Test suite completa
+
 ## Credenciales de Prueba
 - Usuario de prueba: `test_refactor@fortexa.com` / `test123`
-
-## Testing
-- `/app/test_reports/iteration_8.json` - PDF invoices
-- `/app/test_reports/iteration_9.json` - Custom roles
-- `/app/test_reports/iteration_10.json` - DGII reports
