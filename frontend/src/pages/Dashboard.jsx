@@ -148,6 +148,19 @@ export default function Dashboard() {
     <DashboardLayout title="Dashboard">
       <div className="space-y-8" data-testid="dashboard-page">
         
+        {/* Personalized Greeting */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-800">
+              {getGreeting()}, <span className="text-emerald-600">{user?.name?.split(' ')[0] || 'Usuario'}!</span>
+            </h1>
+            <p className="text-slate-500 mt-1">Aquí está el resumen de tu gestión de RRHH</p>
+          </div>
+          <div className="text-right hidden md:block">
+            <p className="text-sm text-slate-500">{new Date().toLocaleDateString('es-DO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          </div>
+        </div>
+        
         {/* Pro Plan Promotional Banner - For Basic and Trial users */}
         {shouldShowUpgradeBanner && showProBanner && (
           <div className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-700 rounded-2xl p-6 text-white shadow-lg">
