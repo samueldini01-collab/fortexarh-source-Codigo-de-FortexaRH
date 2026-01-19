@@ -48,7 +48,9 @@ import {
   Eye,
   EyeOff,
   RotateCcw,
-  Save
+  Save,
+  CreditCard,
+  UserCog
 } from "lucide-react";
 
 // Default navigation items
@@ -66,6 +68,8 @@ const DEFAULT_NAVIGATION = [
   { id: "evaluations", name: "Evaluaciones", href: "/evaluations", icon: Target, visible: true },
   { id: "recruitment", name: "Reclutamiento", href: "/recruitment", icon: Briefcase, visible: true },
   { id: "templates", name: "Plantillas", href: "/templates", icon: FileText, visible: true },
+  { id: "users-management", name: "Usuarios", href: "/users-management", icon: UserCog, visible: true },
+  { id: "subscriptions", name: "Suscripción", href: "/subscriptions", icon: CreditCard, visible: true },
   { id: "company-config", name: "Configuración", href: "/company-config", icon: Building2, visible: true },
 ];
 
