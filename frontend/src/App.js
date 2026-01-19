@@ -324,6 +324,7 @@ function AppRouter() {
       <Route path="/subscriptions" element={<ProtectedRoute><SubscriptionsPage /></ProtectedRoute>} />
       <Route path="/users-management" element={<ProtectedRoute><UsersManagementPage /></ProtectedRoute>} />
       <Route path="/roles" element={<ProtectedRoute><RolesPage /></ProtectedRoute>} />
+      <Route path="/dgii-reports" element={<ProtectedRoute><DGIIReportsPage /></ProtectedRoute>} />
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
