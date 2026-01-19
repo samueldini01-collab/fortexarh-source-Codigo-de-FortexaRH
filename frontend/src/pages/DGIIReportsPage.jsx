@@ -73,15 +73,17 @@ export default function DGIIReportsPage() {
         withCredentials: true
       });
       
-      const sortedPeriods = (response.data.periods || []).sort((a, b) => {
+      // API returns array directly, not wrapped in {periods: [...]}
+      const periodsData = Array.isArray(response.data) ? response.data : (response.data.periods || []);
+      const sortedPeriods = periodsData.sort((a, b) => {
         if (b.year !== a.year) return b.year - a.year;
         return b.month - a.month;
       });
       
       setPeriods(sortedPeriods);
       
-      // Auto-select most recent closed period
-      const closedPeriod = sortedPeriods.find(p => p.status === 'closed');
+      // Auto-select most recent closed or paid period
+      const closedPeriod = sortedPeriods.find(p => p.status === 'closed' || p.status === 'paid');
       if (closedPeriod) {
         setSelectedPeriod(closedPeriod.period_id);
       } else if (sortedPeriods.length > 0) {
