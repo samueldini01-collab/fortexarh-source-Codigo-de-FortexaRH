@@ -11,7 +11,7 @@ import uuid
 import io
 import logging
 
-router = APIRouter(prefix="/documents", tags=["Documents"])
+router = APIRouter(prefix="/doc-generator", tags=["Documents"])
 
 db = None
 _get_current_user_func = None
