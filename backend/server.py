@@ -43,6 +43,36 @@ app = FastAPI(title="FortexaRH SaaS API")
 api_router = APIRouter(prefix="/api")
 security = HTTPBearer(auto_error=False)
 
+# Configure CORS early
+cors_origins = os.environ.get('CORS_ORIGINS', '*')
+if cors_origins == '*':
+    app.add_middleware(
+        CORSMiddleware,
+        allow_credentials=True,
+        allow_origins=["*"],
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+else:
+    origins_list = cors_origins.split(',')
+    app.add_middleware(
+        CORSMiddleware,
+        allow_credentials=True,
+        allow_origins=origins_list,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+# Health check endpoint for Kubernetes (must be defined early, no /api prefix)
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Kubernetes liveness/readiness probes"""
+    try:
+        await db.command("ping")
+        return {"status": "healthy", "database": "connected"}
+    except Exception as e:
+        return {"status": "unhealthy", "database": "disconnected", "error": str(e)}
+
 # ===================== MODELS =====================
 
 class UserCreate(BaseModel):
