@@ -232,7 +232,7 @@ export default function OrganigramaPage() {
         code: newUnit.code || newUnit.name.substring(0, 4).toUpperCase(),
         parent_id: newUnit.parent_id || null,
         node_type: "unit",
-        description: newUnit.description
+        description: newUnit.description || ""
       }, { headers: getAuthHeaders(), withCredentials: true });
       
       toast.success("Unidad creada correctamente");
@@ -240,7 +240,11 @@ export default function OrganigramaPage() {
       setNewUnit({ name: "", code: "", parent_id: null, description: "" });
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al crear unidad");
+      const detail = error.response?.data?.detail;
+      const errorMsg = typeof detail === 'string' ? detail : 
+                       Array.isArray(detail) ? detail.map(d => d.msg).join(', ') :
+                       detail?.msg || "Error al crear unidad";
+      toast.error(errorMsg);
     }
   };
 
@@ -257,7 +261,7 @@ export default function OrganigramaPage() {
         parent_id: newPosition.unit_id || null,
         node_type: "position",
         employee_id: newPosition.employee_id || null,
-        description: newPosition.description
+        description: newPosition.description || ""
       }, { headers: getAuthHeaders(), withCredentials: true });
       
       toast.success("Posición creada correctamente");
