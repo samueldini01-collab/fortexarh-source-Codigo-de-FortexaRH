@@ -470,45 +470,107 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Contact Section */}
+      <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 heading mb-4">
+              Contacto y Soporte
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Estamos aquí para ayudarte. Contáctanos para cualquier consulta sobre nuestros servicios.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center mb-4">
+                <MapPin className="w-6 h-6 text-emerald-600" />
+              </div>
+              <h3 className="font-semibold text-slate-900 mb-2">Dirección</h3>
+              <p className="text-slate-600 text-sm">
+                Av. Winston Churchill<br />
+                Santo Domingo, RD
+              </p>
+            </div>
+            
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-4">
+                <Mail className="w-6 h-6 text-blue-600" />
+              </div>
+              <h3 className="font-semibold text-slate-900 mb-2">Email</h3>
+              <a href="mailto:info@fortexarh.com" className="text-blue-600 hover:text-blue-700 text-sm">
+                info@fortexarh.com
+              </a>
+            </div>
+            
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center mb-4">
+                <Phone className="w-6 h-6 text-purple-600" />
+              </div>
+              <h3 className="font-semibold text-slate-900 mb-2">Teléfono</h3>
+              <a href="tel:+18096859898" className="text-purple-600 hover:text-purple-700 text-sm">
+                (809) 685-9898
+              </a>
+            </div>
+            
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center mb-4">
+                <Clock3 className="w-6 h-6 text-amber-600" />
+              </div>
+              <h3 className="font-semibold text-slate-900 mb-2">Horario</h3>
+              <p className="text-slate-600 text-sm">
+                Lunes a Viernes<br />
+                9:00 AM - 4:00 PM
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="py-12 px-4 sm:px-6 lg:px-8 bg-slate-900 text-white">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                  <Users className="w-5 h-5 text-slate-900" />
-                </div>
+                <img src="/favicon.png" alt="FortexaRH" className="w-8 h-8 rounded-lg" />
                 <span className="text-xl font-bold heading">FortexaRH</span>
               </div>
-              <p className="text-slate-400 text-sm">
-                Sistema de gestión de recursos humanos y nómina para empresas modernas.
+              <p className="text-slate-400 text-sm mb-4">
+                Sistema de gestión de recursos humanos y nómina para empresas modernas en República Dominicana.
               </p>
+              <div className="text-slate-400 text-sm space-y-1">
+                <p className="flex items-center gap-2"><MapPin className="w-4 h-4" /> Av. Winston Churchill, Santo Domingo</p>
+                <p className="flex items-center gap-2"><Mail className="w-4 h-4" /> info@fortexarh.com</p>
+                <p className="flex items-center gap-2"><Phone className="w-4 h-4" /> (809) 685-9898</p>
+              </div>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Producto</h4>
               <ul className="space-y-2 text-slate-400 text-sm">
                 <li><a href="#features" className="hover:text-white transition-colors">Características</a></li>
-                <li><Link to="/pricing" className="hover:text-white transition-colors">Precios</Link></li>
+                <li><a href="#pricing" className="hover:text-white transition-colors">Precios</a></li>
+                <li><a href="#contact" className="hover:text-white transition-colors">Contacto</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Empresa</h4>
+              <h4 className="font-semibold mb-4">Recursos</h4>
               <ul className="space-y-2 text-slate-400 text-sm">
-                <li><a href="#" className="hover:text-white transition-colors">Sobre Nosotros</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contacto</a></li>
+                <li><Link to="/login" className="hover:text-white transition-colors">Iniciar Sesión</Link></li>
+                <li><Link to="/register" className="hover:text-white transition-colors">Crear Cuenta</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-slate-400 text-sm">
-                <li><a href="#" className="hover:text-white transition-colors">Privacidad</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Términos</a></li>
+                <li><Link to="/privacy" className="hover:text-white transition-colors">Política de Privacidad</Link></li>
+                <li><Link to="/terms" className="hover:text-white transition-colors">Términos de Servicio</Link></li>
               </ul>
             </div>
           </div>
           <div className="border-t border-slate-800 pt-8 text-center text-slate-400 text-sm">
-            © {new Date().getFullYear()} FortexaRH. Todos los derechos reservados.
+            © {new Date().getFullYear()} FortexaRH. Todos los derechos reservados. República Dominicana.
           </div>
         </div>
       </footer>
