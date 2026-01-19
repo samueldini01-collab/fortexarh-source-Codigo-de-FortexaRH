@@ -75,10 +75,10 @@ async def get_current_user(request: Request):
 
 
 def _get_stripe_key():
-    """Get Stripe API key with fallback to production key"""
-    key = os.environ.get('STRIPE_API_KEY', '')
-    if not key.startswith('sk_live_'):
-        key = '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'
+    """Get Stripe API key from environment"""
+    key = os.environ.get('STRIPE_API_KEY')
+    if not key:
+        raise HTTPException(status_code=500, detail="Stripe API key not configured")
     return key
 
 

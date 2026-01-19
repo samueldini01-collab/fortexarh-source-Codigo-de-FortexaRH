@@ -20,12 +20,8 @@ import stripe
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# Configure Stripe - use production key if env var is test key or not set
-_stripe_key = os.environ.get('STRIPE_API_KEY', '')
-if not _stripe_key.startswith('sk_live_'):
-    # Production key for FortexaRH
-    _stripe_key = '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'
-stripe.api_key = _stripe_key
+# Configure Stripe - use key from environment variable only
+stripe.api_key = os.environ.get('STRIPE_API_KEY', '')
 
 # Import email service
 from email_service import send_payment_confirmation_email, send_welcome_email, send_invoice_email
@@ -1724,10 +1720,10 @@ async def create_public_checkout(data: PublicCheckoutRequest, request: Request):
     # Ensure amount is at least $1.00 for Stripe
     amount = max(1.00, round(amount, 2))
     
-    # Get Stripe API key - use production key if env var is test or not set
-    api_key = os.environ.get('STRIPE_API_KEY', '')
-    if not api_key.startswith('sk_live_'):
-        api_key = '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'
+    # Get Stripe API key from environment
+    api_key = os.environ.get('STRIPE_API_KEY')
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Stripe no configurado")
     
     # Use direct Stripe SDK
     stripe.api_key = api_key
