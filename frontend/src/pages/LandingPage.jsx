@@ -64,6 +64,14 @@ const benefits = [
 ];
 
 export default function LandingPage() {
+  // Ensure full content renders on first load
+  useEffect(() => {
+    // Force scroll to top on mount to ensure proper hydration
+    window.scrollTo(0, 0);
+    // Force a small layout recalculation
+    document.body.style.overflow = 'auto';
+  }, []);
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
