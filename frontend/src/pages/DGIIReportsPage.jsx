@@ -1,0 +1,389 @@
+import { useState, useEffect } from "react";
+import DashboardLayout from "@/components/DashboardLayout";
+import { useAuth, API } from "@/App";
+import axios from "axios";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { 
+  FileText, Download, Calendar, Building2, FileSpreadsheet, 
+  AlertCircle, RefreshCw, CheckCircle2, Info
+} from "lucide-react";
+import { toast } from "sonner";
+
+const REPORT_TYPES = [
+  {
+    id: "ir3",
+    name: "IR-3",
+    title: "Declaración de Retenciones de Asalariados",
+    description: "Declaración jurada y pago mensual de las retenciones de ISR a asalariados",
+    icon: FileText,
+    color: "blue"
+  },
+  {
+    id: "ir4",
+    name: "IR-4",
+    title: "Detalle Mensual de Retenciones",
+    description: "Detalle de empleados con sus retenciones de ISR que alimenta el IR-3",
+    icon: FileSpreadsheet,
+    color: "emerald"
+  },
+  {
+    id: "tss-autodeterminacion",
+    name: "TSS Autodeterminación",
+    title: "Archivo de Autodeterminación TSS",
+    description: "Archivo Excel para la Tesorería de Seguridad Social (v5.3)",
+    icon: FileSpreadsheet,
+    color: "purple"
+  },
+  {
+    id: "tss-novedades",
+    name: "TSS Novedades",
+    title: "Archivo de Novedades TSS",
+    description: "Archivo Excel de novedades para la TSS (ingresos, salidas, etc.)",
+    icon: FileSpreadsheet,
+    color: "amber"
+  }
+];
+
+export default function DGIIReportsPage() {
+  const { getAuthHeaders } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(null);
+  const [periods, setPeriods] = useState([]);
+  const [selectedPeriod, setSelectedPeriod] = useState(null);
+  const [periodDetails, setPeriodDetails] = useState(null);
+  
+  useEffect(() => {
+    fetchPeriods();
+  }, []);
+
+  useEffect(() => {
+    if (selectedPeriod) {
+      fetchPeriodDetails(selectedPeriod);
+    }
+  }, [selectedPeriod]);
+
+  const fetchPeriods = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${API}/payroll-v2/periods`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      
+      const sortedPeriods = (response.data.periods || []).sort((a, b) => {
+        if (b.year !== a.year) return b.year - a.year;
+        return b.month - a.month;
+      });
+      
+      setPeriods(sortedPeriods);
+      
+      // Auto-select most recent closed period
+      const closedPeriod = sortedPeriods.find(p => p.status === 'closed');
+      if (closedPeriod) {
+        setSelectedPeriod(closedPeriod.period_id);
+      } else if (sortedPeriods.length > 0) {
+        setSelectedPeriod(sortedPeriods[0].period_id);
+      }
+    } catch (error) {
+      console.error("Error fetching periods:", error);
+      toast.error("Error al cargar períodos");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchPeriodDetails = async (periodId) => {
+    try {
+      const response = await axios.get(`${API}/payroll-v2/periods/${periodId}`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      setPeriodDetails(response.data);
+    } catch (error) {
+      console.error("Error fetching period details:", error);
+    }
+  };
+
+  const handleDownload = async (reportType) => {
+    if (!selectedPeriod) {
+      toast.error("Seleccione un período primero");
+      return;
+    }
+
+    setDownloading(reportType);
+    
+    try {
+      let endpoint = "";
+      let filename = "";
+      
+      switch (reportType) {
+        case "ir3":
+          endpoint = `/payroll-v2/periods/${selectedPeriod}/export/ir3`;
+          filename = "IR3_Retenciones.xls";
+          break;
+        case "ir4":
+          endpoint = `/payroll-v2/periods/${selectedPeriod}/export/ir4`;
+          filename = "IR4_Detalle_Retenciones.xls";
+          break;
+        case "tss-autodeterminacion":
+          endpoint = `/payroll-v2/periods/${selectedPeriod}/export/tss-autodeterminacion`;
+          filename = "TSS_Autodeterminacion.xls";
+          break;
+        case "tss-novedades":
+          endpoint = `/payroll-v2/periods/${selectedPeriod}/export/tss-novedades`;
+          filename = "TSS_Novedades.xls";
+          break;
+        default:
+          throw new Error("Tipo de reporte no válido");
+      }
+
+      const response = await axios.get(`${API}${endpoint}`, {
+        headers: getAuthHeaders(),
+        withCredentials: true,
+        responseType: 'blob'
+      });
+
+      // Create download
+      const blob = new Blob([response.data], { type: 'application/vnd.ms-excel' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success(`${reportType.toUpperCase()} descargado correctamente`);
+    } catch (error) {
+      console.error("Error downloading report:", error);
+      toast.error(error.response?.data?.detail || "Error al descargar el reporte");
+    } finally {
+      setDownloading(null);
+    }
+  };
+
+  const getMonthName = (month) => {
+    const months = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    return months[month - 1] || '';
+  };
+
+  const getStatusBadge = (status) => {
+    const styles = {
+      draft: { bg: 'bg-slate-100', text: 'text-slate-600', label: 'Borrador' },
+      open: { bg: 'bg-blue-100', text: 'text-blue-700', label: 'Abierto' },
+      processing: { bg: 'bg-amber-100', text: 'text-amber-700', label: 'Procesando' },
+      closed: { bg: 'bg-emerald-100', text: 'text-emerald-700', label: 'Cerrado' }
+    };
+    const style = styles[status] || styles.draft;
+    return <Badge className={`${style.bg} ${style.text}`}>{style.label}</Badge>;
+  };
+
+  if (loading) {
+    return (
+      <DashboardLayout title="Reportes DGII">
+        <div className="flex items-center justify-center h-64">
+          <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  return (
+    <DashboardLayout title="Reportes DGII">
+      <div className="space-y-6" data-testid="dgii-reports-page">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-800">Reportes DGII y TSS</h1>
+            <p className="text-slate-500">Genera los formularios fiscales requeridos por la DGII y TSS</p>
+          </div>
+        </div>
+
+        {/* Period Selector */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="w-5 h-5" />
+              Seleccionar Período
+            </CardTitle>
+            <CardDescription>
+              Elija el período de nómina para generar los reportes
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {periods.length === 0 ? (
+              <div className="text-center py-8 text-slate-500">
+                <AlertCircle className="w-12 h-12 mx-auto text-slate-300 mb-3" />
+                <p className="font-medium">No hay períodos de nómina</p>
+                <p className="text-sm">Cree un período en el módulo de Nómina primero</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="text-sm font-medium text-slate-700 mb-2 block">
+                    Período de Nómina
+                  </label>
+                  <Select 
+                    value={selectedPeriod || ""} 
+                    onValueChange={setSelectedPeriod}
+                  >
+                    <SelectTrigger data-testid="period-selector">
+                      <SelectValue placeholder="Seleccione un período" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {periods.map(period => (
+                        <SelectItem key={period.period_id} value={period.period_id}>
+                          {getMonthName(period.month)} {period.year} - {period.name || 'Sin nombre'}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {periodDetails && (
+                  <div className="bg-slate-50 rounded-xl p-4">
+                    <h4 className="font-medium text-slate-800 mb-3">Resumen del Período</h4>
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <span className="text-slate-500">Estado:</span>
+                        <span className="ml-2">{getStatusBadge(periodDetails.status)}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500">Empleados:</span>
+                        <span className="ml-2 font-medium">{periodDetails.employee_count || 0}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500">Total Bruto:</span>
+                        <span className="ml-2 font-medium text-emerald-600">
+                          ${(periodDetails.total_gross || 0).toLocaleString('es-DO', { minimumFractionDigits: 2 })}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500">ISR Total:</span>
+                        <span className="ml-2 font-medium text-blue-600">
+                          ${(periodDetails.total_isr || 0).toLocaleString('es-DO', { minimumFractionDigits: 2 })}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Info Banner */}
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+          <Info className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
+          <div className="text-sm text-blue-800">
+            <p className="font-medium mb-1">Importante sobre los formularios DGII</p>
+            <ul className="list-disc list-inside space-y-1 text-blue-700">
+              <li><strong>IR-4</strong>: Detalle de empleados que alimenta la declaración IR-3</li>
+              <li><strong>IR-3</strong>: Declaración mensual de retenciones de ISR a asalariados</li>
+              <li>Recuerde presentar el IR-3 antes del día 10 de cada mes</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Report Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {REPORT_TYPES.map(report => {
+            const Icon = report.icon;
+            const colorClasses = {
+              blue: { bg: 'bg-blue-50', icon: 'text-blue-500', border: 'border-blue-200' },
+              emerald: { bg: 'bg-emerald-50', icon: 'text-emerald-500', border: 'border-emerald-200' },
+              purple: { bg: 'bg-purple-50', icon: 'text-purple-500', border: 'border-purple-200' },
+              amber: { bg: 'bg-amber-50', icon: 'text-amber-500', border: 'border-amber-200' }
+            };
+            const colors = colorClasses[report.color];
+            
+            return (
+              <Card 
+                key={report.id}
+                className={`border-2 ${selectedPeriod ? 'hover:shadow-md transition-shadow' : 'opacity-60'}`}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start gap-4">
+                      <div className={`w-12 h-12 rounded-xl ${colors.bg} flex items-center justify-center`}>
+                        <Icon className={`w-6 h-6 ${colors.icon}`} />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-bold text-lg text-slate-800">{report.name}</h3>
+                          <Badge variant="outline" className="text-xs">Excel</Badge>
+                        </div>
+                        <p className="text-sm font-medium text-slate-700">{report.title}</p>
+                        <p className="text-sm text-slate-500 mt-1">{report.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 flex justify-end">
+                    <Button
+                      onClick={() => handleDownload(report.id)}
+                      disabled={!selectedPeriod || downloading === report.id}
+                      className="gap-2"
+                      data-testid={`download-${report.id}`}
+                    >
+                      {downloading === report.id ? (
+                        <>
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                          Generando...
+                        </>
+                      ) : (
+                        <>
+                          <Download className="w-4 h-4" />
+                          Descargar {report.name}
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Instructions */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Instrucciones de Uso</CardTitle>
+          </CardHeader>
+          <CardContent className="prose prose-sm max-w-none">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h4 className="font-semibold text-slate-800 mb-2">Formularios DGII (IR-3, IR-4)</h4>
+                <ol className="list-decimal list-inside text-sm text-slate-600 space-y-2">
+                  <li>Seleccione el período de nómina cerrado</li>
+                  <li>Descargue primero el <strong>IR-4</strong> para revisar el detalle</li>
+                  <li>Verifique que los datos sean correctos</li>
+                  <li>Descargue el <strong>IR-3</strong> con el resumen</li>
+                  <li>Ingrese a la Oficina Virtual DGII (dgii.gov.do)</li>
+                  <li>Complete la declaración con los datos del reporte</li>
+                </ol>
+              </div>
+              <div>
+                <h4 className="font-semibold text-slate-800 mb-2">Archivos TSS</h4>
+                <ol className="list-decimal list-inside text-sm text-slate-600 space-y-2">
+                  <li>Descargue el archivo de <strong>Autodeterminación</strong></li>
+                  <li>Si hubo cambios de personal, descargue <strong>Novedades</strong></li>
+                  <li>Valide los archivos en el portal TSS (tss.gob.do)</li>
+                  <li>Corrija cualquier error indicado</li>
+                  <li>Envíe los archivos antes del día 3 de cada mes</li>
+                </ol>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </DashboardLayout>
+  );
+}
