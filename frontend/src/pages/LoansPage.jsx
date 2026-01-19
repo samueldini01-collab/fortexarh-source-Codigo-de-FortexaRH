@@ -206,11 +206,15 @@ export default function LoansPage() {
     setShowPaymentModal(true);
   };
 
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat('es-DO', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(value || 0);
+  const formatCurrency = (value, currency = "DOP") => {
+    const symbols = { DOP: "RD$", USD: "$", EUR: "€" };
+    const symbol = symbols[currency] || "RD$";
+    return `${symbol}${new Intl.NumberFormat('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value || 0)}`;
+  };
+
+  const getCurrencySymbol = (currency) => {
+    const symbols = { DOP: "RD$", USD: "$", EUR: "€" };
+    return symbols[currency] || "RD$";
   };
 
   const getStatusBadge = (status) => {
