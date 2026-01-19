@@ -223,6 +223,32 @@ export default function SubscriptionsPage() {
     }
   };
 
+  const handleDownloadInvoice = async (invoiceId, invoiceNumber) => {
+    try {
+      const response = await axios.get(`${API}/invoices/${invoiceId}/pdf`, {
+        headers: getAuthHeaders(),
+        withCredentials: true,
+        responseType: 'blob'
+      });
+      
+      // Create blob and download
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Factura_${invoiceNumber || invoiceId}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success("Factura descargada");
+    } catch (error) {
+      console.error("Error downloading invoice:", error);
+      toast.error("Error al descargar la factura");
+    }
+  };
+
   const formatCurrency = (value) => {
     if (value === null || value === undefined || isNaN(value)) return "$0.00";
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
