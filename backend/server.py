@@ -167,9 +167,12 @@ class EmployeeCreate(BaseModel):
     nationality: Optional[str] = "Dominicana"
     document_type: Optional[str] = "Cédula"
     document_number: Optional[str] = None
-    gender: Optional[str] = None
+    gender: Optional[str] = None  # Masculino, Femenino
     birth_date: Optional[str] = None
     marital_status: Optional[str] = "Soltero/a"
+    blood_type: Optional[str] = None  # A+, A-, B+, B-, AB+, AB-, O+, O-
+    weight: Optional[float] = None  # Weight in pounds (libras)
+    height: Optional[float] = None  # Height in meters
     status: str = "active"
     address: Optional[str] = None
     city: Optional[str] = "Santo Domingo"
