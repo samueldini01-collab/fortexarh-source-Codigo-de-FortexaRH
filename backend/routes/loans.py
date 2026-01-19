@@ -2,7 +2,7 @@
 Employee Loans Routes for FortexaRH
 Module for managing employee loans, payments, and deductions
 """
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime, timezone, timedelta
@@ -13,7 +13,7 @@ router = APIRouter(prefix="/loans", tags=["Employee Loans"])
 
 # These will be injected from server.py
 db = None
-get_current_user = None
+_get_current_user_func = None
 
 logger = logging.getLogger(__name__)
 
@@ -43,23 +43,29 @@ class LoanPaymentCreate(BaseModel):
 
 def init_router(database, auth_dependency):
     """Initialize router with database and auth dependency"""
-    global db, get_current_user
+    global db, _get_current_user_func
     db = database
-    get_current_user = auth_dependency
+    _get_current_user_func = auth_dependency
+
+
+async def get_current_user(request: Request):
+    """Wrapper to call the auth dependency"""
+    from fastapi.security import HTTPBearer
+    security = HTTPBearer(auto_error=False)
+    credentials = await security(request)
+    return await _get_current_user_func(request, credentials)
 
 
 # ===================== LOAN ENDPOINTS =====================
 
 @router.get("")
 async def get_loans(
+    request: Request,
     status: Optional[str] = None,
-    employee_id: Optional[str] = None,
-    current_user: dict = Depends(lambda: get_current_user)
+    employee_id: Optional[str] = None
 ):
     """Get all loans for the company"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     
     query = {"company_id": company_id}
@@ -85,11 +91,9 @@ async def get_loans(
 
 
 @router.get("/summary")
-async def get_loans_summary(current_user: dict = Depends(lambda: get_current_user)):
+async def get_loans_summary(request: Request):
     """Get loans summary for dashboard"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     
     # Get all active loans
@@ -124,11 +128,9 @@ async def get_loans_summary(current_user: dict = Depends(lambda: get_current_use
 
 
 @router.post("")
-async def create_loan(data: LoanCreate, current_user: dict = Depends(lambda: get_current_user)):
+async def create_loan(data: LoanCreate, request: Request):
     """Create a new loan for an employee"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     
     # Verify employee exists
@@ -223,11 +225,9 @@ async def create_loan(data: LoanCreate, current_user: dict = Depends(lambda: get
 
 
 @router.get("/{loan_id}")
-async def get_loan(loan_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def get_loan(loan_id: str, request: Request):
     """Get loan details"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     
     loan = await db.loans.find_one(
@@ -256,15 +256,9 @@ async def get_loan(loan_id: str, current_user: dict = Depends(lambda: get_curren
 
 
 @router.post("/{loan_id}/payment")
-async def register_loan_payment(
-    loan_id: str,
-    data: LoanPaymentCreate,
-    current_user: dict = Depends(lambda: get_current_user)
-):
+async def register_loan_payment(loan_id: str, data: LoanPaymentCreate, request: Request):
     """Register a payment for a loan"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     
     loan = await db.loans.find_one(
@@ -327,11 +321,9 @@ async def register_loan_payment(
 
 
 @router.delete("/{loan_id}")
-async def delete_loan(loan_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def delete_loan(loan_id: str, request: Request):
     """Delete a loan (only if no payments made)"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     
     loan = await db.loans.find_one(

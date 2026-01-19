@@ -2,7 +2,7 @@
 Subscription Routes for FortexaRH
 Module for managing subscriptions, cancellation, retention, and billing
 """
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timezone, timedelta
@@ -16,7 +16,7 @@ router = APIRouter(prefix="/subscription", tags=["Subscriptions"])
 
 # These will be injected from server.py
 db = None
-get_current_user = None
+_get_current_user_func = None
 SUBSCRIPTION_PLANS = None
 FEATURE_ACCESS = None
 ADDITIONAL_USER_PRICE = 2.5
@@ -58,12 +58,20 @@ class SubscriptionUpdate(BaseModel):
 
 def init_router(database, auth_dependency, plans, feature_access, additional_user_price):
     """Initialize router with dependencies"""
-    global db, get_current_user, SUBSCRIPTION_PLANS, FEATURE_ACCESS, ADDITIONAL_USER_PRICE
+    global db, _get_current_user_func, SUBSCRIPTION_PLANS, FEATURE_ACCESS, ADDITIONAL_USER_PRICE
     db = database
-    get_current_user = auth_dependency
+    _get_current_user_func = auth_dependency
     SUBSCRIPTION_PLANS = plans
     FEATURE_ACCESS = feature_access
     ADDITIONAL_USER_PRICE = additional_user_price
+
+
+async def get_current_user(request: Request):
+    """Wrapper to call the auth dependency"""
+    from fastapi.security import HTTPBearer
+    security = HTTPBearer(auto_error=False)
+    credentials = await security(request)
+    return await _get_current_user_func(request, credentials)
 
 
 def _get_stripe_key():
@@ -77,11 +85,9 @@ def _get_stripe_key():
 # ===================== SUBSCRIPTION ENDPOINTS =====================
 
 @router.get("")
-async def get_company_subscription(current_user: dict = Depends(lambda: get_current_user)):
+async def get_company_subscription(request: Request):
     """Get the current company subscription"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     
     subscription = await db.subscriptions.find_one(
@@ -148,11 +154,9 @@ async def get_company_subscription(current_user: dict = Depends(lambda: get_curr
 
 
 @router.post("")
-async def create_subscription(data: SubscriptionCreate, current_user: dict = Depends(lambda: get_current_user)):
+async def create_subscription(data: SubscriptionCreate, request: Request):
     """Create or update subscription"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     
     plan = SUBSCRIPTION_PLANS.get(data.plan_id)
@@ -198,11 +202,9 @@ async def create_subscription(data: SubscriptionCreate, current_user: dict = Dep
 
 
 @router.put("")
-async def update_subscription(data: SubscriptionUpdate, current_user: dict = Depends(lambda: get_current_user)):
+async def update_subscription(data: SubscriptionUpdate, request: Request):
     """Update subscription (change plan, employees, cancel, renew)"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     
     subscription = await db.subscriptions.find_one({"company_id": company_id}, {"_id": 0})
@@ -260,11 +262,9 @@ async def update_subscription(data: SubscriptionUpdate, current_user: dict = Dep
 
 
 @router.get("/check-access")
-async def check_subscription_access(current_user: dict = Depends(lambda: get_current_user)):
+async def check_subscription_access(request: Request):
     """Check if user has system access based on subscription"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     
     subscription = await db.subscriptions.find_one({"company_id": company_id}, {"_id": 0})
@@ -305,11 +305,9 @@ async def check_subscription_access(current_user: dict = Depends(lambda: get_cur
 # ===================== CANCELLATION FLOW =====================
 
 @router.get("/cancellation-info")
-async def get_cancellation_info(current_user: dict = Depends(lambda: get_current_user)):
+async def get_cancellation_info(request: Request):
     """Get information needed for cancellation flow"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     
     subscription = await db.subscriptions.find_one(
@@ -364,11 +362,9 @@ async def get_cancellation_info(current_user: dict = Depends(lambda: get_current
 
 
 @router.post("/accept-retention-offer")
-async def accept_retention_offer(current_user: dict = Depends(lambda: get_current_user)):
+async def accept_retention_offer(request: Request):
     """Accept the retention offer (20% discount for 3 months)"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     user_email = current_user.get("email")
     
@@ -450,11 +446,9 @@ async def accept_retention_offer(current_user: dict = Depends(lambda: get_curren
 
 
 @router.post("/cancel")
-async def cancel_subscription(survey: CancellationSurveyData, current_user: dict = Depends(lambda: get_current_user)):
+async def cancel_subscription(survey: CancellationSurveyData, request: Request):
     """Cancel subscription with survey feedback"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     user_email = current_user.get("email")
     user_name = current_user.get("name", "")
@@ -562,11 +556,9 @@ async def cancel_subscription(survey: CancellationSurveyData, current_user: dict
 
 
 @router.post("/reactivate")
-async def reactivate_subscription(current_user: dict = Depends(lambda: get_current_user)):
+async def reactivate_subscription(request: Request):
     """Reactivate a canceled subscription"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     
     subscription = await db.subscriptions.find_one(
