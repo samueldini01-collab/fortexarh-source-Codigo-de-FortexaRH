@@ -459,3 +459,175 @@ def create_ir17_report(
     workbook.save(output)
     output.seek(0)
     return output
+
+
+def create_ir4_report(
+    rnc_company: str,
+    company_name: str,
+    periodo: str,  # MMAAAA
+    employees: List[Dict[str, Any]]
+) -> BytesIO:
+    """
+    Genera reporte IR-4 (Detalle Mensual de Retenciones de Asalariados)
+    Este detalle alimenta la declaración IR-3 ante la DGII
+    
+    Columnas:
+    - Línea, Cédula/RNC, Tipo Doc, Nombres y Apellidos
+    - Sueldo Bruto Mensual, Otros Ingresos, Total Ingresos
+    - Aporte AFP Empleado, Aporte SFS Empleado, Total Aportes TSS
+    - Renta Neta Imponible, ISR Determinado, ISR Retenido
+    """
+    workbook = xlwt.Workbook(encoding='utf-8')
+    ws = workbook.add_sheet('IR-4 Detalle')
+    
+    # Styles
+    title_style = xlwt.easyxf('font: bold on, height 280; align: horiz center')
+    subtitle_style = xlwt.easyxf('font: bold on, height 220; align: horiz center; pattern: pattern solid, fore_colour light_blue')
+    header_style = xlwt.easyxf('font: bold on; align: horiz center, vert center; borders: left thin, right thin, top thin, bottom thin; pattern: pattern solid, fore_colour light_yellow')
+    data_style = xlwt.easyxf('borders: left thin, right thin, top thin, bottom thin')
+    number_style = xlwt.easyxf('borders: left thin, right thin, top thin, bottom thin; align: horiz right', num_format_str='#,##0.00')
+    total_style = xlwt.easyxf('font: bold on; borders: left thin, right thin, top thin, bottom thin; pattern: pattern solid, fore_colour light_green', num_format_str='#,##0.00')
+    
+    # Title Section
+    ws.write_merge(0, 0, 0, 12, 'DIRECCIÓN GENERAL DE IMPUESTOS INTERNOS', title_style)
+    ws.write_merge(1, 1, 0, 12, 'DETALLE MENSUAL DE RETENCIONES DE ASALARIADOS', subtitle_style)
+    ws.write_merge(2, 2, 0, 12, 'FORMULARIO IR-4', subtitle_style)
+    
+    # Company info
+    ws.write(4, 0, 'RNC/Cédula Agente Retención:', data_style)
+    ws.write_merge(4, 4, 2, 4, rnc_company, data_style)
+    
+    ws.write(5, 0, 'Razón Social:', data_style)
+    ws.write_merge(5, 5, 2, 6, company_name, data_style)
+    
+    ws.write(6, 0, 'Período Fiscal:', data_style)
+    # Format periodo from MMAAAA to MM/AAAA
+    mes = periodo[:2] if len(periodo) >= 2 else periodo
+    anio = periodo[2:] if len(periodo) > 2 else ""
+    ws.write(6, 2, f"{mes}/{anio}", data_style)
+    
+    ws.write(7, 0, 'Cantidad de Empleados:', data_style)
+    ws.write(7, 2, len(employees), data_style)
+    
+    # Column headers (row 9)
+    headers = [
+        'Línea',
+        'Cédula/RNC',
+        'Tipo Doc',
+        'Nombres y Apellidos',
+        'Sueldo Bruto\nMensual',
+        'Otros\nIngresos',
+        'Total\nIngresos',
+        'Aporte AFP\nEmpleado',
+        'Aporte SFS\nEmpleado',
+        'Total\nAportes TSS',
+        'Renta Neta\nImponible',
+        'ISR\nDeterminado',
+        'ISR\nRetenido'
+    ]
+    
+    for col, h in enumerate(headers):
+        ws.write(9, col, h, header_style)
+    
+    # Set row height for headers
+    ws.row(9).height_mismatch = True
+    ws.row(9).height = 800
+    
+    # Data rows
+    totals = {
+        'sueldo_bruto': 0,
+        'otros_ingresos': 0,
+        'total_ingresos': 0,
+        'afp_empleado': 0,
+        'sfs_empleado': 0,
+        'total_tss': 0,
+        'renta_neta': 0,
+        'isr_determinado': 0,
+        'isr_retenido': 0
+    }
+    
+    for row_idx, emp in enumerate(employees, start=10):
+        linea = row_idx - 9
+        
+        sueldo_bruto = emp.get('salario_bruto', 0)
+        otros_ingresos = emp.get('otros_ingresos', 0)
+        total_ingresos = sueldo_bruto + otros_ingresos
+        afp_emp = emp.get('afp_empleado', 0)
+        sfs_emp = emp.get('sfs_empleado', 0)
+        total_tss = afp_emp + sfs_emp
+        renta_neta = total_ingresos - total_tss
+        isr_det = emp.get('isr_calculado', 0)
+        isr_ret = emp.get('isr_retenido', 0)
+        
+        ws.write(row_idx, 0, linea, data_style)
+        ws.write(row_idx, 1, emp.get('cedula', ''), data_style)
+        ws.write(row_idx, 2, emp.get('tipo_doc', 'C'), data_style)
+        ws.write(row_idx, 3, emp.get('nombre_completo', ''), data_style)
+        ws.write(row_idx, 4, sueldo_bruto, number_style)
+        ws.write(row_idx, 5, otros_ingresos, number_style)
+        ws.write(row_idx, 6, total_ingresos, number_style)
+        ws.write(row_idx, 7, afp_emp, number_style)
+        ws.write(row_idx, 8, sfs_emp, number_style)
+        ws.write(row_idx, 9, total_tss, number_style)
+        ws.write(row_idx, 10, renta_neta, number_style)
+        ws.write(row_idx, 11, isr_det, number_style)
+        ws.write(row_idx, 12, isr_ret, number_style)
+        
+        # Accumulate totals
+        totals['sueldo_bruto'] += sueldo_bruto
+        totals['otros_ingresos'] += otros_ingresos
+        totals['total_ingresos'] += total_ingresos
+        totals['afp_empleado'] += afp_emp
+        totals['sfs_empleado'] += sfs_emp
+        totals['total_tss'] += total_tss
+        totals['renta_neta'] += renta_neta
+        totals['isr_determinado'] += isr_det
+        totals['isr_retenido'] += isr_ret
+    
+    # Totals row
+    total_row = 10 + len(employees)
+    ws.write(total_row, 3, 'TOTALES:', total_style)
+    ws.write(total_row, 4, totals['sueldo_bruto'], total_style)
+    ws.write(total_row, 5, totals['otros_ingresos'], total_style)
+    ws.write(total_row, 6, totals['total_ingresos'], total_style)
+    ws.write(total_row, 7, totals['afp_empleado'], total_style)
+    ws.write(total_row, 8, totals['sfs_empleado'], total_style)
+    ws.write(total_row, 9, totals['total_tss'], total_style)
+    ws.write(total_row, 10, totals['renta_neta'], total_style)
+    ws.write(total_row, 11, totals['isr_determinado'], total_style)
+    ws.write(total_row, 12, totals['isr_retenido'], total_style)
+    
+    # Column widths
+    col_widths = [6, 14, 8, 30, 14, 12, 14, 12, 12, 14, 14, 12, 12]
+    for col, width in enumerate(col_widths):
+        ws.col(col).width = width * 256
+    
+    # Sheet 2: Resumen para IR-3
+    ws2 = workbook.add_sheet('Resumen IR-3')
+    
+    ws2.write_merge(0, 0, 0, 3, 'RESUMEN PARA DECLARACIÓN IR-3', title_style)
+    ws2.write_merge(1, 1, 0, 3, f'Período: {mes}/{anio}', subtitle_style)
+    
+    summary_data = [
+        ('Total Sueldos y Salarios', totals['sueldo_bruto']),
+        ('Otros Ingresos Gravables', totals['otros_ingresos']),
+        ('Total Ingresos Brutos', totals['total_ingresos']),
+        ('(-) Aportes AFP Empleado', totals['afp_empleado']),
+        ('(-) Aportes SFS Empleado', totals['sfs_empleado']),
+        ('(=) Total Deducciones TSS', totals['total_tss']),
+        ('(=) Renta Neta Imponible', totals['renta_neta']),
+        ('ISR Determinado', totals['isr_determinado']),
+        ('ISR Retenido a Pagar', totals['isr_retenido']),
+    ]
+    
+    for row_idx, (label, value) in enumerate(summary_data, start=3):
+        ws2.write(row_idx, 0, label, data_style)
+        ws2.write(row_idx, 1, value, number_style)
+    
+    ws2.col(0).width = 30 * 256
+    ws2.col(1).width = 18 * 256
+    
+    output = BytesIO()
+    workbook.save(output)
+    output.seek(0)
+    return output
