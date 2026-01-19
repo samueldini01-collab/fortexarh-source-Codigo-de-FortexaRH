@@ -4396,6 +4396,64 @@ async def export_ir17_excel(period_id: str, current_user: dict = Depends(get_cur
         headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
 
+
+@api_router.get("/payroll-v2/periods/{period_id}/export/ir4")
+async def export_ir4_excel(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Descargar reporte IR-4 (Detalle Mensual de Retenciones de Asalariados) en Excel"""
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    employees_data = []
+    for entry in entries:
+        employee = await db.employees.find_one(
+            {"employee_id": entry["employee_id"], "company_id": company_id},
+            {"_id": 0}
+        )
+        
+        gross = entry.get("gross_salary", 0)
+        afp_emp = entry.get("afp_employee", 0)
+        sfs_emp = entry.get("sfs_employee", 0)
+        
+        emp_data = {
+            "cedula": entry.get("employee_document", employee.get("document_number", "") if employee else ""),
+            "tipo_doc": "C",  # Cédula por defecto
+            "nombre_completo": entry.get("employee_name", ""),
+            "salario_bruto": gross,
+            "otros_ingresos": entry.get("bonuses", 0) + entry.get("commissions", 0),
+            "afp_empleado": afp_emp,
+            "sfs_empleado": sfs_emp,
+            "isr_calculado": entry.get("isr", 0),
+            "isr_retenido": entry.get("isr", 0)
+        }
+        employees_data.append(emp_data)
+    
+    rnc = company.get("rnc", "") if company else ""
+    company_name = company.get("name", "") if company else ""
+    periodo = f"{period['month']:02d}{period['year']}"
+    
+    from tss_generator import create_ir4_report
+    excel_file = create_ir4_report(rnc, company_name, periodo, employees_data)
+    
+    filename = f"IR4_Detalle_Retenciones_{periodo}.xls"
+    return Response(
+        content=excel_file.getvalue(),
+        media_type="application/vnd.ms-excel",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+
+
 @api_router.post("/payroll-v2/periods/{period_id}/calculate")
 async def calculate_period(period_id: str, current_user: dict = Depends(get_current_user)):
     """Calcular/recalcular todas las nóminas del período"""
