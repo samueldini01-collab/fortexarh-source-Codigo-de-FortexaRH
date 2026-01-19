@@ -58,8 +58,13 @@ import {
   Wallet,
   TrendingUp,
   FileBarChart,
-  FileCheck
+  FileCheck,
+  Search,
+  Command
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import axios from "axios";
+import { API } from "@/App";
 
 // Default navigation items with feature mapping
 const DEFAULT_NAVIGATION = [
