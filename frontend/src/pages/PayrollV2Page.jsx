@@ -859,7 +859,7 @@ export default function PayrollV2Page() {
                 <div className="space-y-2"><Label>Departamento (Opcional)</Label>
                   <Select value={newPeriodForm.department_filter} onValueChange={(v) => setNewPeriodForm({...newPeriodForm, department_filter: v})}>
                     <SelectTrigger><SelectValue placeholder="Todos" /></SelectTrigger>
-                    <SelectContent><SelectItem value="">Todos los departamentos</SelectItem>
+                    <SelectContent><SelectItem value="all">Todos los departamentos</SelectItem>
                       {departments.map(d => (<SelectItem key={d} value={d}>{d}</SelectItem>))}
                     </SelectContent>
                   </Select>
