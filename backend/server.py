@@ -4792,6 +4792,65 @@ async def pay_period(period_id: str, payment_data: PayrollPaymentRequest = None,
     if period.get("status") not in ["calculated", "approved"]:
         raise HTTPException(status_code=400, detail="El período debe estar calculado o aprobado para pagarlo")
     
+    # Obtener entradas de nómina para procesar deducciones de préstamos
+    payroll_entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    # Procesar deducciones de préstamos y actualizar saldos
+    for entry in payroll_entries:
+        loan_deduction = entry.get("loan_deduction", 0)
+        if loan_deduction > 0:
+            employee_id = entry.get("employee_id")
+            # Obtener préstamos activos del empleado
+            active_loans = await db.loans.find({
+                "employee_id": employee_id,
+                "company_id": company_id,
+                "status": "active",
+                "deduct_from_payroll": True
+            }).to_list(10)
+            
+            remaining_deduction = loan_deduction
+            for loan in active_loans:
+                if remaining_deduction <= 0:
+                    break
+                    
+                monthly_payment = loan.get("monthly_payment", 0)
+                current_balance = loan.get("remaining_balance", 0)
+                deduction_amount = min(monthly_payment, current_balance, remaining_deduction)
+                
+                new_balance = max(0, current_balance - deduction_amount)
+                new_total_paid = loan.get("total_paid", 0) + deduction_amount
+                new_status = "paid" if new_balance <= 0 else "active"
+                
+                # Register the payment
+                payment = {
+                    "payment_id": f"pay_{uuid.uuid4().hex[:8]}",
+                    "amount": deduction_amount,
+                    "payment_date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+                    "payment_type": "payroll",
+                    "period_id": period_id,
+                    "notes": f"Deducción automática de nómina - {period.get('period_name', '')}",
+                    "created_at": datetime.now(timezone.utc).isoformat()
+                }
+                
+                # Update loan
+                await db.loans.update_one(
+                    {"loan_id": loan.get("loan_id")},
+                    {
+                        "$set": {
+                            "remaining_balance": round(new_balance, 2),
+                            "total_paid": round(new_total_paid, 2),
+                            "status": new_status,
+                            "updated_at": datetime.now(timezone.utc).isoformat()
+                        },
+                        "$push": {"payments": payment}
+                    }
+                )
+                
+                remaining_deduction -= deduction_amount
+    
     # Generar asiento contable con la cuenta bancaria seleccionada
     journal_result = await generate_period_journal_entry(period_id, current_user, bank_account_code=bank_account_code)
     
