@@ -35,10 +35,21 @@ export const API = `${BACKEND_URL}/api`;
 // Auth Context
 export const AuthContext = createContext(null);
 
+// Subscription Context
+export const SubscriptionContext = createContext(null);
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};
+
+export const useSubscription = () => {
+  const context = useContext(SubscriptionContext);
+  if (!context) {
+    throw new Error("useSubscription must be used within a SubscriptionProvider");
   }
   return context;
 };
