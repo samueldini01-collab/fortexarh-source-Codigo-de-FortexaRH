@@ -2687,16 +2687,24 @@ async def create_payroll_period(data: PayrollPeriodCreate, current_user: dict = 
     """Crear un nuevo período de nómina"""
     company_id = current_user.get("company_id")
     
+    # Determinar tipo de nómina
+    payroll_type = getattr(data, 'payroll_type', 'REG')
+    department_filter = getattr(data, 'department_filter', None)
+    employee_ids = getattr(data, 'employee_ids', None)
+    
     period_id = f"period_{uuid.uuid4().hex[:12]}"
     period = {
         "period_id": period_id,
         "company_id": company_id,
         "period_type": data.period_type,
+        "payroll_type": payroll_type,  # REG, TEMP, BONO, REG13, VAC, LIQ
         "year": data.year,
         "month": data.month,
         "start_date": data.start_date,
         "end_date": data.end_date,
         "description": data.description or f"Nómina {data.period_type} - {data.month}/{data.year}",
+        "department_filter": department_filter,
+        "employee_ids": employee_ids,
         "status": "open",  # open, calculated, approved, paid
         "total_gross": 0,
         "total_deductions": 0,
@@ -2707,6 +2715,8 @@ async def create_payroll_period(data: PayrollPeriodCreate, current_user: dict = 
         "created_by": current_user.get("user_id")
     }
     await db.payroll_periods.insert_one(period)
+    
+    return {"period_id": period_id, "message": "Período creado correctamente"}
     
     return {"period_id": period_id, "message": "Período creado correctamente"}
 
