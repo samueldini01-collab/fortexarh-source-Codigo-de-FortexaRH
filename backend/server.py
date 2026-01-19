@@ -5734,11 +5734,13 @@ ADDITIONAL_USER_PRICE = 2.5
 init_loans_router(db, get_current_user)
 init_subscriptions_router(db, get_current_user, SUBSCRIPTION_PLANS, FEATURE_ACCESS, ADDITIONAL_USER_PRICE)
 init_roles_router(db, get_current_user)
+init_bank_files_router(db, get_current_user)
 
 # Include modular routers in api_router
 api_router.include_router(loans_router)
 api_router.include_router(subscriptions_router)
 api_router.include_router(roles_router)
+api_router.include_router(bank_files_router)
 
 # Include the API router
 app.include_router(api_router)
