@@ -479,9 +479,14 @@ export default function SubscriptionsPage() {
                   <Button variant="outline" onClick={() => setShowAddUsers(true)}>
                     <Users className="w-4 h-4 mr-2" />Usuarios Adicionales
                   </Button>
-                  {subscription?.status === 'active' && (
+                  {(subscription?.status === 'active') && (
                     <Button variant="ghost" className="text-red-600 ml-auto" onClick={handleCancelSubscription}>
-                      <X className="w-4 h-4 mr-2" />Cancelar
+                      <XCircle className="w-4 h-4 mr-2" />Cancelar Suscripción
+                    </Button>
+                  )}
+                  {(subscription?.status === 'canceling' || subscription?.status === 'cancelled') && (
+                    <Button variant="outline" className="text-emerald-600 border-emerald-300 ml-auto" onClick={handleReactivateSubscription}>
+                      <RotateCcw className="w-4 h-4 mr-2" />Reactivar Suscripción
                     </Button>
                   )}
                 </>
