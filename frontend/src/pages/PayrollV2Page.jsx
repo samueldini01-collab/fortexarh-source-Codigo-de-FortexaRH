@@ -98,6 +98,15 @@ export default function PayrollV2Page() {
   const [noveltyTypes, setNoveltyTypes] = useState({ income: [], deduction: [] });
   const [companyName, setCompanyName] = useState("NOMBRE DE LA EMPRESA");
   
+  // Bank file generation states
+  const [selectedPaymentBank, setSelectedPaymentBank] = useState("");
+  const [generateBankFile, setGenerateBankFile] = useState(true);
+  const [paymentBanks] = useState([
+    { id: "popular", name: "Banco Popular Dominicano", format: "TXT" },
+    { id: "bhd", name: "BHD León", format: "TXT" },
+    { id: "banreservas", name: "Banreservas", format: "CSV" }
+  ]);
+  
   // Inline editing states
   const [editingCell, setEditingCell] = useState(null);
   const [editValue, setEditValue] = useState("");
