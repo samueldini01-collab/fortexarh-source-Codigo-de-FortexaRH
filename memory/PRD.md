@@ -159,6 +159,10 @@ DELETE /api/accounting/journal-entries/{id}/with-payroll  - Eliminar + nómina
 - Email: test@test.com
 - Password: test123
 
+## Test Suite
+- **Payroll V2 Tests:** `/app/tests/test_payroll_v2.py` (16 tests)
+- **Test Reports:** `/app/test_reports/iteration_5.json`
+
 ## Files Structure
 ```
 /app/
