@@ -125,17 +125,53 @@ export default function RegisterPage() {
         <div className="text-center mb-8">
           <Link to="/" className="inline-block mb-4">
             <img 
-              src="/fortexarh-logo.png" 
+              src="/favicon.png" 
               alt="FortexaRH" 
               className="h-16 w-auto mx-auto"
             />
           </Link>
         </div>
 
+        {/* Payment Verification Loading */}
+        {verifyingPayment && (
+          <Card className="shadow-lg border-blue-200 bg-blue-50 mb-4">
+            <CardContent className="py-6 text-center">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-500 mx-auto mb-3" />
+              <p className="text-blue-700 font-medium">Verificando su pago...</p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Payment Verified Badge */}
+        {paymentVerified && paymentInfo && (
+          <Card className="shadow-lg border-emerald-200 bg-emerald-50 mb-4">
+            <CardContent className="py-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
+                  <CheckCircle2 className="w-6 h-6 text-emerald-600" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-semibold text-emerald-800">¡Pago Verificado!</p>
+                  <p className="text-sm text-emerald-600">
+                    Plan: {paymentInfo.plan_name} • {paymentInfo.employee_count} empleados • ${paymentInfo.amount}/mes
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <Card className="shadow-lg border-slate-200">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl heading">Crear Cuenta</CardTitle>
-            <CardDescription>Comienza tu prueba gratuita de 5 días</CardDescription>
+            <CardTitle className="text-2xl heading">
+              {paymentVerified ? "Complete su Registro" : "Crear Cuenta"}
+            </CardTitle>
+            <CardDescription>
+              {paymentVerified 
+                ? "Ingrese sus datos para activar su cuenta" 
+                : "Comienza tu prueba gratuita de 5 días"
+              }
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
