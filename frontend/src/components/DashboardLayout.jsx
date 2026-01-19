@@ -54,7 +54,8 @@ import {
   AlertTriangle,
   Crown,
   Zap,
-  Shield
+  Shield,
+  Wallet
 } from "lucide-react";
 
 // Default navigation items with feature mapping
