@@ -269,9 +269,14 @@ export default function LandingPage() {
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Integración FortexaERP</li>
               </ul>
               
-              <Link to="/register">
-                <Button className="w-full" variant="outline">Comenzar Gratis</Button>
-              </Link>
+              <div className="space-y-2">
+                <Link to="/register?plan=basic">
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700" data-testid="buy-basic-btn">Comprar Plan</Button>
+                </Link>
+                <Link to="/register">
+                  <Button className="w-full" variant="outline" data-testid="trial-basic-btn">Probar 5 días gratis</Button>
+                </Link>
+              </div>
             </div>
             
             {/* Plan Pro (Popular) */}
@@ -305,9 +310,14 @@ export default function LandingPage() {
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Soporte prioritario</li>
               </ul>
               
-              <Link to="/register">
-                <Button className="w-full bg-purple-600 hover:bg-purple-700">Comenzar Gratis</Button>
-              </Link>
+              <div className="space-y-2">
+                <Link to="/register?plan=pro">
+                  <Button className="w-full bg-purple-600 hover:bg-purple-700" data-testid="buy-pro-btn">Comprar Plan</Button>
+                </Link>
+                <Link to="/register">
+                  <Button className="w-full" variant="outline" data-testid="trial-pro-btn">Probar 5 días gratis</Button>
+                </Link>
+              </div>
             </div>
             
             {/* Plan Enterprise */}
@@ -338,9 +348,14 @@ export default function LandingPage() {
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Gerente de cuenta dedicado</li>
               </ul>
               
-              <Link to="/register">
-                <Button className="w-full" variant="outline">Contactar Ventas</Button>
-              </Link>
+              <div className="space-y-2">
+                <Link to="/register?plan=enterprise">
+                  <Button className="w-full bg-amber-600 hover:bg-amber-700" data-testid="buy-enterprise-btn">Comprar Plan</Button>
+                </Link>
+                <Link to="/register">
+                  <Button className="w-full" variant="outline" data-testid="trial-enterprise-btn">Probar 5 días gratis</Button>
+                </Link>
+              </div>
             </div>
           </div>
           
