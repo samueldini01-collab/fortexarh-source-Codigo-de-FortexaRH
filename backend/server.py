@@ -677,37 +677,119 @@ async def get_current_user(request: Request, credentials = Depends(security)) ->
 # ===================== SUBSCRIPTION PLANS =====================
 
 SUBSCRIPTION_PLANS = {
-    "free": {
-        "plan_id": "free",
+    "trial": {
+        "plan_id": "trial",
         "name": "Prueba Gratuita",
         "base_price": 0.0,
         "price_per_employee": 0.0,
-        "max_employees": 5,
-        "features": ["Hasta 5 empleados", "Gestión básica de empleados", "Control de asistencias", "Soporte por email"]
+        "max_employees": 1,
+        "max_users": 1,
+        "included_users": 1,
+        "trial_days": 5,
+        "features": ["1 empleado máximo", "Calculadora de nómina", "5 días de prueba"],
+        "allowed_features": ["payroll_calculator", "dashboard"],
+        "restricted_features": ["employees", "attendance", "vacations", "evaluations", "recruitment", "reports", "organigrama", "accounting"]
     },
     "basic": {
         "plan_id": "basic",
         "name": "FortexaRH Básico",
-        "base_price": 10.0,
+        "base_price": 5.0,
         "price_per_employee": 1.5,
         "max_employees": 50,
-        "features": ["Hasta 50 empleados", "Gestión de empleados", "Nómina básica", "Asistencias", "Vacaciones", "Soporte por email"]
+        "max_users": 3,
+        "included_users": 3,
+        "trial_days": 0,
+        "features": ["Hasta 50 empleados", "3 usuarios incluidos", "Gestión de empleados", "Nómina básica", "Asistencias y vacaciones", "Calculadora de nómina", "Reportes básicos", "Exportación Excel/CSV", "Soporte por email", "Integración FortexaERP"],
+        "allowed_features": ["all_basic"],
+        "restricted_features": ["evaluations", "recruitment", "organigrama", "advanced_reports", "integrations_pro"]
     },
     "pro": {
         "plan_id": "pro",
         "name": "FortexaRH Pro",
-        "base_price": 20.0,
+        "base_price": 10.0,
         "price_per_employee": 1.5,
         "max_employees": 200,
-        "features": ["Hasta 200 empleados", "Todas las funciones básicas", "Evaluaciones de desempeño", "Reclutamiento", "Reportes avanzados", "Soporte prioritario"]
+        "max_users": 5,
+        "included_users": 5,
+        "trial_days": 0,
+        "features": ["Hasta 200 empleados", "5 usuarios incluidos", "Todo lo del plan Básico", "Evaluaciones de desempeño", "Módulo de reclutamiento", "Organigrama intuitivo", "Reportes avanzados", "Integración QuickBooks", "Soporte prioritario"],
+        "allowed_features": ["all_pro"],
+        "restricted_features": ["custom_roles", "api", "advanced_workflows", "integrations_enterprise"]
     },
     "enterprise": {
         "plan_id": "enterprise",
         "name": "FortexaRH Enterprise",
-        "base_price": 76.0,
+        "base_price": 20.0,
         "price_per_employee": 1.5,
         "max_employees": 9999,
-        "features": ["Empleados ilimitados", "Todas las funciones", "API personalizada", "Soporte 24/7", "Gerente de cuenta dedicado", "Capacitación incluida"]
+        "max_users": 7,
+        "included_users": 7,
+        "trial_days": 0,
+        "features": ["Empleados ilimitados", "7 usuarios incluidos", "Todo lo del plan Pro", "Roles personalizados", "Múltiples administradores", "API personalizada", "Flujos de trabajo avanzados", "Integración SAP/Oracle/Dynamics", "Soporte 24/7", "Gerente de cuenta dedicado"],
+        "allowed_features": ["all"],
+        "restricted_features": []
+    }
+}
+
+# Feature access mapping based on plan
+FEATURE_ACCESS = {
+    "trial": {
+        "dashboard": True,
+        "payroll_calculator": True,
+        "employees": False,
+        "attendance": False,
+        "vacations": False,
+        "evaluations": False,
+        "recruitment": False,
+        "reports": False,
+        "organigrama": False,
+        "accounting": False,
+        "subscriptions": True,
+        "settings": True
+    },
+    "basic": {
+        "dashboard": True,
+        "payroll_calculator": True,
+        "employees": True,
+        "attendance": True,
+        "vacations": True,
+        "evaluations": False,
+        "recruitment": False,
+        "reports": True,
+        "organigrama": False,
+        "accounting": True,
+        "subscriptions": True,
+        "settings": True
+    },
+    "pro": {
+        "dashboard": True,
+        "payroll_calculator": True,
+        "employees": True,
+        "attendance": True,
+        "vacations": True,
+        "evaluations": True,
+        "recruitment": True,
+        "reports": True,
+        "organigrama": True,
+        "accounting": True,
+        "subscriptions": True,
+        "settings": True
+    },
+    "enterprise": {
+        "dashboard": True,
+        "payroll_calculator": True,
+        "employees": True,
+        "attendance": True,
+        "vacations": True,
+        "evaluations": True,
+        "recruitment": True,
+        "reports": True,
+        "organigrama": True,
+        "accounting": True,
+        "subscriptions": True,
+        "settings": True,
+        "custom_roles": True,
+        "api": True
     }
 }
 
