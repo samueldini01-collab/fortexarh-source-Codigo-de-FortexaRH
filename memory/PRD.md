@@ -1,209 +1,107 @@
-# FortexaRH - Product Requirements Document
+# FortexaRH - Sistema SaaS de RRHH y Nómina
 
-## Original Problem Statement
-Sistema SaaS de gestión de Recursos Humanos y Nómina para República Dominicana. El sistema debe venderse mediante suscripción mensual, con precio basado también en la cantidad de empleados.
+## Problema Original
+Crear un sistema SaaS de Recursos Humanos y Nómina llamado "FortexaRH" con:
+- Suscripción mensual basada en planes
+- Precios también basados en número de empleados
+- Sistema completo de gestión de empleados, nóminas, asistencias
 
-## Core Requirements
-- **Modelo de Suscripción**: Híbrido - cuota base mensual + cargo por empleado
-- **Autenticación**: JWT (email/password) + Google Social Login
-- **Pagos**: Integración Stripe
-- **Nómina**: Cálculos específicos de República Dominicana (TSS, ISR DGII)
-- **Contabilidad**: Asientos de diario sincronizados con nómina
-- **Organigrama**: Visualización y reorganización drag-and-drop
+## Requisitos del Producto
 
-## Tech Stack
-- **Backend**: FastAPI + MongoDB (motor)
-- **Frontend**: React + Tailwind CSS + Shadcn/UI
-- **Autenticación**: JWT + Emergent Google Auth
+### Sistema de Suscripciones (Actualizado 2025-01-19)
+- **Prueba Gratuita:** 5 días (antes 14), máximo 1 empleado, solo acceso a calculadora de nómina
+- **Planes pagados:** Básico ($5/mes), Pro ($10/mes), Enterprise ($20/mes) + $1.50 por empleado
+- **Compra directa:** Los usuarios pueden comprar planes sin necesidad de prueba gratuita
+- **Restricciones de acceso:** Funciones bloqueadas según plan, con modal de upgrade
+- **Bloqueo al expirar:** Al vencer el trial, solo se puede acceder a página de suscripción
 
----
+### Planes y Características
 
-## ✅ Implemented Features (January 2026)
+| Plan | Precio Base | Empleados | Usuarios | Características Principales |
+|------|-------------|-----------|----------|----------------------------|
+| Trial | $0 | 1 | 1 | Calculadora de nómina, 5 días |
+| Básico | $5/mes | 50 | 3 | Empleados, Nómina, Asistencias, Vacaciones |
+| Pro | $10/mes | 200 | 5 | + Evaluaciones, Reclutamiento, Organigrama |
+| Enterprise | $20/mes | Ilimitado | 7 | + Roles personalizados, API, Integraciones |
 
-### Módulo de Nómina Completo (NEW)
-- [x] **Períodos de nómina**: Quincenal (1-15, 16-31) y Mensual
-- [x] **Hoja de nómina tipo Excel** con columnas:
-  - NO., Nombre, Cédula, Cargo, Salario Bruto
-  - Ingresos Adicionales: Bonos, Comisiones, Horas Extras
-  - Deducciones: SFS 3.04%, AFP 2.87%, ISR, Otros
-  - Total Ingresos, Total Deducciones, Neto a Pagar
-- [x] **Edición inline** en la hoja de nómina (clic para editar valores)
-- [x] **Flujo de trabajo**: Crear Período → Agregar Empleados → Calcular → Aprobar → Pagar
-- [x] **Horas extras detalladas**:
-  - Diurnas (+35%)
-  - Nocturnas (+15%)
-  - Fin de Semana (+100%)
-  - Días Feriados (+100%)
-- [x] **Aportes del empleador** (TSS):
-  - SFS 7.09%, AFP 7.10%, SRL 1%, INFOTEP 1%
-- [x] **Selección de cuenta bancaria** al momento del pago
-- [x] **Resumen de nómina**: Totales, Costo Empleador
+### Módulos del Sistema
+1. **Dashboard** - Panel de control general
+2. **Gestión de Empleados** - CRUD de empleados
+3. **Nómina (PayrollV2)** - Procesamiento avanzado con períodos
+4. **Calculadora de Nómina** - Herramienta de cálculo
+5. **Asistencias** - Control de entradas/salidas
+6. **Vacaciones** - Gestión de permisos
+7. **Evaluaciones** - Desempeño (Pro+)
+8. **Reclutamiento** - Gestión de candidatos (Pro+)
+9. **Organigrama** - Estructura organizacional (Pro+)
+10. **Contabilidad** - Entradas de diario
+11. **Suscripciones** - Gestión de planes
+12. **Configuración** - Ajustes de empresa
 
-### Módulo de Contabilidad (NEW)
-- [x] **Asientos de diario** con numeración automática (000001, 000002, etc.)
-- [x] **Generación automática** de asiento al pagar nómina
-- [x] **Sincronización bidireccional**: Eliminar asiento ↔ Eliminar nómina
-- [x] **Partidas automáticas** según formato:
-  - DÉBITOS: Gastos de Sueldos, H.E. Diurnas/Nocturnas/F.S./Feriados, Bonos, Comisiones
-  - CRÉDITOS: SFS, AFP, ISR, Otros descuentos, Banco (cuenta seleccionada)
-- [x] **Búsqueda** por número de asiento o fecha
-- [x] **Exportación** a CSV/Excel
-- [x] **Catálogo de cuentas predefinido** (editable por el usuario)
-- [x] **CRUD completo** de cuentas contables
+## Lo Implementado
 
-### Catálogo de Cuentas Predefinido
-| Código | Nombre | Tipo |
-|--------|--------|------|
-| 5101 | Gastos de Sueldos y Salarios | Gasto |
-| 5102 | Gastos de Horas Extras Diurnas | Gasto |
-| 5103 | Gastos de Horas Extras Nocturnas | Gasto |
-| 5104 | Gastos de Horas Extras F.S. | Gasto |
-| 5105 | Gastos de Horas Extras Feriados | Gasto |
-| 5106 | Gastos de Bonificaciones | Gasto |
-| 5107 | Gastos de Comisiones | Gasto |
-| 5201-5204 | Aportes Patronales TSS | Gasto |
-| 2201 | Deducciones SFS por Pagar (3.04%) | Pasivo |
-| 2202 | Deducciones AFP por Pagar (2.87%) | Pasivo |
-| 2203 | Retención ISR por Pagar | Pasivo |
-| 2204 | Descuentos Adicionales por Pagar | Pasivo |
-| 1101 | Banco - Cuenta Nómina | Activo |
+### 2025-01-19 - Actualización de Suscripciones
+- ✅ Prueba gratuita reducida a 5 días
+- ✅ Límite de 1 empleado en prueba
+- ✅ Solo acceso a calculadora de nómina en trial
+- ✅ Botones "Comprar Plan" y "Probar 5 días gratis" en cada plan
+- ✅ Banner de trial en sidebar con días restantes
+- ✅ Modal de upgrade cuando se intenta acceder a función bloqueada
+- ✅ Endpoint /health para Kubernetes deployment
+- ✅ Contexto de suscripción en frontend (useSubscription)
+- ✅ Control de acceso basado en plan
 
-### Empleados (Rediseñado)
-- [x] Formulario multi-tab con 6 pestañas
-- [x] Datos completos: personales, contrato, descuentos, pago, emergencia
-- [x] Campos DR específicos: cédula, nacionalidad, TSS
+### Anteriormente Completado
+- Payroll V2 con períodos y novedades
+- Generación de archivos TSS (Autodeterminación, Novedades)
+- Módulo de Organigrama completo
+- Dashboard de Nómina con analytics
+- Configuración de empresa y personalización de menú
+- Autenticación con JWT y Google OAuth
 
-### Calculadora de Nómina
-- [x] ISR según tablas DGII 2023
-- [x] TSS (SFS, AFP) empleado y empleador
-- [x] Exportación a PDF con tabla ISR
+## Backlog (P0-P2)
 
-### Otros Módulos
-- [x] Dashboard, Organigrama, Vacaciones, Asistencias
-- [x] Evaluaciones, Reclutamiento, Plantillas, Reportes
-- [x] Branding FortexaRH (logo/favicon)
+### P0 - Crítico
+- Integración completa con Stripe (webhooks, pagos recurrentes)
+- Pruebas end-to-end del flujo de pago
 
----
+### P1 - Alto
+- Implementar roles personalizados (Enterprise)
+- Formularios DGII (IR-3, IR-17)
+- Bloqueo automático cuando expira suscripción
 
-## API Endpoints - Nómina V2
+### P2 - Medio
+- Integraciones Enterprise (QuickBooks, SAP, Oracle)
+- Refactorizar server.py (>5000 líneas)
+- Portal de autoservicio para empleados
 
-```
-GET    /api/payroll-v2/periods           - Lista períodos
-POST   /api/payroll-v2/periods           - Crear período
-GET    /api/payroll-v2/periods/{id}      - Detalle con empleados
-DELETE /api/payroll-v2/periods/{id}      - Eliminar (+ asiento)
-POST   /api/payroll-v2/periods/{id}/add-employees  - Agregar empleados activos
-POST   /api/payroll-v2/periods/{id}/calculate      - Calcular nóminas
-POST   /api/payroll-v2/periods/{id}/approve        - Aprobar
-POST   /api/payroll-v2/periods/{id}/pay            - Pagar + generar asiento
+## Arquitectura
 
-GET    /api/payroll-v2/entries/{id}      - Detalle entrada
-PUT    /api/payroll-v2/entries/{id}      - Actualizar (inline edit)
-DELETE /api/payroll-v2/entries/{id}      - Eliminar empleado del período
-```
-
-## API Endpoints - Contabilidad
-
-```
-GET    /api/accounting/accounts          - Lista cuentas
-POST   /api/accounting/accounts          - Crear cuenta
-PUT    /api/accounting/accounts/{id}     - Actualizar cuenta
-DELETE /api/accounting/accounts/{id}     - Eliminar cuenta
-POST   /api/accounting/accounts/reset-defaults  - Restablecer predefinidas
-
-GET    /api/accounting/journal-entries           - Lista asientos
-POST   /api/accounting/journal-entries           - Crear asiento manual
-GET    /api/accounting/journal-entries/search    - Buscar por número/fecha
-PUT    /api/accounting/journal-entries/{id}      - Actualizar
-DELETE /api/accounting/journal-entries/{id}      - Eliminar
-DELETE /api/accounting/journal-entries/{id}/with-payroll  - Eliminar + nómina
-```
-
----
-
-## ✅ Módulos de Configuración y Personalización (Completado - Enero 2026)
-- [x] **Configuración de Empresa**: 7 pestañas (General, Logo, Apariencia, Marca, Notificaciones, Integraciones, Auditoría)
-- [x] **Personalización del Menú**: Modal para ocultar/mostrar y reordenar módulos del sidebar
-  - Cambios guardados en localStorage
-  - Botón "Restablecer" para volver al menú predeterminado
-- [x] **Organigrama Mejorado**: Búsqueda, plantillas, nueva unidad/posición, vistas múltiples
-
-## ✅ P1/P2 - Templates, Moneda y Dashboard (Completado - Enero 2026)
-- [x] **Templates de Nómina**: CRUD completo para guardar configuraciones recurrentes
-- [x] **Proyectos**: Agrupar empleados por proyecto con presupuesto
-- [x] **Configuración de Moneda**: DOP + USD con tasa de cambio configurable
-- [x] **Dashboard Avanzado de Nómina**:
-  - Tarjetas de resumen (empleados, pagado YTD, salario promedio)
-  - Gráfico de tendencia mensual (bruto vs neto)
-  - Distribución por departamento (pie chart)
-  - Costo empleador vs neto (bar chart con desglose TSS)
-  - Top 10 salarios
-  - Sistema de alertas (nóminas pendientes, datos incompletos)
-
-## ✅ Fase 2 - Archivos TSS y Reportes DGII (Completado - Enero 2026)
-- [x] **TSS Autodeterminación (v5.3)**: Descarga Excel con formato oficial TSS
-  - Datos de empleados: cédula, nombres, salario cotizable, ISR
-  - Aportes: SFS, AFP, INFOTEP
-  - Reporte de contribuciones
-- [x] **TSS Novedades (v5.1)**: Descarga Excel con altas/bajas del período
-  - Tipos de novedad: IN (Ingreso), SA (Salida), VC, LM, etc.
-- [x] **IR-3 (Retenciones)**: Declaración de retenciones a asalariados
-  - Lista de empleados con ISR retenido
-  - Totales por período
-- [x] **IR-17 (Declaración Mensual)**: Resumen de ISR y aportes patronales
-  - Sección A: Retenciones a asalariados
-  - Sección B: Aportes patronales TSS
-- [x] **UI de Reportes mejorada**: 3 secciones (Exportar Nóminas, Archivos TSS, Reportes DGII)
-- [x] **12/12 Tests Automatizados** pasando (100%)
-
-## ✅ Fase 1 - Nómina Avanzada (Completado - Enero 2026)
-- [x] **Tipos de Nómina**: REG, TEMP, BONO, REG13 (Regalía Pascual), VAC, LIQ
-- [x] **Filtro por Departamento**: Crear nóminas específicas por departamento
-- [x] **Novedades (Ingresos/Deducciones Manuales)**:
-  - Ingresos: COM (Comisiones), BON (Bonificación), INC (Incentivos), VIA (Viáticos)
-  - Deducciones: PREST (Préstamo), ANTIC (Anticipo), COOP (Cooperativa)
-- [x] **Cálculos TSS**: SFS 3.07%, AFP 2.87%
-- [x] **Flujo Completo**: Crear → Agregar Empleados → Calcular → Aprobar → Pagar
-- [x] **Generación Automática de Asientos Contables** al pagar nómina
-- [x] **16/16 Tests Automatizados** pasando (100%)
-
-## 📋 Pending Features (Backlog)
-
-### P0 - Alta Prioridad
-- [ ] Exportación de nómina a PDF (formato similar al Excel actual)
-
-### P1 - Media Prioridad
-- [ ] Templates de Nómina Recurrentes
-- [ ] Agrupación avanzada (proyecto, moneda, grupos personalizados)
-- [ ] Integración QuickBooks para enviar asientos
-- [ ] Envío de recibos por email (Resend)
-- [ ] Exportar organigrama como imagen
-
-### P2 - Baja Prioridad
-- [ ] Portal de empleados (autoservicio)
-- [ ] Dashboard de métricas avanzadas
-- [ ] App móvil
-
----
-
-## Test Credentials
-- Email: test@test.com
-- Password: test123
-
-## Test Suite
-- **Payroll V2 Tests:** `/app/tests/test_payroll_v2.py` (16 tests)
-- **Test Reports:** `/app/test_reports/iteration_5.json`
-
-## Files Structure
 ```
 /app/
 ├── backend/
-│   └── server.py (endpoints nómina v2, contabilidad)
-├── frontend/src/pages/
-│   ├── PayrollV2Page.jsx    - Hoja de nómina tipo Excel
-│   ├── AccountingPage.jsx   - Asientos y cuentas
-│   ├── EmployeesPage.jsx    - Gestión empleados
-│   └── ...
-└── memory/
-    └── PRD.md
+│   ├── server.py          # API principal FastAPI
+│   ├── tss_generator.py   # Generación archivos TSS
+│   └── requirements.txt
+└── frontend/
+    ├── src/
+    │   ├── App.js         # + SubscriptionContext
+    │   ├── components/
+    │   │   └── DashboardLayout.jsx  # + Control de acceso
+    │   └── pages/
+    │       ├── LandingPage.jsx      # + Botones compra directa
+    │       ├── SubscriptionsPage.jsx
+    │       └── ...
+    └── package.json
 ```
+
+## Integraciones
+- **Stripe:** Claves disponibles, implementación en progreso
+- **Google Auth:** Emergent-managed, funcionando
+- **Resend, QuickBooks, SAP, Oracle:** Pendientes
+
+## Notas Técnicas
+- MongoDB para persistencia
+- JWT para autenticación
+- Hot reload habilitado
+- CORS configurado para producción
