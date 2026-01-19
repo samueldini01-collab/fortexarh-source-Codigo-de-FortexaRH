@@ -2430,24 +2430,31 @@ async def stripe_webhook(request: Request):
     body = await request.body()
     signature = request.headers.get("Stripe-Signature", "")
     
-    api_key = os.environ.get('STRIPE_API_KEY')
-    stripe_checkout = StripeCheckout(api_key=api_key, webhook_url="")
+    webhook_secret = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
     
     try:
-        webhook_response = await stripe_checkout.handle_webhook(body, signature)
+        # Verify webhook signature
+        event = stripe.Webhook.construct_event(
+            body, signature, webhook_secret
+        )
         
-        logging.info(f"Webhook received: event={webhook_response.event_type}, session={webhook_response.session_id}, status={webhook_response.payment_status}")
+        logging.info(f"Webhook received: type={event['type']}")
         
-        if webhook_response.payment_status == "paid":
-            # Check if already processed
-            transaction = await db.payment_transactions.find_one(
-                {"session_id": webhook_response.session_id},
-                {"_id": 0}
-            )
+        if event['type'] == 'checkout.session.completed':
+            session = event['data']['object']
+            session_id = session['id']
+            payment_status = session.get('payment_status', '')
             
-            if transaction and transaction.get("payment_status") != "paid":
-                # Update transaction
-                await db.payment_transactions.update_one(
+            if payment_status == "paid":
+                # Check if already processed
+                transaction = await db.payment_transactions.find_one(
+                    {"session_id": session_id},
+                    {"_id": 0}
+                )
+                
+                if transaction and transaction.get("payment_status") != "paid":
+                    # Update transaction
+                    await db.payment_transactions.update_one(
                     {"session_id": webhook_response.session_id},
                     {"$set": {
                         "payment_status": "paid", 
