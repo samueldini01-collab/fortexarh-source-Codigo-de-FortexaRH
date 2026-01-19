@@ -36,6 +36,7 @@ import DGIIReportsPage from "@/pages/DGIIReportsPage";
 import LoansPage from "@/pages/LoansPage";
 import MetricsDashboardPage from "@/pages/MetricsDashboardPage";
 import ReportsAdvancedPage from "@/pages/ReportsAdvancedPage";
+import EmployeePortalPage from "@/pages/EmployeePortalPage";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
