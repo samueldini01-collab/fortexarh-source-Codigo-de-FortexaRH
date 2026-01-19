@@ -604,12 +604,16 @@ export default function EmployeesPage() {
                     </div>
                     <div className="space-y-2">
                       <Label>Nacionalidad</Label>
-                      <Input
-                        value={formData.nationality}
-                        onChange={(e) => setFormData({...formData, nationality: e.target.value})}
-                        placeholder="Dominicana"
-                        className="bg-slate-50 border-slate-200 focus:bg-white"
-                      />
+                      <Select value={formData.nationality} onValueChange={(v) => setFormData({...formData, nationality: v})}>
+                        <SelectTrigger className="bg-slate-50 border-slate-200">
+                          <SelectValue placeholder="Seleccionar país" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {countries.map(country => (
+                            <SelectItem key={country} value={country}>{country}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
 
