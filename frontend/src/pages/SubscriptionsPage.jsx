@@ -64,6 +64,15 @@ export default function SubscriptionsPage() {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [employeeCount, setEmployeeCount] = useState(5);
   const [additionalUsers, setAdditionalUsers] = useState(0);
+  
+  // Cancellation flow states
+  const [showCancelFlow, setShowCancelFlow] = useState(false);
+  const [cancelStep, setCancelStep] = useState(1); // 1: retention offer, 2: survey, 3: confirm
+  const [cancellationInfo, setCancellationInfo] = useState(null);
+  const [cancelReason, setCancelReason] = useState("");
+  const [cancelFeedback, setCancelFeedback] = useState("");
+  const [cancelWouldReturn, setCancelWouldReturn] = useState(null);
+  const [processingCancel, setProcessingCancel] = useState(false);
 
   // Check for payment return from Stripe
   useEffect(() => {
