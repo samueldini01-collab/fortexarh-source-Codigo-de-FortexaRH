@@ -38,6 +38,7 @@ const navigation = [
   { name: "Empleados", href: "/employees", icon: Users },
   { name: "Organigrama", href: "/organigrama", icon: Network },
   { name: "Nómina", href: "/payroll-v2", icon: DollarSign },
+  { name: "Dashboard Nómina", href: "/payroll-dashboard", icon: BarChart3 },
   { name: "Calculadora", href: "/payroll-calculator", icon: Calculator },
   { name: "Contabilidad", href: "/accounting", icon: BookOpen },
   { name: "Config. Nómina", href: "/payroll-config", icon: Settings2 },
@@ -46,7 +47,6 @@ const navigation = [
   { name: "Evaluaciones", href: "/evaluations", icon: Target },
   { name: "Reclutamiento", href: "/recruitment", icon: Briefcase },
   { name: "Plantillas", href: "/templates", icon: FileText },
-  { name: "Reportes", href: "/reports", icon: BarChart3 },
 ];
 
 export default function DashboardLayout({ children, title }) {
