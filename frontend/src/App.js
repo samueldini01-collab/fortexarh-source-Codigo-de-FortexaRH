@@ -332,6 +332,7 @@ function AppRouter() {
       <Route path="/loans" element={<ProtectedRoute><LoansPage /></ProtectedRoute>} />
       <Route path="/metrics-dashboard" element={<ProtectedRoute><MetricsDashboardPage /></ProtectedRoute>} />
       <Route path="/reports-advanced" element={<ProtectedRoute><ReportsAdvancedPage /></ProtectedRoute>} />
+      <Route path="/employee-portal" element={<EmployeePortalPage />} />
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />

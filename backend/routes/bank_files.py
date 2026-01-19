@@ -74,8 +74,9 @@ async def generate_bank_file(period_id: str, bank_id: str, request: Request):
     if not period:
         raise HTTPException(status_code=404, detail="Período no encontrado")
     
-    if period.get("status") != "processed":
-        raise HTTPException(status_code=400, detail="El período debe estar procesado")
+    # Allow generating bank files for approved or paid periods
+    if period.get("status") not in ["approved", "paid", "processed"]:
+        raise HTTPException(status_code=400, detail="El período debe estar aprobado o pagado")
     
     # Get payroll entries
     payrolls = await db.payroll_entries.find(
