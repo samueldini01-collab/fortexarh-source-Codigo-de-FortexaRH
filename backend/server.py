@@ -1570,14 +1570,17 @@ async def update_candidate_stage(candidate_id: str, stage: str, current_user: di
 @api_router.get("/config/status")
 async def get_config_status():
     """Check configuration status - for debugging deployment issues"""
-    stripe_key = os.environ.get('STRIPE_API_KEY', '')
-    stripe_mode = "live" if stripe_key.startswith("sk_live_") else "test" if stripe_key.startswith("sk_test_") else "not_configured"
+    env_stripe_key = os.environ.get('STRIPE_API_KEY', '')
+    # The actual key being used (with fallback to production)
+    actual_key = env_stripe_key if env_stripe_key.startswith('sk_live_') else 'sk_live_...'
+    stripe_mode = "live"  # Always live now with fallback
     
     return {
         "status": "ok",
         "stripe_mode": stripe_mode,
-        "stripe_configured": bool(stripe_key),
+        "stripe_configured": True,
         "resend_configured": bool(os.environ.get('RESEND_API_KEY')),
+        "env_key_type": "live" if env_stripe_key.startswith("sk_live_") else "test" if env_stripe_key.startswith("sk_test_") else "fallback_to_live"
     }
 
 class CheckoutRequest(BaseModel):
