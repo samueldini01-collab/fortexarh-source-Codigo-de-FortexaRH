@@ -418,12 +418,12 @@ export default function ReportsAdvancedPage() {
                   {(selectedReport === 'payroll' || selectedReport === 'attendance') && (
                     <div>
                       <Label>Período de Nómina</Label>
-                      <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+                      <Select value={selectedPeriod || "all"} onValueChange={(v) => setSelectedPeriod(v === "all" ? "" : v)}>
                         <SelectTrigger>
                           <SelectValue placeholder="Seleccionar período" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Todos</SelectItem>
+                          <SelectItem value="all">Todos</SelectItem>
                           {periods.map(period => (
                             <SelectItem key={period.period_id} value={period.period_id}>
                               {period.period_name}
@@ -436,12 +436,12 @@ export default function ReportsAdvancedPage() {
                   
                   <div>
                     <Label>Empleado Específico</Label>
-                    <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
+                    <Select value={selectedEmployee || "all"} onValueChange={(v) => setSelectedEmployee(v === "all" ? "" : v)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Todos los empleados" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Todos</SelectItem>
+                        <SelectItem value="all">Todos</SelectItem>
                         {employees.map(emp => (
                           <SelectItem key={emp.employee_id} value={emp.employee_id}>
                             {emp.first_name} {emp.last_name}
