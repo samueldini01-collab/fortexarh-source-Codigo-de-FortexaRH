@@ -1943,7 +1943,7 @@ async def create_checkout(data: CheckoutRequest, request: Request, current_user:
 async def get_checkout_status(session_id: str, current_user: dict = Depends(get_current_user)):
     """Poll payment status and update subscription if paid"""
     api_key = os.environ.get('STRIPE_API_KEY')
-    stripe_checkout = StripeCheckout(api_key=api_key, webhook_url="")
+    stripe.api_key = api_key
     
     # Check if already processed to avoid duplicate processing
     transaction = await db.payment_transactions.find_one(
@@ -1964,7 +1964,9 @@ async def get_checkout_status(session_id: str, current_user: dict = Depends(get_
         }
     
     try:
-        status = await stripe_checkout.get_checkout_status(session_id)
+        session = stripe.checkout.Session.retrieve(session_id)
+        payment_status = session.payment_status
+        status_value = session.status
     except Exception as e:
         logging.error(f"Error checking checkout status: {e}")
         return {
@@ -1974,14 +1976,14 @@ async def get_checkout_status(session_id: str, current_user: dict = Depends(get_
         }
     
     # Process successful payment
-    if status.payment_status == "paid":
+    if payment_status == "paid":
         # Update transaction
         await db.payment_transactions.update_one(
             {"session_id": session_id},
             {"$set": {
                 "payment_status": "paid", 
                 "paid_at": datetime.now(timezone.utc).isoformat(),
-                "stripe_status": status.status
+                "stripe_status": status_value
             }}
         )
         
