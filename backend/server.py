@@ -3295,7 +3295,7 @@ async def export_period_to_excel(period_id: str, current_user: dict = Depends(ge
 
 @api_router.get("/payroll-v2/periods/{period_id}/export/tss")
 async def export_period_to_tss(period_id: str, current_user: dict = Depends(get_current_user)):
-    """Exportar período al formato TSS para Autodeterminación"""
+    """Exportar período al formato TSS JSON (datos)"""
     company_id = current_user.get("company_id")
     
     period = await db.payroll_periods.find_one(
@@ -3305,27 +3305,24 @@ async def export_period_to_tss(period_id: str, current_user: dict = Depends(get_
     if not period:
         raise HTTPException(status_code=404, detail="Período no encontrado")
     
-    # Obtener datos de la empresa
     company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
-    
     entries = await db.payroll_entries.find(
         {"period_id": period_id, "company_id": company_id},
         {"_id": 0}
     ).to_list(1000)
     
-    # Formato TSS Autodeterminación
     tss_data = {
         "header": {
             "rnc_cedula": company.get("rnc", "") if company else "",
-            "periodo": f"{period['month']:02d}{period['year']}",  # MMAAAA
+            "periodo": f"{period['month']:02d}{period['year']}",
             "version": "5.3",
             "num_empleados": len(entries)
         },
-        "employees": []
+        "employees": [],
+        "summary": {}
     }
     
     for entry in entries:
-        # Obtener datos del empleado
         employee = await db.employees.find_one(
             {"employee_id": entry["employee_id"], "company_id": company_id},
             {"_id": 0}
@@ -3333,7 +3330,7 @@ async def export_period_to_tss(period_id: str, current_user: dict = Depends(get_
         
         emp_data = {
             "clave_nomina": entry.get("entry_id", "")[:8],
-            "tipo_doc": "C",  # C = Cédula, P = Pasaporte, N = NSS
+            "tipo_doc": "C",
             "numero_doc": entry.get("employee_document", "").replace("-", ""),
             "nombres": employee.get("first_name", "") if employee else entry.get("employee_name", "").split()[0],
             "primer_apellido": employee.get("last_name", "").split()[0] if employee else "",
@@ -3350,11 +3347,16 @@ async def export_period_to_tss(period_id: str, current_user: dict = Depends(get_
             "regalia_pascual": 0,
             "preaviso_cesantia": 0,
             "retencion_pension": 0,
-            "salario_infotep": entry.get("gross_salary", 0)
+            "salario_infotep": entry.get("gross_salary", 0),
+            "retencion_sfs": entry.get("sfs_employee", 0),
+            "contribucion_afp": entry.get("afp_employee", 0),
+            "riesgo_laboral": entry.get("srl_employer", 0),
+            "total_aportes": entry.get("sfs_employee", 0) + entry.get("afp_employee", 0),
+            "total_pagado": entry.get("net_salary", 0),
+            "ingresos_exentos": 0
         }
         tss_data["employees"].append(emp_data)
     
-    # Calcular resumen de contribuciones
     tss_data["summary"] = {
         "total_salario_cotizable": sum(e["salario_cotizable_sdss"] for e in tss_data["employees"]),
         "total_aporte_sfs_empleado": sum(entry.get("sfs_employee", 0) for entry in entries),
@@ -3367,6 +3369,276 @@ async def export_period_to_tss(period_id: str, current_user: dict = Depends(get_
     }
     
     return tss_data
+
+# Import TSS generator
+from tss_generator import (
+    create_tss_autodeterminacion_excel,
+    create_tss_novedades_excel,
+    create_ir3_report,
+    create_ir17_report
+)
+
+@api_router.get("/payroll-v2/periods/{period_id}/export/tss-autodeterminacion")
+async def export_tss_autodeterminacion_excel(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Descargar archivo Excel TSS Autodeterminación v5.3"""
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    if period.get("status") != "paid":
+        raise HTTPException(status_code=400, detail="Solo se pueden exportar períodos pagados")
+    
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    employees_data = []
+    for entry in entries:
+        employee = await db.employees.find_one(
+            {"employee_id": entry["employee_id"], "company_id": company_id},
+            {"_id": 0}
+        )
+        
+        emp_data = {
+            "clave_nomina": entry.get("entry_id", "")[:8],
+            "tipo_doc": "C",
+            "numero_doc": entry.get("employee_document", "").replace("-", ""),
+            "nombres": employee.get("first_name", "") if employee else entry.get("employee_name", "").split()[0],
+            "primer_apellido": (employee.get("last_name", "").split()[0] if employee and employee.get("last_name") else ""),
+            "segundo_apellido": (employee.get("last_name", "").split()[-1] if employee and len(employee.get("last_name", "").split()) > 1 else ""),
+            "sexo": "M" if employee and employee.get("gender") == "Masculino" else "F",
+            "fecha_nacimiento": employee.get("birth_date", "") if employee else "",
+            "salario_cotizable_sdss": entry.get("gross_salary", 0),
+            "aporte_voluntario": 0,
+            "salario_isr": entry.get("gross_salary", 0),
+            "tipo_ingreso": "Normal",
+            "otras_remuneraciones": entry.get("total_income_novelties", 0),
+            "rnc_agente_ret": "",
+            "remuneracion_otros_agentes": 0,
+            "saldo_favor": 0,
+            "regalia_pascual": entry.get("regalia_pascual", 0) if period.get("payroll_type") == "REG13" else 0,
+            "preaviso_cesantia": 0,
+            "retencion_pension": 0,
+            "salario_infotep": entry.get("gross_salary", 0),
+            "retencion_sfs": entry.get("sfs_employee", 0),
+            "contribucion_afp": entry.get("afp_employee", 0),
+            "riesgo_laboral": entry.get("srl_employer", 0),
+            "total_aportes": entry.get("sfs_employee", 0) + entry.get("afp_employee", 0),
+            "total_pagado": entry.get("net_salary", 0),
+            "ingresos_exentos": 0
+        }
+        employees_data.append(emp_data)
+    
+    rnc = company.get("rnc", "") if company else ""
+    periodo = f"{period['month']:02d}{period['year']}"
+    
+    excel_file = create_tss_autodeterminacion_excel(rnc, periodo, employees_data)
+    
+    filename = f"TSS_Autodeterminacion_{periodo}.xls"
+    return Response(
+        content=excel_file.getvalue(),
+        media_type="application/vnd.ms-excel",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+
+@api_router.get("/payroll-v2/periods/{period_id}/export/tss-novedades")
+async def export_tss_novedades_excel(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Descargar archivo Excel TSS Novedades v5.1 - Altas/Bajas del período"""
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    # Detectar novedades: empleados nuevos (IN), salidos (SA), etc.
+    novedades_data = []
+    for entry in entries:
+        employee = await db.employees.find_one(
+            {"employee_id": entry["employee_id"], "company_id": company_id},
+            {"_id": 0}
+        )
+        
+        # Determinar tipo de novedad basado en datos del empleado
+        tipo_novedad = "IN"  # Default: Ingreso normal
+        fecha_inicio = period.get("start_date", "")
+        fecha_fin = period.get("end_date", "")
+        
+        if employee:
+            hire_date = employee.get("hire_date", "")
+            # Si fecha de contratación está dentro del período = Ingreso nuevo
+            if hire_date and hire_date >= period.get("start_date", ""):
+                tipo_novedad = "IN"
+                fecha_inicio = hire_date
+            
+            # Si hay fecha de terminación = Salida
+            termination_date = employee.get("termination_date", "")
+            if termination_date and termination_date <= period.get("end_date", ""):
+                tipo_novedad = "SA"
+                fecha_fin = termination_date
+        
+        nov_data = {
+            "clave_nomina": entry.get("entry_id", "")[:8],
+            "tipo_novedad": tipo_novedad,
+            "fecha_inicio": fecha_inicio,
+            "fecha_fin": fecha_fin,
+            "tipo_doc": "C",
+            "numero_doc": entry.get("employee_document", "").replace("-", ""),
+            "nombres": employee.get("first_name", "") if employee else entry.get("employee_name", "").split()[0],
+            "primer_apellido": (employee.get("last_name", "").split()[0] if employee and employee.get("last_name") else ""),
+            "segundo_apellido": (employee.get("last_name", "").split()[-1] if employee and len(employee.get("last_name", "").split()) > 1 else ""),
+            "sexo": "M" if employee and employee.get("gender") == "Masculino" else "F",
+            "fecha_nacimiento": employee.get("birth_date", "") if employee else "",
+            "salario_cotizable_sdss": entry.get("gross_salary", 0),
+            "aporte_voluntario": 0,
+            "tipo_ingreso": "Normal",
+            "salario_isr": entry.get("gross_salary", 0),
+            "otras_remuneraciones": entry.get("total_income_novelties", 0),
+            "rnc_agente_ret": "",
+            "remuneracion_otros_agentes": 0,
+            "saldo_favor": 0,
+            "regalia_pascual": 0,
+            "preaviso_cesantia": 0,
+            "retencion_pension": 0,
+            "salario_infotep": entry.get("gross_salary", 0)
+        }
+        novedades_data.append(nov_data)
+    
+    rnc = company.get("rnc", "") if company else ""
+    periodo = f"{period['month']:02d}{period['year']}"
+    
+    excel_file = create_tss_novedades_excel(rnc, periodo, novedades_data)
+    
+    filename = f"TSS_Novedades_{periodo}.xls"
+    return Response(
+        content=excel_file.getvalue(),
+        media_type="application/vnd.ms-excel",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+
+@api_router.get("/payroll-v2/periods/{period_id}/export/ir3")
+async def export_ir3_excel(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Descargar reporte IR-3 (Retenciones de Asalariados) en Excel"""
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    employees_data = []
+    for entry in entries:
+        employee = await db.employees.find_one(
+            {"employee_id": entry["employee_id"], "company_id": company_id},
+            {"_id": 0}
+        )
+        
+        gross = entry.get("gross_salary", 0)
+        tss_deduction = entry.get("sfs_employee", 0) + entry.get("afp_employee", 0)
+        
+        emp_data = {
+            "cedula": entry.get("employee_document", ""),
+            "nombre_completo": entry.get("employee_name", ""),
+            "salario_bruto": gross,
+            "salario_cotizable": gross,
+            "exenciones": tss_deduction,
+            "renta_neta_gravable": gross - tss_deduction,
+            "isr_calculado": entry.get("isr", 0),
+            "isr_retenido": entry.get("isr", 0)
+        }
+        employees_data.append(emp_data)
+    
+    rnc = company.get("rnc", "") if company else ""
+    company_name = company.get("name", "") if company else ""
+    periodo = f"{period['month']:02d}{period['year']}"
+    
+    excel_file = create_ir3_report(rnc, company_name, periodo, employees_data)
+    
+    filename = f"IR3_Retenciones_{periodo}.xls"
+    return Response(
+        content=excel_file.getvalue(),
+        media_type="application/vnd.ms-excel",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+
+@api_router.get("/payroll-v2/periods/{period_id}/export/ir17")
+async def export_ir17_excel(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Descargar reporte IR-17 (Declaración Mensual ISR) en Excel"""
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    # Calcular resumen
+    total_sueldos = sum(e.get("gross_salary", 0) for e in entries)
+    total_sfs_emp = sum(e.get("sfs_employee", 0) for e in entries)
+    total_afp_emp = sum(e.get("afp_employee", 0) for e in entries)
+    total_isr = sum(e.get("isr", 0) for e in entries)
+    total_sfs_patron = sum(e.get("sfs_employer", 0) for e in entries)
+    total_afp_patron = sum(e.get("afp_employer", 0) for e in entries)
+    total_srl = sum(e.get("srl_employer", 0) for e in entries)
+    total_infotep = sum(e.get("infotep_employer", 0) for e in entries)
+    
+    summary = {
+        "cantidad_empleados": len(entries),
+        "total_sueldos": total_sueldos,
+        "total_tss_empleado": total_sfs_emp + total_afp_emp,
+        "otras_deducciones": 0,
+        "renta_neta_gravable": total_sueldos - (total_sfs_emp + total_afp_emp),
+        "isr_retenido": total_isr,
+        "sfs_empleador": total_sfs_patron,
+        "afp_empleador": total_afp_patron,
+        "srl": total_srl,
+        "infotep": total_infotep,
+        "total_aportes_patronales": total_sfs_patron + total_afp_patron + total_srl + total_infotep,
+        "total_tss": total_sfs_emp + total_afp_emp + total_sfs_patron + total_afp_patron + total_srl + total_infotep
+    }
+    
+    rnc = company.get("rnc", "") if company else ""
+    company_name = company.get("name", "") if company else ""
+    periodo = f"{period['month']:02d}{period['year']}"
+    
+    excel_file = create_ir17_report(rnc, company_name, periodo, summary)
+    
+    filename = f"IR17_Declaracion_{periodo}.xls"
+    return Response(
+        content=excel_file.getvalue(),
+        media_type="application/vnd.ms-excel",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
 
 @api_router.post("/payroll-v2/periods/{period_id}/calculate")
 async def calculate_period(period_id: str, current_user: dict = Depends(get_current_user)):
