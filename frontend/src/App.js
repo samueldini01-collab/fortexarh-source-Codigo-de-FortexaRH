@@ -215,6 +215,7 @@ function AppRouter() {
       <Route path="/templates" element={<ProtectedRoute><TemplatesPage /></ProtectedRoute>} />
       <Route path="/payroll-calculator" element={<ProtectedRoute><PayrollCalculatorPage /></ProtectedRoute>} />
       <Route path="/accounting" element={<ProtectedRoute><AccountingPage /></ProtectedRoute>} />
+      <Route path="/payroll-v2" element={<ProtectedRoute><PayrollV2Page /></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
