@@ -128,6 +128,74 @@ export default function Dashboard() {
   return (
     <DashboardLayout title="Dashboard">
       <div className="space-y-8" data-testid="dashboard-page">
+        
+        {/* Pro Plan Promotional Banner - Only for Basic plan users */}
+        {isBasicPlan && showProBanner && (
+          <div className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-700 rounded-2xl p-6 text-white shadow-lg">
+            {/* Background decoration */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+            
+            {/* Close button */}
+            <button 
+              onClick={() => setShowProBanner(false)}
+              className="absolute top-4 right-4 p-1 hover:bg-white/20 rounded-full transition-colors"
+              aria-label="Cerrar banner"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="relative flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <Sparkles className="w-5 h-5 text-amber-300" />
+                  <span className="text-sm font-medium text-purple-200">Actualiza a FortexaRH Pro</span>
+                </div>
+                <h3 className="text-2xl font-bold mb-2">Desbloquea todo el potencial de tu gestión de RRHH</h3>
+                <p className="text-purple-100 text-sm mb-4 max-w-xl">
+                  Con el plan Pro obtienes acceso a herramientas avanzadas que transformarán la manera en que gestionas tu equipo.
+                </p>
+                
+                {/* Feature highlights */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
+                    <Briefcase className="w-4 h-4 text-amber-300" />
+                    <span className="text-sm">Reclutamiento</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
+                    <UserCheck className="w-4 h-4 text-amber-300" />
+                    <span className="text-sm">Portal Empleados</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
+                    <Target className="w-4 h-4 text-amber-300" />
+                    <span className="text-sm">Evaluaciones</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
+                    <Network className="w-4 h-4 text-amber-300" />
+                    <span className="text-sm">Organigrama</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex flex-col items-start lg:items-end gap-2">
+                <div className="text-right">
+                  <p className="text-purple-200 text-sm">Desde solo</p>
+                  <p className="text-3xl font-bold">$10<span className="text-lg font-normal">/mes</span></p>
+                  <p className="text-purple-200 text-xs">+ $1.50 por empleado</p>
+                </div>
+                <Button 
+                  onClick={() => navigate('/subscriptions')}
+                  className="bg-white text-purple-700 hover:bg-purple-50 font-semibold px-6"
+                  data-testid="upgrade-pro-btn"
+                >
+                  Actualizar a Pro
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+        
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
