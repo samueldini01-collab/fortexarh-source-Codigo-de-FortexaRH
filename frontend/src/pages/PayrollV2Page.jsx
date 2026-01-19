@@ -872,7 +872,7 @@ export default function PayrollV2Page() {
           <TabsContent value="reportes" className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Card>
-                <CardHeader><CardTitle>Exportar Nóminas</CardTitle><CardDescription>Descarga en formato Excel o PDF</CardDescription></CardHeader>
+                <CardHeader><CardTitle>Exportar Nóminas</CardTitle><CardDescription>Descarga en formato Excel o CSV</CardDescription></CardHeader>
                 <CardContent>
                   {periods.filter(p => ['calculated', 'approved', 'paid'].includes(p.status)).length === 0 ? (
                     <p className="text-slate-500 text-center py-4">No hay nóminas para exportar</p>
@@ -882,7 +882,7 @@ export default function PayrollV2Page() {
                         <div key={period.period_id} className="flex items-center justify-between p-3 border rounded-lg">
                           <div><p className="font-medium">{period.description}</p>{getStatusBadge(period.status)}</div>
                           <div className="flex gap-2">
-                            <Button variant="outline" size="sm" onClick={() => handleExportExcel(period.period_id)}><FileSpreadsheet className="w-4 h-4 mr-1" />Excel</Button>
+                            <Button variant="outline" size="sm" onClick={() => handleExportExcel(period.period_id)}><FileSpreadsheet className="w-4 h-4 mr-1" />CSV</Button>
                           </div>
                         </div>
                       ))}
@@ -890,18 +890,39 @@ export default function PayrollV2Page() {
                   )}
                 </CardContent>
               </Card>
+              
+              {/* TSS Files Section */}
               <Card>
-                <CardHeader><CardTitle>Archivos TSS / DGII</CardTitle><CardDescription>Autodeterminación e IR-3/IR-17</CardDescription></CardHeader>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-blue-600" />
+                    Archivos TSS
+                  </CardTitle>
+                  <CardDescription>Tesorería de la Seguridad Social (v5.3 / v5.1)</CardDescription>
+                </CardHeader>
                 <CardContent>
                   {periods.filter(p => p.status === 'paid').length === 0 ? (
                     <p className="text-slate-500 text-center py-4">Pague una nómina para generar archivos TSS</p>
                   ) : (
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       {periods.filter(p => p.status === 'paid').map(period => (
-                        <div key={period.period_id} className="flex items-center justify-between p-3 border rounded-lg">
-                          <div><p className="font-medium">{period.description}</p><p className="text-xs text-slate-500">Período: {period.month}/{period.year}</p></div>
-                          <div className="flex gap-2">
-                            <Button variant="outline" size="sm" onClick={() => handleExportTSS(period.period_id)}><Download className="w-4 h-4 mr-1" />TSS</Button>
+                        <div key={period.period_id} className="p-3 border rounded-lg bg-slate-50">
+                          <div className="flex items-center justify-between mb-2">
+                            <div>
+                              <p className="font-medium">{period.description}</p>
+                              <p className="text-xs text-slate-500">{period.month}/{period.year} • {period.employee_count} empleados</p>
+                            </div>
+                            {getPayrollTypeBadge(period.payroll_type)}
+                          </div>
+                          <div className="flex gap-2 flex-wrap">
+                            <Button variant="outline" size="sm" className="text-blue-600 border-blue-200 hover:bg-blue-50" 
+                              onClick={() => handleDownloadTSSAutodeterminacion(period.period_id)}>
+                              <Download className="w-4 h-4 mr-1" />Autodeterminación
+                            </Button>
+                            <Button variant="outline" size="sm" className="text-purple-600 border-purple-200 hover:bg-purple-50"
+                              onClick={() => handleDownloadTSSNovedades(period.period_id)}>
+                              <Download className="w-4 h-4 mr-1" />Novedades
+                            </Button>
                           </div>
                         </div>
                       ))}
@@ -910,6 +931,47 @@ export default function PayrollV2Page() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* DGII Tax Reports Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-emerald-600" />
+                  Reportes DGII - Impuestos
+                </CardTitle>
+                <CardDescription>Formularios IR-3 e IR-17 para Dirección General de Impuestos Internos</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {periods.filter(p => p.status === 'paid').length === 0 ? (
+                  <p className="text-slate-500 text-center py-4">Pague una nómina para generar reportes de impuestos</p>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {periods.filter(p => p.status === 'paid').map(period => (
+                      <div key={period.period_id} className="p-4 border rounded-lg bg-gradient-to-br from-emerald-50 to-white">
+                        <div className="mb-3">
+                          <p className="font-semibold text-emerald-800">{period.description}</p>
+                          <p className="text-xs text-emerald-600">{formatCurrency(period.total_net)} pagado</p>
+                        </div>
+                        <div className="space-y-2">
+                          <Button variant="outline" size="sm" className="w-full justify-start text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                            onClick={() => handleDownloadIR3(period.period_id)}>
+                            <Download className="w-4 h-4 mr-2" />
+                            <span>IR-3</span>
+                            <span className="ml-auto text-xs text-emerald-500">Retenciones</span>
+                          </Button>
+                          <Button variant="outline" size="sm" className="w-full justify-start text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                            onClick={() => handleDownloadIR17(period.period_id)}>
+                            <Download className="w-4 h-4 mr-2" />
+                            <span>IR-17</span>
+                            <span className="ml-auto text-xs text-emerald-500">Declaración</span>
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
 
