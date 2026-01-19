@@ -303,24 +303,16 @@ export default function OrganigramaPage() {
           
           const response = await axios.post(`${API}/organigrama`, {
             name: unit.name,
-            code: unit.code,
+            code: unit.code || unit.name.substring(0, 4).toUpperCase(),
             parent_id: parentId,
             node_type: "unit",
-            positions_count: unit.positions
+            positions_count: unit.positions || 0,
+            description: ""
           }, { headers: getAuthHeaders(), withCredentials: true });
           
           const newNodeId = response.data.node_id;
           
-          // Create positions for this unit
-          for (let i = 0; i < (unit.positions || 0); i++) {
-            await axios.post(`${API}/organigrama`, {
-              name: `Posición ${i + 1} - ${unit.name}`,
-              position_title: `Posición ${unit.code}-${i + 1}`,
-              parent_id: newNodeId,
-              node_type: "position"
-            }, { headers: getAuthHeaders(), withCredentials: true });
-          }
-          
+          // Create children units recursively FIRST (not positions)
           if (unit.children && unit.children.length > 0) {
             await createUnits(unit.children, newNodeId);
           }
@@ -333,9 +325,17 @@ export default function OrganigramaPage() {
       setShowTemplateWizard(false);
       setWizardStep(1);
       setSelectedTemplate(null);
+      setTemplateUnits([]);
       fetchData();
     } catch (error) {
-      toast.error("Error al aplicar plantilla");
+      console.error("Error applying template:", error);
+      const detail = error.response?.data?.detail;
+      const errorMsg = typeof detail === 'string' ? detail : 
+                       Array.isArray(detail) ? detail.map(d => d.msg).join(', ') :
+                       "Error al aplicar plantilla";
+      toast.error(errorMsg);
+    } finally {
+      setLoading(false);
     }
   };
 
