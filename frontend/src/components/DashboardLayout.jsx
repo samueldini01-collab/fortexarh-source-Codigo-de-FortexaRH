@@ -102,7 +102,12 @@ export default function DashboardLayout({ children, title }) {
   const [editingItems, setEditingItems] = useState([]);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [blockedFeature, setBlockedFeature] = useState(null);
-  const { user, logout } = useAuth();
+  // Search state
+  const [showSearchModal, setShowSearchModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const { user, logout, getAuthHeaders } = useAuth();
   const { subscription, canAccessFeature, isTrialExpired, getTrialDaysRemaining, isOnTrial, getCurrentPlan } = useSubscription();
   const location = useLocation();
   const navigate = useNavigate();
