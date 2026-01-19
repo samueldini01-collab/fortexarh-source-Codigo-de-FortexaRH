@@ -198,6 +198,7 @@ async def create_loan(data: LoanCreate, request: Request):
         "company_id": company_id,
         "employee_id": data.employee_id,
         "amount": data.amount,
+        "currency": data.currency,
         "interest_rate": data.interest_rate,
         "term_months": data.term_months,
         "monthly_payment": round(monthly_payment, 2),
