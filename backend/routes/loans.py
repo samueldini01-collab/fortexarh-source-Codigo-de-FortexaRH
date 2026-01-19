@@ -24,6 +24,7 @@ class LoanCreate(BaseModel):
     """Model for creating a loan"""
     employee_id: str
     amount: float  # Total loan amount
+    currency: str = "DOP"  # Currency code (DOP, USD, EUR)
     interest_rate: float = 0  # Annual interest rate (%)
     term_months: int  # Term in months
     start_date: str  # Start date (YYYY-MM-DD)
