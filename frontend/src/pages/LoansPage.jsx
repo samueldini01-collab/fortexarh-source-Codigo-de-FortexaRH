@@ -50,12 +50,20 @@ export default function LoansPage() {
   const [formData, setFormData] = useState({
     employee_id: "",
     amount: "",
+    currency: "DOP",
     interest_rate: "0",
     term_months: "12",
     start_date: new Date().toISOString().split('T')[0],
     description: "",
     deduct_from_payroll: true
   });
+  
+  // Available currencies
+  const currencies = [
+    { code: "DOP", name: "Peso Dominicano", symbol: "RD$" },
+    { code: "USD", name: "Dólar Estadounidense", symbol: "$" },
+    { code: "EUR", name: "Euro", symbol: "€" }
+  ];
   
   const [paymentData, setPaymentData] = useState({
     amount: "",
