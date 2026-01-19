@@ -631,3 +631,249 @@ def create_ir4_report(
     workbook.save(output)
     output.seek(0)
     return output
+
+
+def create_ir13_report(
+    rnc_company: str,
+    company_name: str,
+    year: int,
+    employees_annual: List[Dict[str, Any]],
+    monthly_summary: List[Dict[str, Any]]
+) -> BytesIO:
+    """
+    Genera reporte IR-13 (Declaración Jurada Anual de Retenciones de Asalariados)
+    Consolida todos los IR-4 mensuales del año fiscal
+    
+    Args:
+        rnc_company: RNC de la empresa
+        company_name: Nombre de la empresa
+        year: Año fiscal
+        employees_annual: Lista de empleados con totales anuales
+        monthly_summary: Resumen mensual de retenciones
+    """
+    workbook = xlwt.Workbook(encoding='utf-8')
+    
+    # Styles
+    title_style = xlwt.easyxf('font: bold on, height 320; align: horiz center')
+    subtitle_style = xlwt.easyxf('font: bold on, height 240; align: horiz center; pattern: pattern solid, fore_colour light_blue')
+    header_style = xlwt.easyxf('font: bold on; align: horiz center, vert center; borders: left thin, right thin, top thin, bottom thin; pattern: pattern solid, fore_colour light_yellow')
+    subheader_style = xlwt.easyxf('font: bold on; align: horiz center; borders: left thin, right thin, top thin, bottom thin; pattern: pattern solid, fore_colour light_green')
+    data_style = xlwt.easyxf('borders: left thin, right thin, top thin, bottom thin')
+    number_style = xlwt.easyxf('borders: left thin, right thin, top thin, bottom thin; align: horiz right', num_format_str='#,##0.00')
+    total_style = xlwt.easyxf('font: bold on; borders: left thin, right thin, top thin, bottom thin; pattern: pattern solid, fore_colour light_orange', num_format_str='#,##0.00')
+    month_style = xlwt.easyxf('font: bold on; borders: left thin, right thin, top thin, bottom thin; pattern: pattern solid, fore_colour pale_blue')
+    
+    # ========== Sheet 1: Detalle Anual por Empleado ==========
+    ws1 = workbook.add_sheet('IR-13 Detalle Anual')
+    
+    # Title Section
+    ws1.write_merge(0, 0, 0, 14, 'DIRECCIÓN GENERAL DE IMPUESTOS INTERNOS', title_style)
+    ws1.write_merge(1, 1, 0, 14, 'DECLARACIÓN JURADA ANUAL DE RETENCIONES DE ASALARIADOS', subtitle_style)
+    ws1.write_merge(2, 2, 0, 14, f'FORMULARIO IR-13 - AÑO FISCAL {year}', subtitle_style)
+    
+    # Company info
+    ws1.write(4, 0, 'RNC/Cédula Agente Retención:', data_style)
+    ws1.write_merge(4, 4, 2, 4, rnc_company, data_style)
+    
+    ws1.write(5, 0, 'Razón Social:', data_style)
+    ws1.write_merge(5, 5, 2, 6, company_name, data_style)
+    
+    ws1.write(6, 0, 'Año Fiscal:', data_style)
+    ws1.write(6, 2, year, data_style)
+    
+    ws1.write(7, 0, 'Cantidad de Empleados:', data_style)
+    ws1.write(7, 2, len(employees_annual), data_style)
+    
+    # Column headers for employee detail
+    headers = [
+        'No.', 'Cédula/RNC', 'Tipo', 'Nombres y Apellidos',
+        'Sueldo Anual\nBruto', 'Otros\nIngresos', 'Regalía\nPascual',
+        'Total\nIngresos', 'Aporte AFP\nAnual', 'Aporte SFS\nAnual',
+        'Total\nAportes TSS', 'Renta Neta\nAnual', 'ISR\nAnual',
+        'Meses\nLaborados', 'Promedio\nMensual'
+    ]
+    
+    for col, h in enumerate(headers):
+        ws1.write(9, col, h, header_style)
+    
+    ws1.row(9).height_mismatch = True
+    ws1.row(9).height = 900
+    
+    # Employee data
+    totals = {
+        'sueldo_anual': 0, 'otros_ingresos': 0, 'regalia': 0,
+        'total_ingresos': 0, 'afp_anual': 0, 'sfs_anual': 0,
+        'total_tss': 0, 'renta_neta': 0, 'isr_anual': 0
+    }
+    
+    for row_idx, emp in enumerate(employees_annual, start=10):
+        linea = row_idx - 9
+        
+        sueldo = emp.get('sueldo_anual', 0)
+        otros = emp.get('otros_ingresos', 0)
+        regalia = emp.get('regalia_pascual', 0)
+        total_ing = sueldo + otros + regalia
+        afp = emp.get('afp_anual', 0)
+        sfs = emp.get('sfs_anual', 0)
+        tss = afp + sfs
+        renta = total_ing - tss
+        isr = emp.get('isr_anual', 0)
+        meses = emp.get('meses_laborados', 12)
+        promedio = total_ing / meses if meses > 0 else 0
+        
+        ws1.write(row_idx, 0, linea, data_style)
+        ws1.write(row_idx, 1, emp.get('cedula', ''), data_style)
+        ws1.write(row_idx, 2, emp.get('tipo_doc', 'C'), data_style)
+        ws1.write(row_idx, 3, emp.get('nombre_completo', ''), data_style)
+        ws1.write(row_idx, 4, sueldo, number_style)
+        ws1.write(row_idx, 5, otros, number_style)
+        ws1.write(row_idx, 6, regalia, number_style)
+        ws1.write(row_idx, 7, total_ing, number_style)
+        ws1.write(row_idx, 8, afp, number_style)
+        ws1.write(row_idx, 9, sfs, number_style)
+        ws1.write(row_idx, 10, tss, number_style)
+        ws1.write(row_idx, 11, renta, number_style)
+        ws1.write(row_idx, 12, isr, number_style)
+        ws1.write(row_idx, 13, meses, data_style)
+        ws1.write(row_idx, 14, promedio, number_style)
+        
+        totals['sueldo_anual'] += sueldo
+        totals['otros_ingresos'] += otros
+        totals['regalia'] += regalia
+        totals['total_ingresos'] += total_ing
+        totals['afp_anual'] += afp
+        totals['sfs_anual'] += sfs
+        totals['total_tss'] += tss
+        totals['renta_neta'] += renta
+        totals['isr_anual'] += isr
+    
+    # Totals row
+    total_row = 10 + len(employees_annual)
+    ws1.write(total_row, 3, 'TOTALES ANUALES:', total_style)
+    ws1.write(total_row, 4, totals['sueldo_anual'], total_style)
+    ws1.write(total_row, 5, totals['otros_ingresos'], total_style)
+    ws1.write(total_row, 6, totals['regalia'], total_style)
+    ws1.write(total_row, 7, totals['total_ingresos'], total_style)
+    ws1.write(total_row, 8, totals['afp_anual'], total_style)
+    ws1.write(total_row, 9, totals['sfs_anual'], total_style)
+    ws1.write(total_row, 10, totals['total_tss'], total_style)
+    ws1.write(total_row, 11, totals['renta_neta'], total_style)
+    ws1.write(total_row, 12, totals['isr_anual'], total_style)
+    
+    # Column widths
+    col_widths = [5, 14, 5, 30, 14, 12, 12, 14, 12, 12, 14, 14, 12, 8, 12]
+    for col, width in enumerate(col_widths):
+        ws1.col(col).width = width * 256
+    
+    # ========== Sheet 2: Resumen Mensual ==========
+    ws2 = workbook.add_sheet('Resumen Mensual')
+    
+    ws2.write_merge(0, 0, 0, 8, f'RESUMEN MENSUAL DE RETENCIONES - AÑO {year}', title_style)
+    
+    month_names = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+    
+    month_headers = ['Mes', 'Empleados', 'Sueldos Brutos', 'Otros Ingresos',
+                     'Total Ingresos', 'Aportes TSS', 'Renta Neta', 'ISR Retenido', 'Estado']
+    
+    for col, h in enumerate(month_headers):
+        ws2.write(2, col, h, header_style)
+    
+    annual_totals = {
+        'empleados': 0, 'sueldos': 0, 'otros': 0,
+        'total': 0, 'tss': 0, 'renta': 0, 'isr': 0
+    }
+    
+    for row_idx, month_data in enumerate(monthly_summary, start=3):
+        month_num = month_data.get('month', row_idx - 2)
+        month_name = month_names[month_num - 1] if 1 <= month_num <= 12 else f'Mes {month_num}'
+        
+        empleados = month_data.get('employee_count', 0)
+        sueldos = month_data.get('total_sueldos', 0)
+        otros = month_data.get('otros_ingresos', 0)
+        total = sueldos + otros
+        tss = month_data.get('total_tss', 0)
+        renta = total - tss
+        isr = month_data.get('isr_retenido', 0)
+        estado = month_data.get('status', 'pendiente')
+        
+        ws2.write(row_idx, 0, month_name, month_style)
+        ws2.write(row_idx, 1, empleados, data_style)
+        ws2.write(row_idx, 2, sueldos, number_style)
+        ws2.write(row_idx, 3, otros, number_style)
+        ws2.write(row_idx, 4, total, number_style)
+        ws2.write(row_idx, 5, tss, number_style)
+        ws2.write(row_idx, 6, renta, number_style)
+        ws2.write(row_idx, 7, isr, number_style)
+        ws2.write(row_idx, 8, 'Presentado' if estado in ['paid', 'closed'] else 'Pendiente', data_style)
+        
+        annual_totals['sueldos'] += sueldos
+        annual_totals['otros'] += otros
+        annual_totals['total'] += total
+        annual_totals['tss'] += tss
+        annual_totals['renta'] += renta
+        annual_totals['isr'] += isr
+    
+    # Annual totals row
+    total_row = 3 + len(monthly_summary)
+    ws2.write(total_row, 0, 'TOTAL ANUAL', total_style)
+    ws2.write(total_row, 2, annual_totals['sueldos'], total_style)
+    ws2.write(total_row, 3, annual_totals['otros'], total_style)
+    ws2.write(total_row, 4, annual_totals['total'], total_style)
+    ws2.write(total_row, 5, annual_totals['tss'], total_style)
+    ws2.write(total_row, 6, annual_totals['renta'], total_style)
+    ws2.write(total_row, 7, annual_totals['isr'], total_style)
+    
+    ws2.col(0).width = 12 * 256
+    ws2.col(1).width = 10 * 256
+    for col in range(2, 8):
+        ws2.col(col).width = 15 * 256
+    ws2.col(8).width = 12 * 256
+    
+    # ========== Sheet 3: Declaración Resumen ==========
+    ws3 = workbook.add_sheet('Declaración')
+    
+    ws3.write_merge(0, 0, 0, 3, 'DECLARACIÓN JURADA ANUAL IR-13', title_style)
+    ws3.write_merge(1, 1, 0, 3, f'Año Fiscal: {year}', subtitle_style)
+    
+    ws3.write(3, 0, 'A. DATOS DEL AGENTE DE RETENCIÓN', subheader_style)
+    ws3.write(4, 0, 'RNC/Cédula:', data_style)
+    ws3.write(4, 1, rnc_company, data_style)
+    ws3.write(5, 0, 'Razón Social:', data_style)
+    ws3.write(5, 1, company_name, data_style)
+    
+    ws3.write(7, 0, 'B. RESUMEN DE RETENCIONES DEL AÑO', subheader_style)
+    
+    declaration_data = [
+        ('1. Total de empleados durante el año', len(employees_annual)),
+        ('2. Total sueldos y salarios pagados', totals['sueldo_anual']),
+        ('3. Otros ingresos gravables', totals['otros_ingresos']),
+        ('4. Regalía Pascual pagada', totals['regalia']),
+        ('5. Total ingresos brutos (2+3+4)', totals['total_ingresos']),
+        ('6. (-) Aportes AFP empleados', totals['afp_anual']),
+        ('7. (-) Aportes SFS empleados', totals['sfs_anual']),
+        ('8. (=) Total aportes TSS empleados (6+7)', totals['total_tss']),
+        ('9. (=) Renta Neta Imponible (5-8)', totals['renta_neta']),
+        ('10. ISR Retenido Anual', totals['isr_anual']),
+    ]
+    
+    for row_idx, (label, value) in enumerate(declaration_data, start=8):
+        ws3.write(row_idx, 0, label, data_style)
+        if isinstance(value, (int, float)):
+            ws3.write(row_idx, 1, value, number_style)
+        else:
+            ws3.write(row_idx, 1, value, data_style)
+    
+    # Certification section
+    ws3.write(20, 0, 'C. CERTIFICACIÓN', subheader_style)
+    ws3.write(21, 0, 'Certifico que la información contenida en esta declaración es correcta y completa.', data_style)
+    ws3.write(23, 0, 'Firma del Representante Legal: _________________________', data_style)
+    ws3.write(24, 0, 'Fecha: _________________________', data_style)
+    
+    ws3.col(0).width = 45 * 256
+    ws3.col(1).width = 20 * 256
+    
+    output = BytesIO()
+    workbook.save(output)
+    output.seek(0)
+    return output
