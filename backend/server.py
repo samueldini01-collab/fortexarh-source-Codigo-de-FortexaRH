@@ -2683,7 +2683,7 @@ async def get_payroll_periods(current_user: dict = Depends(get_current_user)):
     return periods
 
 @api_router.post("/payroll-v2/periods")
-async def create_payroll_period(data: PayrollPeriodCreate, current_user: dict = Depends(get_current_user)):
+async def create_payroll_period(data: PayrollPeriodCreateV2, current_user: dict = Depends(get_current_user)):
     """Crear un nuevo período de nómina"""
     company_id = current_user.get("company_id")
     
