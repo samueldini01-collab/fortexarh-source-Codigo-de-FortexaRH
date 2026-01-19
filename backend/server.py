@@ -1327,7 +1327,8 @@ async def get_subscription(current_user: dict = Depends(get_current_user)):
     if not company:
         raise HTTPException(status_code=404, detail="Company not found")
     
-    plan = SUBSCRIPTION_PLANS.get(company.get("subscription_plan", "free"))
+    plan_id = company.get("subscription_plan", "basic")
+    plan = SUBSCRIPTION_PLANS.get(plan_id, SUBSCRIPTION_PLANS["basic"])
     employee_count = company.get("employee_count", 0)
     
     monthly_cost = plan["base_price"] + (employee_count * plan["price_per_employee"])
