@@ -5142,24 +5142,25 @@ async def health_check():
 
 app.include_router(api_router)
 
-cors_origins = os.environ.get('CORS_ORIGINS', '')
-if cors_origins and cors_origins != '*':
-    origins_list = cors_origins.split(',')
+cors_origins = os.environ.get('CORS_ORIGINS', '*')
+if cors_origins == '*':
+    # Allow all origins
+    app.add_middleware(
+        CORSMiddleware,
+        allow_credentials=True,
+        allow_origins=["*"],
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 else:
-    # Default development origins
-    origins_list = [
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "https://staff-genius-2.preview.emergentagent.com"
-    ]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=origins_list,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+    origins_list = cors_origins.split(',')
+    app.add_middleware(
+        CORSMiddleware,
+        allow_credentials=True,
+        allow_origins=origins_list,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 logging.basicConfig(
     level=logging.INFO,
