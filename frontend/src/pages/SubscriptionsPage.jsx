@@ -132,8 +132,11 @@ export default function SubscriptionsPage() {
         toast.success("¡Pago exitoso! Su suscripción ha sido activada.");
         // Clear URL params
         setSearchParams({});
-        // Refresh subscription data
+        // Refresh subscription data in both local state and global context
         fetchData();
+        if (refreshSubscription) {
+          refreshSubscription();
+        }
         return;
       } else if (response.data.status === 'expired') {
         setCheckingPayment(false);
