@@ -1,30 +1,80 @@
 # FortexaRH - Sistema SaaS de RRHH y Nómina
 
-## Lo Implementado - Última Sesión (2025-01-19)
+## Última Actualización: 2025-01-19
 
-### IR-13 Declaración Anual de Retenciones ✅ NUEVO
-- **Endpoint:** `GET /api/payroll-v2/annual-report/ir13/{year}`
-- **Función:** Consolida todos los IR-4 mensuales del año fiscal
-- **Excel con 3 hojas:**
-  1. **IR-13 Detalle Anual** - Totales por empleado (Sueldo, AFP, SFS, ISR anuales)
-  2. **Resumen Mensual** - Desglose de los 12 meses con estados
-  3. **Declaración** - Formulario resumen para firma y presentación DGII
+## Resumen del Proyecto
+Sistema completo de gestión de Recursos Humanos y Nómina para República Dominicana, vendido por suscripción mensual con precios basados en el número de empleados.
 
-### Endpoint de Años Disponibles ✅ NUEVO
-- **Endpoint:** `GET /api/payroll-v2/available-years`
-- Retorna años con períodos de nómina y cantidad de períodos por año
+## Arquitectura del Sistema
 
-### UI Actualizada - DGIIReportsPage ✅
-- **Tabs:** "Reportes Mensuales" y "Reporte Anual"
-- **Selector de Año:** Para generar IR-13
-- **Instrucciones:** Actualizadas con proceso IR-13
+### Backend (FastAPI + MongoDB)
+```
+/app/backend/
+├── server.py           # API principal (5,767 líneas - refactorizado)
+├── routes/             # Routers modulares
+│   ├── loans.py        # Módulo de préstamos a empleados (362 líneas)
+│   ├── subscriptions.py # Suscripciones y cancelación (608 líneas)
+│   ├── roles.py        # Roles personalizados Enterprise (398 líneas)
+│   └── invoices.py     # Facturas (placeholder)
+├── services/           # Servicios
+│   └── pdf_service.py  # Generación de PDFs
+├── tss_generator.py    # Generación reportes TSS/DGII
+└── email_service.py    # Servicio de correos
+```
 
-### Formularios DGII Mensuales (Ya implementados)
-- IR-3, IR-4, TSS Autodeterminación, TSS Novedades
+### Frontend (React + Tailwind + Shadcn)
+```
+/app/frontend/src/
+├── pages/
+│   ├── LoansPage.jsx        # Módulo de préstamos (COMPLETO)
+│   ├── SubscriptionsPage.jsx # Gestión suscripciones
+│   ├── RolesPage.jsx         # Roles personalizados
+│   ├── DGIIReportsPage.jsx   # Reportes DGII
+│   └── ...
+└── components/
+    └── DashboardLayout.jsx
+```
 
-### Testing
-- 14/14 pruebas backend pasadas (IR-13)
-- Frontend verificado funcionando
+## Lo Implementado en Esta Sesión (2025-01-19)
+
+### ✅ Refactorización de server.py (COMPLETADO)
+- **Reducción:** De 6,838 a 5,767 líneas (-1,071 líneas, -15.7%)
+- **Módulos extraídos:**
+  - `routes/loans.py` - CRUD completo de préstamos
+  - `routes/subscriptions.py` - Suscripciones, cancelación, retención
+  - `routes/roles.py` - Roles personalizados (Enterprise)
+- **Patrón de inyección:** Uso de `Request` para autenticación en routers modulares
+
+### ✅ Módulo de Préstamos a Empleados (COMPLETO)
+**Backend Endpoints:**
+- `GET /api/loans` - Listar préstamos con filtros
+- `GET /api/loans/summary` - Resumen para dashboard
+- `POST /api/loans` - Crear préstamo con cálculo de amortización
+- `GET /api/loans/{id}` - Detalle del préstamo
+- `POST /api/loans/{id}/payment` - Registrar pago
+- `DELETE /api/loans/{id}` - Eliminar préstamo (sin pagos)
+- `GET /api/employees/{id}/loans` - Préstamos de un empleado
+
+**Frontend (LoansPage.jsx):**
+- Dashboard con KPIs (préstamos activos, total prestado, cobrado, pendiente)
+- Tabla de préstamos con filtros por estado
+- Modal de creación con preview de cuotas
+- Modal de detalle con plan de pagos
+- Registro de pagos manuales
+- Indicador de progreso de pago
+
+### ✅ Sistema de Cancelación de Suscripción (COMPLETO)
+**Endpoints:**
+- `GET /api/subscription/cancellation-info` - Info para flujo de cancelación
+- `POST /api/subscription/accept-retention-offer` - Aceptar descuento 20%
+- `POST /api/subscription/cancel` - Cancelar con encuesta
+- `POST /api/subscription/reactivate` - Reactivar suscripción
+
+**Funcionalidades:**
+- Flujo de retención con oferta de 20% por 3 meses
+- Encuesta de cancelación para analytics
+- Emails de confirmación
+- Acceso hasta fin del período de facturación
 
 ## APIs de Reportes DGII
 
@@ -32,22 +82,52 @@
 |----------|-------------|
 | `GET /api/payroll-v2/periods/{id}/export/ir3` | IR-3 Mensual |
 | `GET /api/payroll-v2/periods/{id}/export/ir4` | IR-4 Detalle Mensual |
-| `GET /api/payroll-v2/annual-report/ir13/{year}` | **NUEVO** IR-13 Anual |
-| `GET /api/payroll-v2/available-years` | **NUEVO** Años disponibles |
+| `GET /api/payroll-v2/annual-report/ir13/{year}` | IR-13 Anual |
+| `GET /api/payroll-v2/available-years` | Años disponibles |
 | `GET /api/payroll-v2/periods/{id}/export/tss-autodeterminacion` | TSS v5.3 |
 | `GET /api/payroll-v2/periods/{id}/export/tss-novedades` | TSS v5.1 |
 
-## Backlog Pendiente
+## Planes de Suscripción
 
-### P1 - Alto
-- Cancelación de suscripción en Stripe
-- Mejorar historial de facturas
-
-### P2 - Medio
-- Refactorizar server.py (mover a routers)
-- Integraciones Enterprise (QuickBooks, SAP)
+| Plan | Precio Base | Por Empleado | Máx Empleados | Usuarios |
+|------|-------------|--------------|---------------|----------|
+| Trial | $0 | $0 | 1 | 1 |
+| Básico | $5/mes | $1.50 | 50 | 3 |
+| Pro | $10/mes | $1.50 | 200 | 5 |
+| Enterprise | $20/mes | $1.50 | Ilimitado | 7 |
 
 ## Integraciones Configuradas
-- ✅ Stripe (Producción)
-- ✅ Resend (Producción)
-- ✅ Google Auth (Emergent-managed)
+- ✅ **Stripe** (Producción) - SDK directo con fallback a live key
+- ✅ **Resend** (Producción) - Emails transaccionales
+- ✅ **Google Auth** (Emergent-managed)
+
+## Backlog Pendiente
+
+### P0 - Crítico
+- [x] Refactorizar server.py (COMPLETADO)
+- [x] Completar módulo de préstamos (COMPLETADO)
+- [x] Completar cancelación de suscripción (COMPLETADO)
+
+### P1 - Alto
+- [ ] UI de cancelación en SubscriptionsPage.jsx
+- [ ] Notificaciones automáticas (fechas de pago, vencimientos DGII)
+- [ ] Dashboard de métricas avanzadas (gráficos)
+- [ ] Generación de archivos bancarios (Popular, BHD, Reservas)
+
+### P2 - Medio
+- [ ] Integrar deducciones de préstamos en cálculo de nómina
+- [ ] Corregir warnings de ESLint en frontend
+- [ ] Integraciones Enterprise (QuickBooks, SAP, Oracle)
+- [ ] Portal de autoservicio para empleados
+
+### P3 - Bajo
+- [ ] Generación de documentos/cartas personalizadas
+- [ ] Notificación de vencimiento IR-13
+
+## Credenciales de Prueba
+- Usuario de prueba: `test_refactor@fortexa.com` / `test123`
+
+## Testing
+- `/app/test_reports/iteration_8.json` - PDF invoices
+- `/app/test_reports/iteration_9.json` - Custom roles
+- `/app/test_reports/iteration_10.json` - DGII reports
