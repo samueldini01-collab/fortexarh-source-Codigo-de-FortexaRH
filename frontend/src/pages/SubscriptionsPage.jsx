@@ -221,16 +221,76 @@ export default function SubscriptionsPage() {
   };
 
   const handleCancelSubscription = async () => {
-    if (!window.confirm("¿Está seguro de cancelar su suscripción? Perderá acceso al sistema al final del período actual.")) return;
-    
+    // Open cancellation flow instead of direct cancel
     try {
-      await axios.put(`${API}/subscription`, {
-        action: "cancel"
-      }, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Suscripción cancelada");
+      const response = await axios.get(`${API}/subscription/cancellation-info`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      setCancellationInfo(response.data);
+      setCancelStep(1);
+      setShowCancelFlow(true);
+    } catch (error) {
+      toast.error("Error al cargar información de cancelación");
+    }
+  };
+
+  const handleAcceptRetentionOffer = async () => {
+    setProcessingCancel(true);
+    try {
+      const response = await axios.post(`${API}/subscription/accept-retention-offer`, {}, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      toast.success(`¡Descuento aplicado! Ahorras ${formatCurrency(response.data.savings_3_months)} en 3 meses`);
+      setShowCancelFlow(false);
       fetchData();
     } catch (error) {
-      toast.error("Error al cancelar");
+      toast.error("Error al aplicar descuento");
+    } finally {
+      setProcessingCancel(false);
+    }
+  };
+
+  const handleConfirmCancellation = async () => {
+    if (!cancelReason) {
+      toast.error("Por favor selecciona un motivo");
+      return;
+    }
+    
+    setProcessingCancel(true);
+    try {
+      await axios.post(`${API}/subscription/cancel`, {
+        reason: cancelReason,
+        feedback: cancelFeedback,
+        would_return: cancelWouldReturn
+      }, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      toast.success("Suscripción cancelada. Tendrás acceso hasta el fin del período actual.");
+      setShowCancelFlow(false);
+      setCancelStep(1);
+      setCancelReason("");
+      setCancelFeedback("");
+      fetchData();
+    } catch (error) {
+      toast.error("Error al cancelar suscripción");
+    } finally {
+      setProcessingCancel(false);
+    }
+  };
+
+  const handleReactivateSubscription = async () => {
+    try {
+      await axios.post(`${API}/subscription/reactivate`, {}, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      toast.success("¡Suscripción reactivada!");
+      fetchData();
+    } catch (error) {
+      toast.error("Error al reactivar suscripción");
     }
   };
 
