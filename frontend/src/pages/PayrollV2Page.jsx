@@ -111,7 +111,7 @@ export default function PayrollV2Page() {
     start_date: "",
     end_date: "",
     description: "",
-    department_filter: ""
+    department_filter: "all"
   });
 
   // Novelty form
