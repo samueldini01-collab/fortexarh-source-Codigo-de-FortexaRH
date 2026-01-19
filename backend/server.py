@@ -2295,7 +2295,120 @@ class CurrencyConfigCreate(BaseModel):
     effective_date: str
     is_active: bool = True
 
-@api_router.get("/accounting/accounts")
+# ===================== SUBSCRIPTION PLANS =====================
+
+SUBSCRIPTION_PLANS = {
+    "basic": {
+        "id": "basic",
+        "name": "FortexaRH Básico",
+        "base_price": 5.00,
+        "price_per_employee": 1.50,
+        "included_users": 3,
+        "max_employees": 50,
+        "features": [
+            "Administración de empleados",
+            "Hasta 50 empleados",
+            "Gestión de empleados",
+            "Nómina básica",
+            "Asistencias",
+            "Vacaciones",
+            "Calculadora de nómina",
+            "Generación de nóminas",
+            "Entradas de diario",
+            "Reportes básicos",
+            "Exportación a Excel/CSV",
+            "Formularios básicos",
+            "Soporte por email",
+            "Integración con FortexaERP",
+            "Roles por área (1 admin)"
+        ],
+        "integrations": ["fortexaerp"],
+        "multi_admin": False
+    },
+    "pro": {
+        "id": "pro",
+        "name": "FortexaRH Pro",
+        "base_price": 10.00,
+        "price_per_employee": 1.50,
+        "included_users": 5,
+        "max_employees": 200,
+        "features": [
+            "Todas las funciones básicas",
+            "Hasta 200 empleados",
+            "Evaluaciones de desempeño",
+            "Reclutamiento",
+            "Organigrama intuitivo",
+            "Reportes avanzados",
+            "Soporte prioritario",
+            "Integración con QuickBooks"
+        ],
+        "integrations": ["fortexaerp", "quickbooks"],
+        "multi_admin": False
+    },
+    "enterprise": {
+        "id": "enterprise",
+        "name": "FortexaRH Enterprise",
+        "base_price": 20.00,
+        "price_per_employee": 1.50,
+        "included_users": 7,
+        "max_employees": -1,  # Unlimited
+        "features": [
+            "Todas las funciones Pro",
+            "Empleados ilimitados",
+            "Documentos personalizados",
+            "API personalizada",
+            "Soporte 24/7",
+            "Gerente de cuenta dedicado",
+            "Roles personalizados",
+            "Múltiples administradores",
+            "Flujos de trabajo avanzados",
+            "Formularios personalizados",
+            "Campos personalizados",
+            "Notificaciones personalizadas",
+            "Integración SAP",
+            "Integración Oracle",
+            "Integración Dynamics"
+        ],
+        "integrations": ["fortexaerp", "quickbooks", "sap", "oracle", "dynamics"],
+        "multi_admin": True
+    }
+}
+
+ADDITIONAL_USER_PRICE = 2.50  # USD per month
+
+class SubscriptionCreate(BaseModel):
+    plan_id: str  # basic, pro, enterprise
+    employee_count: int = 1
+    additional_users: int = 0
+    billing_cycle: str = "monthly"  # monthly, annual
+
+class SubscriptionUpdate(BaseModel):
+    plan_id: Optional[str] = None
+    employee_count: Optional[int] = None
+    additional_users: Optional[int] = None
+    action: Optional[str] = None  # cancel, renew, upgrade, downgrade
+
+class SystemUserCreate(BaseModel):
+    """Usuario del sistema (no empleado)"""
+    email: EmailStr
+    name: str
+    password: str
+    role: str = "user"  # admin, manager, user
+    modules: List[str] = []  # Módulos permitidos
+    is_active: bool = True
+
+class SystemUserUpdate(BaseModel):
+    name: Optional[str] = None
+    role: Optional[str] = None
+    modules: Optional[List[str]] = None
+    is_active: Optional[bool] = None
+
+class CustomRoleCreate(BaseModel):
+    """Rol personalizado (solo Enterprise)"""
+    name: str
+    description: Optional[str] = None
+    modules: List[str] = []
+    permissions: Dict[str, List[str]] = {}  # module: [read, write, delete]
 async def get_chart_of_accounts(current_user: dict = Depends(get_current_user)):
     """Get chart of accounts for the company"""
     company_id = current_user.get("company_id")
