@@ -121,17 +121,31 @@ DELETE /api/accounting/journal-entries/{id}/with-payroll  - Eliminar + nómina
 
 ---
 
+## ✅ Fase 1 - Nómina Avanzada (Completado - Enero 2026)
+- [x] **Tipos de Nómina**: REG, TEMP, BONO, REG13 (Regalía Pascual), VAC, LIQ
+- [x] **Filtro por Departamento**: Crear nóminas específicas por departamento
+- [x] **Novedades (Ingresos/Deducciones Manuales)**:
+  - Ingresos: COM (Comisiones), BON (Bonificación), INC (Incentivos), VIA (Viáticos)
+  - Deducciones: PREST (Préstamo), ANTIC (Anticipo), COOP (Cooperativa)
+- [x] **Cálculos TSS**: SFS 3.07%, AFP 2.87%
+- [x] **Flujo Completo**: Crear → Agregar Empleados → Calcular → Aprobar → Pagar
+- [x] **Generación Automática de Asientos Contables** al pagar nómina
+- [x] **16/16 Tests Automatizados** pasando (100%)
+
 ## 📋 Pending Features (Backlog)
 
-### P0 - Alta Prioridad
-- [ ] Exportación de nómina a PDF (formato similar al Excel actual)
-- [ ] Partidas manuales en la nómina (agregar conceptos custom)
-- [ ] Múltiples cuentas bancarias para pagos
+### P0 - Alta Prioridad (Fase 2)
+- [ ] **Generación de Archivos TSS**:
+  - Archivo de Autodeterminación TSS (formato plant_autodeter_v5.3.xls)
+  - Archivo de Novedades TSS (formato plant_nov_v5.1.xls)
+- [ ] **Formularios Tributarios**: IR-3, IR-4 (basados en imágenes proporcionadas)
+- [ ] Exportación de nómina a PDF
 
 ### P1 - Media Prioridad
+- [ ] Templates de Nómina Recurrentes
+- [ ] Agrupación avanzada (proyecto, moneda, grupos personalizados)
 - [ ] Integración QuickBooks para enviar asientos
 - [ ] Envío de recibos por email (Resend)
-- [ ] Versionado de plantillas
 - [ ] Exportar organigrama como imagen
 
 ### P2 - Baja Prioridad
