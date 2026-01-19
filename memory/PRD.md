@@ -121,6 +121,22 @@ DELETE /api/accounting/journal-entries/{id}/with-payroll  - Eliminar + nómina
 
 ---
 
+## ✅ Fase 2 - Archivos TSS y Reportes DGII (Completado - Enero 2026)
+- [x] **TSS Autodeterminación (v5.3)**: Descarga Excel con formato oficial TSS
+  - Datos de empleados: cédula, nombres, salario cotizable, ISR
+  - Aportes: SFS, AFP, INFOTEP
+  - Reporte de contribuciones
+- [x] **TSS Novedades (v5.1)**: Descarga Excel con altas/bajas del período
+  - Tipos de novedad: IN (Ingreso), SA (Salida), VC, LM, etc.
+- [x] **IR-3 (Retenciones)**: Declaración de retenciones a asalariados
+  - Lista de empleados con ISR retenido
+  - Totales por período
+- [x] **IR-17 (Declaración Mensual)**: Resumen de ISR y aportes patronales
+  - Sección A: Retenciones a asalariados
+  - Sección B: Aportes patronales TSS
+- [x] **UI de Reportes mejorada**: 3 secciones (Exportar Nóminas, Archivos TSS, Reportes DGII)
+- [x] **12/12 Tests Automatizados** pasando (100%)
+
 ## ✅ Fase 1 - Nómina Avanzada (Completado - Enero 2026)
 - [x] **Tipos de Nómina**: REG, TEMP, BONO, REG13 (Regalía Pascual), VAC, LIQ
 - [x] **Filtro por Departamento**: Crear nóminas específicas por departamento
