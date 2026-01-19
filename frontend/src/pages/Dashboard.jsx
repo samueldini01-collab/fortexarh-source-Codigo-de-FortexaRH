@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth, API } from "@/App";
 import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Users,
@@ -13,7 +14,13 @@ import {
   Briefcase,
   UserPlus,
   TrendingUp,
-  AlertCircle
+  AlertCircle,
+  Sparkles,
+  ArrowRight,
+  X,
+  Target,
+  Network,
+  UserCheck
 } from "lucide-react";
 import { toast } from "sonner";
 
