@@ -37,6 +37,7 @@ import LoansPage from "@/pages/LoansPage";
 import MetricsDashboardPage from "@/pages/MetricsDashboardPage";
 import ReportsAdvancedPage from "@/pages/ReportsAdvancedPage";
 import EmployeePortalPage from "@/pages/EmployeePortalPage";
+import DocumentsPage from "@/pages/DocumentsPage";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
@@ -333,6 +334,7 @@ function AppRouter() {
       <Route path="/metrics-dashboard" element={<ProtectedRoute><MetricsDashboardPage /></ProtectedRoute>} />
       <Route path="/reports-advanced" element={<ProtectedRoute><ReportsAdvancedPage /></ProtectedRoute>} />
       <Route path="/employee-portal" element={<EmployeePortalPage />} />
+      <Route path="/documents" element={<ProtectedRoute><DocumentsPage /></ProtectedRoute>} />
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
