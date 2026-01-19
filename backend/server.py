@@ -2733,13 +2733,30 @@ async def create_payroll_period(data: PayrollPeriodCreateV2, current_user: dict 
     payroll_type = data.payroll_type or 'REG'
     department_filter = data.department_filter
     employee_ids = data.employee_ids
+    currency = data.currency or "DOP"
+    exchange_rate = data.exchange_rate
+    project_id = data.project_id
+    
+    # Si viene de un template, cargar configuración
+    if data.template_id:
+        template = await db.payroll_templates.find_one(
+            {"template_id": data.template_id, "company_id": company_id},
+            {"_id": 0}
+        )
+        if template:
+            payroll_type = template.get("payroll_type", payroll_type)
+            department_filter = template.get("department_filter", department_filter)
+            employee_ids = template.get("employee_ids", employee_ids)
+            currency = template.get("currency", currency)
+            exchange_rate = template.get("default_exchange_rate", exchange_rate)
+            project_id = template.get("project_id", project_id)
     
     period_id = f"period_{uuid.uuid4().hex[:12]}"
     period = {
         "period_id": period_id,
         "company_id": company_id,
         "period_type": data.period_type,
-        "payroll_type": payroll_type,  # REG, TEMP, BONO, REG13, VAC, LIQ
+        "payroll_type": payroll_type,
         "year": data.year,
         "month": data.month,
         "start_date": data.start_date,
@@ -2747,7 +2764,11 @@ async def create_payroll_period(data: PayrollPeriodCreateV2, current_user: dict 
         "description": data.description or f"Nómina {data.period_type} - {data.month}/{data.year}",
         "department_filter": department_filter,
         "employee_ids": employee_ids,
-        "status": "open",  # open, calculated, approved, paid
+        "currency": currency,
+        "exchange_rate": exchange_rate,
+        "project_id": project_id,
+        "template_id": data.template_id,
+        "status": "open",
         "total_gross": 0,
         "total_deductions": 0,
         "total_net": 0,
@@ -2757,8 +2778,6 @@ async def create_payroll_period(data: PayrollPeriodCreateV2, current_user: dict 
         "created_by": current_user.get("user_id")
     }
     await db.payroll_periods.insert_one(period)
-    
-    return {"period_id": period_id, "message": "Período creado correctamente"}
     
     return {"period_id": period_id, "message": "Período creado correctamente"}
 
