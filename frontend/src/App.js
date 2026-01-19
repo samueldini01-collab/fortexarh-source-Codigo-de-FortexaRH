@@ -25,6 +25,7 @@ import PayrollCalculatorPage from "@/pages/PayrollCalculatorPage";
 import AccountingPage from "@/pages/AccountingPage";
 import PayrollV2Page from "@/pages/PayrollV2Page";
 import PayrollDashboardPage from "@/pages/PayrollDashboardPage";
+import CompanyConfigPage from "@/pages/CompanyConfigPage";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
