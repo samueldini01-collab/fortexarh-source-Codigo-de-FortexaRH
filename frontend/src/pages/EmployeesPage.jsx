@@ -530,18 +530,37 @@ export default function EmployeesPage() {
                   {/* Photo */}
                   <div className="flex justify-center mb-4">
                     <div className="text-center">
-                      <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mx-auto border-2 border-dashed border-slate-300 cursor-pointer hover:bg-slate-50 transition-colors relative">
+                      <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mx-auto border-2 border-dashed border-slate-300 cursor-pointer hover:bg-slate-50 transition-colors relative overflow-hidden">
                         {formData.photo_url ? (
                           <img src={formData.photo_url} alt="Profile" className="w-full h-full rounded-full object-cover" />
                         ) : (
                           <Camera className="w-8 h-8 text-slate-400" />
                         )}
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          className="absolute inset-0 opacity-0 cursor-pointer"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            if (file.size > 2 * 1024 * 1024) {
+                              toast.error("La imagen no debe superar 2MB");
+                              return;
+                            }
+                            // Convert to base64
+                            const reader = new FileReader();
+                            reader.onload = () => {
+                              setFormData({...formData, photo_url: reader.result});
+                            };
+                            reader.readAsDataURL(file);
+                          }}
+                        />
                         <div className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-md border">
                           <Camera className="w-4 h-4 text-slate-500" />
                         </div>
                       </div>
                       <p className="text-xs text-slate-500 mt-2">Foto de Perfil</p>
-                      <p className="text-xs text-slate-400">Max 2MB. JPG, PNG</p>
+                      <p className="text-xs text-slate-400">Clic para cambiar. Max 2MB</p>
                     </div>
                   </div>
 
