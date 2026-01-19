@@ -28,12 +28,12 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showProBanner, setShowProBanner] = useState(true);
-  const { getAuthHeaders, user } = useAuth();
+  const { getAuthHeaders, subscription } = useAuth();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   
   // Check if user is on basic or trial plan (show upgrade banner)
-  const shouldShowUpgradeBanner = user?.subscription?.plan_id === "basic" || user?.subscription?.plan_id === "trial";
+  const shouldShowUpgradeBanner = subscription?.plan_id === "basic" || subscription?.plan_id === "trial";
 
   useEffect(() => {
     // Check for payment success
