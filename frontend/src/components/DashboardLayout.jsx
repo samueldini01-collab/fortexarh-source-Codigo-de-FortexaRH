@@ -685,6 +685,106 @@ export default function DashboardLayout({ children, title }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Global Search Modal */}
+      <Dialog open={showSearchModal} onOpenChange={setShowSearchModal}>
+        <DialogContent className="sm:max-w-xl p-0 gap-0">
+          <div className="flex items-center border-b px-4 py-3">
+            <Search className="w-5 h-5 text-slate-400 mr-3" />
+            <input
+              type="text"
+              placeholder="Buscar empleados, nóminas, vacaciones, asientos..."
+              className="flex-1 outline-none text-lg bg-transparent"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              autoFocus
+              data-testid="global-search-input"
+            />
+            {searchLoading && (
+              <div className="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+            )}
+          </div>
+          
+          <div className="max-h-[400px] overflow-y-auto">
+            {searchQuery && searchResults.length === 0 && !searchLoading && (
+              <div className="p-8 text-center text-slate-500">
+                <Search className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+                <p>No se encontraron resultados para "{searchQuery}"</p>
+                <p className="text-sm mt-1">Intenta con otros términos de búsqueda</p>
+              </div>
+            )}
+            
+            {!searchQuery && (
+              <div className="p-4">
+                <p className="text-xs text-slate-400 uppercase font-medium mb-3">Accesos Rápidos</p>
+                <div className="space-y-1">
+                  {DEFAULT_NAVIGATION.slice(0, 8).map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => handleSearchResultClick(item)}
+                        className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors text-left"
+                      >
+                        <Icon className="w-4 h-4 text-slate-400" />
+                        <span className="text-sm text-slate-700">{item.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+            
+            {searchResults.length > 0 && (
+              <div className="p-2">
+                {searchResults.map((result, index) => {
+                  const Icon = result.icon || Search;
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => handleSearchResultClick(result)}
+                      className="w-full flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-slate-100 transition-colors text-left"
+                    >
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                        result.type === 'employee' ? 'bg-blue-100' :
+                        result.type === 'payroll' ? 'bg-emerald-100' :
+                        result.type === 'vacation' ? 'bg-amber-100' :
+                        result.type === 'journal' ? 'bg-purple-100' :
+                        'bg-slate-100'
+                      }`}>
+                        {typeof Icon === 'function' ? (
+                          <Icon className={`w-4 h-4 ${
+                            result.type === 'employee' ? 'text-blue-600' :
+                            result.type === 'payroll' ? 'text-emerald-600' :
+                            result.type === 'vacation' ? 'text-amber-600' :
+                            result.type === 'journal' ? 'text-purple-600' :
+                            'text-slate-600'
+                          }`} />
+                        ) : (
+                          <Search className="w-4 h-4 text-slate-600" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-800 truncate">{result.title}</p>
+                        <p className="text-xs text-slate-500 truncate">{result.description}</p>
+                      </div>
+                      <span className="text-xs text-slate-400 capitalize">{result.type}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+          
+          <div className="border-t px-4 py-2 flex items-center justify-between bg-slate-50">
+            <div className="flex items-center gap-4 text-xs text-slate-500">
+              <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 bg-white border rounded">↑↓</kbd> Navegar</span>
+              <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 bg-white border rounded">Enter</kbd> Seleccionar</span>
+              <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 bg-white border rounded">Esc</kbd> Cerrar</span>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
