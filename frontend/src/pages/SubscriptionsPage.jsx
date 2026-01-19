@@ -955,6 +955,199 @@ export default function SubscriptionsPage() {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Cancellation Flow Dialog */}
+        <Dialog open={showCancelFlow} onOpenChange={(open) => {
+          if (!open) {
+            setShowCancelFlow(false);
+            setCancelStep(1);
+            setCancelReason("");
+            setCancelFeedback("");
+          }
+        }}>
+          <DialogContent className="max-w-lg">
+            {/* Step 1: Retention Offer */}
+            {cancelStep === 1 && cancellationInfo && (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Heart className="w-5 h-5 text-red-500" />
+                    ¡Espera! Tenemos una oferta para ti
+                  </DialogTitle>
+                </DialogHeader>
+                
+                <div className="py-4 space-y-4">
+                  <div className="bg-gradient-to-br from-emerald-50 to-blue-50 rounded-xl p-6 border border-emerald-200">
+                    <div className="text-center">
+                      <Gift className="w-12 h-12 mx-auto text-emerald-500 mb-3" />
+                      <h3 className="text-xl font-bold text-emerald-800">
+                        {cancellationInfo.retention_offer?.discount_percent}% de Descuento
+                      </h3>
+                      <p className="text-emerald-600">por {cancellationInfo.retention_offer?.duration_months} meses</p>
+                    </div>
+                    
+                    <div className="mt-4 space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-slate-600">Precio actual:</span>
+                        <span className="line-through text-slate-400">{formatCurrency(cancellationInfo.current_plan?.monthly_cost)}/mes</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-600">Nuevo precio:</span>
+                        <span className="font-bold text-emerald-600">{formatCurrency(cancellationInfo.retention_offer?.discounted_monthly)}/mes</span>
+                      </div>
+                      <div className="flex justify-between pt-2 border-t">
+                        <span className="font-medium">Ahorras en 3 meses:</span>
+                        <span className="font-bold text-emerald-600">{formatCurrency(cancellationInfo.retention_offer?.savings_total)}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <p className="text-sm text-slate-500 text-center">
+                    Quédate con nosotros y aprovecha este descuento exclusivo
+                  </p>
+                </div>
+                
+                <DialogFooter className="flex-col gap-2 sm:flex-col">
+                  <Button 
+                    className="w-full bg-emerald-600 hover:bg-emerald-700" 
+                    onClick={handleAcceptRetentionOffer}
+                    disabled={processingCancel}
+                  >
+                    {processingCancel ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Gift className="w-4 h-4 mr-2" />}
+                    Aceptar Descuento
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    className="w-full text-slate-500"
+                    onClick={() => setCancelStep(2)}
+                  >
+                    No gracias, continuar con la cancelación
+                  </Button>
+                </DialogFooter>
+              </>
+            )}
+
+            {/* Step 2: Survey */}
+            {cancelStep === 2 && cancellationInfo && (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5 text-blue-500" />
+                    ¿Por qué te vas?
+                  </DialogTitle>
+                  <DialogDescription>
+                    Tu opinión nos ayuda a mejorar
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="py-4 space-y-4">
+                  <div>
+                    <Label className="text-sm font-medium">Motivo de cancelación *</Label>
+                    <RadioGroup value={cancelReason} onValueChange={setCancelReason} className="mt-2 space-y-2">
+                      {(cancellationInfo.cancellation_reasons || []).map(reason => (
+                        <div key={reason.id} className="flex items-center space-x-2">
+                          <RadioGroupItem value={reason.id} id={reason.id} />
+                          <Label htmlFor={reason.id} className="cursor-pointer">{reason.label}</Label>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                  </div>
+                  
+                  <div>
+                    <Label className="text-sm font-medium">Comentarios adicionales (opcional)</Label>
+                    <Textarea 
+                      placeholder="Cuéntanos más sobre tu experiencia..."
+                      value={cancelFeedback}
+                      onChange={(e) => setCancelFeedback(e.target.value)}
+                      className="mt-2"
+                      rows={3}
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label className="text-sm font-medium">¿Considerarías volver en el futuro?</Label>
+                    <div className="flex gap-4 mt-2">
+                      <Button 
+                        type="button"
+                        variant={cancelWouldReturn === true ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCancelWouldReturn(true)}
+                      >
+                        Sí, posiblemente
+                      </Button>
+                      <Button 
+                        type="button"
+                        variant={cancelWouldReturn === false ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCancelWouldReturn(false)}
+                      >
+                        No lo creo
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+                
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setCancelStep(1)}>
+                    Volver
+                  </Button>
+                  <Button 
+                    variant="destructive"
+                    onClick={() => setCancelStep(3)}
+                    disabled={!cancelReason}
+                  >
+                    Continuar
+                  </Button>
+                </DialogFooter>
+              </>
+            )}
+
+            {/* Step 3: Confirm */}
+            {cancelStep === 3 && (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 text-red-600">
+                    <AlertTriangle className="w-5 h-5" />
+                    Confirmar Cancelación
+                  </DialogTitle>
+                </DialogHeader>
+                
+                <div className="py-4 space-y-4">
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <h4 className="font-medium text-red-800 mb-2">Al cancelar perderás acceso a:</h4>
+                    <ul className="text-sm text-red-700 space-y-1">
+                      <li>• Procesamiento de nóminas</li>
+                      <li>• Gestión de empleados</li>
+                      <li>• Reportes DGII y TSS</li>
+                      <li>• Todas las funciones del sistema</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="bg-slate-50 rounded-lg p-4">
+                    <p className="text-sm text-slate-600">
+                      <strong>Nota:</strong> Tendrás acceso hasta el final de tu período de facturación actual. 
+                      Tus datos se mantendrán guardados por 30 días por si decides volver.
+                    </p>
+                  </div>
+                </div>
+                
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setCancelStep(2)}>
+                    Volver
+                  </Button>
+                  <Button 
+                    variant="destructive"
+                    onClick={handleConfirmCancellation}
+                    disabled={processingCancel}
+                  >
+                    {processingCancel ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <XCircle className="w-4 h-4 mr-2" />}
+                    Confirmar Cancelación
+                  </Button>
+                </DialogFooter>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );
