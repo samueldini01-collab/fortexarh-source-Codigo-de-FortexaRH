@@ -2169,6 +2169,68 @@ class PayrollPaymentRequest(BaseModel):
     """Solicitud de pago de nómina con cuenta bancaria seleccionada"""
     bank_account_code: Optional[str] = "1101"
 
+# ===================== NOVEDADES DE NÓMINA =====================
+
+# Tipos de novedades predefinidas
+PAYROLL_NOVELTY_TYPES = {
+    "income": [
+        {"code": "COM", "name": "Comisiones", "description": "Comisiones de ventas"},
+        {"code": "VIA", "name": "Viáticos", "description": "Gastos de transporte y alimentación"},
+        {"code": "INC", "name": "Incentivos", "description": "Bonificaciones por rendimiento"},
+        {"code": "HED", "name": "Horas Extras Diurnas", "description": "Horas extras 35%"},
+        {"code": "HEN", "name": "Horas Extras Nocturnas", "description": "Horas extras 15%"},
+        {"code": "HEFS", "name": "Horas Extras Fin de Semana", "description": "Horas extras 100%"},
+        {"code": "HEFER", "name": "Horas Extras Feriados", "description": "Horas extras 100%"},
+        {"code": "BON", "name": "Bonificación", "description": "Bonificación general"},
+        {"code": "REG", "name": "Regalía Pascual", "description": "Salario 13"},
+        {"code": "VAC", "name": "Vacaciones", "description": "Pago de vacaciones"},
+        {"code": "OTROING", "name": "Otros Ingresos", "description": "Otros ingresos no especificados"},
+    ],
+    "deduction": [
+        {"code": "PREST", "name": "Préstamo Empresa", "description": "Cuota de préstamo de la empresa"},
+        {"code": "ANTIC", "name": "Anticipo", "description": "Anticipo de salario"},
+        {"code": "COOP", "name": "Cooperativa", "description": "Descuento de cooperativa"},
+        {"code": "SEG", "name": "Seguro Adicional", "description": "Seguro de vida o médico adicional"},
+        {"code": "PENS", "name": "Pensión Alimenticia", "description": "Retención por pensión alimenticia"},
+        {"code": "EMB", "name": "Embargo", "description": "Embargo judicial"},
+        {"code": "TARD", "name": "Tardanzas", "description": "Descuento por tardanzas"},
+        {"code": "AUS", "name": "Ausencias", "description": "Descuento por ausencias"},
+        {"code": "OTROSD", "name": "Otros Descuentos", "description": "Otros descuentos no especificados"},
+    ]
+}
+
+# Tipos de nómina
+PAYROLL_TYPES = [
+    {"code": "REG", "name": "Regular", "description": "Nómina regular quincenal/mensual"},
+    {"code": "TEMP", "name": "Temporal", "description": "Nómina para empleados temporales"},
+    {"code": "BONO", "name": "Bono/Extraordinaria", "description": "Nómina de bonificaciones extraordinarias"},
+    {"code": "REG13", "name": "Regalía Pascual", "description": "Nómina de salario 13"},
+    {"code": "VAC", "name": "Vacaciones", "description": "Nómina de pago de vacaciones"},
+    {"code": "LIQ", "name": "Liquidación", "description": "Nómina de liquidación de empleados"},
+]
+
+class PayrollNoveltyCreate(BaseModel):
+    """Novedad individual para agregar a la nómina"""
+    entry_id: str  # ID de la entrada de nómina del empleado
+    novelty_type: str  # "income" o "deduction"
+    code: str  # Código del tipo de novedad (COM, VIA, PREST, etc.)
+    name: str
+    description: Optional[str] = ""
+    amount: float
+    is_percentage: bool = False
+
+class PayrollPeriodCreateV2(BaseModel):
+    """Período de nómina con opciones avanzadas"""
+    period_type: str  # "quincenal_1", "quincenal_2", "mensual"
+    payroll_type: str = "REG"  # Tipo de nómina: REG, TEMP, BONO, REG13, VAC, LIQ
+    year: int
+    month: int
+    start_date: str
+    end_date: str
+    description: Optional[str] = None
+    department_filter: Optional[str] = None  # Filtrar por departamento específico
+    employee_ids: Optional[List[str]] = None  # Lista específica de empleados
+
 class CompanyBankConfigCreate(BaseModel):
     """Configuración de cuenta bancaria de la empresa para pagos"""
     bank_name: str
