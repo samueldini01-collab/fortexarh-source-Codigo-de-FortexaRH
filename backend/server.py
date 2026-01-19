@@ -1654,11 +1654,11 @@ async def create_public_checkout(data: PublicCheckoutRequest, request: Request):
             }
         )
     except stripe.error.StripeError as e:
-        logging.error(f"Stripe checkout error: {e}")
-        raise HTTPException(status_code=500, detail="Error al crear sesión de pago")
+        logging.error(f"Stripe API error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error de Stripe: {str(e)[:100]}")
     except Exception as e:
-        logging.error(f"Stripe checkout error: {e}")
-        raise HTTPException(status_code=500, detail="Error al crear sesión de pago")
+        logging.error(f"Stripe checkout error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)[:100]}")
     
     # Create pending checkout record (not linked to user yet)
     await db.pending_checkouts.insert_one({
