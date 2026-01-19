@@ -3,96 +3,108 @@ The user wants to create a SaaS (Software as a Service) Human Resources and payr
 
 **PRODUCT REQUIREMENTS:**
 - **Core System:** A complete HR and Payroll system.
-- **Subscription Model:** Hybrid - a monthly base fee plus a per-employee charge.
-- **Modules:**
-    - **Existing:** Employees, payroll, attendance, vacations, evaluations, recruitment, reports, Organizational Chart (Organigrama), Payroll Configuration, Templates.
-    - **Implemented this session:** Payroll Calculator, Accounting (for payroll journal entries).
-    - **Requested:** Export Org Chart as an image, email signed documents, QuickBooks integration.
-- **Features:**
-    - User Authentication: JWT (email/password) and Google Social Login.
-    - Payments: Stripe integration (placeholder).
-    - **Payroll Calculator:** Must handle Dominican Republic specific calculations including TSS (SFS, AFP) and ISR (Impuesto Sobre la Renta) based on official DGII tables. Results must be exportable to PDF.
-    - **Accounting:** Generate balanced payroll journal entries from calculations. Entries should be editable.
-    - **UI/Branding:** Integrate company logo and favicon. Redesign specific pages (, ) to match user-provided mockups.
-    - PDF Generation and E-signatures.
-    - Template Versioning.
-- **Integrations:**
-    - Stripe for payments.
-    - Resend for sending emails.
-    - QuickBooks Online for accounting.
+- **Subscription & Pricing Tiers:**
+    - Three plans (Básico, Pro, Enterprise) with varying prices, features, and limits on users/employees.
+    - Landing page must display a synchronized, comparative pricing table.
+    - **Subscriptions Module:** Users can view, change, upgrade/downgrade their plan, and manage the number of employees/users.
+    - **Billing:** Stripe integration for monthly recurring payments. The cost for additional users is .5/month.
+    - Access control: A canceled/lapsed subscription should lock the user out of the application, showing only a payment prompt.
+- **User Management Module:**
+    - Admins can create, edit, and delete users.
+    - **Role-Based Access Control (RBAC):** Assign roles to users.
+    - Pre-defined roles for Básico/Pro plans.
+    - **Custom Roles:** A sub-module for creating custom roles, available only on the Enterprise plan.
+    - User activity audit trail.
+- **Org Chart Module:**
+    - An intuitive, interactive organizational chart.
+    - Features: Search, create units/positions, and apply pre-defined templates in a cascading structure.
+- **Payroll & Accounting:**
+    - Advanced payroll processing () with support for different periods (monthly, bi-weekly) and types (Regular, Bonus).
+    - An editable, Excel-like payroll sheet with support for manual additions/deductions (Novedades).
+    - Automatic, synchronized generation of balanced journal entries in the Accounting module when a payroll is paid.
+- **Compliance & Reporting:**
+    - Generation of Dominican Republic-specific files: TSS (, ) and tax forms (IR-3, IR-17).
+- **Company & UI Customization:**
+    - A configuration module to update company info, logo, and brand colors.
+    - A feature to customize the main navigation menu (reorder and hide items).
+- **Integrations:** QuickBooks Online, SAP, Oracle, Dynamics.
 
 **User's preferred language**: Spanish (Español)
 
 **what currently exists?**
-A full-stack application (FastAPI/React) with user authentication, a dashboard, and several modules. The Organigrama module is functional. This session, a detailed Calculadora de Nómina (Payroll Calculator) was added, which correctly calculates Dominican Republic specific taxes (TSS and ISR) based on the official 2023 DGII lookup tables and exports the results to a PDF. A new Contabilidad (Accounting) module was created to generate balanced journal entries from payroll calculations. The application's branding was updated with the FortexaRH logo and favicon across multiple pages.
+A full-stack application (FastAPI/React) with a robust set of features. The initial blocker (missing Python dependencies) has been resolved. The advanced payroll (PayrollV2) and compliance file generation (TSS) features are complete and tested. A full-featured Organization Chart module has been implemented and debugged. An advanced Payroll Dashboard with analytics was added. A Company Configuration page and a dynamic Menu Customization feature are also complete.
+
+The agent has just begun implementing the **Subscriptions and User Management** modules. This involved:
+- Adding a detailed, dynamic pricing table to the .
+- Creating backend models and API endpoints for Plans, Subscriptions, Users, and Roles in .
+- Creating new frontend pages:  and .
+- Adding navigation links for the new modules.
+- Initial debugging to fix a backend crash and a frontend compilation error.
 
 **Last working item**:
-- **Last item agent was working:** The agent was executing a major UI overhaul based on user-provided images. It has overwritten  and  with completely new code to implement the new designs. For the Payroll Config page, it also added a new  model and corresponding API endpoints in . The work on the  is incomplete as the backend  model has not been updated to support the many new fields shown in the design.
+- **Last item agent was working:** Implementing the new Subscriptions and User Management modules, along with updating the Landing Page with pricing tiers. The agent had just created the placeholder pages and backend endpoints and fixed initial compilation/runtime errors. The UI for the landing page pricing and the internal subscription page were verified via screenshots.
 - **Status:** IN PROGRESS
 - **Agent Testing Done:** N
 - **Which testing method agent to use?** both
 - **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
-- **Issue 1:** The  redesign is blocked and incomplete. (Priority: P0)
+- **Issue 1:** The  ESLint warnings, mentioned in the previous handoff, have still not been addressed. (Priority: P2)
 
 **Issues Detail:**
-- **Issue 1:** The agent overwrote  to create a new multi-tabbed UI based on user images. However, the backend  model in  was not updated to include the numerous new fields required by this UI (e.g., personal details, emergency contacts, job information, salary details). The frontend will fail to save or display data correctly.
-    - **Attempted fixes:** The frontend file was overwritten. No backend changes were made for the employee model.
+- **Issue 1: ESLint Warnings**
+    - **Attempted fixes:** None.
     - **Next debug checklist:**
-        1.  Analyze the images for the  redesign again to list all required fields across all tabs.
-        2.  Update the  Pydantic model in  to include all new fields.
-        3.  Update the  and  endpoints to handle the new fields.
-        4.  Verify that the new  correctly sends the new data structure to the backend.
-        5.  Test the entire employee creation and update workflow.
-    - **Why fix this issue and what will be achieved with the fix?** This is a direct user request and is required to complete the employee management module as per the new design.
-    - **Status:** BLOCKED
-    - **Is recurring issue?** N
-    - **Should Test frontend/backend/both after fix?** both
-    - **Blocked on other issue:** None. This is the primary blocker.
+        1.  Navigate to the  directory.
+        2.  Run yarn run v1.22.22
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command..
+        3.  Manually review and resolve any remaining warnings in the affected files (e.g., ).
+    - **Why fix this issue and what will be achieved with the fix?** Improves code quality, maintainability, and prevents potential bugs related to stale state in React hooks.
+    - **Status:** NOT STARTED
+    - **Is recurring issue?** Y
+    - **Should Test frontend/backend/both after fix?** frontend
+    - **Blocked on other issue:** None.
 
 **In progress Task List**:
-- **Task 1:** Complete and test the  redesign. (Priority: P1)
-
+- **Task 1: Complete Subscriptions & User Management Implementation** (Priority: P0)
 **Task Detail:**
 - **Task 1:**
-    - **Where to resume:** The agent has already overwritten  and added the backend endpoint . The next step is to test the page to ensure the new UI can fetch and save the global payroll configuration settings correctly.
-    - **What will be achieved with this?** This will complete one of the two UI redesigns requested by the user.
+    - **Where to resume:**
+        1.  Take a screenshot to verify the UI of the .
+        2.  Implement the end-to-end logic for the entire subscriptions and users feature set. This includes:
+            - **Stripe Integration:** Wire up the Change Plan buttons to create Stripe Checkout sessions. Implement backend webhooks to handle successful payments and update the user's subscription status in the database.
+            - **Subscription Management:** Implement the logic for changing plans, adjusting employee/user counts, and canceling subscriptions. Ensure a canceled plan restricts app access.
+            - **User Management:** Implement the CRUD operations for users (create, edit, delete).
+            - **Role-Based Access Control (RBAC):** Implement the logic to create custom roles (Enterprise plan), assign roles to users, and protect routes/features based on the user's role and the company's subscription plan.
+    - **What will be achieved with this?** This will complete the core monetization and user administration functionality of the SaaS application.
     - **Status:** IN PROGRESS
     - **Should Test frontend/backend/both after fix?** both
-    - **Blocked on something:** Not blocked, but secondary to fixing the .
+    - **Blocked on something:** None.
 
 **Upcoming and Future Tasks**
 - **Upcoming Tasks:**
-    - **P0: Template Versioning:** Implement CRUD endpoints and UI for managing versions of document templates.
-    - **P1: Export Org Chart to Image:** Add a feature to export the organizational chart as a PNG or JPG file, likely using .
-    - **P2: Email Integration (Resend):** Implement the feature to send signed documents via email using the Resend integration.
-    - **P2: QuickBooks Integration:** Build out the functionality to connect to QuickBooks and send journal entries. This was deferred by the user but remains a core requirement.
+    - **P1: Implement Custom Roles:** Build the UI and backend logic for the Create Custom Roles sub-module, ensuring it's only accessible to Enterprise plan subscribers.
+    - **P1: Generate DGII Tax Forms:** Implement the logic for generating IR-3 and IR-17 reports. Backend endpoints exist but are placeholders.
+    - **P2: Enterprise Integrations:** Begin implementation of integrations specified in the Enterprise plan (QuickBooks, SAP, Oracle, etc.).
 - **Future Tasks:**
-    - **P2: General improvements to the Org Chart module**, as mentioned by the user.
-    - **P2: Refactor :** Break down the monolithic file into a structured router-based architecture (, etc.) for better maintainability.
+    - **P2: Refactor :** The file has grown significantly and is a major source of technical debt. It needs to be broken down into a proper router-based architecture.
+    - **P2: Employee Self-Service Portal:** A dedicated portal for employees to view their information and payroll slips.
+    - **P2: Custom Document & Letter Generation.**
 
 **Completed work in this session**
-- **Payroll Calculator:**
-    - Implemented a new page for payroll calculation.
-    - Added backend logic for Dominican Republic specific TSS (SFS, AFP) and employer contributions.
-    - Iteratively implemented ISR (Income Tax) calculation, finally using a lookup-table approach to exactly match the 2023 DGII official monthly retention table.
-    - Implemented PDF export for calculation results, including a detailed breakdown and the relevant ISR tax bracket table.
-- **Accounting Module:**
-    - Created a new page for accounting.
-    - Implemented backend models (, ) and API endpoints for generating and managing payroll journal entries.
-    - Fixed a critical bug to ensure all generated journal entries are correctly balanced (Debits = Credits).
-- **Branding and UI:**
-    - Integrated the FortexaRH logo and favicon across the landing page, login/register pages, and the main dashboard layout.
-- **Bug Fixes & Verification:**
-    - The Organigrama module was confirmed as working by the user.
-    - Used the testing agent multiple times to validate the payroll calculator and ISR features.
+- **Dependency & Environment Fix:** Resolved critical startup failure by adding , , and  to .
+- **Phase 1 - Advanced Payroll (Completed):** Finished and fully tested the feature for creating typed/filtered payrolls and managing Novedades.
+- **Phase 2 - TSS Compliance Files (Completed):** Implemented and tested the generation of  and  Excel files.
+- **Org Chart Module (Completed):** Built a new, full-featured org chart UI from user mockups and fixed all reported bugs related to creating nodes and applying templates.
+- **Advanced Payroll Dashboard (Completed):** Created a new page with KPI cards and charts for payroll analytics.
+- **UI/Company Customization (Completed):** Verified the Company Configuration page and implemented a new feature for users to customize their navigation menu.
+- **Subscriptions & User Management (Started):** Added pricing table to landing page, created backend models/endpoints, and stubbed out the frontend pages.
 
 **Earlier issues found/mentioned but not fixed**
 - **Issue 1: ESLint Warnings**
     - **Debug checklist:** Run yarn run v1.22.22
-info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command. in the  directory. Review and fix the  warnings in several component files.
-    - **Why to solve this issue and what will be achieved with this?** Improves code quality and prevents potential bugs related to stale state or infinite loops in React components.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command. in  directory.
+    - **Why to solve this issue and what will be achieved with this?** Improves code quality and prevents potential state-related bugs.
     - **Should Test frontend/backend/both after fix:** frontend
     - **Is recurring issue?** Y
 
@@ -103,55 +115,58 @@ info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this comm
 
 
 **Key Technical Concepts**
-- **Backend:** FastAPI, MongoDB (), Pydantic.
-- **Frontend:** React, React Router, Tailwind CSS, Shadcn/UI, , .
-- **Payroll Logic:** The ISR calculation was changed from a formula-based approach to a lookup-table with linear interpolation to match official government tables. The calculation is performed on gross salary, *before* TSS deductions.
-- **Architecture:** Monolithic backend () and a page-based component architecture on the frontend. The  and  have been overwritten with large, single-component implementations that could be refactored.
+- **Backend:** FastAPI, MongoDB (), Pydantic,  for Excel generation.
+- **Frontend:** React, React Router, Tailwind CSS, Shadcn/UI,  for charts.
+- **Integrations:** Stripe for payments (keys are present, implementation in progress).
+- **State Management:** Mix of React state (, ) and  (for menu customization).
 
 **key DB schema**
-- , ,  (needs significant extension), , , , , , .
-- **New this session:**
-    - : { overtime_rates, tss_rates, employer_contribution_rates }
-    - : { account_id, name, type, normal_balance }
-    - : { entry_id, date, description, lines, status }
-    - : { account_id, debit, credit }
-    - : Stores the result of a payroll calculation.
+- **Subscription:** { , , , , , ,  }
+- **User:** { , , , : [str] }
+- **Role:** { , , : [str],  (for custom roles) }
+- **PayrollTemplate:** { , , ,  }
+- **Project:** { , ,  }
+- **OrgNode:** { , , , ,  }
 
 **changes in tech stack**
-- None.
+- **Backend:**  added for Excel file creation.
+- **Frontend:**  added for data visualization.
 
 **All files of reference**
 - **Created:**
-    - : UI for the payroll calculator.
-    - : UI for the accounting module.
-    - , : Brand assets.
-    - : Project requirements document.
-- **Updated:**
-    - : Major changes. Added payroll calculation, ISR logic, accounting models/endpoints, and global payroll config endpoints.
-    - : Overwritten with a new UI.
-    - : Overwritten with a new UI.
-    - : Added routes for calculator and accounting.
-    - : Added menu links and logo.
-    - : Added favicon and updated title.
-    - , , : Added logo.
+    - : Separates TSS logic from the main server file.
+    - : New advanced analytics dashboard.
+    - : UI for managing subscription plans.
+    - : UI for managing users and roles.
+- **Updated/Rewritten:**
+    - : Massively expanded with endpoints for Dashboard, Templates, Org Chart, Subscriptions, and Users.
+    - : Completely rewritten to match user design and functionality requirements.
+    - : Heavily modified to add a new menu customization modal and links to new pages.
+    - : Updated to include a detailed, dynamic pricing table section.
+    - : Added routes for all new pages.
+    - : Consistently updated after major feature completion.
 
 **Areas that need refactoring**:
--  remains a monolith and is becoming increasingly difficult to manage.
--  is now a very large file implementing a complex multi-tab form. It should be broken down into smaller, more manageable components, potentially one for each tab.
+-  is now a severe liability due to its size and complexity. Despite creating one helper file (), the agent continued to add hundreds of lines of logic for subsequent features directly into the monolith. This should be the top refactoring priority.
+-  and  are very large components that could be broken down into smaller, more manageable sub-components.
 
 **key api endpoints**
+- 
+-  (CRUD)
+-  (CRUD)
+-  (CRUD)
+-  (GET, POST for checkout session)
 -  (POST)
--  (POST)
--  (GET, POST)
+-  (CRUD)
+-  (CRUD)
 -  (GET)
--  (GET, POST)
--  (GET, PUT, DELETE)
--  (POST)
+-  (GET)
 
 **Critical Info for New Agent**
-- **The highest priority is to fix the **. The frontend has been changed, but the backend  model is outdated, causing a blocker. You must update the Pydantic model and associated API endpoints in  before the page can work.
-- The payroll calculator's ISR logic now uses a lookup function () in  to exactly match the 2023 DGII PDF provided by the user. Do not revert to a formula-based calculation.
-- The user has provided new UI designs for  and . Adhere to these designs.
+- **Your top priority is to complete the Subscriptions and User Management feature.** The basic files and endpoints are in place, but the most complex logic (Stripe integration, webhook handling, plan change logic, and role-based access control) is not yet implemented or tested.
+- The user has provided Stripe keys, which are in . You must build the full payment and subscription lifecycle.
+- When implementing RBAC, remember that custom roles are an Enterprise-only feature. You will need to check the company's current subscription plan before allowing access to role creation/assignment features.
+- The monolithic  is a risk. For any new backend logic, strongly consider creating new router files instead of adding to the existing monolith.
 
 **documents and test reports created in this job**
 - 
@@ -159,26 +174,30 @@ info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this comm
 - 
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Requests adding ISR (income tax) to the calculator. (Status: **COMPLETED**)
-2.  **User:** Requests adding the ISR tax table to the exported PDF. (Status: **COMPLETED**)
-3.  **User:** Provides corrected ISR tax brackets for 2026. (Status: **COMPLETED**)
-4.  **User:** Provides an official PDF with monthly ISR retention tables and asks the agent to use that instead. (Status: **COMPLETED**)
-5.  **User:** Confirms to use the exact values from the 2023 PDF lookup table. (Status: **COMPLETED**)
-6.  **User:** Asks to add the FortexaRH logo/favicon and start the editable Accounting module. (Status: **COMPLETED**)
-7.  **User:** Provides images for a complete redesign of the Payroll Configuration page and the Employee Profile page. (Status: **IN PROGRESS**)
+10. **User:** Reports multiple bugs in the new Org Chart module with screenshots showing errors when applying templates and adding new units/positions. (Status: **RESOLVED**)
+9. **Agent:** Debugs and fixes the Org Chart bugs by aligning backend models with frontend data structures and improving error handling. Verifies fixes with  and screenshots. (Status: **RESOLVED**)
+8. **User:** Submits a very large feature request for a Subscriptions module, User Management with RBAC, and three defined pricing tiers to be displayed on the landing page. Provides UI mockups. (Status: **IN PROGRESS**)
+7. **Agent:** Asks the user to confirm they have Stripe keys ready for the implementation. (Status: **COMPLETED**)
+6. **User:** Confirms they have Stripe keys configured. (Status: **COMPLETED**)
+5. **Agent:** Begins implementing the Subscriptions and User Management features in parallel, creating backend models, endpoints, and frontend pages. (Status: **IN PROGRESS**)
+4. **Agent:** Debugs a backend crash () and a frontend compile error (). (Status: **COMPLETED**)
+3. **Agent:** Verifies the  pricing table is now rendering correctly. (Status: **COMPLETED**)
+2. **Agent:** Verifies the  UI inside the app is rendering correctly. (Status: **COMPLETED**)
+1. **Agent:** Was about to verify the  UI when the session ended. (Status: **PENDING**)
 
 **Project Health Check:**
-- **Broken:**  is non-functional due to a mismatch between the new frontend UI and the old backend model.  is untested after being overwritten.
-- **Mocked:** Stripe and QuickBooks integrations remain placeholders.
+- **Broken:** The Subscriptions and User Management features are in a partially implemented state and are not functional. The application will run, but these new modules will be incomplete.
+- **Mocked:** Stripe (code written but checkout/webhook flow untested), QuickBooks, SAP, Oracle, Resend integrations are all placeholders.
 
 **3rd Party Integrations**
-- **Stripe (Payments):** Requires User API Key.
+- **Stripe (Payments):** Keys are available. Implementation is IN PROGRESS. Requires User API Key.
 - **Emergent-managed Google Auth (Authentication):** Integrated.
-- **Resend (Email):** Uses Emergent LLM Key (Implementation pending).
-- **QuickBooks Online (Accounting):** Requires User API Key (Implementation pending).
+- **Resend (Email):** Implementation pending.
+- **QuickBooks Online (Accounting):** Implementation pending.
+- **SAP, Oracle, Dynamics:** Implementation pending.
 
 **Testing status**
-- **Testing agent used after significant changes:** YES, for the payroll calculator and ISR features.
+- **Testing agent used after significant changes:** YES, for Phase 1 (Advanced Payroll) and Phase 2 (TSS Files).
 - **Troubleshoot agent used after agent stuck in loop:** NO
 - **Test files created:** []
 - **Known regressions:** None.
@@ -187,4 +206,5 @@ info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this comm
 A new user and company can be created through the registration page. No fixed credentials are required.
 
 **What agent forgot to execute**
-The agent completely forgot to update the backend  model and its corresponding API endpoints in  after overwriting the  file. This created a major inconsistency between the frontend and backend, which is the current primary blocker.</analysis>
+- The agent did not address the recurring ESLint warnings in the frontend codebase.
+- When implementing the large set of features for subscriptions and users, the agent reverted to adding all logic to the monolithic  instead of continuing the good practice of creating separate router/handler files.</analysis>

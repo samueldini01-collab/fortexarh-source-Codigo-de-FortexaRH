@@ -5139,7 +5139,7 @@ else:
     origins_list = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
-        "https://fortexahr-system.preview.emergentagent.com"
+        "https://staff-genius-2.preview.emergentagent.com"
     ]
 
 app.add_middleware(
