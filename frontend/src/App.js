@@ -201,6 +201,84 @@ const AuthProvider = ({ children }) => {
   );
 };
 
+// Subscription Provider
+const SubscriptionProvider = ({ children }) => {
+  const [subscription, setSubscription] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { user, token } = useAuth();
+
+  const fetchSubscription = async () => {
+    if (!user || !token) {
+      setLoading(false);
+      return;
+    }
+    
+    try {
+      const response = await axios.get(`${API}/subscription`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setSubscription(response.data);
+    } catch (error) {
+      console.error("Error fetching subscription:", error);
+      setSubscription(null);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchSubscription();
+  }, [user, token]);
+
+  // Check if a feature is accessible based on subscription
+  const canAccessFeature = (featureId) => {
+    if (!subscription) return false;
+    
+    // If subscription is expired, only allow subscriptions page
+    if (subscription.status === "expired") {
+      return featureId === "subscriptions" || featureId === "settings";
+    }
+    
+    const featureAccess = subscription.feature_access || {};
+    return featureAccess[featureId] === true;
+  };
+
+  // Check if trial is expired
+  const isTrialExpired = () => {
+    if (!subscription) return false;
+    return subscription.status === "expired";
+  };
+
+  // Get days remaining in trial
+  const getTrialDaysRemaining = () => {
+    return subscription?.trial_days_remaining || 0;
+  };
+
+  // Check if user is on trial
+  const isOnTrial = () => {
+    return subscription?.status === "trial";
+  };
+
+  // Get current plan
+  const getCurrentPlan = () => {
+    return subscription?.plan_id || "trial";
+  };
+
+  return (
+    <SubscriptionContext.Provider value={{ 
+      subscription, 
+      loading, 
+      canAccessFeature, 
+      isTrialExpired, 
+      getTrialDaysRemaining,
+      isOnTrial,
+      getCurrentPlan,
+      refreshSubscription: fetchSubscription 
+    }}>
+      {children}
+    </SubscriptionContext.Provider>
+  );
+};
+
 // App Router
 function AppRouter() {
   const location = useLocation();
