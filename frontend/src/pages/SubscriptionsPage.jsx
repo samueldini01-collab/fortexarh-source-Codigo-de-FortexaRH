@@ -28,8 +28,10 @@ import {
 import { 
   Check, X, CreditCard, Users, Building2, Zap, Shield, Clock,
   AlertTriangle, RefreshCw, ArrowUpRight, Crown, Rocket, Globe, Loader2, CheckCircle2,
-  FileText, Download, Receipt
+  FileText, Download, Receipt, Gift, Heart, MessageSquare, XCircle, RotateCcw
 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 
 const PLAN_ICONS = {
