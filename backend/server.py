@@ -23,9 +23,17 @@ load_dotenv(ROOT_DIR / '.env')
 # Import email service
 from email_service import send_payment_confirmation_email, send_welcome_email, send_invoice_email
 
-# MongoDB connection
+# MongoDB connection with production-ready settings
 mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
+client = AsyncIOMotorClient(
+    mongo_url,
+    serverSelectionTimeoutMS=10000,  # 10 second timeout for server selection
+    connectTimeoutMS=10000,  # 10 second connection timeout
+    socketTimeoutMS=30000,  # 30 second socket timeout
+    maxPoolSize=50,  # Maximum connection pool size
+    minPoolSize=5,  # Minimum connection pool size
+    retryWrites=True,  # Retry writes on transient errors
+)
 db = client[os.environ['DB_NAME']]
 
 JWT_SECRET = os.environ.get('JWT_SECRET', 'hrflow_secret_key_2024')
