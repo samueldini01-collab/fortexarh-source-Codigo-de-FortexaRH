@@ -121,6 +121,13 @@ DELETE /api/accounting/journal-entries/{id}/with-payroll  - Eliminar + nómina
 
 ---
 
+## ✅ Módulos de Configuración y Personalización (Completado - Enero 2026)
+- [x] **Configuración de Empresa**: 7 pestañas (General, Logo, Apariencia, Marca, Notificaciones, Integraciones, Auditoría)
+- [x] **Personalización del Menú**: Modal para ocultar/mostrar y reordenar módulos del sidebar
+  - Cambios guardados en localStorage
+  - Botón "Restablecer" para volver al menú predeterminado
+- [x] **Organigrama Mejorado**: Búsqueda, plantillas, nueva unidad/posición, vistas múltiples
+
 ## ✅ P1/P2 - Templates, Moneda y Dashboard (Completado - Enero 2026)
 - [x] **Templates de Nómina**: CRUD completo para guardar configuraciones recurrentes
 - [x] **Proyectos**: Agrupar empleados por proyecto con presupuesto
