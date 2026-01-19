@@ -2,7 +2,7 @@
 Custom Roles Routes for FortexaRH
 Enterprise-only feature for creating and managing custom roles
 """
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 from typing import List, Dict, Optional
 from datetime import datetime, timezone
@@ -13,7 +13,9 @@ router = APIRouter(prefix="/roles", tags=["Custom Roles"])
 
 # These will be injected from server.py
 db = None
-get_current_user = None
+_get_current_user_func = None
+
+logger = logging.getLogger(__name__)
 
 # Default modules and permissions
 DEFAULT_MODULES = [
@@ -34,6 +36,7 @@ DEFAULT_MODULES = [
 
 PERMISSION_TYPES = ["view", "create", "edit", "delete"]
 
+
 # Pydantic models
 class CustomRoleCreate(BaseModel):
     """Model for creating a custom role"""
@@ -42,6 +45,7 @@ class CustomRoleCreate(BaseModel):
     modules: List[str] = []
     permissions: Dict[str, List[str]] = {}  # module_id: [view, create, edit, delete]
     color: Optional[str] = "#3b82f6"  # Default blue
+
 
 class CustomRoleUpdate(BaseModel):
     """Model for updating a custom role"""
@@ -55,9 +59,17 @@ class CustomRoleUpdate(BaseModel):
 
 def init_router(database, auth_dependency):
     """Initialize router with database and auth dependency"""
-    global db, get_current_user
+    global db, _get_current_user_func
     db = database
-    get_current_user = auth_dependency
+    _get_current_user_func = auth_dependency
+
+
+async def get_current_user(request: Request):
+    """Wrapper to call the auth dependency"""
+    from fastapi.security import HTTPBearer
+    security = HTTPBearer(auto_error=False)
+    credentials = await security(request)
+    return await _get_current_user_func(request, credentials)
 
 
 async def check_enterprise_plan(company_id: str) -> bool:
@@ -70,8 +82,9 @@ async def check_enterprise_plan(company_id: str) -> bool:
 
 
 @router.get("/modules")
-async def get_available_modules(current_user: dict = Depends(lambda: get_current_user)):
+async def get_available_modules(request: Request):
     """Get list of available modules for role configuration"""
+    await get_current_user(request)  # Verify auth
     return {
         "modules": DEFAULT_MODULES,
         "permission_types": PERMISSION_TYPES
@@ -79,13 +92,10 @@ async def get_available_modules(current_user: dict = Depends(lambda: get_current
 
 
 @router.get("")
-async def get_custom_roles(current_user: dict = Depends(lambda: get_current_user)):
+async def get_custom_roles(request: Request):
     """Get all custom roles for the company (Enterprise only)"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
-    user = current_user
-    company_id = user.get("company_id")
+    current_user = await get_current_user(request)
+    company_id = current_user.get("company_id")
     
     # Check if enterprise plan
     is_enterprise = await check_enterprise_plan(company_id)
@@ -154,13 +164,10 @@ async def get_custom_roles(current_user: dict = Depends(lambda: get_current_user
 
 
 @router.post("")
-async def create_custom_role(data: CustomRoleCreate, current_user: dict = Depends(lambda: get_current_user)):
+async def create_custom_role(data: CustomRoleCreate, request: Request):
     """Create a new custom role (Enterprise only)"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
-    user = current_user
-    company_id = user.get("company_id")
+    current_user = await get_current_user(request)
+    company_id = current_user.get("company_id")
     
     # Check if enterprise plan
     is_enterprise = await check_enterprise_plan(company_id)
@@ -212,7 +219,7 @@ async def create_custom_role(data: CustomRoleCreate, current_user: dict = Depend
         "color": data.color,
         "is_active": True,
         "is_default": False,
-        "created_by": user.get("user_id"),
+        "created_by": current_user.get("user_id"),
         "created_at": datetime.now(timezone.utc).isoformat(),
         "updated_at": datetime.now(timezone.utc).isoformat()
     }
@@ -231,13 +238,10 @@ async def create_custom_role(data: CustomRoleCreate, current_user: dict = Depend
 
 
 @router.get("/{role_id}")
-async def get_custom_role(role_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def get_custom_role(role_id: str, request: Request):
     """Get a specific custom role"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
-    user = current_user
-    company_id = user.get("company_id")
+    current_user = await get_current_user(request)
+    company_id = current_user.get("company_id")
     
     role = await db.custom_roles.find_one(
         {"role_id": role_id, "company_id": company_id},
@@ -251,17 +255,10 @@ async def get_custom_role(role_id: str, current_user: dict = Depends(lambda: get
 
 
 @router.put("/{role_id}")
-async def update_custom_role(
-    role_id: str, 
-    data: CustomRoleUpdate, 
-    current_user: dict = Depends(lambda: get_current_user)
-):
+async def update_custom_role(role_id: str, data: CustomRoleUpdate, request: Request):
     """Update a custom role"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
-    user = current_user
-    company_id = user.get("company_id")
+    current_user = await get_current_user(request)
+    company_id = current_user.get("company_id")
     
     # Check if role exists
     existing = await db.custom_roles.find_one({
@@ -324,13 +321,10 @@ async def update_custom_role(
 
 
 @router.delete("/{role_id}")
-async def delete_custom_role(role_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def delete_custom_role(role_id: str, request: Request):
     """Delete a custom role"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
-    user = current_user
-    company_id = user.get("company_id")
+    current_user = await get_current_user(request)
+    company_id = current_user.get("company_id")
     
     # Check if any users have this role
     users_with_role = await db.users.count_documents({
@@ -356,13 +350,10 @@ async def delete_custom_role(role_id: str, current_user: dict = Depends(lambda: 
 
 
 @router.post("/{role_id}/duplicate")
-async def duplicate_custom_role(role_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def duplicate_custom_role(role_id: str, request: Request):
     """Duplicate an existing role"""
-    if get_current_user is None:
-        raise HTTPException(status_code=500, detail="Router not initialized")
-    
-    user = current_user
-    company_id = user.get("company_id")
+    current_user = await get_current_user(request)
+    company_id = current_user.get("company_id")
     
     # Check if enterprise plan
     is_enterprise = await check_enterprise_plan(company_id)
@@ -393,7 +384,7 @@ async def duplicate_custom_role(role_id: str, current_user: dict = Depends(lambd
         "color": original.get("color", "#3b82f6"),
         "is_active": True,
         "is_default": False,
-        "created_by": user.get("user_id"),
+        "created_by": current_user.get("user_id"),
         "created_at": datetime.now(timezone.utc).isoformat(),
         "updated_at": datetime.now(timezone.utc).isoformat()
     }
