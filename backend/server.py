@@ -4272,6 +4272,331 @@ async def reorder_org_nodes(updates: List[OrgNodeUpdatePosition], current_user: 
     
     return {"message": "Organigrama actualizado correctamente"}
 
+# ===================== PAYROLL TEMPLATES =====================
+
+@api_router.get("/payroll-v2/templates")
+async def get_payroll_templates(current_user: dict = Depends(get_current_user)):
+    """Obtener templates de nómina de la empresa"""
+    company_id = current_user.get("company_id")
+    templates = await db.payroll_templates.find(
+        {"company_id": company_id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    return templates
+
+@api_router.post("/payroll-v2/templates")
+async def create_payroll_template(template: PayrollTemplateCreate, current_user: dict = Depends(get_current_user)):
+    """Crear un template de nómina"""
+    company_id = current_user.get("company_id")
+    
+    template_id = f"tmpl_{uuid.uuid4().hex[:8]}"
+    template_doc = {
+        "template_id": template_id,
+        "company_id": company_id,
+        **template.dict(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "created_by": current_user.get("user_id")
+    }
+    
+    await db.payroll_templates.insert_one(template_doc)
+    return {"template_id": template_id, "message": "Template creado correctamente"}
+
+@api_router.put("/payroll-v2/templates/{template_id}")
+async def update_payroll_template(template_id: str, template: PayrollTemplateCreate, current_user: dict = Depends(get_current_user)):
+    """Actualizar un template de nómina"""
+    company_id = current_user.get("company_id")
+    
+    result = await db.payroll_templates.update_one(
+        {"template_id": template_id, "company_id": company_id},
+        {"$set": {**template.dict(), "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Template no encontrado")
+    
+    return {"message": "Template actualizado"}
+
+@api_router.delete("/payroll-v2/templates/{template_id}")
+async def delete_payroll_template(template_id: str, current_user: dict = Depends(get_current_user)):
+    """Eliminar un template de nómina"""
+    company_id = current_user.get("company_id")
+    
+    result = await db.payroll_templates.delete_one(
+        {"template_id": template_id, "company_id": company_id}
+    )
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Template no encontrado")
+    
+    return {"message": "Template eliminado"}
+
+# ===================== PROJECTS =====================
+
+@api_router.get("/projects")
+async def get_projects(current_user: dict = Depends(get_current_user)):
+    """Obtener proyectos de la empresa"""
+    company_id = current_user.get("company_id")
+    projects = await db.projects.find(
+        {"company_id": company_id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    return projects
+
+@api_router.post("/projects")
+async def create_project(project: ProjectCreate, current_user: dict = Depends(get_current_user)):
+    """Crear un proyecto"""
+    company_id = current_user.get("company_id")
+    
+    project_id = f"proj_{uuid.uuid4().hex[:8]}"
+    project_doc = {
+        "project_id": project_id,
+        "company_id": company_id,
+        **project.dict(),
+        "employee_ids": [],
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.projects.insert_one(project_doc)
+    return {"project_id": project_id, "message": "Proyecto creado correctamente"}
+
+@api_router.put("/projects/{project_id}")
+async def update_project(project_id: str, project: ProjectCreate, current_user: dict = Depends(get_current_user)):
+    """Actualizar un proyecto"""
+    company_id = current_user.get("company_id")
+    
+    result = await db.projects.update_one(
+        {"project_id": project_id, "company_id": company_id},
+        {"$set": {**project.dict(), "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Proyecto no encontrado")
+    
+    return {"message": "Proyecto actualizado"}
+
+@api_router.post("/projects/{project_id}/employees")
+async def add_employees_to_project(project_id: str, employee_ids: List[str], current_user: dict = Depends(get_current_user)):
+    """Agregar empleados a un proyecto"""
+    company_id = current_user.get("company_id")
+    
+    result = await db.projects.update_one(
+        {"project_id": project_id, "company_id": company_id},
+        {"$addToSet": {"employee_ids": {"$each": employee_ids}}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Proyecto no encontrado")
+    
+    # Update employees with project assignment
+    await db.employees.update_many(
+        {"employee_id": {"$in": employee_ids}, "company_id": company_id},
+        {"$set": {"project_id": project_id}}
+    )
+    
+    return {"message": f"{len(employee_ids)} empleados agregados al proyecto"}
+
+@api_router.delete("/projects/{project_id}")
+async def delete_project(project_id: str, current_user: dict = Depends(get_current_user)):
+    """Eliminar un proyecto"""
+    company_id = current_user.get("company_id")
+    
+    # Remove project from employees
+    await db.employees.update_many(
+        {"project_id": project_id, "company_id": company_id},
+        {"$unset": {"project_id": ""}}
+    )
+    
+    result = await db.projects.delete_one(
+        {"project_id": project_id, "company_id": company_id}
+    )
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Proyecto no encontrado")
+    
+    return {"message": "Proyecto eliminado"}
+
+# ===================== CURRENCY CONFIG =====================
+
+@api_router.get("/currency/rates")
+async def get_currency_rates(current_user: dict = Depends(get_current_user)):
+    """Obtener tasas de cambio configuradas"""
+    company_id = current_user.get("company_id")
+    rates = await db.currency_rates.find(
+        {"company_id": company_id, "is_active": True},
+        {"_id": 0}
+    ).sort("effective_date", -1).to_list(50)
+    return rates
+
+@api_router.post("/currency/rates")
+async def create_currency_rate(config: CurrencyConfigCreate, current_user: dict = Depends(get_current_user)):
+    """Crear/actualizar tasa de cambio"""
+    company_id = current_user.get("company_id")
+    
+    rate_id = f"rate_{uuid.uuid4().hex[:8]}"
+    rate_doc = {
+        "rate_id": rate_id,
+        "company_id": company_id,
+        **config.dict(),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.currency_rates.insert_one(rate_doc)
+    return {"rate_id": rate_id, "message": "Tasa de cambio guardada"}
+
+@api_router.get("/currency/latest")
+async def get_latest_exchange_rate(currency: str = "USD", current_user: dict = Depends(get_current_user)):
+    """Obtener la tasa de cambio más reciente para una moneda"""
+    company_id = current_user.get("company_id")
+    
+    rate = await db.currency_rates.find_one(
+        {"company_id": company_id, "currency_code": currency, "is_active": True},
+        {"_id": 0},
+        sort=[("effective_date", -1)]
+    )
+    
+    if not rate:
+        # Default rate for USD
+        return {"currency_code": currency, "exchange_rate": 58.50, "is_default": True}
+    
+    return rate
+
+# ===================== DASHBOARD STATS =====================
+
+@api_router.get("/dashboard/payroll-stats")
+async def get_payroll_dashboard_stats(current_user: dict = Depends(get_current_user)):
+    """Obtener estadísticas del dashboard de nómina"""
+    company_id = current_user.get("company_id")
+    
+    # Get all periods
+    periods = await db.payroll_periods.find(
+        {"company_id": company_id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    
+    # Get all employees
+    employees = await db.employees.find(
+        {"company_id": company_id, "status": "active"},
+        {"_id": 0}
+    ).to_list(500)
+    
+    # Monthly trend (last 12 months)
+    monthly_trend = []
+    paid_periods = [p for p in periods if p.get("status") == "paid"]
+    
+    # Group by month/year
+    monthly_data = {}
+    for p in paid_periods:
+        key = f"{p.get('year')}-{p.get('month'):02d}"
+        if key not in monthly_data:
+            monthly_data[key] = {"month": key, "total_gross": 0, "total_net": 0, "count": 0}
+        monthly_data[key]["total_gross"] += p.get("total_gross", 0)
+        monthly_data[key]["total_net"] += p.get("total_net", 0)
+        monthly_data[key]["count"] += 1
+    
+    monthly_trend = sorted(monthly_data.values(), key=lambda x: x["month"])[-12:]
+    
+    # Department distribution
+    dept_distribution = {}
+    for emp in employees:
+        dept = emp.get("department", "Sin Departamento")
+        if dept not in dept_distribution:
+            dept_distribution[dept] = {"department": dept, "count": 0, "total_salary": 0}
+        dept_distribution[dept]["count"] += 1
+        dept_distribution[dept]["total_salary"] += emp.get("base_salary", 0)
+    
+    # Employer cost breakdown
+    total_entries = []
+    for p in paid_periods[-6:]:  # Last 6 paid periods
+        entries = await db.payroll_entries.find(
+            {"period_id": p["period_id"], "company_id": company_id},
+            {"_id": 0}
+        ).to_list(500)
+        total_entries.extend(entries)
+    
+    employer_costs = {
+        "total_gross_salary": sum(e.get("gross_salary", 0) for e in total_entries),
+        "total_net_salary": sum(e.get("net_salary", 0) for e in total_entries),
+        "total_sfs_employer": sum(e.get("sfs_employer", 0) for e in total_entries),
+        "total_afp_employer": sum(e.get("afp_employer", 0) for e in total_entries),
+        "total_srl": sum(e.get("srl_employer", 0) for e in total_entries),
+        "total_infotep": sum(e.get("infotep_employer", 0) for e in total_entries),
+    }
+    employer_costs["total_employer_cost"] = (
+        employer_costs["total_gross_salary"] + 
+        employer_costs["total_sfs_employer"] + 
+        employer_costs["total_afp_employer"] + 
+        employer_costs["total_srl"] + 
+        employer_costs["total_infotep"]
+    )
+    
+    # Top 10 salaries
+    top_salaries = sorted(employees, key=lambda x: x.get("base_salary", 0), reverse=True)[:10]
+    top_salaries_data = [
+        {
+            "employee_id": e.get("employee_id"),
+            "name": f"{e.get('first_name', '')} {e.get('last_name', '')}",
+            "department": e.get("department", ""),
+            "salary": e.get("base_salary", 0)
+        }
+        for e in top_salaries
+    ]
+    
+    # Alerts
+    alerts = []
+    
+    # Unpaid periods
+    unpaid_approved = [p for p in periods if p.get("status") == "approved"]
+    if unpaid_approved:
+        alerts.append({
+            "type": "warning",
+            "message": f"{len(unpaid_approved)} nóminas aprobadas pendientes de pago",
+            "count": len(unpaid_approved)
+        })
+    
+    # Employees without complete data
+    incomplete_employees = [e for e in employees if not e.get("document_id") or not e.get("bank_account")]
+    if incomplete_employees:
+        alerts.append({
+            "type": "info",
+            "message": f"{len(incomplete_employees)} empleados con datos incompletos",
+            "count": len(incomplete_employees)
+        })
+    
+    # Summary stats
+    summary = {
+        "total_employees": len(employees),
+        "total_periods": len(periods),
+        "paid_periods": len(paid_periods),
+        "total_paid_ytd": sum(p.get("total_net", 0) for p in paid_periods if p.get("year") == datetime.now().year),
+        "avg_salary": sum(e.get("base_salary", 0) for e in employees) / len(employees) if employees else 0
+    }
+    
+    return {
+        "summary": summary,
+        "monthly_trend": monthly_trend,
+        "department_distribution": list(dept_distribution.values()),
+        "employer_costs": employer_costs,
+        "top_salaries": top_salaries_data,
+        "alerts": alerts
+    }
+
+@api_router.get("/dashboard/currency-summary")
+async def get_currency_summary(current_user: dict = Depends(get_current_user)):
+    """Resumen de nóminas por moneda"""
+    company_id = current_user.get("company_id")
+    
+    periods = await db.payroll_periods.find(
+        {"company_id": company_id, "status": "paid"},
+        {"_id": 0}
+    ).to_list(100)
+    
+    currency_summary = {"DOP": 0, "USD": 0}
+    for p in periods:
+        currency = p.get("currency", "DOP")
+        currency_summary[currency] = currency_summary.get(currency, 0) + p.get("total_net", 0)
+    
+    return currency_summary
+
 # ===================== MAIN APP =====================
 
 app.include_router(api_router)
