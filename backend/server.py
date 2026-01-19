@@ -65,19 +65,29 @@ app = FastAPI(title="FortexaRH SaaS API")
 api_router = APIRouter(prefix="/api")
 security = HTTPBearer(auto_error=False)
 
-# Configure CORS early
-cors_origins = os.environ.get('CORS_ORIGINS', '*')
-if cors_origins == '*':
-    app.add_middleware(
-        CORSMiddleware,
-        allow_credentials=True,
-        allow_origins=["*"],
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-else:
-    origins_list = cors_origins.split(',')
-    app.add_middleware(
+# Configure CORS - Production-ready configuration
+# When credentials are included, we cannot use wildcard '*'
+# We need to dynamically allow the requesting origin
+allowed_origins = [
+    "https://fortexarh.com",
+    "https://www.fortexarh.com",
+    "https://staff-genius-2.emergent.host",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+# Add any custom origins from environment
+custom_origins = os.environ.get('CORS_ORIGINS', '')
+if custom_origins and custom_origins != '*':
+    allowed_origins.extend([o.strip() for o in custom_origins.split(',') if o.strip()])
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=allowed_origins,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
         CORSMiddleware,
         allow_credentials=True,
         allow_origins=origins_list,
