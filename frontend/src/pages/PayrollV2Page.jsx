@@ -31,6 +31,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Plus, 
   Calendar,
@@ -49,7 +50,12 @@ import {
   XCircle,
   AlertCircle,
   ChevronRight,
-  Building2
+  Building2,
+  Save,
+  X,
+  Printer,
+  FileSpreadsheet,
+  Wallet
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -81,8 +87,14 @@ export default function PayrollV2Page() {
   const [periodEntries, setPeriodEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showNewPeriod, setShowNewPeriod] = useState(false);
-  const [showEditEntry, setShowEditEntry] = useState(false);
-  const [selectedEntry, setSelectedEntry] = useState(null);
+  const [showPayDialog, setShowPayDialog] = useState(false);
+  const [bankAccounts, setBankAccounts] = useState([]);
+  const [selectedBankAccount, setSelectedBankAccount] = useState("");
+  const [companyName, setCompanyName] = useState("NOMBRE DE LA EMPRESA");
+  
+  // Inline editing states
+  const [editingCell, setEditingCell] = useState(null);
+  const [editValue, setEditValue] = useState("");
   
   // Form states
   const [newPeriodForm, setNewPeriodForm] = useState({
@@ -93,22 +105,15 @@ export default function PayrollV2Page() {
     end_date: "",
     description: ""
   });
-  
-  const [editEntryForm, setEditEntryForm] = useState({
-    base_salary: 0,
-    overtime_day_hours: 0,
-    overtime_night_hours: 0,
-    overtime_weekend_hours: 0,
-    overtime_holiday_hours: 0,
-    bonuses: 0,
-    commissions: 0,
-    additional_deductions: []
-  });
 
-  const { getAuthHeaders } = useAuth();
+  const { getAuthHeaders, user } = useAuth();
 
   useEffect(() => {
     fetchPeriods();
+    fetchBankAccounts();
+    if (user?.company_name) {
+      setCompanyName(user.company_name);
+    }
   }, []);
 
   useEffect(() => {
@@ -163,6 +168,26 @@ export default function PayrollV2Page() {
       setPeriodEntries(response.data.entries || []);
     } catch (error) {
       console.error("Error fetching period details:", error);
+    }
+  };
+
+  const fetchBankAccounts = async () => {
+    try {
+      const response = await axios.get(`${API}/accounting/accounts`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      // Filter bank accounts (code starts with 1101 or type is asset with "banco" in name)
+      const banks = response.data.filter(acc => 
+        acc.code.startsWith('1101') || 
+        (acc.account_type === 'asset' && acc.name.toLowerCase().includes('banco'))
+      );
+      setBankAccounts(banks);
+      if (banks.length > 0) {
+        setSelectedBankAccount(banks[0].code);
+      }
+    } catch (error) {
+      console.error("Error fetching bank accounts:", error);
     }
   };
 
@@ -221,15 +246,24 @@ export default function PayrollV2Page() {
     }
   };
 
-  const handlePayPeriod = async (periodId) => {
-    if (!confirm("¿Está seguro de pagar este período? Se generará el asiento contable automáticamente.")) return;
+  const openPayDialog = (period) => {
+    setSelectedPeriod(period);
+    setShowPayDialog(true);
+  };
+
+  const handlePayPeriod = async () => {
+    if (!selectedPeriod) return;
     
     try {
-      const response = await axios.post(`${API}/payroll-v2/periods/${periodId}/pay`, {}, {
-        headers: getAuthHeaders(),
-        withCredentials: true
-      });
+      const response = await axios.post(`${API}/payroll-v2/periods/${selectedPeriod.period_id}/pay`, 
+        { bank_account_code: selectedBankAccount },
+        {
+          headers: getAuthHeaders(),
+          withCredentials: true
+        }
+      );
       toast.success(`Nómina pagada. Asiento #${response.data.entry_number} generado.`);
+      setShowPayDialog(false);
       fetchPeriods();
     } catch (error) {
       toast.error(error.response?.data?.detail || "Error al pagar");
@@ -252,37 +286,60 @@ export default function PayrollV2Page() {
     }
   };
 
-  const openEditEntry = (entry) => {
-    setSelectedEntry(entry);
-    setEditEntryForm({
-      base_salary: entry.base_salary || 0,
-      overtime_day_hours: entry.overtime_day_hours || 0,
-      overtime_night_hours: entry.overtime_night_hours || 0,
-      overtime_weekend_hours: entry.overtime_weekend_hours || 0,
-      overtime_holiday_hours: entry.overtime_holiday_hours || 0,
-      bonuses: entry.bonuses || 0,
-      commissions: entry.commissions || 0,
-      additional_deductions: entry.additional_deductions || []
-    });
-    setShowEditEntry(true);
+  // Inline editing handlers
+  const startEditing = (entryId, field, currentValue) => {
+    if (selectedPeriod?.status === 'paid') return;
+    setEditingCell({ entryId, field });
+    setEditValue(String(currentValue || 0));
   };
 
-  const handleUpdateEntry = async () => {
+  const cancelEditing = () => {
+    setEditingCell(null);
+    setEditValue("");
+  };
+
+  const saveInlineEdit = async () => {
+    if (!editingCell) return;
+    
+    const entry = periodEntries.find(e => e.entry_id === editingCell.entryId);
+    if (!entry) return;
+
     try {
-      await axios.put(`${API}/payroll-v2/entries/${selectedEntry.entry_id}`, {
-        ...editEntryForm,
-        period_id: selectedEntry.period_id,
-        employee_id: selectedEntry.employee_id
-      }, {
+      const updateData = {
+        period_id: entry.period_id,
+        employee_id: entry.employee_id,
+        base_salary: entry.base_salary,
+        overtime_day_hours: entry.overtime_day_hours || 0,
+        overtime_night_hours: entry.overtime_night_hours || 0,
+        overtime_weekend_hours: entry.overtime_weekend_hours || 0,
+        overtime_holiday_hours: entry.overtime_holiday_hours || 0,
+        bonuses: entry.bonuses || 0,
+        commissions: entry.commissions || 0,
+        additional_deductions: entry.additional_deductions || []
+      };
+
+      // Update the specific field
+      const numValue = parseFloat(editValue) || 0;
+      if (editingCell.field === 'base_salary') updateData.base_salary = numValue;
+      else if (editingCell.field === 'bonuses') updateData.bonuses = numValue;
+      else if (editingCell.field === 'commissions') updateData.commissions = numValue;
+      else if (editingCell.field === 'overtime_day_hours') updateData.overtime_day_hours = numValue;
+      else if (editingCell.field === 'overtime_night_hours') updateData.overtime_night_hours = numValue;
+      else if (editingCell.field === 'overtime_weekend_hours') updateData.overtime_weekend_hours = numValue;
+      else if (editingCell.field === 'overtime_holiday_hours') updateData.overtime_holiday_hours = numValue;
+
+      await axios.put(`${API}/payroll-v2/entries/${entry.entry_id}`, updateData, {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Entrada actualizada");
-      setShowEditEntry(false);
-      fetchPeriodDetails(selectedEntry.period_id);
+      
+      toast.success("Valor actualizado");
+      fetchPeriodDetails(entry.period_id);
       fetchPeriods();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al actualizar");
+      toast.error("Error al actualizar");
+    } finally {
+      cancelEditing();
     }
   };
 
@@ -310,6 +367,13 @@ export default function PayrollV2Page() {
     }).format(value || 0);
   };
 
+  const formatNumber = (value) => {
+    return new Intl.NumberFormat('es-DO', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(value || 0);
+  };
+
   const getStatusBadge = (status) => {
     switch (status) {
       case 'open':
@@ -325,6 +389,78 @@ export default function PayrollV2Page() {
     }
   };
 
+  // Render editable cell
+  const renderEditableCell = (entry, field, value, isCurrency = true) => {
+    const isEditing = editingCell?.entryId === entry.entry_id && editingCell?.field === field;
+    const canEdit = selectedPeriod?.status !== 'paid';
+    
+    if (isEditing) {
+      return (
+        <div className="flex items-center gap-1">
+          <Input
+            type="number"
+            step="0.01"
+            className="w-24 h-7 text-right text-xs"
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') saveInlineEdit();
+              if (e.key === 'Escape') cancelEditing();
+            }}
+            autoFocus
+          />
+          <Button size="icon" variant="ghost" className="h-6 w-6" onClick={saveInlineEdit}>
+            <Check className="w-3 h-3 text-emerald-600" />
+          </Button>
+          <Button size="icon" variant="ghost" className="h-6 w-6" onClick={cancelEditing}>
+            <X className="w-3 h-3 text-red-500" />
+          </Button>
+        </div>
+      );
+    }
+    
+    return (
+      <span 
+        className={`font-mono text-xs ${canEdit ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
+        onClick={() => canEdit && startEditing(entry.entry_id, field, value)}
+        title={canEdit ? "Clic para editar" : ""}
+      >
+        {isCurrency ? formatCurrency(value) : formatNumber(value)}
+      </span>
+    );
+  };
+
+  // Calculate totals for the period
+  const calculateTotals = () => {
+    return periodEntries.reduce((acc, e) => ({
+      baseSalary: acc.baseSalary + (e.base_salary || 0),
+      bonuses: acc.bonuses + (e.bonuses || 0),
+      commissions: acc.commissions + (e.commissions || 0),
+      overtimeDay: acc.overtimeDay + (e.overtime_day_amount || 0),
+      overtimeNight: acc.overtimeNight + (e.overtime_night_amount || 0),
+      overtimeWeekend: acc.overtimeWeekend + (e.overtime_weekend_amount || 0),
+      overtimeHoliday: acc.overtimeHoliday + (e.overtime_holiday_amount || 0),
+      grossSalary: acc.grossSalary + (e.gross_salary || 0),
+      sfsEmployee: acc.sfsEmployee + (e.sfs_employee || 0),
+      afpEmployee: acc.afpEmployee + (e.afp_employee || 0),
+      isr: acc.isr + (e.isr || 0),
+      additionalDeductions: acc.additionalDeductions + (e.total_additional_deductions || 0),
+      totalDeductions: acc.totalDeductions + (e.total_deductions || 0),
+      netSalary: acc.netSalary + (e.net_salary || 0),
+      sfsEmployer: acc.sfsEmployer + (e.sfs_employer || 0),
+      afpEmployer: acc.afpEmployer + (e.afp_employer || 0),
+      srlEmployer: acc.srlEmployer + (e.srl_employer || 0),
+      infotepEmployer: acc.infotepEmployer + (e.infotep_employer || 0),
+      totalEmployerContributions: acc.totalEmployerContributions + (e.total_employer_contributions || 0)
+    }), {
+      baseSalary: 0, bonuses: 0, commissions: 0, overtimeDay: 0, overtimeNight: 0,
+      overtimeWeekend: 0, overtimeHoliday: 0, grossSalary: 0, sfsEmployee: 0,
+      afpEmployee: 0, isr: 0, additionalDeductions: 0, totalDeductions: 0,
+      netSalary: 0, sfsEmployer: 0, afpEmployer: 0, srlEmployer: 0,
+      infotepEmployer: 0, totalEmployerContributions: 0
+    });
+  };
+
   // Dashboard stats
   const stats = {
     openPeriods: periods.filter(p => p.status === 'open').length,
@@ -333,19 +469,27 @@ export default function PayrollV2Page() {
     totalPaid: periods.filter(p => p.status === 'paid').reduce((sum, p) => sum + (p.total_net || 0), 0)
   };
 
+  const totals = calculateTotals();
+
   return (
     <DashboardLayout title="Nómina">
       <div className="space-y-6" data-testid="payroll-v2-page">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">Nómina</h1>
+            <h1 className="text-2xl font-bold text-slate-800">Nómina de Pago</h1>
             <p className="text-slate-500">Gestión de pagos, períodos y cálculos salariales.</p>
           </div>
-          <Button onClick={fetchPeriods} variant="outline" size="sm">
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Actualizar
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={fetchPeriods} variant="outline" size="sm">
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Actualizar
+            </Button>
+            <Button onClick={() => setShowNewPeriod(true)} size="sm">
+              <Plus className="w-4 h-4 mr-2" />
+              Nuevo Período
+            </Button>
+          </div>
         </div>
 
         {/* Tabs */}
@@ -353,14 +497,13 @@ export default function PayrollV2Page() {
           <TabsList className="grid grid-cols-5 w-full max-w-2xl">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="periodos">Períodos ({periods.length})</TabsTrigger>
-            <TabsTrigger value="calculo">Cálculo</TabsTrigger>
+            <TabsTrigger value="nomina">Hoja de Nómina</TabsTrigger>
             <TabsTrigger value="aprobacion">Aprobación</TabsTrigger>
             <TabsTrigger value="reportes">Reportes</TabsTrigger>
           </TabsList>
 
           {/* Dashboard Tab */}
           <TabsContent value="dashboard" className="space-y-6">
-            {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Card className="border-l-4 border-l-blue-500">
                 <CardContent className="p-4">
@@ -408,78 +551,39 @@ export default function PayrollV2Page() {
               </Card>
             </div>
 
-            {/* Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-blue-500" />
-                    Estado de Nóminas
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                    <span className="text-slate-600">Borrador</span>
-                    <span className="bg-slate-200 text-slate-700 px-3 py-1 rounded-full text-sm">
-                      {periods.filter(p => p.status === 'open').length}
-                    </span>
+            {/* Recent Periods */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Períodos Recientes</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {periods.length === 0 ? (
+                  <div className="text-center py-8 text-slate-500">
+                    <Calendar className="w-12 h-12 mx-auto mb-4 text-slate-300" />
+                    <p>No hay períodos de nómina</p>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                    <span className="text-blue-700">Calculadas (Pendientes)</span>
-                    <span className="bg-blue-200 text-blue-800 px-3 py-1 rounded-full text-sm">
-                      {periods.filter(p => p.status === 'calculated').length}
-                    </span>
+                ) : (
+                  <div className="space-y-2">
+                    {periods.slice(0, 5).map(period => (
+                      <div key={period.period_id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-slate-50">
+                        <div>
+                          <p className="font-medium">{period.description}</p>
+                          <p className="text-sm text-slate-500">{period.employee_count} empleados</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="font-mono">{formatCurrency(period.total_net)}</span>
+                          {getStatusBadge(period.status)}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg">
-                    <span className="text-emerald-700">Aprobadas</span>
-                    <span className="bg-emerald-200 text-emerald-800 px-3 py-1 rounded-full text-sm">
-                      {periods.filter(p => p.status === 'approved').length}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <DollarSign className="w-5 h-5 text-emerald-500" />
-                    Resumen Financiero (Aprobado)
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center justify-between p-3 border-b">
-                    <span className="text-slate-600">Salario Bruto</span>
-                    <span className="font-mono">
-                      {formatCurrency(periods.filter(p => p.status === 'approved').reduce((s, p) => s + (p.total_gross || 0), 0))}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 border-b">
-                    <span className="text-red-600">Descuentos</span>
-                    <span className="font-mono text-red-600">
-                      - {formatCurrency(periods.filter(p => p.status === 'approved').reduce((s, p) => s + (p.total_deductions || 0), 0))}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg">
-                    <span className="font-semibold text-emerald-700">Total Neto</span>
-                    <span className="font-mono font-bold text-emerald-700">
-                      {formatCurrency(periods.filter(p => p.status === 'approved').reduce((s, p) => s + (p.total_net || 0), 0))}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Períodos Tab */}
           <TabsContent value="periodos" className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Períodos de Nómina</h3>
-              <Button onClick={() => setShowNewPeriod(true)} data-testid="new-period-btn">
-                <Plus className="w-4 h-4 mr-2" />
-                Nuevo Período
-              </Button>
-            </div>
-
             {loading ? (
               <div className="space-y-4">
                 {[1, 2, 3].map(i => (
@@ -500,7 +604,7 @@ export default function PayrollV2Page() {
                   <Card 
                     key={period.period_id} 
                     className={`cursor-pointer transition-all ${selectedPeriod?.period_id === period.period_id ? 'ring-2 ring-blue-500' : 'hover:shadow-md'}`}
-                    onClick={() => setSelectedPeriod(period)}
+                    onClick={() => { setSelectedPeriod(period); setActiveTab('nomina'); }}
                   >
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
@@ -529,205 +633,301 @@ export default function PayrollV2Page() {
                 ))}
               </div>
             )}
+          </TabsContent>
 
-            {/* Period Details Panel */}
-            {selectedPeriod && (
-              <Card className="mt-6">
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <div>
-                    <CardTitle>{selectedPeriod.description}</CardTitle>
-                    <CardDescription>
-                      {selectedPeriod.start_date} - {selectedPeriod.end_date}
-                    </CardDescription>
-                  </div>
-                  <div className="flex gap-2">
-                    {selectedPeriod.status === 'open' && (
-                      <>
-                        <Button size="sm" variant="outline" onClick={() => handleAddEmployees(selectedPeriod.period_id)}>
-                          <Users className="w-4 h-4 mr-1" />
-                          Agregar Empleados
-                        </Button>
-                        <Button size="sm" onClick={() => handleCalculatePeriod(selectedPeriod.period_id)}>
-                          <Calculator className="w-4 h-4 mr-1" />
-                          Calcular
-                        </Button>
-                      </>
-                    )}
-                    {selectedPeriod.status === 'calculated' && (
-                      <Button size="sm" onClick={() => handleApprovePeriod(selectedPeriod.period_id)}>
-                        <Check className="w-4 h-4 mr-1" />
-                        Aprobar
-                      </Button>
-                    )}
-                    {['calculated', 'approved'].includes(selectedPeriod.status) && (
-                      <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={() => handlePayPeriod(selectedPeriod.period_id)}>
-                        <CreditCard className="w-4 h-4 mr-1" />
-                        Pagar
-                      </Button>
-                    )}
-                    {selectedPeriod.status !== 'paid' && (
-                      <Button size="sm" variant="destructive" onClick={() => handleDeletePeriod(selectedPeriod.period_id)}>
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  {periodEntries.length === 0 ? (
-                    <div className="text-center py-8 text-slate-500">
-                      <Users className="w-10 h-10 mx-auto mb-2 text-slate-300" />
-                      <p>No hay empleados en este período</p>
+          {/* Hoja de Nómina Tab - Excel-like format */}
+          <TabsContent value="nomina" className="space-y-4">
+            {!selectedPeriod ? (
+              <Card className="py-12">
+                <CardContent className="text-center">
+                  <FileSpreadsheet className="w-12 h-12 mx-auto mb-4 text-slate-300" />
+                  <p className="text-slate-500">Seleccione un período para ver la hoja de nómina</p>
+                  <Button variant="link" onClick={() => setActiveTab('periodos')}>
+                    Ver períodos disponibles
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <>
+                {/* Header with company info */}
+                <Card className="bg-gradient-to-r from-slate-800 to-slate-700 text-white">
+                  <CardContent className="p-6">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h2 className="text-2xl font-bold">{companyName}</h2>
+                        <p className="text-slate-300 mt-1">NÓMINA DE PAGO</p>
+                        <p className="text-sm text-slate-400 mt-2">
+                          Período: {selectedPeriod.description}
+                        </p>
+                        <p className="text-sm text-slate-400">
+                          {selectedPeriod.start_date} al {selectedPeriod.end_date}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        {getStatusBadge(selectedPeriod.status)}
+                        <div className="mt-3 flex gap-2">
+                          {selectedPeriod.status === 'open' && (
+                            <>
+                              <Button size="sm" variant="secondary" onClick={() => handleAddEmployees(selectedPeriod.period_id)}>
+                                <Users className="w-4 h-4 mr-1" />
+                                Agregar
+                              </Button>
+                              <Button size="sm" variant="secondary" onClick={() => handleCalculatePeriod(selectedPeriod.period_id)}>
+                                <Calculator className="w-4 h-4 mr-1" />
+                                Calcular
+                              </Button>
+                            </>
+                          )}
+                          {selectedPeriod.status === 'calculated' && (
+                            <Button size="sm" variant="secondary" onClick={() => handleApprovePeriod(selectedPeriod.period_id)}>
+                              <Check className="w-4 h-4 mr-1" />
+                              Aprobar
+                            </Button>
+                          )}
+                          {['calculated', 'approved'].includes(selectedPeriod.status) && (
+                            <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={() => openPayDialog(selectedPeriod)}>
+                              <CreditCard className="w-4 h-4 mr-1" />
+                              Pagar
+                            </Button>
+                          )}
+                          {selectedPeriod.status !== 'paid' && (
+                            <Button size="sm" variant="destructive" onClick={() => handleDeletePeriod(selectedPeriod.period_id)}>
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Excel-like Payroll Sheet */}
+                {periodEntries.length === 0 ? (
+                  <Card className="py-12">
+                    <CardContent className="text-center">
+                      <Users className="w-12 h-12 mx-auto mb-4 text-slate-300" />
+                      <p className="text-slate-500">No hay empleados en este período</p>
                       <Button variant="link" onClick={() => handleAddEmployees(selectedPeriod.period_id)}>
                         Agregar empleados activos
                       </Button>
-                    </div>
-                  ) : (
-                    <div className="overflow-x-auto">
-                      <Table>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <Card>
+                    <CardContent className="p-0 overflow-x-auto">
+                      <Table className="text-xs">
                         <TableHeader>
-                          <TableRow>
-                            <TableHead>Empleado</TableHead>
-                            <TableHead>Departamento</TableHead>
-                            <TableHead className="text-right">Salario Base</TableHead>
-                            <TableHead className="text-right">H. Extras</TableHead>
-                            <TableHead className="text-right">Bonos</TableHead>
-                            <TableHead className="text-right">Bruto</TableHead>
-                            <TableHead className="text-right">Deducciones</TableHead>
-                            <TableHead className="text-right">Neto</TableHead>
-                            <TableHead></TableHead>
+                          <TableRow className="bg-slate-100">
+                            <TableHead className="font-bold text-center border-r" rowSpan={2}>NO.</TableHead>
+                            <TableHead className="font-bold border-r min-w-[180px]" rowSpan={2}>NOMBRES EMPLEADOS</TableHead>
+                            <TableHead className="font-bold text-center border-r min-w-[100px]" rowSpan={2}>CÉDULA</TableHead>
+                            <TableHead className="font-bold border-r min-w-[120px]" rowSpan={2}>CARGO</TableHead>
+                            <TableHead className="font-bold text-right border-r bg-blue-50" rowSpan={2}>SALARIO BRUTO</TableHead>
+                            <TableHead className="font-bold text-center border-r bg-emerald-50" colSpan={3}>INGRESOS ADICIONALES</TableHead>
+                            <TableHead className="font-bold text-right border-r bg-slate-200" rowSpan={2}>TOTAL INGRESOS</TableHead>
+                            <TableHead className="font-bold text-center border-r bg-red-50" colSpan={4}>DEDUCCIONES EMPLEADO</TableHead>
+                            <TableHead className="font-bold text-right border-r bg-red-100" rowSpan={2}>TOTAL DEDUCCIONES</TableHead>
+                            <TableHead className="font-bold text-right bg-emerald-100" rowSpan={2}>NETO A PAGAR</TableHead>
+                            {selectedPeriod.status !== 'paid' && (
+                              <TableHead className="w-12" rowSpan={2}></TableHead>
+                            )}
+                          </TableRow>
+                          <TableRow className="bg-slate-50">
+                            <TableHead className="text-center text-[10px] border-r bg-emerald-50">Bonos</TableHead>
+                            <TableHead className="text-center text-[10px] border-r bg-emerald-50">Comisiones</TableHead>
+                            <TableHead className="text-center text-[10px] border-r bg-emerald-50">H. Extras</TableHead>
+                            <TableHead className="text-center text-[10px] border-r bg-red-50">SFS 3.04%</TableHead>
+                            <TableHead className="text-center text-[10px] border-r bg-red-50">AFP 2.87%</TableHead>
+                            <TableHead className="text-center text-[10px] border-r bg-red-50">ISR</TableHead>
+                            <TableHead className="text-center text-[10px] border-r bg-red-50">Otros</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {periodEntries.map(entry => (
-                            <TableRow key={entry.entry_id}>
-                              <TableCell>
-                                <div>
-                                  <p className="font-medium">{entry.employee_name}</p>
-                                  <p className="text-xs text-slate-500">{entry.position}</p>
-                                </div>
-                              </TableCell>
-                              <TableCell>{entry.department}</TableCell>
-                              <TableCell className="text-right font-mono">{formatCurrency(entry.base_salary)}</TableCell>
-                              <TableCell className="text-right font-mono text-blue-600">
-                                {formatCurrency(
-                                  (entry.overtime_day_amount || 0) +
-                                  (entry.overtime_night_amount || 0) +
-                                  (entry.overtime_weekend_amount || 0) +
-                                  (entry.overtime_holiday_amount || 0)
-                                )}
-                              </TableCell>
-                              <TableCell className="text-right font-mono text-emerald-600">
-                                {formatCurrency(entry.bonuses + entry.commissions)}
-                              </TableCell>
-                              <TableCell className="text-right font-mono font-semibold">
-                                {formatCurrency(entry.gross_salary)}
-                              </TableCell>
-                              <TableCell className="text-right font-mono text-red-600">
-                                -{formatCurrency(entry.total_deductions)}
-                              </TableCell>
-                              <TableCell className="text-right font-mono font-bold text-emerald-700">
-                                {formatCurrency(entry.net_salary)}
-                              </TableCell>
-                              <TableCell>
-                                {selectedPeriod.status !== 'paid' && (
-                                  <div className="flex gap-1">
-                                    <Button size="icon" variant="ghost" onClick={() => openEditEntry(entry)}>
-                                      <Edit className="w-4 h-4" />
-                                    </Button>
-                                    <Button size="icon" variant="ghost" className="text-red-500" onClick={() => handleDeleteEntry(entry.entry_id, selectedPeriod.period_id)}>
-                                      <Trash2 className="w-4 h-4" />
-                                    </Button>
+                          {periodEntries.map((entry, index) => {
+                            const totalOvertime = (entry.overtime_day_amount || 0) + 
+                              (entry.overtime_night_amount || 0) + 
+                              (entry.overtime_weekend_amount || 0) + 
+                              (entry.overtime_holiday_amount || 0);
+                            
+                            return (
+                              <TableRow key={entry.entry_id} className="hover:bg-slate-50">
+                                <TableCell className="text-center border-r font-medium">{index + 1}</TableCell>
+                                <TableCell className="border-r">
+                                  <div>
+                                    <p className="font-medium">{entry.employee_name}</p>
                                   </div>
+                                </TableCell>
+                                <TableCell className="text-center border-r font-mono text-[10px]">{entry.employee_document}</TableCell>
+                                <TableCell className="border-r text-[10px]">{entry.position}</TableCell>
+                                <TableCell className="text-right border-r bg-blue-50/50">
+                                  {renderEditableCell(entry, 'base_salary', entry.base_salary)}
+                                </TableCell>
+                                <TableCell className="text-right border-r bg-emerald-50/50">
+                                  {renderEditableCell(entry, 'bonuses', entry.bonuses)}
+                                </TableCell>
+                                <TableCell className="text-right border-r bg-emerald-50/50">
+                                  {renderEditableCell(entry, 'commissions', entry.commissions)}
+                                </TableCell>
+                                <TableCell className="text-right border-r bg-emerald-50/50">
+                                  <span className="font-mono text-xs text-emerald-600">
+                                    {formatCurrency(totalOvertime)}
+                                  </span>
+                                </TableCell>
+                                <TableCell className="text-right border-r bg-slate-100 font-bold">
+                                  <span className="font-mono text-xs">
+                                    {formatCurrency(entry.gross_salary)}
+                                  </span>
+                                </TableCell>
+                                <TableCell className="text-right border-r bg-red-50/50">
+                                  <span className="font-mono text-xs text-red-600">
+                                    {formatCurrency(entry.sfs_employee)}
+                                  </span>
+                                </TableCell>
+                                <TableCell className="text-right border-r bg-red-50/50">
+                                  <span className="font-mono text-xs text-red-600">
+                                    {formatCurrency(entry.afp_employee)}
+                                  </span>
+                                </TableCell>
+                                <TableCell className="text-right border-r bg-red-50/50">
+                                  <span className="font-mono text-xs text-red-600">
+                                    {formatCurrency(entry.isr)}
+                                  </span>
+                                </TableCell>
+                                <TableCell className="text-right border-r bg-red-50/50">
+                                  <span className="font-mono text-xs text-red-600">
+                                    {formatCurrency(entry.total_additional_deductions)}
+                                  </span>
+                                </TableCell>
+                                <TableCell className="text-right border-r bg-red-100/50 font-bold">
+                                  <span className="font-mono text-xs text-red-700">
+                                    {formatCurrency(entry.total_deductions)}
+                                  </span>
+                                </TableCell>
+                                <TableCell className="text-right bg-emerald-100/50 font-bold">
+                                  <span className="font-mono text-xs text-emerald-700">
+                                    {formatCurrency(entry.net_salary)}
+                                  </span>
+                                </TableCell>
+                                {selectedPeriod.status !== 'paid' && (
+                                  <TableCell>
+                                    <Button 
+                                      size="icon" 
+                                      variant="ghost" 
+                                      className="h-6 w-6 text-red-500"
+                                      onClick={() => handleDeleteEntry(entry.entry_id, selectedPeriod.period_id)}
+                                    >
+                                      <Trash2 className="w-3 h-3" />
+                                    </Button>
+                                  </TableCell>
                                 )}
-                              </TableCell>
-                            </TableRow>
-                          ))}
+                              </TableRow>
+                            );
+                          })}
+                          {/* Totals Row */}
+                          <TableRow className="bg-slate-200 font-bold">
+                            <TableCell colSpan={4} className="text-right border-r">TOTALES:</TableCell>
+                            <TableCell className="text-right border-r font-mono">{formatCurrency(totals.baseSalary)}</TableCell>
+                            <TableCell className="text-right border-r font-mono">{formatCurrency(totals.bonuses)}</TableCell>
+                            <TableCell className="text-right border-r font-mono">{formatCurrency(totals.commissions)}</TableCell>
+                            <TableCell className="text-right border-r font-mono">{formatCurrency(totals.overtimeDay + totals.overtimeNight + totals.overtimeWeekend + totals.overtimeHoliday)}</TableCell>
+                            <TableCell className="text-right border-r font-mono">{formatCurrency(totals.grossSalary)}</TableCell>
+                            <TableCell className="text-right border-r font-mono text-red-600">{formatCurrency(totals.sfsEmployee)}</TableCell>
+                            <TableCell className="text-right border-r font-mono text-red-600">{formatCurrency(totals.afpEmployee)}</TableCell>
+                            <TableCell className="text-right border-r font-mono text-red-600">{formatCurrency(totals.isr)}</TableCell>
+                            <TableCell className="text-right border-r font-mono text-red-600">{formatCurrency(totals.additionalDeductions)}</TableCell>
+                            <TableCell className="text-right border-r font-mono text-red-700">{formatCurrency(totals.totalDeductions)}</TableCell>
+                            <TableCell className="text-right font-mono text-emerald-700">{formatCurrency(totals.netSalary)}</TableCell>
+                            {selectedPeriod.status !== 'paid' && <TableCell></TableCell>}
+                          </TableRow>
                         </TableBody>
                       </Table>
-                    </div>
-                  )}
+                    </CardContent>
+                  </Card>
+                )}
 
-                  {/* Period Totals */}
-                  {periodEntries.length > 0 && (
-                    <div className="mt-4 p-4 bg-slate-50 rounded-lg">
-                      <div className="grid grid-cols-4 gap-4 text-center">
-                        <div>
-                          <p className="text-sm text-slate-500">Total Bruto</p>
-                          <p className="font-mono font-bold">{formatCurrency(selectedPeriod.total_gross)}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-slate-500">Total Deducciones</p>
-                          <p className="font-mono font-bold text-red-600">-{formatCurrency(selectedPeriod.total_deductions)}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-slate-500">Total Neto</p>
-                          <p className="font-mono font-bold text-emerald-600">{formatCurrency(selectedPeriod.total_net)}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-slate-500">Empleados</p>
-                          <p className="font-mono font-bold">{selectedPeriod.employee_count}</p>
-                        </div>
-                      </div>
-                      {selectedPeriod.journal_entry_id && (
-                        <div className="mt-4 p-3 bg-purple-50 rounded-lg flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <FileText className="w-5 h-5 text-purple-600" />
-                            <span className="text-purple-700">Asiento Contable Generado</span>
-                          </div>
-                          <Badge className="bg-purple-200 text-purple-800">
-                            {selectedPeriod.journal_entry_id}
-                          </Badge>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
+                {/* Employer Contributions Summary */}
+                {periodEntries.length > 0 && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Aportes del Empleador (TSS y otros)</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <Table className="text-xs">
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Concepto</TableHead>
+                              <TableHead className="text-right">Porcentaje</TableHead>
+                              <TableHead className="text-right">Valor</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell>SFS (Empleador)</TableCell>
+                              <TableCell className="text-right font-mono">7.09%</TableCell>
+                              <TableCell className="text-right font-mono">{formatCurrency(totals.sfsEmployer)}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell>AFP (Empleador)</TableCell>
+                              <TableCell className="text-right font-mono">7.10%</TableCell>
+                              <TableCell className="text-right font-mono">{formatCurrency(totals.afpEmployer)}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell>SRL</TableCell>
+                              <TableCell className="text-right font-mono">1.00%</TableCell>
+                              <TableCell className="text-right font-mono">{formatCurrency(totals.srlEmployer)}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell>INFOTEP</TableCell>
+                              <TableCell className="text-right font-mono">1.00%</TableCell>
+                              <TableCell className="text-right font-mono">{formatCurrency(totals.infotepEmployer)}</TableCell>
+                            </TableRow>
+                            <TableRow className="font-bold bg-slate-100">
+                              <TableCell>TOTAL</TableCell>
+                              <TableCell className="text-right font-mono">16.19%</TableCell>
+                              <TableCell className="text-right font-mono">{formatCurrency(totals.totalEmployerContributions)}</TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </CardContent>
+                    </Card>
 
-          {/* Cálculo Tab */}
-          <TabsContent value="calculo" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Cálculo de Nóminas</CardTitle>
-                <CardDescription>Períodos pendientes de cálculo o recálculo</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {periods.filter(p => ['open', 'calculated'].includes(p.status)).length === 0 ? (
-                  <div className="text-center py-8 text-slate-500">
-                    <Calculator className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                    <p>No hay períodos pendientes de cálculo</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {periods.filter(p => ['open', 'calculated'].includes(p.status)).map(period => (
-                      <div key={period.period_id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div>
-                          <h4 className="font-semibold">{period.description}</h4>
-                          <p className="text-sm text-slate-500">{period.employee_count} empleados</p>
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Resumen de la Nómina</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        <div className="flex justify-between p-2 bg-slate-50 rounded">
+                          <span>Total Ingresos Brutos:</span>
+                          <span className="font-mono font-bold">{formatCurrency(totals.grossSalary)}</span>
                         </div>
-                        <div className="flex items-center gap-4">
-                          {getStatusBadge(period.status)}
-                          <Button onClick={() => { setSelectedPeriod(period); handleCalculatePeriod(period.period_id); }}>
-                            <Calculator className="w-4 h-4 mr-2" />
-                            {period.status === 'calculated' ? 'Recalcular' : 'Calcular'}
-                          </Button>
+                        <div className="flex justify-between p-2 bg-red-50 rounded">
+                          <span>Total Deducciones Empleado:</span>
+                          <span className="font-mono font-bold text-red-600">- {formatCurrency(totals.totalDeductions)}</span>
                         </div>
-                      </div>
-                    ))}
+                        <div className="flex justify-between p-2 bg-emerald-100 rounded">
+                          <span className="font-bold">Neto a Pagar:</span>
+                          <span className="font-mono font-bold text-emerald-700">{formatCurrency(totals.netSalary)}</span>
+                        </div>
+                        <div className="flex justify-between p-2 bg-blue-50 rounded mt-4">
+                          <span>Costo Total Empleador:</span>
+                          <span className="font-mono font-bold text-blue-700">
+                            {formatCurrency(totals.grossSalary + totals.totalEmployerContributions)}
+                          </span>
+                        </div>
+                      </CardContent>
+                    </Card>
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </>
+            )}
           </TabsContent>
 
           {/* Aprobación Tab */}
           <TabsContent value="aprobacion" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Aprobación de Nóminas</CardTitle>
-                <CardDescription>Períodos calculados pendientes de aprobación</CardDescription>
+                <CardTitle>Nóminas Pendientes de Aprobación</CardTitle>
               </CardHeader>
               <CardContent>
                 {periods.filter(p => p.status === 'calculated').length === 0 ? (
@@ -746,7 +946,7 @@ export default function PayrollV2Page() {
                           </p>
                         </div>
                         <div className="flex gap-2">
-                          <Button variant="outline" onClick={() => { setSelectedPeriod(period); setActiveTab('periodos'); }}>
+                          <Button variant="outline" onClick={() => { setSelectedPeriod(period); setActiveTab('nomina'); }}>
                             Ver Detalle
                           </Button>
                           <Button onClick={() => handleApprovePeriod(period.period_id)}>
@@ -761,11 +961,10 @@ export default function PayrollV2Page() {
               </CardContent>
             </Card>
 
-            {/* Períodos Aprobados - Listos para Pagar */}
+            {/* Ready to Pay */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-emerald-700">Listos para Pagar</CardTitle>
-                <CardDescription>Períodos aprobados que pueden ser pagados</CardDescription>
               </CardHeader>
               <CardContent>
                 {periods.filter(p => p.status === 'approved').length === 0 ? (
@@ -783,7 +982,7 @@ export default function PayrollV2Page() {
                             {period.employee_count} empleados • Total Neto: {formatCurrency(period.total_net)}
                           </p>
                         </div>
-                        <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={() => handlePayPeriod(period.period_id)}>
+                        <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={() => openPayDialog(period)}>
                           <CreditCard className="w-4 h-4 mr-2" />
                           Pagar y Generar Asiento
                         </Button>
@@ -822,12 +1021,16 @@ export default function PayrollV2Page() {
                           )}
                         </div>
                         <div className="flex gap-2">
+                          <Button variant="outline" size="sm" onClick={() => { setSelectedPeriod(period); setActiveTab('nomina'); }}>
+                            <FileSpreadsheet className="w-4 h-4 mr-1" />
+                            Ver
+                          </Button>
                           <Button variant="outline" size="sm">
                             <Download className="w-4 h-4 mr-1" />
                             Excel
                           </Button>
                           <Button variant="outline" size="sm">
-                            <Download className="w-4 h-4 mr-1" />
+                            <Printer className="w-4 h-4 mr-1" />
                             PDF
                           </Button>
                         </div>
@@ -937,116 +1140,72 @@ export default function PayrollV2Page() {
           </DialogContent>
         </Dialog>
 
-        {/* Edit Entry Dialog */}
-        <Dialog open={showEditEntry} onOpenChange={setShowEditEntry}>
-          <DialogContent className="max-w-2xl">
+        {/* Pay Period Dialog - Select Bank Account */}
+        <Dialog open={showPayDialog} onOpenChange={setShowPayDialog}>
+          <DialogContent>
             <DialogHeader>
-              <DialogTitle>Editar Nómina - {selectedEntry?.employee_name}</DialogTitle>
-              <DialogDescription>Modificar valores de la nómina del empleado</DialogDescription>
+              <DialogTitle className="flex items-center gap-2">
+                <Wallet className="w-5 h-5 text-emerald-600" />
+                Pagar Nómina
+              </DialogTitle>
+              <DialogDescription>
+                Seleccione la cuenta bancaria para realizar el pago de la nómina
+              </DialogDescription>
             </DialogHeader>
             
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <Label>Salario Base</Label>
-                <Input 
-                  type="number" 
-                  step="0.01"
-                  value={editEntryForm.base_salary}
-                  onChange={(e) => setEditEntryForm({...editEntryForm, base_salary: parseFloat(e.target.value) || 0})}
-                />
-              </div>
-
-              <div className="space-y-3">
-                <Label className="font-semibold">Horas Extras</Label>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-sm text-slate-500">Horas Extras Diurnas (35%)</Label>
-                    <Input 
-                      type="number" 
-                      step="0.5"
-                      value={editEntryForm.overtime_day_hours}
-                      onChange={(e) => setEditEntryForm({...editEntryForm, overtime_day_hours: parseFloat(e.target.value) || 0})}
-                      placeholder="0"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm text-slate-500">Horas Extras Nocturnas (15%)</Label>
-                    <Input 
-                      type="number" 
-                      step="0.5"
-                      value={editEntryForm.overtime_night_hours}
-                      onChange={(e) => setEditEntryForm({...editEntryForm, overtime_night_hours: parseFloat(e.target.value) || 0})}
-                      placeholder="0"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm text-slate-500">Horas Extras Fin de Semana (100%)</Label>
-                    <Input 
-                      type="number" 
-                      step="0.5"
-                      value={editEntryForm.overtime_weekend_hours}
-                      onChange={(e) => setEditEntryForm({...editEntryForm, overtime_weekend_hours: parseFloat(e.target.value) || 0})}
-                      placeholder="0"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm text-slate-500">Horas Extras Días Feriados (100%)</Label>
-                    <Input 
-                      type="number" 
-                      step="0.5"
-                      value={editEntryForm.overtime_holiday_hours}
-                      onChange={(e) => setEditEntryForm({...editEntryForm, overtime_holiday_hours: parseFloat(e.target.value) || 0})}
-                      placeholder="0"
-                    />
+            {selectedPeriod && (
+              <div className="space-y-4">
+                <div className="p-4 bg-slate-50 rounded-lg">
+                  <p className="font-semibold">{selectedPeriod.description}</p>
+                  <p className="text-sm text-slate-500 mt-1">
+                    {selectedPeriod.employee_count} empleados
+                  </p>
+                  <div className="mt-3 p-3 bg-emerald-100 rounded-lg">
+                    <p className="text-sm text-emerald-700">Total a Pagar (Neto)</p>
+                    <p className="text-2xl font-bold text-emerald-800">
+                      {formatCurrency(selectedPeriod.total_net)}
+                    </p>
                   </div>
                 </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Bonificaciones</Label>
-                  <Input 
-                    type="number" 
-                    step="0.01"
-                    value={editEntryForm.bonuses}
-                    onChange={(e) => setEditEntryForm({...editEntryForm, bonuses: parseFloat(e.target.value) || 0})}
-                  />
+                  <Label>Cuenta Bancaria para el Pago</Label>
+                  <Select value={selectedBankAccount} onValueChange={setSelectedBankAccount}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccione cuenta bancaria" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {bankAccounts.map(acc => (
+                        <SelectItem key={acc.code} value={acc.code}>
+                          {acc.code} - {acc.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-slate-500">
+                    Esta cuenta se acreditará en el asiento contable generado
+                  </p>
                 </div>
-                <div className="space-y-2">
-                  <Label>Comisiones</Label>
-                  <Input 
-                    type="number" 
-                    step="0.01"
-                    value={editEntryForm.commissions}
-                    onChange={(e) => setEditEntryForm({...editEntryForm, commissions: parseFloat(e.target.value) || 0})}
-                  />
-                </div>
-              </div>
 
-              <div className="p-4 bg-slate-50 rounded-lg">
-                <p className="text-sm text-slate-500 mb-2">Las deducciones de ley (SFS, AFP, ISR) se calculan automáticamente sobre el salario bruto.</p>
-                {selectedEntry && (
-                  <div className="grid grid-cols-3 gap-4 text-sm">
-                    <div>
-                      <p className="text-slate-500">SFS (3.04%)</p>
-                      <p className="font-mono">{formatCurrency(selectedEntry.sfs_employee)}</p>
-                    </div>
-                    <div>
-                      <p className="text-slate-500">AFP (2.87%)</p>
-                      <p className="font-mono">{formatCurrency(selectedEntry.afp_employee)}</p>
-                    </div>
-                    <div>
-                      <p className="text-slate-500">ISR</p>
-                      <p className="font-mono">{formatCurrency(selectedEntry.isr)}</p>
-                    </div>
-                  </div>
-                )}
+                <div className="p-3 bg-blue-50 rounded-lg">
+                  <p className="text-sm text-blue-700">
+                    <strong>Nota:</strong> Al confirmar, se generará automáticamente un asiento contable 
+                    con el débito a gastos de nómina y crédito a las cuentas de pasivo y banco seleccionado.
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowEditEntry(false)}>Cancelar</Button>
-              <Button onClick={handleUpdateEntry}>Guardar Cambios</Button>
+              <Button variant="outline" onClick={() => setShowPayDialog(false)}>Cancelar</Button>
+              <Button 
+                className="bg-emerald-600 hover:bg-emerald-700" 
+                onClick={handlePayPeriod}
+                disabled={!selectedBankAccount}
+              >
+                <CreditCard className="w-4 h-4 mr-2" />
+                Confirmar Pago
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
