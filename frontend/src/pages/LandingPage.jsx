@@ -268,10 +268,10 @@ export default function LandingPage() {
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Nómina básica</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Asistencias y vacaciones</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Calculadora de nómina</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Módulo de préstamos</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Reportes básicos</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Exportación Excel/CSV</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Soporte por email</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Integración FortexaERP</li>
               </ul>
               
               <div className="space-y-2">
@@ -309,6 +309,7 @@ export default function LandingPage() {
                 <li className="flex items-center gap-2 text-sm font-medium"><Check className="w-4 h-4 text-emerald-500" />Todo lo del plan Básico</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Evaluaciones de desempeño</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Módulo de reclutamiento</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Portal autoservicio empleados</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Organigrama intuitivo</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Reportes avanzados</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Integración QuickBooks</li>
