@@ -402,6 +402,16 @@ export default function UsersManagementPage() {
                           <Button 
                             variant="ghost" 
                             size="icon"
+                            className="text-amber-500 hover:text-amber-700"
+                            onClick={() => openPasswordModal(user)}
+                            title="Asignar contraseña"
+                            data-testid={`set-password-btn-${user.user_id}`}
+                          >
+                            <Key className="w-4 h-4" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon"
                             className="text-red-500 hover:text-red-700"
                             onClick={() => handleDeleteUser(user.user_id)}
                             disabled={user.user_id === currentUser?.user_id}
