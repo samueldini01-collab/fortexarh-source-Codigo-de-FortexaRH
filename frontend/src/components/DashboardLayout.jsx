@@ -336,7 +336,7 @@ export default function DashboardLayout({ children, title }) {
           {/* Logo with collapse button */}
           <div className={`flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'gap-3 px-4'} py-5 border-b border-slate-100`}>
             <img 
-              src="/fortexarh-favicon.png" 
+              src="/fortexarh-icon-128.png" 
               alt="FortexaRH" 
               className="w-10 h-10 rounded-xl object-contain shrink-0"
             />
