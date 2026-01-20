@@ -1,6 +1,6 @@
 # FortexaRH - Sistema SaaS de RRHH y Nómina
 
-## Última Actualización: 2025-01-19
+## Última Actualización: 2025-01-20
 
 ## Resumen del Proyecto
 Sistema completo de gestión de Recursos Humanos y Nómina para República Dominicana, vendido por suscripción mensual.
@@ -32,17 +32,30 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 ├── SubscriptionsPage.jsx      # Suscripciones + Cancelación (COMPLETO)
 ├── MetricsDashboardPage.jsx   # Dashboard métricas (COMPLETO)
 ├── ReportsAdvancedPage.jsx    # Reportes avanzados (COMPLETO)
-├── DocumentsPage.jsx          # Generación documentos (NUEVO)
-├── EmployeePortalPage.jsx     # Portal empleados (NUEVO)
-├── PayrollV2Page.jsx          # Nómina con selector banco (ACTUALIZADO)
+├── DocumentsPage.jsx          # Generación documentos
+├── EmployeePortalPage.jsx     # Portal empleados
+├── PayrollV2Page.jsx          # Nómina con selector banco
 ├── RolesPage.jsx              # Roles personalizados
 ├── DGIIReportsPage.jsx        # Reportes DGII
 └── ...
 ```
 
-## Lo Implementado en Esta Sesión (2025-01-19)
+## Lo Implementado en Esta Sesión (2025-01-20)
 
-### ✅ 1. Selector de Banco en UI de Nómina (P1) - COMPLETADO
+### ✅ 1. Deducciones de Ley Desactivables por Empleado - COMPLETADO
+- Switches para activar/desactivar SFS, AFP e ISR por empleado
+- Los campos `sfs_discount`, `afp_discount`, `isr_discount` ya existían en el modelo
+- Advertencia visual cuando alguna deducción está desactivada
+- Actualización en `/app/frontend/src/pages/EmployeesPage.jsx`
+
+### ✅ 2. Sidebar Colapsable - COMPLETADO
+- Botón para colapsar/expandir el sidebar hacia la izquierda
+- Estado persistido en localStorage (`fortexarh_sidebar_collapsed`)
+- Muestra solo íconos cuando está colapsado
+- Transición suave al colapsar/expandir
+- Actualización en `/app/frontend/src/components/DashboardLayout.jsx`
+
+## Lo Implementado Anteriormente
 - Dropdown para seleccionar banco (Popular, BHD, Banreservas)
 - Generación y descarga automática de archivo bancario al pagar nómina
 - Checkbox para activar/desactivar generación de archivo
