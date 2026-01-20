@@ -298,6 +298,10 @@ export default function DashboardLayout({ children, title }) {
   }, []);
 
   const handleSearchResultClick = (result) => {
+    // Save to recent searches if it's not a navigation item
+    if (result.type !== 'navigation' && result.href) {
+      saveRecentSearch(result);
+    }
     setShowSearchModal(false);
     setSearchQuery("");
     setSearchResults([]);
