@@ -3,7 +3,7 @@ Global Search Router - FortexaRH
 Provides search functionality across all modules
 """
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import HTTPBearer
 from typing import Callable
 
@@ -12,14 +12,14 @@ security = HTTPBearer(auto_error=False)
 
 # These will be set by init_router
 db = None
-get_current_user: Callable = None
+_get_current_user_func: Callable = None
 
 
 def init_router(database, auth_dependency: Callable):
     """Initialize the router with database and auth dependency"""
     global db, _get_current_user_func
     db = database
-    get_current_user = auth_dependency
+    _get_current_user_func = auth_dependency
 
 
 async def get_current_user(request: Request, credentials = Depends(security)):
