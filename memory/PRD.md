@@ -119,16 +119,19 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 
 ## Backlog Pendiente
 
+### P0 - Crítico
+- [ ] Refactorización de server.py (separar en routers modulares)
+- [ ] Historial de búsquedas recientes en búsqueda global
+
 ### P1 - Alto
 - [ ] Notificaciones automáticas (fechas de pago, vencimientos DGII, contratos)
 
 ### P2 - Medio
 - [ ] Integraciones Enterprise (QuickBooks, SAP, Oracle)
-- [ ] Corregir warnings de ESLint
+- [ ] Corregir warnings de ESLint en frontend
 
 ### P3 - Bajo
-- [ ] Completar refactorización de server.py
-- [ ] Notificación de vencimiento IR-13
+- [ ] Personalización avanzada de plantillas de documentos
 
 ## Integraciones
 - ✅ **Stripe** (Producción)
