@@ -62,7 +62,9 @@ import {
   FileBarChart,
   FileCheck,
   Search,
-  Command
+  Command,
+  Trash2,
+  History
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
