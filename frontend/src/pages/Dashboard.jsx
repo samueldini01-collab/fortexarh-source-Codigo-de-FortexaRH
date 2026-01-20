@@ -54,6 +54,35 @@ export default function Dashboard() {
     localStorage.setItem('fortexarh_hide_pro_banner', 'true');
   };
 
+  const checkPaymentStatus = useCallback(async (sessionId) => {
+    try {
+      const response = await axios.get(`${API}/checkout/status/${sessionId}`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      if (response.data.payment_status === "paid") {
+        toast.success("¡Pago exitoso! Tu suscripción ha sido activada.");
+        window.history.replaceState({}, document.title, "/dashboard");
+      }
+    } catch (error) {
+      console.error("Error checking payment:", error);
+    }
+  }, []);
+
+  const fetchStats = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API}/dashboard/stats`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      setStats(response.data);
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    } finally {
+      setLoadingStats(false);
+    }
+  }, []);
+
   useEffect(() => {
     // Check for payment success
     const sessionId = searchParams.get("session_id");
@@ -65,14 +94,7 @@ export default function Dashboard() {
     if (user) {
       fetchStats();
     }
-  }, [user]);
-
-  const checkPaymentStatus = async (sessionId) => {
-    try {
-      const response = await axios.get(`${API}/checkout/status/${sessionId}`, {
-        headers: getAuthHeaders(),
-        withCredentials: true
-      });
+  }, [user, searchParams, checkPaymentStatus, fetchStats]);
       if (response.data.payment_status === "paid") {
         toast.success("¡Pago completado exitosamente! Tu plan ha sido actualizado.");
       }
