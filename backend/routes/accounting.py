@@ -248,7 +248,7 @@ class JournalEntryUpdate(BaseModel):
 
 
 @router.get("/accounts")
-async def get_accounts(current_user: dict = Depends(lambda: get_current_user)):
+async def get_accounts(current_user: dict = Depends(get_current_user)):
     """Get chart of accounts"""
     company_id = current_user.get("company_id")
     
@@ -273,7 +273,7 @@ async def get_accounts(current_user: dict = Depends(lambda: get_current_user)):
 
 
 @router.post("/accounts")
-async def create_account(data: AccountCreate, current_user: dict = Depends(lambda: get_current_user)):
+async def create_account(data: AccountCreate, current_user: dict = Depends(get_current_user)):
     """Create a new account"""
     company_id = current_user.get("company_id")
     
@@ -298,7 +298,7 @@ async def create_account(data: AccountCreate, current_user: dict = Depends(lambd
 
 
 @router.put("/accounts/{account_id}")
-async def update_account(account_id: str, data: AccountCreate, current_user: dict = Depends(lambda: get_current_user)):
+async def update_account(account_id: str, data: AccountCreate, current_user: dict = Depends(get_current_user)):
     """Update an account"""
     company_id = current_user.get("company_id")
     
@@ -320,7 +320,7 @@ async def update_account(account_id: str, data: AccountCreate, current_user: dic
 
 
 @router.delete("/accounts/{account_id}")
-async def delete_account(account_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def delete_account(account_id: str, current_user: dict = Depends(get_current_user)):
     """Delete an account"""
     company_id = current_user.get("company_id")
     
@@ -350,7 +350,7 @@ async def get_catalog_templates():
 
 
 @router.post("/accounts/load-catalog/{catalog_id}")
-async def load_catalog_template(catalog_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def load_catalog_template(catalog_id: str, current_user: dict = Depends(get_current_user)):
     """Load a specific chart of accounts template"""
     company_id = current_user.get("company_id")
     
@@ -389,7 +389,7 @@ async def load_catalog_template(catalog_id: str, current_user: dict = Depends(la
 
 
 @router.post("/accounts/reset-defaults")
-async def reset_default_accounts(current_user: dict = Depends(lambda: get_current_user)):
+async def reset_default_accounts(current_user: dict = Depends(get_current_user)):
     """Reset to default chart of accounts (basic template)"""
     company_id = current_user.get("company_id")
     
@@ -413,7 +413,7 @@ async def reset_default_accounts(current_user: dict = Depends(lambda: get_curren
 async def get_journal_entries(
     period: Optional[str] = None,
     status: Optional[str] = None,
-    current_user: dict = Depends(lambda: get_current_user)
+    current_user: dict = Depends(get_current_user)
 ):
     """Get journal entries"""
     company_id = current_user.get("company_id")
@@ -434,7 +434,7 @@ async def search_journal_entries(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
     entry_type: Optional[str] = None,
-    current_user: dict = Depends(lambda: get_current_user)
+    current_user: dict = Depends(get_current_user)
 ):
     """Search journal entries"""
     company_id = current_user.get("company_id")
@@ -463,7 +463,7 @@ async def search_journal_entries(
 
 
 @router.get("/journal-entries/{entry_id}")
-async def get_journal_entry(entry_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def get_journal_entry(entry_id: str, current_user: dict = Depends(get_current_user)):
     """Get a specific journal entry"""
     entry = await db.journal_entries.find_one(
         {"entry_id": entry_id, "company_id": current_user.get("company_id")},
@@ -475,7 +475,7 @@ async def get_journal_entry(entry_id: str, current_user: dict = Depends(lambda: 
 
 
 @router.post("/journal-entries")
-async def create_journal_entry(data: JournalEntryCreate, current_user: dict = Depends(lambda: get_current_user)):
+async def create_journal_entry(data: JournalEntryCreate, current_user: dict = Depends(get_current_user)):
     """Create a new journal entry"""
     company_id = current_user.get("company_id")
     
@@ -515,7 +515,7 @@ async def create_journal_entry(data: JournalEntryCreate, current_user: dict = De
 
 
 @router.put("/journal-entries/{entry_id}")
-async def update_journal_entry(entry_id: str, data: JournalEntryUpdate, current_user: dict = Depends(lambda: get_current_user)):
+async def update_journal_entry(entry_id: str, data: JournalEntryUpdate, current_user: dict = Depends(get_current_user)):
     """Update a journal entry (only if status is 'draft')"""
     company_id = current_user.get("company_id")
     
@@ -566,7 +566,7 @@ async def update_journal_entry(entry_id: str, data: JournalEntryUpdate, current_
 
 
 @router.post("/journal-entries/{entry_id}/post")
-async def post_journal_entry(entry_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def post_journal_entry(entry_id: str, current_user: dict = Depends(get_current_user)):
     """Post (contabilizar) a journal entry"""
     company_id = current_user.get("company_id")
     
@@ -606,7 +606,7 @@ async def post_journal_entry(entry_id: str, current_user: dict = Depends(lambda:
 
 
 @router.delete("/journal-entries/{entry_id}")
-async def delete_journal_entry(entry_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def delete_journal_entry(entry_id: str, current_user: dict = Depends(get_current_user)):
     """Delete a journal entry (only if status is 'draft')"""
     company_id = current_user.get("company_id")
     
@@ -623,7 +623,7 @@ async def delete_journal_entry(entry_id: str, current_user: dict = Depends(lambd
 
 
 @router.get("/journal-entries/{entry_id}/export")
-async def export_journal_entry(entry_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def export_journal_entry(entry_id: str, current_user: dict = Depends(get_current_user)):
     """Export journal entry as CSV"""
     company_id = current_user.get("company_id")
     
