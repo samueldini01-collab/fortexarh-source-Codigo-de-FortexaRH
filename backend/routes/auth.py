@@ -3,6 +3,7 @@ Authentication Routes - FortexaRH
 Handles user registration, login, password management, and session management
 """
 from fastapi import APIRouter, HTTPException, Depends, Request, Response
+from fastapi.security import HTTPBearer
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime, timezone, timedelta
@@ -17,6 +18,7 @@ import stripe
 import resend
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
+security = HTTPBearer(auto_error=False)
 
 # Will be initialized by init_router
 db = None
@@ -34,6 +36,38 @@ def init_router(database, plans, welcome_email_func):
     db = database
     SUBSCRIPTION_PLANS = plans
     send_welcome_email = welcome_email_func
+
+
+async def get_current_user(request: Request, credentials = Depends(security)) -> dict:
+    """Get current authenticated user from session or JWT"""
+    # Try cookie first
+    session_token = request.cookies.get("session_token")
+    if session_token:
+        session = await db.user_sessions.find_one({"session_token": session_token}, {"_id": 0})
+        if session:
+            expires_at = session.get("expires_at")
+            if isinstance(expires_at, str):
+                expires_at = datetime.fromisoformat(expires_at)
+            if expires_at.tzinfo is None:
+                expires_at = expires_at.replace(tzinfo=timezone.utc)
+            if expires_at > datetime.now(timezone.utc):
+                user = await db.users.find_one({"user_id": session["user_id"]}, {"_id": 0})
+                if user:
+                    return user
+    
+    # Try JWT from header
+    if credentials:
+        try:
+            payload = jwt.decode(credentials.credentials, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+            user = await db.users.find_one({"user_id": payload["user_id"]}, {"_id": 0})
+            if user:
+                return user
+        except jwt.ExpiredSignatureError:
+            raise HTTPException(status_code=401, detail="Token expired")
+        except jwt.InvalidTokenError:
+            raise HTTPException(status_code=401, detail="Invalid token")
+    
+    raise HTTPException(status_code=401, detail="Not authenticated")
 
 
 # ===================== MODELS =====================
