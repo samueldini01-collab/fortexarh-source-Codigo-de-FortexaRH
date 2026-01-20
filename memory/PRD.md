@@ -42,26 +42,41 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 
 ## Lo Implementado en Esta Sesión (2025-01-20)
 
-### ✅ 1. Deducciones de Ley Desactivables por Empleado - COMPLETADO
+### ✅ 1. Sistema de Recuperación de Contraseña - COMPLETADO
+- Link "¿Olvidaste tu contraseña?" en la página de login
+- Página `/forgot-password` para solicitar reset por email
+- Página `/reset-password?token=xxx` para establecer nueva contraseña
+- Email con enlace de recuperación (vía Resend)
+- Tokens de reseteo con expiración de 1 hora
+- Archivos: `ForgotPasswordPage.jsx`, `ResetPasswordPage.jsx`, `server.py`
+
+### ✅ 2. Cambio de Contraseña para Usuarios Logueados - COMPLETADO
+- Sección "Cambiar Contraseña" en Configuración > Mi Cuenta
+- Campos: contraseña actual, nueva contraseña, confirmar
+- Validaciones: mínimo 6 caracteres, coincidencia
+- Archivo: `SettingsPage.jsx`
+
+### ✅ 3. Asignación de Contraseña por Administrador - COMPLETADO
+- Botón de llave (🔑) en tabla de usuarios
+- Modal para establecer nueva contraseña
+- Solo disponible para administradores
+- Registro en log de actividad
+- Archivo: `UsersManagementPage.jsx`
+
+### ✅ 4. Deducciones de Ley Desactivables por Empleado - COMPLETADO
 - Switches para activar/desactivar SFS, AFP e ISR por empleado
-- Los campos `sfs_discount`, `afp_discount`, `isr_discount` ya existían en el modelo
 - Advertencia visual cuando alguna deducción está desactivada
-- Actualización en `/app/frontend/src/pages/EmployeesPage.jsx`
+- Archivo: `EmployeesPage.jsx`
 
-### ✅ 2. Sidebar Colapsable - COMPLETADO
-- Botón `<` / `>` movido a la parte superior (debajo del logo FortexaRH)
-- Estado persistido en localStorage (`fortexarh_sidebar_collapsed`)
-- Muestra solo íconos cuando está colapsado
-- Transición suave animada
-- Actualización en `/app/frontend/src/components/DashboardLayout.jsx`
+### ✅ 5. Sidebar Colapsable - COMPLETADO
+- Botón `<` / `>` junto al logo FortexaRH
+- Estado persistido en localStorage
+- Archivo: `DashboardLayout.jsx`
 
-### ✅ 3. Historial de Búsquedas Recientes - COMPLETADO
-- Sección "Búsquedas Recientes" en el modal de búsqueda global (⌘K)
-- Guarda automáticamente las últimas 8 búsquedas cuando el usuario hace clic en un resultado
-- Botón "Limpiar" para borrar el historial
-- Persistido en localStorage (`fortexarh_recent_searches`)
-- Muestra ícono según tipo de resultado (empleado, nómina, vacación, etc.)
-- Actualización en `/app/frontend/src/components/DashboardLayout.jsx`
+### ✅ 6. Historial de Búsquedas Recientes - COMPLETADO
+- Sección "Búsquedas Recientes" en el modal de búsqueda (⌘K)
+- Guarda automáticamente las últimas 8 búsquedas
+- Archivo: `DashboardLayout.jsx`
 
 ## Lo Implementado Anteriormente
 - Dropdown para seleccionar banco (Popular, BHD, Banreservas)
