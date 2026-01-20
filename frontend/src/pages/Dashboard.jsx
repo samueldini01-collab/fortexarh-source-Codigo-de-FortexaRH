@@ -95,28 +95,6 @@ export default function Dashboard() {
       fetchStats();
     }
   }, [user, searchParams, checkPaymentStatus, fetchStats]);
-      if (response.data.payment_status === "paid") {
-        toast.success("¡Pago completado exitosamente! Tu plan ha sido actualizado.");
-      }
-    } catch (error) {
-      console.error("Error checking payment:", error);
-    }
-  };
-
-  const fetchStats = async () => {
-    try {
-      const response = await axios.get(`${API}/dashboard/stats`, {
-        headers: getAuthHeaders(),
-        withCredentials: true
-      });
-      setStats(response.data);
-    } catch (error) {
-      console.error("Error fetching stats:", error);
-      toast.error("Error al cargar las estadísticas");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const statCards = [
     {
