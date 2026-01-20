@@ -34,6 +34,15 @@ from routes.bank_files import router as bank_files_router, init_router as init_b
 from routes.employee_portal import router as employee_portal_router, init_router as init_employee_portal_router
 from routes.documents import router as documents_router, init_router as init_documents_router
 from routes.search import router as search_router, init_router as init_search_router
+from routes.auth import router as auth_router, init_router as init_auth_router
+from routes.employees import router as employees_router, init_router as init_employees_router
+from routes.attendance import router as attendance_router, init_router as init_attendance_router
+from routes.vacations import router as vacations_router, init_router as init_vacations_router
+from routes.dashboard import router as dashboard_router, init_router as init_dashboard_router
+from routes.company import router as company_router, init_router as init_company_router
+from routes.organigrama import router as organigrama_router, init_router as init_organigrama_router
+from routes.evaluations import router as evaluations_router, init_router as init_evaluations_router
+from routes.recruitment import router as recruitment_router, init_router as init_recruitment_router
 
 # MongoDB connection with production-ready settings
 mongo_url = os.environ['MONGO_URL']
