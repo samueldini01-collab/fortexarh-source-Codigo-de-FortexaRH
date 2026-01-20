@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/table";
 import { 
   Users, UserPlus, Edit, Trash2, Shield, Key, Clock, Search,
-  RefreshCw, MoreVertical, CheckCircle, XCircle, Activity
+  RefreshCw, MoreVertical, CheckCircle, XCircle, Activity, Eye, EyeOff, Lock
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -73,7 +73,17 @@ export default function UsersManagementPage() {
   const [showNewUser, setShowNewUser] = useState(false);
   const [showEditUser, setShowEditUser] = useState(false);
   const [showNewRole, setShowNewRole] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+  const [passwordUser, setPasswordUser] = useState(null);
+  
+  // Password form state
+  const [newPasswordData, setNewPasswordData] = useState({
+    password: "",
+    confirmPassword: ""
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
   
   // Form state
   const [newUser, setNewUser] = useState({
