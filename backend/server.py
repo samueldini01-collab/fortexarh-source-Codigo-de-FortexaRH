@@ -4310,65 +4310,6 @@ async def save_company_bank_config(data: CompanyBankConfigCreate, current_user: 
     
     return {"message": "Configuración guardada correctamente"}
 
-# ===================== CRUD CUENTAS CONTABLES =====================
-
-@api_router.put("/accounting/accounts/{account_id}")
-async def update_account(account_id: str, data: AccountCreate, current_user: dict = Depends(get_current_user)):
-    """Actualizar una cuenta contable"""
-    company_id = current_user.get("company_id")
-    
-    result = await db.accounts.update_one(
-        {"account_id": account_id, "company_id": company_id},
-        {"$set": {
-            "code": data.code,
-            "name": data.name,
-            "account_type": data.account_type,
-            "parent_code": data.parent_code,
-            "description": data.description,
-            "updated_at": datetime.now(timezone.utc).isoformat()
-        }}
-    )
-    
-    if result.modified_count == 0:
-        raise HTTPException(status_code=404, detail="Cuenta no encontrada")
-    
-    return {"message": "Cuenta actualizada correctamente"}
-
-@api_router.delete("/accounting/accounts/{account_id}")
-async def delete_account(account_id: str, current_user: dict = Depends(get_current_user)):
-    """Eliminar una cuenta contable"""
-    company_id = current_user.get("company_id")
-    
-    result = await db.accounts.delete_one(
-        {"account_id": account_id, "company_id": company_id}
-    )
-    
-    if result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="Cuenta no encontrada")
-    
-    return {"message": "Cuenta eliminada correctamente"}
-
-@api_router.post("/accounting/accounts/reset-defaults")
-async def reset_default_accounts(current_user: dict = Depends(get_current_user)):
-    """Resetear cuentas a las predefinidas"""
-    company_id = current_user.get("company_id")
-    
-    # Eliminar cuentas existentes
-    await db.accounts.delete_many({"company_id": company_id})
-    
-    # Crear cuentas predefinidas
-    for acc in DEFAULT_PAYROLL_ACCOUNTS:
-        account = {
-            "account_id": f"acc_{uuid.uuid4().hex[:8]}",
-            "company_id": company_id,
-            **acc,
-            "balance": 0,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        }
-        await db.accounts.insert_one(account)
-    
-    return {"message": "Cuentas restablecidas a valores predeterminados"}
-
 # ===================== SINCRONIZACIÓN NÓMINA-ASIENTO =====================
 
 @api_router.delete("/accounting/journal-entries/{entry_id}/with-payroll")
