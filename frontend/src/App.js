@@ -38,6 +38,8 @@ import MetricsDashboardPage from "@/pages/MetricsDashboardPage";
 import ReportsAdvancedPage from "@/pages/ReportsAdvancedPage";
 import EmployeePortalPage from "@/pages/EmployeePortalPage";
 import DocumentsPage from "@/pages/DocumentsPage";
+import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
+import ResetPasswordPage from "@/pages/ResetPasswordPage";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
