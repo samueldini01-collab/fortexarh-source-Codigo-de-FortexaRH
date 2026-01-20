@@ -285,20 +285,23 @@ export default function DashboardLayout({ children, title }) {
 
       {/* Sidebar */}
       <aside className={`
-        fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-slate-200 
-        transform transition-transform duration-300 ease-in-out
-        lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        fixed top-0 left-0 z-50 h-full bg-white border-r border-slate-200 
+        transform transition-all duration-300 ease-in-out
+        ${sidebarCollapsed ? 'w-16' : 'w-64'}
+        lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center gap-3 px-4 py-5 border-b border-slate-100">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
+          <div className={`flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'gap-3 px-4'} py-5 border-b border-slate-100`}>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shrink-0">
               <span className="text-white font-bold text-lg">F</span>
             </div>
-            <div>
-              <h1 className="font-bold text-slate-800 text-lg leading-tight">FortexaRH</h1>
-              <p className="text-xs text-slate-500">Sistema de RRHH</p>
-            </div>
+            {!sidebarCollapsed && (
+              <div className="min-w-0 flex-1">
+                <h1 className="font-bold text-slate-800 text-lg leading-tight truncate">FortexaRH</h1>
+                <p className="text-xs text-slate-500">Sistema de RRHH</p>
+              </div>
+            )}
             <button 
               className="lg:hidden ml-auto p-2 hover:bg-slate-100 rounded-lg"
               onClick={() => setSidebarOpen(false)}
@@ -308,9 +311,9 @@ export default function DashboardLayout({ children, title }) {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-3 py-4 overflow-y-auto">
-            {/* Trial/Subscription Banner */}
-            {isOnTrial() && (
+          <nav className={`flex-1 ${sidebarCollapsed ? 'px-2' : 'px-3'} py-4 overflow-y-auto`}>
+            {/* Trial/Subscription Banner - Hide when collapsed */}
+            {!sidebarCollapsed && isOnTrial() && (
               <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                 <div className="flex items-center gap-2 text-amber-700 text-sm font-medium">
                   <AlertTriangle className="w-4 h-4" />
