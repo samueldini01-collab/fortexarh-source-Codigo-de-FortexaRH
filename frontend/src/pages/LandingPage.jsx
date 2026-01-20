@@ -65,6 +65,8 @@ const benefits = [
 ];
 
 export default function LandingPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   // Ensure full content renders on first load
   useEffect(() => {
     // Force scroll to top on mount to ensure proper hydration
@@ -76,33 +78,83 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link to="/" className="flex items-center gap-2">
+          <div className="flex items-center justify-between h-16 md:h-20">
+            <Link to="/" className="flex items-center">
               <img 
-                src="/fortexarh-logo.png" 
+                src="/fortexarh-logo-300.png" 
                 alt="FortexaRH" 
-                className="h-10 w-auto"
+                className="h-8 sm:h-10 md:h-12 w-auto"
               />
             </Link>
-            <nav className="hidden md:flex items-center gap-8">
-              <a href="#features" className="text-slate-600 hover:text-slate-900 transition-colors">Características</a>
-              <a href="#pricing" className="text-slate-600 hover:text-slate-900 transition-colors">Precios</a>
-              <a href="#contact" className="text-slate-600 hover:text-slate-900 transition-colors">Contacto</a>
+            
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center gap-6 lg:gap-8">
+              <a href="#features" className="text-sm lg:text-base text-slate-600 hover:text-slate-900 transition-colors">Características</a>
+              <a href="#pricing" className="text-sm lg:text-base text-slate-600 hover:text-slate-900 transition-colors">Precios</a>
+              <a href="#contact" className="text-sm lg:text-base text-slate-600 hover:text-slate-900 transition-colors">Contacto</a>
             </nav>
-            <div className="flex items-center gap-3">
+            
+            {/* Desktop Buttons */}
+            <div className="hidden md:flex items-center gap-2 lg:gap-3">
               <Link to="/login">
-                <Button variant="ghost" data-testid="login-btn">Iniciar Sesión</Button>
+                <Button variant="ghost" size="sm" className="text-sm" data-testid="login-btn">Iniciar Sesión</Button>
               </Link>
               <Link to="/register">
-                <Button className="bg-slate-900 hover:bg-slate-800" data-testid="register-btn">
+                <Button size="sm" className="bg-slate-900 hover:bg-slate-800 text-sm" data-testid="register-btn">
                   Comenzar Gratis
                 </Button>
               </Link>
             </div>
+            
+            {/* Mobile Menu Button */}
+            <button 
+              className="md:hidden p-2 -mr-2 text-slate-600"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              data-testid="mobile-menu-btn"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
         </div>
+        
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-white border-t border-slate-200 py-4 px-4 animate-fade-in">
+            <nav className="flex flex-col gap-3 mb-4">
+              <a 
+                href="#features" 
+                className="text-slate-600 hover:text-slate-900 py-2 px-3 rounded-lg hover:bg-slate-50"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Características
+              </a>
+              <a 
+                href="#pricing" 
+                className="text-slate-600 hover:text-slate-900 py-2 px-3 rounded-lg hover:bg-slate-50"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Precios
+              </a>
+              <a 
+                href="#contact" 
+                className="text-slate-600 hover:text-slate-900 py-2 px-3 rounded-lg hover:bg-slate-50"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Contacto
+              </a>
+            </nav>
+            <div className="flex flex-col gap-2 pt-3 border-t border-slate-100">
+              <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="outline" className="w-full">Iniciar Sesión</Button>
+              </Link>
+              <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
+                <Button className="w-full bg-slate-900 hover:bg-slate-800">Comenzar Gratis</Button>
+              </Link>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Hero Section */}
