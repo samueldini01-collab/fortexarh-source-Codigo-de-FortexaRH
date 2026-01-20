@@ -99,11 +99,12 @@ export default function Dashboard() {
   const statCards = [
     {
       title: "Empleados Activos",
-      value: stats?.employee_count || 0,
+      value: stats?.total_employees || 0,
       icon: Users,
       color: "bg-blue-500",
       bgColor: "bg-blue-50",
-      textColor: "text-blue-600"
+      textColor: "text-blue-600",
+      href: "/employees"
     },
     {
       title: "Nóminas Pendientes",
@@ -111,15 +112,17 @@ export default function Dashboard() {
       icon: DollarSign,
       color: "bg-emerald-500",
       bgColor: "bg-emerald-50",
-      textColor: "text-emerald-600"
+      textColor: "text-emerald-600",
+      href: "/payroll-v2"
     },
     {
       title: "Presentes Hoy",
-      value: stats?.present_today || 0,
+      value: stats?.today_attendance || 0,
       icon: Clock,
       color: "bg-amber-500",
       bgColor: "bg-amber-50",
-      textColor: "text-amber-600"
+      textColor: "text-amber-600",
+      href: "/attendance"
     },
     {
       title: "Vacaciones Pendientes",
@@ -127,7 +130,8 @@ export default function Dashboard() {
       icon: Calendar,
       color: "bg-purple-500",
       bgColor: "bg-purple-50",
-      textColor: "text-purple-600"
+      textColor: "text-purple-600",
+      href: "/vacations"
     },
     {
       title: "Vacantes Abiertas",
@@ -135,7 +139,8 @@ export default function Dashboard() {
       icon: Briefcase,
       color: "bg-rose-500",
       bgColor: "bg-rose-50",
-      textColor: "text-rose-600"
+      textColor: "text-rose-600",
+      href: "/recruitment"
     },
     {
       title: "Nuevos Candidatos",
@@ -143,7 +148,8 @@ export default function Dashboard() {
       icon: UserPlus,
       color: "bg-cyan-500",
       bgColor: "bg-cyan-50",
-      textColor: "text-cyan-600"
+      textColor: "text-cyan-600",
+      href: "/recruitment"
     }
   ];
 
