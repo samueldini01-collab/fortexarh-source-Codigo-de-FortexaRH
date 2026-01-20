@@ -271,23 +271,23 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50">
+      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-slate-50">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 heading mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 heading mb-3 sm:mb-4">
             ¿Listo para transformar tu gestión de RRHH?
           </h2>
-          <p className="text-lg text-slate-600 mb-8">
-            Únete a cientos de empresas que ya optimizaron su gestión de recursos humanos con HRflow.
+          <p className="text-sm sm:text-base md:text-lg text-slate-600 mb-6 sm:mb-8 px-4">
+            Únete a cientos de empresas que ya optimizaron su gestión de recursos humanos con FortexaRH.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/register">
-              <Button size="lg" className="bg-slate-900 hover:bg-slate-800 text-base px-8" data-testid="cta-register-btn">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
+            <Link to="/register" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-sm sm:text-base px-6 sm:px-8" data-testid="cta-register-btn">
                 Comenzar Prueba Gratuita
-                <ArrowRight className="w-5 h-5 ml-2" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
               </Button>
             </Link>
-            <Link to="/pricing">
-              <Button size="lg" variant="outline" className="text-base px-8">
+            <Link to="/pricing" className="w-full sm:w-auto">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8">
                 Ver Planes y Precios
               </Button>
             </Link>
@@ -296,10 +296,10 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="pricing" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 heading mb-4">
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 heading mb-3 sm:mb-4">
               Planes y Precios
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
