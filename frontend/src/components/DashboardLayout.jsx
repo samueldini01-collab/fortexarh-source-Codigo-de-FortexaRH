@@ -291,7 +291,7 @@ export default function DashboardLayout({ children, title }) {
         lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         <div className="flex flex-col h-full">
-          {/* Logo */}
+          {/* Logo with collapse button */}
           <div className={`flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'gap-3 px-4'} py-5 border-b border-slate-100`}>
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shrink-0">
               <span className="text-white font-bold text-lg">F</span>
@@ -302,6 +302,16 @@ export default function DashboardLayout({ children, title }) {
                 <p className="text-xs text-slate-500">Sistema de RRHH</p>
               </div>
             )}
+            {/* Collapse button - Desktop only */}
+            <button 
+              className="hidden lg:flex p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors"
+              onClick={toggleSidebarCollapsed}
+              data-testid="collapse-sidebar-btn"
+              title={sidebarCollapsed ? "Expandir menú" : "Colapsar menú"}
+            >
+              {sidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+            </button>
+            {/* Close button - Mobile only */}
             <button 
               className="lg:hidden ml-auto p-2 hover:bg-slate-100 rounded-lg"
               onClick={() => setSidebarOpen(false)}
