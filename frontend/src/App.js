@@ -311,6 +311,8 @@ function AppRouter() {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/checkout" element={<CheckoutPage />} />
       <Route path="/pricing" element={<PricingPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/employees" element={<ProtectedRoute><EmployeesPage /></ProtectedRoute>} />
       <Route path="/payroll" element={<ProtectedRoute><PayrollPage /></ProtectedRoute>} />
