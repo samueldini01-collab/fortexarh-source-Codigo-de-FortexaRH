@@ -2,22 +2,32 @@
 Company Routes - FortexaRH
 Handles company settings and configuration
 """
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Request, HTTPException, Depends
+from fastapi.security import HTTPBearer
 from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
 from datetime import datetime, timezone
 import uuid
 
 router = APIRouter(prefix="/company", tags=["Company"])
+security = HTTPBearer(auto_error=False)
 
 db = None
-get_current_user = None
+_get_current_user_func = None
 
 
 def init_router(database, auth_func):
-    global db, get_current_user
+    global db, _get_current_user_func
     db = database
-    get_current_user = auth_func
+    _get_current_user_func = auth_func
+
+
+async def get_current_user(request: Request, credentials = Depends(security)):
+    """Wrapper for the injected auth function"""
+    if _get_current_user_func is None:
+        raise HTTPException(status_code=500, detail="Auth not initialized")
+    return await _get_current_user_func(request, credentials)
+
 
 
 class CompanyUpdate(BaseModel):
@@ -52,7 +62,7 @@ class BankConfig(BaseModel):
 
 
 @router.get("")
-async def get_company(current_user: dict = Depends(lambda: get_current_user)):
+async def get_company(current_user: dict = Depends(get_current_user)):
     company = await db.companies.find_one(
         {"company_id": current_user.get("company_id")},
         {"_id": 0}
@@ -63,7 +73,7 @@ async def get_company(current_user: dict = Depends(lambda: get_current_user)):
 
 
 @router.put("")
-async def update_company(data: CompanyUpdate, current_user: dict = Depends(lambda: get_current_user)):
+async def update_company(data: CompanyUpdate, current_user: dict = Depends(get_current_user)):
     update_data = {k: v for k, v in data.model_dump().items() if v is not None}
     result = await db.companies.update_one(
         {"company_id": current_user.get("company_id")},
@@ -75,7 +85,7 @@ async def update_company(data: CompanyUpdate, current_user: dict = Depends(lambd
 
 
 @router.get("/settings")
-async def get_company_settings(current_user: dict = Depends(lambda: get_current_user)):
+async def get_company_settings(current_user: dict = Depends(get_current_user)):
     """Get company payroll settings"""
     company_id = current_user.get("company_id")
     
@@ -105,7 +115,7 @@ async def get_company_settings(current_user: dict = Depends(lambda: get_current_
 
 
 @router.put("/settings")
-async def update_company_settings(data: CompanySettings, current_user: dict = Depends(lambda: get_current_user)):
+async def update_company_settings(data: CompanySettings, current_user: dict = Depends(get_current_user)):
     """Update company payroll settings"""
     company_id = current_user.get("company_id")
     
@@ -123,7 +133,7 @@ async def update_company_settings(data: CompanySettings, current_user: dict = De
 
 
 @router.get("/bank-config")
-async def get_bank_config(current_user: dict = Depends(lambda: get_current_user)):
+async def get_bank_config(current_user: dict = Depends(get_current_user)):
     """Get company's default bank configuration"""
     company_id = current_user.get("company_id")
     config = await db.company_bank_config.find_one({"company_id": company_id}, {"_id": 0})
@@ -131,7 +141,7 @@ async def get_bank_config(current_user: dict = Depends(lambda: get_current_user)
 
 
 @router.post("/bank-config")
-async def save_bank_config(data: BankConfig, current_user: dict = Depends(lambda: get_current_user)):
+async def save_bank_config(data: BankConfig, current_user: dict = Depends(get_current_user)):
     """Save company's default bank configuration"""
     company_id = current_user.get("company_id")
     

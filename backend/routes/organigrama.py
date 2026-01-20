@@ -2,22 +2,32 @@
 Organigrama Routes - FortexaRH
 Handles organizational chart management
 """
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Request, HTTPException, Depends
+from fastapi.security import HTTPBearer
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime, timezone
 import uuid
 
 router = APIRouter(prefix="/organigrama", tags=["Organigrama"])
+security = HTTPBearer(auto_error=False)
 
 db = None
-get_current_user = None
+_get_current_user_func = None
 
 
 def init_router(database, auth_func):
-    global db, get_current_user
+    global db, _get_current_user_func
     db = database
-    get_current_user = auth_func
+    _get_current_user_func = auth_func
+
+
+async def get_current_user(request: Request, credentials = Depends(security)):
+    """Wrapper for the injected auth function"""
+    if _get_current_user_func is None:
+        raise HTTPException(status_code=500, detail="Auth not initialized")
+    return await _get_current_user_func(request, credentials)
+
 
 
 class OrgNodeCreate(BaseModel):
@@ -34,7 +44,7 @@ class OrgNodeReorder(BaseModel):
 
 
 @router.get("")
-async def get_organigrama(current_user: dict = Depends(lambda: get_current_user)):
+async def get_organigrama(current_user: dict = Depends(get_current_user)):
     nodes = await db.organigrama.find(
         {"company_id": current_user.get("company_id")},
         {"_id": 0}
@@ -43,7 +53,7 @@ async def get_organigrama(current_user: dict = Depends(lambda: get_current_user)
 
 
 @router.post("")
-async def create_org_node(data: OrgNodeCreate, current_user: dict = Depends(lambda: get_current_user)):
+async def create_org_node(data: OrgNodeCreate, current_user: dict = Depends(get_current_user)):
     company_id = current_user.get("company_id")
     
     manager_name = None
@@ -90,7 +100,7 @@ async def create_org_node(data: OrgNodeCreate, current_user: dict = Depends(lamb
 
 
 @router.put("/{node_id}")
-async def update_org_node(node_id: str, data: OrgNodeCreate, current_user: dict = Depends(lambda: get_current_user)):
+async def update_org_node(node_id: str, data: OrgNodeCreate, current_user: dict = Depends(get_current_user)):
     company_id = current_user.get("company_id")
     
     manager_name = None
@@ -132,7 +142,7 @@ async def update_org_node(node_id: str, data: OrgNodeCreate, current_user: dict 
 
 
 @router.delete("/{node_id}")
-async def delete_org_node(node_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def delete_org_node(node_id: str, current_user: dict = Depends(get_current_user)):
     company_id = current_user.get("company_id")
     
     # Check if node has children
@@ -172,7 +182,7 @@ async def delete_org_node(node_id: str, current_user: dict = Depends(lambda: get
 
 
 @router.put("/reorder")
-async def reorder_org_nodes(data: OrgNodeReorder, current_user: dict = Depends(lambda: get_current_user)):
+async def reorder_org_nodes(data: OrgNodeReorder, current_user: dict = Depends(get_current_user)):
     """Reorder organizational nodes"""
     company_id = current_user.get("company_id")
     

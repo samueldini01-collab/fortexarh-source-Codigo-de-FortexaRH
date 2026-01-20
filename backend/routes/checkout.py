@@ -3,6 +3,7 @@ Checkout Routes - FortexaRH
 Handles payment processing with Stripe
 """
 from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi.security import HTTPBearer
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime, timezone, timedelta
@@ -13,21 +14,30 @@ import asyncio
 import stripe
 
 router = APIRouter(tags=["Checkout"])
+security = HTTPBearer(auto_error=False)
 
 db = None
-get_current_user = None
+_get_current_user_func = None
 SUBSCRIPTION_PLANS = None
 send_payment_confirmation_email = None
 send_invoice_email = None
 
 
 def init_router(database, auth_func, plans, payment_email_func, invoice_email_func):
-    global db, get_current_user, SUBSCRIPTION_PLANS, send_payment_confirmation_email, send_invoice_email
+    global db, _get_current_user_func, SUBSCRIPTION_PLANS, send_payment_confirmation_email, send_invoice_email
     db = database
-    get_current_user = auth_func
+    _get_current_user_func = auth_func
     SUBSCRIPTION_PLANS = plans
     send_payment_confirmation_email = payment_email_func
     send_invoice_email = invoice_email_func
+
+
+async def get_current_user(request: Request, credentials = Depends(security)):
+    """Wrapper for the injected auth function"""
+    if _get_current_user_func is None:
+        raise HTTPException(status_code=500, detail="Auth not initialized")
+    return await _get_current_user_func(request, credentials)
+
 
 
 class PublicCheckoutRequest(BaseModel):
@@ -166,7 +176,7 @@ async def verify_public_checkout(session_id: str):
 # ===================== AUTHENTICATED CHECKOUT =====================
 
 @router.post("/checkout")
-async def create_checkout(data: CheckoutRequest, request: Request, current_user: dict = Depends(lambda: get_current_user)):
+async def create_checkout(data: CheckoutRequest, request: Request, current_user: dict = Depends(get_current_user)):
     """Create Stripe checkout session for subscription payment"""
     plan = SUBSCRIPTION_PLANS.get(data.plan_id)
     if not plan or data.plan_id == "trial":
@@ -245,7 +255,7 @@ async def create_checkout(data: CheckoutRequest, request: Request, current_user:
 
 
 @router.get("/checkout/status/{session_id}")
-async def get_checkout_status(session_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def get_checkout_status(session_id: str, current_user: dict = Depends(get_current_user)):
     """Poll payment status and update subscription if paid"""
     api_key = os.environ.get('STRIPE_API_KEY')
     stripe.api_key = api_key

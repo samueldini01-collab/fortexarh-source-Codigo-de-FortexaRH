@@ -2,22 +2,32 @@
 Recruitment Routes - FortexaRH
 Handles job postings and candidate management
 """
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Request, HTTPException, Depends
+from fastapi.security import HTTPBearer
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime, timezone
 import uuid
 
 router = APIRouter(tags=["Recruitment"])
+security = HTTPBearer(auto_error=False)
 
 db = None
-get_current_user = None
+_get_current_user_func = None
 
 
 def init_router(database, auth_func):
-    global db, get_current_user
+    global db, _get_current_user_func
     db = database
-    get_current_user = auth_func
+    _get_current_user_func = auth_func
+
+
+async def get_current_user(request: Request, credentials = Depends(security)):
+    """Wrapper for the injected auth function"""
+    if _get_current_user_func is None:
+        raise HTTPException(status_code=500, detail="Auth not initialized")
+    return await _get_current_user_func(request, credentials)
+
 
 
 class JobCreate(BaseModel):
@@ -46,7 +56,7 @@ class CandidateCreate(BaseModel):
 # ===================== JOBS =====================
 
 @router.get("/jobs")
-async def get_jobs(current_user: dict = Depends(lambda: get_current_user)):
+async def get_jobs(current_user: dict = Depends(get_current_user)):
     jobs = await db.jobs.find(
         {"company_id": current_user.get("company_id")},
         {"_id": 0}
@@ -55,7 +65,7 @@ async def get_jobs(current_user: dict = Depends(lambda: get_current_user)):
 
 
 @router.post("/jobs")
-async def create_job(data: JobCreate, current_user: dict = Depends(lambda: get_current_user)):
+async def create_job(data: JobCreate, current_user: dict = Depends(get_current_user)):
     job_id = f"job_{uuid.uuid4().hex[:12]}"
     job = {
         "job_id": job_id,
@@ -70,7 +80,7 @@ async def create_job(data: JobCreate, current_user: dict = Depends(lambda: get_c
 
 
 @router.put("/jobs/{job_id}")
-async def update_job(job_id: str, data: JobCreate, current_user: dict = Depends(lambda: get_current_user)):
+async def update_job(job_id: str, data: JobCreate, current_user: dict = Depends(get_current_user)):
     result = await db.jobs.update_one(
         {"job_id": job_id, "company_id": current_user.get("company_id")},
         {"$set": data.model_dump()}
@@ -81,7 +91,7 @@ async def update_job(job_id: str, data: JobCreate, current_user: dict = Depends(
 
 
 @router.put("/jobs/{job_id}/close")
-async def close_job(job_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def close_job(job_id: str, current_user: dict = Depends(get_current_user)):
     result = await db.jobs.update_one(
         {"job_id": job_id, "company_id": current_user.get("company_id")},
         {"$set": {"status": "closed", "closed_at": datetime.now(timezone.utc).isoformat()}}
@@ -94,7 +104,7 @@ async def close_job(job_id: str, current_user: dict = Depends(lambda: get_curren
 # ===================== CANDIDATES =====================
 
 @router.get("/candidates")
-async def get_candidates(job_id: Optional[str] = None, current_user: dict = Depends(lambda: get_current_user)):
+async def get_candidates(job_id: Optional[str] = None, current_user: dict = Depends(get_current_user)):
     query = {"company_id": current_user.get("company_id")}
     if job_id:
         query["job_id"] = job_id
@@ -103,7 +113,7 @@ async def get_candidates(job_id: Optional[str] = None, current_user: dict = Depe
 
 
 @router.post("/candidates")
-async def create_candidate(data: CandidateCreate, current_user: dict = Depends(lambda: get_current_user)):
+async def create_candidate(data: CandidateCreate, current_user: dict = Depends(get_current_user)):
     company_id = current_user.get("company_id")
     
     # Verify job exists
@@ -134,7 +144,7 @@ async def create_candidate(data: CandidateCreate, current_user: dict = Depends(l
 
 
 @router.put("/candidates/{candidate_id}/stage")
-async def update_candidate_stage(candidate_id: str, stage: str, current_user: dict = Depends(lambda: get_current_user)):
+async def update_candidate_stage(candidate_id: str, stage: str, current_user: dict = Depends(get_current_user)):
     valid_stages = ["new", "screening", "interview", "offer", "hired", "rejected"]
     if stage not in valid_stages:
         raise HTTPException(status_code=400, detail=f"Invalid stage. Must be one of: {', '.join(valid_stages)}")

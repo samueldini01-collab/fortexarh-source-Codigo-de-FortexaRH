@@ -2,25 +2,35 @@
 Employees Routes - FortexaRH
 Handles employee CRUD operations
 """
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Request, HTTPException, Depends
+from fastapi.security import HTTPBearer
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List, Dict, Any
 from datetime import datetime, timezone
 import uuid
 
 router = APIRouter(prefix="/employees", tags=["Employees"])
+security = HTTPBearer(auto_error=False)
 
 # Will be initialized by init_router
 db = None
-get_current_user = None
+_get_current_user_func = None
 SUBSCRIPTION_PLANS = None
 
 
 def init_router(database, auth_func, plans):
-    global db, get_current_user, SUBSCRIPTION_PLANS
+    global db, _get_current_user_func, SUBSCRIPTION_PLANS
     db = database
-    get_current_user = auth_func
+    _get_current_user_func = auth_func
     SUBSCRIPTION_PLANS = plans
+
+
+async def get_current_user(request: Request, credentials = Depends(security)):
+    """Wrapper for the injected auth function"""
+    if _get_current_user_func is None:
+        raise HTTPException(status_code=500, detail="Auth not initialized")
+    return await _get_current_user_func(request, credentials)
+
 
 
 class EmployeeCreate(BaseModel):
@@ -74,7 +84,7 @@ class EmployeeCreate(BaseModel):
 
 
 @router.get("")
-async def get_employees(current_user: dict = Depends(lambda: get_current_user)):
+async def get_employees(current_user: dict = Depends(get_current_user)):
     employees = await db.employees.find(
         {"company_id": current_user.get("company_id")},
         {"_id": 0}
@@ -83,7 +93,7 @@ async def get_employees(current_user: dict = Depends(lambda: get_current_user)):
 
 
 @router.post("")
-async def create_employee(data: EmployeeCreate, current_user: dict = Depends(lambda: get_current_user)):
+async def create_employee(data: EmployeeCreate, current_user: dict = Depends(get_current_user)):
     company_id = current_user.get("company_id")
     
     # Check subscription limit
@@ -113,7 +123,7 @@ async def create_employee(data: EmployeeCreate, current_user: dict = Depends(lam
 
 
 @router.get("/{employee_id}")
-async def get_employee(employee_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def get_employee(employee_id: str, current_user: dict = Depends(get_current_user)):
     employee = await db.employees.find_one(
         {"employee_id": employee_id, "company_id": current_user.get("company_id")},
         {"_id": 0}
@@ -124,7 +134,7 @@ async def get_employee(employee_id: str, current_user: dict = Depends(lambda: ge
 
 
 @router.put("/{employee_id}")
-async def update_employee(employee_id: str, data: EmployeeCreate, current_user: dict = Depends(lambda: get_current_user)):
+async def update_employee(employee_id: str, data: EmployeeCreate, current_user: dict = Depends(get_current_user)):
     result = await db.employees.update_one(
         {"employee_id": employee_id, "company_id": current_user.get("company_id")},
         {"$set": data.model_dump()}
@@ -135,7 +145,7 @@ async def update_employee(employee_id: str, data: EmployeeCreate, current_user: 
 
 
 @router.delete("/{employee_id}")
-async def delete_employee(employee_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def delete_employee(employee_id: str, current_user: dict = Depends(get_current_user)):
     result = await db.employees.delete_one(
         {"employee_id": employee_id, "company_id": current_user.get("company_id")}
     )
@@ -150,7 +160,7 @@ async def delete_employee(employee_id: str, current_user: dict = Depends(lambda:
 
 
 @router.get("/{employee_id}/loans")
-async def get_employee_loans(employee_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def get_employee_loans(employee_id: str, current_user: dict = Depends(get_current_user)):
     """Get all loans for a specific employee"""
     company_id = current_user.get("company_id")
     loans = await db.loans.find(

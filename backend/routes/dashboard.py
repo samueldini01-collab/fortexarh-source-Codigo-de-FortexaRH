@@ -2,24 +2,34 @@
 Dashboard Routes - FortexaRH
 Handles dashboard statistics and metrics
 """
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Request, HTTPException, Depends
+from fastapi.security import HTTPBearer
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
+security = HTTPBearer(auto_error=False)
 
 db = None
-get_current_user = None
+_get_current_user_func = None
 
 
 def init_router(database, auth_func):
-    global db, get_current_user
+    global db, _get_current_user_func
     db = database
-    get_current_user = auth_func
+    _get_current_user_func = auth_func
+
+
+async def get_current_user(request: Request, credentials = Depends(security)):
+    """Wrapper for the injected auth function"""
+    if _get_current_user_func is None:
+        raise HTTPException(status_code=500, detail="Auth not initialized")
+    return await _get_current_user_func(request, credentials)
+
 
 
 @router.get("/stats")
-async def get_dashboard_stats(current_user: dict = Depends(lambda: get_current_user)):
+async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
     company_id = current_user.get("company_id")
     
     total_employees = await db.employees.count_documents({"company_id": company_id, "status": "active"})
@@ -57,7 +67,7 @@ async def get_dashboard_stats(current_user: dict = Depends(lambda: get_current_u
 
 
 @router.get("/payroll-stats")
-async def get_payroll_stats(current_user: dict = Depends(lambda: get_current_user)):
+async def get_payroll_stats(current_user: dict = Depends(get_current_user)):
     """Get payroll statistics for dashboard widgets"""
     company_id = current_user.get("company_id")
     
@@ -106,7 +116,7 @@ async def get_payroll_stats(current_user: dict = Depends(lambda: get_current_use
 
 
 @router.get("/currency-summary")
-async def get_currency_summary(current_user: dict = Depends(lambda: get_current_user)):
+async def get_currency_summary(current_user: dict = Depends(get_current_user)):
     """Get currency distribution summary for dashboard"""
     company_id = current_user.get("company_id")
     

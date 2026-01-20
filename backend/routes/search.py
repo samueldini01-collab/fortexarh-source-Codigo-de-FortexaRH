@@ -4,9 +4,11 @@ Provides search functionality across all modules
 """
 
 from fastapi import APIRouter, Depends
+from fastapi.security import HTTPBearer
 from typing import Callable
 
 router = APIRouter(tags=["Search"])
+security = HTTPBearer(auto_error=False)
 
 # These will be set by init_router
 db = None
@@ -15,13 +17,21 @@ get_current_user: Callable = None
 
 def init_router(database, auth_dependency: Callable):
     """Initialize the router with database and auth dependency"""
-    global db, get_current_user
+    global db, _get_current_user_func
     db = database
     get_current_user = auth_dependency
 
 
+async def get_current_user(request: Request, credentials = Depends(security)):
+    """Wrapper for the injected auth function"""
+    if _get_current_user_func is None:
+        raise HTTPException(status_code=500, detail="Auth not initialized")
+    return await _get_current_user_func(request, credentials)
+
+
+
 @router.get("/search")
-async def global_search(q: str, current_user: dict = Depends(lambda: get_current_user)):
+async def global_search(q: str, current_user: dict = Depends(get_current_user)):
     """Global search across employees, payroll, vacations, journal entries, etc."""
     if not db or not get_current_user:
         return {"results": [], "error": "Router not initialized"}

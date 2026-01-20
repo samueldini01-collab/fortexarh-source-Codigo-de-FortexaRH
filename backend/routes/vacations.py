@@ -2,22 +2,32 @@
 Vacations Routes - FortexaRH
 Handles vacation requests and approvals
 """
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Request, HTTPException, Depends
+from fastapi.security import HTTPBearer
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timezone
 import uuid
 
 router = APIRouter(prefix="/vacations", tags=["Vacations"])
+security = HTTPBearer(auto_error=False)
 
 db = None
-get_current_user = None
+_get_current_user_func = None
 
 
 def init_router(database, auth_func):
-    global db, get_current_user
+    global db, _get_current_user_func
     db = database
-    get_current_user = auth_func
+    _get_current_user_func = auth_func
+
+
+async def get_current_user(request: Request, credentials = Depends(security)):
+    """Wrapper for the injected auth function"""
+    if _get_current_user_func is None:
+        raise HTTPException(status_code=500, detail="Auth not initialized")
+    return await _get_current_user_func(request, credentials)
+
 
 
 class VacationCreate(BaseModel):
@@ -28,7 +38,7 @@ class VacationCreate(BaseModel):
 
 
 @router.get("")
-async def get_vacations(current_user: dict = Depends(lambda: get_current_user)):
+async def get_vacations(current_user: dict = Depends(get_current_user)):
     vacations = await db.vacations.find(
         {"company_id": current_user.get("company_id")},
         {"_id": 0}
@@ -37,7 +47,7 @@ async def get_vacations(current_user: dict = Depends(lambda: get_current_user)):
 
 
 @router.post("")
-async def create_vacation(data: VacationCreate, current_user: dict = Depends(lambda: get_current_user)):
+async def create_vacation(data: VacationCreate, current_user: dict = Depends(get_current_user)):
     employee = await db.employees.find_one(
         {"employee_id": data.employee_id, "company_id": current_user.get("company_id")},
         {"_id": 0}
@@ -68,7 +78,7 @@ async def create_vacation(data: VacationCreate, current_user: dict = Depends(lam
 
 
 @router.put("/{vacation_id}/approve")
-async def approve_vacation(vacation_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def approve_vacation(vacation_id: str, current_user: dict = Depends(get_current_user)):
     result = await db.vacations.update_one(
         {"vacation_id": vacation_id, "company_id": current_user.get("company_id")},
         {"$set": {"status": "approved", "approved_by": current_user["user_id"]}}
@@ -79,7 +89,7 @@ async def approve_vacation(vacation_id: str, current_user: dict = Depends(lambda
 
 
 @router.put("/{vacation_id}/reject")
-async def reject_vacation(vacation_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def reject_vacation(vacation_id: str, current_user: dict = Depends(get_current_user)):
     result = await db.vacations.update_one(
         {"vacation_id": vacation_id, "company_id": current_user.get("company_id")},
         {"$set": {"status": "rejected", "rejected_by": current_user["user_id"]}}

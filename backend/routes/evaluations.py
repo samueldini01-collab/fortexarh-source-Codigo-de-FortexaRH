@@ -2,22 +2,32 @@
 Evaluations Routes - FortexaRH
 Handles performance evaluations
 """
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Request, HTTPException, Depends
+from fastapi.security import HTTPBearer
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 from datetime import datetime, timezone
 import uuid
 
 router = APIRouter(prefix="/evaluations", tags=["Evaluations"])
+security = HTTPBearer(auto_error=False)
 
 db = None
-get_current_user = None
+_get_current_user_func = None
 
 
 def init_router(database, auth_func):
-    global db, get_current_user
+    global db, _get_current_user_func
     db = database
-    get_current_user = auth_func
+    _get_current_user_func = auth_func
+
+
+async def get_current_user(request: Request, credentials = Depends(security)):
+    """Wrapper for the injected auth function"""
+    if _get_current_user_func is None:
+        raise HTTPException(status_code=500, detail="Auth not initialized")
+    return await _get_current_user_func(request, credentials)
+
 
 
 class EvaluationCreate(BaseModel):
@@ -30,7 +40,7 @@ class EvaluationCreate(BaseModel):
 
 
 @router.get("")
-async def get_evaluations(current_user: dict = Depends(lambda: get_current_user)):
+async def get_evaluations(current_user: dict = Depends(get_current_user)):
     evaluations = await db.evaluations.find(
         {"company_id": current_user.get("company_id")},
         {"_id": 0}
@@ -39,7 +49,7 @@ async def get_evaluations(current_user: dict = Depends(lambda: get_current_user)
 
 
 @router.post("")
-async def create_evaluation(data: EvaluationCreate, current_user: dict = Depends(lambda: get_current_user)):
+async def create_evaluation(data: EvaluationCreate, current_user: dict = Depends(get_current_user)):
     company_id = current_user.get("company_id")
     
     employee = await db.employees.find_one(

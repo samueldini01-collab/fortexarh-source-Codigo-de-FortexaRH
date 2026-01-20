@@ -2,7 +2,8 @@
 DGII Reports Routes - FortexaRH
 Handles Dominican Republic tax reporting (TSS, IR-3, IR-17, IR-4, IR-13)
 """
-from fastapi import APIRouter, HTTPException, Depends, Response
+from fastapi import APIRouter, Request, HTTPException, Depends, Response
+from fastapi.security import HTTPBearer
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime, timezone
@@ -11,15 +12,16 @@ import io
 import csv
 
 router = APIRouter(prefix="/dgii-reports", tags=["DGII Reports"])
+security = HTTPBearer(auto_error=False)
 
 db = None
-get_current_user = None
+_get_current_user_func = None
 
 
 def init_router(database, auth_func):
-    global db, get_current_user
+    global db, _get_current_user_func
     db = database
-    get_current_user = auth_func
+    _get_current_user_func = auth_func
 
 
 # Dominican Republic Tax Rates
@@ -58,7 +60,7 @@ def calculate_isr(annual_income: float) -> float:
 
 
 @router.get("/summary")
-async def get_dgii_summary(period: str, current_user: dict = Depends(lambda: get_current_user)):
+async def get_dgii_summary(period: str, current_user: dict = Depends(get_current_user)):
     """Get summary of DGII obligations for a period"""
     company_id = current_user.get("company_id")
     
@@ -109,7 +111,7 @@ async def get_dgii_summary(period: str, current_user: dict = Depends(lambda: get
 
 
 @router.get("/tss/autodeterminacion")
-async def generate_tss_autodeterminacion(period: str, current_user: dict = Depends(lambda: get_current_user)):
+async def generate_tss_autodeterminacion(period: str, current_user: dict = Depends(get_current_user)):
     """Generate TSS Autodeterminación file (Type A)"""
     company_id = current_user.get("company_id")
     
@@ -163,7 +165,7 @@ async def generate_tss_autodeterminacion(period: str, current_user: dict = Depen
 
 
 @router.get("/tss/novedades")
-async def generate_tss_novedades(period: str, current_user: dict = Depends(lambda: get_current_user)):
+async def generate_tss_novedades(period: str, current_user: dict = Depends(get_current_user)):
     """Generate TSS Novedades file (Type N)"""
     company_id = current_user.get("company_id")
     
@@ -202,7 +204,7 @@ async def generate_tss_novedades(period: str, current_user: dict = Depends(lambd
 
 
 @router.get("/ir3")
-async def generate_ir3(period: str, current_user: dict = Depends(lambda: get_current_user)):
+async def generate_ir3(period: str, current_user: dict = Depends(get_current_user)):
     """Generate IR-3 (Monthly ISR Withholdings) report"""
     company_id = current_user.get("company_id")
     
@@ -248,7 +250,7 @@ async def generate_ir3(period: str, current_user: dict = Depends(lambda: get_cur
 
 
 @router.get("/ir17")
-async def generate_ir17(year: int, current_user: dict = Depends(lambda: get_current_user)):
+async def generate_ir17(year: int, current_user: dict = Depends(get_current_user)):
     """Generate IR-17 (Annual Employee Compensation) report"""
     company_id = current_user.get("company_id")
     
@@ -300,7 +302,7 @@ async def generate_ir17(year: int, current_user: dict = Depends(lambda: get_curr
 
 
 @router.get("/deadlines")
-async def get_dgii_deadlines(current_user: dict = Depends(lambda: get_current_user)):
+async def get_dgii_deadlines(current_user: dict = Depends(get_current_user)):
     """Get upcoming DGII reporting deadlines"""
     now = datetime.now(timezone.utc)
     current_month = now.month

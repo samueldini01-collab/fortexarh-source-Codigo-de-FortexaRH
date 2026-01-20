@@ -2,7 +2,8 @@
 System Users Routes - FortexaRH
 Handles system user management, roles, and activities
 """
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Request, HTTPException, Depends
+from fastapi.security import HTTPBearer
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List
 from datetime import datetime, timezone
@@ -10,19 +11,28 @@ import uuid
 import bcrypt
 
 router = APIRouter(prefix="/system-users", tags=["System Users"])
+security = HTTPBearer(auto_error=False)
 
 db = None
-get_current_user = None
+_get_current_user_func = None
 
 
 def init_router(database, auth_func):
-    global db, get_current_user
+    global db, _get_current_user_func
     db = database
-    get_current_user = auth_func
+    _get_current_user_func = auth_func
 
 
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+
+
+async def get_current_user(request: Request, credentials = Depends(security)):
+    """Wrapper for the injected auth function"""
+    if _get_current_user_func is None:
+        raise HTTPException(status_code=500, detail="Auth not initialized")
+    return await _get_current_user_func(request, credentials)
+
 
 
 class SystemUserCreate(BaseModel):
@@ -52,7 +62,7 @@ class AdminPasswordSet(BaseModel):
 
 
 @router.get("")
-async def get_system_users(current_user: dict = Depends(lambda: get_current_user)):
+async def get_system_users(current_user: dict = Depends(get_current_user)):
     """Get all users for current company"""
     company_id = current_user.get("company_id")
     
@@ -65,7 +75,7 @@ async def get_system_users(current_user: dict = Depends(lambda: get_current_user
 
 
 @router.post("")
-async def create_system_user(data: SystemUserCreate, current_user: dict = Depends(lambda: get_current_user)):
+async def create_system_user(data: SystemUserCreate, current_user: dict = Depends(get_current_user)):
     """Create a new system user"""
     company_id = current_user.get("company_id")
     
@@ -136,7 +146,7 @@ async def create_system_user(data: SystemUserCreate, current_user: dict = Depend
 
 
 @router.put("/{user_id}")
-async def update_system_user(user_id: str, data: SystemUserUpdate, current_user: dict = Depends(lambda: get_current_user)):
+async def update_system_user(user_id: str, data: SystemUserUpdate, current_user: dict = Depends(get_current_user)):
     """Update a system user"""
     company_id = current_user.get("company_id")
     
@@ -185,7 +195,7 @@ async def update_system_user(user_id: str, data: SystemUserUpdate, current_user:
 
 
 @router.delete("/{user_id}")
-async def delete_system_user(user_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def delete_system_user(user_id: str, current_user: dict = Depends(get_current_user)):
     """Delete a system user"""
     company_id = current_user.get("company_id")
     
@@ -221,7 +231,7 @@ async def delete_system_user(user_id: str, current_user: dict = Depends(lambda: 
 
 
 @router.get("/{user_id}/activities")
-async def get_user_activities(user_id: str, current_user: dict = Depends(lambda: get_current_user)):
+async def get_user_activities(user_id: str, current_user: dict = Depends(get_current_user)):
     """Get activity history for a user"""
     company_id = current_user.get("company_id")
     
@@ -234,7 +244,7 @@ async def get_user_activities(user_id: str, current_user: dict = Depends(lambda:
 
 
 @router.get("/activities/all")
-async def get_all_activities(limit: int = 50, current_user: dict = Depends(lambda: get_current_user)):
+async def get_all_activities(limit: int = 50, current_user: dict = Depends(get_current_user)):
     """Get all user activities for the company"""
     company_id = current_user.get("company_id")
     
@@ -247,7 +257,7 @@ async def get_all_activities(limit: int = 50, current_user: dict = Depends(lambd
 
 
 @router.post("/change-password")
-async def change_own_password(data: PasswordChange, current_user: dict = Depends(lambda: get_current_user)):
+async def change_own_password(data: PasswordChange, current_user: dict = Depends(get_current_user)):
     """Change own password (logged-in user)"""
     import bcrypt
     
@@ -276,7 +286,7 @@ async def change_own_password(data: PasswordChange, current_user: dict = Depends
 
 
 @router.post("/admin-set-password")
-async def admin_set_user_password(data: AdminPasswordSet, current_user: dict = Depends(lambda: get_current_user)):
+async def admin_set_user_password(data: AdminPasswordSet, current_user: dict = Depends(get_current_user)):
     """Admin sets password for another user"""
     if current_user.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Solo administradores pueden realizar esta acción")
