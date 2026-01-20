@@ -92,11 +92,17 @@ const DEFAULT_NAVIGATION = [
   { id: "company-config", name: "Configuración", href: "/company-config", icon: Building2, visible: true, featureKey: "settings" },
 ];
 
-// Local storage key
+// Local storage keys
 const MENU_CONFIG_KEY = "fortexarh_menu_config";
+const SIDEBAR_COLLAPSED_KEY = "fortexarh_sidebar_collapsed";
 
 export default function DashboardLayout({ children, title }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    // Load collapsed state from localStorage
+    const saved = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
+    return saved === "true";
+  });
   const [showMenuEditor, setShowMenuEditor] = useState(false);
   const [menuItems, setMenuItems] = useState(DEFAULT_NAVIGATION);
   const [editingItems, setEditingItems] = useState([]);
@@ -111,6 +117,13 @@ export default function DashboardLayout({ children, title }) {
   const { subscription, canAccessFeature, isTrialExpired, getTrialDaysRemaining, isOnTrial, getCurrentPlan } = useSubscription();
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Toggle sidebar collapsed state
+  const toggleSidebarCollapsed = () => {
+    const newState = !sidebarCollapsed;
+    setSidebarCollapsed(newState);
+    localStorage.setItem(SIDEBAR_COLLAPSED_KEY, newState.toString());
+  };
 
   // Load menu config from localStorage
   useEffect(() => {
