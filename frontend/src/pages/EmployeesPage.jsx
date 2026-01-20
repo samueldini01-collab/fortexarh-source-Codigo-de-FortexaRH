@@ -159,7 +159,11 @@ export default function EmployeesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAuthHeaders]);
+
+  useEffect(() => {
+    fetchEmployees();
+  }, [fetchEmployees]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
