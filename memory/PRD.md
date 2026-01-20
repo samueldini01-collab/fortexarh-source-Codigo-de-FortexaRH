@@ -155,7 +155,8 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 
 ### P0 - Crítico
 - [x] Refactorización de server.py - Fase 1 (routers básicos)
-- [ ] Refactorización de server.py - Fase 2 (payroll, accounting, checkout, payroll_v2)
+- [x] Refactorización de server.py - Fase 2 (payroll, checkout, accounting)
+- [ ] Refactorización de server.py - Fase 3 (payroll_v2, DGII reports, system-users)
 
 ### P1 - Alto
 - [ ] Notificaciones automáticas (fechas de pago, vencimientos DGII, contratos)
