@@ -64,7 +64,8 @@ import {
   Search,
   Command,
   Trash2,
-  History
+  History,
+  PieChart
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
