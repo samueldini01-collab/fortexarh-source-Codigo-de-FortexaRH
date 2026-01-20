@@ -200,6 +200,47 @@ export default function UsersManagementPage() {
     }
   };
 
+  const handleSetPassword = async () => {
+    if (!newPasswordData.password) {
+      toast.error("La contraseña es requerida");
+      return;
+    }
+    if (newPasswordData.password.length < 6) {
+      toast.error("La contraseña debe tener al menos 6 caracteres");
+      return;
+    }
+    if (newPasswordData.password !== newPasswordData.confirmPassword) {
+      toast.error("Las contraseñas no coinciden");
+      return;
+    }
+    
+    setPasswordLoading(true);
+    try {
+      await axios.post(`${API}/auth/admin-set-password`, {
+        user_id: passwordUser.user_id,
+        new_password: newPasswordData.password
+      }, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      toast.success("Contraseña actualizada correctamente");
+      setShowPasswordModal(false);
+      setPasswordUser(null);
+      setNewPasswordData({ password: "", confirmPassword: "" });
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al actualizar contraseña");
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
+  const openPasswordModal = (user) => {
+    setPasswordUser(user);
+    setNewPasswordData({ password: "", confirmPassword: "" });
+    setShowPassword(false);
+    setShowPasswordModal(true);
+  };
+
   const toggleModule = (moduleId, setter, current) => {
     if (current.includes(moduleId)) {
       setter(current.filter(m => m !== moduleId));
