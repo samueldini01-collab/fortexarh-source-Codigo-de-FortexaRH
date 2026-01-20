@@ -146,11 +146,7 @@ export default function EmployeesPage() {
   const [newEmergencyContact, setNewEmergencyContact] = useState(initialEmergencyContactForm);
   const { getAuthHeaders } = useAuth();
 
-  useEffect(() => {
-    fetchEmployees();
-  }, []);
-
-  const fetchEmployees = async () => {
+  const fetchEmployees = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/employees`, {
         headers: getAuthHeaders(),
