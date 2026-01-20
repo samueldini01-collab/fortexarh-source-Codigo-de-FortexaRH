@@ -97,6 +97,8 @@ const DEFAULT_NAVIGATION = [
 // Local storage keys
 const MENU_CONFIG_KEY = "fortexarh_menu_config";
 const SIDEBAR_COLLAPSED_KEY = "fortexarh_sidebar_collapsed";
+const RECENT_SEARCHES_KEY = "fortexarh_recent_searches";
+const MAX_RECENT_SEARCHES = 8;
 
 export default function DashboardLayout({ children, title }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -115,6 +117,15 @@ export default function DashboardLayout({ children, title }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
+  // Recent searches state
+  const [recentSearches, setRecentSearches] = useState(() => {
+    try {
+      const saved = localStorage.getItem(RECENT_SEARCHES_KEY);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const { user, logout, getAuthHeaders } = useAuth();
   const { subscription, canAccessFeature, isTrialExpired, getTrialDaysRemaining, isOnTrial, getCurrentPlan } = useSubscription();
   const location = useLocation();
@@ -125,6 +136,31 @@ export default function DashboardLayout({ children, title }) {
     const newState = !sidebarCollapsed;
     setSidebarCollapsed(newState);
     localStorage.setItem(SIDEBAR_COLLAPSED_KEY, newState.toString());
+  };
+
+  // Save recent search
+  const saveRecentSearch = (result) => {
+    const newSearch = {
+      id: `${result.type}_${Date.now()}`,
+      type: result.type,
+      title: result.title,
+      description: result.description,
+      href: result.href,
+      timestamp: Date.now()
+    };
+    
+    // Remove duplicates based on href
+    const filtered = recentSearches.filter(s => s.href !== result.href);
+    const updated = [newSearch, ...filtered].slice(0, MAX_RECENT_SEARCHES);
+    
+    setRecentSearches(updated);
+    localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated));
+  };
+
+  // Clear recent searches
+  const clearRecentSearches = () => {
+    setRecentSearches([]);
+    localStorage.removeItem(RECENT_SEARCHES_KEY);
   };
 
   // Load menu config from localStorage
