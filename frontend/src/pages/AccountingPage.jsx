@@ -61,6 +61,8 @@ export default function AccountingPage() {
   const [showEditEntry, setShowEditEntry] = useState(false);
   const [showEditAccount, setShowEditAccount] = useState(false);
   const [showNewAccount, setShowNewAccount] = useState(false);
+  const [showCatalogSelector, setShowCatalogSelector] = useState(false);
+  const [catalogTemplates, setCatalogTemplates] = useState([]);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [selectedAccount, setSelectedAccount] = useState(null);
   
@@ -96,6 +98,7 @@ export default function AccountingPage() {
 
   useEffect(() => {
     fetchData();
+    fetchCatalogTemplates();
   }, []);
 
   const fetchData = async () => {
