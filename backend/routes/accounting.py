@@ -205,9 +205,9 @@ DEFAULT_ACCOUNTS = CATALOG_TEMPLATES["dr_basico"]["accounts"]
 
 
 def init_router(database, auth_func):
-    global db, get_current_user
+    global db, _get_current_user_func
     db = database
-    get_current_user = auth_func
+    _get_current_user_func = auth_func
 
 
 class AccountCreate(BaseModel):
