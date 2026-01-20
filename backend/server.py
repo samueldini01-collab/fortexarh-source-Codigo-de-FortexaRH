@@ -5195,6 +5195,8 @@ init_checkout_router(db, get_current_user, SUBSCRIPTION_PLANS, send_payment_conf
 init_accounting_router(db, get_current_user)
 init_system_users_router(db, get_current_user)
 init_dgii_reports_router(db, get_current_user)
+init_notifications_router(db, get_current_user)
+init_reports_router(db, get_current_user)
 
 # Include modular routers in api_router
 api_router.include_router(loans_router)
@@ -5217,6 +5219,8 @@ api_router.include_router(checkout_router)
 api_router.include_router(accounting_router)
 api_router.include_router(system_users_router)
 api_router.include_router(dgii_reports_router)
+api_router.include_router(notifications_router)
+api_router.include_router(reports_router)
 
 # Include the API router
 app.include_router(api_router)
