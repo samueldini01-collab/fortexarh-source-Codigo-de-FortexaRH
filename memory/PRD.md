@@ -68,3 +68,29 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 - Usuario: test_refactor@fortexa.com
 - Contraseña: test123
 - Plan: Pro
+
+## Implementado en Esta Sesión - Parte 2 (2026-01-20)
+
+### ✅ Notificaciones Automáticas - COMPLETADO
+- **Recordatorios de Nómina**: Emails automáticos antes de la fecha de pago
+  - Configuración de día de pago (1, 5, 10, 15, 20, 25, 28, 30)
+  - Anticipación configurable (1-7 días antes)
+  - Botón para enviar recordatorio manual
+- **Notificaciones de Cumpleaños**: Alertas de cumpleaños de empleados
+  - Lista de próximos cumpleaños (30 días)
+  - Anticipación configurable
+  - Emails a administradores con lista de cumpleaños
+- Historial de notificaciones enviadas
+
+### ✅ Reportes de Costos por Departamento - COMPLETADO
+- Desglose de costos por departamento
+- Incluye: Salario bruto, deducciones (SFS, AFP, ISR), aportes patronales
+- Comparación visual entre departamentos
+- Exportación a CSV
+- Selección de período (últimos 12 meses)
+
+### Nuevos Archivos Creados
+- `/app/backend/routes/notifications.py` - Router de notificaciones
+- `/app/backend/routes/reports.py` - Router de reportes avanzados
+- `/app/frontend/src/pages/NotificationsPage.jsx` - Página de notificaciones
+- `/app/frontend/src/pages/CostsByDepartmentPage.jsx` - Página de costos
