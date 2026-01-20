@@ -326,9 +326,62 @@ async def delete_account(account_id: str, current_user: dict = Depends(lambda: g
     return {"message": "Cuenta eliminada correctamente"}
 
 
+@router.get("/catalog-templates")
+async def get_catalog_templates():
+    """Get available chart of accounts templates"""
+    templates = []
+    for key, template in CATALOG_TEMPLATES.items():
+        templates.append({
+            "catalog_id": key,
+            "name": template["name"],
+            "description": template["description"],
+            "account_count": len(template["accounts"])
+        })
+    return templates
+
+
+@router.post("/accounts/load-catalog/{catalog_id}")
+async def load_catalog_template(catalog_id: str, current_user: dict = Depends(lambda: get_current_user)):
+    """Load a specific chart of accounts template"""
+    company_id = current_user.get("company_id")
+    
+    if catalog_id not in CATALOG_TEMPLATES:
+        raise HTTPException(status_code=400, detail="Catálogo no encontrado")
+    
+    template = CATALOG_TEMPLATES[catalog_id]
+    
+    # Delete existing accounts
+    await db.accounts.delete_many({"company_id": company_id})
+    
+    # Load new accounts from template
+    for acc in template["accounts"]:
+        await db.accounts.insert_one({
+            "account_id": f"acc_{uuid.uuid4().hex[:8]}",
+            "company_id": company_id,
+            **acc,
+            "balance": 0,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
+    
+    # Save which catalog was used
+    await db.company_settings.update_one(
+        {"company_id": company_id},
+        {"$set": {
+            "chart_of_accounts_template": catalog_id,
+            "chart_loaded_at": datetime.now(timezone.utc).isoformat()
+        }},
+        upsert=True
+    )
+    
+    return {
+        "message": f"Catálogo '{template['name']}' cargado correctamente",
+        "accounts_loaded": len(template["accounts"])
+    }
+
+
 @router.post("/accounts/reset-defaults")
 async def reset_default_accounts(current_user: dict = Depends(lambda: get_current_user)):
-    """Reset to default chart of accounts"""
+    """Reset to default chart of accounts (basic template)"""
     company_id = current_user.get("company_id")
     
     await db.accounts.delete_many({"company_id": company_id})
