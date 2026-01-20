@@ -439,18 +439,6 @@ export default function DashboardLayout({ children, title }) {
           </div>
           )}
 
-          {/* Collapse toggle button */}
-          <div className={`hidden lg:flex ${sidebarCollapsed ? 'justify-center' : 'justify-end'} px-3 py-2 border-t border-slate-100`}>
-            <button
-              onClick={toggleSidebarCollapsed}
-              className="p-2 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-700 transition-colors"
-              data-testid="collapse-sidebar-btn"
-              title={sidebarCollapsed ? "Expandir menú" : "Colapsar menú"}
-            >
-              {sidebarCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-            </button>
-          </div>
-
           {/* User section */}
           <div className={`border-t border-slate-100 ${sidebarCollapsed ? 'p-2' : 'p-4'}`}>
             <DropdownMenu>
