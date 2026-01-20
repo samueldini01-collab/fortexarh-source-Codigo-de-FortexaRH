@@ -427,26 +427,43 @@ export default function DashboardLayout({ children, title }) {
                 Personalizar Menú
               </button>
           </div>
+          )}
+
+          {/* Collapse toggle button */}
+          <div className={`hidden lg:flex ${sidebarCollapsed ? 'justify-center' : 'justify-end'} px-3 py-2 border-t border-slate-100`}>
+            <button
+              onClick={toggleSidebarCollapsed}
+              className="p-2 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-700 transition-colors"
+              data-testid="collapse-sidebar-btn"
+              title={sidebarCollapsed ? "Expandir menú" : "Colapsar menú"}
+            >
+              {sidebarCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+            </button>
+          </div>
 
           {/* User section */}
-          <div className="border-t border-slate-100 p-4">
+          <div className={`border-t border-slate-100 ${sidebarCollapsed ? 'p-2' : 'p-4'}`}>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-3 w-full hover:bg-slate-50 rounded-lg p-2 transition-colors">
-                  <Avatar className="h-9 w-9">
+                <button className={`flex items-center ${sidebarCollapsed ? 'justify-center w-full' : 'gap-3 w-full'} hover:bg-slate-50 rounded-lg p-2 transition-colors`}>
+                  <Avatar className="h-9 w-9 shrink-0">
                     <AvatarImage src={user?.avatar} />
                     <AvatarFallback className="bg-emerald-100 text-emerald-700">
                       {getInitials(user?.name)}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 text-left">
-                    <p className="text-sm font-medium text-slate-700">{user?.name || 'Usuario'}</p>
-                    <p className="text-xs text-slate-500">{user?.email}</p>
-                  </div>
-                  <ChevronDown className="w-4 h-4 text-slate-400" />
+                  {!sidebarCollapsed && (
+                    <>
+                      <div className="flex-1 text-left min-w-0">
+                        <p className="text-sm font-medium text-slate-700 truncate">{user?.name || 'Usuario'}</p>
+                        <p className="text-xs text-slate-500 truncate">{user?.email}</p>
+                      </div>
+                      <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
+                    </>
+                  )}
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align={sidebarCollapsed ? "start" : "end"} className="w-56">
                 <DropdownMenuItem onClick={() => navigate('/profile')}>
                   <Users className="w-4 h-4 mr-2" /> Mi Perfil
                 </DropdownMenuItem>
@@ -471,7 +488,7 @@ export default function DashboardLayout({ children, title }) {
       </aside>
 
       {/* Main content */}
-      <div className="lg:pl-64">
+      <div className={`transition-all duration-300 ${sidebarCollapsed ? 'lg:pl-16' : 'lg:pl-64'}`}>
         {/* Top header */}
         <header className="sticky top-0 z-30 bg-white border-b border-slate-200">
           <div className="flex items-center justify-between px-4 py-3">
