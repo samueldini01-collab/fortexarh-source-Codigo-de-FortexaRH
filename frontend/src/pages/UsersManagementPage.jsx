@@ -734,6 +734,82 @@ export default function UsersManagementPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Set Password Dialog */}
+        <Dialog open={showPasswordModal} onOpenChange={setShowPasswordModal}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Key className="w-5 h-5 text-amber-500" />
+                Asignar Contraseña
+              </DialogTitle>
+              <DialogDescription>
+                Establece una nueva contraseña para {passwordUser?.name || "el usuario"}
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div className="p-3 bg-slate-50 rounded-lg">
+                <p className="text-sm text-slate-600">
+                  <strong>Usuario:</strong> {passwordUser?.email}
+                </p>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Nueva Contraseña *</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Mínimo 6 caracteres"
+                    value={newPasswordData.password}
+                    onChange={(e) => setNewPasswordData({...newPasswordData, password: e.target.value})}
+                    className="pl-9 pr-10"
+                    data-testid="admin-new-password-input"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Confirmar Contraseña *</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Repite la contraseña"
+                    value={newPasswordData.confirmPassword}
+                    onChange={(e) => setNewPasswordData({...newPasswordData, confirmPassword: e.target.value})}
+                    className="pl-9"
+                    data-testid="admin-confirm-password-input"
+                  />
+                </div>
+              </div>
+              
+              <p className="text-xs text-slate-500">
+                El usuario podrá cambiar esta contraseña después de iniciar sesión.
+              </p>
+            </div>
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowPasswordModal(false)}>Cancelar</Button>
+              <Button 
+                onClick={handleSetPassword}
+                disabled={passwordLoading}
+                className="bg-amber-600 hover:bg-amber-700"
+                data-testid="admin-set-password-btn"
+              >
+                {passwordLoading ? "Guardando..." : "Guardar Contraseña"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );
