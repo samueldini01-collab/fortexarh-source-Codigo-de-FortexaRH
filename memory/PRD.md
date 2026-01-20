@@ -143,7 +143,8 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 ## Backlog Pendiente
 
 ### P0 - Crítico
-- [ ] Refactorización de server.py (separar en routers modulares)
+- [x] Refactorización de server.py - Fase 1 (routers básicos)
+- [ ] Refactorización de server.py - Fase 2 (payroll, accounting, checkout, payroll_v2)
 
 ### P1 - Alto
 - [ ] Notificaciones automáticas (fechas de pago, vencimientos DGII, contratos)
