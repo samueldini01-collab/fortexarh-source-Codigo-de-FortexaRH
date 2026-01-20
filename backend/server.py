@@ -1074,7 +1074,7 @@ async def verify_public_checkout(session_id: str):
     
     return {
         "valid": False,
-        "payment_status": status.payment_status,
+        "payment_status": payment_status,
         "message": "El pago aún no ha sido completado."
     }
 
