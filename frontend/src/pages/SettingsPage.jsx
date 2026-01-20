@@ -282,7 +282,7 @@ export default function SettingsPage() {
           </TabsContent>
 
           {/* Account Tab */}
-          <TabsContent value="account">
+          <TabsContent value="account" className="space-y-6">
             <Card className="border-slate-200">
               <CardHeader>
                 <CardTitle>Mi Cuenta</CardTitle>
@@ -312,6 +312,97 @@ export default function SettingsPage() {
                     </div>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Change Password Section */}
+            <Card className="border-slate-200">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lock className="w-5 h-5" />
+                  Cambiar Contraseña
+                </CardTitle>
+                <CardDescription>
+                  Actualiza tu contraseña para mantener tu cuenta segura
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleChangePassword} className="space-y-4 max-w-lg">
+                  {passwordError && (
+                    <div className="flex items-center gap-2 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      {passwordError}
+                    </div>
+                  )}
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="currentPassword">Contraseña Actual</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <Input
+                        id="currentPassword"
+                        type={showPasswords ? "text" : "password"}
+                        value={passwordForm.currentPassword}
+                        onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
+                        className="pl-9 pr-10"
+                        placeholder="Tu contraseña actual"
+                        required
+                        data-testid="current-password-input"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPasswords(!showPasswords)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      >
+                        {showPasswords ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="newPassword">Nueva Contraseña</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <Input
+                        id="newPassword"
+                        type={showPasswords ? "text" : "password"}
+                        value={passwordForm.newPassword}
+                        onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
+                        className="pl-9"
+                        placeholder="Mínimo 6 caracteres"
+                        required
+                        minLength={6}
+                        data-testid="new-password-input"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword">Confirmar Nueva Contraseña</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <Input
+                        id="confirmPassword"
+                        type={showPasswords ? "text" : "password"}
+                        value={passwordForm.confirmPassword}
+                        onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
+                        className="pl-9"
+                        placeholder="Repite la nueva contraseña"
+                        required
+                        data-testid="confirm-new-password-input"
+                      />
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    type="submit" 
+                    disabled={savingPassword}
+                    className="bg-emerald-600 hover:bg-emerald-700"
+                    data-testid="change-password-btn"
+                  >
+                    {savingPassword ? "Guardando..." : "Cambiar Contraseña"}
+                  </Button>
+                </form>
               </CardContent>
             </Card>
           </TabsContent>
