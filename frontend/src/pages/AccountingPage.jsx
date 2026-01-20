@@ -118,6 +118,36 @@ export default function AccountingPage() {
     }
   };
 
+  const fetchCatalogTemplates = async () => {
+    try {
+      const response = await axios.get(`${API}/accounting/catalog-templates`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      setCatalogTemplates(response.data);
+    } catch (error) {
+      console.error("Error fetching catalog templates:", error);
+    }
+  };
+
+  const loadCatalogTemplate = async (catalogId) => {
+    if (!window.confirm("¿Está seguro? Esto reemplazará todas las cuentas existentes con el catálogo seleccionado.")) {
+      return;
+    }
+    
+    try {
+      const response = await axios.post(`${API}/accounting/accounts/load-catalog/${catalogId}`, {}, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      toast.success(response.data.message);
+      setShowCatalogSelector(false);
+      fetchData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al cargar catálogo");
+    }
+  };
+
   const handleSearch = async () => {
     try {
       const params = new URLSearchParams();
