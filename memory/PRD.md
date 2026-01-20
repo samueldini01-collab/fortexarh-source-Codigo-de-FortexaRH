@@ -49,10 +49,18 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 - Actualización en `/app/frontend/src/pages/EmployeesPage.jsx`
 
 ### ✅ 2. Sidebar Colapsable - COMPLETADO
-- Botón para colapsar/expandir el sidebar hacia la izquierda
+- Botón `<` / `>` movido a la parte superior (debajo del logo FortexaRH)
 - Estado persistido en localStorage (`fortexarh_sidebar_collapsed`)
 - Muestra solo íconos cuando está colapsado
-- Transición suave al colapsar/expandir
+- Transición suave animada
+- Actualización en `/app/frontend/src/components/DashboardLayout.jsx`
+
+### ✅ 3. Historial de Búsquedas Recientes - COMPLETADO
+- Sección "Búsquedas Recientes" en el modal de búsqueda global (⌘K)
+- Guarda automáticamente las últimas 8 búsquedas cuando el usuario hace clic en un resultado
+- Botón "Limpiar" para borrar el historial
+- Persistido en localStorage (`fortexarh_recent_searches`)
+- Muestra ícono según tipo de resultado (empleado, nómina, vacación, etc.)
 - Actualización en `/app/frontend/src/components/DashboardLayout.jsx`
 
 ## Lo Implementado Anteriormente
