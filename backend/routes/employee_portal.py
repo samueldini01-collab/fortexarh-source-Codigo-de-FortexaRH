@@ -433,15 +433,26 @@ async def get_employee_dashboard(request: Request):
         {"_id": 0, "portal_password": 0}
     )
     
-    # Get latest payslip
-    latest_payslip = await db.payroll_entries.find_one(
+    # Get latest payslip from payroll_v2
+    latest_payslip = await db.payroll_v2.find_one(
         {
             "employee_id": emp_data["employee_id"],
             "status": "paid"
         },
         {"_id": 0},
-        sort=[("created_at", -1)]
+        sort=[("period", -1)]
     )
+    
+    # Fallback to old format if not found
+    if not latest_payslip:
+        latest_payslip = await db.payroll_entries.find_one(
+            {
+                "employee_id": emp_data["employee_id"],
+                "status": "paid"
+            },
+            {"_id": 0},
+            sort=[("created_at", -1)]
+        )
     
     # Get vacation balance
     vacation_balance = await get_vacation_balance(request)
@@ -473,8 +484,8 @@ async def get_employee_dashboard(request: Request):
         },
         "salary": {
             "latest_net": latest_payslip.get("net_salary", 0) if latest_payslip else 0,
-            "latest_period": latest_payslip.get("period_name", "") if latest_payslip else "",
-            "base_salary": employee.get("base_salary", 0)
+            "latest_period": latest_payslip.get("period", "") if latest_payslip else "",
+            "base_salary": employee.get("salary", 0)
         },
         "vacations": vacation_balance,
         "loans": {
