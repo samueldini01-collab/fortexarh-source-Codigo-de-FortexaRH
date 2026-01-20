@@ -2,7 +2,8 @@
 Accounting Routes - FortexaRH
 Handles accounting, chart of accounts, and journal entries
 """
-from fastapi import APIRouter, HTTPException, Depends, Response
+from fastapi import APIRouter, HTTPException, Depends, Response, Request
+from fastapi.security import HTTPBearer
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime, timezone
@@ -11,9 +12,17 @@ import io
 import csv
 
 router = APIRouter(prefix="/accounting", tags=["Accounting"])
+security = HTTPBearer(auto_error=False)
 
 db = None
-get_current_user = None
+_get_current_user_func = None
+
+
+async def get_current_user(request: Request, credentials = Depends(security)):
+    """Wrapper for the injected auth function"""
+    if _get_current_user_func is None:
+        raise HTTPException(status_code=500, detail="Auth not initialized")
+    return await _get_current_user_func(request, credentials)
 
 # Available chart of accounts catalogs
 CATALOG_TEMPLATES = {
