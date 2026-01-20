@@ -1153,6 +1153,202 @@ async def logout(request: Request, response: Response):
     response.delete_cookie("session_token", path="/", secure=True, samesite="none")
     return {"message": "Logged out successfully"}
 
+# ===================== PASSWORD RESET & CHANGE =====================
+
+class PasswordResetRequest(BaseModel):
+    email: EmailStr
+
+class PasswordResetConfirm(BaseModel):
+    token: str
+    new_password: str
+
+class PasswordChangeRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+class AdminPasswordSetRequest(BaseModel):
+    user_id: str
+    new_password: str
+
+@api_router.post("/auth/forgot-password")
+async def forgot_password(data: PasswordResetRequest):
+    """Request password reset - sends email with reset link"""
+    user = await db.users.find_one({"email": data.email}, {"_id": 0})
+    
+    if not user:
+        # Don't reveal if email exists or not for security
+        return {"message": "Si el correo existe, recibirás instrucciones para restablecer tu contraseña"}
+    
+    # Generate reset token
+    reset_token = f"rst_{uuid.uuid4().hex}"
+    expires_at = datetime.now(timezone.utc) + timedelta(hours=1)
+    
+    # Store reset token
+    await db.password_resets.update_one(
+        {"user_id": user["user_id"]},
+        {"$set": {
+            "user_id": user["user_id"],
+            "email": data.email,
+            "token": reset_token,
+            "expires_at": expires_at.isoformat(),
+            "used": False,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }},
+        upsert=True
+    )
+    
+    # Send email with reset link
+    try:
+        # Get frontend URL from referrer or use default
+        frontend_url = os.environ.get('FRONTEND_URL', 'https://fortexarh.com')
+        reset_link = f"{frontend_url}/reset-password?token={reset_token}"
+        
+        # Send email using Resend
+        if resend.api_key:
+            params = {
+                "from": SENDER_EMAIL,
+                "to": [data.email],
+                "subject": "Restablecer contraseña - FortexaRH",
+                "html": f"""
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; text-align: center;">
+                            <h1 style="color: white; margin: 0;">FortexaRH</h1>
+                        </div>
+                        <div style="padding: 30px; background: #f9fafb;">
+                            <h2 style="color: #1e3a5f;">Restablecer Contraseña</h2>
+                            <p style="color: #4b5563;">Hola {user.get('name', 'Usuario')},</p>
+                            <p style="color: #4b5563;">Recibimos una solicitud para restablecer la contraseña de tu cuenta.</p>
+                            <p style="color: #4b5563;">Haz clic en el siguiente botón para crear una nueva contraseña:</p>
+                            <div style="text-align: center; margin: 30px 0;">
+                                <a href="{reset_link}" style="background-color: #10b981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold;">Restablecer Contraseña</a>
+                            </div>
+                            <p style="color: #6b7280; font-size: 14px;">Este enlace expira en 1 hora.</p>
+                            <p style="color: #6b7280; font-size: 14px;">Si no solicitaste este cambio, ignora este correo.</p>
+                        </div>
+                        <div style="background: #e5e7eb; padding: 20px; text-align: center;">
+                            <p style="color: #6b7280; font-size: 12px; margin: 0;">© 2025 FortexaRH. Todos los derechos reservados.</p>
+                        </div>
+                    </div>
+                """
+            }
+            resend.Emails.send(params)
+            logging.info(f"Password reset email sent to {data.email}")
+    except Exception as e:
+        logging.error(f"Error sending password reset email: {e}")
+    
+    return {"message": "Si el correo existe, recibirás instrucciones para restablecer tu contraseña"}
+
+@api_router.post("/auth/reset-password")
+async def reset_password(data: PasswordResetConfirm):
+    """Reset password using token from email"""
+    # Find valid reset token
+    reset = await db.password_resets.find_one(
+        {"token": data.token, "used": False},
+        {"_id": 0}
+    )
+    
+    if not reset:
+        raise HTTPException(status_code=400, detail="Token inválido o expirado")
+    
+    # Check expiration
+    expires_at = datetime.fromisoformat(reset["expires_at"])
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    
+    if datetime.now(timezone.utc) > expires_at:
+        raise HTTPException(status_code=400, detail="El enlace ha expirado. Solicita uno nuevo.")
+    
+    # Validate password length
+    if len(data.new_password) < 6:
+        raise HTTPException(status_code=400, detail="La contraseña debe tener al menos 6 caracteres")
+    
+    # Update password
+    new_hash = hash_password(data.new_password)
+    await db.users.update_one(
+        {"user_id": reset["user_id"]},
+        {"$set": {"password_hash": new_hash}}
+    )
+    
+    # Mark token as used
+    await db.password_resets.update_one(
+        {"token": data.token},
+        {"$set": {"used": True, "used_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"message": "Contraseña actualizada correctamente. Ya puedes iniciar sesión."}
+
+@api_router.post("/auth/change-password")
+async def change_password(data: PasswordChangeRequest, current_user: dict = Depends(get_current_user)):
+    """Change password for logged-in user"""
+    # Verify current password
+    user = await db.users.find_one({"user_id": current_user["user_id"]}, {"_id": 0})
+    
+    if not user or not user.get("password_hash"):
+        raise HTTPException(status_code=400, detail="No se puede cambiar la contraseña para esta cuenta")
+    
+    if not verify_password(data.current_password, user["password_hash"]):
+        raise HTTPException(status_code=400, detail="Contraseña actual incorrecta")
+    
+    # Validate new password
+    if len(data.new_password) < 6:
+        raise HTTPException(status_code=400, detail="La nueva contraseña debe tener al menos 6 caracteres")
+    
+    if data.current_password == data.new_password:
+        raise HTTPException(status_code=400, detail="La nueva contraseña debe ser diferente a la actual")
+    
+    # Update password
+    new_hash = hash_password(data.new_password)
+    await db.users.update_one(
+        {"user_id": current_user["user_id"]},
+        {"$set": {"password_hash": new_hash, "password_changed_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"message": "Contraseña actualizada correctamente"}
+
+@api_router.post("/auth/admin-set-password")
+async def admin_set_password(data: AdminPasswordSetRequest, current_user: dict = Depends(get_current_user)):
+    """Admin sets password for another user"""
+    # Verify current user is admin
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Solo los administradores pueden realizar esta acción")
+    
+    # Find target user
+    target_user = await db.users.find_one(
+        {"user_id": data.user_id, "company_id": current_user.get("company_id")},
+        {"_id": 0}
+    )
+    
+    if not target_user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    # Validate new password
+    if len(data.new_password) < 6:
+        raise HTTPException(status_code=400, detail="La contraseña debe tener al menos 6 caracteres")
+    
+    # Update password
+    new_hash = hash_password(data.new_password)
+    await db.users.update_one(
+        {"user_id": data.user_id},
+        {"$set": {
+            "password_hash": new_hash,
+            "password_changed_at": datetime.now(timezone.utc).isoformat(),
+            "password_set_by_admin": True
+        }}
+    )
+    
+    # Log activity
+    await db.user_activities.insert_one({
+        "activity_id": f"act_{uuid.uuid4().hex[:12]}",
+        "company_id": current_user.get("company_id"),
+        "user_id": data.user_id,
+        "action": "password_reset_by_admin",
+        "performed_by": current_user["user_id"],
+        "performed_by_name": current_user.get("name"),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    return {"message": "Contraseña del usuario actualizada correctamente"}
+
 # ===================== COMPANY ROUTES =====================
 
 @api_router.get("/company")
