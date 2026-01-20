@@ -87,6 +87,39 @@ export default function SettingsPage() {
     }
   };
 
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    setPasswordError("");
+    
+    // Validations
+    if (passwordForm.newPassword.length < 6) {
+      setPasswordError("La nueva contraseña debe tener al menos 6 caracteres");
+      return;
+    }
+    
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordError("Las contraseñas no coinciden");
+      return;
+    }
+    
+    setSavingPassword(true);
+    try {
+      await axios.post(`${API}/auth/change-password`, {
+        current_password: passwordForm.currentPassword,
+        new_password: passwordForm.newPassword
+      }, { headers: getAuthHeaders(), withCredentials: true });
+      
+      toast.success("Contraseña actualizada correctamente");
+      setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+    } catch (error) {
+      const message = error.response?.data?.detail || "Error al cambiar contraseña";
+      setPasswordError(message);
+      toast.error(message);
+    } finally {
+      setSavingPassword(false);
+    }
+  };
+
   const plans = [
     {
       id: "basic",
