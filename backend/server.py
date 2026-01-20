@@ -33,6 +33,7 @@ from routes.roles import router as roles_router, init_router as init_roles_route
 from routes.bank_files import router as bank_files_router, init_router as init_bank_files_router
 from routes.employee_portal import router as employee_portal_router, init_router as init_employee_portal_router
 from routes.documents import router as documents_router, init_router as init_documents_router
+from routes.search import router as search_router, init_router as init_search_router
 
 # MongoDB connection with production-ready settings
 mongo_url = os.environ['MONGO_URL']
