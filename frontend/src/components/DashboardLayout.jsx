@@ -332,7 +332,7 @@ export default function DashboardLayout({ children, title }) {
               </div>
             )}
             
-            {isTrialExpired() && (
+            {!sidebarCollapsed && isTrialExpired() && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
                 <div className="flex items-center gap-2 text-red-700 text-sm font-medium">
                   <AlertTriangle className="w-4 h-4" />
@@ -371,17 +371,21 @@ export default function DashboardLayout({ children, title }) {
                         setBlockedFeature(item.name);
                         setShowUpgradeModal(true);
                       }}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-amber-50 hover:text-amber-600 transition-colors group"
-                      title={`Disponible en plan ${requiredPlan}`}
+                      className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'gap-3 px-3'} py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-amber-50 hover:text-amber-600 transition-colors group`}
+                      title={sidebarCollapsed ? item.name : `Disponible en plan ${requiredPlan}`}
                     >
-                      <Icon className="w-5 h-5 text-slate-300 group-hover:text-amber-400" />
-                      <span className="flex-1 text-left">{item.name}</span>
-                      <span className="flex items-center gap-1">
-                        <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded font-medium hidden group-hover:inline">
-                          {requiredPlan}
-                        </span>
-                        <Lock className="w-4 h-4 text-slate-300 group-hover:text-amber-500" />
-                      </span>
+                      <Icon className="w-5 h-5 text-slate-300 group-hover:text-amber-400 shrink-0" />
+                      {!sidebarCollapsed && (
+                        <>
+                          <span className="flex-1 text-left truncate">{item.name}</span>
+                          <span className="flex items-center gap-1">
+                            <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded font-medium hidden group-hover:inline">
+                              {requiredPlan}
+                            </span>
+                            <Lock className="w-4 h-4 text-slate-300 group-hover:text-amber-500" />
+                          </span>
+                        </>
+                      )}
                     </button>
                   );
                 }
@@ -391,33 +395,37 @@ export default function DashboardLayout({ children, title }) {
                     key={item.id}
                     to={item.href}
                     className={`
-                      flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
+                      flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'gap-3 px-3'} py-2.5 rounded-lg text-sm font-medium
                       transition-all duration-200
                       ${isActive 
-                        ? 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-500 -ml-1 pl-4' 
+                        ? sidebarCollapsed 
+                          ? 'bg-emerald-50 text-emerald-700' 
+                          : 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-500 -ml-1 pl-4'
                         : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                       }
                     `}
                     onClick={() => setSidebarOpen(false)}
+                    title={sidebarCollapsed ? item.name : undefined}
                   >
-                    <Icon className={`w-5 h-5 ${isActive ? 'text-emerald-600' : 'text-slate-400'}`} />
-                    {item.name}
+                    <Icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-emerald-600' : 'text-slate-400'}`} />
+                    {!sidebarCollapsed && <span className="truncate">{item.name}</span>}
                   </Link>
                 );
               })}
             </div>
           </nav>
 
-          {/* Menu Customization Button */}
-          <div className="px-3 py-2 border-t border-slate-100">
-            <button
-              onClick={openMenuEditor}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors"
-              data-testid="customize-menu-btn"
-            >
-              <Sliders className="w-5 h-5" />
-              Personalizar Menú
-            </button>
+          {/* Menu Customization Button - Hide when collapsed */}
+          {!sidebarCollapsed && (
+            <div className="px-3 py-2 border-t border-slate-100">
+              <button
+                onClick={openMenuEditor}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors"
+                data-testid="customize-menu-btn"
+              >
+                <Sliders className="w-5 h-5" />
+                Personalizar Menú
+              </button>
           </div>
 
           {/* User section */}
