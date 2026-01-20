@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { 
   Users, 
@@ -20,7 +20,8 @@ import {
   MapPin,
   Mail,
   Phone,
-  Clock3
+  Clock3,
+  Menu
 } from "lucide-react";
 
 const features = [
