@@ -252,8 +252,9 @@ export default function Dashboard() {
             statCards.map((stat, index) => (
               <Card 
                 key={index} 
-                className="border-slate-200 hover:shadow-md transition-shadow cursor-pointer"
+                className="border-slate-200 hover:shadow-md transition-shadow cursor-pointer group"
                 data-testid={`stat-card-${index}`}
+                onClick={() => stat.href && navigate(stat.href)}
               >
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
@@ -261,7 +262,7 @@ export default function Dashboard() {
                       <p className="text-sm text-slate-500 mb-1">{stat.title}</p>
                       <p className="text-3xl font-bold text-slate-900">{stat.value}</p>
                     </div>
-                    <div className={`w-12 h-12 ${stat.bgColor} rounded-xl flex items-center justify-center`}>
+                    <div className={`w-12 h-12 ${stat.bgColor} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
                       <stat.icon className={`w-6 h-6 ${stat.textColor}`} />
                     </div>
                   </div>
