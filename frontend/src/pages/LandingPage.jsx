@@ -158,67 +158,67 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 hero-gradient">
+      <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 hero-gradient">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="animate-fade-in">
-              <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
-                <Zap className="w-4 h-4" />
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="animate-fade-in text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6">
+                <Zap className="w-3 h-3 sm:w-4 sm:h-4" />
                 Sistema de RRHH y Nómina SaaS
               </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight heading mb-6">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight heading mb-4 sm:mb-6">
                 Gestiona tu equipo de manera
                 <span className="text-emerald-600"> inteligente</span>
               </h1>
-              <p className="text-lg text-slate-600 mb-8 max-w-xl">
+              <p className="text-base sm:text-lg text-slate-600 mb-6 sm:mb-8 max-w-xl mx-auto lg:mx-0">
                 Simplifica la gestión de recursos humanos, nómina y asistencias. 
                 Todo en una plataforma moderna, segura y fácil de usar.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/register">
-                  <Button size="lg" className="bg-slate-900 hover:bg-slate-800 text-base px-8" data-testid="hero-cta-btn">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
+                <Link to="/register" className="w-full sm:w-auto">
+                  <Button size="lg" className="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-sm sm:text-base px-6 sm:px-8" data-testid="hero-cta-btn">
                     Prueba Gratis 5 Días
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
                   </Button>
                 </Link>
-                <Link to="/pricing">
-                  <Button size="lg" variant="outline" className="text-base px-8" data-testid="pricing-btn">
+                <Link to="/pricing" className="w-full sm:w-auto">
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8" data-testid="pricing-btn">
                     Ver Precios
                   </Button>
                 </Link>
               </div>
-              <div className="flex items-center gap-6 mt-8 text-sm text-slate-500">
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-6 mt-6 sm:mt-8 text-xs sm:text-sm text-slate-500">
                 <div className="flex items-center gap-2">
-                  <Check className="w-5 h-5 text-emerald-500" />
+                  <Check className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" />
                   Sin tarjeta de crédito
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-5 h-5 text-emerald-500" />
+                  <Check className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" />
                   Cancela cuando quieras
                 </div>
               </div>
             </div>
-            <div className="relative animate-fade-in stagger-2">
-              <div className="bg-slate-900 rounded-2xl p-6 shadow-2xl">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+            <div className="relative animate-fade-in stagger-2 hidden sm:block">
+              <div className="bg-slate-900 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-2xl">
+                <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-500"></div>
+                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-yellow-500"></div>
+                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-500"></div>
                 </div>
                 <img 
                   src="https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxNzV8MHwxfHNlYXJjaHwyfHxkaXZlcnNlJTIwY29ycG9yYXRlJTIwdGVhbSUyMHdvcmtpbmclMjBpbiUyMG1vZGVybiUyMG9mZmljZXxlbnwwfHx8fDE3Njg2ODM3Mzd8MA&ixlib=rb-4.1.0&q=85"
                   alt="Equipo corporativo trabajando"
-                  className="rounded-lg w-full h-64 object-cover"
+                  className="rounded-lg w-full h-48 sm:h-56 md:h-64 object-cover"
                 />
               </div>
-              <div className="absolute -bottom-6 -left-6 bg-white rounded-xl p-4 shadow-lg border border-slate-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
-                    <Users className="w-5 h-5 text-emerald-600" />
+              <div className="absolute -bottom-4 sm:-bottom-6 -left-2 sm:-left-6 bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-lg border border-slate-100">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-emerald-100 rounded-full flex items-center justify-center">
+                    <Users className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-slate-900">+500</p>
-                    <p className="text-sm text-slate-500">Empresas confían en nosotros</p>
+                    <p className="text-lg sm:text-2xl font-bold text-slate-900">+500</p>
+                    <p className="text-xs sm:text-sm text-slate-500">Empresas confían en nosotros</p>
                   </div>
                 </div>
               </div>
