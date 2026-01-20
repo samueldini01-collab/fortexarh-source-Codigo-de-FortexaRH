@@ -463,3 +463,86 @@ async def reset_password(data: PasswordResetConfirm):
     )
     
     return {"message": "Contraseña actualizada correctamente. Ya puedes iniciar sesión."}
+
+
+
+@router.get("/me")
+async def get_me(current_user: dict = Depends(get_current_user)):
+    """Get current user info"""
+    return current_user
+
+
+@router.post("/change-password")
+async def change_password(data: PasswordChangeRequest, current_user: dict = Depends(get_current_user)):
+    """Change password for logged in user"""
+    user = await db.users.find_one({"user_id": current_user["user_id"]}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    # Verify current password
+    if not user.get("password_hash"):
+        raise HTTPException(status_code=400, detail="Este usuario no tiene contraseña configurada")
+    
+    if not verify_password(data.current_password, user["password_hash"]):
+        raise HTTPException(status_code=400, detail="Contraseña actual incorrecta")
+    
+    if len(data.new_password) < 6:
+        raise HTTPException(status_code=400, detail="La nueva contraseña debe tener al menos 6 caracteres")
+    
+    new_hash = hash_password(data.new_password)
+    await db.users.update_one(
+        {"user_id": current_user["user_id"]},
+        {"$set": {"password_hash": new_hash}}
+    )
+    
+    # Log activity
+    await db.user_activities.insert_one({
+        "activity_id": f"act_{uuid.uuid4().hex[:8]}",
+        "company_id": current_user.get("company_id"),
+        "user_id": current_user["user_id"],
+        "action": "password_changed",
+        "details": {"method": "self_change"},
+        "created_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    return {"message": "Contraseña actualizada correctamente"}
+
+
+@router.post("/admin-set-password")
+async def admin_set_password(data: AdminPasswordSetRequest, current_user: dict = Depends(get_current_user)):
+    """Admin endpoint to set password for a user"""
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Solo administradores pueden realizar esta acción")
+    
+    target_user = await db.users.find_one(
+        {"user_id": data.user_id, "company_id": current_user.get("company_id")},
+        {"_id": 0}
+    )
+    if not target_user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    if len(data.new_password) < 6:
+        raise HTTPException(status_code=400, detail="La contraseña debe tener al menos 6 caracteres")
+    
+    new_hash = hash_password(data.new_password)
+    await db.users.update_one(
+        {"user_id": data.user_id},
+        {"$set": {"password_hash": new_hash}}
+    )
+    
+    # Log activity
+    await db.user_activities.insert_one({
+        "activity_id": f"act_{uuid.uuid4().hex[:8]}",
+        "company_id": current_user.get("company_id"),
+        "user_id": current_user["user_id"],
+        "action": "admin_password_set",
+        "details": {
+            "target_user_id": data.user_id,
+            "target_user_email": target_user.get("email")
+        },
+        "performed_by": current_user.get("email"),
+        "performed_by_name": current_user.get("name"),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    return {"message": "Contraseña del usuario actualizada correctamente"}
