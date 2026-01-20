@@ -43,6 +43,9 @@ from routes.company import router as company_router, init_router as init_company
 from routes.organigrama import router as organigrama_router, init_router as init_organigrama_router
 from routes.evaluations import router as evaluations_router, init_router as init_evaluations_router
 from routes.recruitment import router as recruitment_router, init_router as init_recruitment_router
+from routes.payroll import router as payroll_router, init_router as init_payroll_router
+from routes.checkout import router as checkout_router, init_router as init_checkout_router
+from routes.accounting import router as accounting_router, init_router as init_accounting_router
 
 # MongoDB connection with production-ready settings
 mongo_url = os.environ['MONGO_URL']
