@@ -4401,43 +4401,6 @@ async def search_journal_entries(
     entries = await db.journal_entries.find(query, {"_id": 0}).sort("entry_number", -1).to_list(100)
     return entries
 
-# ===================== ORGANIGRAMA DRAG & DROP =====================
-
-@api_router.put("/organigrama/reorder")
-async def reorder_org_nodes(updates: List[OrgNodeUpdatePosition], current_user: dict = Depends(get_current_user)):
-    company_id = current_user.get("company_id")
-    
-    for update in updates:
-        # Get old node data
-        old_node = await db.org_nodes.find_one({"node_id": update.node_id, "company_id": company_id}, {"_id": 0})
-        if not old_node:
-            continue
-        
-        old_parent_id = old_node.get("parent_id")
-        new_parent_id = update.parent_id
-        
-        # Remove from old parent's children
-        if old_parent_id:
-            await db.org_nodes.update_one(
-                {"node_id": old_parent_id},
-                {"$pull": {"children": update.node_id}}
-            )
-        
-        # Add to new parent's children
-        if new_parent_id:
-            await db.org_nodes.update_one(
-                {"node_id": new_parent_id},
-                {"$addToSet": {"children": update.node_id}}
-            )
-        
-        # Update node
-        await db.org_nodes.update_one(
-            {"node_id": update.node_id, "company_id": company_id},
-            {"$set": {"parent_id": new_parent_id, "level": update.level}}
-        )
-    
-    return {"message": "Organigrama actualizado correctamente"}
-
 # ===================== PAYROLL TEMPLATES =====================
 
 @api_router.get("/payroll-v2/templates")
