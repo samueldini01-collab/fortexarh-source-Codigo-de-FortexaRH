@@ -650,9 +650,9 @@ export default function AccountingPage() {
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Catálogo de Cuentas</h3>
               <div className="flex gap-2">
-                <Button variant="outline" onClick={handleResetAccounts}>
+                <Button variant="outline" onClick={() => setShowCatalogSelector(true)}>
                   <RefreshCw className="w-4 h-4 mr-2" />
-                  Restablecer Predeterminadas
+                  Cargar Catálogo
                 </Button>
                 <Button onClick={() => { resetAccountForm(); setShowNewAccount(true); }}>
                   <Plus className="w-4 h-4 mr-2" />
@@ -666,9 +666,9 @@ export default function AccountingPage() {
                 {accounts.length === 0 ? (
                   <div className="text-center py-12">
                     <Settings className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                    <p className="text-slate-500">No hay cuentas configuradas</p>
-                    <Button variant="link" onClick={handleResetAccounts}>
-                      Cargar cuentas predeterminadas
+                    <p className="text-slate-500 mb-4">No hay cuentas configuradas</p>
+                    <Button onClick={() => setShowCatalogSelector(true)}>
+                      Seleccionar Catálogo de Cuentas
                     </Button>
                   </div>
                 ) : (
