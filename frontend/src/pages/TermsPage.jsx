@@ -35,7 +35,7 @@ export default function TermsPage() {
 
           <div className="prose prose-slate max-w-none">
             <p className="text-slate-600 mb-6">
-              Bienvenido a FortexaRH. Estos Términos de Servicio ("Términos") rigen su uso del software de gestión de recursos humanos y nómina FortexaRH ("Servicio"), operado por Fortexa Solutions SRL ("Nosotros", "Nuestro" o "la Empresa"), una empresa constituida bajo las leyes de la República Dominicana.
+              Bienvenido a FortexaRH. Estos Términos de Servicio ("Términos") rigen su uso del software de gestión de recursos humanos y nómina FortexaRH ("Servicio"), operado por Cloudtexa Solutions SRL ("Nosotros", "Nuestro" o "la Empresa"), una empresa constituida bajo las leyes de la República Dominicana.
             </p>
 
             <h2 className="text-xl font-semibold text-slate-900 mt-8 mb-4">1. Aceptación de Términos</h2>
@@ -80,7 +80,7 @@ export default function TermsPage() {
 
             <h2 className="text-xl font-semibold text-slate-900 mt-8 mb-4">5. Propiedad Intelectual</h2>
             <p className="text-slate-600 mb-4">
-              El Servicio y su contenido original, características y funcionalidad son y seguirán siendo propiedad exclusiva de Fortexa Solutions SRL y sus licenciantes. El Servicio está protegido por las leyes de propiedad intelectual de la República Dominicana, tratados internacionales y otras leyes aplicables.
+              El Servicio y su contenido original, características y funcionalidad son y seguirán siendo propiedad exclusiva de Cloudtexa Solutions SRL y sus licenciantes. El Servicio está protegido por las leyes de propiedad intelectual de la República Dominicana, tratados internacionales y otras leyes aplicables.
             </p>
 
             <h2 className="text-xl font-semibold text-slate-900 mt-8 mb-4">6. Datos y Confidencialidad</h2>
@@ -95,12 +95,12 @@ export default function TermsPage() {
 
             <h2 className="text-xl font-semibold text-slate-900 mt-8 mb-4">8. Limitación de Responsabilidad</h2>
             <p className="text-slate-600 mb-4">
-              En ningún caso Fortexa Solutions SRL, sus directores, empleados o agentes serán responsables por daños indirectos, incidentales, especiales, consecuentes o punitivos que resulten del uso o la imposibilidad de uso del Servicio. Nuestra responsabilidad máxima estará limitada al monto pagado por usted en los últimos 12 meses por el Servicio.
+              En ningún caso Cloudtexa Solutions SRL, sus directores, empleados o agentes serán responsables por daños indirectos, incidentales, especiales, consecuentes o punitivos que resulten del uso o la imposibilidad de uso del Servicio. Nuestra responsabilidad máxima estará limitada al monto pagado por usted en los últimos 12 meses por el Servicio.
             </p>
 
             <h2 className="text-xl font-semibold text-slate-900 mt-8 mb-4">9. Indemnización</h2>
             <p className="text-slate-600 mb-4">
-              Usted acepta indemnizar y mantener indemne a Fortexa Solutions SRL de cualquier reclamo, daño, pérdida, responsabilidad y gastos (incluyendo honorarios de abogados) que surjan de su uso del Servicio o violación de estos Términos.
+              Usted acepta indemnizar y mantener indemne a Cloudtexa Solutions SRL de cualquier reclamo, daño, pérdida, responsabilidad y gastos (incluyendo honorarios de abogados) que surjan de su uso del Servicio o violación de estos Términos.
             </p>
 
             <h2 className="text-xl font-semibold text-slate-900 mt-8 mb-4">10. Terminación</h2>
@@ -123,7 +123,7 @@ export default function TermsPage() {
               Si tiene preguntas sobre estos Términos, contáctenos:
             </p>
             <div className="bg-slate-50 p-4 rounded-lg text-slate-600">
-              <p><strong>Fortexa Solutions SRL</strong></p>
+              <p><strong>Cloudtexa Solutions SRL</strong></p>
               <p>Av. Winston Churchill, Santo Domingo, República Dominicana</p>
               <p>Email: info@fortexarh.com</p>
               <p>Teléfono: (809) 685-9898</p>

@@ -35,7 +35,7 @@ export default function PrivacyPage() {
 
           <div className="prose prose-slate max-w-none">
             <p className="text-slate-600 mb-6">
-              En FortexaRH, operado por Fortexa Solutions SRL, nos comprometemos a proteger su privacidad y la de sus empleados. Esta Política de Privacidad describe cómo recopilamos, usamos, almacenamos y protegemos su información personal, en cumplimiento con la Ley 172-13 sobre Protección de Datos de Carácter Personal de la República Dominicana.
+              En FortexaRH, operado por Cloudtexa Solutions SRL, nos comprometemos a proteger su privacidad y la de sus empleados. Esta Política de Privacidad describe cómo recopilamos, usamos, almacenamos y protegemos su información personal, en cumplimiento con la Ley 172-13 sobre Protección de Datos de Carácter Personal de la República Dominicana.
             </p>
 
             <h2 className="text-xl font-semibold text-slate-900 mt-8 mb-4">1. Información que Recopilamos</h2>
@@ -168,7 +168,7 @@ export default function PrivacyPage() {
             </p>
             <div className="bg-slate-50 p-4 rounded-lg text-slate-600">
               <p><strong>Oficial de Protección de Datos</strong></p>
-              <p>Fortexa Solutions SRL</p>
+              <p>Cloudtexa Solutions SRL</p>
               <p>Av. Winston Churchill, Santo Domingo, República Dominicana</p>
               <p>Email: privacidad@fortexarh.com</p>
               <p>Teléfono: (809) 685-9898</p>
