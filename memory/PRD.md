@@ -129,7 +129,6 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 
 ### P0 - Crítico
 - [ ] Refactorización de server.py (separar en routers modulares)
-- [ ] Historial de búsquedas recientes en búsqueda global
 
 ### P1 - Alto
 - [ ] Notificaciones automáticas (fechas de pago, vencimientos DGII, contratos)
