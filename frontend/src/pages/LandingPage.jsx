@@ -228,13 +228,13 @@ export default function LandingPage() {
       </section>
 
       {/* Benefits Bar */}
-      <section className="py-8 bg-slate-900">
+      <section className="py-6 sm:py-8 bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {benefits.map((benefit, index) => (
-              <div key={index} className="flex items-center gap-3 text-white">
-                <benefit.icon className="w-5 h-5 text-emerald-400" />
-                <span className="text-sm font-medium">{benefit.text}</span>
+              <div key={index} className="flex items-center gap-2 sm:gap-3 text-white justify-center lg:justify-start">
+                <benefit.icon className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 shrink-0" />
+                <span className="text-xs sm:text-sm font-medium">{benefit.text}</span>
               </div>
             ))}
           </div>
@@ -242,28 +242,28 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8">
+      <section id="features" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 heading mb-4">
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 heading mb-3 sm:mb-4">
               Todo lo que necesitas para gestionar tu equipo
             </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto px-4">
               Desde la contratación hasta la nómina, tenemos todas las herramientas que tu departamento de RRHH necesita.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {features.map((feature, index) => (
               <div 
                 key={index} 
-                className="dashboard-card p-6 hover:border-emerald-200 animate-fade-in"
+                className="dashboard-card p-4 sm:p-6 hover:border-emerald-200 animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mb-4">
-                  <feature.icon className="w-6 h-6 text-emerald-600" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-50 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4">
+                  <feature.icon className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900 mb-2 heading">{feature.title}</h3>
-                <p className="text-slate-600">{feature.description}</p>
+                <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-1.5 sm:mb-2 heading">{feature.title}</h3>
+                <p className="text-sm sm:text-base text-slate-600">{feature.description}</p>
               </div>
             ))}
           </div>
