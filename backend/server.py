@@ -1505,53 +1505,6 @@ async def stripe_webhook(request: Request):
         # Return 200 to prevent Stripe from retrying
         return {"status": "error", "message": str(e)}
 
-# ===================== DASHBOARD STATS =====================
-
-@api_router.get("/dashboard/stats")
-async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
-    company_id = current_user.get("company_id")
-    
-    # Get counts
-    employee_count = await db.employees.count_documents({"company_id": company_id, "status": "active"})
-    pending_vacations = await db.vacations.count_documents({"company_id": company_id, "status": "pending"})
-    pending_payrolls = await db.payrolls.count_documents({"company_id": company_id, "status": "pending"})
-    open_jobs = await db.jobs.count_documents({"company_id": company_id, "status": "open"})
-    new_candidates = await db.candidates.count_documents({"company_id": company_id, "status": "new"})
-    
-    # Get today's attendance
-    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    present_today = await db.attendances.count_documents({"company_id": company_id, "date": today, "status": "present"})
-    
-    # Get total payroll this month
-    month_start = datetime.now(timezone.utc).replace(day=1).strftime("%Y-%m-%d")
-    payrolls = await db.payrolls.find(
-        {"company_id": company_id, "period_start": {"$gte": month_start}, "status": {"$in": ["approved", "paid"]}}
-    ).to_list(1000)
-    total_payroll = sum(p.get("net_salary", 0) for p in payrolls)
-    
-    # Recent employees
-    recent_employees = await db.employees.find(
-        {"company_id": company_id},
-        {"_id": 0}
-    ).sort("created_at", -1).limit(5).to_list(5)
-    
-    # Upcoming vacations
-    upcoming_vacations = await db.vacations.find(
-        {"company_id": company_id, "status": "approved", "start_date": {"$gte": today}}
-    , {"_id": 0}).sort("start_date", 1).limit(5).to_list(5)
-    
-    return {
-        "employee_count": employee_count,
-        "pending_vacations": pending_vacations,
-        "pending_payrolls": pending_payrolls,
-        "open_jobs": open_jobs,
-        "new_candidates": new_candidates,
-        "present_today": present_today,
-        "total_payroll_this_month": total_payroll,
-        "recent_employees": recent_employees,
-        "upcoming_vacations": upcoming_vacations
-    }
-
 # ===================== REPORTS =====================
 
 @api_router.get("/reports/payroll")
