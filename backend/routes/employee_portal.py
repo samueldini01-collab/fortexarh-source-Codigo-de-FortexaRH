@@ -223,43 +223,54 @@ async def get_employee_payslips(request: Request, year: int = None):
     }
     
     if year:
-        query["year"] = year
+        query["period"] = {"$regex": f"^{year}"}
     
-    payslips = await db.payroll_entries.find(
+    # Try payroll_v2 first (new format)
+    payslips = await db.payroll_v2.find(
         query,
         {"_id": 0}
-    ).sort("created_at", -1).to_list(24)
+    ).sort("period", -1).to_list(24)
+    
+    # If no results, try old format
+    if not payslips:
+        payslips = await db.payroll_entries.find(
+            query,
+            {"_id": 0}
+        ).sort("created_at", -1).to_list(24)
     
     return payslips
 
 
-@router.get("/payslips/{entry_id}")
-async def get_payslip_detail(entry_id: str, request: Request):
+@router.get("/payslips/{payroll_id}")
+async def get_payslip_detail(payroll_id: str, request: Request):
     """Get detailed payslip"""
     emp_data = await get_employee_from_token(request)
     
-    payslip = await db.payroll_entries.find_one(
+    # Try payroll_v2 first
+    payslip = await db.payroll_v2.find_one(
         {
-            "entry_id": entry_id,
+            "payroll_id": payroll_id,
             "employee_id": emp_data["employee_id"],
             "company_id": emp_data["company_id"]
         },
         {"_id": 0}
     )
     
+    # If not found, try old format
+    if not payslip:
+        payslip = await db.payroll_entries.find_one(
+            {
+                "entry_id": payroll_id,
+                "employee_id": emp_data["employee_id"],
+                "company_id": emp_data["company_id"]
+            },
+            {"_id": 0}
+        )
+    
     if not payslip:
         raise HTTPException(status_code=404, detail="Recibo no encontrado")
     
-    # Get period info
-    period = await db.payroll_periods.find_one(
-        {"period_id": payslip.get("period_id")},
-        {"_id": 0, "period_name": 1, "description": 1, "start_date": 1, "end_date": 1}
-    )
-    
-    return {
-        "payslip": payslip,
-        "period": period
-    }
+    return payslip
 
 
 # ===================== VACATIONS =====================
