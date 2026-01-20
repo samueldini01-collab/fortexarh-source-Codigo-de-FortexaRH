@@ -974,6 +974,45 @@ export default function AccountingPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Catalog Selector Dialog */}
+        <Dialog open={showCatalogSelector} onOpenChange={setShowCatalogSelector}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Seleccionar Catálogo de Cuentas</DialogTitle>
+              <DialogDescription>
+                Elija una plantilla de catálogo de cuentas. Esto reemplazará todas las cuentas existentes.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4 py-4">
+              {catalogTemplates.map((template) => (
+                <div 
+                  key={template.catalog_id}
+                  className="border rounded-lg p-4 hover:border-emerald-500 hover:bg-emerald-50 cursor-pointer transition-colors"
+                  onClick={() => loadCatalogTemplate(template.catalog_id)}
+                  data-testid={`catalog-${template.catalog_id}`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h4 className="font-semibold text-slate-800">{template.name}</h4>
+                      <p className="text-sm text-slate-500 mt-1">{template.description}</p>
+                    </div>
+                    <Badge variant="secondary" className="ml-4">
+                      {template.account_count} cuentas
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowCatalogSelector(false)}>
+                Cancelar
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );
