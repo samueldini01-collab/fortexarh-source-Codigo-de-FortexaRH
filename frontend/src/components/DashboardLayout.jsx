@@ -35,6 +35,8 @@ import {
   X,
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
+  ChevronRight,
   Bell,
   CreditCard,
   Network,
