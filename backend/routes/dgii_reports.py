@@ -24,6 +24,13 @@ def init_router(database, auth_func):
     _get_current_user_func = auth_func
 
 
+async def get_current_user(request: Request, credentials = Depends(security)):
+    """Wrapper for the injected auth function"""
+    if _get_current_user_func is None:
+        raise HTTPException(status_code=500, detail="Auth not initialized")
+    return await _get_current_user_func(request, credentials)
+
+
 # Dominican Republic Tax Rates
 TSS_RATES = {
     "afp_employee": 0.0287,      # 2.87% AFP Empleado
