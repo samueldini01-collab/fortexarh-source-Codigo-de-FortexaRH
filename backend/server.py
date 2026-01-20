@@ -1482,23 +1482,23 @@ async def stripe_webhook(request: Request):
                 if transaction and transaction.get("payment_status") != "paid":
                     # Update transaction
                     await db.payment_transactions.update_one(
-                    {"session_id": webhook_response.session_id},
-                    {"$set": {
-                        "payment_status": "paid", 
-                        "paid_at": datetime.now(timezone.utc).isoformat(),
-                        "webhook_event_id": webhook_response.event_id
-                    }}
-                )
+                        {"session_id": session_id},
+                        {"$set": {
+                            "payment_status": "paid", 
+                            "paid_at": datetime.now(timezone.utc).isoformat(),
+                            "webhook_event_id": event["id"]
+                        }}
+                    )
                 
-                # Activate subscription
-                await activate_subscription(
-                    company_id=transaction["company_id"],
-                    plan_id=transaction["plan_id"],
-                    employee_count=transaction.get("employee_count", 1),
-                    session_id=webhook_response.session_id
-                )
+                    # Activate subscription
+                    await activate_subscription(
+                        company_id=transaction["company_id"],
+                        plan_id=transaction["plan_id"],
+                        employee_count=transaction.get("employee_count", 1),
+                        session_id=session_id
+                    )
         
-        return {"status": "ok", "event_id": webhook_response.event_id}
+        return {"status": "ok", "event_id": event["id"]}
     
     except Exception as e:
         logging.error(f"Webhook error: {e}")
