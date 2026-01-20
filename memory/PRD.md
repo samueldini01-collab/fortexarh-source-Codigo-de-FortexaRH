@@ -33,7 +33,9 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 ```
 
 ### Frontend (React + Tailwind + Shadcn)
-Logo de FortexaRH agregado al sidebar (`/fortexarh-icon-128.png`)
+- Landing page responsive con menú móvil
+- Dashboard responsive con sidebar colapsable
+- Todas las páginas adaptativas
 
 ## Lo Implementado en Esta Sesión (2026-01-20)
 
