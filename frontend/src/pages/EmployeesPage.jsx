@@ -891,39 +891,62 @@ export default function EmployeesPage() {
                 {/* Tab 3: Descuentos */}
                 <TabsContent value="descuentos" className="space-y-4">
                   <div>
-                    <h4 className="font-semibold text-slate-700 mb-4">Deducciones de Ley (Automáticas)</h4>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between p-3 border-b border-slate-100">
-                        <div>
-                          <p className="font-medium text-slate-600">SFS</p>
+                    <h4 className="font-semibold text-slate-700 mb-4">Deducciones de Ley</h4>
+                    <p className="text-sm text-slate-500 mb-4">
+                      Active o desactive las deducciones de ley para este empleado. Las deducciones desactivadas no se aplicarán en la nómina.
+                    </p>
+                    <div className="space-y-2 bg-slate-50 rounded-lg border border-slate-200">
+                      <div className="flex items-center justify-between p-4 border-b border-slate-200">
+                        <div className="flex-1">
+                          <p className="font-medium text-slate-700">SFS</p>
                           <p className="text-sm text-slate-500">Seguro Familiar de Salud</p>
                         </div>
-                        <div className="flex items-center gap-2 text-slate-500">
-                          <span>3.04%</span>
-                          <Lock className="w-4 h-4" />
+                        <div className="flex items-center gap-4">
+                          <span className={`text-sm font-mono ${formData.sfs_discount ? 'text-emerald-600' : 'text-slate-400 line-through'}`}>3.04%</span>
+                          <Switch
+                            checked={formData.sfs_discount}
+                            onCheckedChange={(checked) => setFormData({...formData, sfs_discount: checked})}
+                            data-testid="toggle-sfs"
+                          />
                         </div>
                       </div>
-                      <div className="flex items-center justify-between p-3 border-b border-slate-100">
-                        <div>
-                          <p className="font-medium text-slate-600">AFP</p>
+                      <div className="flex items-center justify-between p-4 border-b border-slate-200">
+                        <div className="flex-1">
+                          <p className="font-medium text-slate-700">AFP</p>
                           <p className="text-sm text-slate-500">Administradora Fondos de Pensiones</p>
                         </div>
-                        <div className="flex items-center gap-2 text-slate-500">
-                          <span>2.87%</span>
-                          <Lock className="w-4 h-4" />
+                        <div className="flex items-center gap-4">
+                          <span className={`text-sm font-mono ${formData.afp_discount ? 'text-emerald-600' : 'text-slate-400 line-through'}`}>2.87%</span>
+                          <Switch
+                            checked={formData.afp_discount}
+                            onCheckedChange={(checked) => setFormData({...formData, afp_discount: checked})}
+                            data-testid="toggle-afp"
+                          />
                         </div>
                       </div>
-                      <div className="flex items-center justify-between p-3">
-                        <div>
-                          <p className="font-medium text-slate-600">ISR</p>
+                      <div className="flex items-center justify-between p-4">
+                        <div className="flex-1">
+                          <p className="font-medium text-slate-700">ISR</p>
                           <p className="text-sm text-slate-500">Impuesto Sobre la Renta</p>
                         </div>
-                        <div className="flex items-center gap-2 text-slate-500">
-                          <span>Calculado</span>
-                          <Lock className="w-4 h-4" />
+                        <div className="flex items-center gap-4">
+                          <span className={`text-sm font-mono ${formData.isr_discount ? 'text-emerald-600' : 'text-slate-400 line-through'}`}>Calculado</span>
+                          <Switch
+                            checked={formData.isr_discount}
+                            onCheckedChange={(checked) => setFormData({...formData, isr_discount: checked})}
+                            data-testid="toggle-isr"
+                          />
                         </div>
                       </div>
                     </div>
+                    {(!formData.sfs_discount || !formData.afp_discount || !formData.isr_discount) && (
+                      <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                        <p className="text-sm text-amber-700 flex items-center gap-2">
+                          <span className="text-amber-500">⚠️</span>
+                          Algunas deducciones de ley están desactivadas para este empleado. Asegúrese de cumplir con las regulaciones aplicables.
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <div>
