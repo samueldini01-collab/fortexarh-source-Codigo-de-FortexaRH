@@ -204,6 +204,7 @@ export default function PayrollV2Page() {
       end_date = `${year}-${String(month).padStart(2, '0')}-${lastDay}`;
     }
     setNewPeriodForm(prev => ({ ...prev, start_date, end_date }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newPeriodForm.period_type, newPeriodForm.year, newPeriodForm.month]);
 
   const handleCreatePeriod = async () => {
