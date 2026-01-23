@@ -544,9 +544,7 @@ export default function EmployeesPage() {
               </span>
             </>
           )}
-            </span>
-          </div>
-        )}
+        </div>
 
         {/* Employees Table */}
         <Card className="border-slate-200">
