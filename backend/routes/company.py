@@ -38,8 +38,13 @@ class CompanyUpdate(BaseModel):
     email: Optional[str] = None
     industry: Optional[str] = None
     logo_url: Optional[str] = None
+    logo: Optional[str] = None  # Base64 encoded logo
     primary_color: Optional[str] = None
     secondary_color: Optional[str] = None
+    slogan: Optional[str] = None
+    description: Optional[str] = None
+    city: Optional[str] = None
+    country: Optional[str] = None
 
 
 class CompanySettings(BaseModel):
