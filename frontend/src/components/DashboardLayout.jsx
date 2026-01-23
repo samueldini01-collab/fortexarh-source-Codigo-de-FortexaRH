@@ -72,6 +72,7 @@ import { Input } from "@/components/ui/input";
 import axios from "axios";
 import { API } from "@/App";
 import GlobalSearch from "@/components/GlobalSearch";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 // Default navigation items with feature mapping
 const DEFAULT_NAVIGATION = [
