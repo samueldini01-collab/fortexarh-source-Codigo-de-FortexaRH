@@ -52,7 +52,6 @@ from routes.notifications import router as notifications_router, init_router as 
 from routes.reports import router as reports_router, init_router as init_reports_router
 from routes.expenses import router as expenses_router, init_router as init_expenses_router
 from routes.payroll_v2 import router as payroll_v2_router, init_router as init_payroll_v2_router
-from routes.checkout import router as checkout_router, init_router as init_checkout_router
 from routes.projects import router as projects_router, init_router as init_projects_router
 
 # MongoDB connection with production-ready settings
