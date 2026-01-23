@@ -130,8 +130,82 @@ export default function RecruitmentPage() {
     }
   };
 
+  // Stats calculations
   const openJobs = jobs.filter(j => j.status === "open").length;
+  const closedJobs = jobs.filter(j => j.status === "closed").length;
   const totalCandidates = candidates.length;
+  const hiredCandidates = candidates.filter(c => c.stage === "hired").length;
+  const interviewCandidates = candidates.filter(c => c.stage === "interview").length;
+  const appliedCandidates = candidates.filter(c => c.stage === "applied").length;
+  
+  // Filter jobs based on status
+  const filteredJobs = jobs.filter(job => {
+    if (jobStatusFilter && job.status !== jobStatusFilter) return false;
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase();
+      if (!job.title?.toLowerCase().includes(searchLower) && 
+          !job.department?.toLowerCase().includes(searchLower) &&
+          !job.location?.toLowerCase().includes(searchLower)) {
+        return false;
+      }
+    }
+    return true;
+  });
+  
+  // Filter candidates based on stage and search
+  const filteredCandidates = candidates.filter(candidate => {
+    if (candidateStageFilter && candidate.stage !== candidateStageFilter) return false;
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase();
+      const job = jobs.find(j => j.job_id === candidate.job_id);
+      if (!candidate.name?.toLowerCase().includes(searchLower) && 
+          !candidate.email?.toLowerCase().includes(searchLower) &&
+          !job?.title?.toLowerCase().includes(searchLower)) {
+        return false;
+      }
+    }
+    return true;
+  });
+  
+  // Export to CSV
+  const exportCandidatesToCSV = () => {
+    const headers = ["Nombre", "Email", "Teléfono", "Vacante", "Etapa", "Fecha Aplicación"];
+    const rows = filteredCandidates.map(c => {
+      const job = jobs.find(j => j.job_id === c.job_id);
+      const stageLabel = stages.find(s => s.value === c.stage)?.label || c.stage;
+      return [
+        c.name,
+        c.email,
+        c.phone || "",
+        job?.title || "",
+        stageLabel,
+        c.applied_at || ""
+      ];
+    });
+    
+    const csvContent = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `candidatos_${new Date().toISOString().split("T")[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success("Candidatos exportados correctamente");
+  };
+  
+  // Get active filter label
+  const getFilterLabel = () => {
+    const labels = [];
+    if (jobStatusFilter) {
+      labels.push(jobStatusFilter === 'open' ? 'Vacantes Abiertas' : 'Vacantes Cerradas');
+    }
+    if (candidateStageFilter) {
+      const stageLabel = stages.find(s => s.value === candidateStageFilter)?.label;
+      labels.push(stageLabel || candidateStageFilter);
+    }
+    return labels.join(' + ') || null;
+  };
 
   return (
     <DashboardLayout title="Reclutamiento">
