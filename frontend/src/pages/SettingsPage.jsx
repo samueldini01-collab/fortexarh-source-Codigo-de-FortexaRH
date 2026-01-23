@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth, API } from "@/App";
 import axios from "axios";
@@ -35,11 +35,7 @@ export default function SettingsPage() {
   
   const { getAuthHeaders, user } = useAuth();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [companyRes, subRes] = await Promise.all([
         axios.get(`${API}/company`, { headers: getAuthHeaders(), withCredentials: true }),
@@ -58,7 +54,11 @@ export default function SettingsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAuthHeaders]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleSaveCompany = async (e) => {
     e.preventDefault();
