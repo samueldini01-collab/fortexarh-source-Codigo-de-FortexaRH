@@ -564,6 +564,10 @@ export default function DashboardLayout({ children, title }) {
                   <CreditCard className="w-4 h-4 mr-2" /> Facturación
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={startOnboarding}>
+                  <GraduationCap className="w-4 h-4 mr-2" /> 
+                  {onboardingCompleted ? "Repetir Tutorial" : "Iniciar Tutorial"}
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setIsHelpOpen(true)}>
                   <Keyboard className="w-4 h-4 mr-2" /> 
                   Atajos de Teclado
