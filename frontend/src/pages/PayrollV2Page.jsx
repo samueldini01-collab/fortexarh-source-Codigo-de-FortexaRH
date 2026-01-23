@@ -638,19 +638,28 @@ export default function PayrollV2Page() {
           {/* Dashboard Tab */}
           <TabsContent value="dashboard" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <Card className="border-l-4 border-l-blue-500">
+              <Card 
+                className={`border-l-4 border-l-blue-500 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'open' ? 'ring-2 ring-blue-400' : ''}`}
+                onClick={() => setQuickFilter(quickFilter === 'open' ? null : 'open')}
+              >
                 <CardContent className="p-4">
                   <p className="text-sm text-slate-500">Períodos Abiertos</p>
                   <p className="text-2xl font-bold text-blue-600">{stats.openPeriods}</p>
                 </CardContent>
               </Card>
-              <Card className="border-l-4 border-l-orange-500">
+              <Card 
+                className={`border-l-4 border-l-orange-500 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'pending' ? 'ring-2 ring-orange-400' : ''}`}
+                onClick={() => setQuickFilter(quickFilter === 'pending' ? null : 'pending')}
+              >
                 <CardContent className="p-4">
                   <p className="text-sm text-slate-500">Nóminas Pendientes</p>
                   <p className="text-2xl font-bold text-orange-600">{stats.pendingPayrolls}</p>
                 </CardContent>
               </Card>
-              <Card className="border-l-4 border-l-purple-500">
+              <Card 
+                className={`border-l-4 border-l-purple-500 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'paid' ? 'ring-2 ring-purple-400' : ''}`}
+                onClick={() => setQuickFilter(quickFilter === 'paid' ? null : 'paid')}
+              >
                 <CardContent className="p-4">
                   <p className="text-sm text-slate-500">Total Pagado</p>
                   <p className="text-xl font-bold text-purple-600">{formatCurrency(stats.totalPaid)}</p>
@@ -667,6 +676,16 @@ export default function PayrollV2Page() {
                 </CardContent>
               </Card>
             </div>
+            
+            {/* Filter indicator for Dashboard */}
+            {quickFilter && (
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="px-3 py-1">
+                  Filtro: {quickFilter === 'open' ? 'Períodos Abiertos' : quickFilter === 'pending' ? 'Pendientes' : 'Pagados'}
+                  <button onClick={() => setQuickFilter(null)} className="ml-2 hover:text-red-500">×</button>
+                </Badge>
+              </div>
+            )}
           </TabsContent>
 
           {/* Períodos Tab */}
