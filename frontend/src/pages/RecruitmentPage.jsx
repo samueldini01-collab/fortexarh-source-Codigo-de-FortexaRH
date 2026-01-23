@@ -617,10 +617,17 @@ export default function RecruitmentPage() {
                   <div className="p-6 space-y-4">
                     {Array(5).fill(0).map((_, i) => <Skeleton key={i} className="h-12 w-full" />)}
                   </div>
-                ) : candidates.length === 0 ? (
+                ) : filteredCandidates.length === 0 ? (
                   <div className="text-center py-12">
                     <Users className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                    <p className="text-slate-500">No hay candidatos registrados</p>
+                    <p className="text-slate-500">
+                      {candidates.length === 0 ? "No hay candidatos registrados" : "No hay candidatos que coincidan con el filtro"}
+                    </p>
+                    {candidateStageFilter && (
+                      <Button variant="link" onClick={() => setCandidateStageFilter(null)} className="mt-2">
+                        Limpiar filtro
+                      </Button>
+                    )}
                   </div>
                 ) : (
                   <Table>
@@ -633,7 +640,7 @@ export default function RecruitmentPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {candidates.map((candidate) => {
+                      {filteredCandidates.map((candidate) => {
                         const job = jobs.find(j => j.job_id === candidate.job_id);
                         return (
                           <TableRow key={candidate.candidate_id} data-testid={`candidate-row-${candidate.candidate_id}`}>
