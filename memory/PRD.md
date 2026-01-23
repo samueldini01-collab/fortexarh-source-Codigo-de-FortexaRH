@@ -88,12 +88,13 @@ Implementación completa del módulo de solicitudes de gastos y viáticos con:
 
 ### P1 - Alta Prioridad
 1. **Completar refactorización de `server.py`** (~5,257 líneas)
+   - ✅ Creado `/app/backend/utils/payroll_constants.py` con constantes compartidas TSS, tipos de nómina, novedades y funciones utilitarias
    - Endpoints a mover a routers modulares:
      - `/payroll-v2/*` (27 endpoints, líneas 2688-4455)
      - `/invoices/*` (3 endpoints)
      - `/checkout/*` (4 endpoints)
      - `/templates/*` y `/documents/*` (7 endpoints)
-   - Patrón a seguir: Ver `routes/accounting.py` para la estructura correcta con dependency injection
+   - Patrón a seguir: Ver `routes/accounting.py` para dependency injection
 
 ### P2 - Media Prioridad
 1. **Corregir advertencias ESLint** (1,467 warnings)
