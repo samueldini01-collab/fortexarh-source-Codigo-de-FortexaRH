@@ -21,7 +21,14 @@ import {
   Mail,
   Phone,
   Clock3,
-  Menu
+  Menu,
+  Receipt,
+  Bell,
+  FileText,
+  Network,
+  Wallet,
+  BookOpen,
+  Building2
 } from "lucide-react";
 
 const features = [
@@ -33,7 +40,17 @@ const features = [
   {
     icon: DollarSign,
     title: "Nómina Automatizada",
-    description: "Calcula salarios, deducciones e impuestos automáticamente. Genera recibos de pago al instante."
+    description: "Calcula salarios, deducciones TSS e ISR automáticamente. Cumple con las regulaciones de RD."
+  },
+  {
+    icon: Receipt,
+    title: "Gastos y Viáticos",
+    description: "Solicitudes de gastos con doble aprobación, anticipos y desglose por categorías."
+  },
+  {
+    icon: Wallet,
+    title: "Módulo de Préstamos",
+    description: "Gestiona préstamos a empleados con cálculo de cuotas y descuento automático en nómina."
   },
   {
     icon: Clock,
@@ -54,6 +71,26 @@ const features = [
     icon: Briefcase,
     title: "Reclutamiento",
     description: "Publica vacantes, gestiona candidatos y optimiza tu proceso de contratación."
+  },
+  {
+    icon: Network,
+    title: "Organigrama Interactivo",
+    description: "Visualiza la estructura organizacional con un organigrama dinámico y editable."
+  },
+  {
+    icon: BookOpen,
+    title: "Contabilidad Integrada",
+    description: "Catálogo de cuentas NIIF, asientos contables automáticos desde nómina."
+  },
+  {
+    icon: Bell,
+    title: "Notificaciones Automáticas",
+    description: "Recordatorios de nómina, cumpleaños de empleados y alertas personalizadas por email."
+  },
+  {
+    icon: FileText,
+    title: "Reportes DGII",
+    description: "Genera reportes TSS e ISR listos para presentar ante la DGII de República Dominicana."
   }
 ];
 
