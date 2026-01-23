@@ -556,22 +556,25 @@ export default function DashboardLayout({ children, title }) {
               {/* Global Search */}
               <GlobalSearch />
               
-              <button className="p-2 hover:bg-slate-100 rounded-lg relative">
-                <Bell className="w-5 h-5 text-slate-600" />
+              {/* Theme Toggle */}
+              <ThemeToggle />
+              
+              <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg relative">
+                <Bell className="w-5 h-5 text-slate-600 dark:text-slate-300" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
               </button>
               
               <div className="hidden md:flex items-center gap-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="flex items-center gap-2 hover:bg-slate-100 rounded-lg p-2 transition-colors" data-testid="user-menu-btn">
+                    <button className="flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg p-2 transition-colors" data-testid="user-menu-btn">
                       <Avatar className="h-8 w-8">
                         <AvatarImage src={user?.avatar} />
-                        <AvatarFallback className="bg-emerald-100 text-emerald-700 text-sm">
+                        <AvatarFallback className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300 text-sm">
                           {getInitials(user?.name)}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="text-sm font-medium text-slate-700">{user?.name?.split(' ')[0]}</span>
+                      <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{user?.name?.split(' ')[0]}</span>
                       <ChevronDown className="w-4 h-4 text-slate-400" />
                     </button>
                   </DropdownMenuTrigger>
