@@ -364,13 +364,13 @@ export default function LandingPage() {
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Hasta 50 empleados</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />3 usuarios incluidos</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Gestión de empleados</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Nómina básica</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Nómina con TSS e ISR</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Asistencias y vacaciones</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Calculadora de nómina</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Módulo de préstamos</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Reportes básicos</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Exportación Excel/CSV</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Soporte por email</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Contabilidad básica</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Reportes y exportación</li>
+                <li className="flex items-center gap-2 text-sm text-slate-400"><X className="w-4 h-4" />Gastos y viáticos</li>
+                <li className="flex items-center gap-2 text-sm text-slate-400"><X className="w-4 h-4" />Portal de empleados</li>
               </ul>
               
               <div className="space-y-2">
@@ -406,12 +406,12 @@ export default function LandingPage() {
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Hasta 200 empleados</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />5 usuarios incluidos</li>
                 <li className="flex items-center gap-2 text-sm font-medium"><Check className="w-4 h-4 text-emerald-500" />Todo lo del plan Básico</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Evaluaciones de desempeño</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Módulo de reclutamiento</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Portal autoservicio empleados</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Organigrama intuitivo</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Reportes avanzados</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Integración QuickBooks</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-purple-500" />Gastos y viáticos (doble aprobación)</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-purple-500" />Evaluaciones de desempeño</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-purple-500" />Módulo de reclutamiento</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-purple-500" />Portal autoservicio empleados</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-purple-500" />Organigrama interactivo</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Notificaciones automáticas</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Soporte prioritario</li>
               </ul>
               
@@ -444,11 +444,11 @@ export default function LandingPage() {
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Empleados ilimitados</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />7 usuarios incluidos</li>
                 <li className="flex items-center gap-2 text-sm font-medium"><Check className="w-4 h-4 text-emerald-500" />Todo lo del plan Pro</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Roles personalizados</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Múltiples administradores</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />API personalizada</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Flujos de trabajo avanzados</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Integración SAP/Oracle/Dynamics</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-amber-500" />Roles personalizados</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-amber-500" />API personalizada</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-amber-500" />Integración SAP/Oracle/Dynamics</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-amber-500" />Flujos de trabajo avanzados</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-amber-500" />Múltiples sucursales</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Soporte 24/7</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Gerente de cuenta dedicado</li>
               </ul>
