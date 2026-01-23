@@ -120,19 +120,82 @@ async def get_company_settings(current_user: dict = Depends(get_current_user)):
 
 
 @router.put("/settings")
-async def update_company_settings(data: CompanySettings, current_user: dict = Depends(get_current_user)):
-    """Update company payroll settings"""
+async def update_company_settings(data: dict, current_user: dict = Depends(get_current_user)):
+    """Update company settings - handles both company data and payroll settings"""
     company_id = current_user.get("company_id")
     
-    update_data = {k: v for k, v in data.model_dump().items() if v is not None}
-    update_data["company_id"] = company_id
-    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    # If 'company' key exists, update company info
+    if "company" in data:
+        company_data = data["company"]
+        if company_data:
+            update_fields = {k: v for k, v in company_data.items() if v is not None}
+            update_fields["updated_at"] = datetime.now(timezone.utc).isoformat()
+            
+            await db.companies.update_one(
+                {"company_id": company_id},
+                {"$set": update_fields},
+                upsert=True
+            )
     
-    await db.company_settings.update_one(
-        {"company_id": company_id},
-        {"$set": update_data},
-        upsert=True
-    )
+    # If 'appearance' key exists, save appearance settings
+    if "appearance" in data:
+        appearance_data = data["appearance"]
+        if appearance_data:
+            await db.company_config.update_one(
+                {"company_id": company_id, "config_type": "appearance"},
+                {"$set": {
+                    "company_id": company_id,
+                    "config_type": "appearance",
+                    "data": appearance_data,
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }},
+                upsert=True
+            )
+    
+    # If 'branding' key exists, save branding settings
+    if "branding" in data:
+        branding_data = data["branding"]
+        if branding_data:
+            await db.company_config.update_one(
+                {"company_id": company_id, "config_type": "branding"},
+                {"$set": {
+                    "company_id": company_id,
+                    "config_type": "branding",
+                    "data": branding_data,
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }},
+                upsert=True
+            )
+    
+    # If 'notifications' key exists, save notification settings
+    if "notifications" in data:
+        notifications_data = data["notifications"]
+        if notifications_data:
+            await db.company_config.update_one(
+                {"company_id": company_id, "config_type": "notifications"},
+                {"$set": {
+                    "company_id": company_id,
+                    "config_type": "notifications",
+                    "data": notifications_data,
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }},
+                upsert=True
+            )
+    
+    # Handle legacy CompanySettings fields for backwards compatibility
+    payroll_fields = ["payment_frequency", "work_hours_per_day", "overtime_rate", 
+                      "night_shift_rate", "vacation_days_per_year", "christmas_bonus_months",
+                      "currency", "multi_currency_enabled", "default_bank"]
+    payroll_data = {k: v for k, v in data.items() if k in payroll_fields and v is not None}
+    
+    if payroll_data:
+        payroll_data["company_id"] = company_id
+        payroll_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+        await db.company_settings.update_one(
+            {"company_id": company_id},
+            {"$set": payroll_data},
+            upsert=True
+        )
     
     return {"message": "Settings updated successfully"}
 
