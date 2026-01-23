@@ -4,30 +4,72 @@
 
 ## ✅ Completado en Esta Sesión
 
-### 1. Sistema de Temas (Modo Oscuro/Claro/Sistema)
-- **ThemeProvider** (`/app/frontend/src/context/ThemeContext.jsx`): Contexto global para gestión de temas
-- **ThemeToggle** (`/app/frontend/src/components/ThemeToggle.jsx`): Componente de selector de temas con 3 opciones
-- **Integración en App.js**: ThemeProvider envuelve toda la aplicación
-- **Toggle en Header**: Selector de tema visible junto a notificaciones
-- **Persistencia**: Preferencia guardada en localStorage
-- **Opciones disponibles:**
-  - ☀️ Claro (Light)
-  - 🌙 Oscuro (Dark)
-  - 💻 Sistema (detecta preferencia del OS)
+### Sistema de Temas (Dark Mode) - Extendido a Todas las Páginas
 
-### Componentes Actualizados con Dark Mode:
-- DashboardLayout.jsx (sidebar, header, navegación)
-- Dashboard.jsx (cards de estadísticas, secciones)
-- Variables CSS ya configuradas en index.css (.dark class)
-- Tailwind configurado con `darkMode: ["class"]`
+#### Componentes del Sistema de Temas:
+- **ThemeContext** (`/app/frontend/src/context/ThemeContext.jsx`)
+- **ThemeToggle** (`/app/frontend/src/components/ThemeToggle.jsx`)
+- **3 opciones:** Claro, Oscuro, Sistema (detecta OS)
+- **Persistencia:** localStorage
 
-## Estilos Dark Mode
-Los estilos usan clases de Tailwind con sufijo `dark:`:
+#### Páginas Actualizadas con Dark Mode:
+| Módulo | Páginas |
+|--------|---------|
+| Dashboard | Dashboard.jsx |
+| Empleados | EmployeesPage.jsx |
+| Nómina | PayrollV2Page.jsx, PayrollPage.jsx, PayrollCalculatorPage.jsx, PayrollConfigPage.jsx, PayrollDashboardPage.jsx |
+| Vacaciones | VacationsPage.jsx |
+| Préstamos | LoansPage.jsx |
+| Asistencias | AttendancePage.jsx |
+| Evaluaciones | EvaluationsPage.jsx |
+| Reclutamiento | RecruitmentPage.jsx |
+| Configuración | SettingsPage.jsx, CompanyConfigPage.jsx |
+| Contabilidad | AccountingPage.jsx |
+| Documentos | DocumentsPage.jsx, TemplatesPage.jsx |
+| Reportes | ReportsPage.jsx, ReportsAdvancedPage.jsx, DGIIReportsPage.jsx, MetricsDashboardPage.jsx |
+| Administración | UsersManagementPage.jsx, RolesPage.jsx, SubscriptionsPage.jsx |
+| Organigrama | OrganigramaPage.jsx |
+| Gastos | ExpensesPage.jsx, CostsByDepartmentPage.jsx |
+| Notificaciones | NotificationsPage.jsx |
+
+#### Componentes Actualizados:
+- DashboardLayout.jsx
+- EmployeeImportExport.jsx
+- FilterableStats.jsx
+- GlobalSearch.jsx
+
+#### Variables CSS Dark Mode (index.css):
 ```css
-/* Ejemplo */
-bg-white dark:bg-slate-900
+.dark {
+  --background: 222 47% 6%;
+  --foreground: 210 40% 98%;
+  --card: 222 47% 8%;
+  --primary: 158 64% 52%;
+  --border: 217 33% 20%;
+  /* ... etc */
+}
+```
+
+## Patrones de Estilo Dark Mode
+```jsx
+// Textos
+text-slate-500 dark:text-slate-400
+text-slate-700 dark:text-slate-200
 text-slate-800 dark:text-slate-100
+
+// Fondos
+bg-slate-50 dark:bg-slate-800
+bg-slate-100 dark:bg-slate-800
+
+// Bordes
 border-slate-200 dark:border-slate-700
+
+// Hover
+hover:bg-slate-50 dark:hover:bg-slate-800
+
+// Colores semánticos
+text-emerald-600 dark:text-emerald-400
+bg-emerald-50 dark:bg-emerald-900/30
 ```
 
 ## Credenciales de Prueba
@@ -40,19 +82,12 @@ border-slate-200 dark:border-slate-700
 - **Google Auth:** ✅ Funcionando
 - **Enterprise (QuickBooks, SAP, Oracle):** MOCKED
 
-## Archivos Creados/Modificados
-- `/app/frontend/src/context/ThemeContext.jsx` (NUEVO)
-- `/app/frontend/src/components/ThemeToggle.jsx` (NUEVO)
-- `/app/frontend/src/App.js` (ThemeProvider integrado)
-- `/app/frontend/src/components/DashboardLayout.jsx` (estilos dark mode)
-- `/app/frontend/src/pages/Dashboard.jsx` (estilos dark mode)
-
 ## Próximas Tareas (P2)
-1. Aplicar dark mode a todas las páginas interiores
-2. Añadir exportación a páginas pendientes (Nómina, Asistencias, Evaluaciones)
-3. Reportes avanzados exportables (PDF/Excel)
+1. Añadir exportación a páginas pendientes (Nómina, Asistencias, Evaluaciones)
+2. Reportes avanzados exportables (PDF/Excel)
 
 ## Tareas Futuras (P3)
+- Temas personalizados por empresa (colores corporativos)
 - Notificaciones en Portal de Auto-Servicio
 - Historial de auditoría de cambios
 - Integraciones Enterprise reales
