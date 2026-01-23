@@ -467,9 +467,9 @@ export default function DGIIReportsPage() {
                         <SelectValue placeholder="Seleccione un año" />
                       </SelectTrigger>
                       <SelectContent>
-                        {availableYears.map(yearInfo => (
-                          <SelectItem key={yearInfo.year} value={yearInfo.year.toString()}>
-                            {yearInfo.year} ({yearInfo.periods_count} períodos)
+                        {availableYears.map(year => (
+                          <SelectItem key={year} value={year.toString()}>
+                            {year}
                           </SelectItem>
                         ))}
                       </SelectContent>
