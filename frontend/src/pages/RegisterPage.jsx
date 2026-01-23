@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth, API } from "@/App";
 import axios from "axios";
@@ -15,7 +15,7 @@ export default function RegisterPage() {
   const sessionId = searchParams.get("session_id");
   const paymentStatus = searchParams.get("payment");
   const planFromUrl = searchParams.get("plan");
-  const employeesFromUrl = searchParams.get("employees");
+  const _employeesFromUrl = searchParams.get("employees");
   
   const [formData, setFormData] = useState({
     name: "",
@@ -34,14 +34,7 @@ export default function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  // Verify payment on mount if session_id is present
-  useEffect(() => {
-    if (sessionId && paymentStatus === "success") {
-      verifyPayment();
-    }
-  }, [sessionId, paymentStatus]);
-
-  const verifyPayment = async () => {
+  const verifyPayment = useCallback(async () => {
     setVerifyingPayment(true);
     try {
       const response = await axios.get(`${API}/public/checkout/verify/${sessionId}`);
@@ -52,12 +45,20 @@ export default function RegisterPage() {
       } else {
         toast.error("El pago aún no ha sido confirmado. Intente nuevamente.");
       }
-    } catch (error) {
-      console.error("Error verifying payment:", error);
-      toast.error(error.response?.data?.detail || "Error al verificar el pago");
+    } catch (err) {
+      console.error("Error verifying payment:", err);
+      toast.error(err.response?.data?.detail || "Error al verificar el pago");
     } finally {
       setVerifyingPayment(false);
     }
+  }, [sessionId]);
+
+  // Verify payment on mount if session_id is present
+  useEffect(() => {
+    if (sessionId && paymentStatus === "success") {
+      verifyPayment();
+    }
+  }, [sessionId, paymentStatus, verifyPayment]);
   };
 
   const handleChange = (e) => {
