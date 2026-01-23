@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth, API } from "@/App";
 import axios from "axios";
@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Briefcase, Users, MapPin, Clock, ChevronRight } from "lucide-react";
+import { Plus, Briefcase, Users, MapPin, Clock, ChevronRight, Search, Download, UserPlus, UserCheck, UserX, Filter } from "lucide-react";
 import { toast } from "sonner";
 
 const stages = [
@@ -57,13 +57,15 @@ export default function RecruitmentPage() {
   const [candidateForm, setCandidateForm] = useState({
     job_id: "", name: "", email: "", phone: "", resume_url: "", cover_letter: ""
   });
+  
+  // Filters state
+  const [jobStatusFilter, setJobStatusFilter] = useState(null); // 'open', 'closed', null
+  const [candidateStageFilter, setCandidateStageFilter] = useState(null); // stage value or null
+  const [searchTerm, setSearchTerm] = useState("");
+  
   const { getAuthHeaders } = useAuth();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [jobsRes, candidatesRes] = await Promise.all([
         axios.get(`${API}/jobs`, { headers: getAuthHeaders(), withCredentials: true }),
@@ -76,7 +78,11 @@ export default function RecruitmentPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAuthHeaders]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleJobSubmit = async (e) => {
     e.preventDefault();
