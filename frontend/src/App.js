@@ -3,6 +3,7 @@ import "@/App.css";
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
 import axios from "axios";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 // Pages
 import LandingPage from "@/pages/LandingPage";
@@ -355,12 +356,14 @@ function AppRouter() {
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <SubscriptionProvider>
-          <AppRouter />
-          <Toaster position="top-right" richColors />
-        </SubscriptionProvider>
-      </AuthProvider>
+      <ThemeProvider defaultTheme="system" storageKey="fortexarh-theme">
+        <AuthProvider>
+          <SubscriptionProvider>
+            <AppRouter />
+            <Toaster position="top-right" richColors />
+          </SubscriptionProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }
