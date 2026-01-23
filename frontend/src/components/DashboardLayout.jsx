@@ -539,17 +539,17 @@ export default function DashboardLayout({ children, title }) {
       {/* Main content */}
       <div className={`transition-all duration-300 ${sidebarCollapsed ? 'lg:pl-16' : 'lg:pl-64'}`}>
         {/* Top header */}
-        <header className="sticky top-0 z-30 bg-white border-b border-slate-200">
+        <header className="sticky top-0 z-30 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
           <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center gap-4">
               <button 
-                className="lg:hidden p-2 hover:bg-slate-100 rounded-lg"
+                className="lg:hidden p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
                 onClick={() => setSidebarOpen(true)}
                 data-testid="mobile-menu-btn"
               >
-                <Menu className="w-6 h-6 text-slate-600" />
+                <Menu className="w-6 h-6 text-slate-600 dark:text-slate-300" />
               </button>
-              {title && <h1 className="text-xl font-semibold text-slate-800">{title}</h1>}
+              {title && <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100">{title}</h1>}
             </div>
             
             <div className="flex items-center gap-3">
