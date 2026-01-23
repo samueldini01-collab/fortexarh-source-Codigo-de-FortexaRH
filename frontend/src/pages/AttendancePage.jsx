@@ -190,24 +190,6 @@ export default function AttendancePage() {
             </span>
           </div>
         )}
-                  <p className="text-3xl font-bold text-red-700">{absentCount}</p>
-                </div>
-                <UserX className="w-10 h-10 text-red-500" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="border-amber-200 bg-amber-50/50">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-amber-600">Tarde</p>
-                  <p className="text-3xl font-bold text-amber-700">{lateCount}</p>
-                </div>
-                <AlertCircle className="w-10 h-10 text-amber-500" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
 
         {/* Controls */}
         <div className="flex flex-col sm:flex-row gap-4 justify-between">
