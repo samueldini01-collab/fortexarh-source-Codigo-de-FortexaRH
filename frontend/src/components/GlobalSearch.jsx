@@ -145,8 +145,6 @@ export default function GlobalSearch() {
     return acc;
   }, {});
 
-  if (!isAuthenticated) return null;
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
