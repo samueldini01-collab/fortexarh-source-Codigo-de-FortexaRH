@@ -51,6 +51,7 @@ from routes.dgii_reports import router as dgii_reports_router, init_router as in
 from routes.notifications import router as notifications_router, init_router as init_notifications_router
 from routes.reports import router as reports_router, init_router as init_reports_router
 from routes.expenses import router as expenses_router, init_router as init_expenses_router
+from routes.payroll_v2 import router as payroll_v2_router, init_router as init_payroll_v2_router
 
 # MongoDB connection with production-ready settings
 mongo_url = os.environ['MONGO_URL']
