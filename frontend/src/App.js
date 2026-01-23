@@ -362,6 +362,7 @@ function App() {
           <SubscriptionProvider>
             <AppRouter />
             <Toaster position="top-right" richColors />
+            <AccessibilityIndicator />
           </SubscriptionProvider>
         </AuthProvider>
       </ThemeProvider>
