@@ -329,7 +329,7 @@ export default function EmployeesPage() {
     });
   };
 
-  // Filter employees by search term AND quick filter
+  // Filter employees by search term, quick filter AND department
   const filteredEmployees = employees.filter(emp => {
     // First apply search term filter
     const matchesSearch = searchTerm === "" || 
@@ -337,19 +337,37 @@ export default function EmployeesPage() {
       emp.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       emp.department?.toLowerCase().includes(searchTerm.toLowerCase());
     
-    // Then apply quick filter
     if (!matchesSearch) return false;
     
-    if (!quickFilter || quickFilter === 'all') return true;
-    if (quickFilter === 'active') return emp.status === 'active';
-    if (quickFilter === 'inactive') return emp.status === 'inactive';
-    if (quickFilter === 'on_leave') return emp.status === 'on_leave';
+    // Apply quick filter (status)
+    if (quickFilter && quickFilter !== 'all') {
+      if (quickFilter === 'active' && emp.status !== 'active') return false;
+      if (quickFilter === 'inactive' && emp.status !== 'inactive') return false;
+      if (quickFilter === 'on_leave' && emp.status !== 'on_leave') return false;
+    }
+    
+    // Apply department filter
+    if (departmentFilter && departmentFilter !== 'all') {
+      if (emp.department !== departmentFilter) return false;
+    }
     
     return true;
   });
 
   // Get unique departments for filter
-  const uniqueDepartments = [...new Set(employees.map(e => e.department).filter(Boolean))];
+  const uniqueDepartments = [...new Set(employees.map(e => e.department).filter(Boolean))].sort();
+  
+  // Get active filter label
+  const getFilterLabel = () => {
+    const labels = [];
+    if (quickFilter && quickFilter !== 'all') {
+      labels.push(quickFilter === 'active' ? 'Activos' : quickFilter === 'inactive' ? 'Inactivos' : 'En Licencia');
+    }
+    if (departmentFilter && departmentFilter !== 'all') {
+      labels.push(departmentFilter);
+    }
+    return labels.join(' + ') || null;
+  };
 
   const getStatusBadge = (status) => {
     switch (status) {
