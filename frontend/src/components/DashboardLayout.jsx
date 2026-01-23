@@ -65,7 +65,8 @@ import {
   Command,
   Trash2,
   History,
-  PieChart
+  PieChart,
+  Receipt
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
@@ -80,6 +81,7 @@ const DEFAULT_NAVIGATION = [
   { id: "payroll-dashboard", name: "Dashboard Nómina", href: "/payroll-dashboard", icon: BarChart3, visible: true, featureKey: "reports" },
   { id: "payroll-calculator", name: "Calculadora", href: "/payroll-calculator", icon: Calculator, visible: true, featureKey: "payroll_calculator" },
   { id: "loans", name: "Préstamos", href: "/loans", icon: Wallet, visible: true, featureKey: "loans" },
+  { id: "expenses", name: "Gastos y Viáticos", href: "/expenses", icon: Receipt, visible: true, featureKey: "employees" },
   { id: "accounting", name: "Contabilidad", href: "/accounting", icon: BookOpen, visible: true, featureKey: "accounting" },
   { id: "costs-by-department", name: "Costos por Depto", href: "/costs-by-department", icon: PieChart, visible: true, featureKey: "reports" },
   { id: "dgii-reports", name: "Reportes DGII", href: "/dgii-reports", icon: FileText, visible: true, featureKey: "reports" },
