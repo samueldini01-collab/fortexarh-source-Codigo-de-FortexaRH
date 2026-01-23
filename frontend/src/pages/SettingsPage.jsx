@@ -163,7 +163,7 @@ export default function SettingsPage() {
 
           {/* Company Tab */}
           <TabsContent value="company">
-            <Card className="border-slate-200">
+            <Card className="border-slate-200 dark:border-slate-700">
               <CardHeader>
                 <CardTitle>Información de la Empresa</CardTitle>
                 <CardDescription>Actualiza los datos de tu empresa</CardDescription>
@@ -226,7 +226,7 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-emerald-600 font-medium">Plan Actual</p>
-                    <p className="text-2xl font-bold text-slate-900">{subscription?.current_plan?.name || "Cargando..."}</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{subscription?.current_plan?.name || "Cargando..."}</p>
                     <p className="text-sm text-slate-500 mt-1">
                       {subscription?.employee_count} empleados • ${subscription?.monthly_cost?.toFixed(2)}/mes
                     </p>
@@ -245,7 +245,7 @@ export default function SettingsPage() {
                 return (
                   <Card 
                     key={plan.id} 
-                    className={`relative ${plan.popular ? "border-emerald-500 shadow-lg" : "border-slate-200"}`}
+                    className={`relative ${plan.popular ? "border-emerald-500 shadow-lg" : "border-slate-200 dark:border-slate-700"}`}
                     data-testid={`plan-card-${plan.id}`}
                   >
                     {plan.popular && (
@@ -267,7 +267,7 @@ export default function SettingsPage() {
                         ))}
                       </ul>
                       <Button 
-                        className={`w-full ${isCurrentPlan ? "bg-slate-200 text-slate-600" : plan.popular ? "bg-emerald-600 hover:bg-emerald-700" : "bg-slate-900 hover:bg-slate-800"}`}
+                        className={`w-full ${isCurrentPlan ? "bg-slate-200 text-slate-600 dark:text-slate-300" : plan.popular ? "bg-emerald-600 hover:bg-emerald-700" : "bg-slate-900 hover:bg-slate-800"}`}
                         disabled={isCurrentPlan}
                         onClick={() => handleUpgrade(plan.id)}
                         data-testid={`upgrade-${plan.id}`}
@@ -283,7 +283,7 @@ export default function SettingsPage() {
 
           {/* Account Tab */}
           <TabsContent value="account" className="space-y-6">
-            <Card className="border-slate-200">
+            <Card className="border-slate-200 dark:border-slate-700">
               <CardHeader>
                 <CardTitle>Mi Cuenta</CardTitle>
                 <CardDescription>Información de tu cuenta personal</CardDescription>
@@ -291,22 +291,22 @@ export default function SettingsPage() {
               <CardContent>
                 <div className="space-y-4 max-w-lg">
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center text-xl font-bold text-slate-600">
+                    <div className="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center text-xl font-bold text-slate-600 dark:text-slate-300">
                       {user?.name?.split(" ").map(n => n[0]).join("").toUpperCase() || "U"}
                     </div>
                     <div>
-                      <p className="text-lg font-semibold text-slate-900">{user?.name}</p>
-                      <p className="text-slate-500">{user?.email}</p>
+                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">{user?.name}</p>
+                      <p className="text-slate-500 dark:text-slate-400">{user?.email}</p>
                     </div>
                   </div>
-                  <div className="pt-4 border-t border-slate-200">
+                  <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <p className="text-slate-500">Rol</p>
+                        <p className="text-slate-500 dark:text-slate-400">Rol</p>
                         <p className="font-medium capitalize">{user?.role || "Admin"}</p>
                       </div>
                       <div>
-                        <p className="text-slate-500">ID de Usuario</p>
+                        <p className="text-slate-500 dark:text-slate-400">ID de Usuario</p>
                         <p className="font-mono text-xs">{user?.user_id}</p>
                       </div>
                     </div>
@@ -316,7 +316,7 @@ export default function SettingsPage() {
             </Card>
 
             {/* Change Password Section */}
-            <Card className="border-slate-200">
+            <Card className="border-slate-200 dark:border-slate-700">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Lock className="w-5 h-5" />
@@ -352,7 +352,7 @@ export default function SettingsPage() {
                       <button
                         type="button"
                         onClick={() => setShowPasswords(!showPasswords)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-300"
                       >
                         {showPasswords ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>

@@ -127,7 +127,7 @@ export default function AttendancePage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Total Registros</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Total Registros</p>
                   <p className="text-2xl font-bold">{attendances.length}</p>
                 </div>
                 <Users className="w-8 h-8 text-slate-300" />
@@ -185,7 +185,7 @@ export default function AttendancePage() {
               Filtro: {quickFilter === 'present' ? 'Presentes' : quickFilter === 'absent' ? 'Ausentes' : 'Tarde'}
               <button onClick={() => setQuickFilter(null)} className="ml-2 hover:text-red-500">×</button>
             </Badge>
-            <span className="text-sm text-slate-500">
+            <span className="text-sm text-slate-500 dark:text-slate-400">
               {filteredAttendances.length} de {attendances.length} registros
             </span>
           </div>
@@ -194,7 +194,7 @@ export default function AttendancePage() {
         {/* Controls */}
         <div className="flex flex-col sm:flex-row gap-4 justify-between">
           <div className="flex items-center gap-4">
-            <Label className="text-slate-600">Fecha:</Label>
+            <Label className="text-slate-600 dark:text-slate-300">Fecha:</Label>
             <Input
               type="date"
               value={selectedDate}
@@ -287,7 +287,7 @@ export default function AttendancePage() {
         </div>
 
         {/* Table */}
-        <Card className="border-slate-200">
+        <Card className="border-slate-200 dark:border-slate-700">
           <CardContent className="p-0">
             {loading ? (
               <div className="p-6 space-y-4">
@@ -296,7 +296,7 @@ export default function AttendancePage() {
             ) : filteredAttendances.length === 0 ? (
               <div className="text-center py-12">
                 <Clock className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                <p className="text-slate-500">{quickFilter ? 'No hay registros con este filtro' : 'No hay registros para esta fecha'}</p>
+                <p className="text-slate-500 dark:text-slate-400">{quickFilter ? 'No hay registros con este filtro' : 'No hay registros para esta fecha'}</p>
               </div>
             ) : (
               <Table>

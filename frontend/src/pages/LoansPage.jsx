@@ -284,8 +284,8 @@ export default function LoansPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">Préstamos a Empleados</h1>
-            <p className="text-slate-500">Gestiona préstamos y descuentos automáticos en nómina</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Préstamos a Empleados</h1>
+            <p className="text-slate-500 dark:text-slate-400">Gestiona préstamos y descuentos automáticos en nómina</p>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" onClick={exportToCSV} size="sm">
@@ -309,7 +309,7 @@ export default function LoansPage() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-500">Préstamos Activos</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Préstamos Activos</p>
                     <p className="text-2xl font-bold text-blue-600">{summary.total_active_loans}</p>
                   </div>
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
@@ -323,7 +323,7 @@ export default function LoansPage() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-500">Total Prestado</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Total Prestado</p>
                     <p className="text-2xl font-bold text-emerald-600">{formatCurrency(summary.total_loaned)}</p>
                   </div>
                   <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
@@ -340,7 +340,7 @@ export default function LoansPage() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-500">Pagados</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Pagados</p>
                     <p className="text-2xl font-bold text-blue-600">{formatCurrency(summary.total_paid)}</p>
                   </div>
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
@@ -357,7 +357,7 @@ export default function LoansPage() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-500">En Mora</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">En Mora</p>
                     <p className="text-2xl font-bold text-amber-600">{formatCurrency(summary.total_pending)}</p>
                   </div>
                   <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
@@ -376,7 +376,7 @@ export default function LoansPage() {
               Filtro: {filterStatus === 'active' ? 'Activos' : filterStatus === 'paid' ? 'Pagados' : 'En Mora'}
               <button onClick={() => setFilterStatus('all')} className="ml-2 hover:text-red-500">×</button>
             </Badge>
-            <span className="text-sm text-slate-500">{loans.length} préstamos</span>
+            <span className="text-sm text-slate-500 dark:text-slate-400">{loans.length} préstamos</span>
           </div>
         )}
 
@@ -387,7 +387,7 @@ export default function LoansPage() {
           </CardHeader>
           <CardContent>
             {loans.length === 0 ? (
-              <div className="text-center py-12 text-slate-500">
+              <div className="text-center py-12 text-slate-500 dark:text-slate-400">
                 <Wallet className="w-12 h-12 mx-auto text-slate-300 mb-3" />
                 <p className="font-medium">No hay préstamos registrados</p>
                 <p className="text-sm">Crea un nuevo préstamo para empezar</p>
@@ -411,7 +411,7 @@ export default function LoansPage() {
                       <TableCell>
                         <div>
                           <p className="font-medium">{loan.employee_name}</p>
-                          <p className="text-sm text-slate-500">{loan.employee_position}</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400">{loan.employee_position}</p>
                         </div>
                       </TableCell>
                       <TableCell className="font-semibold">{formatCurrency(loan.amount, loan.currency)}</TableCell>
@@ -624,12 +624,12 @@ export default function LoansPage() {
                 {/* Employee & Loan Info */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-slate-50 rounded-xl p-4">
-                    <p className="text-sm text-slate-500">Empleado</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Empleado</p>
                     <p className="font-semibold">{selectedLoan.employee?.name}</p>
-                    <p className="text-sm text-slate-500">{selectedLoan.employee?.position}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{selectedLoan.employee?.position}</p>
                   </div>
                   <div className="bg-slate-50 rounded-xl p-4">
-                    <p className="text-sm text-slate-500">Estado</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Estado</p>
                     <div className="mt-1">{getStatusBadge(selectedLoan.status)}</div>
                   </div>
                 </div>
@@ -694,7 +694,7 @@ export default function LoansPage() {
                         <div key={i} className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
                           <div>
                             <p className="font-medium">{formatCurrency(p.amount)}</p>
-                            <p className="text-sm text-slate-500">{p.payment_date}</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">{p.payment_date}</p>
                           </div>
                           <Badge variant="outline">{p.payment_type}</Badge>
                         </div>

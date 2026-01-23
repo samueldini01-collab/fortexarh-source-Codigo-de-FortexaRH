@@ -148,7 +148,7 @@ export default function EvaluationsPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Total Evaluaciones</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Total Evaluaciones</p>
                   <p className="text-2xl font-bold">{stats.total}</p>
                 </div>
                 <Users className="w-8 h-8 text-slate-300" />
@@ -206,7 +206,7 @@ export default function EvaluationsPage() {
               Filtro: {quickFilter === 'excellent' ? 'Excelentes' : quickFilter === 'good' ? 'Buenos' : 'Necesita Mejorar'}
               <button onClick={() => setQuickFilter(null)} className="ml-2 hover:text-red-500">×</button>
             </Badge>
-            <span className="text-sm text-slate-500">{filteredEvaluations.length} de {evaluations.length} evaluaciones</span>
+            <span className="text-sm text-slate-500 dark:text-slate-400">{filteredEvaluations.length} de {evaluations.length} evaluaciones</span>
           </div>
         )}
         
@@ -349,16 +349,16 @@ export default function EvaluationsPage() {
             {Array(4).fill(0).map((_, i) => <Skeleton key={i} className="h-48 w-full" />)}
           </div>
         ) : evaluations.length === 0 ? (
-          <Card className="border-slate-200">
+          <Card className="border-slate-200 dark:border-slate-700">
             <CardContent className="text-center py-12">
               <Target className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-              <p className="text-slate-500">No hay evaluaciones registradas</p>
+              <p className="text-slate-500 dark:text-slate-400">No hay evaluaciones registradas</p>
             </CardContent>
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {evaluations.map((evaluation) => (
-              <Card key={evaluation.evaluation_id} className="border-slate-200" data-testid={`eval-card-${evaluation.evaluation_id}`}>
+              <Card key={evaluation.evaluation_id} className="border-slate-200 dark:border-slate-700" data-testid={`eval-card-${evaluation.evaluation_id}`}>
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">{evaluation.employee_name}</CardTitle>
@@ -366,12 +366,12 @@ export default function EvaluationsPage() {
                       {evaluation.overall_score.toFixed(1)}
                     </span>
                   </div>
-                  <p className="text-sm text-slate-500">{evaluation.period}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{evaluation.period}</p>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-600">Desempeño</span>
+                      <span className="text-slate-600 dark:text-slate-300">Desempeño</span>
                       <span className="font-medium">{evaluation.performance_score}/5</span>
                     </div>
                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
@@ -380,7 +380,7 @@ export default function EvaluationsPage() {
                   </div>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-600">Metas</span>
+                      <span className="text-slate-600 dark:text-slate-300">Metas</span>
                       <span className="font-medium">{evaluation.goals_achieved}/5</span>
                     </div>
                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
@@ -389,7 +389,7 @@ export default function EvaluationsPage() {
                   </div>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-600">Trabajo en Equipo</span>
+                      <span className="text-slate-600 dark:text-slate-300">Trabajo en Equipo</span>
                       <span className="font-medium">{evaluation.teamwork_score}/5</span>
                     </div>
                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
@@ -398,7 +398,7 @@ export default function EvaluationsPage() {
                   </div>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-600">Comunicación</span>
+                      <span className="text-slate-600 dark:text-slate-300">Comunicación</span>
                       <span className="font-medium">{evaluation.communication_score}/5</span>
                     </div>
                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden">

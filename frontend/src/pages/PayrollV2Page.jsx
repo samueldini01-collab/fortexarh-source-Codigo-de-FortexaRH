@@ -614,8 +614,8 @@ export default function PayrollV2Page() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">Nómina de Pago</h1>
-            <p className="text-slate-500">Procesa nóminas por tipo, período o grupos</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Nómina de Pago</h1>
+            <p className="text-slate-500 dark:text-slate-400">Procesa nóminas por tipo, período o grupos</p>
           </div>
           <div className="flex gap-2">
             <Button onClick={fetchPeriods} variant="outline" size="sm"><RefreshCw className="w-4 h-4 mr-2" />Actualizar</Button>
@@ -641,7 +641,7 @@ export default function PayrollV2Page() {
                 onClick={() => setQuickFilter(quickFilter === 'open' ? null : 'open')}
               >
                 <CardContent className="p-4">
-                  <p className="text-sm text-slate-500">Períodos Abiertos</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Períodos Abiertos</p>
                   <p className="text-2xl font-bold text-blue-600">{stats.openPeriods}</p>
                 </CardContent>
               </Card>
@@ -650,7 +650,7 @@ export default function PayrollV2Page() {
                 onClick={() => setQuickFilter(quickFilter === 'pending' ? null : 'pending')}
               >
                 <CardContent className="p-4">
-                  <p className="text-sm text-slate-500">Nóminas Pendientes</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Nóminas Pendientes</p>
                   <p className="text-2xl font-bold text-orange-600">{stats.pendingPayrolls}</p>
                 </CardContent>
               </Card>
@@ -659,13 +659,13 @@ export default function PayrollV2Page() {
                 onClick={() => setQuickFilter(quickFilter === 'paid' ? null : 'paid')}
               >
                 <CardContent className="p-4">
-                  <p className="text-sm text-slate-500">Total Pagado</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Total Pagado</p>
                   <p className="text-xl font-bold text-purple-600">{formatCurrency(stats.totalPaid)}</p>
                 </CardContent>
               </Card>
               <Card className="border-l-4 border-l-emerald-500">
                 <CardContent className="p-4">
-                  <p className="text-sm text-slate-500">Tipos de Nómina</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Tipos de Nómina</p>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {payrollTypes.slice(0, 3).map(pt => (
                       <Badge key={pt.value} variant="outline" className="text-[10px]">{pt.label}</Badge>
@@ -739,12 +739,12 @@ export default function PayrollV2Page() {
                               <h4 className="font-semibold">{period.description}</h4>
                               {getPayrollTypeBadge(period.payroll_type)}
                             </div>
-                            <p className="text-sm text-slate-500">{period.start_date} - {period.end_date} • {period.employee_count} empleados</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">{period.start_date} - {period.end_date} • {period.employee_count} empleados</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-4">
                           <div className="text-right">
-                            <p className="text-sm text-slate-500">Total Neto</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">Total Neto</p>
                             <p className="font-mono font-semibold">{formatCurrency(period.total_net)}</p>
                           </div>
                           {getStatusBadge(period.status)}
@@ -763,7 +763,7 @@ export default function PayrollV2Page() {
             {!selectedPeriod ? (
               <Card className="py-12"><CardContent className="text-center">
                 <FileSpreadsheet className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                <p className="text-slate-500">Seleccione un período</p>
+                <p className="text-slate-500 dark:text-slate-400">Seleccione un período</p>
                 <Button variant="link" onClick={() => setActiveTab('periodos')}>Ver períodos</Button>
               </CardContent></Card>
             ) : (
@@ -806,7 +806,7 @@ export default function PayrollV2Page() {
                 {periodEntries.length === 0 ? (
                   <Card className="py-12"><CardContent className="text-center">
                     <Users className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                    <p className="text-slate-500">No hay empleados</p>
+                    <p className="text-slate-500 dark:text-slate-400">No hay empleados</p>
                     <Button variant="link" onClick={() => handleAddEmployees(selectedPeriod.period_id)}>Agregar empleados</Button>
                   </CardContent></Card>
                 ) : (
@@ -814,7 +814,7 @@ export default function PayrollV2Page() {
                     <CardContent className="p-0 overflow-x-auto">
                       <Table className="text-[10px]">
                         <TableHeader>
-                          <TableRow className="bg-slate-100">
+                          <TableRow className="bg-slate-100 dark:bg-slate-800">
                             <TableHead className="font-bold text-center border-r w-8">NO.</TableHead>
                             <TableHead className="font-bold border-r min-w-[150px]">EMPLEADO</TableHead>
                             <TableHead className="font-bold text-center border-r w-24">CÉDULA</TableHead>
@@ -840,11 +840,11 @@ export default function PayrollV2Page() {
                             const novelties = entry.novelties || [];
                             
                             return (
-                              <TableRow key={entry.entry_id} className="hover:bg-slate-50">
+                              <TableRow key={entry.entry_id} className="hover:bg-slate-50 dark:bg-slate-800">
                                 <TableCell className="text-center border-r font-medium">{index + 1}</TableCell>
                                 <TableCell className="border-r">
                                   <div><p className="font-medium text-[11px]">{entry.employee_name}</p>
-                                    <p className="text-slate-500">{entry.position}</p>
+                                    <p className="text-slate-500 dark:text-slate-400">{entry.position}</p>
                                     {novelties.length > 0 && (
                                       <div className="flex gap-1 mt-1 flex-wrap">
                                         {novelties.map(n => (
@@ -919,12 +919,12 @@ export default function PayrollV2Page() {
               <CardHeader><CardTitle>Nóminas Pendientes de Aprobación</CardTitle></CardHeader>
               <CardContent>
                 {periods.filter(p => p.status === 'calculated').length === 0 ? (
-                  <div className="text-center py-8 text-slate-500"><Check className="w-12 h-12 mx-auto mb-4 text-slate-300" /><p>No hay pendientes</p></div>
+                  <div className="text-center py-8 text-slate-500 dark:text-slate-400"><Check className="w-12 h-12 mx-auto mb-4 text-slate-300" /><p>No hay pendientes</p></div>
                 ) : (
                   <div className="space-y-3">
                     {periods.filter(p => p.status === 'calculated').map(period => (
                       <div key={period.period_id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div><h4 className="font-semibold">{period.description}</h4><p className="text-sm text-slate-500">{period.employee_count} empleados • {formatCurrency(period.total_net)}</p></div>
+                        <div><h4 className="font-semibold">{period.description}</h4><p className="text-sm text-slate-500 dark:text-slate-400">{period.employee_count} empleados • {formatCurrency(period.total_net)}</p></div>
                         <div className="flex gap-2">
                           <Button variant="outline" onClick={() => { setSelectedPeriod(period); setActiveTab('nomina'); }}>Ver</Button>
                           <Button onClick={() => handleApprovePeriod(period.period_id)}><Check className="w-4 h-4 mr-2" />Aprobar</Button>
@@ -939,7 +939,7 @@ export default function PayrollV2Page() {
               <CardHeader><CardTitle className="text-emerald-700">Listos para Pagar</CardTitle></CardHeader>
               <CardContent>
                 {periods.filter(p => p.status === 'approved').length === 0 ? (
-                  <div className="text-center py-8 text-slate-500"><CreditCard className="w-12 h-12 mx-auto mb-4 text-slate-300" /><p>No hay aprobados</p></div>
+                  <div className="text-center py-8 text-slate-500 dark:text-slate-400"><CreditCard className="w-12 h-12 mx-auto mb-4 text-slate-300" /><p>No hay aprobados</p></div>
                 ) : (
                   <div className="space-y-3">
                     {periods.filter(p => p.status === 'approved').map(period => (
@@ -992,11 +992,11 @@ export default function PayrollV2Page() {
                   ) : (
                     <div className="space-y-3">
                       {periods.filter(p => p.status === 'paid').map(period => (
-                        <div key={period.period_id} className="p-3 border rounded-lg bg-slate-50">
+                        <div key={period.period_id} className="p-3 border rounded-lg bg-slate-50 dark:bg-slate-800">
                           <div className="flex items-center justify-between mb-2">
                             <div>
                               <p className="font-medium">{period.description}</p>
-                              <p className="text-xs text-slate-500">{period.month}/{period.year} • {period.employee_count} empleados</p>
+                              <p className="text-xs text-slate-500 dark:text-slate-400">{period.month}/{period.year} • {period.employee_count} empleados</p>
                             </div>
                             {getPayrollTypeBadge(period.payroll_type)}
                           </div>
@@ -1182,7 +1182,7 @@ export default function PayrollV2Page() {
                           ))}
                         </SelectContent>
                       </Select>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
                         Se descargará automáticamente el archivo para carga en el banco
                       </p>
                     </div>

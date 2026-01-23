@@ -277,8 +277,8 @@ export default function RecruitmentPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600">Vacantes Cerradas</p>
-                  <p className="text-2xl font-bold text-slate-700">{closedJobs}</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-300">Vacantes Cerradas</p>
+                  <p className="text-2xl font-bold text-slate-700 dark:text-slate-200">{closedJobs}</p>
                 </div>
                 <Briefcase className="w-8 h-8 text-slate-300" />
               </div>
@@ -362,7 +362,7 @@ export default function RecruitmentPage() {
                 ×
               </button>
             </Badge>
-            <span className="text-sm text-slate-500">
+            <span className="text-sm text-slate-500 dark:text-slate-400">
               {filteredJobs.length} vacantes, {filteredCandidates.length} candidatos
             </span>
           </div>
@@ -480,10 +480,10 @@ export default function RecruitmentPage() {
                 {Array(4).fill(0).map((_, i) => <Skeleton key={i} className="h-48 w-full" />)}
               </div>
             ) : filteredJobs.length === 0 ? (
-              <Card className="border-slate-200">
+              <Card className="border-slate-200 dark:border-slate-700">
                 <CardContent className="text-center py-12">
                   <Briefcase className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                  <p className="text-slate-500">
+                  <p className="text-slate-500 dark:text-slate-400">
                     {jobs.length === 0 ? "No hay vacantes publicadas" : "No hay vacantes que coincidan con el filtro"}
                   </p>
                   {jobStatusFilter && (
@@ -496,12 +496,12 @@ export default function RecruitmentPage() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {filteredJobs.map((job) => (
-                  <Card key={job.job_id} className="border-slate-200" data-testid={`job-card-${job.job_id}`}>
+                  <Card key={job.job_id} className="border-slate-200 dark:border-slate-700" data-testid={`job-card-${job.job_id}`}>
                     <CardHeader className="pb-2">
                       <div className="flex items-start justify-between">
                         <div>
                           <CardTitle className="text-lg">{job.title}</CardTitle>
-                          <p className="text-sm text-slate-500">{job.department}</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400">{job.department}</p>
                         </div>
                         <Badge variant={job.status === "open" ? "default" : "secondary"}>
                           {job.status === "open" ? "Abierta" : "Cerrada"}
@@ -509,7 +509,7 @@ export default function RecruitmentPage() {
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                      <div className="flex flex-wrap gap-3 text-sm text-slate-600">
+                      <div className="flex flex-wrap gap-3 text-sm text-slate-600 dark:text-slate-300">
                         <div className="flex items-center gap-1">
                           <MapPin className="w-4 h-4" />
                           {job.location}
@@ -523,7 +523,7 @@ export default function RecruitmentPage() {
                           {job.applicants_count} candidatos
                         </div>
                       </div>
-                      <p className="text-sm text-slate-500">{job.salary_range}</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{job.salary_range}</p>
                       {job.status === "open" && (
                         <Button 
                           size="sm" 
@@ -611,7 +611,7 @@ export default function RecruitmentPage() {
               </Dialog>
             </div>
 
-            <Card className="border-slate-200">
+            <Card className="border-slate-200 dark:border-slate-700">
               <CardContent className="p-0">
                 {loading ? (
                   <div className="p-6 space-y-4">
@@ -620,7 +620,7 @@ export default function RecruitmentPage() {
                 ) : filteredCandidates.length === 0 ? (
                   <div className="text-center py-12">
                     <Users className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                    <p className="text-slate-500">
+                    <p className="text-slate-500 dark:text-slate-400">
                       {candidates.length === 0 ? "No hay candidatos registrados" : "No hay candidatos que coincidan con el filtro"}
                     </p>
                     {candidateStageFilter && (
@@ -647,7 +647,7 @@ export default function RecruitmentPage() {
                             <TableCell>
                               <div>
                                 <p className="font-medium">{candidate.name}</p>
-                                <p className="text-sm text-slate-500">{candidate.email}</p>
+                                <p className="text-sm text-slate-500 dark:text-slate-400">{candidate.email}</p>
                               </div>
                             </TableCell>
                             <TableCell>{job?.title || "-"}</TableCell>

@@ -181,7 +181,7 @@ export default function VacationsPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Total Solicitudes</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Total Solicitudes</p>
                   <p className="text-2xl font-bold">{stats.total}</p>
                 </div>
                 <Calendar className="w-8 h-8 text-slate-300" />
@@ -241,7 +241,7 @@ export default function VacationsPage() {
                 <button onClick={() => setQuickFilter(null)} className="ml-2 hover:text-red-500">×</button>
               </Badge>
             )}
-            <span className="text-sm text-slate-500">
+            <span className="text-sm text-slate-500 dark:text-slate-400">
               {filteredVacations.length} de {vacations.length} solicitudes
             </span>
           </div>
@@ -339,7 +339,7 @@ export default function VacationsPage() {
         </div>
 
         {/* Table */}
-        <Card className="border-slate-200">
+        <Card className="border-slate-200 dark:border-slate-700">
           <CardContent className="p-0">
             {loading ? (
               <div className="p-6 space-y-4">
@@ -348,7 +348,7 @@ export default function VacationsPage() {
             ) : filteredVacations.length === 0 ? (
               <div className="text-center py-12">
                 <Calendar className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                <p className="text-slate-500">{quickFilter ? 'No hay solicitudes con este filtro' : 'No hay solicitudes de vacaciones'}</p>
+                <p className="text-slate-500 dark:text-slate-400">{quickFilter ? 'No hay solicitudes con este filtro' : 'No hay solicitudes de vacaciones'}</p>
               </div>
             ) : (
               <Table>
