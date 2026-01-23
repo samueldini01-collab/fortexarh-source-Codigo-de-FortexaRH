@@ -908,8 +908,7 @@ FEATURE_ACCESS = {
     }
 }
 
-# ===================== SUBSCRIPTION & PAYMENT ROUTES =====================
-# NOTE: Main subscription endpoints are defined later in the file (line ~4850)
+# ===================== CONFIG STATUS (for debugging) =====================
 
 @api_router.get("/config/status")
 async def get_config_status():
@@ -925,16 +924,6 @@ async def get_config_status():
         "resend_configured": bool(os.environ.get('RESEND_API_KEY')),
         "mongo_configured": bool(os.environ.get('MONGO_URL'))
     }
-
-class CheckoutRequest(BaseModel):
-    plan_id: str
-    employee_count: int = 1
-    origin_url: str
-
-class PublicCheckoutRequest(BaseModel):
-    plan_id: str
-    employee_count: int = 1
-    origin_url: str
 
 # ===================== PUBLIC CHECKOUT (No auth required - Pay first, then register) =====================
 
