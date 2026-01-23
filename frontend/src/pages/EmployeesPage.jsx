@@ -553,24 +553,24 @@ export default function EmployeesPage() {
         </div>
 
         {/* Employees Table */}
-        <Card className="border-slate-200">
+        <Card>
           <CardContent className="p-0">
             {loading ? (
               <div className="p-8 space-y-4">
                 {[1, 2, 3].map(i => (
                   <div key={i} className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-slate-100 rounded-full animate-pulse" />
+                    <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-full animate-pulse" />
                     <div className="flex-1 space-y-2">
-                      <div className="h-4 bg-slate-100 rounded w-1/4 animate-pulse" />
-                      <div className="h-3 bg-slate-100 rounded w-1/3 animate-pulse" />
+                      <div className="h-4 bg-slate-100 dark:bg-slate-800 rounded w-1/4 animate-pulse" />
+                      <div className="h-3 bg-slate-100 dark:bg-slate-800 rounded w-1/3 animate-pulse" />
                     </div>
                   </div>
                 ))}
               </div>
             ) : filteredEmployees.length === 0 ? (
               <div className="text-center py-12">
-                <User className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                <p className="text-slate-500">No hay empleados registrados</p>
+                <User className="w-12 h-12 mx-auto mb-4 text-slate-300 dark:text-slate-600" />
+                <p className="text-slate-500 dark:text-slate-400">No hay empleados registrados</p>
                 <Button 
                   variant="link" 
                   onClick={() => { resetForm(); setIsDialogOpen(true); }}
@@ -603,7 +603,7 @@ export default function EmployeesPage() {
                     <TableRow 
                       key={emp.employee_id} 
                       data-testid={`employee-row-${emp.employee_id}`}
-                      className={isEmployeeSelected(emp.employee_id) ? "bg-blue-50" : ""}
+                      className={isEmployeeSelected(emp.employee_id) ? "bg-blue-50 dark:bg-blue-900/20" : ""}
                     >
                       <TableCell>
                         <Checkbox 
@@ -616,7 +616,7 @@ export default function EmployeesPage() {
                         <div className="flex items-center gap-3">
                           <Avatar className="w-10 h-10">
                             <AvatarImage src={emp.photo_url} />
-                            <AvatarFallback className="bg-slate-100 text-slate-600">
+                            <AvatarFallback className="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
                               {emp.first_name?.[0]}{emp.last_name?.[0]}
                             </AvatarFallback>
                           </Avatar>
