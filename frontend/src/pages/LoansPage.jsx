@@ -99,6 +99,37 @@ export default function LoansPage() {
     } finally {
       setLoading(false);
     }
+  }, [filterStatus, getAuthHeaders]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Export filtered loans to CSV
+  const exportToCSV = () => {
+    const headers = ['Empleado', 'Monto', 'Moneda', 'Tasa', 'Plazo', 'Pagado', 'Pendiente', 'Estado'];
+    const rows = loans.map(loan => {
+      const emp = employees.find(e => e.employee_id === loan.employee_id);
+      return [
+        emp ? `${emp.first_name} ${emp.last_name}` : loan.employee_name || 'N/A',
+        loan.amount,
+        loan.currency || 'DOP',
+        `${loan.interest_rate}%`,
+        `${loan.term_months} meses`,
+        loan.amount_paid || 0,
+        loan.remaining_balance || loan.amount,
+        loan.status
+      ];
+    });
+    const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `prestamos_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success('Datos exportados');
   };
 
   const handleCreateLoan = async () => {
