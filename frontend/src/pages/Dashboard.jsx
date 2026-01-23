@@ -241,7 +241,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
             Array(6).fill(0).map((_, i) => (
-              <Card key={i} className="border-slate-200">
+              <Card key={i} className="border-slate-200 dark:border-slate-700">
                 <CardContent className="p-6">
                   <Skeleton className="h-4 w-24 mb-2" />
                   <Skeleton className="h-8 w-16" />
@@ -252,15 +252,15 @@ export default function Dashboard() {
             statCards.map((stat, index) => (
               <Card 
                 key={index} 
-                className="border-slate-200 hover:shadow-md transition-shadow cursor-pointer group"
+                className="border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow cursor-pointer group bg-white dark:bg-slate-900"
                 data-testid={`stat-card-${index}`}
                 onClick={() => stat.href && navigate(stat.href)}
               >
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-slate-500 mb-1">{stat.title}</p>
-                      <p className="text-3xl font-bold text-slate-900">{stat.value}</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">{stat.title}</p>
+                      <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">{stat.value}</p>
                     </div>
                     <div className={`w-12 h-12 ${stat.bgColor} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
                       <stat.icon className={`w-6 h-6 ${stat.textColor}`} />
@@ -275,10 +275,10 @@ export default function Dashboard() {
         {/* Bottom Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Recent Employees */}
-          <Card className="border-slate-200">
+          <Card className="border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                <Users className="w-5 h-5 text-slate-500" />
+              <CardTitle className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-100">
+                <Users className="w-5 h-5 text-slate-500 dark:text-slate-400" />
                 Empleados Recientes
               </CardTitle>
             </CardHeader>
