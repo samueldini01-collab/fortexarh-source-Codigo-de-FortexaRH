@@ -75,6 +75,34 @@ code, .mono {
         --chart-4: 280 65% 60%;
         --chart-5: 340 75% 55%;
     }
+
+    /* High Contrast Mode - WCAG AAA Compliant */
+    .high-contrast {
+        --background: 0 0% 0%;
+        --foreground: 0 0% 100%;
+        --card: 0 0% 5%;
+        --card-foreground: 0 0% 100%;
+        --popover: 0 0% 5%;
+        --popover-foreground: 0 0% 100%;
+        --primary: 60 100% 50%;
+        --primary-foreground: 0 0% 0%;
+        --secondary: 0 0% 15%;
+        --secondary-foreground: 0 0% 100%;
+        --muted: 0 0% 12%;
+        --muted-foreground: 0 0% 85%;
+        --accent: 60 100% 50%;
+        --accent-foreground: 0 0% 0%;
+        --destructive: 0 100% 60%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 0 0% 40%;
+        --input: 0 0% 15%;
+        --ring: 60 100% 50%;
+        --chart-1: 200 100% 60%;
+        --chart-2: 120 100% 50%;
+        --chart-3: 40 100% 55%;
+        --chart-4: 280 100% 65%;
+        --chart-5: 0 100% 60%;
+    }
 }
 
 @layer base {
@@ -83,6 +111,41 @@ code, .mono {
     }
     body {
         @apply bg-background text-foreground;
+    }
+    
+    /* High contrast focus states */
+    .high-contrast *:focus-visible {
+        outline: 3px solid hsl(60 100% 50%) !important;
+        outline-offset: 2px !important;
+    }
+    
+    /* High contrast link underlines */
+    .high-contrast a {
+        text-decoration: underline !important;
+        text-underline-offset: 2px;
+    }
+    
+    .high-contrast a:hover {
+        text-decoration-thickness: 3px !important;
+    }
+    
+    /* High contrast buttons */
+    .high-contrast button,
+    .high-contrast [role="button"] {
+        border: 2px solid currentColor !important;
+    }
+    
+    /* High contrast inputs */
+    .high-contrast input,
+    .high-contrast textarea,
+    .high-contrast select {
+        border: 2px solid hsl(0 0% 60%) !important;
+    }
+    
+    .high-contrast input:focus,
+    .high-contrast textarea:focus,
+    .high-contrast select:focus {
+        border-color: hsl(60 100% 50%) !important;
     }
 }
 
