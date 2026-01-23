@@ -121,11 +121,7 @@ export default function CompanyConfigPage() {
   // Audit log
   const [auditLog, setAuditLog] = useState([]);
 
-  useEffect(() => {
-    fetchCompanyData();
-  }, []);
-
-  const fetchCompanyData = async () => {
+  const fetchCompanyData = useCallback(async () => {
     setLoading(true);
     try {
       const response = await axios.get(`${API}/company/settings`, {
@@ -151,7 +147,11 @@ export default function CompanyConfigPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAuthHeaders]);
+
+  useEffect(() => {
+    fetchCompanyData();
+  }, [fetchCompanyData]);
 
   const handleSave = async (section) => {
     setSaving(true);
