@@ -238,11 +238,11 @@ export default function PayrollDashboardPage() {
                   <div className="grid grid-cols-2 gap-4 pt-4 border-t">
                     <div className="text-center p-4 bg-slate-50 rounded-lg">
                       <p className="text-sm text-slate-500 dark:text-slate-400">Neto Pagado a Empleados</p>
-                      <p className="text-2xl font-bold text-emerald-600">{formatCurrency(employer_costs.total_net_salary)}</p>
+                      <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(employer_costs.total_net_salary)}</p>
                     </div>
                     <div className="text-center p-4 bg-slate-50 rounded-lg">
                       <p className="text-sm text-slate-500 dark:text-slate-400">Costo Total Empleador</p>
-                      <p className="text-2xl font-bold text-blue-600">{formatCurrency(employer_costs.total_employer_cost)}</p>
+                      <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{formatCurrency(employer_costs.total_employer_cost)}</p>
                     </div>
                   </div>
                 </div>
@@ -278,7 +278,7 @@ export default function PayrollDashboardPage() {
                           <p className="text-xs text-slate-500 dark:text-slate-400">{emp.department}</p>
                         </div>
                       </div>
-                      <span className="font-mono text-sm font-semibold text-emerald-600">
+                      <span className="font-mono text-sm font-semibold text-emerald-600 dark:text-emerald-400">
                         {formatCurrency(emp.salary)}
                       </span>
                     </div>

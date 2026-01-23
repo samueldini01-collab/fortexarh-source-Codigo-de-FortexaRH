@@ -385,7 +385,7 @@ export default function DocumentsPage() {
                     <div className="p-3 bg-slate-50 rounded-lg">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                          <User className="w-5 h-5 text-blue-600" />
+                          <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div>
                           <p className="font-medium text-sm">{selectedEmployeeData.first_name} {selectedEmployeeData.last_name}</p>
@@ -688,7 +688,7 @@ export default function DocumentsPage() {
                       <div key={doc.document_id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-slate-50 dark:bg-slate-800">
                         <div className="flex items-center gap-4">
                           <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <FileText className="w-5 h-5 text-blue-600" />
+                            <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                           </div>
                           <div>
                             <p className="font-medium">{doc.template_name}</p>

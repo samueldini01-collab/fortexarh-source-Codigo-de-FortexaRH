@@ -112,31 +112,31 @@ export default function ReportsPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="border-emerald-200 bg-emerald-50/50">
             <CardContent className="p-6">
-              <p className="text-sm text-emerald-600">Total Nómina</p>
-              <p className="text-2xl font-bold text-emerald-700">
+              <p className="text-sm text-emerald-600 dark:text-emerald-400">Total Nómina</p>
+              <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">
                 ${(payrollReport?.summary?.total_net_salary || 0).toLocaleString('es-MX')}
               </p>
             </CardContent>
           </Card>
           <Card className="border-blue-200 bg-blue-50/50">
             <CardContent className="p-6">
-              <p className="text-sm text-blue-600">Salario Base</p>
-              <p className="text-2xl font-bold text-blue-700">
+              <p className="text-sm text-blue-600 dark:text-blue-400">Salario Base</p>
+              <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">
                 ${(payrollReport?.summary?.total_base_salary || 0).toLocaleString('es-MX')}
               </p>
             </CardContent>
           </Card>
           <Card className="border-amber-200 bg-amber-50/50">
             <CardContent className="p-6">
-              <p className="text-sm text-amber-600">Bonos</p>
-              <p className="text-2xl font-bold text-amber-700">
+              <p className="text-sm text-amber-600 dark:text-amber-400">Bonos</p>
+              <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">
                 ${(payrollReport?.summary?.total_bonuses || 0).toLocaleString('es-MX')}
               </p>
             </CardContent>
           </Card>
           <Card className="border-red-200 bg-red-50/50">
             <CardContent className="p-6">
-              <p className="text-sm text-red-600">Impuestos</p>
+              <p className="text-sm text-red-600 dark:text-red-400">Impuestos</p>
               <p className="text-2xl font-bold text-red-700">
                 ${(payrollReport?.summary?.total_taxes || 0).toLocaleString('es-MX')}
               </p>
@@ -253,7 +253,7 @@ export default function ReportsPage() {
                     <TableRow key={index}>
                       <TableCell className="font-medium">{emp.employee_name}</TableCell>
                       <TableCell className="text-center">
-                        <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-emerald-50 text-emerald-700">
+                        <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-emerald-50 text-emerald-700 dark:text-emerald-400">
                           {emp.present}
                         </span>
                       </TableCell>
@@ -263,7 +263,7 @@ export default function ReportsPage() {
                         </span>
                       </TableCell>
                       <TableCell className="text-center">
-                        <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-amber-50 text-amber-700">
+                        <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-amber-50 text-amber-700 dark:text-amber-400">
                           {emp.late}
                         </span>
                       </TableCell>

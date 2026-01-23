@@ -218,7 +218,7 @@ export default function PayrollConfigPage() {
           <CardHeader className="pb-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Clock className="w-4 h-4 text-blue-600" />
+                <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               </div>
               <CardTitle className="text-lg">Tasas de Horas Extras</CardTitle>
             </div>
@@ -258,7 +258,7 @@ export default function PayrollConfigPage() {
           <CardHeader className="pb-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
-                <DollarSign className="w-4 h-4 text-red-600" />
+                <DollarSign className="w-4 h-4 text-red-600 dark:text-red-400" />
               </div>
               <CardTitle className="text-lg">Deducciones del Empleado</CardTitle>
             </div>
@@ -326,7 +326,7 @@ export default function PayrollConfigPage() {
           <CardHeader className="pb-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
-                <FileText className="w-4 h-4 text-amber-600" />
+                <FileText className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               </div>
               <CardTitle className="text-lg">Configuración del ISR (Impuesto Sobre la Renta)</CardTitle>
             </div>
@@ -334,7 +334,7 @@ export default function PayrollConfigPage() {
           <CardContent className="space-y-6">
             {/* ISR Explanation Collapsible */}
             <Collapsible open={isrExpanded} onOpenChange={setIsrExpanded}>
-              <CollapsibleTrigger className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700">
+              <CollapsibleTrigger className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400">
                 <ChevronDown className={`w-4 h-4 transition-transform ${isrExpanded ? 'rotate-180' : ''}`} />
                 Ver explicación de los rangos de ISR
               </CollapsibleTrigger>

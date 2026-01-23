@@ -413,7 +413,7 @@ export default function AccountingPage() {
       case 'draft':
         return <Badge variant="outline" className="border-slate-400">Borrador</Badge>;
       case 'posted':
-        return <Badge className="bg-emerald-100 text-emerald-700">Contabilizado</Badge>;
+        return <Badge className="bg-emerald-100 text-emerald-700 dark:text-emerald-400">Contabilizado</Badge>;
       case 'voided':
         return <Badge className="bg-red-100 text-red-700">Anulado</Badge>;
       default:
@@ -426,11 +426,11 @@ export default function AccountingPage() {
       case 'expense':
         return <Badge className="bg-red-100 text-red-700">Gasto</Badge>;
       case 'asset':
-        return <Badge className="bg-blue-100 text-blue-700">Activo</Badge>;
+        return <Badge className="bg-blue-100 text-blue-700 dark:text-blue-400">Activo</Badge>;
       case 'liability':
-        return <Badge className="bg-amber-100 text-amber-700">Pasivo</Badge>;
+        return <Badge className="bg-amber-100 text-amber-700 dark:text-amber-400">Pasivo</Badge>;
       case 'income':
-        return <Badge className="bg-emerald-100 text-emerald-700">Ingreso</Badge>;
+        return <Badge className="bg-emerald-100 text-emerald-700 dark:text-emerald-400">Ingreso</Badge>;
       case 'equity':
         return <Badge className="bg-purple-100 text-purple-700">Capital</Badge>;
       default:
@@ -479,7 +479,7 @@ export default function AccountingPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-500 dark:text-slate-400">Total Débitos</p>
-                  <p className="text-xl font-bold text-emerald-600">{formatCurrency(stats.totalDebits)}</p>
+                  <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(stats.totalDebits)}</p>
                 </div>
                 <ArrowUpRight className="w-8 h-8 text-emerald-300" />
               </div>
@@ -490,7 +490,7 @@ export default function AccountingPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-500 dark:text-slate-400">Total Créditos</p>
-                  <p className="text-xl font-bold text-red-600">{formatCurrency(stats.totalCredits)}</p>
+                  <p className="text-xl font-bold text-red-600 dark:text-red-400">{formatCurrency(stats.totalCredits)}</p>
                 </div>
                 <ArrowDownRight className="w-8 h-8 text-red-300" />
               </div>
@@ -603,7 +603,7 @@ export default function AccountingPage() {
                       {entries.map(entry => (
                         <TableRow key={entry.entry_id}>
                           <TableCell>
-                            <span className="font-mono font-bold text-blue-600">
+                            <span className="font-mono font-bold text-blue-600 dark:text-blue-400">
                               #{entry.entry_number || '-'}
                             </span>
                           </TableCell>

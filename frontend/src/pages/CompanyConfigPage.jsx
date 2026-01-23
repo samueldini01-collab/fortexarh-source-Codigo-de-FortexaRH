@@ -356,7 +356,7 @@ export default function CompanyConfigPage() {
             </label>
             
             {logoPreview && (
-              <Button variant="outline" className="text-red-600" onClick={handleLogoDelete}>
+              <Button variant="outline" className="text-red-600 dark:text-red-400" onClick={handleLogoDelete}>
                 <Trash2 className="w-4 h-4 mr-2" />Eliminar
               </Button>
             )}
@@ -606,7 +606,7 @@ export default function CompanyConfigPage() {
             </div>
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
-                <Facebook className="w-4 h-4 text-blue-600" /> Facebook
+                <Facebook className="w-4 h-4 text-blue-600 dark:text-blue-400" /> Facebook
               </Label>
               <Input 
                 placeholder="https://facebook.com/empresa"
@@ -619,7 +619,7 @@ export default function CompanyConfigPage() {
             </div>
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
-                <Linkedin className="w-4 h-4 text-blue-700" /> LinkedIn
+                <Linkedin className="w-4 h-4 text-blue-700 dark:text-blue-400" /> LinkedIn
               </Label>
               <Input 
                 placeholder="https://linkedin.com/company/empresa"
@@ -667,7 +667,7 @@ export default function CompanyConfigPage() {
           <div className="flex items-center justify-between p-4 rounded-lg border bg-white">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                <Mail className="w-5 h-5 text-blue-600" />
+                <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
                 <h4 className="font-medium">Notificaciones por Correo</h4>
@@ -683,7 +683,7 @@ export default function CompanyConfigPage() {
           <div className="flex items-center justify-between p-4 rounded-lg border bg-white">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
-                <MessageSquare className="w-5 h-5 text-emerald-600" />
+                <MessageSquare className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div>
                 <h4 className="font-medium">Notificaciones SMS</h4>
@@ -776,7 +776,7 @@ export default function CompanyConfigPage() {
             <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
             <div>
               <h4 className="font-medium text-amber-800">¿Necesitas otra integración?</h4>
-              <p className="text-sm text-amber-700">Contáctanos para solicitar integraciones personalizadas con tus sistemas existentes.</p>
+              <p className="text-sm text-amber-700 dark:text-amber-400">Contáctanos para solicitar integraciones personalizadas con tus sistemas existentes.</p>
             </div>
           </div>
         </div>

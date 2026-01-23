@@ -414,7 +414,7 @@ export default function NotificationsPage() {
                           log.type === 'payroll_reminder' ? 'bg-amber-100' : 'bg-pink-100'
                         }`}>
                           {log.type === 'payroll_reminder' ? (
-                            <Calendar className="w-5 h-5 text-amber-600" />
+                            <Calendar className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                           ) : (
                             <Cake className="w-5 h-5 text-pink-600" />
                           )}

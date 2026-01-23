@@ -153,7 +153,7 @@ export default function MetricsDashboardPage() {
                   </div>
                 </div>
                 <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                  <DollarSign className="w-6 h-6 text-blue-600" />
+                  <DollarSign className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                 </div>
               </div>
             </CardContent>
@@ -165,13 +165,13 @@ export default function MetricsDashboardPage() {
                 <div>
                   <p className="text-sm text-slate-500 dark:text-slate-400">Total Empleados</p>
                   <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{metrics?.employee_count || currentMonthData.employees || 0}</p>
-                  <div className="flex items-center text-sm mt-1 text-emerald-600">
+                  <div className="flex items-center text-sm mt-1 text-emerald-600 dark:text-emerald-400">
                     <UserPlus className="w-4 h-4 mr-1" />
                     <span>{employeeMetrics?.new_this_month || 2} nuevos este mes</span>
                   </div>
                 </div>
                 <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
-                  <Users className="w-6 h-6 text-emerald-600" />
+                  <Users className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
                 </div>
               </div>
             </CardContent>
@@ -188,7 +188,7 @@ export default function MetricsDashboardPage() {
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
-                  <Wallet className="w-6 h-6 text-amber-600" />
+                  <Wallet className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
               </div>
             </CardContent>
@@ -316,15 +316,15 @@ export default function MetricsDashboardPage() {
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                  <span className="text-sm text-blue-700">Total Prestado</span>
+                  <span className="text-sm text-blue-700 dark:text-blue-400">Total Prestado</span>
                   <span className="font-bold text-blue-800">{formatCurrency(loanMetrics?.total_loaned || 0)}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg">
-                  <span className="text-sm text-emerald-700">Total Cobrado</span>
+                  <span className="text-sm text-emerald-700 dark:text-emerald-400">Total Cobrado</span>
                   <span className="font-bold text-emerald-800">{formatCurrency(loanMetrics?.total_paid || 0)}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-amber-50 rounded-lg">
-                  <span className="text-sm text-amber-700">Pendiente</span>
+                  <span className="text-sm text-amber-700 dark:text-amber-400">Pendiente</span>
                   <span className="font-bold text-amber-800">{formatCurrency(loanMetrics?.total_pending || 0)}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
@@ -347,25 +347,25 @@ export default function MetricsDashboardPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600 dark:text-slate-300">Rotación de personal</span>
-                  <Badge className="bg-emerald-100 text-emerald-700">
+                  <Badge className="bg-emerald-100 text-emerald-700 dark:text-emerald-400">
                     {employeeMetrics?.turnover_rate || 5}%
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600 dark:text-slate-300">Vacaciones pendientes</span>
-                  <Badge className="bg-amber-100 text-amber-700">
+                  <Badge className="bg-amber-100 text-amber-700 dark:text-amber-400">
                     {metrics?.pending_vacations || 12} días
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600 dark:text-slate-300">Evaluaciones este mes</span>
-                  <Badge className="bg-blue-100 text-blue-700">
+                  <Badge className="bg-blue-100 text-blue-700 dark:text-blue-400">
                     {metrics?.evaluations_count || 8}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600 dark:text-slate-300">Asistencia promedio</span>
-                  <Badge className="bg-emerald-100 text-emerald-700">
+                  <Badge className="bg-emerald-100 text-emerald-700 dark:text-emerald-400">
                     {metrics?.avg_attendance || 95}%
                   </Badge>
                 </div>
@@ -404,7 +404,7 @@ export default function MetricsDashboardPage() {
                     <tr key={i} className="border-b hover:bg-slate-50 dark:bg-slate-800">
                       <td className="py-3 px-4 font-medium">{row.month}</td>
                       <td className="py-3 px-4 text-right">{formatCurrency(row.gross)}</td>
-                      <td className="py-3 px-4 text-right text-red-600">{formatCurrency(row.deductions)}</td>
+                      <td className="py-3 px-4 text-right text-red-600 dark:text-red-400">{formatCurrency(row.deductions)}</td>
                       <td className="py-3 px-4 text-right text-emerald-600 font-medium">{formatCurrency(row.net)}</td>
                       <td className="py-3 px-4 text-right">{row.employees}</td>
                       <td className="py-3 px-4 text-right text-slate-500 dark:text-slate-400">{formatCurrency(row.gross / row.employees)}</td>

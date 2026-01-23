@@ -441,7 +441,7 @@ export default function OrganigramaPage() {
               <p className="text-xs text-slate-500 truncate">{node.position_title}</p>
             )}
             {employee && (
-              <p className="text-xs text-emerald-600">{employee.first_name} {employee.last_name}</p>
+              <p className="text-xs text-emerald-600 dark:text-emerald-400">{employee.first_name} {employee.last_name}</p>
             )}
           </div>
           
@@ -659,7 +659,7 @@ export default function OrganigramaPage() {
                           </div>
                           <div>
                             <h4 className="font-semibold">{template.name}</h4>
-                            <p className="text-sm text-blue-600">{template.employees}</p>
+                            <p className="text-sm text-blue-600 dark:text-blue-400">{template.employees}</p>
                           </div>
                         </div>
                         <p className="text-sm text-slate-600 mt-3">{template.description}</p>
@@ -672,7 +672,7 @@ export default function OrganigramaPage() {
                   <Lightbulb className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
                   <div>
                     <h4 className="font-medium text-amber-800">¿Cómo funciona?</h4>
-                    <p className="text-sm text-amber-700">Al seleccionar una plantilla, no estás atado a ella. En el siguiente paso podrás renombrar unidades, agregar o eliminar posiciones, y ajustar la jerarquía visualmente antes de guardar los cambios.</p>
+                    <p className="text-sm text-amber-700 dark:text-amber-400">Al seleccionar una plantilla, no estás atado a ella. En el siguiente paso podrás renombrar unidades, agregar o eliminar posiciones, y ajustar la jerarquía visualmente antes de guardar los cambios.</p>
                   </div>
                 </div>
               </div>
@@ -690,7 +690,7 @@ export default function OrganigramaPage() {
                   {renderTemplateTree(templateUnits)}
                 </div>
 
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-700">
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-700 dark:text-amber-400">
                   <strong>Nota:</strong> Desactivar una unidad principal ocultará también todas sus sub-unidades y posiciones asociadas.
                 </div>
               </div>
@@ -815,7 +815,7 @@ export default function OrganigramaPage() {
               <FileText className="w-4 h-4 mr-2" />Usar Plantilla
             </Button>
             
-            <Button variant="outline" className="text-blue-600 border-blue-200 hover:bg-blue-50" onClick={() => setShowNewUnit(true)} data-testid="new-unit-btn">
+            <Button variant="outline" className="text-blue-600 border-blue-200 hover:bg-blue-50 dark:bg-blue-900/30" onClick={() => setShowNewUnit(true)} data-testid="new-unit-btn">
               <Building2 className="w-4 h-4 mr-2" />Nueva Unidad
             </Button>
             

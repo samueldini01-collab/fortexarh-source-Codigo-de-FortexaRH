@@ -449,7 +449,7 @@ export default function PayrollCalculatorPage() {
           <CardContent className="p-4">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Building2 className="w-5 h-5 text-blue-600" />
+                <Building2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
                 <h3 className="font-semibold text-blue-900">Cálculo según Tabla de Retención DGII 2023</h3>
@@ -670,7 +670,7 @@ export default function PayrollCalculatorPage() {
                         </div>
                       )}
                       <Separator className="my-2" />
-                      <div className="flex justify-between font-semibold text-emerald-700">
+                      <div className="flex justify-between font-semibold text-emerald-700 dark:text-emerald-400">
                         <span>Total Ingresos</span>
                         <span>{formatCurrency(result.total_earnings)}</span>
                       </div>
@@ -685,11 +685,11 @@ export default function PayrollCalculatorPage() {
                       <p className="text-xs text-red-600 font-medium mb-1">Seguridad Social (TSS)</p>
                       <div className="flex justify-between">
                         <span className="text-slate-600 dark:text-slate-300">SFS (3.07%)</span>
-                        <span className="font-medium text-red-600">-{formatCurrency(result.sfs_employee)}</span>
+                        <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.sfs_employee)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-600 dark:text-slate-300">AFP (2.87%)</span>
-                        <span className="font-medium text-red-600">-{formatCurrency(result.afp_employee)}</span>
+                        <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.afp_employee)}</span>
                       </div>
                       <div className="flex justify-between text-xs">
                         <span className="text-slate-500 dark:text-slate-400">Subtotal TSS</span>
@@ -701,7 +701,7 @@ export default function PayrollCalculatorPage() {
                       <p className="text-xs text-red-600 font-medium mb-1">Impuesto Sobre la Renta (ISR)</p>
                       <div className="flex justify-between">
                         <span className="text-slate-600 dark:text-slate-300">ISR Mensual ({result.isr_bracket})</span>
-                        <span className="font-medium text-red-600">-{formatCurrency(result.isr_monthly)}</span>
+                        <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.isr_monthly)}</span>
                       </div>
                       {result.isr_monthly > 0 && (
                         <div className="text-xs text-slate-500 mt-1">
@@ -717,13 +717,13 @@ export default function PayrollCalculatorPage() {
                           {result.loan_deduction > 0 && (
                             <div className="flex justify-between">
                               <span className="text-slate-600 dark:text-slate-300">Préstamos</span>
-                              <span className="font-medium text-red-600">-{formatCurrency(result.loan_deduction)}</span>
+                              <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.loan_deduction)}</span>
                             </div>
                           )}
                           {result.other_deductions > 0 && (
                             <div className="flex justify-between">
                               <span className="text-slate-600 dark:text-slate-300">Otras</span>
-                              <span className="font-medium text-red-600">-{formatCurrency(result.other_deductions)}</span>
+                              <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.other_deductions)}</span>
                             </div>
                           )}
                         </>
@@ -768,7 +768,7 @@ export default function PayrollCalculatorPage() {
                       </div>
                     </div>
                     <Separator className="my-2" />
-                    <div className="flex justify-between text-sm font-semibold text-blue-700">
+                    <div className="flex justify-between text-sm font-semibold text-blue-700 dark:text-blue-400">
                       <span>Total Aportes</span>
                       <span>{formatCurrency(result.total_employer_contributions)}</span>
                     </div>

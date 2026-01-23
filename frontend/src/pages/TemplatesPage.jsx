@@ -32,10 +32,10 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
 const templateTypes = [
-  { value: "contract", label: "Contrato", icon: FileSignature, color: "bg-blue-100 text-blue-700" },
-  { value: "letter", label: "Carta", icon: Mail, color: "bg-emerald-100 text-emerald-700" },
+  { value: "contract", label: "Contrato", icon: FileSignature, color: "bg-blue-100 text-blue-700 dark:text-blue-400" },
+  { value: "letter", label: "Carta", icon: Mail, color: "bg-emerald-100 text-emerald-700 dark:text-emerald-400" },
   { value: "certificate", label: "Certificado", icon: Award, color: "bg-purple-100 text-purple-700" },
-  { value: "policy", label: "Política", icon: BookOpen, color: "bg-amber-100 text-amber-700" }
+  { value: "policy", label: "Política", icon: BookOpen, color: "bg-amber-100 text-amber-700 dark:text-amber-400" }
 ];
 
 const defaultVariables = [
@@ -460,7 +460,7 @@ export default function TemplatesPage() {
                           <Button variant="ghost" size="sm" onClick={() => handleDuplicate(template)}>
                             <Copy className="w-4 h-4" />
                           </Button>
-                          <Button variant="ghost" size="sm" className="text-red-600 hover:bg-red-50" onClick={() => handleDelete(template.template_id)}>
+                          <Button variant="ghost" size="sm" className="text-red-600 hover:bg-red-50 dark:bg-red-900/30" onClick={() => handleDelete(template.template_id)}>
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>

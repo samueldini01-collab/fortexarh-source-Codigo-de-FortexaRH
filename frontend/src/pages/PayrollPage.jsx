@@ -162,11 +162,11 @@ export default function PayrollPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-amber-600">Pendientes</p>
-                  <p className="text-2xl font-bold text-amber-700">${totalPending.toLocaleString('es-MX')}</p>
+                  <p className="text-sm text-amber-600 dark:text-amber-400">Pendientes</p>
+                  <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">${totalPending.toLocaleString('es-MX')}</p>
                 </div>
                 <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-                  <FileText className="w-5 h-5 text-amber-600" />
+                  <FileText className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                 </div>
               </div>
             </CardContent>
@@ -175,11 +175,11 @@ export default function PayrollPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-blue-600">Aprobadas</p>
-                  <p className="text-2xl font-bold text-blue-700">${totalApproved.toLocaleString('es-MX')}</p>
+                  <p className="text-sm text-blue-600 dark:text-blue-400">Aprobadas</p>
+                  <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">${totalApproved.toLocaleString('es-MX')}</p>
                 </div>
                 <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Check className="w-5 h-5 text-blue-600" />
+                  <Check className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 </div>
               </div>
             </CardContent>
@@ -188,11 +188,11 @@ export default function PayrollPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-emerald-600">Pagadas</p>
-                  <p className="text-2xl font-bold text-emerald-700">${totalPaid.toLocaleString('es-MX')}</p>
+                  <p className="text-sm text-emerald-600 dark:text-emerald-400">Pagadas</p>
+                  <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">${totalPaid.toLocaleString('es-MX')}</p>
                 </div>
                 <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
-                  <DollarSign className="w-5 h-5 text-emerald-600" />
+                  <DollarSign className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                 </div>
               </div>
             </CardContent>
@@ -331,9 +331,9 @@ export default function PayrollPage() {
                       <TableCell className="font-medium">{payroll.employee_name}</TableCell>
                       <TableCell>{payroll.period_start} - {payroll.period_end}</TableCell>
                       <TableCell>${payroll.base_salary.toLocaleString('es-MX')}</TableCell>
-                      <TableCell className="text-emerald-600">+${payroll.bonuses.toLocaleString('es-MX')}</TableCell>
-                      <TableCell className="text-red-600">-${payroll.deductions.toLocaleString('es-MX')}</TableCell>
-                      <TableCell className="text-red-600">-${payroll.taxes.toLocaleString('es-MX')}</TableCell>
+                      <TableCell className="text-emerald-600 dark:text-emerald-400">+${payroll.bonuses.toLocaleString('es-MX')}</TableCell>
+                      <TableCell className="text-red-600 dark:text-red-400">-${payroll.deductions.toLocaleString('es-MX')}</TableCell>
+                      <TableCell className="text-red-600 dark:text-red-400">-${payroll.taxes.toLocaleString('es-MX')}</TableCell>
                       <TableCell className="font-semibold">${payroll.net_salary.toLocaleString('es-MX')}</TableCell>
                       <TableCell>{getStatusBadge(payroll.status)}</TableCell>
                       <TableCell className="text-right">

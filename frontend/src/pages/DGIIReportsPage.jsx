@@ -334,13 +334,13 @@ export default function DGIIReportsPage() {
                       </div>
                       <div>
                         <span className="text-slate-500 dark:text-slate-400">Total Bruto:</span>
-                        <span className="ml-2 font-medium text-emerald-600">
+                        <span className="ml-2 font-medium text-emerald-600 dark:text-emerald-400">
                           ${(periodDetails.total_gross || 0).toLocaleString('es-DO', { minimumFractionDigits: 2 })}
                         </span>
                       </div>
                       <div>
                         <span className="text-slate-500 dark:text-slate-400">ISR Total:</span>
-                        <span className="ml-2 font-medium text-blue-600">
+                        <span className="ml-2 font-medium text-blue-600 dark:text-blue-400">
                           ${(periodDetails.total_isr || 0).toLocaleString('es-DO', { minimumFractionDigits: 2 })}
                         </span>
                       </div>
@@ -357,7 +357,7 @@ export default function DGIIReportsPage() {
           <Info className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
           <div className="text-sm text-blue-800">
             <p className="font-medium mb-1">Importante sobre los formularios DGII</p>
-            <ul className="list-disc list-inside space-y-1 text-blue-700">
+            <ul className="list-disc list-inside space-y-1 text-blue-700 dark:text-blue-400">
               <li><strong>IR-4</strong>: Detalle de empleados que alimenta la declaración IR-3</li>
               <li><strong>IR-3</strong>: Declaración mensual de retenciones de ISR a asalariados</li>
               <li><strong>IR-13</strong>: Declaración anual que consolida todos los IR-4 del año</li>

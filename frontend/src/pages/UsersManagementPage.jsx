@@ -344,7 +344,7 @@ export default function UsersManagementPage() {
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <Avatar className="h-9 w-9">
-                            <AvatarFallback className="bg-blue-100 text-blue-700">
+                            <AvatarFallback className="bg-blue-100 text-blue-700 dark:text-blue-400">
                               {getInitials(user.name)}
                             </AvatarFallback>
                           </Avatar>
@@ -375,7 +375,7 @@ export default function UsersManagementPage() {
                       </TableCell>
                       <TableCell>
                         {user.is_active ? (
-                          <div className="flex items-center gap-1 text-emerald-600">
+                          <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
                             <CheckCircle className="w-4 h-4" />Activo
                           </div>
                         ) : (
@@ -402,7 +402,7 @@ export default function UsersManagementPage() {
                           <Button 
                             variant="ghost" 
                             size="icon"
-                            className="text-amber-500 hover:text-amber-700"
+                            className="text-amber-500 hover:text-amber-700 dark:text-amber-400"
                             onClick={() => openPasswordModal(user)}
                             title="Asignar contraseña"
                             data-testid={`set-password-btn-${user.user_id}`}
@@ -502,7 +502,7 @@ export default function UsersManagementPage() {
                     activities.map(activity => (
                       <div key={activity.activity_id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-slate-50 dark:bg-slate-800">
                         <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <Activity className="w-5 h-5 text-blue-600" />
+                          <Activity className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div className="flex-1">
                           <p className="font-medium text-slate-800 dark:text-slate-100">{activity.details}</p>

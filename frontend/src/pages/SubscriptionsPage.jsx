@@ -342,8 +342,8 @@ export default function SubscriptionsPage() {
 
   const getStatusBadge = (status) => {
     const styles = {
-      active: "bg-emerald-100 text-emerald-700",
-      trial: "bg-blue-100 text-blue-700",
+      active: "bg-emerald-100 text-emerald-700 dark:text-emerald-400",
+      trial: "bg-blue-100 text-blue-700 dark:text-blue-400",
       cancelled: "bg-red-100 text-red-700",
       expired: "bg-red-100 text-red-700"
     };
@@ -463,8 +463,8 @@ export default function SubscriptionsPage() {
                       <p className="text-lg font-bold">{subscription?.current_employees || 0}</p>
                     </div>
                     <div className="p-3 bg-emerald-50 rounded-lg">
-                      <p className="text-xs text-emerald-600">Total mensual</p>
-                      <p className="text-lg font-bold text-emerald-700">{formatCurrency(subscription?.total_monthly)}</p>
+                      <p className="text-xs text-emerald-600 dark:text-emerald-400">Total mensual</p>
+                      <p className="text-lg font-bold text-emerald-700 dark:text-emerald-400">{formatCurrency(subscription?.total_monthly)}</p>
                     </div>
                   </div>
                 </div>
@@ -549,7 +549,7 @@ export default function SubscriptionsPage() {
 
               {subscription?.status === 'trial' && subscription?.trial_days_remaining !== undefined && (
                 <div className="p-3 bg-blue-50 rounded-lg">
-                  <p className="text-sm text-blue-700">
+                  <p className="text-sm text-blue-700 dark:text-blue-400">
                     <Clock className="w-4 h-4 inline mr-1" />
                     {subscription.trial_days_remaining} días restantes de prueba
                   </p>
@@ -680,7 +680,7 @@ export default function SubscriptionsPage() {
                       <TableCell>{invoice.paid_at || formatDate(invoice.created_at)}</TableCell>
                       <TableCell>{invoice.plan_name}</TableCell>
                       <TableCell>{invoice.employee_count}</TableCell>
-                      <TableCell className="text-right font-semibold text-emerald-600">
+                      <TableCell className="text-right font-semibold text-emerald-600 dark:text-emerald-400">
                         {formatCurrency(invoice.total)}
                       </TableCell>
                       <TableCell>
@@ -799,7 +799,7 @@ export default function SubscriptionsPage() {
                     </div>
                     <div className="flex justify-between font-bold text-lg border-t pt-2 mt-2">
                       <span>Total mensual</span>
-                      <span className="text-emerald-600">{formatCurrency(calculateTotal(selectedPlan, employeeCount))}</span>
+                      <span className="text-emerald-600 dark:text-emerald-400">{formatCurrency(calculateTotal(selectedPlan, employeeCount))}</span>
                     </div>
                   </div>
                 </div>
@@ -931,7 +931,7 @@ export default function SubscriptionsPage() {
           <DialogContent className="sm:max-w-md">
             <div className="text-center py-6">
               <div className="w-16 h-16 mx-auto rounded-full bg-emerald-100 flex items-center justify-center mb-4">
-                <CheckCircle2 className="w-10 h-10 text-emerald-600" />
+                <CheckCircle2 className="w-10 h-10 text-emerald-600 dark:text-emerald-400" />
               </div>
               <h2 className="text-2xl font-bold text-slate-900 mb-2">¡Pago Exitoso!</h2>
               <p className="text-slate-600 mb-6">
@@ -987,7 +987,7 @@ export default function SubscriptionsPage() {
                       <h3 className="text-xl font-bold text-emerald-800">
                         {cancellationInfo.retention_offer?.discount_percent}% de Descuento
                       </h3>
-                      <p className="text-emerald-600">por {cancellationInfo.retention_offer?.duration_months} meses</p>
+                      <p className="text-emerald-600 dark:text-emerald-400">por {cancellationInfo.retention_offer?.duration_months} meses</p>
                     </div>
                     
                     <div className="mt-4 space-y-2 text-sm">
@@ -997,11 +997,11 @@ export default function SubscriptionsPage() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-600 dark:text-slate-300">Nuevo precio:</span>
-                        <span className="font-bold text-emerald-600">{formatCurrency(cancellationInfo.retention_offer?.discounted_monthly)}/mes</span>
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(cancellationInfo.retention_offer?.discounted_monthly)}/mes</span>
                       </div>
                       <div className="flex justify-between pt-2 border-t">
                         <span className="font-medium">Ahorras en 3 meses:</span>
-                        <span className="font-bold text-emerald-600">{formatCurrency(cancellationInfo.retention_offer?.savings_total)}</span>
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(cancellationInfo.retention_offer?.savings_total)}</span>
                       </div>
                     </div>
                   </div>
@@ -1110,7 +1110,7 @@ export default function SubscriptionsPage() {
             {cancelStep === 3 && (
               <>
                 <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2 text-red-600">
+                  <DialogTitle className="flex items-center gap-2 text-red-600 dark:text-red-400">
                     <AlertTriangle className="w-5 h-5" />
                     Confirmar Cancelación
                   </DialogTitle>

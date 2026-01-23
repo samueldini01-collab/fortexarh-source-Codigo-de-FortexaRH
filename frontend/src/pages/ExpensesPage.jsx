@@ -89,9 +89,9 @@ const categoryIcons = {
 
 // Status badge styles
 const statusStyles = {
-  pending: { label: "Pendiente", color: "bg-amber-100 text-amber-700", icon: Clock },
-  approved_manager: { label: "Aprobado (Gerente)", color: "bg-blue-100 text-blue-700", icon: CheckCircle },
-  approved_admin: { label: "Aprobado", color: "bg-emerald-100 text-emerald-700", icon: CheckCircle },
+  pending: { label: "Pendiente", color: "bg-amber-100 text-amber-700 dark:text-amber-400", icon: Clock },
+  approved_manager: { label: "Aprobado (Gerente)", color: "bg-blue-100 text-blue-700 dark:text-blue-400", icon: CheckCircle },
+  approved_admin: { label: "Aprobado", color: "bg-emerald-100 text-emerald-700 dark:text-emerald-400", icon: CheckCircle },
   rejected: { label: "Rechazado", color: "bg-red-100 text-red-700", icon: XCircle },
   in_progress: { label: "En Progreso", color: "bg-purple-100 text-purple-700", icon: RefreshCw },
   pending_verification: { label: "Pend. Verificación", color: "bg-orange-100 text-orange-700", icon: FileCheck },
@@ -359,7 +359,7 @@ export default function ExpensesPage() {
                     <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{summary.total_requests}</p>
                   </div>
                   <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                    <Receipt className="w-5 h-5 text-blue-600" />
+                    <Receipt className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   </div>
                 </div>
               </CardContent>
@@ -373,7 +373,7 @@ export default function ExpensesPage() {
                     <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{summary.pending_advances?.count || 0}</p>
                   </div>
                   <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-                    <Banknote className="w-5 h-5 text-amber-600" />
+                    <Banknote className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                   </div>
                 </div>
               </CardContent>
@@ -387,7 +387,7 @@ export default function ExpensesPage() {
                     <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{formatCurrency(summary.total_estimated)}</p>
                   </div>
                   <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
-                    <DollarSign className="w-5 h-5 text-emerald-600" />
+                    <DollarSign className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   </div>
                 </div>
               </CardContent>
@@ -415,7 +415,7 @@ export default function ExpensesPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <CardTitle className="flex items-center gap-2">
-                  <Receipt className="w-5 h-5 text-emerald-600" />
+                  <Receipt className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   Solicitudes de Gastos y Viáticos
                 </CardTitle>
                 <CardDescription>Gestiona solicitudes de gastos, anticipos y reembolsos</CardDescription>
@@ -444,7 +444,7 @@ export default function ExpensesPage() {
                     >
                       Por Aprobar
                       {pendingApprovals.length > 0 && (
-                        <Badge className="ml-2 bg-amber-100 text-amber-700 hover:bg-amber-100">
+                        <Badge className="ml-2 bg-amber-100 text-amber-700 hover:bg-amber-100 dark:bg-amber-900/50">
                           {pendingApprovals.length}
                         </Badge>
                       )}
@@ -539,7 +539,7 @@ export default function ExpensesPage() {
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <Receipt className="w-5 h-5 text-emerald-600" />
+                <Receipt className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                 Nueva Solicitud de Gastos
               </DialogTitle>
               <DialogDescription>
@@ -763,7 +763,7 @@ export default function ExpensesPage() {
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <Eye className="w-5 h-5 text-blue-600" />
+                <Eye className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 Detalles de la Solicitud
               </DialogTitle>
             </DialogHeader>
@@ -851,7 +851,7 @@ export default function ExpensesPage() {
                     )}
                     <div>
                       <Label className="text-slate-500 dark:text-slate-400">Presupuesto Estimado</Label>
-                      <p className="text-lg font-semibold text-emerald-600">
+                      <p className="text-lg font-semibold text-emerald-600 dark:text-emerald-400">
                         {formatCurrency(requestDetails.request.estimated_budget)}
                       </p>
                     </div>
@@ -915,7 +915,7 @@ export default function ExpensesPage() {
                       {requestDetails.advances.map((adv, i) => (
                         <div key={i} className="flex items-center justify-between p-3 bg-amber-50 border border-amber-100 rounded-lg">
                           <div className="flex items-center gap-3">
-                            <Banknote className="w-5 h-5 text-amber-600" />
+                            <Banknote className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                             <div>
                               <p className="font-medium">{formatCurrency(adv.amount)}</p>
                               <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -926,7 +926,7 @@ export default function ExpensesPage() {
                             </div>
                           </div>
                           {adv.disbursed_amount > 0 && (
-                            <Badge variant="outline" className="bg-emerald-50 text-emerald-700">
+                            <Badge variant="outline" className="bg-emerald-50 text-emerald-700 dark:text-emerald-400">
                               Desembolsado: {formatCurrency(adv.disbursed_amount)}
                             </Badge>
                           )}
@@ -949,11 +949,11 @@ export default function ExpensesPage() {
                             'bg-blue-100'
                           }`}>
                             {approval.action === 'approve' ? (
-                              <CheckCircle className="w-4 h-4 text-emerald-600" />
+                              <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                             ) : approval.action === 'reject' ? (
-                              <XCircle className="w-4 h-4 text-red-600" />
+                              <XCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
                             ) : (
-                              <History className="w-4 h-4 text-blue-600" />
+                              <History className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                             )}
                           </div>
                           <div className="flex-1">
@@ -993,7 +993,7 @@ export default function ExpensesPage() {
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <FileCheck className="w-5 h-5 text-emerald-600" />
+                <FileCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                 Aprobar / Rechazar Solicitud
               </DialogTitle>
               <DialogDescription>
@@ -1150,7 +1150,7 @@ function RequestsTable({
                 <TableCell className="text-right">
                   <p className="font-medium">{formatCurrency(request.estimated_budget)}</p>
                   {request.requires_advance && (
-                    <p className="text-xs text-amber-600">
+                    <p className="text-xs text-amber-600 dark:text-amber-400">
                       Anticipo: {formatCurrency(request.advance_amount)}
                     </p>
                   )}
@@ -1180,7 +1180,7 @@ function RequestsTable({
                       {onCancel && ['pending', 'draft'].includes(request.status) && (
                         <DropdownMenuItem 
                           onClick={() => onCancel(request.request_id)}
-                          className="text-red-600"
+                          className="text-red-600 dark:text-red-400"
                         >
                           <XCircle className="w-4 h-4 mr-2" /> Cancelar
                         </DropdownMenuItem>

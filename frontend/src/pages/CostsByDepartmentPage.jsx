@@ -152,7 +152,7 @@ export default function CostsByDepartmentPage() {
               <CardContent className="pt-6">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-blue-100 rounded-lg">
-                    <Users className="w-5 h-5 text-blue-600" />
+                    <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
                     <p className="text-sm text-slate-600 dark:text-slate-300">Empleados</p>
@@ -167,7 +167,7 @@ export default function CostsByDepartmentPage() {
               <CardContent className="pt-6">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-emerald-100 rounded-lg">
-                    <DollarSign className="w-5 h-5 text-emerald-600" />
+                    <DollarSign className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   </div>
                   <div>
                     <p className="text-sm text-slate-600 dark:text-slate-300">Salario Bruto</p>
@@ -182,7 +182,7 @@ export default function CostsByDepartmentPage() {
               <CardContent className="pt-6">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-amber-100 rounded-lg">
-                    <Building2 className="w-5 h-5 text-amber-600" />
+                    <Building2 className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                   </div>
                   <div>
                     <p className="text-sm text-slate-600 dark:text-slate-300">Aportes Patronales</p>
@@ -241,10 +241,10 @@ export default function CostsByDepartmentPage() {
                         <td className="py-3 px-4 font-medium">{dept.department}</td>
                         <td className="py-3 px-4 text-center">{dept.employee_count}</td>
                         <td className="py-3 px-4 text-right">{formatCurrency(dept.gross_salary)}</td>
-                        <td className="py-3 px-4 text-right hidden md:table-cell text-red-600">
+                        <td className="py-3 px-4 text-right hidden md:table-cell text-red-600 dark:text-red-400">
                           -{formatCurrency(dept.sfs_deduction + dept.afp_deduction + dept.isr_deduction)}
                         </td>
-                        <td className="py-3 px-4 text-right hidden lg:table-cell text-amber-600">
+                        <td className="py-3 px-4 text-right hidden lg:table-cell text-amber-600 dark:text-amber-400">
                           {formatCurrency(dept.total_employer_cost)}
                         </td>
                         <td className="py-3 px-4 text-right font-semibold">{formatCurrency(dept.total_cost)}</td>
@@ -261,10 +261,10 @@ export default function CostsByDepartmentPage() {
                       <td className="py-3 px-4">TOTAL</td>
                       <td className="py-3 px-4 text-center">{costReport.summary.employee_count}</td>
                       <td className="py-3 px-4 text-right">{formatCurrency(costReport.summary.total_gross)}</td>
-                      <td className="py-3 px-4 text-right hidden md:table-cell text-red-600">
+                      <td className="py-3 px-4 text-right hidden md:table-cell text-red-600 dark:text-red-400">
                         -{formatCurrency(costReport.summary.total_sfs + costReport.summary.total_afp + costReport.summary.total_isr)}
                       </td>
-                      <td className="py-3 px-4 text-right hidden lg:table-cell text-amber-600">
+                      <td className="py-3 px-4 text-right hidden lg:table-cell text-amber-600 dark:text-amber-400">
                         {formatCurrency(costReport.summary.total_employer_contributions)}
                       </td>
                       <td className="py-3 px-4 text-right text-purple-600">{formatCurrency(costReport.summary.grand_total_cost)}</td>
