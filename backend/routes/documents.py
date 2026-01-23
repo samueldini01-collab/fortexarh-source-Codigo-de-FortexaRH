@@ -128,6 +128,9 @@ DEFAULT_TEMPLATES = [
         "content": """
 <div style="font-family: Arial, sans-serif; padding: 40px; max-width: 700px; margin: 0 auto;">
     <div style="text-align: center; margin-bottom: 40px;">
+        {{#if company_logo}}
+        <img src="{{company_logo}}" alt="Logo" style="max-height: 80px; max-width: 200px; margin-bottom: 15px;" />
+        {{/if}}
         <h2 style="margin-bottom: 5px;">{{company_name}}</h2>
         <p style="color: #666; margin: 0;">RNC: {{company_rnc}}</p>
     </div>
@@ -171,7 +174,7 @@ DEFAULT_TEMPLATES = [
     </div>
 </div>
 """,
-        "variables": ["company_name", "company_rnc", "city", "date", "employee_name",
+        "variables": ["company_name", "company_rnc", "company_logo", "city", "date", "employee_name",
                      "employee_document", "hire_date", "end_date", "position", "department",
                      "additional_comments", "authorized_by", "authorized_position"],
         "is_default": True
