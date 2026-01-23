@@ -91,19 +91,18 @@ async def update_company(data: CompanyUpdate, current_user: dict = Depends(get_c
 
 @router.get("/settings")
 async def get_company_settings(current_user: dict = Depends(get_current_user)):
-    """Get company payroll settings"""
+    """Get all company settings including appearance, branding, etc."""
     company_id = current_user.get("company_id")
-    
-    # Get company
+
+    # Get company basic info
     company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
     if not company:
-        raise HTTPException(status_code=404, detail="Company not found")
-    
-    # Get settings or return defaults
-    settings = await db.company_settings.find_one({"company_id": company_id}, {"_id": 0})
-    
-    if not settings:
-        settings = {
+        company = {"company_id": company_id, "name": ""}
+
+    # Get payroll settings
+    payroll_settings = await db.company_settings.find_one({"company_id": company_id}, {"_id": 0})
+    if not payroll_settings:
+        payroll_settings = {
             "company_id": company_id,
             "payment_frequency": "Quincenal",
             "work_hours_per_day": 8,
@@ -116,7 +115,31 @@ async def get_company_settings(current_user: dict = Depends(get_current_user)):
             "default_bank": None
         }
     
-    return settings
+    # Get appearance config
+    appearance_config = await db.company_config.find_one(
+        {"company_id": company_id, "config_type": "appearance"}, {"_id": 0}
+    )
+    appearance = appearance_config.get("data", {}) if appearance_config else {}
+    
+    # Get branding config
+    branding_config = await db.company_config.find_one(
+        {"company_id": company_id, "config_type": "branding"}, {"_id": 0}
+    )
+    branding = branding_config.get("data", {}) if branding_config else {}
+    
+    # Get notifications config
+    notifications_config = await db.company_config.find_one(
+        {"company_id": company_id, "config_type": "notifications"}, {"_id": 0}
+    )
+    notifications = notifications_config.get("data", {}) if notifications_config else {}
+
+    return {
+        "company": company,
+        "payroll_settings": payroll_settings,
+        "appearance": appearance,
+        "branding": branding,
+        "notifications": notifications
+    }
 
 
 @router.put("/settings")
