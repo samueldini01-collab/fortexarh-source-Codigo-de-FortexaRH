@@ -289,18 +289,18 @@ export default function LandingPage() {
               Desde la contratación hasta la nómina, tenemos todas las herramientas que tu departamento de RRHH necesita.
             </p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {features.map((feature, index) => (
               <div 
                 key={index} 
-                className="dashboard-card p-4 sm:p-6 hover:border-emerald-200 animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
+                className="dashboard-card p-4 sm:p-5 hover:border-emerald-200 animate-fade-in"
+                style={{ animationDelay: `${index * 0.05}s` }}
               >
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-50 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4">
-                  <feature.icon className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
+                <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center mb-3">
+                  <feature.icon className="w-5 h-5 text-emerald-600" />
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-1.5 sm:mb-2 heading">{feature.title}</h3>
-                <p className="text-sm sm:text-base text-slate-600">{feature.description}</p>
+                <h3 className="text-base font-semibold text-slate-900 mb-1 heading">{feature.title}</h3>
+                <p className="text-sm text-slate-600">{feature.description}</p>
               </div>
             ))}
           </div>
