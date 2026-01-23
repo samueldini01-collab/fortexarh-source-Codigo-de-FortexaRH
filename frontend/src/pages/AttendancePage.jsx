@@ -47,11 +47,7 @@ export default function AttendancePage() {
   });
   const { getAuthHeaders } = useAuth();
 
-  useEffect(() => {
-    fetchData();
-  }, [selectedDate]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [attRes, empRes] = await Promise.all([
         axios.get(`${API}/attendance?date=${selectedDate}`, { headers: getAuthHeaders(), withCredentials: true }),
