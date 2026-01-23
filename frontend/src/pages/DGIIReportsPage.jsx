@@ -274,8 +274,8 @@ export default function DGIIReportsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">Reportes DGII y TSS</h1>
-            <p className="text-slate-500">Genera los formularios fiscales requeridos por la DGII y TSS</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Reportes DGII y TSS</h1>
+            <p className="text-slate-500 dark:text-slate-400">Genera los formularios fiscales requeridos por la DGII y TSS</p>
           </div>
         </div>
 
@@ -292,7 +292,7 @@ export default function DGIIReportsPage() {
           </CardHeader>
           <CardContent>
             {periods.length === 0 ? (
-              <div className="text-center py-8 text-slate-500">
+              <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                 <AlertCircle className="w-12 h-12 mx-auto text-slate-300 mb-3" />
                 <p className="font-medium">No hay períodos de nómina</p>
                 <p className="text-sm">Cree un período en el módulo de Nómina primero</p>
@@ -325,21 +325,21 @@ export default function DGIIReportsPage() {
                     <h4 className="font-medium text-slate-800 mb-3">Resumen del Período</h4>
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
-                        <span className="text-slate-500">Estado:</span>
+                        <span className="text-slate-500 dark:text-slate-400">Estado:</span>
                         <span className="ml-2">{getStatusBadge(periodDetails.status)}</span>
                       </div>
                       <div>
-                        <span className="text-slate-500">Empleados:</span>
+                        <span className="text-slate-500 dark:text-slate-400">Empleados:</span>
                         <span className="ml-2 font-medium">{periodDetails.employee_count || 0}</span>
                       </div>
                       <div>
-                        <span className="text-slate-500">Total Bruto:</span>
+                        <span className="text-slate-500 dark:text-slate-400">Total Bruto:</span>
                         <span className="ml-2 font-medium text-emerald-600">
                           ${(periodDetails.total_gross || 0).toLocaleString('es-DO', { minimumFractionDigits: 2 })}
                         </span>
                       </div>
                       <div>
-                        <span className="text-slate-500">ISR Total:</span>
+                        <span className="text-slate-500 dark:text-slate-400">ISR Total:</span>
                         <span className="ml-2 font-medium text-blue-600">
                           ${(periodDetails.total_isr || 0).toLocaleString('es-DO', { minimumFractionDigits: 2 })}
                         </span>
@@ -399,10 +399,10 @@ export default function DGIIReportsPage() {
                           </div>
                           <div>
                             <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-bold text-lg text-slate-800">{report.name}</h3>
+                              <h3 className="font-bold text-lg text-slate-800 dark:text-slate-100">{report.name}</h3>
                               <Badge variant="outline" className="text-xs">Excel</Badge>
                             </div>
-                            <p className="text-sm font-medium text-slate-700">{report.title}</p>
+                            <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{report.title}</p>
                             <p className="text-sm text-slate-500 mt-1">{report.description}</p>
                           </div>
                         </div>
@@ -449,7 +449,7 @@ export default function DGIIReportsPage() {
               </CardHeader>
               <CardContent>
                 {availableYears.length === 0 ? (
-                  <div className="text-center py-8 text-slate-500">
+                  <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                     <AlertCircle className="w-12 h-12 mx-auto text-slate-300 mb-3" />
                     <p className="font-medium">No hay años disponibles</p>
                     <p className="text-sm">Procese nóminas para generar reportes anuales</p>
@@ -495,16 +495,16 @@ export default function DGIIReportsPage() {
                         </div>
                         <div>
                           <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-bold text-xl text-slate-800">{report.name}</h3>
+                            <h3 className="font-bold text-xl text-slate-800 dark:text-slate-100">{report.name}</h3>
                             <Badge variant="outline" className="text-xs">Excel</Badge>
                             <Badge className="bg-rose-100 text-rose-700 text-xs">Anual</Badge>
                           </div>
-                          <p className="text-sm font-medium text-slate-700">{report.title}</p>
+                          <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{report.title}</p>
                           <p className="text-sm text-slate-500 mt-1 max-w-lg">{report.description}</p>
                           
                           {selectedYear && (
                             <div className="mt-3 bg-slate-50 rounded-lg p-3">
-                              <p className="text-sm text-slate-600">
+                              <p className="text-sm text-slate-600 dark:text-slate-300">
                                 <strong>Año seleccionado:</strong> {selectedYear}
                               </p>
                               <p className="text-xs text-slate-500 mt-1">

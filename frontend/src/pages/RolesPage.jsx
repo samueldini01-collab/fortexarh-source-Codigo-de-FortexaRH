@@ -273,8 +273,8 @@ export default function RolesPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">Gestión de Roles</h1>
-            <p className="text-slate-500">Crea y administra roles personalizados con permisos específicos</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Gestión de Roles</h1>
+            <p className="text-slate-500 dark:text-slate-400">Crea y administra roles personalizados con permisos específicos</p>
           </div>
           <Button onClick={() => { resetForm(); setShowCreateModal(true); }} data-testid="create-role-btn">
             <Plus className="w-4 h-4 mr-2" />
@@ -296,7 +296,7 @@ export default function RolesPage() {
               {defaultRoles.map(role => (
                 <div 
                   key={role.role_id}
-                  className="border rounded-xl p-4 bg-slate-50"
+                  className="border rounded-xl p-4 bg-slate-50 dark:bg-slate-800"
                 >
                   <div className="flex items-center gap-3 mb-2">
                     <div 
@@ -306,8 +306,8 @@ export default function RolesPage() {
                       <Shield className="w-5 h-5" style={{ color: role.color }} />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-slate-800">{role.name}</h3>
-                      <p className="text-sm text-slate-500">{role.description}</p>
+                      <h3 className="font-semibold text-slate-800 dark:text-slate-100">{role.name}</h3>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{role.description}</p>
                     </div>
                   </div>
                   <div className="mt-3 pt-3 border-t">
@@ -342,7 +342,7 @@ export default function RolesPage() {
           </CardHeader>
           <CardContent>
             {roles.length === 0 ? (
-              <div className="text-center py-12 text-slate-500">
+              <div className="text-center py-12 text-slate-500 dark:text-slate-400">
                 <Shield className="w-12 h-12 mx-auto text-slate-300 mb-3" />
                 <p className="font-medium">No hay roles personalizados</p>
                 <p className="text-sm">Crea tu primer rol personalizado para asignar permisos específicos</p>
@@ -362,7 +362,7 @@ export default function RolesPage() {
                     className="border rounded-xl overflow-hidden"
                   >
                     <div 
-                      className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50"
+                      className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 dark:bg-slate-800"
                       onClick={() => toggleRoleExpanded(role.role_id)}
                     >
                       <div className="flex items-center gap-3">
@@ -373,8 +373,8 @@ export default function RolesPage() {
                           <Shield className="w-5 h-5" style={{ color: role.color || '#3b82f6' }} />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-slate-800">{role.name}</h3>
-                          <p className="text-sm text-slate-500">{role.description || 'Sin descripción'}</p>
+                          <h3 className="font-semibold text-slate-800 dark:text-slate-100">{role.name}</h3>
+                          <p className="text-sm text-slate-500 dark:text-slate-400">{role.description || 'Sin descripción'}</p>
                         </div>
                         <Badge className={role.is_active !== false ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}>
                           {role.is_active !== false ? 'Activo' : 'Inactivo'}
@@ -513,8 +513,8 @@ export default function RolesPage() {
                             onCheckedChange={() => toggleModule(mod.id)}
                           />
                           <div>
-                            <p className="font-medium text-slate-800">{mod.name}</p>
-                            <p className="text-xs text-slate-500">{mod.description}</p>
+                            <p className="font-medium text-slate-800 dark:text-slate-100">{mod.name}</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">{mod.description}</p>
                           </div>
                         </div>
                       </div>
@@ -630,8 +630,8 @@ export default function RolesPage() {
                             onCheckedChange={() => toggleModule(mod.id)}
                           />
                           <div>
-                            <p className="font-medium text-slate-800">{mod.name}</p>
-                            <p className="text-xs text-slate-500">{mod.description}</p>
+                            <p className="font-medium text-slate-800 dark:text-slate-100">{mod.name}</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">{mod.description}</p>
                           </div>
                         </div>
                       </div>

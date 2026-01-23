@@ -452,8 +452,8 @@ export default function AccountingPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">Módulo Contable</h1>
-            <p className="text-slate-500">Asientos de diario y plan de cuentas</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Módulo Contable</h1>
+            <p className="text-slate-500 dark:text-slate-400">Asientos de diario y plan de cuentas</p>
           </div>
           <Button onClick={fetchData} variant="outline" size="sm">
             <RefreshCw className="w-4 h-4 mr-2" />
@@ -467,7 +467,7 @@ export default function AccountingPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Total Asientos</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Total Asientos</p>
                   <p className="text-2xl font-bold">{stats.totalEntries}</p>
                 </div>
                 <FileText className="w-8 h-8 text-blue-300" />
@@ -478,7 +478,7 @@ export default function AccountingPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Total Débitos</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Total Débitos</p>
                   <p className="text-xl font-bold text-emerald-600">{formatCurrency(stats.totalDebits)}</p>
                 </div>
                 <ArrowUpRight className="w-8 h-8 text-emerald-300" />
@@ -489,7 +489,7 @@ export default function AccountingPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Total Créditos</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Total Créditos</p>
                   <p className="text-xl font-bold text-red-600">{formatCurrency(stats.totalCredits)}</p>
                 </div>
                 <ArrowDownRight className="w-8 h-8 text-red-300" />
@@ -500,7 +500,7 @@ export default function AccountingPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">De Nómina</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">De Nómina</p>
                   <p className="text-2xl font-bold text-purple-600">{stats.payrollEntries}</p>
                 </div>
                 <Link2 className="w-8 h-8 text-purple-300" />
@@ -523,7 +523,7 @@ export default function AccountingPage() {
               <CardContent className="p-4">
                 <div className="flex flex-wrap gap-4 items-end">
                   <div className="space-y-1">
-                    <Label className="text-xs text-slate-500">Buscar por Número</Label>
+                    <Label className="text-xs text-slate-500 dark:text-slate-400">Buscar por Número</Label>
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <Input 
@@ -535,7 +535,7 @@ export default function AccountingPage() {
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs text-slate-500">Fecha Inicio</Label>
+                    <Label className="text-xs text-slate-500 dark:text-slate-400">Fecha Inicio</Label>
                     <Input 
                       type="date" 
                       className="w-40"
@@ -544,7 +544,7 @@ export default function AccountingPage() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs text-slate-500">Fecha Fin</Label>
+                    <Label className="text-xs text-slate-500 dark:text-slate-400">Fecha Fin</Label>
                     <Input 
                       type="date" 
                       className="w-40"
@@ -580,7 +580,7 @@ export default function AccountingPage() {
                 ) : entries.length === 0 ? (
                   <div className="text-center py-12">
                     <BookOpen className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                    <p className="text-slate-500">No hay asientos de diario</p>
+                    <p className="text-slate-500 dark:text-slate-400">No hay asientos de diario</p>
                     <Button variant="link" onClick={() => { resetEntryForm(); setShowNewEntry(true); }}>
                       Crear primer asiento
                     </Button>
@@ -784,7 +784,7 @@ export default function AccountingPage() {
                 <div className="border rounded-lg overflow-hidden">
                   <Table>
                     <TableHeader>
-                      <TableRow className="bg-slate-50">
+                      <TableRow className="bg-slate-50 dark:bg-slate-800">
                         <TableHead className="w-40">Cuenta</TableHead>
                         <TableHead>Descripción</TableHead>
                         <TableHead className="w-32 text-right">Débito</TableHead>
@@ -995,7 +995,7 @@ export default function AccountingPage() {
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <h4 className="font-semibold text-slate-800">{template.name}</h4>
+                      <h4 className="font-semibold text-slate-800 dark:text-slate-100">{template.name}</h4>
                       <p className="text-sm text-slate-500 mt-1">{template.description}</p>
                     </div>
                     <Badge variant="secondary" className="ml-4">

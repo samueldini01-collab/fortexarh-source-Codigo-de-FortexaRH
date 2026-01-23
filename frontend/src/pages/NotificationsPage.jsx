@@ -169,7 +169,7 @@ export default function NotificationsPage() {
       <div className="space-y-6" data-testid="notifications-page">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Notificaciones</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">Notificaciones</h1>
             <p className="text-sm sm:text-base text-slate-600 mt-1">
               Configura recordatorios de nómina y alertas de cumpleaños
             </p>
@@ -346,7 +346,7 @@ export default function NotificationsPage() {
               </CardHeader>
               <CardContent>
                 {upcomingBirthdays.length === 0 ? (
-                  <div className="text-center py-8 text-slate-500">
+                  <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                     <Cake className="w-12 h-12 mx-auto mb-3 text-slate-300" />
                     <p>No hay cumpleaños próximos en los siguientes 30 días</p>
                   </div>
@@ -360,8 +360,8 @@ export default function NotificationsPage() {
                       >
                         <div className="flex items-start justify-between">
                           <div>
-                            <p className="font-medium text-slate-900">{emp.name}</p>
-                            <p className="text-sm text-slate-500">{emp.department}</p>
+                            <p className="font-medium text-slate-900 dark:text-slate-100">{emp.name}</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">{emp.department}</p>
                             <p className="text-xs text-slate-400">{emp.position}</p>
                           </div>
                           <div className="text-right">
@@ -370,7 +370,7 @@ export default function NotificationsPage() {
                                 🎂 ¡Hoy!
                               </span>
                             ) : (
-                              <span className="text-sm text-slate-600">
+                              <span className="text-sm text-slate-600 dark:text-slate-300">
                                 En {emp.days_until} día{emp.days_until > 1 ? 's' : ''}
                               </span>
                             )}
@@ -399,7 +399,7 @@ export default function NotificationsPage() {
               </CardHeader>
               <CardContent>
                 {notificationLogs.length === 0 ? (
-                  <div className="text-center py-8 text-slate-500">
+                  <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                     <Bell className="w-12 h-12 mx-auto mb-3 text-slate-300" />
                     <p>No hay notificaciones enviadas aún</p>
                   </div>
@@ -420,14 +420,14 @@ export default function NotificationsPage() {
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-slate-900">
+                          <p className="font-medium text-slate-900 dark:text-slate-100">
                             {log.type === 'payroll_reminder' ? 'Recordatorio de Nómina' : 'Notificación de Cumpleaños'}
                           </p>
                           <p className="text-sm text-slate-500 truncate">
                             Enviado a: {log.sent_to?.join(', ')}
                           </p>
                         </div>
-                        <div className="text-right text-sm text-slate-500">
+                        <div className="text-right text-sm text-slate-500 dark:text-slate-400">
                           <div className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
                             {formatDate(log.created_at)}

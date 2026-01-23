@@ -96,7 +96,7 @@ const statusStyles = {
   in_progress: { label: "En Progreso", color: "bg-purple-100 text-purple-700", icon: RefreshCw },
   pending_verification: { label: "Pend. Verificación", color: "bg-orange-100 text-orange-700", icon: FileCheck },
   completed: { label: "Completado", color: "bg-green-100 text-green-700", icon: CheckCircle },
-  cancelled: { label: "Cancelado", color: "bg-slate-100 text-slate-500", icon: XCircle }
+  cancelled: { label: "Cancelado", color: "bg-slate-100 text-slate-500 dark:text-slate-400", icon: XCircle }
 };
 
 // Expense type labels
@@ -355,8 +355,8 @@ export default function ExpensesPage() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-500">Total Solicitudes</p>
-                    <p className="text-2xl font-bold text-slate-800">{summary.total_requests}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Total Solicitudes</p>
+                    <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{summary.total_requests}</p>
                   </div>
                   <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
                     <Receipt className="w-5 h-5 text-blue-600" />
@@ -369,8 +369,8 @@ export default function ExpensesPage() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-500">Anticipos Pendientes</p>
-                    <p className="text-2xl font-bold text-slate-800">{summary.pending_advances?.count || 0}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Anticipos Pendientes</p>
+                    <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{summary.pending_advances?.count || 0}</p>
                   </div>
                   <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
                     <Banknote className="w-5 h-5 text-amber-600" />
@@ -383,8 +383,8 @@ export default function ExpensesPage() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-500">Total Estimado</p>
-                    <p className="text-2xl font-bold text-slate-800">{formatCurrency(summary.total_estimated)}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Total Estimado</p>
+                    <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{formatCurrency(summary.total_estimated)}</p>
                   </div>
                   <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
                     <DollarSign className="w-5 h-5 text-emerald-600" />
@@ -397,8 +397,8 @@ export default function ExpensesPage() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-500">Ahorro</p>
-                    <p className="text-2xl font-bold text-slate-800">{formatCurrency(summary.savings)}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Ahorro</p>
+                    <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{formatCurrency(summary.savings)}</p>
                   </div>
                   <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
                     <ArrowRight className="w-5 h-5 text-purple-600" />
@@ -699,7 +699,7 @@ export default function ExpensesPage() {
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <Label className="text-base font-medium">Solicitar Anticipo</Label>
-                    <p className="text-sm text-slate-500">¿Necesita un anticipo antes del viaje/gasto?</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">¿Necesita un anticipo antes del viaje/gasto?</p>
                   </div>
                   <Switch
                     checked={formData.requires_advance}
@@ -792,7 +792,7 @@ export default function ExpensesPage() {
                       })()}
                       <div>
                         <p className="font-medium">{statusStyles[requestDetails.request.status]?.label || requestDetails.request.status}</p>
-                        <p className="text-sm text-slate-500">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
                           Creado: {formatDate(requestDetails.request.created_at)}
                         </p>
                       </div>
@@ -807,15 +807,15 @@ export default function ExpensesPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div>
-                      <Label className="text-slate-500">Título</Label>
+                      <Label className="text-slate-500 dark:text-slate-400">Título</Label>
                       <p className="font-medium">{requestDetails.request.title}</p>
                     </div>
                     <div>
-                      <Label className="text-slate-500">Tipo de Gasto</Label>
+                      <Label className="text-slate-500 dark:text-slate-400">Tipo de Gasto</Label>
                       <p>{expenseTypeLabels[requestDetails.request.expense_type] || requestDetails.request.expense_type}</p>
                     </div>
                     <div>
-                      <Label className="text-slate-500">Solicitante</Label>
+                      <Label className="text-slate-500 dark:text-slate-400">Solicitante</Label>
                       <p className="flex items-center gap-2">
                         <User className="w-4 h-4 text-slate-400" />
                         {requestDetails.request.employee_name}
@@ -823,7 +823,7 @@ export default function ExpensesPage() {
                     </div>
                     {requestDetails.request.department && (
                       <div>
-                        <Label className="text-slate-500">Departamento</Label>
+                        <Label className="text-slate-500 dark:text-slate-400">Departamento</Label>
                         <p className="flex items-center gap-2">
                           <Building2 className="w-4 h-4 text-slate-400" />
                           {requestDetails.request.department}
@@ -834,7 +834,7 @@ export default function ExpensesPage() {
                   
                   <div className="space-y-4">
                     <div>
-                      <Label className="text-slate-500">Período</Label>
+                      <Label className="text-slate-500 dark:text-slate-400">Período</Label>
                       <p className="flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-slate-400" />
                         {formatDate(requestDetails.request.start_date)} - {formatDate(requestDetails.request.end_date)}
@@ -842,7 +842,7 @@ export default function ExpensesPage() {
                     </div>
                     {requestDetails.request.destination && (
                       <div>
-                        <Label className="text-slate-500">Destino</Label>
+                        <Label className="text-slate-500 dark:text-slate-400">Destino</Label>
                         <p className="flex items-center gap-2">
                           <MapPin className="w-4 h-4 text-slate-400" />
                           {requestDetails.request.destination}
@@ -850,14 +850,14 @@ export default function ExpensesPage() {
                       </div>
                     )}
                     <div>
-                      <Label className="text-slate-500">Presupuesto Estimado</Label>
+                      <Label className="text-slate-500 dark:text-slate-400">Presupuesto Estimado</Label>
                       <p className="text-lg font-semibold text-emerald-600">
                         {formatCurrency(requestDetails.request.estimated_budget)}
                       </p>
                     </div>
                     {requestDetails.request.actual_spent > 0 && (
                       <div>
-                        <Label className="text-slate-500">Gasto Real</Label>
+                        <Label className="text-slate-500 dark:text-slate-400">Gasto Real</Label>
                         <p className="text-lg font-semibold">
                           {formatCurrency(requestDetails.request.actual_spent)}
                         </p>
@@ -868,7 +868,7 @@ export default function ExpensesPage() {
 
                 {/* Description */}
                 <div>
-                  <Label className="text-slate-500">Descripción / Justificación</Label>
+                  <Label className="text-slate-500 dark:text-slate-400">Descripción / Justificación</Label>
                   <p className="mt-1 p-3 bg-slate-50 rounded-lg">{requestDetails.request.description}</p>
                 </div>
 
@@ -879,7 +879,7 @@ export default function ExpensesPage() {
                     <div className="border rounded-lg overflow-hidden">
                       <Table>
                         <TableHeader>
-                          <TableRow className="bg-slate-50">
+                          <TableRow className="bg-slate-50 dark:bg-slate-800">
                             <TableHead>Categoría</TableHead>
                             <TableHead>Descripción</TableHead>
                             <TableHead className="text-right">Monto</TableHead>
@@ -918,7 +918,7 @@ export default function ExpensesPage() {
                             <Banknote className="w-5 h-5 text-amber-600" />
                             <div>
                               <p className="font-medium">{formatCurrency(adv.amount)}</p>
-                              <p className="text-sm text-slate-500">
+                              <p className="text-sm text-slate-500 dark:text-slate-400">
                                 Estado: {adv.status === 'disbursed' ? 'Desembolsado' : 
                                         adv.status === 'approved' ? 'Aprobado' : 
                                         adv.status === 'pending' ? 'Pendiente' : adv.status}
@@ -961,7 +961,7 @@ export default function ExpensesPage() {
                               <p className="font-medium text-sm">{approval.performed_by_name || "Sistema"}</p>
                               <span className="text-xs text-slate-400">{formatDate(approval.created_at)}</span>
                             </div>
-                            <p className="text-sm text-slate-600">
+                            <p className="text-sm text-slate-600 dark:text-slate-300">
                               {approval.action === 'approve' ? 'Aprobó la solicitud' :
                                approval.action === 'reject' ? 'Rechazó la solicitud' :
                                approval.action === 'created' ? 'Creó la solicitud' :
@@ -1078,7 +1078,7 @@ function RequestsTable({
     return (
       <div className="p-8 text-center">
         <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-slate-500">Cargando solicitudes...</p>
+        <p className="text-slate-500 dark:text-slate-400">Cargando solicitudes...</p>
       </div>
     );
   }
@@ -1088,7 +1088,7 @@ function RequestsTable({
       <div className="p-12 text-center">
         <Receipt className="w-12 h-12 mx-auto text-slate-300 mb-4" />
         <h3 className="text-lg font-medium text-slate-700 mb-2">No hay solicitudes</h3>
-        <p className="text-slate-500">
+        <p className="text-slate-500 dark:text-slate-400">
           {isApprovalView 
             ? "No hay solicitudes pendientes de aprobación" 
             : "Cree una nueva solicitud para comenzar"
@@ -1102,7 +1102,7 @@ function RequestsTable({
     <div className="overflow-x-auto">
       <Table>
         <TableHeader>
-          <TableRow className="bg-slate-50">
+          <TableRow className="bg-slate-50 dark:bg-slate-800">
             <TableHead>Solicitud</TableHead>
             <TableHead>Solicitante</TableHead>
             <TableHead>Tipo</TableHead>
@@ -1116,17 +1116,17 @@ function RequestsTable({
           {requests.map((request) => {
             const StatusIcon = statusStyles[request.status]?.icon || Clock;
             return (
-              <TableRow key={request.request_id} className="hover:bg-slate-50" data-testid={`expense-row-${request.request_id}`}>
+              <TableRow key={request.request_id} className="hover:bg-slate-50 dark:bg-slate-800" data-testid={`expense-row-${request.request_id}`}>
                 <TableCell>
                   <div>
-                    <p className="font-medium text-slate-800">{request.title}</p>
+                    <p className="font-medium text-slate-800 dark:text-slate-100">{request.title}</p>
                     <p className="text-xs text-slate-400">{request.request_id}</p>
                   </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
-                      <User className="w-4 h-4 text-slate-500" />
+                      <User className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                     </div>
                     <div>
                       <p className="text-sm">{request.employee_name}</p>

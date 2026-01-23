@@ -65,8 +65,8 @@ export default function PayrollDashboardPage() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">Dashboard de Nómina</h1>
-            <p className="text-slate-500">Métricas y análisis de tu fuerza laboral</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Dashboard de Nómina</h1>
+            <p className="text-slate-500 dark:text-slate-400">Métricas y análisis de tu fuerza laboral</p>
           </div>
           <Button onClick={fetchStats} variant="outline" size="sm">
             <RefreshCw className="w-4 h-4 mr-2" />Actualizar
@@ -237,11 +237,11 @@ export default function PayrollDashboardPage() {
                   
                   <div className="grid grid-cols-2 gap-4 pt-4 border-t">
                     <div className="text-center p-4 bg-slate-50 rounded-lg">
-                      <p className="text-sm text-slate-500">Neto Pagado a Empleados</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">Neto Pagado a Empleados</p>
                       <p className="text-2xl font-bold text-emerald-600">{formatCurrency(employer_costs.total_net_salary)}</p>
                     </div>
                     <div className="text-center p-4 bg-slate-50 rounded-lg">
-                      <p className="text-sm text-slate-500">Costo Total Empleador</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">Costo Total Empleador</p>
                       <p className="text-2xl font-bold text-blue-600">{formatCurrency(employer_costs.total_employer_cost)}</p>
                     </div>
                   </div>
@@ -264,7 +264,7 @@ export default function PayrollDashboardPage() {
               {top_salaries && top_salaries.length > 0 ? (
                 <div className="space-y-2">
                   {top_salaries.map((emp, idx) => (
-                    <div key={emp.employee_id} className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50">
+                    <div key={emp.employee_id} className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 dark:bg-slate-800">
                       <div className="flex items-center gap-3">
                         <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
                           idx === 0 ? 'bg-amber-100 text-amber-700' : 
@@ -275,7 +275,7 @@ export default function PayrollDashboardPage() {
                         </span>
                         <div>
                           <p className="font-medium text-sm">{emp.name}</p>
-                          <p className="text-xs text-slate-500">{emp.department}</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">{emp.department}</p>
                         </div>
                       </div>
                       <span className="font-mono text-sm font-semibold text-emerald-600">

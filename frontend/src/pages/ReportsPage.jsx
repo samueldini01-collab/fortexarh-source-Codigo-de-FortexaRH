@@ -78,11 +78,11 @@ export default function ReportsPage() {
     <DashboardLayout title="Reportes y Analytics">
       <div className="space-y-6" data-testid="reports-page">
         {/* Filters */}
-        <Card className="border-slate-200">
+        <Card className="border-slate-200 dark:border-slate-700">
           <CardContent className="p-4">
             <div className="flex flex-wrap gap-4 items-center">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-slate-600">Período:</span>
+                <span className="text-sm text-slate-600 dark:text-slate-300">Período:</span>
                 <Select value={selectedMonth} onValueChange={setSelectedMonth}>
                   <SelectTrigger className="w-32" data-testid="report-month">
                     <SelectValue />
@@ -147,10 +147,10 @@ export default function ReportsPage() {
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Payroll Chart */}
-          <Card className="border-slate-200">
+          <Card className="border-slate-200 dark:border-slate-700">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-slate-500" />
+                <DollarSign className="w-5 h-5 text-slate-500 dark:text-slate-400" />
                 Nómina por Empleado
               </CardTitle>
             </CardHeader>
@@ -168,7 +168,7 @@ export default function ReportsPage() {
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="h-64 flex items-center justify-center text-slate-500">
+                <div className="h-64 flex items-center justify-center text-slate-500 dark:text-slate-400">
                   No hay datos para mostrar
                 </div>
               )}
@@ -176,10 +176,10 @@ export default function ReportsPage() {
           </Card>
 
           {/* Attendance Pie Chart */}
-          <Card className="border-slate-200">
+          <Card className="border-slate-200 dark:border-slate-700">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-slate-500" />
+                <Clock className="w-5 h-5 text-slate-500 dark:text-slate-400" />
                 Resumen de Asistencias
               </CardTitle>
             </CardHeader>
@@ -210,13 +210,13 @@ export default function ReportsPage() {
                     {attendancePieData.map((entry, index) => (
                       <div key={entry.name} className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index] }} />
-                        <span className="text-sm text-slate-600">{entry.name}: {entry.value}</span>
+                        <span className="text-sm text-slate-600 dark:text-slate-300">{entry.name}: {entry.value}</span>
                       </div>
                     ))}
                   </div>
                 </div>
               ) : (
-                <div className="h-64 flex items-center justify-center text-slate-500">
+                <div className="h-64 flex items-center justify-center text-slate-500 dark:text-slate-400">
                   No hay datos para mostrar
                 </div>
               )}
@@ -225,10 +225,10 @@ export default function ReportsPage() {
         </div>
 
         {/* Attendance by Employee */}
-        <Card className="border-slate-200">
+        <Card className="border-slate-200 dark:border-slate-700">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-slate-500" />
+              <Users className="w-5 h-5 text-slate-500 dark:text-slate-400" />
               Asistencia por Empleado
             </CardTitle>
           </CardHeader>
@@ -273,7 +273,7 @@ export default function ReportsPage() {
                 </TableBody>
               </Table>
             ) : (
-              <div className="text-center py-12 text-slate-500">
+              <div className="text-center py-12 text-slate-500 dark:text-slate-400">
                 No hay datos de asistencia para este período
               </div>
             )}

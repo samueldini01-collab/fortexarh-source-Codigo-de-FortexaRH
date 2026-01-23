@@ -118,8 +118,8 @@ export default function MetricsDashboardPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">Dashboard de Métricas</h1>
-            <p className="text-slate-500">Análisis avanzado de nómina, empleados y préstamos</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Dashboard de Métricas</h1>
+            <p className="text-slate-500 dark:text-slate-400">Análisis avanzado de nómina, empleados y préstamos</p>
           </div>
           <div className="flex items-center gap-4">
             <Select value={selectedYear.toString()} onValueChange={(v) => setSelectedYear(parseInt(v))}>
@@ -145,8 +145,8 @@ export default function MetricsDashboardPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Nómina Mensual</p>
-                  <p className="text-2xl font-bold text-slate-800">{formatCurrency(currentMonthData.gross)}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Nómina Mensual</p>
+                  <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{formatCurrency(currentMonthData.gross)}</p>
                   <div className={`flex items-center text-sm mt-1 ${grossChange >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
                     {grossChange >= 0 ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
                     <span>{formatPercent(Math.abs(grossChange))} vs mes anterior</span>
@@ -163,8 +163,8 @@ export default function MetricsDashboardPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Total Empleados</p>
-                  <p className="text-2xl font-bold text-slate-800">{metrics?.employee_count || currentMonthData.employees || 0}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Total Empleados</p>
+                  <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{metrics?.employee_count || currentMonthData.employees || 0}</p>
                   <div className="flex items-center text-sm mt-1 text-emerald-600">
                     <UserPlus className="w-4 h-4 mr-1" />
                     <span>{employeeMetrics?.new_this_month || 2} nuevos este mes</span>
@@ -181,8 +181,8 @@ export default function MetricsDashboardPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Préstamos Activos</p>
-                  <p className="text-2xl font-bold text-slate-800">{loanMetrics?.total_active_loans || 0}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Préstamos Activos</p>
+                  <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{loanMetrics?.total_active_loans || 0}</p>
                   <p className="text-sm text-amber-600 mt-1">
                     {formatCurrency(loanMetrics?.total_pending || 0)} pendiente
                   </p>
@@ -198,8 +198,8 @@ export default function MetricsDashboardPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Costo por Empleado</p>
-                  <p className="text-2xl font-bold text-slate-800">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Costo por Empleado</p>
+                  <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">
                     {formatCurrency(currentMonthData.gross / (currentMonthData.employees || 1))}
                   </p>
                   <p className="text-sm text-slate-500 mt-1">Promedio mensual</p>
@@ -328,8 +328,8 @@ export default function MetricsDashboardPage() {
                   <span className="font-bold text-amber-800">{formatCurrency(loanMetrics?.total_pending || 0)}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                  <span className="text-sm text-slate-700">Empleados con Préstamos</span>
-                  <span className="font-bold text-slate-800">{loanMetrics?.employees_with_loans || 0}</span>
+                  <span className="text-sm text-slate-700 dark:text-slate-200">Empleados con Préstamos</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-100">{loanMetrics?.employees_with_loans || 0}</span>
                 </div>
               </div>
             </CardContent>
@@ -346,31 +346,31 @@ export default function MetricsDashboardPage() {
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Rotación de personal</span>
+                  <span className="text-sm text-slate-600 dark:text-slate-300">Rotación de personal</span>
                   <Badge className="bg-emerald-100 text-emerald-700">
                     {employeeMetrics?.turnover_rate || 5}%
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Vacaciones pendientes</span>
+                  <span className="text-sm text-slate-600 dark:text-slate-300">Vacaciones pendientes</span>
                   <Badge className="bg-amber-100 text-amber-700">
                     {metrics?.pending_vacations || 12} días
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Evaluaciones este mes</span>
+                  <span className="text-sm text-slate-600 dark:text-slate-300">Evaluaciones este mes</span>
                   <Badge className="bg-blue-100 text-blue-700">
                     {metrics?.evaluations_count || 8}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Asistencia promedio</span>
+                  <span className="text-sm text-slate-600 dark:text-slate-300">Asistencia promedio</span>
                   <Badge className="bg-emerald-100 text-emerald-700">
                     {metrics?.avg_attendance || 95}%
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Nóminas procesadas</span>
+                  <span className="text-sm text-slate-600 dark:text-slate-300">Nóminas procesadas</span>
                   <Badge className="bg-purple-100 text-purple-700">
                     {metrics?.payroll_count || payrollData.length}
                   </Badge>
@@ -391,23 +391,23 @@ export default function MetricsDashboardPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left py-3 px-4 font-medium text-slate-600">Mes</th>
-                    <th className="text-right py-3 px-4 font-medium text-slate-600">Bruto</th>
-                    <th className="text-right py-3 px-4 font-medium text-slate-600">Deducciones</th>
-                    <th className="text-right py-3 px-4 font-medium text-slate-600">Neto</th>
-                    <th className="text-right py-3 px-4 font-medium text-slate-600">Empleados</th>
-                    <th className="text-right py-3 px-4 font-medium text-slate-600">Costo/Emp</th>
+                    <th className="text-left py-3 px-4 font-medium text-slate-600 dark:text-slate-300">Mes</th>
+                    <th className="text-right py-3 px-4 font-medium text-slate-600 dark:text-slate-300">Bruto</th>
+                    <th className="text-right py-3 px-4 font-medium text-slate-600 dark:text-slate-300">Deducciones</th>
+                    <th className="text-right py-3 px-4 font-medium text-slate-600 dark:text-slate-300">Neto</th>
+                    <th className="text-right py-3 px-4 font-medium text-slate-600 dark:text-slate-300">Empleados</th>
+                    <th className="text-right py-3 px-4 font-medium text-slate-600 dark:text-slate-300">Costo/Emp</th>
                   </tr>
                 </thead>
                 <tbody>
                   {payrollData.map((row, i) => (
-                    <tr key={i} className="border-b hover:bg-slate-50">
+                    <tr key={i} className="border-b hover:bg-slate-50 dark:bg-slate-800">
                       <td className="py-3 px-4 font-medium">{row.month}</td>
                       <td className="py-3 px-4 text-right">{formatCurrency(row.gross)}</td>
                       <td className="py-3 px-4 text-right text-red-600">{formatCurrency(row.deductions)}</td>
                       <td className="py-3 px-4 text-right text-emerald-600 font-medium">{formatCurrency(row.net)}</td>
                       <td className="py-3 px-4 text-right">{row.employees}</td>
-                      <td className="py-3 px-4 text-right text-slate-500">{formatCurrency(row.gross / row.employees)}</td>
+                      <td className="py-3 px-4 text-right text-slate-500 dark:text-slate-400">{formatCurrency(row.gross / row.employees)}</td>
                     </tr>
                   ))}
                 </tbody>

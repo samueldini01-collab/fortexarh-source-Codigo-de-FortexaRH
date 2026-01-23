@@ -297,7 +297,7 @@ export default function PayrollPage() {
         </div>
 
         {/* Table */}
-        <Card className="border-slate-200">
+        <Card className="border-slate-200 dark:border-slate-700">
           <CardContent className="p-0">
             {loading ? (
               <div className="p-6 space-y-4">
@@ -308,7 +308,7 @@ export default function PayrollPage() {
             ) : payrolls.length === 0 ? (
               <div className="text-center py-12">
                 <DollarSign className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                <p className="text-slate-500">No hay nóminas registradas</p>
+                <p className="text-slate-500 dark:text-slate-400">No hay nóminas registradas</p>
               </div>
             ) : (
               <Table>

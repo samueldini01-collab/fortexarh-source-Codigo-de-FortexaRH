@@ -353,7 +353,7 @@ export default function SubscriptionsPage() {
       cancelled: "Cancelado",
       expired: "Vencido"
     };
-    return <Badge className={styles[status] || "bg-slate-100 text-slate-700"}>{labels[status] || status}</Badge>;
+    return <Badge className={styles[status] || "bg-slate-100 text-slate-700 dark:text-slate-200"}>{labels[status] || status}</Badge>;
   };
 
   const calculateTotal = (plan, empCount) => {
@@ -440,10 +440,10 @@ export default function SubscriptionsPage() {
                   })()}
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-slate-800">
+                  <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
                     {subscription?.plan_name || "Prueba Gratuita"}
                   </h2>
-                  <p className="text-slate-500">
+                  <p className="text-slate-500 dark:text-slate-400">
                     {maxEmployees === -1 || maxEmployees === 9999 
                       ? 'Empleados ilimitados' 
                       : `Hasta ${maxEmployees} empleado${maxEmployees > 1 ? 's' : ''}`}
@@ -451,15 +451,15 @@ export default function SubscriptionsPage() {
                   
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                     <div className="p-3 bg-slate-50 rounded-lg">
-                      <p className="text-xs text-slate-500">Base mensual</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Base mensual</p>
                       <p className="text-lg font-bold">{formatCurrency(currentPlan?.base_price)}</p>
                     </div>
                     <div className="p-3 bg-slate-50 rounded-lg">
-                      <p className="text-xs text-slate-500">Por empleado</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Por empleado</p>
                       <p className="text-lg font-bold">{formatCurrency(currentPlan?.price_per_employee)}</p>
                     </div>
                     <div className="p-3 bg-slate-50 rounded-lg">
-                      <p className="text-xs text-slate-500">Empleados</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Empleados</p>
                       <p className="text-lg font-bold">{subscription?.current_employees || 0}</p>
                     </div>
                     <div className="p-3 bg-emerald-50 rounded-lg">
@@ -506,7 +506,7 @@ export default function SubscriptionsPage() {
             <CardContent className="space-y-4">
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-slate-500">Empleados</span>
+                  <span className="text-slate-500 dark:text-slate-400">Empleados</span>
                   <span className="font-medium">
                     {subscription?.current_employees || 0} / {maxEmployees === -1 || maxEmployees === 9999 ? '∞' : maxEmployees}
                   </span>
@@ -525,7 +525,7 @@ export default function SubscriptionsPage() {
               
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-slate-500">Usuarios</span>
+                  <span className="text-slate-500 dark:text-slate-400">Usuarios</span>
                   <span className="font-medium">
                     {subscription?.current_users || 0} / {includedUsers + (subscription?.additional_users || 0)}
                   </span>
@@ -541,7 +541,7 @@ export default function SubscriptionsPage() {
               </div>
 
               <div className="pt-4 border-t">
-                <p className="text-sm text-slate-500">Período actual</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Período actual</p>
                 <p className="font-medium">
                   {formatDate(subscription?.current_period_start)} - {formatDate(subscription?.current_period_end)}
                 </p>
@@ -597,25 +597,25 @@ export default function SubscriptionsPage() {
                       <h3 className="text-xl font-bold">{plan.name}</h3>
                       <div className="mt-2">
                         <span className="text-3xl font-bold">{formatCurrency(plan.base_price)}</span>
-                        <span className="text-slate-500">/mes</span>
+                        <span className="text-slate-500 dark:text-slate-400">/mes</span>
                       </div>
-                      <p className="text-sm text-slate-500">+ {formatCurrency(plan.price_per_employee)}/empleado</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">+ {formatCurrency(plan.price_per_employee)}/empleado</p>
                     </div>
 
                     <div className="space-y-2 mb-6">
-                      <p className="text-sm font-medium text-slate-700">
+                      <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
                         {plan.max_employees === -1 || plan.max_employees === 9999 
                           ? 'Empleados ilimitados' 
                           : `Hasta ${plan.max_employees} empleados`}
                       </p>
-                      <p className="text-sm text-slate-500">{plan.included_users} usuarios incluidos</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{plan.included_users} usuarios incluidos</p>
                     </div>
 
                     <div className="space-y-2 mb-6 max-h-48 overflow-y-auto">
                       {(plan.features || []).slice(0, 8).map((feature, idx) => (
                         <div key={idx} className="flex items-start gap-2 text-sm">
                           <Check className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
-                          <span className="text-slate-600">{feature}</span>
+                          <span className="text-slate-600 dark:text-slate-300">{feature}</span>
                         </div>
                       ))}
                       {(plan.features || []).length > 8 && (
@@ -655,7 +655,7 @@ export default function SubscriptionsPage() {
           </CardHeader>
           <CardContent>
             {invoices.length === 0 ? (
-              <div className="text-center py-8 text-slate-500">
+              <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                 <FileText className="w-12 h-12 mx-auto text-slate-300 mb-3" />
                 <p>No hay facturas disponibles</p>
                 <p className="text-sm">Las facturas aparecerán aquí después de realizar un pago</p>
@@ -745,8 +745,8 @@ export default function SubscriptionsPage() {
                           'text-amber-500'
                         }`} />
                         <h4 className="font-bold">{plan.name}</h4>
-                        <p className="text-2xl font-bold mt-1">{formatCurrency(plan.base_price)}<span className="text-sm font-normal text-slate-500">/mes</span></p>
-                        <p className="text-xs text-slate-500">+ {formatCurrency(plan.price_per_employee)}/empleado</p>
+                        <p className="text-2xl font-bold mt-1">{formatCurrency(plan.base_price)}<span className="text-sm font-normal text-slate-500 dark:text-slate-400">/mes</span></p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">+ {formatCurrency(plan.price_per_employee)}/empleado</p>
                         <p className="text-xs text-slate-400 mt-2">
                           {plan.max_employees === 9999 ? 'Ilimitados' : `Hasta ${plan.max_employees}`} empleados
                         </p>
@@ -953,7 +953,7 @@ export default function SubscriptionsPage() {
             <div className="text-center py-6">
               <Loader2 className="w-12 h-12 mx-auto text-blue-500 animate-spin mb-4" />
               <h2 className="text-xl font-bold text-slate-900 mb-2">Verificando Pago</h2>
-              <p className="text-slate-600">
+              <p className="text-slate-600 dark:text-slate-300">
                 Por favor espere mientras confirmamos su pago...
               </p>
             </div>
@@ -992,11 +992,11 @@ export default function SubscriptionsPage() {
                     
                     <div className="mt-4 space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-slate-600">Precio actual:</span>
+                        <span className="text-slate-600 dark:text-slate-300">Precio actual:</span>
                         <span className="line-through text-slate-400">{formatCurrency(cancellationInfo.current_plan?.monthly_cost)}/mes</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-600">Nuevo precio:</span>
+                        <span className="text-slate-600 dark:text-slate-300">Nuevo precio:</span>
                         <span className="font-bold text-emerald-600">{formatCurrency(cancellationInfo.retention_offer?.discounted_monthly)}/mes</span>
                       </div>
                       <div className="flex justify-between pt-2 border-t">
@@ -1022,7 +1022,7 @@ export default function SubscriptionsPage() {
                   </Button>
                   <Button 
                     variant="ghost" 
-                    className="w-full text-slate-500"
+                    className="w-full text-slate-500 dark:text-slate-400"
                     onClick={() => setCancelStep(2)}
                   >
                     No gracias, continuar con la cancelación
@@ -1128,7 +1128,7 @@ export default function SubscriptionsPage() {
                   </div>
                   
                   <div className="bg-slate-50 rounded-lg p-4">
-                    <p className="text-sm text-slate-600">
+                    <p className="text-sm text-slate-600 dark:text-slate-300">
                       <strong>Nota:</strong> Tendrás acceso hasta el final de tu período de facturación actual. 
                       Tus datos se mantendrán guardados por 30 días por si decides volver.
                     </p>

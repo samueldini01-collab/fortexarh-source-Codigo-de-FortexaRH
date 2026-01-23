@@ -278,8 +278,8 @@ export default function UsersManagementPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">Gestión de Usuarios</h1>
-            <p className="text-slate-500">Administre los usuarios y roles del sistema</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Gestión de Usuarios</h1>
+            <p className="text-slate-500 dark:text-slate-400">Administre los usuarios y roles del sistema</p>
           </div>
           <div className="flex items-center gap-3">
             <Badge variant="outline" className="text-sm">
@@ -351,7 +351,7 @@ export default function UsersManagementPage() {
                           <span className="font-medium">{user.name}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-slate-500">{user.email}</TableCell>
+                      <TableCell className="text-slate-500 dark:text-slate-400">{user.email}</TableCell>
                       <TableCell>
                         <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
                           {ROLES.find(r => r.id === user.role)?.name || user.role}
@@ -452,7 +452,7 @@ export default function UsersManagementPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {/* Default Roles */}
                   {ROLES.map(role => (
-                    <Card key={role.id} className="border-slate-200">
+                    <Card key={role.id} className="border-slate-200 dark:border-slate-700">
                       <CardHeader className="pb-2">
                         <div className="flex items-center justify-between">
                           <CardTitle className="text-lg">{role.name}</CardTitle>
@@ -500,13 +500,13 @@ export default function UsersManagementPage() {
                     <p className="text-center text-slate-500 py-8">No hay actividades registradas</p>
                   ) : (
                     activities.map(activity => (
-                      <div key={activity.activity_id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-slate-50">
+                      <div key={activity.activity_id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-slate-50 dark:bg-slate-800">
                         <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
                           <Activity className="w-5 h-5 text-blue-600" />
                         </div>
                         <div className="flex-1">
-                          <p className="font-medium text-slate-800">{activity.details}</p>
-                          <div className="flex items-center gap-2 text-sm text-slate-500">
+                          <p className="font-medium text-slate-800 dark:text-slate-100">{activity.details}</p>
+                          <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
                             <Clock className="w-3 h-3" />
                             {new Date(activity.timestamp).toLocaleString()}
                           </div>
@@ -750,7 +750,7 @@ export default function UsersManagementPage() {
             
             <div className="space-y-4">
               <div className="p-3 bg-slate-50 rounded-lg">
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-slate-600 dark:text-slate-300">
                   <strong>Usuario:</strong> {passwordUser?.email}
                 </p>
               </div>
@@ -770,7 +770,7 @@ export default function UsersManagementPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-300"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -792,7 +792,7 @@ export default function UsersManagementPage() {
                 </div>
               </div>
               
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 El usuario podrá cambiar esta contraseña después de iniciar sesión.
               </p>
             </div>

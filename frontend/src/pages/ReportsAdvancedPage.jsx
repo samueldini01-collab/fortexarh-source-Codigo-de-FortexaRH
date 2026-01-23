@@ -303,8 +303,8 @@ export default function ReportsAdvancedPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">Reportes Avanzados</h1>
-            <p className="text-slate-500">Genera reportes personalizados con filtros avanzados</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Reportes Avanzados</h1>
+            <p className="text-slate-500 dark:text-slate-400">Genera reportes personalizados con filtros avanzados</p>
           </div>
         </div>
 
@@ -544,7 +544,7 @@ export default function ReportsAdvancedPage() {
               </CardHeader>
               <CardContent>
                 {savedFilters.length === 0 ? (
-                  <div className="text-center py-12 text-slate-500">
+                  <div className="text-center py-12 text-slate-500 dark:text-slate-400">
                     <Save className="w-12 h-12 mx-auto text-slate-300 mb-3" />
                     <p className="font-medium">No hay filtros guardados</p>
                     <p className="text-sm">Guarda un filtro desde la pestaña de generación</p>

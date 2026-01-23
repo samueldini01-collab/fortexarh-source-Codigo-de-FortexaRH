@@ -277,8 +277,8 @@ export default function DocumentsPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">Documentos y Cartas</h1>
-            <p className="text-slate-500">Genera constancias, cartas y certificados</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Documentos y Cartas</h1>
+            <p className="text-slate-500 dark:text-slate-400">Genera constancias, cartas y certificados</p>
           </div>
           <div className="flex gap-2">
             <Button onClick={fetchData} variant="outline" size="sm">
@@ -347,7 +347,7 @@ export default function DocumentsPage() {
                               <Icon className={`w-5 h-5 text-${color}-600`} />
                             </div>
                             <div className="flex-1">
-                              <h4 className="font-medium text-slate-800">{template.name}</h4>
+                              <h4 className="font-medium text-slate-800 dark:text-slate-100">{template.name}</h4>
                               <p className="text-xs text-slate-500 mt-1">{template.description}</p>
                               {isSelected && <Check className="w-4 h-4 text-emerald-500 mt-2" />}
                             </div>
@@ -389,7 +389,7 @@ export default function DocumentsPage() {
                         </div>
                         <div>
                           <p className="font-medium text-sm">{selectedEmployeeData.first_name} {selectedEmployeeData.last_name}</p>
-                          <p className="text-xs text-slate-500">{selectedEmployeeData.position}</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">{selectedEmployeeData.position}</p>
                         </div>
                       </div>
                     </div>
@@ -399,7 +399,7 @@ export default function DocumentsPage() {
                   {selectedTemplate?.template_id === "constancia_trabajo" && (
                     <div className="space-y-3 pt-2 border-t">
                       <h4 className="text-sm font-medium">Opciones de la Constancia</h4>
-                      <p className="text-xs text-slate-500">Seleccione qué información incluir en el documento</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Seleccione qué información incluir en el documento</p>
                       
                       <div className="flex items-center justify-between py-1">
                         <Label className="text-sm">Fecha de contratación</Label>
@@ -680,19 +680,19 @@ export default function DocumentsPage() {
                 {history.length === 0 ? (
                   <div className="text-center py-12">
                     <History className="w-12 h-12 mx-auto text-slate-300 mb-4" />
-                    <p className="text-slate-500">No hay documentos generados</p>
+                    <p className="text-slate-500 dark:text-slate-400">No hay documentos generados</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {history.map(doc => (
-                      <div key={doc.document_id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-slate-50">
+                      <div key={doc.document_id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-slate-50 dark:bg-slate-800">
                         <div className="flex items-center gap-4">
                           <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                             <FileText className="w-5 h-5 text-blue-600" />
                           </div>
                           <div>
                             <p className="font-medium">{doc.template_name}</p>
-                            <p className="text-sm text-slate-500">
+                            <p className="text-sm text-slate-500 dark:text-slate-400">
                               {doc.employee_name} • {new Date(doc.created_at).toLocaleDateString('es-DO')}
                             </p>
                           </div>
@@ -788,7 +788,7 @@ export default function DocumentsPage() {
                   rows={15}
                   className="font-mono text-sm"
                 />
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Variables disponibles: {"{{company_name}}"}, {"{{employee_name}}"}, {"{{employee_document}}"}, {"{{position}}"}, {"{{department}}"}, {"{{hire_date}}"}, {"{{salary}}"}, {"{{date}}"}, {"{{day}}"}, {"{{month}}"}, {"{{year}}"}, {"{{city}}"}, {"{{authorized_by}}"}, {"{{authorized_position}}"}
                 </p>
               </div>

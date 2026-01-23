@@ -420,7 +420,7 @@ export default function OrganigramaPage() {
         >
           {hasChildren ? (
             <button onClick={() => toggleExpand(node.node_id)} className="p-0.5 hover:bg-slate-200 rounded">
-              {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-500" /> : <ChevronRight className="w-4 h-4 text-slate-500" />}
+              {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-500 dark:text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-500 dark:text-slate-400" />}
             </button>
           ) : (
             <div className="w-5" />
@@ -553,9 +553,9 @@ export default function OrganigramaPage() {
                     <Building2 className="w-6 h-6" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-slate-800">{unit.name}</h3>
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100">{unit.name}</h3>
                     {unit.code && <Badge variant="outline" className="mt-1">{unit.code}</Badge>}
-                    <div className="flex gap-4 mt-3 text-sm text-slate-500">
+                    <div className="flex gap-4 mt-3 text-sm text-slate-500 dark:text-slate-400">
                       <span className="flex items-center gap-1">
                         <Building2 className="w-4 h-4" />{childCount} sub-unidades
                       </span>
@@ -708,21 +708,21 @@ export default function OrganigramaPage() {
                   <Card>
                     <CardContent className="p-4 text-center">
                       <Building2 className="w-8 h-8 mx-auto text-blue-500 mb-2" />
-                      <p className="text-sm text-slate-500">Unidades Organizativas</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">Unidades Organizativas</p>
                       <p className="text-2xl font-bold">{stats.unitCount}</p>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardContent className="p-4 text-center">
                       <Briefcase className="w-8 h-8 mx-auto text-emerald-500 mb-2" />
-                      <p className="text-sm text-slate-500">Posiciones Definidas</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">Posiciones Definidas</p>
                       <p className="text-2xl font-bold">{stats.positionCount}</p>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardContent className="p-4 text-center">
                       <Users className="w-8 h-8 mx-auto text-purple-500 mb-2" />
-                      <p className="text-sm text-slate-500">Plazas Totales</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">Plazas Totales</p>
                       <p className="text-2xl font-bold">{stats.positionCount}</p>
                     </CardContent>
                   </Card>
@@ -735,14 +735,14 @@ export default function OrganigramaPage() {
                         <div className="w-2 h-2 rounded-full bg-blue-500" />
                         <span className="font-medium">{unit.name}</span>
                         <Badge variant="outline" className="text-xs">{unit.code}</Badge>
-                        <span className="ml-auto text-xs text-slate-500">{unit.positions} pos.</span>
+                        <span className="ml-auto text-xs text-slate-500 dark:text-slate-400">{unit.positions} pos.</span>
                       </div>
                       {unit.children?.filter(c => c.enabled).map((child, cidx) => (
                         <div key={cidx} className="ml-6 flex items-center gap-2 py-1 text-sm">
                           <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
                           <span>{child.name}</span>
                           <Badge variant="outline" className="text-xs">{child.code}</Badge>
-                          <span className="ml-auto text-xs text-slate-500">{child.positions} pos.</span>
+                          <span className="ml-auto text-xs text-slate-500 dark:text-slate-400">{child.positions} pos.</span>
                         </div>
                       ))}
                     </div>
@@ -788,8 +788,8 @@ export default function OrganigramaPage() {
               <Network className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-slate-800">Organigrama</h1>
-              <p className="text-sm text-slate-500">Visualice y gestione la estructura de su organización</p>
+              <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">Organigrama</h1>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Visualice y gestione la estructura de su organización</p>
             </div>
           </div>
           

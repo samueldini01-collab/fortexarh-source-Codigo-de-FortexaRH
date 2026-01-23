@@ -384,7 +384,7 @@ export default function TemplatesPage() {
                     <div className="flex items-center justify-between py-2">
                       <div className="space-y-0.5">
                         <Label>Plantilla Activa</Label>
-                        <p className="text-sm text-slate-500">Disponible para generar documentos</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">Disponible para generar documentos</p>
                       </div>
                       <Switch
                         checked={formData.is_active}
@@ -413,7 +413,7 @@ export default function TemplatesPage() {
                 {Array(6).fill(0).map((_, i) => <Skeleton key={i} className="h-48 w-full" />)}
               </div>
             ) : templates.length === 0 ? (
-              <Card className="border-slate-200">
+              <Card className="border-slate-200 dark:border-slate-700">
                 <CardContent className="text-center py-12">
                   <FileText className="w-16 h-16 mx-auto mb-4 text-slate-300" />
                   <p className="text-slate-500 mb-2">No hay plantillas creadas</p>
@@ -436,7 +436,7 @@ export default function TemplatesPage() {
                           </Badge>
                         </div>
                         <CardTitle className="text-lg mt-3">{template.name}</CardTitle>
-                        <p className="text-sm text-slate-500">{typeInfo?.label}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{typeInfo?.label}</p>
                       </CardHeader>
                       <CardContent>
                         <p className="text-sm text-slate-600 line-clamp-2 mb-4">
@@ -475,16 +475,16 @@ export default function TemplatesPage() {
           {/* Documents Tab */}
           <TabsContent value="documents">
             {documents.length === 0 ? (
-              <Card className="border-slate-200">
+              <Card className="border-slate-200 dark:border-slate-700">
                 <CardContent className="text-center py-12">
                   <FileSignature className="w-16 h-16 mx-auto mb-4 text-slate-300" />
-                  <p className="text-slate-500">No hay documentos generados</p>
+                  <p className="text-slate-500 dark:text-slate-400">No hay documentos generados</p>
                 </CardContent>
               </Card>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {documents.map((doc) => (
-                  <Card key={doc.document_id} className="border-slate-200">
+                  <Card key={doc.document_id} className="border-slate-200 dark:border-slate-700">
                     <CardHeader className="pb-2">
                       <div className="flex items-start justify-between">
                         <FileText className="w-8 h-8 text-slate-400" />
@@ -495,7 +495,7 @@ export default function TemplatesPage() {
                         </Badge>
                       </div>
                       <CardTitle className="text-lg mt-2">{doc.template_name}</CardTitle>
-                      <p className="text-sm text-slate-500">{doc.employee_name}</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{doc.employee_name}</p>
                     </CardHeader>
                     <CardContent>
                       <p className="text-xs text-slate-400 mb-4">
@@ -503,7 +503,7 @@ export default function TemplatesPage() {
                         {doc.signed_at && <> • Firmado: {new Date(doc.signed_at).toLocaleDateString('es-MX')}</>}
                       </p>
                       {doc.signature_data && (
-                        <div className="border rounded-lg p-2 mb-3 bg-slate-50">
+                        <div className="border rounded-lg p-2 mb-3 bg-slate-50 dark:bg-slate-800">
                           <img src={doc.signature_data} alt="Firma" className="h-12 object-contain mx-auto" />
                         </div>
                       )}
@@ -576,7 +576,7 @@ export default function TemplatesPage() {
             </DialogHeader>
             
             <div className="space-y-4 mt-4">
-              <p className="text-sm text-slate-600">Firma en el recuadro de abajo con tu mouse o dedo:</p>
+              <p className="text-sm text-slate-600 dark:text-slate-300">Firma en el recuadro de abajo con tu mouse o dedo:</p>
               
               <div className="border-2 border-dashed border-slate-300 rounded-lg bg-white">
                 <SignatureCanvas

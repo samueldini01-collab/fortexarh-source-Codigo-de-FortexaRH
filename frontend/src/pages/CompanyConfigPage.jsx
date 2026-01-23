@@ -371,12 +371,12 @@ export default function CompanyConfigPage() {
         
         {/* Preview in document */}
         {logoPreview && (
-          <div className="border rounded-lg p-4 bg-slate-50">
+          <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
             <h4 className="text-sm font-medium mb-3">Vista previa en documentos:</h4>
             <div className="bg-white p-6 rounded border text-center">
               <img src={logoPreview} alt="Logo preview" className="h-16 mx-auto mb-2" />
               <p className="font-semibold">{company.name || "Nombre de la Empresa"}</p>
-              <p className="text-sm text-slate-500">RNC: {company.rnc || "000-00000-0"}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">RNC: {company.rnc || "000-00000-0"}</p>
             </div>
           </div>
         )}
@@ -518,7 +518,7 @@ export default function CompanyConfigPage() {
         </div>
         
         {/* Preview */}
-        <div className="p-4 rounded-lg border bg-slate-50">
+        <div className="p-4 rounded-lg border bg-slate-50 dark:bg-slate-800">
           <h4 className="font-medium mb-2">Vista Previa</h4>
           <div 
             className="p-4 rounded-lg bg-white border"
@@ -671,7 +671,7 @@ export default function CompanyConfigPage() {
               </div>
               <div>
                 <h4 className="font-medium">Notificaciones por Correo</h4>
-                <p className="text-sm text-slate-500">Recibir resúmenes semanales y alertas importantes.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Recibir resúmenes semanales y alertas importantes.</p>
               </div>
             </div>
             <Switch 
@@ -687,7 +687,7 @@ export default function CompanyConfigPage() {
               </div>
               <div>
                 <h4 className="font-medium">Notificaciones SMS</h4>
-                <p className="text-sm text-slate-500">Alertas urgentes enviadas a móviles registrados.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Alertas urgentes enviadas a móviles registrados.</p>
               </div>
             </div>
             <Switch 
@@ -703,7 +703,7 @@ export default function CompanyConfigPage() {
               </div>
               <div>
                 <h4 className="font-medium">Notificaciones Push</h4>
-                <p className="text-sm text-slate-500">Alertas en tiempo real en la aplicación y navegador.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Alertas en tiempo real en la aplicación y navegador.</p>
               </div>
             </div>
             <Switch 
@@ -719,7 +719,7 @@ export default function CompanyConfigPage() {
               </div>
               <div>
                 <h4 className="font-medium">Portal de Autogestión</h4>
-                <p className="text-sm text-slate-500">Permitir a empleados actualizar sus propios datos de contacto.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Permitir a empleados actualizar sus propios datos de contacto.</p>
               </div>
             </div>
             <Switch 
@@ -754,7 +754,7 @@ export default function CompanyConfigPage() {
               </div>
               <div>
                 <h4 className="font-medium">{integration.name}</h4>
-                <p className="text-sm text-slate-500">{integration.description}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{integration.description}</p>
               </div>
             </div>
             <Button 
@@ -806,11 +806,11 @@ export default function CompanyConfigPage() {
         ) : (
           <div className="space-y-3">
             {auditLog.map((log, idx) => (
-              <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-slate-50">
+              <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800">
                 <div className="w-2 h-2 rounded-full bg-blue-500 mt-2" />
                 <div className="flex-1">
                   <p className="font-medium text-sm">{log.action}</p>
-                  <p className="text-xs text-slate-500">{log.user} • {log.timestamp}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{log.user} • {log.timestamp}</p>
                 </div>
               </div>
             ))}
@@ -836,8 +836,8 @@ export default function CompanyConfigPage() {
       <div className="space-y-6" data-testid="company-config-page">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Configuración de Empresa</h1>
-          <p className="text-slate-500">Administra la identidad, apariencia e integraciones de tu organización.</p>
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Configuración de Empresa</h1>
+          <p className="text-slate-500 dark:text-slate-400">Administra la identidad, apariencia e integraciones de tu organización.</p>
         </div>
         
         {/* Tabs */}

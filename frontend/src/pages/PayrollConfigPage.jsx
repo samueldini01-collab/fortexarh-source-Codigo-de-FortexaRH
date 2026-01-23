@@ -121,7 +121,7 @@ export default function PayrollConfigPage() {
   const InputWithTooltip = ({ label, field, value, tooltip, suffix = "%" }) => (
     <div className="space-y-2">
       <div className="flex items-center gap-1">
-        <Label className="text-sm text-slate-600">{label}</Label>
+        <Label className="text-sm text-slate-600 dark:text-slate-300">{label}</Label>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
@@ -139,7 +139,7 @@ export default function PayrollConfigPage() {
           step="0.01"
           value={value}
           onChange={(e) => updateConfig(field, e.target.value)}
-          className="pr-8 bg-white border-slate-200"
+          className="pr-8 bg-white border-slate-200 dark:border-slate-700"
         />
         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">
           {suffix}
@@ -151,7 +151,7 @@ export default function PayrollConfigPage() {
   const CurrencyInput = ({ label, field, value, tooltip }) => (
     <div className="space-y-2">
       <div className="flex items-center gap-1">
-        <Label className="text-sm text-slate-600">{label}</Label>
+        <Label className="text-sm text-slate-600 dark:text-slate-300">{label}</Label>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
@@ -172,7 +172,7 @@ export default function PayrollConfigPage() {
           step="0.01"
           value={value}
           onChange={(e) => updateConfig(field, e.target.value)}
-          className="pl-12 bg-white border-slate-200"
+          className="pl-12 bg-white border-slate-200 dark:border-slate-700"
         />
       </div>
     </div>
@@ -193,7 +193,7 @@ export default function PayrollConfigPage() {
       <div className="space-y-6 max-w-4xl" data-testid="payroll-config-page">
         {/* Header */}
         <div>
-          <p className="text-slate-500">
+          <p className="text-slate-500 dark:text-slate-400">
             Configura las tasas y montos para el cálculo automático de nómina
           </p>
         </div>
@@ -214,7 +214,7 @@ export default function PayrollConfigPage() {
         </div>
 
         {/* Overtime Rates */}
-        <Card className="border-slate-200">
+        <Card className="border-slate-200 dark:border-slate-700">
           <CardHeader className="pb-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -254,7 +254,7 @@ export default function PayrollConfigPage() {
         </Card>
 
         {/* Employee Deductions */}
-        <Card className="border-slate-200">
+        <Card className="border-slate-200 dark:border-slate-700">
           <CardHeader className="pb-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
@@ -282,7 +282,7 @@ export default function PayrollConfigPage() {
         </Card>
 
         {/* Employer Contributions */}
-        <Card className="border-slate-200">
+        <Card className="border-slate-200 dark:border-slate-700">
           <CardHeader className="pb-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -322,7 +322,7 @@ export default function PayrollConfigPage() {
         </Card>
 
         {/* ISR Configuration */}
-        <Card className="border-slate-200">
+        <Card className="border-slate-200 dark:border-slate-700">
           <CardHeader className="pb-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">

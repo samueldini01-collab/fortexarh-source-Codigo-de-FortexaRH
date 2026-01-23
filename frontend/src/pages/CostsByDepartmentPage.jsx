@@ -109,7 +109,7 @@ export default function CostsByDepartmentPage() {
       <div className="space-y-6" data-testid="costs-department-page">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Costos por Departamento</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">Costos por Departamento</h1>
             <p className="text-sm sm:text-base text-slate-600 mt-1">
               Análisis detallado de costos de nómina por departamento
             </p>
@@ -155,7 +155,7 @@ export default function CostsByDepartmentPage() {
                     <Users className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-slate-600">Empleados</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-300">Empleados</p>
                     <p className="text-xl sm:text-2xl font-bold" data-testid="employee-count">
                       {costReport.summary.employee_count}
                     </p>
@@ -170,7 +170,7 @@ export default function CostsByDepartmentPage() {
                     <DollarSign className="w-5 h-5 text-emerald-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-slate-600">Salario Bruto</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-300">Salario Bruto</p>
                     <p className="text-lg sm:text-xl font-bold" data-testid="total-gross">
                       {formatCurrency(costReport.summary.total_gross)}
                     </p>
@@ -185,7 +185,7 @@ export default function CostsByDepartmentPage() {
                     <Building2 className="w-5 h-5 text-amber-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-slate-600">Aportes Patronales</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-300">Aportes Patronales</p>
                     <p className="text-lg sm:text-xl font-bold" data-testid="employer-contributions">
                       {formatCurrency(costReport.summary.total_employer_contributions)}
                     </p>
@@ -200,7 +200,7 @@ export default function CostsByDepartmentPage() {
                     <TrendingUp className="w-5 h-5 text-purple-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-slate-600">Costo Total</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-300">Costo Total</p>
                     <p className="text-lg sm:text-xl font-bold text-purple-600" data-testid="grand-total">
                       {formatCurrency(costReport.summary.grand_total_cost)}
                     </p>
@@ -225,7 +225,7 @@ export default function CostsByDepartmentPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm" data-testid="department-table">
                   <thead>
-                    <tr className="border-b bg-slate-50">
+                    <tr className="border-b bg-slate-50 dark:bg-slate-800">
                       <th className="text-left py-3 px-4 font-medium">Departamento</th>
                       <th className="text-center py-3 px-4 font-medium">Empleados</th>
                       <th className="text-right py-3 px-4 font-medium">Salario Bruto</th>
@@ -237,7 +237,7 @@ export default function CostsByDepartmentPage() {
                   </thead>
                   <tbody>
                     {costReport.departments.map((dept, idx) => (
-                      <tr key={idx} className="border-b hover:bg-slate-50">
+                      <tr key={idx} className="border-b hover:bg-slate-50 dark:bg-slate-800">
                         <td className="py-3 px-4 font-medium">{dept.department}</td>
                         <td className="py-3 px-4 text-center">{dept.employee_count}</td>
                         <td className="py-3 px-4 text-right">{formatCurrency(dept.gross_salary)}</td>
@@ -249,7 +249,7 @@ export default function CostsByDepartmentPage() {
                         </td>
                         <td className="py-3 px-4 text-right font-semibold">{formatCurrency(dept.total_cost)}</td>
                         <td className="py-3 px-4 text-right">
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-slate-100">
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800">
                             {dept.percentage_of_total}%
                           </span>
                         </td>
@@ -321,7 +321,7 @@ export default function CostsByDepartmentPage() {
             <CardContent className="py-12 text-center">
               <Building2 className="w-12 h-12 mx-auto mb-4 text-slate-300" />
               <h3 className="text-lg font-medium text-slate-900 mb-2">Sin datos de departamentos</h3>
-              <p className="text-slate-500">
+              <p className="text-slate-500 dark:text-slate-400">
                 No hay empleados registrados o no tienen departamento asignado.
               </p>
             </CardContent>
