@@ -165,6 +165,7 @@ export default function EmployeesPage() {
   const [selectedEmployees, setSelectedEmployees] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [quickFilter, setQuickFilter] = useState(null); // 'all', 'active', 'inactive', 'on_leave'
+  const [departmentFilter, setDepartmentFilter] = useState("all");
   
   const { getAuthHeaders } = useAuth();
 
