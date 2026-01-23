@@ -451,8 +451,8 @@ export default function EmployeesPage() {
         {/* Stats Cards - Clickable for quick filtering */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card 
-            className={`border-slate-200 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'all' || !quickFilter ? 'ring-2 ring-slate-400' : ''}`}
-            onClick={() => setQuickFilter(quickFilter === 'all' ? null : 'all')}
+            className={`border-slate-200 cursor-pointer transition-all hover:shadow-md ${!quickFilter ? 'ring-2 ring-slate-400' : ''}`}
+            onClick={() => setQuickFilter(null)}
           >
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -514,20 +514,36 @@ export default function EmployeesPage() {
           </Card>
         </div>
         
-        {/* Active filter indicator */}
-        {quickFilter && (
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="px-3 py-1">
-              Filtro: {quickFilter === 'all' ? 'Todos' : quickFilter === 'active' ? 'Activos' : quickFilter === 'inactive' ? 'Inactivos' : 'En Licencia'}
-              <button 
-                onClick={() => setQuickFilter(null)} 
-                className="ml-2 hover:text-red-500"
-              >
-                ×
-              </button>
-            </Badge>
-            <span className="text-sm text-slate-500">
-              {filteredEmployees.length} de {employees.length} empleados
+        {/* Filter Controls: Department dropdown + Active filter indicator */}
+        <div className="flex flex-wrap items-center gap-4">
+          <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
+            <SelectTrigger className="w-52">
+              <SelectValue placeholder="Todos los departamentos" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos los departamentos</SelectItem>
+              {uniqueDepartments.map(dept => (
+                <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          
+          {getFilterLabel() && (
+            <>
+              <Badge variant="outline" className="px-3 py-1">
+                Filtro: {getFilterLabel()}
+                <button 
+                  onClick={() => { setQuickFilter(null); setDepartmentFilter("all"); }} 
+                  className="ml-2 hover:text-red-500"
+                >
+                  ×
+                </button>
+              </Badge>
+              <span className="text-sm text-slate-500">
+                {filteredEmployees.length} de {employees.length} empleados
+              </span>
+            </>
+          )}
             </span>
           </div>
         )}
