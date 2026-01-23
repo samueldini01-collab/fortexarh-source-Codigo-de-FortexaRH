@@ -10,11 +10,17 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 ### Backend (FastAPI + MongoDB)
 ```
 /app/backend/
-├── server.py           # API principal (~5,250 líneas - REFACTORIZADO)
-├── routes/             # Routers modulares
+├── server.py           # API principal (~2,698 líneas - REFACTORIZADO)
+├── routes/             # 27 Routers modulares
 │   ├── auth.py         # Autenticación, login, reset password
 │   ├── employees.py    # CRUD empleados
 │   ├── payroll.py      # Nómina básica
+│   ├── payroll_v2.py   # ✅ Nómina avanzada (extraído de server.py)
+│   ├── checkout.py     # ✅ Checkout y pagos Stripe (extraído)
+│   ├── invoices.py     # ✅ Facturas (extraído)
+│   ├── search.py       # ✅ Búsqueda global (inicializado)
+│   ├── expenses.py     # ✅ Gastos y Viáticos
+│   ├── projects.py     # ✅ Proyectos (extraído)
 │   ├── attendance.py   # Asistencias
 │   ├── vacations.py    # Vacaciones
 │   ├── evaluations.py  # Evaluaciones
@@ -28,7 +34,7 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 │   ├── loans.py        # Préstamos a empleados
 │   ├── notifications.py # Notificaciones automáticas
 │   ├── reports.py      # Reportes avanzados
-│   ├── expenses.py     # ✅ NEW: Gastos y Viáticos
+│   ├── documents.py    # ✅ Generación documentos con logo
 │   └── ... más routers
 ├── services/
 │   └── pdf_service.py  # Generación PDFs
@@ -42,76 +48,77 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 
 ## Implementado en Esta Sesión (2026-01-23)
 
-### ✅ Módulo de Gastos y Viáticos - COMPLETADO
-Implementación completa del módulo de solicitudes de gastos y viáticos con:
+### ✅ Refactorización de `server.py` - COMPLETADA
+Reducción de ~3,402 a ~2,698 líneas (aprox. 700 líneas menos en esta sesión):
 
-**Backend (`/app/backend/routes/expenses.py`)**
-- **9 Categorías de Gastos**: transporte, alojamiento, alimentación, materiales, viajes, gastos administrativos, educación, uniformes, otros
-- **CRUD Completo**: Crear, listar, ver detalles, actualizar, cancelar solicitudes
-- **Flujo de Doble Aprobación**: 
-  - `pending` → `approved_manager` (aprobado por gerente)
-  - `approved_manager` → `approved_admin` (aprobado por administrador)
-  - Admins pueden aprobar directamente a `approved_admin`
-- **Solicitud de Anticipos**: Opción de solicitar anticipo antes del gasto
-- **Desglose de Presupuesto**: Por categoría con montos y descripciones
-- **Historial de Aprobaciones**: Registro completo de quién aprobó/rechazó y cuándo
-- **Reportes de Gastos**: Resumen por estado, tipo y departamento
-- **Adjuntos**: Subir recibos y comprobantes (base64)
+**Módulos Extraídos:**
+- `/app/backend/routes/checkout.py` - Checkout público, autenticado, webhook Stripe y activación de suscripciones
+- `/app/backend/routes/invoices.py` - Listado, detalles y descarga PDF de facturas  
+- `/app/backend/routes/search.py` - Búsqueda global (inicializado correctamente)
 
-**Frontend (`/app/frontend/src/pages/ExpensesPage.jsx`)**
-- Dashboard con estadísticas: Total solicitudes, Anticipos pendientes, Total estimado, Ahorro
-- 3 Tabs: "Mis Solicitudes", "Por Aprobar" (con badge), "Todas"
-- Tabla de solicitudes con filtros por estado y búsqueda
-- Modal de nueva solicitud con:
-  - Campos: título, tipo, destino, fechas, presupuesto, descripción
-  - Desglose de presupuesto con categorías
-  - Toggle para solicitar anticipo
-- Modal de aprobación/rechazo con comentarios
-- Modal de detalles con historial de aprobaciones
+**Mejoras Técnicas:**
+- Eliminado código duplicado de checkout, invoices y search
+- Corregido bug: checkout_router incluido dos veces
+- Inicialización correcta de 27 routers modulares
+- Función `activate_subscription` movida al router de checkout
 
-**Endpoints API:**
-- `GET /api/expenses/categories` - Obtener categorías
-- `POST /api/expenses/requests` - Crear solicitud
-- `GET /api/expenses/requests` - Listar solicitudes
-- `GET /api/expenses/requests/pending-approval` - Pendientes de aprobación
-- `GET /api/expenses/requests/{id}` - Detalles de solicitud
-- `POST /api/expenses/requests/{id}/approve` - Aprobar/rechazar
-- `DELETE /api/expenses/requests/{id}` - Cancelar solicitud
-- `GET /api/expenses/reports/summary` - Resumen de gastos
+### ✅ Logo de Empresa en Documentos
+- Actualizado `/app/backend/routes/documents.py` para soportar logo base64 y logo_url
+- Templates actualizados con soporte para logo:
+  - Constancia de Trabajo
+  - Carta de Recomendación  
+  - Certificado de Ingresos
+  - Carta de Terminación
 
-**Testing:**
-- 13 tests backend (100% passed)
-- Frontend verificado con Playwright
-- Archivo de tests: `/app/backend/tests/test_expenses.py`
+### ✅ Testing Backend (30/30 tests - 100%)
+- Test suite completa en `/app/backend/tests/test_refactored_routers.py`
+- Endpoints validados:
+  - Checkout (público y autenticado)
+  - Invoices (lista y detalles)
+  - Search (empleados, vacaciones, nómina, asistencia, préstamos)
+  - Documents (templates y generación)
+  - Company Settings
 
 ## Tareas Pendientes
 
-### P1 - Alta Prioridad - ✅ COMPLETADO
-1. **Refactorización de `server.py`** - Reducido de 5,257 a 3,480 líneas (-34%)
-   - ✅ Creado `/app/backend/utils/payroll_constants.py` con constantes compartidas
-   - ✅ Creado `/app/backend/routes/payroll_v2.py` con 28 endpoints extraídos
-   - Endpoints restantes en server.py: `/invoices/*`, `/checkout/*`, `/projects/*`
-
 ### P2 - Media Prioridad
 1. **Corregir advertencias ESLint** (1,467 warnings)
+   - 32 warnings críticos de `react-hooks/exhaustive-deps`
    - 1,426 warnings de `no-unused-vars` (imports no usados)
-   - 32 warnings de `react-hooks/exhaustive-deps`
-   - Archivos principales afectados: PayrollV2Page.jsx, AccountingPage.jsx, DashboardLayout.jsx
+   - Archivos principales: PayrollV2Page.jsx, AccountingPage.jsx, DashboardLayout.jsx
+
+### P2 - Nueva
+2. **Búsqueda Global en Frontend**
+   - Backend listo (`/api/search?q=`)
+   - Implementar componente UI de búsqueda en header
+   - Agregar dropdown de resultados con navegación
 
 ### P3 - Backlog
 1. Integraciones Enterprise (QuickBooks, SAP, Oracle - MOCKED)
 2. Reportes avanzados con gráficos y exportación PDF/Excel
+3. Notificaciones en Portal de Empleados
+4. PWA/App Móvil del portal de empleados
+5. Firma electrónica para documentos
 
-### P3 - Backlog
-1. Personalización avanzada de documentos
-2. Notificaciones en Portal de Empleados (aprobación vacaciones, nómina)
+## Resumen de Reducción de server.py
+
+| Sesión | Líneas Antes | Líneas Después | Reducción |
+|--------|--------------|----------------|-----------|
+| Anterior | 5,257 | 3,402 | -35% |
+| Esta sesión | 3,402 | 2,698 | -21% |
+| **Total** | **5,257** | **2,698** | **-49%** |
 
 ## Credenciales de Prueba
 - **Admin**: test_refactor@fortexa.com / test123 (Plan Pro)
 - **Portal Empleado**: 001-0000001-1 / portal123
 
 ## Integraciones
-- ✅ Stripe (Pagos)
-- ✅ Resend (Emails)
-- ✅ Google Auth (Emergent-managed)
+- ✅ Stripe (Pagos) - Funcionando
+- ✅ Resend (Emails) - Funcionando
+- ✅ Google Auth (Emergent-managed) - Funcionando
 - 🔄 QuickBooks, SAP, Oracle, Dynamics (MOCKED)
+
+## Archivos de Tests
+- `/app/backend/tests/test_refactored_routers.py` - Tests de routers extraídos
+- `/app/backend/tests/test_expenses.py` - Tests del módulo de gastos
+- `/app/test_reports/iteration_15.json` - Último reporte de testing
