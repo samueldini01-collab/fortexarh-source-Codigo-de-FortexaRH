@@ -549,6 +549,12 @@ export default function DashboardLayout({ children, title }) {
                   <CreditCard className="w-4 h-4 mr-2" /> Facturación
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setIsHelpOpen(true)}>
+                  <Keyboard className="w-4 h-4 mr-2" /> 
+                  Atajos de Teclado
+                  <span className="ml-auto text-xs text-slate-400 font-mono">?</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-red-600">
                   <LogOut className="w-4 h-4 mr-2" /> Cerrar Sesión
                 </DropdownMenuItem>
