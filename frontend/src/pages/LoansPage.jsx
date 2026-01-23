@@ -287,21 +287,30 @@ export default function LoansPage() {
             <h1 className="text-2xl font-bold text-slate-800">Préstamos a Empleados</h1>
             <p className="text-slate-500">Gestiona préstamos y descuentos automáticos en nómina</p>
           </div>
-          <Button onClick={() => { resetForm(); setShowCreateModal(true); }} data-testid="create-loan-btn">
-            <Plus className="w-4 h-4 mr-2" />
-            Nuevo Préstamo
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={exportToCSV} size="sm">
+              <Download className="w-4 h-4 mr-2" />
+              Exportar
+            </Button>
+            <Button onClick={() => { resetForm(); setShowCreateModal(true); }} data-testid="create-loan-btn">
+              <Plus className="w-4 h-4 mr-2" />
+              Nuevo Préstamo
+            </Button>
+          </div>
         </div>
 
-        {/* Summary Cards */}
+        {/* Summary Cards - Clickable for filtering */}
         {summary && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card>
+            <Card 
+              className={`cursor-pointer transition-all hover:shadow-md ${filterStatus === 'active' ? 'ring-2 ring-blue-400' : ''}`}
+              onClick={() => setFilterStatus(filterStatus === 'active' ? 'all' : 'active')}
+            >
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-slate-500">Préstamos Activos</p>
-                    <p className="text-2xl font-bold text-slate-800">{summary.total_active_loans}</p>
+                    <p className="text-2xl font-bold text-blue-600">{summary.total_active_loans}</p>
                   </div>
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
                     <Wallet className="w-6 h-6 text-blue-600" />
