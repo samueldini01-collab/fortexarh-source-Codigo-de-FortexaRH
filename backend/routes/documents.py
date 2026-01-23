@@ -249,7 +249,7 @@ DEFAULT_TEMPLATES = [
     </div>
 </div>
 """,
-        "variables": ["company_name", "company_rnc", "company_address", "company_phone",
+        "variables": ["company_name", "company_rnc", "company_address", "company_phone", "company_logo",
                      "employee_name", "employee_document", "hire_date", "position",
                      "base_salary", "commissions", "other_income", "total_income",
                      "contract_type", "payment_method", "purpose", "city", "day", "month", "year",
