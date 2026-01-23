@@ -14,7 +14,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://fortexarh-app.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://fortexa-hrm.preview.emergentagent.com')
 
 # TSS Rates for Dominican Republic
 SFS_EMPLOYEE_RATE = 0.0307  # 3.07%
