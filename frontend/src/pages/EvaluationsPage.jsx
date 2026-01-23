@@ -210,8 +210,9 @@ export default function EvaluationsPage() {
           </div>
         )}
         
-        {/* Old summary cards removed and replaced with clickable stats above */}
-        <Card className="border-purple-200 bg-purple-50/50">
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card className="border-emerald-200 bg-emerald-50/50">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
