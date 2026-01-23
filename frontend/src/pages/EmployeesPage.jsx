@@ -164,6 +164,7 @@ export default function EmployeesPage() {
   const [showBulkEditModal, setShowBulkEditModal] = useState(false);
   const [selectedEmployees, setSelectedEmployees] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [quickFilter, setQuickFilter] = useState(null); // 'all', 'active', 'inactive', 'on_leave'
   
   const { getAuthHeaders } = useAuth();
 
