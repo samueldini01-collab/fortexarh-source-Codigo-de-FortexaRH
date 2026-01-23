@@ -226,7 +226,7 @@ const SubscriptionProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const { user, token } = useAuth();
 
-  const fetchSubscription = async () => {
+  const fetchSubscription = useCallback(async () => {
     if (!user || !token) {
       setLoading(false);
       return;
@@ -242,11 +242,11 @@ const SubscriptionProvider = ({ children }) => {
       setSubscription(null);
     }
     setLoading(false);
-  };
+  }, [user, token]);
 
   useEffect(() => {
     fetchSubscription();
-  }, [user, token]);
+  }, [fetchSubscription]);
 
   // Check if a feature is accessible based on subscription
   const canAccessFeature = (featureId) => {
