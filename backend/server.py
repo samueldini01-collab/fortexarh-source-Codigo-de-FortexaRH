@@ -5230,6 +5230,7 @@ api_router.include_router(dgii_reports_router)
 api_router.include_router(notifications_router)
 api_router.include_router(reports_router)
 api_router.include_router(expenses_router)
+api_router.include_router(payroll_v2_router)
 
 # Include the API router
 app.include_router(api_router)
