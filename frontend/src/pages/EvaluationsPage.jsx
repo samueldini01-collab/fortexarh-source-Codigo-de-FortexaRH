@@ -41,13 +41,10 @@ export default function EvaluationsPage() {
     communication_score: "3",
     comments: ""
   });
+  const [quickFilter, setQuickFilter] = useState(null);
   const { getAuthHeaders, user } = useAuth();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [evalRes, empRes] = await Promise.all([
         axios.get(`${API}/evaluations`, { headers: getAuthHeaders(), withCredentials: true }),
@@ -60,7 +57,33 @@ export default function EvaluationsPage() {
     } finally {
       setLoading(false);
     }
+  }, [getAuthHeaders]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Stats
+  const stats = {
+    total: evaluations.length,
+    excellent: evaluations.filter(e => getAverageScore(e) >= 4.5).length,
+    good: evaluations.filter(e => getAverageScore(e) >= 3.5 && getAverageScore(e) < 4.5).length,
+    needsWork: evaluations.filter(e => getAverageScore(e) < 3.5).length
   };
+
+  function getAverageScore(e) {
+    return (e.performance_score + e.goals_achieved + e.teamwork_score + e.communication_score) / 4;
+  }
+
+  // Filter evaluations
+  const filteredEvaluations = evaluations.filter(e => {
+    if (!quickFilter) return true;
+    const avg = getAverageScore(e);
+    if (quickFilter === 'excellent') return avg >= 4.5;
+    if (quickFilter === 'good') return avg >= 3.5 && avg < 4.5;
+    if (quickFilter === 'needsWork') return avg < 3.5;
+    return true;
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
