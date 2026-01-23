@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth, API } from "@/App";
 import axios from "axios";
@@ -67,11 +67,7 @@ export default function TemplatesPage() {
   const signatureRef = useRef(null);
   const documentRef = useRef(null);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [templatesRes, employeesRes, docsRes] = await Promise.all([
         axios.get(`${API}/templates`, { headers: getAuthHeaders(), withCredentials: true }),
@@ -86,7 +82,11 @@ export default function TemplatesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAuthHeaders]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
