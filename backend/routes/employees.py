@@ -1,16 +1,20 @@
 """
 Employees Routes - FortexaRH
-Handles employee CRUD operations
+Handles employee CRUD operations, import/export, and bulk editing
 """
-from fastapi import APIRouter, Request, HTTPException, Depends
+from fastapi import APIRouter, Request, HTTPException, Depends, UploadFile, File
+from fastapi.responses import StreamingResponse
 from fastapi.security import HTTPBearer
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List, Dict, Any
 from datetime import datetime, timezone
 import uuid
+import io
+import logging
 
 router = APIRouter(prefix="/employees", tags=["Employees"])
 security = HTTPBearer(auto_error=False)
+logger = logging.getLogger(__name__)
 
 # Will be initialized by init_router
 db = None
