@@ -134,11 +134,16 @@ export default function CompanyConfigPage() {
       });
       
       const data = response.data;
-      if (data.company) setCompany(data.company);
+      if (data.company) {
+        setCompany(data.company);
+        // Load logo from company data
+        if (data.company.logo) {
+          setLogoPreview(data.company.logo);
+        }
+      }
       if (data.appearance) setAppearance(data.appearance);
       if (data.branding) setBranding(data.branding);
       if (data.notifications) setNotifications(data.notifications);
-      if (data.logo) setLogoPreview(data.logo);
       if (data.auditLog) setAuditLog(data.auditLog);
     } catch (error) {
       // Initialize with defaults
