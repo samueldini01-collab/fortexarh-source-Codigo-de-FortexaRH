@@ -65,11 +65,7 @@ export default function PayrollConfigPage() {
   const [originalConfig, setOriginalConfig] = useState(null);
   const { getAuthHeaders } = useAuth();
 
-  useEffect(() => {
-    fetchConfig();
-  }, []);
-
-  const fetchConfig = async () => {
+  const fetchConfig = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/payroll-settings`, {
         headers: getAuthHeaders(),
@@ -85,7 +81,12 @@ export default function PayrollConfigPage() {
     } finally {
       setLoading(false);
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getAuthHeaders]);
+
+  useEffect(() => {
+    fetchConfig();
+  }, [fetchConfig]);
 
   const handleSave = async () => {
     setSaving(true);

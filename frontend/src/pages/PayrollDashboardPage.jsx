@@ -22,11 +22,7 @@ export default function PayrollDashboardPage() {
   const [loading, setLoading] = useState(true);
   const { getAuthHeaders } = useAuth();
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
-
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     setLoading(true);
     try {
       const response = await axios.get(`${API}/dashboard/payroll-stats`, {
@@ -39,7 +35,11 @@ export default function PayrollDashboardPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAuthHeaders]);
+
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
 
   const formatCurrency = (value) => 
     new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'DOP', minimumFractionDigits: 0 }).format(value || 0);
