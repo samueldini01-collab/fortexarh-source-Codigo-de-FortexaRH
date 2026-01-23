@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth, API } from "@/App";
 import axios from "axios";
@@ -34,11 +34,7 @@ export default function ReportsPage() {
   const [selectedMonth, setSelectedMonth] = useState((new Date().getMonth() + 1).toString());
   const { getAuthHeaders } = useAuth();
 
-  useEffect(() => {
-    fetchReports();
-  }, [selectedYear, selectedMonth]);
-
-  const fetchReports = async () => {
+  const fetchReports = useCallback(async () => {
     setLoading(true);
     try {
       const [payrollRes, attendanceRes] = await Promise.all([
@@ -52,7 +48,11 @@ export default function ReportsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedYear, selectedMonth, getAuthHeaders]);
+
+  useEffect(() => {
+    fetchReports();
+  }, [fetchReports]);
 
   const months = [
     { value: "1", label: "Enero" }, { value: "2", label: "Febrero" }, { value: "3", label: "Marzo" },
