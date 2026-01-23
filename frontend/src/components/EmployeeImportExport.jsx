@@ -573,7 +573,7 @@ export function BulkEditModal({ open, onClose, selectedEmployees, onSuccess }) {
 
 // ===================== EXPORT BUTTON =====================
 
-export function ExportEmployeesButton() {
+export function ExportEmployeesButton({ asMenuItem = false }) {
   const [loading, setLoading] = useState(false);
   const { getAuthHeaders } = useAuth();
 
@@ -604,13 +604,16 @@ export function ExportEmployeesButton() {
   };
 
   return (
-    <Button variant="outline" onClick={handleExport} disabled={loading}>
+    <div 
+      onClick={handleExport} 
+      className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+    >
       {loading ? (
         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
       ) : (
         <Download className="w-4 h-4 mr-2" />
       )}
-      Exportar Excel
-    </Button>
+      Exportar a Excel
+    </div>
   );
 }
