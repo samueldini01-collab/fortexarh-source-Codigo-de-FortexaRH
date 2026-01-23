@@ -498,6 +498,13 @@ export default function EmployeesPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-12">
+                      <Checkbox 
+                        checked={selectAll && filteredEmployees.length > 0}
+                        onCheckedChange={handleSelectAll}
+                        aria-label="Seleccionar todos"
+                      />
+                    </TableHead>
                     <TableHead>Empleado</TableHead>
                     <TableHead>Departamento</TableHead>
                     <TableHead>Posición</TableHead>
@@ -508,7 +515,18 @@ export default function EmployeesPage() {
                 </TableHeader>
                 <TableBody>
                   {filteredEmployees.map(emp => (
-                    <TableRow key={emp.employee_id} data-testid={`employee-row-${emp.employee_id}`}>
+                    <TableRow 
+                      key={emp.employee_id} 
+                      data-testid={`employee-row-${emp.employee_id}`}
+                      className={isEmployeeSelected(emp.employee_id) ? "bg-blue-50" : ""}
+                    >
+                      <TableCell>
+                        <Checkbox 
+                          checked={isEmployeeSelected(emp.employee_id)}
+                          onCheckedChange={(checked) => handleSelectEmployee(emp, checked)}
+                          aria-label={`Seleccionar ${emp.first_name} ${emp.last_name}`}
+                        />
+                      </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <Avatar className="w-10 h-10">
