@@ -508,16 +508,40 @@ export default function LandingPage() {
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4">Nómina y calculadora</td>
+                  <td className="py-3 px-4">Nómina (TSS, AFP, ISR)</td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
+                  <td className="py-3 px-4">Asistencias y vacaciones</td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50">
                   <td className="py-3 px-4">Módulo de préstamos</td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100">
+                  <td className="py-3 px-4">Contabilidad y catálogos NIIF</td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50">
+                  <td className="py-3 px-4">Reportes DGII (TSS, ISR)</td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100">
+                  <td className="py-3 px-4 font-medium text-purple-700">Gastos y viáticos (doble aprobación)</td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-purple-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-purple-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
                   <td className="py-3 px-4">Evaluaciones de desempeño</td>
@@ -538,13 +562,13 @@ export default function LandingPage() {
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4">Organigrama</td>
+                  <td className="py-3 px-4">Organigrama interactivo</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4">Integración QuickBooks</td>
+                  <td className="py-3 px-4">Notificaciones automáticas</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
@@ -553,19 +577,19 @@ export default function LandingPage() {
                   <td className="py-3 px-4">Roles personalizados</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
                   <td className="py-3 px-4">API personalizada</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4">Integración SAP/Oracle</td>
+                  <td className="py-3 px-4">Integración SAP/Oracle/Dynamics</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
                   <td className="py-3 px-4">Soporte</td>
