@@ -29,7 +29,7 @@ import {
 import { 
   Wallet, Plus, Eye, Trash2, DollarSign, Users, Calendar,
   RefreshCw, TrendingUp, TrendingDown, CreditCard, Receipt,
-  ChevronDown, ChevronUp, AlertCircle
+  ChevronDown, ChevronUp, AlertCircle, Download
 } from "lucide-react";
 import { toast } from "sonner";
 
