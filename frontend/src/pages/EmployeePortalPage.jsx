@@ -31,7 +31,6 @@ function EmployeeAuthProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem("employee_portal_token"));
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
   const fetchProfile = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/employee-portal/profile`, {
