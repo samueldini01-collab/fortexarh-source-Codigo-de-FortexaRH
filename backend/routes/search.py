@@ -33,10 +33,9 @@ async def get_current_user(request: Request, credentials = Depends(security)):
 @router.get("/search")
 async def global_search(q: str, current_user: dict = Depends(get_current_user)):
     """Global search across employees, payroll, vacations, journal entries, etc."""
-    if not db or not get_current_user:
+    if db is None:
         return {"results": [], "error": "Router not initialized"}
     
-    # Re-call with actual dependency
     company_id = current_user.get("company_id")
     results = []
     query_lower = q.lower()
