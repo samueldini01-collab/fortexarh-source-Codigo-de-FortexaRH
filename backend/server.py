@@ -845,6 +845,7 @@ FEATURE_ACCESS = {
         "organigrama": False,
         "accounting": False,
         "loans": False,
+        "expenses": False,
         "employee_portal": False,
         "subscriptions": True,
         "settings": True
@@ -861,6 +862,7 @@ FEATURE_ACCESS = {
         "organigrama": False,
         "accounting": True,
         "loans": True,
+        "expenses": False,
         "employee_portal": False,
         "subscriptions": True,
         "settings": True
@@ -877,6 +879,7 @@ FEATURE_ACCESS = {
         "organigrama": True,
         "accounting": True,
         "loans": True,
+        "expenses": True,
         "employee_portal": True,
         "subscriptions": True,
         "settings": True
@@ -893,6 +896,7 @@ FEATURE_ACCESS = {
         "organigrama": True,
         "accounting": True,
         "loans": True,
+        "expenses": True,
         "employee_portal": True,
         "subscriptions": True,
         "settings": True,
