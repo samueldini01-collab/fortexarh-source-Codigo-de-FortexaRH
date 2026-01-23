@@ -637,6 +637,9 @@ async def generate_document(data: DocumentGenerateRequest, request: Request):
         
         # Defaults
         "show_salary": data.custom_values.get("show_salary", False),
+        "show_hire_date": data.custom_values.get("show_hire_date", True),
+        "show_position": data.custom_values.get("show_position", True),
+        "show_department": data.custom_values.get("show_department", True),
         "commissions": "0.00",
         "other_income": "0.00",
         "total_income": f"{employee.get('base_salary', 0):,.2f}",
