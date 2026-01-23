@@ -50,6 +50,7 @@ from routes.system_users import router as system_users_router, init_router as in
 from routes.dgii_reports import router as dgii_reports_router, init_router as init_dgii_reports_router
 from routes.notifications import router as notifications_router, init_router as init_notifications_router
 from routes.reports import router as reports_router, init_router as init_reports_router
+from routes.expenses import router as expenses_router, init_router as init_expenses_router
 
 # MongoDB connection with production-ready settings
 mongo_url = os.environ['MONGO_URL']
@@ -5197,6 +5198,7 @@ init_system_users_router(db, get_current_user)
 init_dgii_reports_router(db, get_current_user)
 init_notifications_router(db, get_current_user)
 init_reports_router(db, get_current_user)
+init_expenses_router(db, get_current_user)
 
 # Include modular routers in api_router
 api_router.include_router(loans_router)
@@ -5221,6 +5223,7 @@ api_router.include_router(system_users_router)
 api_router.include_router(dgii_reports_router)
 api_router.include_router(notifications_router)
 api_router.include_router(reports_router)
+api_router.include_router(expenses_router)
 
 # Include the API router
 app.include_router(api_router)

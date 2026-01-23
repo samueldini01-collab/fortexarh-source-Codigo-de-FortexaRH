@@ -124,16 +124,15 @@ class ExpenseVerification(BaseModel):
 # ==================== EXPENSE CATEGORIES ====================
 
 EXPENSE_CATEGORIES = [
-    {"id": "transport", "name": "Transporte", "icon": "car"},
-    {"id": "accommodation", "name": "Alojamiento", "icon": "hotel"},
-    {"id": "meals", "name": "Alimentación", "icon": "utensils"},
-    {"id": "fuel", "name": "Combustible", "icon": "fuel"},
-    {"id": "parking", "name": "Estacionamiento", "icon": "parking"},
-    {"id": "tolls", "name": "Peajes", "icon": "road"},
-    {"id": "supplies", "name": "Suministros", "icon": "package"},
-    {"id": "communication", "name": "Comunicaciones", "icon": "phone"},
-    {"id": "entertainment", "name": "Representación", "icon": "users"},
-    {"id": "other", "name": "Otros", "icon": "more-horizontal"}
+    {"id": "transporte", "name": "Transporte", "icon": "car"},
+    {"id": "alojamiento", "name": "Alojamiento", "icon": "hotel"},
+    {"id": "alimentacion", "name": "Alimentación", "icon": "utensils"},
+    {"id": "materiales", "name": "Materiales", "icon": "package"},
+    {"id": "viajes", "name": "Viajes", "icon": "plane"},
+    {"id": "administrativos", "name": "Gastos Administrativos", "icon": "file-text"},
+    {"id": "educacion", "name": "Educación", "icon": "graduation-cap"},
+    {"id": "uniformes", "name": "Uniformes", "icon": "shirt"},
+    {"id": "otros", "name": "Otros", "icon": "more-horizontal"}
 ]
 
 
