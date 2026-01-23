@@ -368,6 +368,25 @@ export default function CompanyConfigPage() {
             <p>Dimensiones recomendadas: 400x400px</p>
           </div>
         </div>
+        
+        {/* Preview in document */}
+        {logoPreview && (
+          <div className="border rounded-lg p-4 bg-slate-50">
+            <h4 className="text-sm font-medium mb-3">Vista previa en documentos:</h4>
+            <div className="bg-white p-6 rounded border text-center">
+              <img src={logoPreview} alt="Logo preview" className="h-16 mx-auto mb-2" />
+              <p className="font-semibold">{company.name || "Nombre de la Empresa"}</p>
+              <p className="text-sm text-slate-500">RNC: {company.rnc || "000-00000-0"}</p>
+            </div>
+          </div>
+        )}
+        
+        <div className="flex justify-end pt-4 border-t">
+          <Button onClick={() => handleSave("logo")} disabled={saving} className="bg-purple-600 hover:bg-purple-700">
+            <Save className="w-4 h-4 mr-2" />
+            {saving ? "Guardando..." : "Guardar Logo"}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
