@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation, Link 
 import axios from "axios";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { AccessibilityIndicator } from "@/components/ThemeToggle";
 
 // Pages
 import LandingPage from "@/pages/LandingPage";
