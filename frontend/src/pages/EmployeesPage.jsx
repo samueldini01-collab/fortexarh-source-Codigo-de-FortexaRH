@@ -368,14 +368,49 @@ export default function EmployeesPage() {
               data-testid="search-employees"
             />
           </div>
-          <Button 
-            onClick={() => { resetForm(); setIsDialogOpen(true); }}
-            className="bg-slate-900 hover:bg-slate-800"
-            data-testid="add-employee-btn"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Nuevo Empleado
-          </Button>
+          
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Bulk Edit Button - shows when employees are selected */}
+            {selectedEmployees.length > 0 && (
+              <Button 
+                onClick={() => setShowBulkEditModal(true)}
+                variant="outline"
+                className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                data-testid="bulk-edit-btn"
+              >
+                <Edit3 className="w-4 h-4 mr-2" />
+                Editar {selectedEmployees.length} seleccionados
+              </Button>
+            )}
+            
+            {/* Actions Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <MoreVertical className="w-4 h-4 mr-2" />
+                  Acciones
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={() => setShowImportModal(true)}>
+                  <Upload className="w-4 h-4 mr-2" />
+                  Importar desde Excel
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <ExportEmployeesButton />
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            <Button 
+              onClick={() => { resetForm(); setIsDialogOpen(true); }}
+              className="bg-slate-900 hover:bg-slate-800"
+              data-testid="add-employee-btn"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Nuevo Empleado
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}
