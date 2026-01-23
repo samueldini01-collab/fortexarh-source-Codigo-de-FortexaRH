@@ -139,20 +139,79 @@ export default function EvaluationsPage() {
   return (
     <DashboardLayout title="Evaluaciones de Desempeño">
       <div className="space-y-6" data-testid="evaluations-page">
-        {/* Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="border-blue-200 bg-blue-50/50">
-            <CardContent className="p-6">
+        {/* Stats Cards - Clickable */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card 
+            className={`cursor-pointer transition-all hover:shadow-md ${!quickFilter ? 'ring-2 ring-slate-400' : ''}`}
+            onClick={() => setQuickFilter(null)}
+          >
+            <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-blue-600">Total Evaluaciones</p>
-                  <p className="text-3xl font-bold text-blue-700">{evaluations.length}</p>
+                  <p className="text-sm text-slate-500">Total Evaluaciones</p>
+                  <p className="text-2xl font-bold">{stats.total}</p>
                 </div>
-                <Target className="w-10 h-10 text-blue-500" />
+                <Users className="w-8 h-8 text-slate-300" />
               </div>
             </CardContent>
           </Card>
-          <Card className="border-emerald-200 bg-emerald-50/50">
+          <Card 
+            className={`border-emerald-200 bg-emerald-50/50 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'excellent' ? 'ring-2 ring-emerald-400' : ''}`}
+            onClick={() => setQuickFilter(quickFilter === 'excellent' ? null : 'excellent')}
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-emerald-600">Excelentes (≥4.5)</p>
+                  <p className="text-2xl font-bold text-emerald-700">{stats.excellent}</p>
+                </div>
+                <Award className="w-8 h-8 text-emerald-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card 
+            className={`border-blue-200 bg-blue-50/50 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'good' ? 'ring-2 ring-blue-400' : ''}`}
+            onClick={() => setQuickFilter(quickFilter === 'good' ? null : 'good')}
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-blue-600">Buenos (3.5-4.4)</p>
+                  <p className="text-2xl font-bold text-blue-700">{stats.good}</p>
+                </div>
+                <Star className="w-8 h-8 text-blue-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card 
+            className={`border-amber-200 bg-amber-50/50 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'needsWork' ? 'ring-2 ring-amber-400' : ''}`}
+            onClick={() => setQuickFilter(quickFilter === 'needsWork' ? null : 'needsWork')}
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-amber-600">Necesita Mejorar</p>
+                  <p className="text-2xl font-bold text-amber-700">{stats.needsWork}</p>
+                </div>
+                <AlertTriangle className="w-8 h-8 text-amber-500" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
+        {/* Filter indicator */}
+        {quickFilter && (
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="px-3 py-1">
+              Filtro: {quickFilter === 'excellent' ? 'Excelentes' : quickFilter === 'good' ? 'Buenos' : 'Necesita Mejorar'}
+              <button onClick={() => setQuickFilter(null)} className="ml-2 hover:text-red-500">×</button>
+            </Badge>
+            <span className="text-sm text-slate-500">{filteredEvaluations.length} de {evaluations.length} evaluaciones</span>
+          </div>
+        )}
+        
+        {/* Old summary cards removed and replaced with clickable stats above */}
+        <Card className="border-purple-200 bg-purple-50/50">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
