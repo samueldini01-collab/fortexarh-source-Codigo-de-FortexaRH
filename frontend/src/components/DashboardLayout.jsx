@@ -140,8 +140,27 @@ export default function DashboardLayout({ children, title }) {
   });
   const { user, logout, getAuthHeaders } = useAuth();
   const { subscription, canAccessFeature, isTrialExpired, getTrialDaysRemaining, isOnTrial, getCurrentPlan } = useSubscription();
+  const { registerShortcut, unregisterShortcut, setIsHelpOpen } = useKeyboardShortcuts();
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Register keyboard shortcut handlers
+  useEffect(() => {
+    registerShortcut("search", () => setShowSearchModal(true));
+    registerShortcut("toggleSidebar", () => toggleSidebarCollapsed());
+    registerShortcut("escape", () => {
+      setShowSearchModal(false);
+      setShowMenuEditor(false);
+      setShowUpgradeModal(false);
+    });
+    
+    return () => {
+      unregisterShortcut("search");
+      unregisterShortcut("toggleSidebar");
+      unregisterShortcut("escape");
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [registerShortcut, unregisterShortcut]);
 
   // Toggle sidebar collapsed state
   const toggleSidebarCollapsed = () => {
