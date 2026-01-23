@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth, API } from "@/App";
 import axios from "axios";
@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -30,7 +31,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, Calendar, Check, X, Clock } from "lucide-react";
+import { Plus, Calendar, Check, X, Clock, Download, FileSpreadsheet, Users } from "lucide-react";
 import { toast } from "sonner";
 
 const vacationTypes = [
@@ -46,6 +47,7 @@ export default function VacationsPage() {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [quickFilter, setQuickFilter] = useState(null);
   const [formData, setFormData] = useState({
     employee_id: "",
     start_date: "",
@@ -55,11 +57,7 @@ export default function VacationsPage() {
   });
   const { getAuthHeaders } = useAuth();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [vacRes, empRes] = await Promise.all([
         axios.get(`${API}/vacations`, { headers: getAuthHeaders(), withCredentials: true }),
@@ -72,6 +70,50 @@ export default function VacationsPage() {
     } finally {
       setLoading(false);
     }
+  }, [getAuthHeaders]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Filter vacations
+  const filteredVacations = vacations.filter(v => {
+    if (!quickFilter) return true;
+    return v.status === quickFilter;
+  });
+
+  // Stats
+  const stats = {
+    total: vacations.length,
+    pending: vacations.filter(v => v.status === 'pending').length,
+    approved: vacations.filter(v => v.status === 'approved').length,
+    rejected: vacations.filter(v => v.status === 'rejected').length
+  };
+
+  // Export filtered data
+  const exportToCSV = () => {
+    const headers = ['Empleado', 'Tipo', 'Fecha Inicio', 'Fecha Fin', 'Estado', 'Motivo'];
+    const rows = filteredVacations.map(v => {
+      const emp = employees.find(e => e.employee_id === v.employee_id);
+      return [
+        emp ? `${emp.first_name} ${emp.last_name}` : 'N/A',
+        vacationTypes.find(t => t.value === v.vacation_type)?.label || v.vacation_type,
+        v.start_date,
+        v.end_date,
+        v.status === 'approved' ? 'Aprobado' : v.status === 'rejected' ? 'Rechazado' : 'Pendiente',
+        v.reason || ''
+      ];
+    });
+    
+    const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `vacaciones_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success('Datos exportados');
   };
 
   const handleSubmit = async (e) => {
