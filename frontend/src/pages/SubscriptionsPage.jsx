@@ -75,26 +75,7 @@ export default function SubscriptionsPage() {
   const [cancelWouldReturn, setCancelWouldReturn] = useState(null);
   const [processingCancel, setProcessingCancel] = useState(false);
 
-  // Check for payment return from Stripe
-  useEffect(() => {
-    const sessionId = searchParams.get('session_id');
-    const status = searchParams.get('status');
-    
-    if (sessionId && status === 'success') {
-      pollPaymentStatus(sessionId);
-    } else if (status === 'cancelled') {
-      toast.info("Pago cancelado");
-      // Clear URL params
-      setSearchParams({});
-    }
-  }, [searchParams]);
-
-  useEffect(() => {
-    fetchData();
-    fetchInvoices();
-  }, []);
-
-  const fetchInvoices = async () => {
+  const fetchInvoices = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/invoices`, {
         headers: getAuthHeaders(),
@@ -104,10 +85,29 @@ export default function SubscriptionsPage() {
     } catch (error) {
       console.error("Error fetching invoices:", error);
     }
-  };
+  }, [getAuthHeaders]);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [subRes, plansRes] = await Promise.all([
+        axios.get(`${API}/subscription`, { headers: getAuthHeaders(), withCredentials: true }),
+        axios.get(`${API}/plans`, { headers: getAuthHeaders(), withCredentials: true })
+      ]);
+      setSubscription(subRes.data);
+      setPlans(plansRes.data);
+      setEmployeeCount(subRes.data.employee_count || 1);
+      setAdditionalUsers(subRes.data.additional_users || 0);
+    } catch (error) {
+      console.error("Error fetching subscription:", error);
+      toast.error("Error al cargar datos de suscripción");
+    } finally {
+      setLoading(false);
+    }
+  }, [getAuthHeaders]);
 
   // Poll payment status after returning from Stripe
-  const pollPaymentStatus = async (sessionId, attempts = 0) => {
+  const pollPaymentStatus = useCallback(async (sessionId, attempts = 0) => {
     const maxAttempts = 10;
     const pollInterval = 2000;
 
@@ -151,26 +151,26 @@ export default function SubscriptionsPage() {
       console.error("Error checking payment status:", error);
       setTimeout(() => pollPaymentStatus(sessionId, attempts + 1), pollInterval);
     }
-  };
+  }, [getAuthHeaders, fetchData, refreshSubscription, setSearchParams]);
 
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const [subRes, plansRes] = await Promise.all([
-        axios.get(`${API}/subscription`, { headers: getAuthHeaders(), withCredentials: true }),
-        axios.get(`${API}/plans`, { headers: getAuthHeaders(), withCredentials: true })
-      ]);
-      setSubscription(subRes.data);
-      setPlans(plansRes.data);
-      setEmployeeCount(subRes.data.employee_count || 1);
-      setAdditionalUsers(subRes.data.additional_users || 0);
-    } catch (error) {
-      console.error("Error fetching subscription:", error);
-      toast.error("Error al cargar datos de suscripción");
-    } finally {
-      setLoading(false);
+  // Check for payment return from Stripe
+  useEffect(() => {
+    const sessionId = searchParams.get('session_id');
+    const status = searchParams.get('status');
+    
+    if (sessionId && status === 'success') {
+      pollPaymentStatus(sessionId);
+    } else if (status === 'cancelled') {
+      toast.info("Pago cancelado");
+      // Clear URL params
+      setSearchParams({});
     }
-  };
+  }, [searchParams, pollPaymentStatus, setSearchParams]);
+
+  useEffect(() => {
+    fetchData();
+    fetchInvoices();
+  }, [fetchData, fetchInvoices]);
 
   const handleSelectPlan = async (plan) => {
     if (!plan) return;
