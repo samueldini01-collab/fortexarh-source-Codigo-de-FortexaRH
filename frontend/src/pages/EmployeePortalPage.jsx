@@ -11,7 +11,7 @@ import axios from "axios";
 import { 
   User, DollarSign, Calendar, Wallet, FileText, LogOut, Home,
   Phone, MapPin, Mail, Building2, CreditCard, AlertCircle, Check,
-  Clock, Download, Eye, Send, Loader2, Lock, ChevronRight
+  Clock, Download, Eye, EyeOff, Send, Loader2, Lock, ChevronRight
 } from "lucide-react";
 import { toast, Toaster } from "sonner";
 
