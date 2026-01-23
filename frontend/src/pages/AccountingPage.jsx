@@ -96,12 +96,7 @@ export default function AccountingPage() {
 
   const { getAuthHeaders } = useAuth();
 
-  useEffect(() => {
-    fetchData();
-    fetchCatalogTemplates();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const [entriesRes, accountsRes] = await Promise.all([
@@ -116,9 +111,9 @@ export default function AccountingPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAuthHeaders]);
 
-  const fetchCatalogTemplates = async () => {
+  const fetchCatalogTemplates = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/accounting/catalog-templates`, {
         headers: getAuthHeaders(),
@@ -128,7 +123,12 @@ export default function AccountingPage() {
     } catch (error) {
       console.error("Error fetching catalog templates:", error);
     }
-  };
+  }, [getAuthHeaders]);
+
+  useEffect(() => {
+    fetchData();
+    fetchCatalogTemplates();
+  }, [fetchData, fetchCatalogTemplates]);
 
   const loadCatalogTemplate = async (catalogId) => {
     if (!window.confirm("¿Está seguro? Esto reemplazará todas las cuentas existentes con el catálogo seleccionado.")) {
