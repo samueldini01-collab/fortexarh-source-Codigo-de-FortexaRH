@@ -59,7 +59,6 @@ export default function RegisterPage() {
       verifyPayment();
     }
   }, [sessionId, paymentStatus, verifyPayment]);
-  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
