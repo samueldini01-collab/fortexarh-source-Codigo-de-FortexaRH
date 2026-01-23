@@ -160,11 +160,7 @@ export default function OrganigramaPage() {
   const [newUnit, setNewUnit] = useState({ name: "", code: "", parent_id: null, description: "" });
   const [newPosition, setNewPosition] = useState({ title: "", unit_id: null, employee_id: null, description: "" });
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const [nodesRes, employeesRes] = await Promise.all([
@@ -182,7 +178,11 @@ export default function OrganigramaPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAuthHeaders]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   // Search filter
   const filteredNodes = nodes.filter(node => {
