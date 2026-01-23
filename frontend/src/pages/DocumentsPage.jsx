@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth, API } from "@/App";
 import axios from "axios";
@@ -87,11 +87,7 @@ export default function DocumentsPage() {
   
   const { getAuthHeaders } = useAuth();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const [templatesRes, employeesRes, historyRes, categoriesRes] = await Promise.all([
@@ -109,7 +105,11 @@ export default function DocumentsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAuthHeaders]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleGenerateDocument = async () => {
     if (!selectedTemplate || !selectedEmployee) {
