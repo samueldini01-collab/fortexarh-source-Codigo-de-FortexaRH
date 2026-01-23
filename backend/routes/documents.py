@@ -413,7 +413,7 @@ DEFAULT_TEMPLATES = [
     </div>
 </div>
 """,
-        "variables": ["company_name", "company_rnc", "city", "date", "employee_name",
+        "variables": ["company_name", "company_rnc", "company_logo", "city", "date", "employee_name",
                      "termination_date", "termination_reason", "preaviso", "cesantia",
                      "vacaciones", "regalia", "salarios_pendientes", "total_liquidacion",
                      "authorized_by", "authorized_position"],
