@@ -72,11 +72,7 @@ export default function LoansPage() {
     notes: ""
   });
 
-  useEffect(() => {
-    fetchData();
-  }, [filterStatus]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const [loansRes, summaryRes, employeesRes] = await Promise.all([
