@@ -134,9 +134,9 @@ export default function DGIIReportsPage() {
       const years = Array.isArray(response.data) ? response.data : [];
       setAvailableYears(years);
       
-      // Auto-select most recent year
+      // Auto-select most recent year (response is array of numbers, not objects)
       if (years.length > 0) {
-        setSelectedYear(years[0].year);
+        setSelectedYear(years[0]);
       }
     } catch (error) {
       console.error("Error fetching available years:", error);
