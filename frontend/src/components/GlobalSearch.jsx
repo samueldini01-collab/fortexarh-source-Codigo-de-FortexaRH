@@ -154,7 +154,7 @@ export default function GlobalSearch() {
         >
           <Search className="w-4 h-4" />
           <span className="flex-1 text-left">Buscar...</span>
-          <kbd className="hidden sm:inline-flex h-5 items-center gap-1 rounded border bg-white px-1.5 font-mono text-[10px] font-medium text-slate-500">
+          <kbd className="hidden sm:inline-flex h-5 items-center gap-1 rounded border bg-white px-1.5 font-mono text-[10px] font-medium text-slate-500 dark:text-slate-400">
             <span className="text-xs">⌘</span>K
           </kbd>
         </button>
@@ -175,7 +175,7 @@ export default function GlobalSearch() {
           </div>
           <CommandList className="max-h-[400px] overflow-y-auto">
             {!loading && query.length >= 2 && results.length === 0 && (
-              <CommandEmpty className="py-6 text-center text-sm text-slate-500">
+              <CommandEmpty className="py-6 text-center text-sm text-slate-500 dark:text-slate-400">
                 No se encontraron resultados para "{query}"
               </CommandEmpty>
             )}

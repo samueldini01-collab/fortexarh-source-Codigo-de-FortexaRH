@@ -160,7 +160,7 @@ export function ImportEmployeesModal({ open, onClose, onSuccess }) {
 
         <div className="space-y-6">
           {/* Step 1: Download Template */}
-          <Card className="border-slate-200">
+          <Card className="border-slate-200 dark:border-slate-700">
             <CardContent className="p-4">
               <div className="flex items-start justify-between">
                 <div className="space-y-1">
@@ -168,7 +168,7 @@ export function ImportEmployeesModal({ open, onClose, onSuccess }) {
                     <span className="w-6 h-6 rounded-full bg-slate-900 text-white text-xs flex items-center justify-center">1</span>
                     Descargar Plantilla
                   </h3>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
                     Descargue la plantilla Excel con todos los campos del perfil de empleados.
                     Solo <span className="text-red-600 font-medium">Nombres</span> y <span className="text-red-600 font-medium">Apellidos</span> son obligatorios.
                   </p>
@@ -182,7 +182,7 @@ export function ImportEmployeesModal({ open, onClose, onSuccess }) {
           </Card>
 
           {/* Step 2: Upload File */}
-          <Card className="border-slate-200">
+          <Card className="border-slate-200 dark:border-slate-700">
             <CardContent className="p-4">
               <div className="space-y-4">
                 <h3 className="font-medium flex items-center gap-2">
@@ -214,7 +214,7 @@ export function ImportEmployeesModal({ open, onClose, onSuccess }) {
                 </div>
 
                 {file && (
-                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                  <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
                     <FileSpreadsheet className="w-4 h-4" />
                     {file.name}
                   </div>
@@ -225,7 +225,7 @@ export function ImportEmployeesModal({ open, onClose, onSuccess }) {
 
           {/* Step 3: Preview Results */}
           {preview && (
-            <Card className="border-slate-200">
+            <Card className="border-slate-200 dark:border-slate-700">
               <CardContent className="p-4">
                 <div className="space-y-4">
                   <h3 className="font-medium flex items-center gap-2">
@@ -237,15 +237,15 @@ export function ImportEmployeesModal({ open, onClose, onSuccess }) {
                   <div className="grid grid-cols-3 gap-4">
                     <div className="p-3 bg-slate-50 rounded-lg text-center">
                       <p className="text-2xl font-bold">{preview.total_rows}</p>
-                      <p className="text-xs text-slate-500">Total Filas</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Total Filas</p>
                     </div>
                     <div className="p-3 bg-emerald-50 rounded-lg text-center">
                       <p className="text-2xl font-bold text-emerald-600">{preview.valid_rows}</p>
-                      <p className="text-xs text-slate-500">Válidas</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Válidas</p>
                     </div>
                     <div className="p-3 bg-red-50 rounded-lg text-center">
                       <p className="text-2xl font-bold text-red-600">{preview.invalid_rows}</p>
-                      <p className="text-xs text-slate-500">Con Errores</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Con Errores</p>
                     </div>
                   </div>
 
@@ -289,7 +289,7 @@ export function ImportEmployeesModal({ open, onClose, onSuccess }) {
                               const hasError = preview.errors?.some(e => e.row === row._row_number);
                               return (
                                 <TableRow key={idx} className={hasError ? "bg-red-50" : ""}>
-                                  <TableCell className="text-xs text-slate-500">{row._row_number}</TableCell>
+                                  <TableCell className="text-xs text-slate-500 dark:text-slate-400">{row._row_number}</TableCell>
                                   <TableCell>{row.first_name || "-"}</TableCell>
                                   <TableCell>{row.last_name || "-"}</TableCell>
                                   <TableCell className="text-xs">{row.email || "-"}</TableCell>
@@ -308,7 +308,7 @@ export function ImportEmployeesModal({ open, onClose, onSuccess }) {
                         </Table>
                       </div>
                       {preview.preview_data.length > 10 && (
-                        <div className="text-xs text-center p-2 bg-slate-50 text-slate-500">
+                        <div className="text-xs text-center p-2 bg-slate-50 text-slate-500 dark:text-slate-400">
                           Mostrando 10 de {preview.preview_data.length} registros
                         </div>
                       )}
@@ -476,7 +476,7 @@ export function BulkEditModal({ open, onClose, selectedEmployees, onSuccess }) {
               checked={fieldValues[field.field] || false}
               onCheckedChange={(val) => handleValueChange(field.field, val)}
             />
-            <span className="text-sm text-slate-500">
+            <span className="text-sm text-slate-500 dark:text-slate-400">
               {fieldValues[field.field] ? "Sí" : "No"}
             </span>
           </div>

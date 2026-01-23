@@ -20,7 +20,7 @@ export function StatCard({
   onClick 
 }) {
   const colorClasses = {
-    slate: { bg: "text-slate-300", ring: "ring-slate-400", text: "text-slate-600" },
+    slate: { bg: "text-slate-300", ring: "ring-slate-400", text: "text-slate-600 dark:text-slate-300" },
     emerald: { bg: "text-emerald-300", ring: "ring-emerald-400", text: "text-emerald-600" },
     blue: { bg: "text-blue-300", ring: "ring-blue-400", text: "text-blue-600" },
     amber: { bg: "text-amber-300", ring: "ring-amber-400", text: "text-amber-600" },
@@ -42,7 +42,7 @@ export function StatCard({
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-slate-500">{title}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{title}</p>
             <p className={`text-2xl font-bold ${colors.text}`}>{value}</p>
           </div>
           {Icon && <Icon className={`w-8 h-8 ${colors.bg}`} />}
@@ -69,7 +69,7 @@ export function FilterIndicator({ filterLabel, resultCount, totalCount, onClear 
           ×
         </button>
       </Badge>
-      <span className="text-sm text-slate-500">
+      <span className="text-sm text-slate-500 dark:text-slate-400">
         {resultCount} de {totalCount} registros
       </span>
     </div>
