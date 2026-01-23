@@ -158,9 +158,18 @@ export default function CompanyConfigPage() {
     try {
       let dataToSave = {};
       
+      // Include logo if set
+      const companyWithLogo = {...company};
+      if (logoPreview) {
+        companyWithLogo.logo = logoPreview;
+      }
+      
       switch (section) {
         case "general":
-          dataToSave = { company };
+          dataToSave = { company: companyWithLogo };
+          break;
+        case "logo":
+          dataToSave = { company: companyWithLogo };
           break;
         case "appearance":
           dataToSave = { appearance };
@@ -172,7 +181,7 @@ export default function CompanyConfigPage() {
           dataToSave = { notifications };
           break;
         default:
-          dataToSave = { company, appearance, branding, notifications };
+          dataToSave = { company: companyWithLogo, appearance, branding, notifications };
       }
       
       await axios.put(`${API}/company/settings`, dataToSave, {
