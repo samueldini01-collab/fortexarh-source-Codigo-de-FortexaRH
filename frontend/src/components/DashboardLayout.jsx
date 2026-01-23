@@ -67,7 +67,9 @@ import {
   Trash2,
   History,
   PieChart,
-  Receipt
+  Receipt,
+  Keyboard,
+  HelpCircle
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
