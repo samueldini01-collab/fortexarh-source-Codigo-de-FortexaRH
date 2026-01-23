@@ -298,20 +298,20 @@ export default function Dashboard() {
               ) : stats?.recent_employees?.length > 0 ? (
                 <div className="space-y-3">
                   {stats.recent_employees.map((employee, index) => (
-                    <div key={index} className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50">
-                      <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center text-slate-600 font-medium">
+                    <div key={index} className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800">
+                      <div className="w-10 h-10 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 font-medium">
                         {employee.first_name?.[0]}{employee.last_name?.[0]}
                       </div>
                       <div>
-                        <p className="font-medium text-slate-900">{employee.first_name} {employee.last_name}</p>
-                        <p className="text-sm text-slate-500">{employee.position}</p>
+                        <p className="font-medium text-slate-900 dark:text-slate-100">{employee.first_name} {employee.last_name}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{employee.position}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-slate-500">
-                  <Users className="w-12 h-12 mx-auto mb-2 text-slate-300" />
+                <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+                  <Users className="w-12 h-12 mx-auto mb-2 text-slate-300 dark:text-slate-600" />
                   <p>No hay empleados registrados</p>
                 </div>
               )}
@@ -319,10 +319,10 @@ export default function Dashboard() {
           </Card>
 
           {/* Upcoming Vacations */}
-          <Card className="border-slate-200">
+          <Card className="border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-slate-500" />
+              <CardTitle className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-100">
+                <Calendar className="w-5 h-5 text-slate-500 dark:text-slate-400" />
                 Próximas Vacaciones
               </CardTitle>
             </CardHeader>
@@ -339,14 +339,14 @@ export default function Dashboard() {
               ) : stats?.upcoming_vacations?.length > 0 ? (
                 <div className="space-y-3">
                   {stats.upcoming_vacations.map((vacation, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50">
+                    <div key={index} className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800">
                       <div>
-                        <p className="font-medium text-slate-900">{vacation.employee_name}</p>
-                        <p className="text-sm text-slate-500">{vacation.days} días</p>
+                        <p className="font-medium text-slate-900 dark:text-slate-100">{vacation.employee_name}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{vacation.days} días</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-medium text-slate-700">{vacation.start_date}</p>
-                        <span className="inline-flex px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-50 text-emerald-700">
+                        <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{vacation.start_date}</p>
+                        <span className="inline-flex px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-50 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400">
                           Aprobado
                         </span>
                       </div>
@@ -354,8 +354,8 @@ export default function Dashboard() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-slate-500">
-                  <Calendar className="w-12 h-12 mx-auto mb-2 text-slate-300" />
+                <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+                  <Calendar className="w-12 h-12 mx-auto mb-2 text-slate-300 dark:text-slate-600" />
                   <p>No hay vacaciones programadas</p>
                 </div>
               )}
