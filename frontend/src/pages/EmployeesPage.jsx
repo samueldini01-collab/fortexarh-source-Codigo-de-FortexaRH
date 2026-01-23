@@ -158,6 +158,13 @@ export default function EmployeesPage() {
   const [formData, setFormData] = useState(initialFormData);
   const [newDeduction, setNewDeduction] = useState(initialDeductionForm);
   const [newEmergencyContact, setNewEmergencyContact] = useState(initialEmergencyContactForm);
+  
+  // Import/Export/Bulk Edit states
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [showBulkEditModal, setShowBulkEditModal] = useState(false);
+  const [selectedEmployees, setSelectedEmployees] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
+  
   const { getAuthHeaders } = useAuth();
 
   const fetchEmployees = useCallback(async () => {
@@ -167,6 +174,8 @@ export default function EmployeesPage() {
         withCredentials: true
       });
       setEmployees(response.data);
+      setSelectedEmployees([]); // Reset selection on refresh
+      setSelectAll(false);
     } catch (error) {
       console.error("Error fetching employees:", error);
       toast.error("Error al cargar empleados");
@@ -178,6 +187,31 @@ export default function EmployeesPage() {
   useEffect(() => {
     fetchEmployees();
   }, [fetchEmployees]);
+  
+  // Handle select all toggle
+  const handleSelectAll = (checked) => {
+    setSelectAll(checked);
+    if (checked) {
+      setSelectedEmployees(filteredEmployees);
+    } else {
+      setSelectedEmployees([]);
+    }
+  };
+  
+  // Handle individual employee selection
+  const handleSelectEmployee = (employee, checked) => {
+    if (checked) {
+      setSelectedEmployees(prev => [...prev, employee]);
+    } else {
+      setSelectedEmployees(prev => prev.filter(e => e.employee_id !== employee.employee_id));
+      setSelectAll(false);
+    }
+  };
+  
+  // Check if employee is selected
+  const isEmployeeSelected = (employeeId) => {
+    return selectedEmployees.some(e => e.employee_id === employeeId);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
