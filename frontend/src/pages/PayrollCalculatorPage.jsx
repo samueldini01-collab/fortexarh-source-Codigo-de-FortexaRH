@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth, API } from "@/App";
 import axios from "axios";
@@ -38,11 +38,7 @@ export default function PayrollCalculatorPage() {
   const { getAuthHeaders, user } = useAuth();
   const resultRef = useRef(null);
 
-  useEffect(() => {
-    fetchEmployees();
-  }, []);
-
-  const fetchEmployees = async () => {
+  const fetchEmployees = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/employees`, {
         headers: getAuthHeaders(),
@@ -52,7 +48,11 @@ export default function PayrollCalculatorPage() {
     } catch (error) {
       console.error("Error fetching employees:", error);
     }
-  };
+  }, [getAuthHeaders]);
+
+  useEffect(() => {
+    fetchEmployees();
+  }, [fetchEmployees]);
 
   const handleEmployeeSelect = (employeeId) => {
     if (employeeId === "manual") {
