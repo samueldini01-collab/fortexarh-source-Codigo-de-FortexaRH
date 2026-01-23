@@ -87,10 +87,21 @@ Implementación completa del módulo de solicitudes de gastos y viáticos con:
 ## Tareas Pendientes
 
 ### P1 - Alta Prioridad
-1. Completar refactorización de `server.py` (aún tiene ~5,250 líneas)
-2. Corregir advertencias ESLint en frontend
+1. **Completar refactorización de `server.py`** (~5,257 líneas)
+   - Endpoints a mover a routers modulares:
+     - `/payroll-v2/*` (27 endpoints, líneas 2688-4455)
+     - `/invoices/*` (3 endpoints)
+     - `/checkout/*` (4 endpoints)
+     - `/templates/*` y `/documents/*` (7 endpoints)
+   - Patrón a seguir: Ver `routes/accounting.py` para la estructura correcta con dependency injection
 
 ### P2 - Media Prioridad
+1. **Corregir advertencias ESLint** (1,467 warnings)
+   - 1,426 warnings de `no-unused-vars` (imports no usados)
+   - 32 warnings de `react-hooks/exhaustive-deps`
+   - Archivos principales afectados: PayrollV2Page.jsx, AccountingPage.jsx, DashboardLayout.jsx
+
+### P3 - Backlog
 1. Integraciones Enterprise (QuickBooks, SAP, Oracle - MOCKED)
 2. Reportes avanzados con gráficos y exportación PDF/Excel
 
