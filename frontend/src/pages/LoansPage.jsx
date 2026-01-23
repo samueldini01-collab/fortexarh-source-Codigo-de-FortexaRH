@@ -310,10 +310,10 @@ export default function LoansPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-slate-500 dark:text-slate-400">Préstamos Activos</p>
-                    <p className="text-2xl font-bold text-blue-600">{summary.total_active_loans}</p>
+                    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{summary.total_active_loans}</p>
                   </div>
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <Wallet className="w-6 h-6 text-blue-600" />
+                    <Wallet className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                 </div>
               </CardContent>
@@ -324,10 +324,10 @@ export default function LoansPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-slate-500 dark:text-slate-400">Total Prestado</p>
-                    <p className="text-2xl font-bold text-emerald-600">{formatCurrency(summary.total_loaned)}</p>
+                    <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(summary.total_loaned)}</p>
                   </div>
                   <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
-                    <TrendingUp className="w-6 h-6 text-emerald-600" />
+                    <TrendingUp className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
                   </div>
                 </div>
               </CardContent>
@@ -341,10 +341,10 @@ export default function LoansPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-slate-500 dark:text-slate-400">Pagados</p>
-                    <p className="text-2xl font-bold text-blue-600">{formatCurrency(summary.total_paid)}</p>
+                    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{formatCurrency(summary.total_paid)}</p>
                   </div>
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <Receipt className="w-6 h-6 text-blue-600" />
+                    <Receipt className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                 </div>
               </CardContent>
@@ -358,10 +358,10 @@ export default function LoansPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-slate-500 dark:text-slate-400">En Mora</p>
-                    <p className="text-2xl font-bold text-amber-600">{formatCurrency(summary.total_pending)}</p>
+                    <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{formatCurrency(summary.total_pending)}</p>
                   </div>
                   <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
-                    <AlertCircle className="w-6 h-6 text-amber-600" />
+                    <AlertCircle className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                   </div>
                 </div>
               </CardContent>
@@ -416,7 +416,7 @@ export default function LoansPage() {
                       </TableCell>
                       <TableCell className="font-semibold">{formatCurrency(loan.amount, loan.currency)}</TableCell>
                       <TableCell>{formatCurrency(loan.monthly_payment, loan.currency)}</TableCell>
-                      <TableCell className="font-semibold text-amber-600">
+                      <TableCell className="font-semibold text-amber-600 dark:text-amber-400">
                         {formatCurrency(loan.remaining_balance, loan.currency)}
                       </TableCell>
                       <TableCell>
@@ -585,13 +585,13 @@ export default function LoansPage() {
                   <p className="text-sm text-blue-800 font-medium">Vista Previa del Préstamo</p>
                   <div className="grid grid-cols-2 gap-4 mt-2">
                     <div>
-                      <p className="text-xs text-blue-600">Cuota Mensual</p>
+                      <p className="text-xs text-blue-600 dark:text-blue-400">Cuota Mensual</p>
                       <p className="text-lg font-bold text-blue-800">
                         {formatCurrency(calculateMonthlyPayment())}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-blue-600">Total a Pagar</p>
+                      <p className="text-xs text-blue-600 dark:text-blue-400">Total a Pagar</p>
                       <p className="text-lg font-bold text-blue-800">
                         {formatCurrency(calculateMonthlyPayment() * parseInt(formData.term_months || 1))}
                       </p>
@@ -637,19 +637,19 @@ export default function LoansPage() {
                 {/* Financial Summary */}
                 <div className="grid grid-cols-4 gap-4">
                   <div className="text-center p-3 bg-blue-50 rounded-lg">
-                    <p className="text-xs text-blue-600">Monto Original</p>
+                    <p className="text-xs text-blue-600 dark:text-blue-400">Monto Original</p>
                     <p className="font-bold text-blue-800">{formatCurrency(selectedLoan.amount)}</p>
                   </div>
                   <div className="text-center p-3 bg-emerald-50 rounded-lg">
-                    <p className="text-xs text-emerald-600">Total Pagado</p>
+                    <p className="text-xs text-emerald-600 dark:text-emerald-400">Total Pagado</p>
                     <p className="font-bold text-emerald-800">{formatCurrency(selectedLoan.total_paid)}</p>
                   </div>
                   <div className="text-center p-3 bg-amber-50 rounded-lg">
-                    <p className="text-xs text-amber-600">Balance Pendiente</p>
+                    <p className="text-xs text-amber-600 dark:text-amber-400">Balance Pendiente</p>
                     <p className="font-bold text-amber-800">{formatCurrency(selectedLoan.remaining_balance)}</p>
                   </div>
                   <div className="text-center p-3 bg-purple-50 rounded-lg">
-                    <p className="text-xs text-purple-600">Cuota Mensual</p>
+                    <p className="text-xs text-purple-600 dark:text-purple-400">Cuota Mensual</p>
                     <p className="font-bold text-purple-800">{formatCurrency(selectedLoan.monthly_payment)}</p>
                   </div>
                 </div>

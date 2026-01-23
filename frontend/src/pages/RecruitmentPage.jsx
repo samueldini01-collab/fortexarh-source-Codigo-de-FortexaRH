@@ -261,8 +261,8 @@ export default function RecruitmentPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-blue-600">Vacantes Abiertas</p>
-                  <p className="text-2xl font-bold text-blue-700">{openJobs}</p>
+                  <p className="text-sm text-blue-600 dark:text-blue-400">Vacantes Abiertas</p>
+                  <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">{openJobs}</p>
                 </div>
                 <Briefcase className="w-8 h-8 text-blue-400" />
               </div>
@@ -293,8 +293,8 @@ export default function RecruitmentPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-emerald-600">Total Candidatos</p>
-                  <p className="text-2xl font-bold text-emerald-700">{totalCandidates}</p>
+                  <p className="text-sm text-emerald-600 dark:text-emerald-400">Total Candidatos</p>
+                  <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{totalCandidates}</p>
                 </div>
                 <Users className="w-8 h-8 text-emerald-400" />
               </div>
@@ -309,8 +309,8 @@ export default function RecruitmentPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-purple-600">En Entrevista</p>
-                  <p className="text-2xl font-bold text-purple-700">{interviewCandidates}</p>
+                  <p className="text-sm text-purple-600 dark:text-purple-400">En Entrevista</p>
+                  <p className="text-2xl font-bold text-purple-700 dark:text-purple-400">{interviewCandidates}</p>
                 </div>
                 <UserPlus className="w-8 h-8 text-purple-400" />
               </div>
@@ -325,8 +325,8 @@ export default function RecruitmentPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-amber-600">Nuevos</p>
-                  <p className="text-2xl font-bold text-amber-700">{appliedCandidates}</p>
+                  <p className="text-sm text-amber-600 dark:text-amber-400">Nuevos</p>
+                  <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">{appliedCandidates}</p>
                 </div>
                 <UserCheck className="w-8 h-8 text-amber-400" />
               </div>

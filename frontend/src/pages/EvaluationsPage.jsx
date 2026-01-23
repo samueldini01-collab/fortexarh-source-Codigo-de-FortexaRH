@@ -119,9 +119,9 @@ export default function EvaluationsPage() {
   };
 
   const getScoreColor = (score) => {
-    if (score >= 4) return "text-emerald-600";
-    if (score >= 3) return "text-blue-600";
-    if (score >= 2) return "text-amber-600";
+    if (score >= 4) return "text-emerald-600 dark:text-emerald-400";
+    if (score >= 3) return "text-blue-600 dark:text-blue-400";
+    if (score >= 2) return "text-amber-600 dark:text-amber-400";
     return "text-red-600";
   };
 
@@ -162,8 +162,8 @@ export default function EvaluationsPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-emerald-600">Excelentes (≥4.5)</p>
-                  <p className="text-2xl font-bold text-emerald-700">{stats.excellent}</p>
+                  <p className="text-sm text-emerald-600 dark:text-emerald-400">Excelentes (≥4.5)</p>
+                  <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{stats.excellent}</p>
                 </div>
                 <Award className="w-8 h-8 text-emerald-500" />
               </div>
@@ -176,8 +176,8 @@ export default function EvaluationsPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-blue-600">Buenos (3.5-4.4)</p>
-                  <p className="text-2xl font-bold text-blue-700">{stats.good}</p>
+                  <p className="text-sm text-blue-600 dark:text-blue-400">Buenos (3.5-4.4)</p>
+                  <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">{stats.good}</p>
                 </div>
                 <Star className="w-8 h-8 text-blue-500" />
               </div>
@@ -190,8 +190,8 @@ export default function EvaluationsPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-amber-600">Necesita Mejorar</p>
-                  <p className="text-2xl font-bold text-amber-700">{stats.needsWork}</p>
+                  <p className="text-sm text-amber-600 dark:text-amber-400">Necesita Mejorar</p>
+                  <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">{stats.needsWork}</p>
                 </div>
                 <AlertTriangle className="w-8 h-8 text-amber-500" />
               </div>
@@ -216,8 +216,8 @@ export default function EvaluationsPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-emerald-600">Promedio General</p>
-                  <p className="text-3xl font-bold text-emerald-700">{avgScore}/5</p>
+                  <p className="text-sm text-emerald-600 dark:text-emerald-400">Promedio General</p>
+                  <p className="text-3xl font-bold text-emerald-700 dark:text-emerald-400">{avgScore}/5</p>
                 </div>
                 <Star className="w-10 h-10 text-emerald-500" />
               </div>
@@ -227,8 +227,8 @@ export default function EvaluationsPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-purple-600">Alto Desempeño</p>
-                  <p className="text-3xl font-bold text-purple-700">{evaluations.filter(e => e.overall_score >= 4).length}</p>
+                  <p className="text-sm text-purple-600 dark:text-purple-400">Alto Desempeño</p>
+                  <p className="text-3xl font-bold text-purple-700 dark:text-purple-400">{evaluations.filter(e => e.overall_score >= 4).length}</p>
                 </div>
                 <TrendingUp className="w-10 h-10 text-purple-500" />
               </div>

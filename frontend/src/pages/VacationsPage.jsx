@@ -195,8 +195,8 @@ export default function VacationsPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-amber-600">Pendientes</p>
-                  <p className="text-2xl font-bold text-amber-700">{stats.pending}</p>
+                  <p className="text-sm text-amber-600 dark:text-amber-400">Pendientes</p>
+                  <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">{stats.pending}</p>
                 </div>
                 <Clock className="w-8 h-8 text-amber-500" />
               </div>
@@ -209,8 +209,8 @@ export default function VacationsPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-emerald-600">Aprobadas</p>
-                  <p className="text-2xl font-bold text-emerald-700">{stats.approved}</p>
+                  <p className="text-sm text-emerald-600 dark:text-emerald-400">Aprobadas</p>
+                  <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{stats.approved}</p>
                 </div>
                 <Check className="w-8 h-8 text-emerald-500" />
               </div>

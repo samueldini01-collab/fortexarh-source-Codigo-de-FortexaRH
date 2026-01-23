@@ -141,8 +141,8 @@ export default function AttendancePage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-emerald-600">Presentes</p>
-                  <p className="text-2xl font-bold text-emerald-700">{presentCount}</p>
+                  <p className="text-sm text-emerald-600 dark:text-emerald-400">Presentes</p>
+                  <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{presentCount}</p>
                 </div>
                 <UserCheck className="w-8 h-8 text-emerald-500" />
               </div>
@@ -169,8 +169,8 @@ export default function AttendancePage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-amber-600">Tarde</p>
-                  <p className="text-2xl font-bold text-amber-700">{lateCount}</p>
+                  <p className="text-sm text-amber-600 dark:text-amber-400">Tarde</p>
+                  <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">{lateCount}</p>
                 </div>
                 <Clock className="w-8 h-8 text-amber-500" />
               </div>

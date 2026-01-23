@@ -542,10 +542,10 @@ export default function PayrollV2Page() {
 
   const getStatusBadge = (status) => {
     const badges = {
-      'open': <Badge variant="outline" className="border-blue-500 text-blue-600">Abierto</Badge>,
-      'calculated': <Badge className="bg-amber-100 text-amber-700">Calculado</Badge>,
-      'approved': <Badge className="bg-emerald-100 text-emerald-700">Aprobado</Badge>,
-      'paid': <Badge className="bg-purple-100 text-purple-700">Pagado</Badge>,
+      'open': <Badge variant="outline" className="border-blue-500 text-blue-600 dark:text-blue-400">Abierto</Badge>,
+      'calculated': <Badge className="bg-amber-100 text-amber-700 dark:text-amber-400">Calculado</Badge>,
+      'approved': <Badge className="bg-emerald-100 text-emerald-700 dark:text-emerald-400">Aprobado</Badge>,
+      'paid': <Badge className="bg-purple-100 text-purple-700 dark:text-purple-400">Pagado</Badge>,
     };
     return badges[status] || <Badge variant="secondary">{status}</Badge>;
   };
@@ -569,7 +569,7 @@ export default function PayrollV2Page() {
             onKeyDown={(e) => { if (e.key === 'Enter') saveInlineEdit(); if (e.key === 'Escape') cancelEditing(); }}
             autoFocus
           />
-          <Button size="icon" variant="ghost" className="h-5 w-5" onClick={saveInlineEdit}><Check className="w-3 h-3 text-emerald-600" /></Button>
+          <Button size="icon" variant="ghost" className="h-5 w-5" onClick={saveInlineEdit}><Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /></Button>
           <Button size="icon" variant="ghost" className="h-5 w-5" onClick={cancelEditing}><X className="w-3 h-3 text-red-500" /></Button>
         </div>
       );
@@ -642,7 +642,7 @@ export default function PayrollV2Page() {
               >
                 <CardContent className="p-4">
                   <p className="text-sm text-slate-500 dark:text-slate-400">Períodos Abiertos</p>
-                  <p className="text-2xl font-bold text-blue-600">{stats.openPeriods}</p>
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.openPeriods}</p>
                 </CardContent>
               </Card>
               <Card 
@@ -660,7 +660,7 @@ export default function PayrollV2Page() {
               >
                 <CardContent className="p-4">
                   <p className="text-sm text-slate-500 dark:text-slate-400">Total Pagado</p>
-                  <p className="text-xl font-bold text-purple-600">{formatCurrency(stats.totalPaid)}</p>
+                  <p className="text-xl font-bold text-purple-600 dark:text-purple-400">{formatCurrency(stats.totalPaid)}</p>
                 </CardContent>
               </Card>
               <Card className="border-l-4 border-l-emerald-500">
@@ -732,7 +732,7 @@ export default function PayrollV2Page() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <Calendar className="w-6 h-6 text-blue-600" />
+                            <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
@@ -863,15 +863,15 @@ export default function PayrollV2Page() {
                                 <TableCell className="text-right border-r bg-blue-50/50">{renderEditableCell(entry, 'base_salary', entry.base_salary)}</TableCell>
                                 <TableCell className="text-right border-r bg-emerald-50/50">{renderEditableCell(entry, 'commissions', entry.commissions)}</TableCell>
                                 <TableCell className="text-right border-r bg-emerald-50/50">{renderEditableCell(entry, 'bonuses', entry.bonuses)}</TableCell>
-                                <TableCell className="text-right border-r bg-emerald-50/50 text-emerald-600">{formatNumber(totalOvertime)}</TableCell>
-                                <TableCell className="text-right border-r bg-amber-50/50 text-amber-600">{formatNumber(entry.total_income_novelties || 0)}</TableCell>
+                                <TableCell className="text-right border-r bg-emerald-50/50 text-emerald-600 dark:text-emerald-400">{formatNumber(totalOvertime)}</TableCell>
+                                <TableCell className="text-right border-r bg-amber-50/50 text-amber-600 dark:text-amber-400">{formatNumber(entry.total_income_novelties || 0)}</TableCell>
                                 <TableCell className="text-right border-r bg-slate-100 font-bold">{formatNumber(entry.gross_salary)}</TableCell>
                                 <TableCell className="text-right border-r bg-red-50/50 text-red-600">{formatNumber(entry.sfs_employee)}</TableCell>
                                 <TableCell className="text-right border-r bg-red-50/50 text-red-600">{formatNumber(entry.afp_employee)}</TableCell>
                                 <TableCell className="text-right border-r bg-red-50/50 text-red-600">{formatNumber(entry.isr)}</TableCell>
                                 <TableCell className="text-right border-r bg-orange-50/50 text-orange-600">{formatNumber(entry.total_deduction_novelties || 0)}</TableCell>
                                 <TableCell className="text-right border-r bg-red-100/50 font-bold text-red-700">{formatNumber(entry.total_deductions)}</TableCell>
-                                <TableCell className="text-right bg-emerald-100/50 font-bold text-emerald-700">{formatNumber(entry.net_salary)}</TableCell>
+                                <TableCell className="text-right bg-emerald-100/50 font-bold text-emerald-700 dark:text-emerald-400">{formatNumber(entry.net_salary)}</TableCell>
                                 {selectedPeriod.status !== 'paid' && (
                                   <TableCell>
                                     <div className="flex gap-1">
@@ -894,14 +894,14 @@ export default function PayrollV2Page() {
                             <TableCell className="text-right border-r font-mono">{formatNumber(totals.commissions)}</TableCell>
                             <TableCell className="text-right border-r font-mono">{formatNumber(totals.bonuses)}</TableCell>
                             <TableCell className="text-right border-r font-mono">{formatNumber(totals.overtimeDay + totals.overtimeNight + totals.overtimeWeekend + totals.overtimeHoliday)}</TableCell>
-                            <TableCell className="text-right border-r font-mono text-amber-600">{formatNumber(totals.incomeNovelties)}</TableCell>
+                            <TableCell className="text-right border-r font-mono text-amber-600 dark:text-amber-400">{formatNumber(totals.incomeNovelties)}</TableCell>
                             <TableCell className="text-right border-r font-mono">{formatNumber(totals.grossSalary)}</TableCell>
                             <TableCell className="text-right border-r font-mono text-red-600">{formatNumber(totals.sfsEmployee)}</TableCell>
                             <TableCell className="text-right border-r font-mono text-red-600">{formatNumber(totals.afpEmployee)}</TableCell>
                             <TableCell className="text-right border-r font-mono text-red-600">{formatNumber(totals.isr)}</TableCell>
                             <TableCell className="text-right border-r font-mono text-orange-600">{formatNumber(totals.deductionNovelties)}</TableCell>
                             <TableCell className="text-right border-r font-mono text-red-700">{formatNumber(totals.totalDeductions)}</TableCell>
-                            <TableCell className="text-right font-mono text-emerald-700">{formatNumber(totals.netSalary)}</TableCell>
+                            <TableCell className="text-right font-mono text-emerald-700 dark:text-emerald-400">{formatNumber(totals.netSalary)}</TableCell>
                             {selectedPeriod.status !== 'paid' && <TableCell></TableCell>}
                           </TableRow>
                         </TableBody>
@@ -936,7 +936,7 @@ export default function PayrollV2Page() {
               </CardContent>
             </Card>
             <Card>
-              <CardHeader><CardTitle className="text-emerald-700">Listos para Pagar</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-emerald-700 dark:text-emerald-400">Listos para Pagar</CardTitle></CardHeader>
               <CardContent>
                 {periods.filter(p => p.status === 'approved').length === 0 ? (
                   <div className="text-center py-8 text-slate-500 dark:text-slate-400"><CreditCard className="w-12 h-12 mx-auto mb-4 text-slate-300" /><p>No hay aprobados</p></div>
@@ -944,7 +944,7 @@ export default function PayrollV2Page() {
                   <div className="space-y-3">
                     {periods.filter(p => p.status === 'approved').map(period => (
                       <div key={period.period_id} className="flex items-center justify-between p-4 border border-emerald-200 bg-emerald-50 rounded-lg">
-                        <div><h4 className="font-semibold text-emerald-800">{period.description}</h4><p className="text-sm text-emerald-600">{period.employee_count} empleados • {formatCurrency(period.total_net)}</p></div>
+                        <div><h4 className="font-semibold text-emerald-800">{period.description}</h4><p className="text-sm text-emerald-600 dark:text-emerald-400">{period.employee_count} empleados • {formatCurrency(period.total_net)}</p></div>
                         <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={() => openPayDialog(period)}><CreditCard className="w-4 h-4 mr-2" />Pagar</Button>
                       </div>
                     ))}
@@ -981,7 +981,7 @@ export default function PayrollV2Page() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-blue-600" />
+                    <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     Archivos TSS
                   </CardTitle>
                   <CardDescription>Tesorería de la Seguridad Social (v5.3 / v5.1)</CardDescription>
@@ -1001,11 +1001,11 @@ export default function PayrollV2Page() {
                             {getPayrollTypeBadge(period.payroll_type)}
                           </div>
                           <div className="flex gap-2 flex-wrap">
-                            <Button variant="outline" size="sm" className="text-blue-600 border-blue-200 hover:bg-blue-50" 
+                            <Button variant="outline" size="sm" className="text-blue-600 border-blue-200 hover:bg-blue-50 dark:bg-blue-900/30" 
                               onClick={() => handleDownloadTSSAutodeterminacion(period.period_id)}>
                               <Download className="w-4 h-4 mr-1" />Autodeterminación
                             </Button>
-                            <Button variant="outline" size="sm" className="text-purple-600 border-purple-200 hover:bg-purple-50"
+                            <Button variant="outline" size="sm" className="text-purple-600 border-purple-200 hover:bg-purple-50 dark:bg-purple-900/30"
                               onClick={() => handleDownloadTSSNovedades(period.period_id)}>
                               <Download className="w-4 h-4 mr-1" />Novedades
                             </Button>
@@ -1022,7 +1022,7 @@ export default function PayrollV2Page() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-emerald-600" />
+                  <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   Reportes DGII - Impuestos
                 </CardTitle>
                 <CardDescription>Formularios IR-3 e IR-17 para Dirección General de Impuestos Internos</CardDescription>
@@ -1036,16 +1036,16 @@ export default function PayrollV2Page() {
                       <div key={period.period_id} className="p-4 border rounded-lg bg-gradient-to-br from-emerald-50 to-white">
                         <div className="mb-3">
                           <p className="font-semibold text-emerald-800">{period.description}</p>
-                          <p className="text-xs text-emerald-600">{formatCurrency(period.total_net)} pagado</p>
+                          <p className="text-xs text-emerald-600 dark:text-emerald-400">{formatCurrency(period.total_net)} pagado</p>
                         </div>
                         <div className="space-y-2">
-                          <Button variant="outline" size="sm" className="w-full justify-start text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                          <Button variant="outline" size="sm" className="w-full justify-start text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-900/50"
                             onClick={() => handleDownloadIR3(period.period_id)}>
                             <Download className="w-4 h-4 mr-2" />
                             <span>IR-3</span>
                             <span className="ml-auto text-xs text-emerald-500">Retenciones</span>
                           </Button>
-                          <Button variant="outline" size="sm" className="w-full justify-start text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                          <Button variant="outline" size="sm" className="w-full justify-start text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-900/50"
                             onClick={() => handleDownloadIR17(period.period_id)}>
                             <Download className="w-4 h-4 mr-2" />
                             <span>IR-17</span>
@@ -1123,7 +1123,7 @@ export default function PayrollV2Page() {
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <Wallet className="w-5 h-5 text-emerald-600" />
+                <Wallet className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                 Pagar Nómina
               </DialogTitle>
               <DialogDescription>Configure el pago y archivo bancario</DialogDescription>
@@ -1134,7 +1134,7 @@ export default function PayrollV2Page() {
                   <p className="font-semibold">{selectedPeriod.description}</p>
                   <p className="text-sm text-slate-500 mt-1">{selectedPeriod.employee_count} empleados</p>
                   <div className="mt-3 p-3 bg-emerald-100 rounded-lg">
-                    <p className="text-sm text-emerald-700">Total a Pagar</p>
+                    <p className="text-sm text-emerald-700 dark:text-emerald-400">Total a Pagar</p>
                     <p className="text-2xl font-bold text-emerald-800">{formatCurrency(selectedPeriod.total_net)}</p>
                   </div>
                 </div>
