@@ -102,8 +102,8 @@ export default function Dashboard() {
       value: stats?.total_employees || 0,
       icon: Users,
       color: "bg-blue-500",
-      bgColor: "bg-blue-50",
-      textColor: "text-blue-600",
+      bgColor: "bg-blue-50 dark:bg-blue-900/30",
+      textColor: "text-blue-600 dark:text-blue-400",
       href: "/employees"
     },
     {
@@ -111,8 +111,8 @@ export default function Dashboard() {
       value: stats?.pending_payrolls || 0,
       icon: DollarSign,
       color: "bg-emerald-500",
-      bgColor: "bg-emerald-50",
-      textColor: "text-emerald-600",
+      bgColor: "bg-emerald-50 dark:bg-emerald-900/30",
+      textColor: "text-emerald-600 dark:text-emerald-400",
       href: "/payroll-v2"
     },
     {
@@ -120,8 +120,8 @@ export default function Dashboard() {
       value: stats?.today_attendance || 0,
       icon: Clock,
       color: "bg-amber-500",
-      bgColor: "bg-amber-50",
-      textColor: "text-amber-600",
+      bgColor: "bg-amber-50 dark:bg-amber-900/30",
+      textColor: "text-amber-600 dark:text-amber-400",
       href: "/attendance"
     },
     {
@@ -129,8 +129,8 @@ export default function Dashboard() {
       value: stats?.pending_vacations || 0,
       icon: Calendar,
       color: "bg-purple-500",
-      bgColor: "bg-purple-50",
-      textColor: "text-purple-600",
+      bgColor: "bg-purple-50 dark:bg-purple-900/30",
+      textColor: "text-purple-600 dark:text-purple-400",
       href: "/vacations"
     },
     {
@@ -138,8 +138,8 @@ export default function Dashboard() {
       value: stats?.open_jobs || 0,
       icon: Briefcase,
       color: "bg-rose-500",
-      bgColor: "bg-rose-50",
-      textColor: "text-rose-600",
+      bgColor: "bg-rose-50 dark:bg-rose-900/30",
+      textColor: "text-rose-600 dark:text-rose-400",
       href: "/recruitment"
     },
     {
@@ -147,8 +147,8 @@ export default function Dashboard() {
       value: stats?.new_candidates || 0,
       icon: UserPlus,
       color: "bg-cyan-500",
-      bgColor: "bg-cyan-50",
-      textColor: "text-cyan-600",
+      bgColor: "bg-cyan-50 dark:bg-cyan-900/30",
+      textColor: "text-cyan-600 dark:text-cyan-400",
       href: "/recruitment"
     }
   ];
@@ -160,13 +160,13 @@ export default function Dashboard() {
         {/* Personalized Greeting */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-slate-800">
-              {getGreeting()}, <span className="text-emerald-600">{user?.name?.split(' ')[0] || 'Usuario'}!</span>
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100">
+              {getGreeting()}, <span className="text-emerald-600 dark:text-emerald-400">{user?.name?.split(' ')[0] || 'Usuario'}!</span>
             </h1>
-            <p className="text-slate-500 mt-1">Aquí está el resumen de tu gestión de RRHH</p>
+            <p className="text-slate-500 dark:text-slate-400 mt-1">Aquí está el resumen de tu gestión de RRHH</p>
           </div>
           <div className="text-right hidden md:block">
-            <p className="text-sm text-slate-500">{new Date().toLocaleDateString('es-DO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{new Date().toLocaleDateString('es-DO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
           </div>
         </div>
         
