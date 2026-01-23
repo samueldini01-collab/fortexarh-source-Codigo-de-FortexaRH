@@ -363,7 +363,7 @@ export default function VacationsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {vacations.map((vac) => (
+                  {filteredVacations.map((vac) => (
                     <TableRow key={vac.vacation_id} data-testid={`vacation-row-${vac.vacation_id}`}>
                       <TableCell className="font-medium">{vac.employee_name}</TableCell>
                       <TableCell>{vacationTypes.find(t => t.value === vac.vacation_type)?.label || vac.vacation_type}</TableCell>
