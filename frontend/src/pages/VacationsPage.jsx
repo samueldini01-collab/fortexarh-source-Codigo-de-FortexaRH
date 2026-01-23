@@ -345,10 +345,10 @@ export default function VacationsPage() {
               <div className="p-6 space-y-4">
                 {Array(5).fill(0).map((_, i) => <Skeleton key={i} className="h-12 w-full" />)}
               </div>
-            ) : vacations.length === 0 ? (
+            ) : filteredVacations.length === 0 ? (
               <div className="text-center py-12">
                 <Calendar className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                <p className="text-slate-500">No hay solicitudes de vacaciones</p>
+                <p className="text-slate-500">{quickFilter ? 'No hay solicitudes con este filtro' : 'No hay solicitudes de vacaciones'}</p>
               </div>
             ) : (
               <Table>
