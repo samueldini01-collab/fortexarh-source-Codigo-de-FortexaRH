@@ -429,9 +429,12 @@ export default function EmployeesPage() {
           </div>
         </div>
 
-        {/* Stats Cards */}
+        {/* Stats Cards - Clickable for quick filtering */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="border-slate-200">
+          <Card 
+            className={`border-slate-200 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'all' || !quickFilter ? 'ring-2 ring-slate-400' : ''}`}
+            onClick={() => setQuickFilter(quickFilter === 'all' ? null : 'all')}
+          >
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -442,7 +445,10 @@ export default function EmployeesPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="border-slate-200">
+          <Card 
+            className={`border-slate-200 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'active' ? 'ring-2 ring-emerald-400' : ''}`}
+            onClick={() => setQuickFilter(quickFilter === 'active' ? null : 'active')}
+          >
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -455,20 +461,26 @@ export default function EmployeesPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="border-slate-200">
+          <Card 
+            className={`border-slate-200 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'inactive' ? 'ring-2 ring-slate-400' : ''}`}
+            onClick={() => setQuickFilter(quickFilter === 'inactive' ? null : 'inactive')}
+          >
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Departamentos</p>
-                  <p className="text-2xl font-bold text-blue-600">
-                    {new Set(employees.map(e => e.department).filter(Boolean)).size}
+                  <p className="text-sm text-slate-500">Inactivos</p>
+                  <p className="text-2xl font-bold text-slate-600">
+                    {employees.filter(e => e.status === 'inactive').length}
                   </p>
                 </div>
-                <Building2 className="w-8 h-8 text-blue-300" />
+                <Building2 className="w-8 h-8 text-slate-300" />
               </div>
             </CardContent>
           </Card>
-          <Card className="border-slate-200">
+          <Card 
+            className={`border-slate-200 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'on_leave' ? 'ring-2 ring-amber-400' : ''}`}
+            onClick={() => setQuickFilter(quickFilter === 'on_leave' ? null : 'on_leave')}
+          >
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -482,6 +494,24 @@ export default function EmployeesPage() {
             </CardContent>
           </Card>
         </div>
+        
+        {/* Active filter indicator */}
+        {quickFilter && (
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="px-3 py-1">
+              Filtro: {quickFilter === 'all' ? 'Todos' : quickFilter === 'active' ? 'Activos' : quickFilter === 'inactive' ? 'Inactivos' : 'En Licencia'}
+              <button 
+                onClick={() => setQuickFilter(null)} 
+                className="ml-2 hover:text-red-500"
+              >
+                ×
+              </button>
+            </Badge>
+            <span className="text-sm text-slate-500">
+              {filteredEmployees.length} de {employees.length} empleados
+            </span>
+          </div>
+        )}
 
         {/* Employees Table */}
         <Card className="border-slate-200">
