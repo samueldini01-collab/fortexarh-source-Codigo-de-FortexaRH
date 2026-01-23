@@ -1,6 +1,6 @@
 # FortexaRH - Sistema SaaS de RRHH y Nómina
 
-## Última Actualización: 2026-01-20
+## Última Actualización: 2026-01-23
 
 ## Resumen del Proyecto
 Sistema completo de gestión de Recursos Humanos y Nómina para República Dominicana, vendido por suscripción mensual.
@@ -10,7 +10,7 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 ### Backend (FastAPI + MongoDB)
 ```
 /app/backend/
-├── server.py           # API principal (~5,244 líneas - REFACTORIZADO)
+├── server.py           # API principal (~5,250 líneas - REFACTORIZADO)
 ├── routes/             # Routers modulares
 │   ├── auth.py         # Autenticación, login, reset password
 │   ├── employees.py    # CRUD empleados
@@ -26,6 +26,9 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 │   ├── system_users.py # Usuarios del sistema
 │   ├── dgii_reports.py # Reportes DGII (TSS, ISR)
 │   ├── loans.py        # Préstamos a empleados
+│   ├── notifications.py # Notificaciones automáticas
+│   ├── reports.py      # Reportes avanzados
+│   ├── expenses.py     # ✅ NEW: Gastos y Viáticos
 │   └── ... más routers
 ├── services/
 │   └── pdf_service.py  # Generación PDFs
@@ -37,60 +40,70 @@ Sistema completo de gestión de Recursos Humanos y Nómina para República Domin
 - Dashboard responsive con sidebar colapsable
 - Todas las páginas adaptativas
 
-## Lo Implementado en Esta Sesión (2026-01-20)
+## Implementado en Esta Sesión (2026-01-23)
 
-### ✅ 1. Logo de FortexaRH en Landing Page y Sidebar - COMPLETADO
-- Logo oficial agregado al header de la landing page (`/fortexarh-logo-300.png`)
-- Logo optimizado en el sidebar del dashboard (`/fortexarh-icon-128.png`)
-- Imágenes en múltiples tamaños para diferentes usos
+### ✅ Módulo de Gastos y Viáticos - COMPLETADO
+Implementación completa del módulo de solicitudes de gastos y viáticos con:
 
-### ✅ 2. Landing Page y Sistema Responsive - COMPLETADO
-- **Header responsive**: Logo escalable, menú hamburguesa en móvil
-- **Hero section**: Layout adaptativo, botones a ancho completo en móvil
-- **Features/Benefits**: Grid responsive (1-2-3 columnas según pantalla)
-- **Dashboard móvil**: Sidebar oculto con botón menú, contenido adaptativo
-- Probado en: Desktop (1920px), Tablet (768px), Mobile (375px)
+**Backend (`/app/backend/routes/expenses.py`)**
+- **9 Categorías de Gastos**: transporte, alojamiento, alimentación, materiales, viajes, gastos administrativos, educación, uniformes, otros
+- **CRUD Completo**: Crear, listar, ver detalles, actualizar, cancelar solicitudes
+- **Flujo de Doble Aprobación**: 
+  - `pending` → `approved_manager` (aprobado por gerente)
+  - `approved_manager` → `approved_admin` (aprobado por administrador)
+  - Admins pueden aprobar directamente a `approved_admin`
+- **Solicitud de Anticipos**: Opción de solicitar anticipo antes del gasto
+- **Desglose de Presupuesto**: Por categoría con montos y descripciones
+- **Historial de Aprobaciones**: Registro completo de quién aprobó/rechazó y cuándo
+- **Reportes de Gastos**: Resumen por estado, tipo y departamento
+- **Adjuntos**: Subir recibos y comprobantes (base64)
 
-### ✅ 3. Refactorización de server.py - COMPLETADO
-- Reducido de 6,485 a 5,244 líneas (-19%)
-- Endpoints movidos a routers modulares
+**Frontend (`/app/frontend/src/pages/ExpensesPage.jsx`)**
+- Dashboard con estadísticas: Total solicitudes, Anticipos pendientes, Total estimado, Ahorro
+- 3 Tabs: "Mis Solicitudes", "Por Aprobar" (con badge), "Todas"
+- Tabla de solicitudes con filtros por estado y búsqueda
+- Modal de nueva solicitud con:
+  - Campos: título, tipo, destino, fechas, presupuesto, descripción
+  - Desglose de presupuesto con categorías
+  - Toggle para solicitar anticipo
+- Modal de aprobación/rechazo con comentarios
+- Modal de detalles con historial de aprobaciones
+
+**Endpoints API:**
+- `GET /api/expenses/categories` - Obtener categorías
+- `POST /api/expenses/requests` - Crear solicitud
+- `GET /api/expenses/requests` - Listar solicitudes
+- `GET /api/expenses/requests/pending-approval` - Pendientes de aprobación
+- `GET /api/expenses/requests/{id}` - Detalles de solicitud
+- `POST /api/expenses/requests/{id}/approve` - Aprobar/rechazar
+- `DELETE /api/expenses/requests/{id}` - Cancelar solicitud
+- `GET /api/expenses/reports/summary` - Resumen de gastos
+
+**Testing:**
+- 13 tests backend (100% passed)
+- Frontend verificado con Playwright
+- Archivo de tests: `/app/backend/tests/test_expenses.py`
 
 ## Tareas Pendientes
 
 ### P1 - Alta Prioridad
-1. Notificaciones Automáticas (emails)
+1. Completar refactorización de `server.py` (aún tiene ~5,250 líneas)
+2. Corregir advertencias ESLint en frontend
 
 ### P2 - Media Prioridad
-1. Corregir advertencias ESLint
-2. Integraciones Enterprise (MOCKED)
+1. Integraciones Enterprise (QuickBooks, SAP, Oracle - MOCKED)
+2. Reportes avanzados con gráficos y exportación PDF/Excel
+
+### P3 - Backlog
+1. Personalización avanzada de documentos
+2. Notificaciones en Portal de Empleados (aprobación vacaciones, nómina)
 
 ## Credenciales de Prueba
-- Usuario: test_refactor@fortexa.com
-- Contraseña: test123
-- Plan: Pro
+- **Admin**: test_refactor@fortexa.com / test123 (Plan Pro)
+- **Portal Empleado**: 001-0000001-1 / portal123
 
-## Implementado en Esta Sesión - Parte 2 (2026-01-20)
-
-### ✅ Notificaciones Automáticas - COMPLETADO
-- **Recordatorios de Nómina**: Emails automáticos antes de la fecha de pago
-  - Configuración de día de pago (1, 5, 10, 15, 20, 25, 28, 30)
-  - Anticipación configurable (1-7 días antes)
-  - Botón para enviar recordatorio manual
-- **Notificaciones de Cumpleaños**: Alertas de cumpleaños de empleados
-  - Lista de próximos cumpleaños (30 días)
-  - Anticipación configurable
-  - Emails a administradores con lista de cumpleaños
-- Historial de notificaciones enviadas
-
-### ✅ Reportes de Costos por Departamento - COMPLETADO
-- Desglose de costos por departamento
-- Incluye: Salario bruto, deducciones (SFS, AFP, ISR), aportes patronales
-- Comparación visual entre departamentos
-- Exportación a CSV
-- Selección de período (últimos 12 meses)
-
-### Nuevos Archivos Creados
-- `/app/backend/routes/notifications.py` - Router de notificaciones
-- `/app/backend/routes/reports.py` - Router de reportes avanzados
-- `/app/frontend/src/pages/NotificationsPage.jsx` - Página de notificaciones
-- `/app/frontend/src/pages/CostsByDepartmentPage.jsx` - Página de costos
+## Integraciones
+- ✅ Stripe (Pagos)
+- ✅ Resend (Emails)
+- ✅ Google Auth (Emergent-managed)
+- 🔄 QuickBooks, SAP, Oracle, Dynamics (MOCKED)
