@@ -74,7 +74,9 @@ DEFAULT_TEMPLATES = [
         {{/if}}
         <h2 style="margin-bottom: 5px;">{{company_name}}</h2>
         <p style="color: #666; margin: 0;">RNC: {{company_rnc}}</p>
+        {{#if company_address}}
         <p style="color: #666; margin: 0;">{{company_address}}</p>
+        {{/if}}
     </div>
     
     <h1 style="text-align: center; font-size: 18px; margin-bottom: 30px; text-decoration: underline;">
@@ -84,17 +86,17 @@ DEFAULT_TEMPLATES = [
     <p style="text-align: justify; line-height: 1.8; margin-bottom: 20px;">
         Por medio de la presente hacemos constar que <strong>{{employee_name}}</strong>, 
         portador(a) de la Cédula de Identidad No. <strong>{{employee_document}}</strong>, 
-        labora en nuestra empresa desde el <strong>{{hire_date}}</strong>, desempeñándose 
-        actualmente en el cargo de <strong>{{position}}</strong> en el departamento de 
-        <strong>{{department}}</strong>.
+        labora en nuestra empresa{{#if show_hire_date}} desde el <strong>{{hire_date}}</strong>{{/if}}{{#if show_position}}, desempeñándose 
+        actualmente en el cargo de <strong>{{position}}</strong>{{/if}}{{#if show_department}} en el departamento de 
+        <strong>{{department}}</strong>{{/if}}.
     </p>
     
+    {{#if show_salary}}
     <p style="text-align: justify; line-height: 1.8; margin-bottom: 20px;">
-        {{#if show_salary}}
         El(La) señor(a) {{employee_name}} devenga un salario mensual de 
         <strong>RD$ {{salary}}</strong>.
-        {{/if}}
     </p>
+    {{/if}}
     
     <p style="text-align: justify; line-height: 1.8; margin-bottom: 40px;">
         Esta constancia se expide a solicitud de la parte interesada, para los fines 
@@ -112,9 +114,10 @@ DEFAULT_TEMPLATES = [
     </div>
 </div>
 """,
-        "variables": ["company_name", "company_rnc", "company_address", "employee_name", 
+        "variables": ["company_name", "company_rnc", "company_address", "company_logo", "employee_name", 
                      "employee_document", "hire_date", "position", "department", "salary",
-                     "city", "day", "month", "year", "authorized_by", "authorized_position", "show_salary"],
+                     "city", "day", "month", "year", "authorized_by", "authorized_position", 
+                     "show_salary", "show_hire_date", "show_position", "show_department"],
         "is_default": True
     },
     {
