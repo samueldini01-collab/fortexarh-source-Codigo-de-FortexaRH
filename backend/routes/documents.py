@@ -621,8 +621,8 @@ async def generate_document(data: DocumentGenerateRequest, request: Request):
         "hire_date": hire_date_formatted,
         "position": employee.get("position", ""),
         "department": employee.get("department", ""),
-        "salary": f"{employee.get('base_salary', 0):,.2f}",
-        "base_salary": f"{employee.get('base_salary', 0):,.2f}",
+        "salary": f"{employee.get('salary', employee.get('base_salary', 0)):,.2f}",
+        "base_salary": f"{employee.get('salary', employee.get('base_salary', 0)):,.2f}",
         
         # Date info
         "date": now.strftime("%d de %B de %Y").replace(now.strftime("%B"), months_es[now.month - 1]),
