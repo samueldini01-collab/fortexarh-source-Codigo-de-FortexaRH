@@ -457,64 +457,64 @@ export default function EmployeesPage() {
         {/* Stats Cards - Clickable for quick filtering */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card 
-            className={`border-slate-200 cursor-pointer transition-all hover:shadow-md ${!quickFilter ? 'ring-2 ring-slate-400' : ''}`}
+            className={`cursor-pointer transition-all hover:shadow-md ${!quickFilter ? 'ring-2 ring-slate-400 dark:ring-slate-500' : ''}`}
             onClick={() => setQuickFilter(null)}
           >
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Total Empleados</p>
-                  <p className="text-2xl font-bold">{employees.length}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Total Empleados</p>
+                  <p className="text-2xl font-bold dark:text-slate-100">{employees.length}</p>
                 </div>
-                <User className="w-8 h-8 text-slate-300" />
+                <User className="w-8 h-8 text-slate-300 dark:text-slate-600" />
               </div>
             </CardContent>
           </Card>
           <Card 
-            className={`border-slate-200 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'active' ? 'ring-2 ring-emerald-400' : ''}`}
+            className={`cursor-pointer transition-all hover:shadow-md ${quickFilter === 'active' ? 'ring-2 ring-emerald-400' : ''}`}
             onClick={() => setQuickFilter(quickFilter === 'active' ? null : 'active')}
           >
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Activos</p>
-                  <p className="text-2xl font-bold text-emerald-600">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Activos</p>
+                  <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                     {employees.filter(e => e.status === 'active').length}
                   </p>
                 </div>
-                <UserCheck className="w-8 h-8 text-emerald-300" />
+                <UserCheck className="w-8 h-8 text-emerald-300 dark:text-emerald-600" />
               </div>
             </CardContent>
           </Card>
           <Card 
-            className={`border-slate-200 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'inactive' ? 'ring-2 ring-slate-400' : ''}`}
+            className={`cursor-pointer transition-all hover:shadow-md ${quickFilter === 'inactive' ? 'ring-2 ring-slate-400 dark:ring-slate-500' : ''}`}
             onClick={() => setQuickFilter(quickFilter === 'inactive' ? null : 'inactive')}
           >
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Inactivos</p>
-                  <p className="text-2xl font-bold text-slate-600">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Inactivos</p>
+                  <p className="text-2xl font-bold text-slate-600 dark:text-slate-300">
                     {employees.filter(e => e.status === 'inactive').length}
                   </p>
                 </div>
-                <Building2 className="w-8 h-8 text-slate-300" />
+                <Building2 className="w-8 h-8 text-slate-300 dark:text-slate-600" />
               </div>
             </CardContent>
           </Card>
           <Card 
-            className={`border-slate-200 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'on_leave' ? 'ring-2 ring-amber-400' : ''}`}
+            className={`cursor-pointer transition-all hover:shadow-md ${quickFilter === 'on_leave' ? 'ring-2 ring-amber-400' : ''}`}
             onClick={() => setQuickFilter(quickFilter === 'on_leave' ? null : 'on_leave')}
           >
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">En Licencia</p>
-                  <p className="text-2xl font-bold text-amber-600">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">En Licencia</p>
+                  <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
                     {employees.filter(e => e.status === 'on_leave').length}
                   </p>
                 </div>
-                <Calendar className="w-8 h-8 text-amber-300" />
+                <Calendar className="w-8 h-8 text-amber-300 dark:text-amber-600" />
               </div>
             </CardContent>
           </Card>
