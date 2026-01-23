@@ -53,6 +53,7 @@ from routes.reports import router as reports_router, init_router as init_reports
 from routes.expenses import router as expenses_router, init_router as init_expenses_router
 from routes.payroll_v2 import router as payroll_v2_router, init_router as init_payroll_v2_router
 from routes.projects import router as projects_router, init_router as init_projects_router
+from routes.invoices import router as invoices_router, init_router as init_invoices_router
 
 # MongoDB connection with production-ready settings
 mongo_url = os.environ['MONGO_URL']
