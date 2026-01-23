@@ -460,15 +460,15 @@ export default function DashboardLayout({ children, title }) {
                       transition-all duration-200
                       ${isActive 
                         ? sidebarCollapsed 
-                          ? 'bg-emerald-50 text-emerald-700' 
-                          : 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-500 -ml-1 pl-4'
-                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                          ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' 
+                          : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-l-4 border-emerald-500 -ml-1 pl-4'
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
                       }
                     `}
                     onClick={() => setSidebarOpen(false)}
                     title={sidebarCollapsed ? item.name : undefined}
                   >
-                    <Icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-emerald-600' : 'text-slate-400'}`} />
+                    <Icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`} />
                     {!sidebarCollapsed && <span className="truncate">{item.name}</span>}
                   </Link>
                 );
@@ -478,10 +478,10 @@ export default function DashboardLayout({ children, title }) {
 
           {/* Menu Customization Button - Hide when collapsed */}
           {!sidebarCollapsed && (
-            <div className="px-3 py-2 border-t border-slate-100">
+            <div className="px-3 py-2 border-t border-slate-100 dark:border-slate-700">
               <button
                 onClick={openMenuEditor}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
                 data-testid="customize-menu-btn"
               >
                 <Sliders className="w-5 h-5" />
@@ -491,21 +491,21 @@ export default function DashboardLayout({ children, title }) {
           )}
 
           {/* User section */}
-          <div className={`border-t border-slate-100 ${sidebarCollapsed ? 'p-2' : 'p-4'}`}>
+          <div className={`border-t border-slate-100 dark:border-slate-700 ${sidebarCollapsed ? 'p-2' : 'p-4'}`}>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className={`flex items-center ${sidebarCollapsed ? 'justify-center w-full' : 'gap-3 w-full'} hover:bg-slate-50 rounded-lg p-2 transition-colors`}>
+                <button className={`flex items-center ${sidebarCollapsed ? 'justify-center w-full' : 'gap-3 w-full'} hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg p-2 transition-colors`}>
                   <Avatar className="h-9 w-9 shrink-0">
                     <AvatarImage src={user?.avatar} />
-                    <AvatarFallback className="bg-emerald-100 text-emerald-700">
+                    <AvatarFallback className="bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300">
                       {getInitials(user?.name)}
                     </AvatarFallback>
                   </Avatar>
                   {!sidebarCollapsed && (
                     <>
                       <div className="flex-1 text-left min-w-0">
-                        <p className="text-sm font-medium text-slate-700 truncate">{user?.name || 'Usuario'}</p>
-                        <p className="text-xs text-slate-500 truncate">{user?.email}</p>
+                        <p className="text-sm font-medium text-slate-700 dark:text-slate-200 truncate">{user?.name || 'Usuario'}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user?.email}</p>
                       </div>
                       <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
                     </>
