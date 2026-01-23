@@ -5,6 +5,8 @@ import axios from "axios";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { AccessibilityIndicator } from "@/components/ThemeToggle";
+import { KeyboardShortcutsProvider } from "@/context/KeyboardShortcutsContext";
+import { KeyboardShortcutsHelp } from "@/components/KeyboardShortcutsHelp";
 
 // Pages
 import LandingPage from "@/pages/LandingPage";
