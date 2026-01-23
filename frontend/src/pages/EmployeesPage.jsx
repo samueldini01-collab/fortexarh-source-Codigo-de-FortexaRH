@@ -396,9 +396,8 @@ export default function EmployeesPage() {
                   <Upload className="w-4 h-4 mr-2" />
                   Importar desde Excel
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <ExportEmployeesButton />
-                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <ExportEmployeesButton />
               </DropdownMenuContent>
             </DropdownMenu>
             
