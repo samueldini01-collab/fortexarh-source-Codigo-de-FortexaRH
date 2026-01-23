@@ -83,6 +83,7 @@ function EmployeeLogin() {
   const { login } = useEmployeeAuth();
   const [documentNumber, setDocumentNumber] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
@@ -121,13 +122,23 @@ function EmployeeLogin() {
             </div>
             <div className="space-y-2">
               <Label>Contraseña</Label>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-              />
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="pr-10"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
               <p className="text-xs text-slate-500">Primera vez: usa tu número de cédula como contraseña</p>
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
