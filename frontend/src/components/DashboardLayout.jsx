@@ -70,7 +70,9 @@ import {
   PieChart,
   Receipt,
   Keyboard,
-  HelpCircle
+  HelpCircle,
+  Sparkles,
+  GraduationCap
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
