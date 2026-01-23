@@ -144,8 +144,20 @@ export default function DashboardLayout({ children, title }) {
   const { user, logout, getAuthHeaders } = useAuth();
   const { subscription, canAccessFeature, isTrialExpired, getTrialDaysRemaining, isOnTrial, getCurrentPlan } = useSubscription();
   const { registerShortcut, unregisterShortcut, setIsHelpOpen } = useKeyboardShortcuts();
+  const { startOnboarding, isCompleted: onboardingCompleted } = useOnboarding();
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Show onboarding for first-time users
+  useEffect(() => {
+    if (!onboardingCompleted && location.pathname === "/dashboard") {
+      // Small delay to let the dashboard render first
+      const timer = setTimeout(() => {
+        startOnboarding();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [onboardingCompleted, location.pathname, startOnboarding]);
 
   // Register keyboard shortcut handlers
   useEffect(() => {
