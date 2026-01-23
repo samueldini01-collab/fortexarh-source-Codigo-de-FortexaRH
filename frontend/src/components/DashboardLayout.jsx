@@ -722,7 +722,7 @@ export default function DashboardLayout({ children, title }) {
             {blockedFeature && (
               <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-700">
-                  {["Reclutamiento", "Portal autoservicio empleados", "Evaluaciones", "Organigrama"].includes(blockedFeature)
+                  {["Reclutamiento", "Portal autoservicio empleados", "Evaluaciones", "Organigrama", "Gastos y Viáticos"].includes(blockedFeature)
                     ? <><strong>"{blockedFeature}"</strong> está disponible en los planes <strong>Pro</strong> y <strong>Enterprise</strong></>
                     : ["Roles"].includes(blockedFeature)
                       ? <><strong>"{blockedFeature}"</strong> está disponible en el plan <strong>Enterprise</strong></>
@@ -750,6 +750,10 @@ export default function DashboardLayout({ children, title }) {
                 <li className="flex items-center gap-2">
                   <Zap className="w-4 h-4 text-purple-500" />
                   Portal de autoservicio para empleados
+                </li>
+                <li className="flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-purple-500" />
+                  Gastos y viáticos con doble aprobación
                 </li>
                 <li className="flex items-center gap-2">
                   <Zap className="w-4 h-4 text-purple-500" />
