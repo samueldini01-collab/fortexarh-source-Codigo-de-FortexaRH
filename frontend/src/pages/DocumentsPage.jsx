@@ -398,9 +398,35 @@ export default function DocumentsPage() {
                   {/* Custom Values based on template */}
                   {selectedTemplate?.template_id === "constancia_trabajo" && (
                     <div className="space-y-3 pt-2 border-t">
-                      <h4 className="text-sm font-medium">Opciones Adicionales</h4>
-                      <div className="flex items-center justify-between">
-                        <Label className="text-sm">Mostrar salario</Label>
+                      <h4 className="text-sm font-medium">Opciones de la Constancia</h4>
+                      <p className="text-xs text-slate-500">Seleccione qué información incluir en el documento</p>
+                      
+                      <div className="flex items-center justify-between py-1">
+                        <Label className="text-sm">Fecha de contratación</Label>
+                        <Switch 
+                          checked={customValues.show_hire_date !== false}
+                          onCheckedChange={(v) => setCustomValues({...customValues, show_hire_date: v})}
+                        />
+                      </div>
+                      
+                      <div className="flex items-center justify-between py-1">
+                        <Label className="text-sm">Cargo / Posición</Label>
+                        <Switch 
+                          checked={customValues.show_position !== false}
+                          onCheckedChange={(v) => setCustomValues({...customValues, show_position: v})}
+                        />
+                      </div>
+                      
+                      <div className="flex items-center justify-between py-1">
+                        <Label className="text-sm">Departamento</Label>
+                        <Switch 
+                          checked={customValues.show_department !== false}
+                          onCheckedChange={(v) => setCustomValues({...customValues, show_department: v})}
+                        />
+                      </div>
+                      
+                      <div className="flex items-center justify-between py-1">
+                        <Label className="text-sm">Salario mensual</Label>
                         <Switch 
                           checked={customValues.show_salary || false}
                           onCheckedChange={(v) => setCustomValues({...customValues, show_salary: v})}
