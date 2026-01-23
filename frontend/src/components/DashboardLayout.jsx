@@ -251,7 +251,7 @@ export default function DashboardLayout({ children, title }) {
   };
 
   // Global search function
-  const handleGlobalSearch = async (query) => {
+  const handleGlobalSearch = useCallback(async (query) => {
     if (!query || query.length < 2) {
       setSearchResults([]);
       return;
@@ -280,7 +280,7 @@ export default function DashboardLayout({ children, title }) {
     } finally {
       setSearchLoading(false);
     }
-  };
+  }, [getAuthHeaders]);
 
   // Debounced search
   useEffect(() => {
@@ -288,7 +288,7 @@ export default function DashboardLayout({ children, title }) {
       if (searchQuery) handleGlobalSearch(searchQuery);
     }, 300);
     return () => clearTimeout(timer);
-  }, [searchQuery]);
+  }, [searchQuery, handleGlobalSearch]);
 
   // Keyboard shortcut for search (Ctrl+K or Cmd+K)
   useEffect(() => {
