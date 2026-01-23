@@ -7,6 +7,8 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { AccessibilityIndicator } from "@/components/ThemeToggle";
 import { KeyboardShortcutsProvider } from "@/context/KeyboardShortcutsContext";
 import { KeyboardShortcutsHelp } from "@/components/KeyboardShortcutsHelp";
+import { OnboardingProvider } from "@/context/OnboardingContext";
+import OnboardingTutorial from "@/components/OnboardingTutorial";
 
 // Pages
 import LandingPage from "@/pages/LandingPage";
