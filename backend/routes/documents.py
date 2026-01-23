@@ -607,13 +607,23 @@ async def generate_document(data: DocumentGenerateRequest, request: Request):
         hire_date_formatted = "N/A"
     
     # Base variable values
+    # Get logo - try both logo (base64) and logo_url
+    company_logo = ""
+    if company:
+        # First try base64 logo
+        if company.get("logo"):
+            company_logo = company.get("logo")
+        # Then try logo_url
+        elif company.get("logo_url"):
+            company_logo = company.get("logo_url")
+    
     variables = {
         # Company info
         "company_name": company.get("name", "") if company else "",
         "company_rnc": company.get("rnc", "") if company else "",
         "company_address": company.get("address", "") if company else "",
         "company_phone": company.get("phone", "") if company else "",
-        "company_logo": company.get("logo", "") if company else "",
+        "company_logo": company_logo,
         
         # Employee info
         "employee_name": f"{employee.get('first_name', '')} {employee.get('last_name', '')}".strip(),
