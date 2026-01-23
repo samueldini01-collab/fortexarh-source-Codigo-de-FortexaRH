@@ -671,7 +671,318 @@ async def get_available_years(current_user: dict = Depends(get_current_user)):
     return years
 
 
-@router.post("/periods/{period_id}/calculate")
+# ===================== EXPORT ENDPOINTS =====================
+
+@router.get("/periods/{period_id}/export/excel")
+async def export_period_excel(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Export payroll period to Excel format"""
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter='\t')
+    
+    writer.writerow([
+        "Cédula", "Nombre", "Departamento", "Cargo", 
+        "Salario Base", "Horas Extras", "Bonos", "Comisiones", 
+        "Otros Ingresos", "Salario Bruto",
+        "SFS Empleado", "AFP Empleado", "ISR", 
+        "Otros Descuentos", "Total Descuentos", "Salario Neto",
+        "SFS Patronal", "AFP Patronal", "SRL", "INFOTEP"
+    ])
+    
+    for entry in entries:
+        overtime_total = (
+            entry.get("overtime_day_amount", 0) +
+            entry.get("overtime_night_amount", 0) +
+            entry.get("overtime_weekend_amount", 0) +
+            entry.get("overtime_holiday_amount", 0)
+        )
+        writer.writerow([
+            entry.get("employee_document", ""),
+            entry.get("employee_name", ""),
+            entry.get("department", ""),
+            entry.get("position", ""),
+            entry.get("base_salary", 0),
+            overtime_total,
+            entry.get("bonuses", 0),
+            entry.get("commissions", 0),
+            entry.get("other_income", 0),
+            entry.get("gross_salary", 0),
+            entry.get("sfs_employee", 0),
+            entry.get("afp_employee", 0),
+            entry.get("isr", 0),
+            entry.get("total_additional_deductions", 0),
+            entry.get("total_deductions", 0),
+            entry.get("net_salary", 0),
+            entry.get("sfs_employer", 0),
+            entry.get("afp_employer", 0),
+            entry.get("srl_employer", 0),
+            entry.get("infotep_employer", 0)
+        ])
+    
+    content = output.getvalue()
+    return Response(
+        content=content,
+        media_type="application/vnd.ms-excel",
+        headers={"Content-Disposition": f"attachment; filename=nomina_{period_id}.xls"}
+    )
+
+
+@router.get("/periods/{period_id}/export/tss-autodeterminacion")
+async def export_tss_autodeterminacion(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Export TSS Autodetermination file"""
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    rnc = company.get("rnc", "") if company else ""
+    
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter='\t')
+    
+    writer.writerow([
+        "RNC_PATRONO", "CEDULA", "TIPO_CEDULA", "NSS",
+        "NOMBRE", "APELLIDO1", "APELLIDO2",
+        "SEXO", "FECHA_NACIMIENTO", "SALARIO_COTIZABLE",
+        "APORTE_VOLUNTARIO", "SFS_EMPLEADOR", "SFS_EMPLEADO",
+        "AFP_EMPLEADOR", "AFP_EMPLEADO", "SRL", "INFOTEP"
+    ])
+    
+    for entry in entries:
+        cedula = entry.get("employee_document", "").replace("-", "")
+        name_parts = entry.get("employee_name", "").split()
+        first_name = name_parts[0] if len(name_parts) > 0 else ""
+        last_name1 = name_parts[-1] if len(name_parts) > 1 else ""
+        last_name2 = name_parts[-2] if len(name_parts) > 2 else ""
+        
+        writer.writerow([
+            rnc.replace("-", ""),
+            cedula,
+            "C",
+            "",
+            first_name,
+            last_name1,
+            last_name2,
+            "M",
+            "",
+            entry.get("gross_salary", 0),
+            0,
+            entry.get("sfs_employer", 0),
+            entry.get("sfs_employee", 0),
+            entry.get("afp_employer", 0),
+            entry.get("afp_employee", 0),
+            entry.get("srl_employer", 0),
+            entry.get("infotep_employer", 0)
+        ])
+    
+    content = output.getvalue()
+    return Response(
+        content=content,
+        media_type="application/vnd.ms-excel",
+        headers={"Content-Disposition": f"attachment; filename=TSS_Autodeterminacion_{period_id}.xls"}
+    )
+
+
+@router.get("/periods/{period_id}/export/tss-novedades")
+async def export_tss_novedades(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Export TSS Novedades file"""
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    rnc = company.get("rnc", "") if company else ""
+    
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter='\t')
+    
+    writer.writerow([
+        "RNC_PATRONO", "CEDULA", "TIPO_NOVEDAD", "FECHA_NOVEDAD",
+        "MOTIVO", "OBSERVACIONES"
+    ])
+    
+    content = output.getvalue()
+    return Response(
+        content=content,
+        media_type="application/vnd.ms-excel",
+        headers={"Content-Disposition": f"attachment; filename=TSS_Novedades_{period_id}.xls"}
+    )
+
+
+@router.get("/periods/{period_id}/export/ir3")
+async def export_ir3(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Export IR-3 report"""
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    total_isr = sum(e.get("isr", 0) for e in entries)
+    total_gross = sum(e.get("gross_salary", 0) for e in entries)
+    
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter='\t')
+    
+    writer.writerow(["DECLARACIÓN IR-3 - RETENCIONES DE ASALARIADOS"])
+    writer.writerow([])
+    writer.writerow(["Empresa:", company.get("name", "") if company else ""])
+    writer.writerow(["RNC:", company.get("rnc", "") if company else ""])
+    writer.writerow(["Período:", f"{period.get('month', '')}/{period.get('year', '')}"])
+    writer.writerow([])
+    writer.writerow(["RESUMEN"])
+    writer.writerow(["Total Empleados:", len(entries)])
+    writer.writerow(["Total Salarios Brutos:", f"RD$ {total_gross:,.2f}"])
+    writer.writerow(["Total ISR Retenido:", f"RD$ {total_isr:,.2f}"])
+    
+    content = output.getvalue()
+    return Response(
+        content=content,
+        media_type="application/vnd.ms-excel",
+        headers={"Content-Disposition": f"attachment; filename=IR3_{period_id}.xls"}
+    )
+
+
+@router.get("/periods/{period_id}/export/ir4")
+async def export_ir4(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Export IR-4 report (detail)"""
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter='\t')
+    
+    writer.writerow([
+        "Cédula", "Nombre", "Salario Bruto", "ISR Retenido"
+    ])
+    
+    for entry in entries:
+        if entry.get("isr", 0) > 0:
+            writer.writerow([
+                entry.get("employee_document", ""),
+                entry.get("employee_name", ""),
+                entry.get("gross_salary", 0),
+                entry.get("isr", 0)
+            ])
+    
+    content = output.getvalue()
+    return Response(
+        content=content,
+        media_type="application/vnd.ms-excel",
+        headers={"Content-Disposition": f"attachment; filename=IR4_{period_id}.xls"}
+    )
+
+
+@router.get("/annual-report/ir13/{year}")
+async def export_ir13(year: int, current_user: dict = Depends(get_current_user)):
+    """Export IR-13 annual report"""
+    company_id = current_user.get("company_id")
+    
+    periods = await db.payroll_periods.find(
+        {"company_id": company_id, "year": year},
+        {"_id": 0}
+    ).to_list(100)
+    
+    if not periods:
+        raise HTTPException(status_code=404, detail="No hay períodos para este año")
+    
+    all_entries = []
+    for period in periods:
+        entries = await db.payroll_entries.find(
+            {"period_id": period["period_id"], "company_id": company_id},
+            {"_id": 0}
+        ).to_list(1000)
+        all_entries.extend(entries)
+    
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    
+    employee_totals = {}
+    for entry in all_entries:
+        emp_id = entry.get("employee_id")
+        if emp_id not in employee_totals:
+            employee_totals[emp_id] = {
+                "document": entry.get("employee_document", ""),
+                "name": entry.get("employee_name", ""),
+                "total_gross": 0,
+                "total_isr": 0
+            }
+        employee_totals[emp_id]["total_gross"] += entry.get("gross_salary", 0)
+        employee_totals[emp_id]["total_isr"] += entry.get("isr", 0)
+    
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter='\t')
+    
+    writer.writerow(["DECLARACIÓN IR-13 - RETENCIONES ANUALES"])
+    writer.writerow([])
+    writer.writerow(["Empresa:", company.get("name", "") if company else ""])
+    writer.writerow(["RNC:", company.get("rnc", "") if company else ""])
+    writer.writerow(["Año Fiscal:", year])
+    writer.writerow([])
+    writer.writerow(["Cédula", "Nombre", "Total Ingresos", "Total ISR Retenido"])
+    
+    for emp in employee_totals.values():
+        writer.writerow([
+            emp["document"],
+            emp["name"],
+            f"{emp['total_gross']:,.2f}",
+            f"{emp['total_isr']:,.2f}"
+        ])
+    
+    content = output.getvalue()
+    return Response(
+        content=content,
+        media_type="application/vnd.ms-excel",
+        headers={"Content-Disposition": f"attachment; filename=IR13_{year}.xls"}
+    )
 async def calculate_period(period_id: str, current_user: dict = Depends(get_current_user)):
     """Recalculate all entries in a period"""
     company_id = current_user.get("company_id")
