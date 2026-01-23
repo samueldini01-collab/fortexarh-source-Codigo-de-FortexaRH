@@ -690,6 +690,28 @@ export default function PayrollV2Page() {
 
           {/* Períodos Tab */}
           <TabsContent value="periodos" className="space-y-4">
+            {/* Filter controls */}
+            <div className="flex flex-wrap items-center gap-4">
+              <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
+                <SelectTrigger className="w-52">
+                  <SelectValue placeholder="Todos los departamentos" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos los departamentos</SelectItem>
+                  {departments.map(dept => (
+                    <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              {quickFilter && (
+                <Badge variant="outline" className="px-3 py-1">
+                  Filtro: {quickFilter === 'open' ? 'Abiertos' : quickFilter === 'pending' ? 'Pendientes' : 'Pagados'}
+                  <button onClick={() => setQuickFilter(null)} className="ml-2 hover:text-red-500">×</button>
+                </Badge>
+              )}
+            </div>
+            
             {periods.length === 0 ? (
               <Card className="py-12"><CardContent className="text-center">
                 <Calendar className="w-12 h-12 mx-auto mb-4 text-slate-300" />
@@ -698,7 +720,14 @@ export default function PayrollV2Page() {
               </CardContent></Card>
             ) : (
               <div className="space-y-3">
-                {periods.map(period => (
+                {periods
+                  .filter(period => {
+                    if (quickFilter === 'open') return period.status === 'open';
+                    if (quickFilter === 'pending') return ['calculated', 'approved'].includes(period.status);
+                    if (quickFilter === 'paid') return period.status === 'paid';
+                    return true;
+                  })
+                  .map(period => (
                   <Card key={period.period_id} className={`cursor-pointer transition-all ${selectedPeriod?.period_id === period.period_id ? 'ring-2 ring-blue-500' : 'hover:shadow-md'}`}
                     onClick={() => { setSelectedPeriod(period); setActiveTab('nomina'); }}>
                     <CardContent className="p-4">
