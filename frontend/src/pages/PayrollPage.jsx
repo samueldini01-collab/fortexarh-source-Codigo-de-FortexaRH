@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth, API } from "@/App";
 import axios from "axios";
@@ -47,11 +47,7 @@ export default function PayrollPage() {
   });
   const { getAuthHeaders } = useAuth();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [payrollRes, employeeRes] = await Promise.all([
         axios.get(`${API}/payroll`, { headers: getAuthHeaders(), withCredentials: true }),
@@ -65,7 +61,11 @@ export default function PayrollPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAuthHeaders]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleEmployeeSelect = (employeeId) => {
     const employee = employees.find(e => e.employee_id === employeeId);
