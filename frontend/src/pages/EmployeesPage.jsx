@@ -62,6 +62,7 @@ import {
   X
 } from "lucide-react";
 import { toast } from "sonner";
+import { ImportEmployeesModal, BulkEditModal, ExportEmployeesButton } from "@/components/EmployeeImportExport";
 
 const departments = ["Administración", "Ventas", "Marketing", "TI", "Recursos Humanos", "Finanzas", "Operaciones", "Legal", "Producción", "Logística"];
 const documentTypes = ["Cédula", "Pasaporte", "Residencia"];
