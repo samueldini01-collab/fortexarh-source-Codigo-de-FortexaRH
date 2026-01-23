@@ -610,8 +610,13 @@ async def execute_import(file: UploadFile = File(...), current_user: dict = Depe
 
 
 @router.get("/export/excel")
-async def export_employees_excel(current_user: dict = Depends(get_current_user)):
-    """Export all employees to Excel"""
+async def export_employees_excel(
+    status: Optional[str] = None,
+    department: Optional[str] = None,
+    search: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Export employees to Excel with optional filters"""
     company_id = current_user.get("company_id")
     
     try:
@@ -619,8 +624,27 @@ async def export_employees_excel(current_user: dict = Depends(get_current_user))
         from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
         from openpyxl.utils import get_column_letter
         
+        # Build query with filters
+        query = {"company_id": company_id}
+        
+        if status and status != "all":
+            query["status"] = status
+        
+        if department and department != "all":
+            query["department"] = department
+        
+        # For search, we need to use $or with regex
+        if search:
+            search_regex = {"$regex": search, "$options": "i"}
+            query["$or"] = [
+                {"first_name": search_regex},
+                {"last_name": search_regex},
+                {"email": search_regex},
+                {"department": search_regex}
+            ]
+        
         employees = await db.employees.find(
-            {"company_id": company_id},
+            query,
             {"_id": 0}
         ).to_list(10000)
         
