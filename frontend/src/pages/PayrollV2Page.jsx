@@ -111,6 +111,10 @@ export default function PayrollV2Page() {
   const [editingCell, setEditingCell] = useState(null);
   const [editValue, setEditValue] = useState("");
   
+  // Quick filter states
+  const [quickFilter, setQuickFilter] = useState(null);
+  const [departmentFilter, setDepartmentFilter] = useState("all");
+  
   // Form states
   const [newPeriodForm, setNewPeriodForm] = useState({
     period_type: "quincenal_1",
