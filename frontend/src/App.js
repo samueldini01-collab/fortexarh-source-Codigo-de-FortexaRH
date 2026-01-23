@@ -362,14 +362,17 @@ function AppRouter() {
 function AppWithShortcuts() {
   return (
     <KeyboardShortcutsProvider>
-      <AuthProvider>
-        <SubscriptionProvider>
-          <AppRouter />
-          <Toaster position="top-right" richColors />
-          <AccessibilityIndicator />
-          <KeyboardShortcutsHelp />
-        </SubscriptionProvider>
-      </AuthProvider>
+      <OnboardingProvider>
+        <AuthProvider>
+          <SubscriptionProvider>
+            <AppRouter />
+            <Toaster position="top-right" richColors />
+            <AccessibilityIndicator />
+            <KeyboardShortcutsHelp />
+            <OnboardingTutorial />
+          </SubscriptionProvider>
+        </AuthProvider>
+      </OnboardingProvider>
     </KeyboardShortcutsProvider>
   );
 }
