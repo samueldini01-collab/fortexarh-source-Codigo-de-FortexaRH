@@ -71,13 +71,7 @@ export default function ReportsAdvancedPage() {
   const [periods, setPeriods] = useState([]);
   const [selectedPeriod, setSelectedPeriod] = useState("");
 
-  useEffect(() => {
-    fetchEmployees();
-    fetchPeriods();
-    loadSavedFilters();
-  }, []);
-
-  const fetchEmployees = async () => {
+  const fetchEmployees = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/employees`, {
         headers: getAuthHeaders(),
@@ -87,9 +81,9 @@ export default function ReportsAdvancedPage() {
     } catch (error) {
       console.error("Error fetching employees:", error);
     }
-  };
+  }, [getAuthHeaders]);
 
-  const fetchPeriods = async () => {
+  const fetchPeriods = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/payroll-v2/periods`, {
         headers: getAuthHeaders(),
@@ -99,14 +93,20 @@ export default function ReportsAdvancedPage() {
     } catch (error) {
       console.error("Error fetching periods:", error);
     }
-  };
+  }, [getAuthHeaders]);
 
-  const loadSavedFilters = () => {
+  const loadSavedFilters = useCallback(() => {
     const saved = localStorage.getItem('fortexarh_saved_filters');
     if (saved) {
       setSavedFilters(JSON.parse(saved));
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchEmployees();
+    fetchPeriods();
+    loadSavedFilters();
+  }, [fetchEmployees, fetchPeriods, loadSavedFilters]);
 
   const saveFilter = () => {
     if (!filterName.trim()) {
