@@ -168,11 +168,7 @@ function EmployeeDashboard() {
   const [vacationForm, setVacationForm] = useState({ start_date: "", end_date: "", reason: "" });
   const [showPayslipDetail, setShowPayslipDetail] = useState(null);
 
-  useEffect(() => {
-    fetchDashboard();
-  }, []);
-
-  const fetchDashboard = async () => {
+  const fetchDashboard = useCallback(async () => {
     setLoading(true);
     try {
       const [dashRes, payRes, loanRes, vacRes, balRes, profRes] = await Promise.all([
@@ -194,7 +190,11 @@ function EmployeeDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAuthHeaders]);
+
+  useEffect(() => {
+    fetchDashboard();
+  }, [fetchDashboard]);
 
   const handleVacationRequest = async () => {
     try {
