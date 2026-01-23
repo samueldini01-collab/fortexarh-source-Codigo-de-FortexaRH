@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext } from "react";
+import { useState, useEffect, createContext, useContext, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,14 +32,7 @@ function EmployeeAuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (token) {
-      fetchProfile();
-    } else {
-      setLoading(false);
-    }
-  }, [token]);
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/employee-portal/profile`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -50,7 +43,15 @@ function EmployeeAuthProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    if (token) {
+      fetchProfile();
+    } else {
+      setLoading(false);
+    }
+  }, [token, fetchProfile]);
 
   const login = async (documentNumber, password) => {
     const response = await axios.post(`${API}/employee-portal/login`, {
