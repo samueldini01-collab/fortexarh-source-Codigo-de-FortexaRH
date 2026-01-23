@@ -328,11 +328,27 @@ export default function EmployeesPage() {
     });
   };
 
-  const filteredEmployees = employees.filter(emp =>
-    `${emp.first_name} ${emp.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    emp.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    emp.department?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter employees by search term AND quick filter
+  const filteredEmployees = employees.filter(emp => {
+    // First apply search term filter
+    const matchesSearch = searchTerm === "" || 
+      `${emp.first_name} ${emp.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      emp.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      emp.department?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Then apply quick filter
+    if (!matchesSearch) return false;
+    
+    if (!quickFilter || quickFilter === 'all') return true;
+    if (quickFilter === 'active') return emp.status === 'active';
+    if (quickFilter === 'inactive') return emp.status === 'inactive';
+    if (quickFilter === 'on_leave') return emp.status === 'on_leave';
+    
+    return true;
+  });
+
+  // Get unique departments for filter
+  const uniqueDepartments = [...new Set(employees.map(e => e.department).filter(Boolean))];
 
   const getStatusBadge = (status) => {
     switch (status) {
