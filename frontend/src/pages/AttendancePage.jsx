@@ -107,28 +107,88 @@ export default function AttendancePage() {
   const presentCount = attendances.filter(a => a.status === "present").length;
   const absentCount = attendances.filter(a => a.status === "absent").length;
   const lateCount = attendances.filter(a => a.status === "late").length;
+  
+  // Filter attendances
+  const filteredAttendances = attendances.filter(a => {
+    if (!quickFilter) return true;
+    return a.status === quickFilter;
+  });
 
   return (
     <DashboardLayout title="Control de Asistencias">
       <div className="space-y-6" data-testid="attendance-page">
-        {/* Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="border-emerald-200 bg-emerald-50/50">
-            <CardContent className="p-6">
+        {/* Stats Cards - Clickable for quick filtering */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card 
+            className={`cursor-pointer transition-all hover:shadow-md ${!quickFilter ? 'ring-2 ring-slate-400' : ''}`}
+            onClick={() => setQuickFilter(null)}
+          >
+            <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-emerald-600">Presentes</p>
-                  <p className="text-3xl font-bold text-emerald-700">{presentCount}</p>
+                  <p className="text-sm text-slate-500">Total Registros</p>
+                  <p className="text-2xl font-bold">{attendances.length}</p>
                 </div>
-                <UserCheck className="w-10 h-10 text-emerald-500" />
+                <Users className="w-8 h-8 text-slate-300" />
               </div>
             </CardContent>
           </Card>
-          <Card className="border-red-200 bg-red-50/50">
-            <CardContent className="p-6">
+          <Card 
+            className={`border-emerald-200 bg-emerald-50/50 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'present' ? 'ring-2 ring-emerald-400' : ''}`}
+            onClick={() => setQuickFilter(quickFilter === 'present' ? null : 'present')}
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-emerald-600">Presentes</p>
+                  <p className="text-2xl font-bold text-emerald-700">{presentCount}</p>
+                </div>
+                <UserCheck className="w-8 h-8 text-emerald-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card 
+            className={`border-red-200 bg-red-50/50 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'absent' ? 'ring-2 ring-red-400' : ''}`}
+            onClick={() => setQuickFilter(quickFilter === 'absent' ? null : 'absent')}
+          >
+            <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-red-600">Ausentes</p>
+                  <p className="text-2xl font-bold text-red-700">{absentCount}</p>
+                </div>
+                <UserX className="w-8 h-8 text-red-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card 
+            className={`border-amber-200 bg-amber-50/50 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'late' ? 'ring-2 ring-amber-400' : ''}`}
+            onClick={() => setQuickFilter(quickFilter === 'late' ? null : 'late')}
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-amber-600">Tarde</p>
+                  <p className="text-2xl font-bold text-amber-700">{lateCount}</p>
+                </div>
+                <Clock className="w-8 h-8 text-amber-500" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
+        {/* Filter indicator */}
+        {quickFilter && (
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="px-3 py-1">
+              Filtro: {quickFilter === 'present' ? 'Presentes' : quickFilter === 'absent' ? 'Ausentes' : 'Tarde'}
+              <button onClick={() => setQuickFilter(null)} className="ml-2 hover:text-red-500">×</button>
+            </Badge>
+            <span className="text-sm text-slate-500">
+              {filteredAttendances.length} de {attendances.length} registros
+            </span>
+          </div>
+        )}
                   <p className="text-3xl font-bold text-red-700">{absentCount}</p>
                 </div>
                 <UserX className="w-10 h-10 text-red-500" />
