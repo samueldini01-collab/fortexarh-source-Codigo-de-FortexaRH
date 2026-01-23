@@ -38,6 +38,7 @@ export default function AttendancePage() {
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [quickFilter, setQuickFilter] = useState(null);
   const [formData, setFormData] = useState({
     employee_id: "",
     date: new Date().toISOString().split('T')[0],
