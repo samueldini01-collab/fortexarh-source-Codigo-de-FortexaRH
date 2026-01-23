@@ -175,6 +175,34 @@ code, .mono {
     background: #94a3b8;
 }
 
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+    background: #1e293b;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #475569;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* High contrast scrollbar */
+.high-contrast ::-webkit-scrollbar-track {
+    background: #000;
+    border: 1px solid #666;
+}
+
+.high-contrast ::-webkit-scrollbar-thumb {
+    background: #888;
+    border: 1px solid #fff;
+}
+
+.high-contrast ::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}
+
 /* Animations */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
