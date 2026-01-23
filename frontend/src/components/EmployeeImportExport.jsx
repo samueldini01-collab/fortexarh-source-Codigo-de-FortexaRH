@@ -370,7 +370,7 @@ export function BulkEditModal({ open, onClose, selectedEmployees, onSuccess }) {
   }, [getAuthHeaders]);
 
   // Load fields when modal opens
-  useState(() => {
+  useEffect(() => {
     if (open) {
       loadFields();
     }
