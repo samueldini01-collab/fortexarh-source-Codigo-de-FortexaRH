@@ -4,6 +4,7 @@ const ThemeContext = createContext({
   theme: "system",
   setTheme: () => null,
   resolvedTheme: "light",
+  isHighContrast: false,
 });
 
 export function ThemeProvider({ children, defaultTheme = "system", storageKey = "fortexarh-theme" }) {
@@ -20,17 +21,29 @@ export function ThemeProvider({ children, defaultTheme = "system", storageKey = 
     const root = window.document.documentElement;
     
     // Remove all theme classes
-    root.classList.remove("light", "dark");
+    root.classList.remove("light", "dark", "high-contrast");
 
     let effectiveTheme = theme;
     
     if (theme === "system") {
-      effectiveTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light";
+      // Check for system preference for high contrast
+      const prefersHighContrast = window.matchMedia("(prefers-contrast: more)").matches;
+      if (prefersHighContrast) {
+        effectiveTheme = "high-contrast";
+      } else {
+        effectiveTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+      }
     }
 
     root.classList.add(effectiveTheme);
+    
+    // High contrast also needs dark class for base dark styles
+    if (effectiveTheme === "high-contrast") {
+      root.classList.add("dark");
+    }
+    
     setResolvedTheme(effectiveTheme);
     
     // Save to localStorage
@@ -41,24 +54,42 @@ export function ThemeProvider({ children, defaultTheme = "system", storageKey = 
   useEffect(() => {
     if (theme !== "system") return;
 
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const darkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const highContrastQuery = window.matchMedia("(prefers-contrast: more)");
     
-    const handleChange = (e) => {
+    const handleChange = () => {
       const root = window.document.documentElement;
-      root.classList.remove("light", "dark");
-      const newTheme = e.matches ? "dark" : "light";
-      root.classList.add(newTheme);
+      root.classList.remove("light", "dark", "high-contrast");
+      
+      let newTheme;
+      if (highContrastQuery.matches) {
+        newTheme = "high-contrast";
+        root.classList.add("dark", "high-contrast");
+      } else if (darkModeQuery.matches) {
+        newTheme = "dark";
+        root.classList.add("dark");
+      } else {
+        newTheme = "light";
+        root.classList.add("light");
+      }
+      
       setResolvedTheme(newTheme);
     };
 
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
+    darkModeQuery.addEventListener("change", handleChange);
+    highContrastQuery.addEventListener("change", handleChange);
+    
+    return () => {
+      darkModeQuery.removeEventListener("change", handleChange);
+      highContrastQuery.removeEventListener("change", handleChange);
+    };
   }, [theme]);
 
   const value = {
     theme,
     setTheme,
     resolvedTheme,
+    isHighContrast: resolvedTheme === "high-contrast" || theme === "high-contrast",
   };
 
   return (
