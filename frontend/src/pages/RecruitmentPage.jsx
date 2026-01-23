@@ -479,16 +479,23 @@ export default function RecruitmentPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {Array(4).fill(0).map((_, i) => <Skeleton key={i} className="h-48 w-full" />)}
               </div>
-            ) : jobs.length === 0 ? (
+            ) : filteredJobs.length === 0 ? (
               <Card className="border-slate-200">
                 <CardContent className="text-center py-12">
                   <Briefcase className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                  <p className="text-slate-500">No hay vacantes publicadas</p>
+                  <p className="text-slate-500">
+                    {jobs.length === 0 ? "No hay vacantes publicadas" : "No hay vacantes que coincidan con el filtro"}
+                  </p>
+                  {jobStatusFilter && (
+                    <Button variant="link" onClick={() => setJobStatusFilter(null)} className="mt-2">
+                      Limpiar filtro
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {jobs.map((job) => (
+                {filteredJobs.map((job) => (
                   <Card key={job.job_id} className="border-slate-200" data-testid={`job-card-${job.job_id}`}>
                     <CardHeader className="pb-2">
                       <div className="flex items-start justify-between">
