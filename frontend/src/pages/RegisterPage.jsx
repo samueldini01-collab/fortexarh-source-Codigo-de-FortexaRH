@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Mail, Lock, User, Building2, AlertCircle, Check, CheckCircle2, Loader2, CreditCard } from "lucide-react";
+import { Users, Mail, Lock, User, Building2, AlertCircle, Check, CheckCircle2, Loader2, CreditCard, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 
@@ -29,6 +29,8 @@ export default function RegisterPage() {
   const [paymentVerified, setPaymentVerified] = useState(false);
   const [paymentInfo, setPaymentInfo] = useState(null);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -243,14 +245,21 @@ export default function RegisterPage() {
                   <Input
                     id="password"
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={formData.password}
                     onChange={handleChange}
-                    className="pl-10"
+                    className="pl-10 pr-10"
                     required
                     data-testid="password-input"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
                 </div>
               </div>
 
@@ -261,14 +270,21 @@ export default function RegisterPage() {
                   <Input
                     id="confirmPassword"
                     name="confirmPassword"
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="pl-10"
+                    className="pl-10 pr-10"
                     required
                     data-testid="confirm-password-input"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
                 </div>
               </div>
 
