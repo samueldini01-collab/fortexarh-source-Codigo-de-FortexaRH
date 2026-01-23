@@ -573,29 +573,50 @@ export function BulkEditModal({ open, onClose, selectedEmployees, onSuccess }) {
 
 // ===================== EXPORT BUTTON =====================
 
-export function ExportEmployeesButton({ asMenuItem = false }) {
+export function ExportEmployeesButton({ asMenuItem = false, filters = {} }) {
   const [loading, setLoading] = useState(false);
   const { getAuthHeaders } = useAuth();
 
   const handleExport = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API}/employees/export/excel`, {
+      // Build query params from filters
+      const params = new URLSearchParams();
+      if (filters.status && filters.status !== 'all') {
+        params.append('status', filters.status);
+      }
+      if (filters.department && filters.department !== 'all') {
+        params.append('department', filters.department);
+      }
+      if (filters.search) {
+        params.append('search', filters.search);
+      }
+      
+      const queryString = params.toString();
+      const url = queryString ? `${API}/employees/export/excel?${queryString}` : `${API}/employees/export/excel`;
+      
+      const response = await axios.get(url, {
         headers: getAuthHeaders(),
         responseType: 'blob',
         withCredentials: true
       });
       
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const blobUrl = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `empleados_${new Date().toISOString().split('T')[0]}.xlsx`);
+      link.href = blobUrl;
+      
+      // Include filter info in filename if filters are active
+      const hasFilters = (filters.status && filters.status !== 'all') || 
+                         (filters.department && filters.department !== 'all') ||
+                         filters.search;
+      const suffix = hasFilters ? '_filtrados' : '';
+      link.setAttribute('download', `empleados${suffix}_${new Date().toISOString().split('T')[0]}.xlsx`);
       document.body.appendChild(link);
       link.click();
       link.remove();
-      window.URL.revokeObjectURL(url);
+      window.URL.revokeObjectURL(blobUrl);
       
-      toast.success("Empleados exportados correctamente");
+      toast.success(hasFilters ? "Empleados filtrados exportados" : "Empleados exportados correctamente");
     } catch (error) {
       toast.error("Error al exportar empleados");
     } finally {
