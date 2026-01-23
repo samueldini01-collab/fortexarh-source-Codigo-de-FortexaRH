@@ -356,17 +356,27 @@ function AppRouter() {
   );
 }
 
+// Wrapper component for keyboard shortcuts (needs to be inside BrowserRouter)
+function AppWithShortcuts() {
+  return (
+    <KeyboardShortcutsProvider>
+      <AuthProvider>
+        <SubscriptionProvider>
+          <AppRouter />
+          <Toaster position="top-right" richColors />
+          <AccessibilityIndicator />
+          <KeyboardShortcutsHelp />
+        </SubscriptionProvider>
+      </AuthProvider>
+    </KeyboardShortcutsProvider>
+  );
+}
+
 function App() {
   return (
     <BrowserRouter>
       <ThemeProvider defaultTheme="system" storageKey="fortexarh-theme">
-        <AuthProvider>
-          <SubscriptionProvider>
-            <AppRouter />
-            <Toaster position="top-right" richColors />
-            <AccessibilityIndicator />
-          </SubscriptionProvider>
-        </AuthProvider>
+        <AppWithShortcuts />
       </ThemeProvider>
     </BrowserRouter>
   );
