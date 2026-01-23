@@ -369,16 +369,51 @@ class TestDocumentsRouter:
         for expected in expected_templates:
             assert expected in template_ids, f"Missing default template: {expected}"
     
-    def test_get_novelty_types(self, auth_headers):
-        """Test getting novelty types for documents"""
-        response = requests.get(
-            f"{BASE_URL}/api/doc-generator/novelty-types",
+    def test_generate_document_with_employee(self, auth_headers):
+        """Test generating a document with a real employee"""
+        # First get an employee
+        emp_response = requests.get(
+            f"{BASE_URL}/api/employees",
             headers=auth_headers
         )
-        assert response.status_code == 200
-        data = response.json()
-        assert "income" in data
-        assert "deduction" in data
+        assert emp_response.status_code == 200
+        employees = emp_response.json()
+        
+        if len(employees) > 0:
+            employee_id = employees[0]["employee_id"]
+            
+            # Generate document
+            response = requests.post(
+                f"{BASE_URL}/api/doc-generator/generate",
+                headers=auth_headers,
+                json={
+                    "template_id": "constancia_trabajo",
+                    "employee_id": employee_id,
+                    "custom_values": {
+                        "city": "Santo Domingo",
+                        "show_salary": True,
+                        "show_position": True
+                    }
+                }
+            )
+            assert response.status_code == 200
+            data = response.json()
+            assert "document_id" in data
+            assert "content" in data
+            assert "template_name" in data
+    
+    def test_generate_document_nonexistent_employee(self, auth_headers):
+        """Test generating document with non-existent employee returns 404"""
+        response = requests.post(
+            f"{BASE_URL}/api/doc-generator/generate",
+            headers=auth_headers,
+            json={
+                "template_id": "constancia_trabajo",
+                "employee_id": "emp_nonexistent_12345",
+                "custom_values": {}
+            }
+        )
+        assert response.status_code == 404
     
     def test_documents_without_auth(self):
         """Test that document endpoints without auth return 401"""
