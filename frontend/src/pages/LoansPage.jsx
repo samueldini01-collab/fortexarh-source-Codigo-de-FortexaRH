@@ -333,11 +333,14 @@ export default function LoansPage() {
               </CardContent>
             </Card>
             
-            <Card>
+            <Card 
+              className={`cursor-pointer transition-all hover:shadow-md ${filterStatus === 'paid' ? 'ring-2 ring-blue-400' : ''}`}
+              onClick={() => setFilterStatus(filterStatus === 'paid' ? 'all' : 'paid')}
+            >
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-500">Total Cobrado</p>
+                    <p className="text-sm text-slate-500">Pagados</p>
                     <p className="text-2xl font-bold text-blue-600">{formatCurrency(summary.total_paid)}</p>
                   </div>
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
@@ -347,15 +350,18 @@ export default function LoansPage() {
               </CardContent>
             </Card>
             
-            <Card>
+            <Card 
+              className={`cursor-pointer transition-all hover:shadow-md ${filterStatus === 'defaulted' ? 'ring-2 ring-amber-400' : ''}`}
+              onClick={() => setFilterStatus(filterStatus === 'defaulted' ? 'all' : 'defaulted')}
+            >
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-500">Por Cobrar</p>
+                    <p className="text-sm text-slate-500">En Mora</p>
                     <p className="text-2xl font-bold text-amber-600">{formatCurrency(summary.total_pending)}</p>
                   </div>
                   <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
-                    <TrendingDown className="w-6 h-6 text-amber-600" />
+                    <AlertCircle className="w-6 h-6 text-amber-600" />
                   </div>
                 </div>
               </CardContent>
@@ -363,21 +369,16 @@ export default function LoansPage() {
           </div>
         )}
 
-        {/* Filters */}
-        <div className="flex gap-4 items-center">
-          <Label>Filtrar por estado:</Label>
-          <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-48">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="active">Activos</SelectItem>
-              <SelectItem value="paid">Pagados</SelectItem>
-              <SelectItem value="defaulted">En mora</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        {/* Filter indicator */}
+        {filterStatus !== 'all' && (
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="px-3 py-1">
+              Filtro: {filterStatus === 'active' ? 'Activos' : filterStatus === 'paid' ? 'Pagados' : 'En Mora'}
+              <button onClick={() => setFilterStatus('all')} className="ml-2 hover:text-red-500">×</button>
+            </Badge>
+            <span className="text-sm text-slate-500">{loans.length} préstamos</span>
+          </div>
+        )}
 
         {/* Loans Table */}
         <Card>
