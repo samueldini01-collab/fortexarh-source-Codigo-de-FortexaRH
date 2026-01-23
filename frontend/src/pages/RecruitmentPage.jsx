@@ -341,8 +341,8 @@ export default function RecruitmentPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-green-600">Contratados</p>
-                  <p className="text-2xl font-bold text-green-700">{hiredCandidates}</p>
+                  <p className="text-sm text-green-600 dark:text-green-400">Contratados</p>
+                  <p className="text-2xl font-bold text-green-700 dark:text-green-400">{hiredCandidates}</p>
                 </div>
                 <UserCheck className="w-8 h-8 text-green-400" />
               </div>

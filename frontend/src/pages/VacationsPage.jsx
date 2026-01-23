@@ -223,8 +223,8 @@ export default function VacationsPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-red-600">Rechazadas</p>
-                  <p className="text-2xl font-bold text-red-700">{stats.rejected}</p>
+                  <p className="text-sm text-red-600 dark:text-red-400">Rechazadas</p>
+                  <p className="text-2xl font-bold text-red-700 dark:text-red-400">{stats.rejected}</p>
                 </div>
                 <X className="w-8 h-8 text-red-500" />
               </div>
@@ -384,7 +384,7 @@ export default function VacationsPage() {
                             <Button 
                               size="sm" 
                               variant="outline"
-                              className="text-red-600 hover:bg-red-50"
+                              className="text-red-600 hover:bg-red-50 dark:bg-red-900/30"
                               onClick={() => handleReject(vac.vacation_id)}
                               data-testid={`reject-vacation-${vac.vacation_id}`}
                             >

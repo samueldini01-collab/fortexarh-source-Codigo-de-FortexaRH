@@ -866,11 +866,11 @@ export default function PayrollV2Page() {
                                 <TableCell className="text-right border-r bg-emerald-50/50 text-emerald-600 dark:text-emerald-400">{formatNumber(totalOvertime)}</TableCell>
                                 <TableCell className="text-right border-r bg-amber-50/50 text-amber-600 dark:text-amber-400">{formatNumber(entry.total_income_novelties || 0)}</TableCell>
                                 <TableCell className="text-right border-r bg-slate-100 font-bold">{formatNumber(entry.gross_salary)}</TableCell>
-                                <TableCell className="text-right border-r bg-red-50/50 text-red-600">{formatNumber(entry.sfs_employee)}</TableCell>
-                                <TableCell className="text-right border-r bg-red-50/50 text-red-600">{formatNumber(entry.afp_employee)}</TableCell>
-                                <TableCell className="text-right border-r bg-red-50/50 text-red-600">{formatNumber(entry.isr)}</TableCell>
+                                <TableCell className="text-right border-r bg-red-50/50 text-red-600 dark:text-red-400">{formatNumber(entry.sfs_employee)}</TableCell>
+                                <TableCell className="text-right border-r bg-red-50/50 text-red-600 dark:text-red-400">{formatNumber(entry.afp_employee)}</TableCell>
+                                <TableCell className="text-right border-r bg-red-50/50 text-red-600 dark:text-red-400">{formatNumber(entry.isr)}</TableCell>
                                 <TableCell className="text-right border-r bg-orange-50/50 text-orange-600">{formatNumber(entry.total_deduction_novelties || 0)}</TableCell>
-                                <TableCell className="text-right border-r bg-red-100/50 font-bold text-red-700">{formatNumber(entry.total_deductions)}</TableCell>
+                                <TableCell className="text-right border-r bg-red-100/50 font-bold text-red-700 dark:text-red-400">{formatNumber(entry.total_deductions)}</TableCell>
                                 <TableCell className="text-right bg-emerald-100/50 font-bold text-emerald-700 dark:text-emerald-400">{formatNumber(entry.net_salary)}</TableCell>
                                 {selectedPeriod.status !== 'paid' && (
                                   <TableCell>
@@ -896,11 +896,11 @@ export default function PayrollV2Page() {
                             <TableCell className="text-right border-r font-mono">{formatNumber(totals.overtimeDay + totals.overtimeNight + totals.overtimeWeekend + totals.overtimeHoliday)}</TableCell>
                             <TableCell className="text-right border-r font-mono text-amber-600 dark:text-amber-400">{formatNumber(totals.incomeNovelties)}</TableCell>
                             <TableCell className="text-right border-r font-mono">{formatNumber(totals.grossSalary)}</TableCell>
-                            <TableCell className="text-right border-r font-mono text-red-600">{formatNumber(totals.sfsEmployee)}</TableCell>
-                            <TableCell className="text-right border-r font-mono text-red-600">{formatNumber(totals.afpEmployee)}</TableCell>
-                            <TableCell className="text-right border-r font-mono text-red-600">{formatNumber(totals.isr)}</TableCell>
+                            <TableCell className="text-right border-r font-mono text-red-600 dark:text-red-400">{formatNumber(totals.sfsEmployee)}</TableCell>
+                            <TableCell className="text-right border-r font-mono text-red-600 dark:text-red-400">{formatNumber(totals.afpEmployee)}</TableCell>
+                            <TableCell className="text-right border-r font-mono text-red-600 dark:text-red-400">{formatNumber(totals.isr)}</TableCell>
                             <TableCell className="text-right border-r font-mono text-orange-600">{formatNumber(totals.deductionNovelties)}</TableCell>
-                            <TableCell className="text-right border-r font-mono text-red-700">{formatNumber(totals.totalDeductions)}</TableCell>
+                            <TableCell className="text-right border-r font-mono text-red-700 dark:text-red-400">{formatNumber(totals.totalDeductions)}</TableCell>
                             <TableCell className="text-right font-mono text-emerald-700 dark:text-emerald-400">{formatNumber(totals.netSalary)}</TableCell>
                             {selectedPeriod.status !== 'paid' && <TableCell></TableCell>}
                           </TableRow>

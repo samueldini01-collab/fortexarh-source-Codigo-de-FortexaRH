@@ -155,8 +155,8 @@ export default function AttendancePage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-red-600">Ausentes</p>
-                  <p className="text-2xl font-bold text-red-700">{absentCount}</p>
+                  <p className="text-sm text-red-600 dark:text-red-400">Ausentes</p>
+                  <p className="text-2xl font-bold text-red-700 dark:text-red-400">{absentCount}</p>
                 </div>
                 <UserX className="w-8 h-8 text-red-500" />
               </div>
