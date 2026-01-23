@@ -210,31 +210,163 @@ export default function RecruitmentPage() {
   return (
     <DashboardLayout title="Reclutamiento">
       <div className="space-y-6" data-testid="recruitment-page">
-        {/* Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="border-blue-200 bg-blue-50/50">
-            <CardContent className="p-6">
+        {/* Search and Actions Bar */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Input
+              placeholder="Buscar vacantes o candidatos..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+              data-testid="search-recruitment"
+            />
+          </div>
+          
+          <div className="flex items-center gap-2">
+            {(jobStatusFilter || candidateStageFilter || searchTerm) && (
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => {
+                  setJobStatusFilter(null);
+                  setCandidateStageFilter(null);
+                  setSearchTerm("");
+                }}
+              >
+                <Filter className="w-4 h-4 mr-1" />
+                Limpiar Filtros
+              </Button>
+            )}
+            
+            <Button 
+              variant="outline"
+              onClick={exportCandidatesToCSV}
+              disabled={filteredCandidates.length === 0}
+              data-testid="export-candidates-btn"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Exportar Candidatos
+            </Button>
+          </div>
+        </div>
+        
+        {/* Summary Stats - Clickable */}
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <Card 
+            className={`border-blue-200 bg-blue-50/50 cursor-pointer transition-all hover:shadow-md ${jobStatusFilter === 'open' ? 'ring-2 ring-blue-400' : ''}`}
+            onClick={() => setJobStatusFilter(jobStatusFilter === 'open' ? null : 'open')}
+            data-testid="stat-open-jobs"
+          >
+            <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-blue-600">Vacantes Abiertas</p>
-                  <p className="text-3xl font-bold text-blue-700">{openJobs}</p>
+                  <p className="text-2xl font-bold text-blue-700">{openJobs}</p>
                 </div>
-                <Briefcase className="w-10 h-10 text-blue-500" />
+                <Briefcase className="w-8 h-8 text-blue-400" />
               </div>
             </CardContent>
           </Card>
-          <Card className="border-emerald-200 bg-emerald-50/50">
-            <CardContent className="p-6">
+          
+          <Card 
+            className={`border-slate-200 cursor-pointer transition-all hover:shadow-md ${jobStatusFilter === 'closed' ? 'ring-2 ring-slate-400' : ''}`}
+            onClick={() => setJobStatusFilter(jobStatusFilter === 'closed' ? null : 'closed')}
+            data-testid="stat-closed-jobs"
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-600">Vacantes Cerradas</p>
+                  <p className="text-2xl font-bold text-slate-700">{closedJobs}</p>
+                </div>
+                <Briefcase className="w-8 h-8 text-slate-300" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className={`border-emerald-200 bg-emerald-50/50 cursor-pointer transition-all hover:shadow-md ${!candidateStageFilter ? 'ring-2 ring-emerald-400' : ''}`}
+            onClick={() => setCandidateStageFilter(null)}
+            data-testid="stat-total-candidates"
+          >
+            <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-emerald-600">Total Candidatos</p>
-                  <p className="text-3xl font-bold text-emerald-700">{totalCandidates}</p>
+                  <p className="text-2xl font-bold text-emerald-700">{totalCandidates}</p>
                 </div>
-                <Users className="w-10 h-10 text-emerald-500" />
+                <Users className="w-8 h-8 text-emerald-400" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className={`border-purple-200 bg-purple-50/50 cursor-pointer transition-all hover:shadow-md ${candidateStageFilter === 'interview' ? 'ring-2 ring-purple-400' : ''}`}
+            onClick={() => setCandidateStageFilter(candidateStageFilter === 'interview' ? null : 'interview')}
+            data-testid="stat-interview"
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-purple-600">En Entrevista</p>
+                  <p className="text-2xl font-bold text-purple-700">{interviewCandidates}</p>
+                </div>
+                <UserPlus className="w-8 h-8 text-purple-400" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className={`border-amber-200 bg-amber-50/50 cursor-pointer transition-all hover:shadow-md ${candidateStageFilter === 'applied' ? 'ring-2 ring-amber-400' : ''}`}
+            onClick={() => setCandidateStageFilter(candidateStageFilter === 'applied' ? null : 'applied')}
+            data-testid="stat-applied"
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-amber-600">Nuevos</p>
+                  <p className="text-2xl font-bold text-amber-700">{appliedCandidates}</p>
+                </div>
+                <UserCheck className="w-8 h-8 text-amber-400" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className={`border-green-200 bg-green-50/50 cursor-pointer transition-all hover:shadow-md ${candidateStageFilter === 'hired' ? 'ring-2 ring-green-400' : ''}`}
+            onClick={() => setCandidateStageFilter(candidateStageFilter === 'hired' ? null : 'hired')}
+            data-testid="stat-hired"
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-green-600">Contratados</p>
+                  <p className="text-2xl font-bold text-green-700">{hiredCandidates}</p>
+                </div>
+                <UserCheck className="w-8 h-8 text-green-400" />
               </div>
             </CardContent>
           </Card>
         </div>
+        
+        {/* Active Filter Indicator */}
+        {getFilterLabel() && (
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="px-3 py-1">
+              Filtro: {getFilterLabel()}
+              <button 
+                onClick={() => { setJobStatusFilter(null); setCandidateStageFilter(null); }} 
+                className="ml-2 hover:text-red-500"
+              >
+                ×
+              </button>
+            </Badge>
+            <span className="text-sm text-slate-500">
+              {filteredJobs.length} vacantes, {filteredCandidates.length} candidatos
+            </span>
+          </div>
+        )}
 
         <Tabs defaultValue="jobs" className="space-y-6">
           <TabsList>
