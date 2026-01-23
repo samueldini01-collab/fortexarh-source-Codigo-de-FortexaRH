@@ -139,16 +139,54 @@ export default function PayrollV2Page() {
 
   const { getAuthHeaders, user } = useAuth();
 
+  const fetchPeriods = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API}/payroll-v2/periods`, { headers: getAuthHeaders(), withCredentials: true });
+      setPeriods(response.data);
+    } catch (_error) {
+      toast.error("Error al cargar períodos");
+    }
+  }, [getAuthHeaders]);
+
+  const fetchPeriodDetails = useCallback(async (periodId) => {
+    try {
+      const response = await axios.get(`${API}/payroll-v2/periods/${periodId}`, { headers: getAuthHeaders(), withCredentials: true });
+      setPeriodEntries(response.data.entries || []);
+    } catch (_error) {
+      console.error("Error fetching period details");
+    }
+  }, [getAuthHeaders]);
+
+  const fetchBankAccounts = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API}/accounting/accounts`, { headers: getAuthHeaders(), withCredentials: true });
+      const banks = response.data.filter(acc => acc.code.startsWith('1101') || (acc.account_type === 'asset' && acc.name.toLowerCase().includes('banco')));
+      setBankAccounts(banks);
+      if (banks.length > 0) setSelectedBankAccount(banks[0].code);
+    } catch (_error) {
+      console.error("Error fetching bank accounts");
+    }
+  }, [getAuthHeaders]);
+
+  const fetchNoveltyTypes = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API}/payroll-v2/novelty-types`, { headers: getAuthHeaders(), withCredentials: true });
+      setNoveltyTypes(response.data);
+    } catch (_error) {
+      console.error("Error fetching novelty types");
+    }
+  }, [getAuthHeaders]);
+
   useEffect(() => {
     fetchPeriods();
     fetchBankAccounts();
     fetchNoveltyTypes();
     if (user?.company_name) setCompanyName(user.company_name);
-  }, []);
+  }, [fetchPeriods, fetchBankAccounts, fetchNoveltyTypes, user?.company_name]);
 
   useEffect(() => {
     if (selectedPeriod) fetchPeriodDetails(selectedPeriod.period_id);
-  }, [selectedPeriod]);
+  }, [selectedPeriod, fetchPeriodDetails]);
 
   useEffect(() => {
     const { period_type, year, month } = newPeriodForm;
@@ -167,47 +205,6 @@ export default function PayrollV2Page() {
     }
     setNewPeriodForm(prev => ({ ...prev, start_date, end_date }));
   }, [newPeriodForm.period_type, newPeriodForm.year, newPeriodForm.month]);
-
-  const fetchPeriods = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`${API}/payroll-v2/periods`, { headers: getAuthHeaders(), withCredentials: true });
-      setPeriods(response.data);
-    } catch (error) {
-      toast.error("Error al cargar períodos");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchPeriodDetails = async (periodId) => {
-    try {
-      const response = await axios.get(`${API}/payroll-v2/periods/${periodId}`, { headers: getAuthHeaders(), withCredentials: true });
-      setPeriodEntries(response.data.entries || []);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  const fetchBankAccounts = async () => {
-    try {
-      const response = await axios.get(`${API}/accounting/accounts`, { headers: getAuthHeaders(), withCredentials: true });
-      const banks = response.data.filter(acc => acc.code.startsWith('1101') || (acc.account_type === 'asset' && acc.name.toLowerCase().includes('banco')));
-      setBankAccounts(banks);
-      if (banks.length > 0) setSelectedBankAccount(banks[0].code);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  const fetchNoveltyTypes = async () => {
-    try {
-      const response = await axios.get(`${API}/payroll-v2/novelty-types`, { headers: getAuthHeaders(), withCredentials: true });
-      setNoveltyTypes(response.data);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
 
   const handleCreatePeriod = async () => {
     try {
