@@ -293,10 +293,10 @@ export default function AttendancePage() {
               <div className="p-6 space-y-4">
                 {Array(5).fill(0).map((_, i) => <Skeleton key={i} className="h-12 w-full" />)}
               </div>
-            ) : attendances.length === 0 ? (
+            ) : filteredAttendances.length === 0 ? (
               <div className="text-center py-12">
                 <Clock className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                <p className="text-slate-500">No hay registros para esta fecha</p>
+                <p className="text-slate-500">{quickFilter ? 'No hay registros con este filtro' : 'No hay registros para esta fecha'}</p>
               </div>
             ) : (
               <Table>
@@ -311,7 +311,7 @@ export default function AttendancePage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {attendances.map((att) => (
+                  {filteredAttendances.map((att) => (
                     <TableRow key={att.attendance_id} data-testid={`attendance-row-${att.attendance_id}`}>
                       <TableCell className="font-medium">{att.employee_name}</TableCell>
                       <TableCell>{att.date}</TableCell>
