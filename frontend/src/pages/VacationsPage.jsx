@@ -172,31 +172,85 @@ export default function VacationsPage() {
   return (
     <DashboardLayout title="Gestión de Vacaciones">
       <div className="space-y-6" data-testid="vacations-page">
-        {/* Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="border-amber-200 bg-amber-50/50">
-            <CardContent className="p-6">
+        {/* Stats Cards - Clickable for quick filtering */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card 
+            className={`cursor-pointer transition-all hover:shadow-md ${!quickFilter ? 'ring-2 ring-slate-400' : ''}`}
+            onClick={() => setQuickFilter(null)}
+          >
+            <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-amber-600">Pendientes de Aprobación</p>
-                  <p className="text-3xl font-bold text-amber-700">{pendingCount}</p>
+                  <p className="text-sm text-slate-500">Total Solicitudes</p>
+                  <p className="text-2xl font-bold">{stats.total}</p>
                 </div>
-                <Clock className="w-10 h-10 text-amber-500" />
+                <Calendar className="w-8 h-8 text-slate-300" />
               </div>
             </CardContent>
           </Card>
-          <Card className="border-emerald-200 bg-emerald-50/50">
-            <CardContent className="p-6">
+          <Card 
+            className={`border-amber-200 bg-amber-50/50 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'pending' ? 'ring-2 ring-amber-400' : ''}`}
+            onClick={() => setQuickFilter(quickFilter === 'pending' ? null : 'pending')}
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-amber-600">Pendientes</p>
+                  <p className="text-2xl font-bold text-amber-700">{stats.pending}</p>
+                </div>
+                <Clock className="w-8 h-8 text-amber-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card 
+            className={`border-emerald-200 bg-emerald-50/50 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'approved' ? 'ring-2 ring-emerald-400' : ''}`}
+            onClick={() => setQuickFilter(quickFilter === 'approved' ? null : 'approved')}
+          >
+            <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-emerald-600">Aprobadas</p>
-                  <p className="text-3xl font-bold text-emerald-700">{approvedCount}</p>
+                  <p className="text-2xl font-bold text-emerald-700">{stats.approved}</p>
                 </div>
-                <Check className="w-10 h-10 text-emerald-500" />
+                <Check className="w-8 h-8 text-emerald-500" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card 
+            className={`border-red-200 bg-red-50/50 cursor-pointer transition-all hover:shadow-md ${quickFilter === 'rejected' ? 'ring-2 ring-red-400' : ''}`}
+            onClick={() => setQuickFilter(quickFilter === 'rejected' ? null : 'rejected')}
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-red-600">Rechazadas</p>
+                  <p className="text-2xl font-bold text-red-700">{stats.rejected}</p>
+                </div>
+                <X className="w-8 h-8 text-red-500" />
               </div>
             </CardContent>
           </Card>
         </div>
+        
+        {/* Filter indicator and Export button */}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            {quickFilter && (
+              <Badge variant="outline" className="px-3 py-1">
+                Filtro: {quickFilter === 'pending' ? 'Pendientes' : quickFilter === 'approved' ? 'Aprobadas' : 'Rechazadas'}
+                <button onClick={() => setQuickFilter(null)} className="ml-2 hover:text-red-500">×</button>
+              </Badge>
+            )}
+            <span className="text-sm text-slate-500">
+              {filteredVacations.length} de {vacations.length} solicitudes
+            </span>
+          </div>
+          <Button variant="outline" onClick={exportToCSV} size="sm">
+            <Download className="w-4 h-4 mr-2" />
+            Exportar CSV
+          </Button>
+        </div>
+
 
         {/* Actions */}
         <div className="flex justify-end">
