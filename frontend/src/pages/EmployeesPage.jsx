@@ -1394,6 +1394,21 @@ export default function EmployeesPage() {
             </form>
           </DialogContent>
         </Dialog>
+        
+        {/* Import Modal */}
+        <ImportEmployeesModal
+          open={showImportModal}
+          onClose={() => setShowImportModal(false)}
+          onSuccess={fetchEmployees}
+        />
+        
+        {/* Bulk Edit Modal */}
+        <BulkEditModal
+          open={showBulkEditModal}
+          onClose={() => setShowBulkEditModal(false)}
+          selectedEmployees={selectedEmployees}
+          onSuccess={fetchEmployees}
+        />
       </div>
     </DashboardLayout>
   );
