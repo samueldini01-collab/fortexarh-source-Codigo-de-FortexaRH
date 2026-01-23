@@ -334,14 +334,14 @@ export default function DashboardLayout({ children, title }) {
 
       {/* Sidebar */}
       <aside className={`
-        fixed top-0 left-0 z-50 h-full bg-white border-r border-slate-200 
+        fixed top-0 left-0 z-50 h-full bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700
         transform transition-all duration-300 ease-in-out
         ${sidebarCollapsed ? 'w-16' : 'w-64'}
         lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         <div className="flex flex-col h-full">
           {/* Logo with collapse button */}
-          <div className={`flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'gap-3 px-4'} py-5 border-b border-slate-100`}>
+          <div className={`flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'gap-3 px-4'} py-5 border-b border-slate-100 dark:border-slate-700`}>
             <img 
               src="/fortexarh-icon-128.png" 
               alt="FortexaRH" 
@@ -349,13 +349,13 @@ export default function DashboardLayout({ children, title }) {
             />
             {!sidebarCollapsed && (
               <div className="min-w-0 flex-1">
-                <h1 className="font-bold text-slate-800 text-lg leading-tight truncate">FortexaRH</h1>
-                <p className="text-xs text-slate-500">Sistema de RRHH</p>
+                <h1 className="font-bold text-slate-800 dark:text-slate-100 text-lg leading-tight truncate">FortexaRH</h1>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Sistema de RRHH</p>
               </div>
             )}
             {/* Collapse button - Desktop only */}
             <button 
-              className="hidden lg:flex p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors"
+              className="hidden lg:flex p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
               onClick={toggleSidebarCollapsed}
               data-testid="collapse-sidebar-btn"
               title={sidebarCollapsed ? "Expandir menú" : "Colapsar menú"}
@@ -364,7 +364,7 @@ export default function DashboardLayout({ children, title }) {
             </button>
             {/* Close button - Mobile only */}
             <button 
-              className="lg:hidden ml-auto p-2 hover:bg-slate-100 rounded-lg"
+              className="lg:hidden ml-auto p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
               onClick={() => setSidebarOpen(false)}
             >
               <X className="w-5 h-5" />
@@ -375,8 +375,8 @@ export default function DashboardLayout({ children, title }) {
           <nav className={`flex-1 ${sidebarCollapsed ? 'px-2' : 'px-3'} py-4 overflow-y-auto`}>
             {/* Trial/Subscription Banner - Hide when collapsed */}
             {!sidebarCollapsed && isOnTrial() && (
-              <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                <div className="flex items-center gap-2 text-amber-700 text-sm font-medium">
+              <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-lg">
+                <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 text-sm font-medium">
                   <AlertTriangle className="w-4 h-4" />
                   Prueba gratuita
                 </div>
