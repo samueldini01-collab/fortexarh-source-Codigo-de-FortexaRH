@@ -779,14 +779,17 @@ export default function ExpensesPage() {
                 }`}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      {statusStyles[requestDetails.request.status]?.icon && (
-                        <statusStyles[requestDetails.request.status].icon className={`w-5 h-5 ${
-                          requestDetails.request.status === 'approved_admin' ? 'text-emerald-600' :
-                          requestDetails.request.status === 'rejected' ? 'text-red-600' :
-                          requestDetails.request.status === 'pending' ? 'text-amber-600' :
-                          'text-blue-600'
-                        }`} />
-                      )}
+                      {statusStyles[requestDetails.request.status]?.icon && (() => {
+                        const StatusIcon = statusStyles[requestDetails.request.status].icon;
+                        return (
+                          <StatusIcon className={`w-5 h-5 ${
+                            requestDetails.request.status === 'approved_admin' ? 'text-emerald-600' :
+                            requestDetails.request.status === 'rejected' ? 'text-red-600' :
+                            requestDetails.request.status === 'pending' ? 'text-amber-600' :
+                            'text-blue-600'
+                          }`} />
+                        );
+                      })()}
                       <div>
                         <p className="font-medium">{statusStyles[requestDetails.request.status]?.label || requestDetails.request.status}</p>
                         <p className="text-sm text-slate-500">
