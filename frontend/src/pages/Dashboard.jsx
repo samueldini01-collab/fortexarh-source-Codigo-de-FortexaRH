@@ -67,7 +67,7 @@ export default function Dashboard() {
     } catch (error) {
       console.error("Error checking payment:", error);
     }
-  }, []);
+  }, [getAuthHeaders]);
 
   const fetchStats = useCallback(async () => {
     try {
