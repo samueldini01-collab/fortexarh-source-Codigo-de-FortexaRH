@@ -68,19 +68,8 @@ export default function DGIIReportsPage() {
   const [availableYears, setAvailableYears] = useState([]);
   const [selectedYear, setSelectedYear] = useState(null);
   const [periodDetails, setPeriodDetails] = useState(null);
-  
-  useEffect(() => {
-    fetchPeriods();
-    fetchAvailableYears();
-  }, []);
 
-  useEffect(() => {
-    if (selectedPeriod) {
-      fetchPeriodDetails(selectedPeriod);
-    }
-  }, [selectedPeriod]);
-
-  const fetchPeriods = async () => {
+  const fetchPeriods = useCallback(async () => {
     setLoading(true);
     try {
       const response = await axios.get(`${API}/payroll-v2/periods`, {
@@ -110,9 +99,9 @@ export default function DGIIReportsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAuthHeaders]);
 
-  const fetchPeriodDetails = async (periodId) => {
+  const fetchPeriodDetails = useCallback(async (periodId) => {
     try {
       const response = await axios.get(`${API}/payroll-v2/periods/${periodId}`, {
         headers: getAuthHeaders(),
@@ -122,9 +111,9 @@ export default function DGIIReportsPage() {
     } catch (error) {
       console.error("Error fetching period details:", error);
     }
-  };
+  }, [getAuthHeaders]);
 
-  const fetchAvailableYears = async () => {
+  const fetchAvailableYears = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/payroll-v2/available-years`, {
         headers: getAuthHeaders(),
@@ -141,7 +130,18 @@ export default function DGIIReportsPage() {
     } catch (error) {
       console.error("Error fetching available years:", error);
     }
-  };
+  }, [getAuthHeaders]);
+  
+  useEffect(() => {
+    fetchPeriods();
+    fetchAvailableYears();
+  }, [fetchPeriods, fetchAvailableYears]);
+
+  useEffect(() => {
+    if (selectedPeriod) {
+      fetchPeriodDetails(selectedPeriod);
+    }
+  }, [selectedPeriod, fetchPeriodDetails]);
 
   const handleDownload = async (reportType) => {
     if (!selectedPeriod) {
