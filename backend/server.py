@@ -5204,6 +5204,7 @@ init_dgii_reports_router(db, get_current_user)
 init_notifications_router(db, get_current_user)
 init_reports_router(db, get_current_user)
 init_expenses_router(db, get_current_user)
+init_payroll_v2_router(db, get_current_user)
 
 # Include modular routers in api_router
 api_router.include_router(loans_router)
