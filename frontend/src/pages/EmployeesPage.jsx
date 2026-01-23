@@ -433,7 +433,13 @@ export default function EmployeesPage() {
                   Importar desde Excel
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <ExportEmployeesButton />
+                <ExportEmployeesButton 
+                  filters={{
+                    status: quickFilter || 'all',
+                    department: departmentFilter || 'all',
+                    search: searchTerm || ''
+                  }}
+                />
               </DropdownMenuContent>
             </DropdownMenu>
             
