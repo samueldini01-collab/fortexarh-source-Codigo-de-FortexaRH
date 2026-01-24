@@ -204,7 +204,24 @@
 | Stripe | ✅ Funcionando |
 | Resend (Email) | ✅ Funcionando |
 | Google Auth | ✅ Funcionando |
-| QuickBooks, SAP, Oracle | MOCKED |
+| QuickBooks Online | ✅ Integración OAuth 2.0 Completa |
+| SAP, Oracle, Dynamics | MOCKED (Próximamente) |
+
+### QuickBooks Online - Integración Completada (2026-01-24)
+- **OAuth 2.0** flujo completo implementado
+- **Endpoints disponibles:**
+  - `GET /api/quickbooks/status` - Estado de conexión
+  - `GET /api/quickbooks/connect` - Iniciar autorización OAuth
+  - `GET /api/quickbooks/callback` - Manejar callback de Intuit
+  - `POST /api/quickbooks/disconnect` - Desconectar y revocar tokens
+  - `GET /api/quickbooks/accounts` - Obtener chart of accounts
+  - `POST /api/quickbooks/sync/employees` - Sincronizar empleados como vendors
+  - `POST /api/quickbooks/sync/payroll` - Sincronizar nómina como journal entries
+  - `GET /api/quickbooks/sync/history` - Historial de sincronizaciones
+  - `GET /api/quickbooks/company-info` - Info de empresa en QBO
+- **Colecciones MongoDB:** `quickbooks_connections`, `quickbooks_oauth_states`, `quickbooks_sync_jobs`
+- **Frontend:** Integración en página de Configuración de Empresa (tab Integraciones)
+- **Archivos:** `/app/backend/routes/quickbooks.py`, `/app/frontend/src/pages/CompanyConfigPage.jsx`
 
 ## Arquitectura Actualizada
 
