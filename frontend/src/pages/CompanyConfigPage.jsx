@@ -117,13 +117,38 @@ export default function CompanyConfigPage() {
   
   // Integrations
   const [integrations, setIntegrations] = useState(INTEGRATIONS);
+  const [quickbooksLoading, setQuickbooksLoading] = useState(false);
   
   // Audit log
   const [auditLog, setAuditLog] = useState([]);
+  
+  // Fetch QuickBooks status
+  const fetchQuickbooksStatus = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API}/quickbooks/status`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      
+      if (response.data.connected) {
+        setIntegrations(prev => 
+          prev.map(i => i.id === "quickbooks" 
+            ? {...i, connected: true, companyName: response.data.company_name, connectedAt: response.data.connected_at} 
+            : i
+          )
+        );
+      }
+    } catch (error) {
+      console.log("QuickBooks status check:", error.response?.data?.detail || error.message);
+    }
+  }, [getAuthHeaders]);
 
   const fetchCompanyData = useCallback(async () => {
     setLoading(true);
     try {
+      // Fetch QuickBooks status in parallel
+      fetchQuickbooksStatus();
+      
       const response = await axios.get(`${API}/company/settings`, {
         headers: getAuthHeaders(),
         withCredentials: true
