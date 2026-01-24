@@ -338,6 +338,9 @@ async def stop_all_change_streams():
 @router.get("/status")
 async def get_cdc_status(current_user: dict = Depends(get_current_user)):
     """Get CDC system status"""
+    # Check Change Stream support
+    supports_streams = await check_change_stream_support()
+    
     # Count total events
     total_events = await db.audit_logs.count_documents({})
     
@@ -350,6 +353,9 @@ async def get_cdc_status(current_user: dict = Depends(get_current_user)):
     
     return {
         "is_running": is_cdc_running,
+        "change_streams_supported": supports_streams,
+        "mode": "change_streams" if supports_streams else "manual_tracking",
+        "mode_description": "Change Streams activos (tiempo real)" if supports_streams else "Tracking manual (sin replica set)",
         "watched_collections": WATCHED_COLLECTIONS,
         "collection_names": COLLECTION_NAMES,
         "active_streams": len(change_stream_tasks),
