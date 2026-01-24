@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from typing import Callable, Optional, List, Dict, Any
 import os
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 
 load_dotenv()
