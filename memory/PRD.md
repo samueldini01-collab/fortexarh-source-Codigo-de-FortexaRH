@@ -4,7 +4,41 @@
 
 ## ✅ Completado Hoy (Sesión Actual)
 
-### 🔔 Sistema de Notificaciones In-App (P0 - COMPLETADO)
+### 📱 Portal de Empleados - 4 Nuevas Funcionalidades (P0 - COMPLETADO)
+
+#### 1. Descarga de Recibos de Nómina en PDF
+- Botón de descarga en cada recibo
+- PDF profesional con:
+  - Datos de empresa y empleado
+  - Desglose de ingresos (base, horas extra, bonos)
+  - Deducciones (SFS, AFP, ISR, préstamos)
+  - Salario neto a pagar
+- **Endpoint:** `GET /api/employee-portal/payslips/{payslip_id}/pdf`
+
+#### 2. Vista de Evaluaciones de Desempeño
+- Tab "Evaluaciones" en portal
+- Historial de evaluaciones con puntuación
+- Panel "Mi Rendimiento" con promedio general
+- **Endpoints:** `GET /api/employee-portal/evaluations`, `GET /api/employee-portal/evaluations/{id}`
+
+#### 3. Solicitud de Permisos/Licencias
+- Tab "Permisos" con 7 tipos de licencias:
+  - Enfermedad (3 días), Personal (1 día), Duelo (3 días)
+  - Maternidad (84 días), Paternidad (2 días)
+  - Cita Médica (1 día), Otro (1 día)
+- Modal para crear solicitudes
+- **Endpoints:** `GET /api/employee-portal/leaves`, `POST /api/employee-portal/leaves/request`
+
+#### 4. Registro de Asistencia desde Portal
+- Tab "Asistencia" completo
+- Widget de registro rápido en Home
+- Botones Entrada/Salida con validación
+- Historial mensual con resumen
+- **Endpoints:** 
+  - `GET /api/employee-portal/attendance/today`
+  - `POST /api/employee-portal/attendance/check-in`
+  - `POST /api/employee-portal/attendance/check-out`
+  - `GET /api/employee-portal/attendance/history`
 - **Campana en header** con badge de contador de no leídas
 - **Dropdown** con lista de notificaciones, timestamps, iconos por tipo
 - **Acciones:** Marcar individual, marcar todas, ver todas
