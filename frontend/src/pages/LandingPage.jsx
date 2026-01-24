@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { 
   Users, 
@@ -33,7 +33,13 @@ import {
   FileBarChart,
   Smartphone,
   Search,
-  HeadphonesIcon
+  HeadphonesIcon,
+  ChevronDown,
+  Calculator,
+  Percent,
+  Award,
+  TrendingUp,
+  UserPlus
 } from "lucide-react";
 
 const features = [
