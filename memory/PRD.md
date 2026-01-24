@@ -4,42 +4,60 @@
 
 ## ✅ Completado Hoy (Sesión Actual)
 
-### 📋 4 Nuevas Funcionalidades Implementadas
+### 🔔 Sistema de Notificaciones In-App (P0 - COMPLETADO)
+- **Campana en header** con badge de contador de no leídas
+- **Dropdown** con lista de notificaciones, timestamps, iconos por tipo
+- **Acciones:** Marcar individual, marcar todas, ver todas
+- **Auto-notificación:** Al enviar nómina a aprobación
+- **Endpoints:**
+  - `GET /api/notifications` - Lista de notificaciones
+  - `GET /api/notifications/count` - Contador no leídas
+  - `POST /api/notifications/mark-read` - Marcar como leídas
+  - `POST /api/notifications/mark-all-read` - Marcar todas
+- **Archivos:** `/app/backend/routes/notifications_system.py`, `/app/frontend/src/components/NotificationBell.jsx`
 
-#### 1. Flujo de Aprobación de Nómina (P0 - COMPLETADO)
-- **Estados del flujo:** Draft → Pending Approval → Approved → Paid
-- **Endpoints nuevos:**
-  - `POST /api/payroll-v2/periods/{id}/submit-for-approval` - Enviar a aprobación
-  - `POST /api/payroll-v2/periods/{id}/reject` - Rechazar con motivo
-  - `GET /api/payroll-v2/periods/{id}/workflow-history` - Ver historial del flujo
-- **Permisos:** Solo usuarios con `payroll_approve` o roles `admin`, `hr_manager`, `finance_manager`
-- **Frontend:** Botones dinámicos según estado, rechazo con comentarios
-- **Archivos:** `/app/backend/routes/payroll_v2.py`, `/app/frontend/src/pages/PayrollV2Page.jsx`
+### 📊 Reportes Avanzados PDF (P0 - COMPLETADO)
+- **Generación con reportlab (Python nativo)**
+- **3 Tipos de reportes:**
+  1. **Nómina Detallado:** Resumen, desglose por empleado, SFS/AFP/ISR, totales
+  2. **Asistencia:** A tiempo/tardanzas/ausencias, horas trabajadas/extras
+  3. **Evaluaciones:** Scores, competencias, estado por empleado
+- **Endpoints:**
+  - `GET /api/reports-advanced/available` - Lista reportes disponibles
+  - `GET /api/reports-advanced/payroll/{period_id}/pdf`
+  - `GET /api/reports-advanced/attendance/pdf?start_date=X&end_date=Y`
+  - `GET /api/reports-advanced/evaluations/pdf?cycle_id=X`
+- **Archivos:** `/app/backend/routes/reports_advanced.py`, `/app/frontend/src/pages/ReportsAdvancedPage.jsx`
 
-#### 2. Dashboard de Métricas Conectado (P0 - COMPLETADO)
-- **Nuevo endpoint:** `GET /api/metrics/dashboard?year=YYYY`
-- **Datos reales agregados de:**
-  - Nómina (tendencia mensual, bruto/neto)
-  - Empleados (total, nuevos, rotación)
-  - Préstamos (activos, pendientes, pagados)
-  - Costos por departamento
-  - Indicadores rápidos (vacaciones, evaluaciones, asistencia)
-- **Archivos:** `/app/backend/routes/metrics.py` (NUEVO), `/app/frontend/src/pages/MetricsDashboardPage.jsx`
+### 📱 Notificaciones Portal del Empleado (P0 - COMPLETADO)
+- **Triggers implementados:**
+  - Vacaciones aprobadas/rechazadas
+  - Nómina disponible para consulta
+  - Evaluación programada
+  - Recordatorio de entrada/salida
+- **Endpoints trigger:**
+  - `POST /api/notifications/trigger/vacation-status`
+  - `POST /api/notifications/trigger/payroll-available`
+  - `POST /api/notifications/trigger/evaluation-scheduled`
+  - `POST /api/notifications/trigger/attendance-reminder`
 
-#### 3. Vista Previa de Reporte "Costos por Departamento" (P0 - COMPLETADO)
-- **Tabs:** "Vista Previa" y "Gráficos"
-- **Preview completo** antes de exportar con tabla detallada
-- **Exportación:** CSV y Excel con botones visibles
-- **Archivos:** `/app/frontend/src/pages/CostsByDepartmentPage.jsx`
+### 📋 4 Funcionalidades Anteriores (Sesión Previa)
 
-#### 4. Búsqueda AI que Aprende (P0 - COMPLETADO)
-- **Historial de acciones:** Guarda acciones ejecutadas por usuario
-- **Frecuencia:** Reordena sugerencias según uso frecuente
-- **Búsquedas recientes:** Muestra últimas consultas del usuario
-- **Nuevos endpoints:**
-  - `POST /api/search/log-query` - Guarda consultas
-  - `GET /api/search/user-stats` - Estadísticas de uso
-- **Archivos:** `/app/backend/routes/search.py`
+#### 1. Flujo de Aprobación de Nómina
+- **Estados:** Draft → Pending Approval → Approved → Paid
+- **Endpoints:** submit-for-approval, reject, workflow-history
+- **Permisos:** admin, hr_manager, finance_manager, payroll_approve
+
+#### 2. Dashboard de Métricas Conectado
+- **Endpoint:** `GET /api/metrics/dashboard?year=YYYY`
+- **Datos reales:** Empleados, nómina, préstamos, costos por departamento
+
+#### 3. Vista Previa de Costos por Departamento
+- **Tabs:** Vista Previa + Gráficos antes de exportar
+
+#### 4. Búsqueda AI que Aprende
+- **Historial:** Guarda acciones y consultas del usuario
+- **Personalización:** Sugerencias basadas en frecuencia de uso
 
 ## ✅ Completado en Sesión Anterior
 
