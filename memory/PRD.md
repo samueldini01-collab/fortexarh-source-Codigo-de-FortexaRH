@@ -4,6 +4,13 @@
 
 ## ✅ Completado Hoy (Sesión Actual)
 
+### 🖼️ Logo en Portal de Empleados (P0 - COMPLETADO)
+- **Página de Login:** Logo centrado sobre el formulario de acceso
+- **Header del Dashboard:** Logo en esquina superior izquierda junto al nombre del empleado
+- **URL del logo:** `https://customer-assets.emergentagent.com/job_hrpay-manager-2/artifacts/y0ghj2zi_FortexaRH%20Logo.png`
+- **Archivo:** `/app/frontend/src/pages/EmployeePortalPage.jsx`
+- **Verificado:** Screenshots confirmaron visualización correcta en ambas ubicaciones
+
 ### 📱 Portal de Empleados - 4 Nuevas Funcionalidades (P0 - COMPLETADO)
 
 #### 1. Descarga de Recibos de Nómina en PDF
