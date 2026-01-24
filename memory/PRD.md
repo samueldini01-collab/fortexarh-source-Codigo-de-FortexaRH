@@ -4,6 +4,32 @@
 
 ## ✅ Completado Hoy (Sesión Actual)
 
+### 📧 Sistema de Emails de Invitación para Partners (P1 - COMPLETADO)
+Automatización del envío de emails a clientes referidos desde el Portal de Partners.
+
+#### Funcionalidades
+- **Email Automático:** Al agregar un cliente, se envía email de invitación automáticamente
+- **Reenvío Manual:** Botón en el dashboard para reenviar invitaciones
+- **Tracking:** Registro de envíos (invitation_sent, invitation_sent_at, invitation_resent_count)
+- **Template Profesional:** Email en español con branding FortexaRH, beneficios y CTA
+
+#### API Endpoints
+- `POST /api/partners/clients` - Ahora envía email automáticamente
+- `POST /api/partners/clients/{id}/resend-invitation` - Reenvía invitación
+
+#### Frontend Actualizado
+- Nueva columna "Invitación" en tabla de clientes (badges: Enviada/Pendiente)
+- Opción "Reenviar Invitación" en menú de acciones
+- Opción "Copiar Link" en menú de acciones
+- Toast notifications para confirmaciones
+
+#### Test Report
+- **Backend:** 11/12 tests passed (92%)
+- **Frontend:** 100% features working
+- **Archivo:** `/app/test_reports/iteration_22.json`
+
+---
+
 ### 🎫 Panel Administrativo de Soporte (P1 - COMPLETADO)
 Panel completo para gestión de tickets de soporte de clientes.
 
