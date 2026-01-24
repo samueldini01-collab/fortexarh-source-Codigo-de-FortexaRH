@@ -157,9 +157,9 @@ async def register_accounting_firm(data: PartnerRegistration):
     user_id = f"user_{secrets.token_hex(8)}"
     referral_code = generate_referral_code(data.firm_name)
     
-    # Hash password
-    import hashlib
-    password_hash = hashlib.sha256(data.password.encode()).hexdigest()
+    # Hash password using bcrypt (same as main auth system)
+    import bcrypt
+    password_hash = bcrypt.hashpw(data.password.encode(), bcrypt.gensalt()).decode()
     
     # Create accounting firm record
     firm_data = {
