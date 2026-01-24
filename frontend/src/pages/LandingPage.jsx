@@ -496,44 +496,49 @@ export default function LandingPage() {
         )}
       </header>
 
-      {/* Hero Section */}
-      <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 hero-gradient">
+      {/* Hero Section - Enhanced with Video */}
+      <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-white to-emerald-50">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="animate-fade-in text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6">
-                <Zap className="w-3 h-3 sm:w-4 sm:h-4" />
-                Sistema de RRHH y Nómina SaaS
+              <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6 border border-emerald-200">
+                <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
+                #1 Sistema de RRHH en República Dominicana
               </div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight heading mb-4 sm:mb-6">
-                Gestiona tu equipo de manera
-                <span className="text-emerald-600"> inteligente</span>
+                Nómina y RRHH
+                <span className="text-emerald-600 block sm:inline"> sin complicaciones</span>
               </h1>
               <p className="text-base sm:text-lg text-slate-600 mb-6 sm:mb-8 max-w-xl mx-auto lg:mx-0">
-                Simplifica la gestión de recursos humanos, nómina y asistencias. 
-                Todo en una plataforma moderna, segura y fácil de usar.
+                Automatiza TSS, ISR y AFP. Genera reportes DGII en un clic. 
+                Más de 500 empresas dominicanas ya confían en nosotros.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
                 <Link to="/register" className="w-full sm:w-auto">
-                  <Button size="lg" className="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-sm sm:text-base px-6 sm:px-8" data-testid="hero-cta-btn">
-                    Prueba Gratis 5 Días
+                  <Button size="lg" className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-sm sm:text-base px-6 sm:px-8 shadow-lg shadow-emerald-200" data-testid="hero-cta-btn">
+                    Prueba Gratis 14 Días
                     <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
                   </Button>
                 </Link>
-                <Link to="/pricing" className="w-full sm:w-auto">
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8" data-testid="pricing-btn">
-                    Ver Precios
+                <a href="#demo-video" className="w-full sm:w-auto">
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 border-slate-300 hover:bg-slate-50" data-testid="watch-demo-btn">
+                    <Play className="w-4 h-4 mr-2" />
+                    Ver Demo
                   </Button>
-                </Link>
+                </a>
               </div>
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-6 mt-6 sm:mt-8 text-xs sm:text-sm text-slate-500">
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" />
+                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" />
                   Sin tarjeta de crédito
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" />
+                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" />
                   Cancela cuando quieras
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" />
+                  Soporte en español
                 </div>
               </div>
             </div>
@@ -561,18 +566,74 @@ export default function LandingPage() {
                   </div>
                 </div>
               </div>
+              <div className="absolute -top-2 sm:-top-4 -right-2 sm:-right-4 bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-lg border border-slate-100">
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-2">
+                    <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs font-bold">5</div>
+                  </div>
+                  <div className="flex text-amber-400">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-3 h-3 fill-current" />
+                    ))}
+                  </div>
+                </div>
+                <p className="text-xs text-slate-500 mt-1">Calificación promedio</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Video Demo Section */}
+      <section id="demo-video" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-slate-900">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white heading mb-3 sm:mb-4">
+              Mira FortexaRH en Acción
+            </h2>
+            <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto">
+              Descubre cómo nuestra plataforma puede transformar la gestión de tu equipo en minutos
+            </p>
+          </div>
+          <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-slate-800 border border-slate-700">
+            <video 
+              className="w-full aspect-video"
+              controls
+              poster="https://images.unsplash.com/photo-1551434678-e076c223a692?w=1200&h=675&fit=crop"
+              data-testid="demo-video-player"
+            >
+              <source src="/videos/fortexarh_demo.mp4" type="video/mp4" />
+              Tu navegador no soporta el elemento de video.
+            </video>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+            <div className="text-center p-4 bg-slate-800/50 rounded-xl">
+              <p className="text-2xl sm:text-3xl font-bold text-emerald-400">2 hrs</p>
+              <p className="text-xs sm:text-sm text-slate-400">Tiempo promedio de nómina</p>
+            </div>
+            <div className="text-center p-4 bg-slate-800/50 rounded-xl">
+              <p className="text-2xl sm:text-3xl font-bold text-emerald-400">100%</p>
+              <p className="text-xs sm:text-sm text-slate-400">Cumplimiento DGII</p>
+            </div>
+            <div className="text-center p-4 bg-slate-800/50 rounded-xl">
+              <p className="text-2xl sm:text-3xl font-bold text-emerald-400">70%</p>
+              <p className="text-xs sm:text-sm text-slate-400">Menos consultas RRHH</p>
+            </div>
+            <div className="text-center p-4 bg-slate-800/50 rounded-xl">
+              <p className="text-2xl sm:text-3xl font-bold text-emerald-400">24/7</p>
+              <p className="text-xs sm:text-sm text-slate-400">Acceso a información</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Benefits Bar */}
-      <section className="py-6 sm:py-8 bg-slate-900">
+      <section className="py-6 sm:py-8 bg-emerald-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {benefits.map((benefit, index) => (
               <div key={index} className="flex items-center gap-2 sm:gap-3 text-white justify-center lg:justify-start">
-                <benefit.icon className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 shrink-0" />
+                <benefit.icon className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-100 shrink-0" />
                 <span className="text-xs sm:text-sm font-medium">{benefit.text}</span>
               </div>
             ))}
