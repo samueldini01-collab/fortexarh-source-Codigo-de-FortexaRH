@@ -372,6 +372,10 @@ async def add_partner_client(
     if not partner_id:
         raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
     
+    # Get firm info to get referral code
+    firm = await db.accounting_firms.find_one({"partner_id": partner_id}, {"referral_code": 1})
+    referral_code = firm.get("referral_code") if firm else "PARTNER"
+    
     # Check if client email already exists
     existing = await db.partner_clients.find_one({
         "email": data.email.lower()
@@ -395,7 +399,7 @@ async def add_partner_client(
         "subscription_status": "pending",
         "subscription_plan": None,
         "invitation_code": invitation_code,
-        "invitation_link": f"https://fortexarh.com/register?ref={current_user.get('referral_code')}&invite={invitation_code}",
+        "invitation_link": f"https://fortexarh.com/register?ref={referral_code}&invite={invitation_code}",
         "invited_at": datetime.now(timezone.utc),
         "activated_at": None,
         "monthly_value": 0,
