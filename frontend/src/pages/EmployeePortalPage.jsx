@@ -465,6 +465,150 @@ function EmployeeDashboard() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Quick Attendance Card on Home */}
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-blue-500" />
+                  Registro de Asistencia - Hoy
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col md:flex-row items-center gap-4">
+                  <div className="flex-1 grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 bg-emerald-50 rounded-lg">
+                      <p className="text-sm text-emerald-700">Entrada</p>
+                      <p className="text-2xl font-bold text-emerald-600">
+                        {todayAttendance?.attendance?.check_in || "--:--"}
+                      </p>
+                    </div>
+                    <div className="text-center p-4 bg-amber-50 rounded-lg">
+                      <p className="text-sm text-amber-700">Salida</p>
+                      <p className="text-2xl font-bold text-amber-600">
+                        {todayAttendance?.attendance?.check_out || "--:--"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handleCheckIn}
+                      disabled={!todayAttendance?.can_check_in || checkingIn}
+                      className="bg-emerald-600 hover:bg-emerald-700"
+                    >
+                      {checkingIn ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <PlayCircle className="w-4 h-4 mr-2" />}
+                      Entrada
+                    </Button>
+                    <Button
+                      onClick={handleCheckOut}
+                      disabled={!todayAttendance?.can_check_out || checkingOut}
+                      variant="outline"
+                      className="border-amber-500 text-amber-600 hover:bg-amber-50"
+                    >
+                      {checkingOut ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <StopCircle className="w-4 h-4 mr-2" />}
+                      Salida
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Attendance Tab */}
+          <TabsContent value="attendance">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Today's Attendance */}
+              <Card className="lg:col-span-2">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Clock className="w-5 h-5" />
+                    Registro de Hoy - {new Date().toLocaleDateString('es-DO', { weekday: 'long', day: 'numeric', month: 'long' })}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div className="text-center p-4 bg-emerald-50 rounded-lg">
+                      <p className="text-sm text-emerald-700">Entrada</p>
+                      <p className="text-2xl font-bold text-emerald-600">{todayAttendance?.attendance?.check_in || "--:--"}</p>
+                    </div>
+                    <div className="text-center p-4 bg-amber-50 rounded-lg">
+                      <p className="text-sm text-amber-700">Salida</p>
+                      <p className="text-2xl font-bold text-amber-600">{todayAttendance?.attendance?.check_out || "--:--"}</p>
+                    </div>
+                    <div className="text-center p-4 bg-blue-50 rounded-lg">
+                      <p className="text-sm text-blue-700">Horas</p>
+                      <p className="text-2xl font-bold text-blue-600">{todayAttendance?.attendance?.hours_worked?.toFixed(1) || "0.0"}h</p>
+                    </div>
+                    <div className="text-center p-4 bg-purple-50 rounded-lg">
+                      <p className="text-sm text-purple-700">Estado</p>
+                      <p className="text-lg font-bold text-purple-600">
+                        {todayAttendance?.attendance?.status === "on_time" ? "A Tiempo" : 
+                         todayAttendance?.attendance?.status === "late" ? "Tardanza" : "Pendiente"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-center gap-4">
+                    <Button
+                      onClick={handleCheckIn}
+                      disabled={!todayAttendance?.can_check_in || checkingIn}
+                      size="lg"
+                      className="bg-emerald-600 hover:bg-emerald-700"
+                    >
+                      {checkingIn ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <PlayCircle className="w-5 h-5 mr-2" />}
+                      Registrar Entrada
+                    </Button>
+                    <Button
+                      onClick={handleCheckOut}
+                      disabled={!todayAttendance?.can_check_out || checkingOut}
+                      size="lg"
+                      variant="outline"
+                      className="border-amber-500 text-amber-600 hover:bg-amber-50"
+                    >
+                      {checkingOut ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <StopCircle className="w-5 h-5 mr-2" />}
+                      Registrar Salida
+                    </Button>
+                  </div>
+
+                  {todayAttendance?.shift && (
+                    <div className="mt-4 p-3 bg-slate-50 rounded-lg text-center">
+                      <p className="text-sm text-slate-600">
+                        Tu turno: <span className="font-medium">{todayAttendance.shift.name}</span> ({todayAttendance.shift.start_time} - {todayAttendance.shift.end_time})
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Monthly Summary */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Resumen del Mes</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                    <span className="text-sm text-slate-600">Días trabajados</span>
+                    <span className="font-bold">{attendanceHistory.summary?.days_worked || 0}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-emerald-50 rounded-lg">
+                    <span className="text-sm text-emerald-700">A tiempo</span>
+                    <span className="font-bold text-emerald-600">{attendanceHistory.summary?.on_time || 0}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-amber-50 rounded-lg">
+                    <span className="text-sm text-amber-700">Tardanzas</span>
+                    <span className="font-bold text-amber-600">{attendanceHistory.summary?.late || 0}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                    <span className="text-sm text-blue-700">Horas totales</span>
+                    <span className="font-bold text-blue-600">{attendanceHistory.summary?.total_hours || 0}h</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                    <span className="text-sm text-purple-700">Horas extra</span>
+                    <span className="font-bold text-purple-600">{attendanceHistory.summary?.total_overtime || 0}h</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           {/* Payslips Tab */}
