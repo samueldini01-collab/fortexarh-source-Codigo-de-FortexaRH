@@ -59,6 +59,7 @@ from routes.notifications_system import router as notifications_system_router, i
 from routes.reports_advanced import router as reports_advanced_router, init_router as init_reports_advanced_router
 from routes.reports_system import router as reports_system_router, init_router as init_reports_system_router
 from routes.quickbooks import router as quickbooks_router, init_router as init_quickbooks_router
+from routes.cdc_audit import router as cdc_audit_router, init_router as init_cdc_audit_router, start_all_change_streams, create_indexes as create_cdc_indexes
 
 # MongoDB connection with production-ready settings
 mongo_url = os.environ['MONGO_URL']
