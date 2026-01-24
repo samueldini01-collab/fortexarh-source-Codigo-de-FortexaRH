@@ -275,11 +275,6 @@ export default function CDCAuditPage() {
               </div>
             </CardContent>
           </Card>
-                </div>
-                <Database className="w-10 h-10 text-slate-300" />
-              </div>
-            </CardContent>
-          </Card>
 
           <Card className="border-l-4 border-l-blue-500">
             <CardContent className="pt-4">
