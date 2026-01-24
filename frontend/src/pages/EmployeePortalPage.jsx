@@ -238,6 +238,82 @@ function EmployeeDashboard() {
     }
   };
 
+  // Download payslip as PDF
+  const handleDownloadPayslip = async (payslipId) => {
+    setDownloadingPdf(payslipId);
+    try {
+      const response = await axios.get(`${API}/employee-portal/payslips/${payslipId}/pdf`, {
+        headers: getAuthHeaders(),
+        responseType: 'blob'
+      });
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `recibo_nomina_${payslipId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+      toast.success("Recibo descargado");
+    } catch (error) {
+      toast.error("Error al descargar recibo");
+    } finally {
+      setDownloadingPdf(null);
+    }
+  };
+
+  // Leave/Permit request
+  const handleLeaveRequest = async () => {
+    try {
+      await axios.post(`${API}/employee-portal/leaves/request`, leaveForm, { headers: getAuthHeaders() });
+      toast.success("Solicitud de permiso enviada");
+      setShowLeaveRequest(false);
+      setLeaveForm({ leave_type: "", start_date: "", end_date: "", reason: "" });
+      fetchDashboard();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al enviar solicitud");
+    }
+  };
+
+  // Attendance check-in
+  const handleCheckIn = async () => {
+    setCheckingIn(true);
+    try {
+      const response = await axios.post(`${API}/employee-portal/attendance/check-in`, {}, { headers: getAuthHeaders() });
+      toast.success(response.data.message);
+      setTodayAttendance(prev => ({ ...prev, attendance: { ...prev?.attendance, check_in: response.data.check_in }, can_check_in: false, can_check_out: true }));
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al registrar entrada");
+    } finally {
+      setCheckingIn(false);
+    }
+  };
+
+  // Attendance check-out
+  const handleCheckOut = async () => {
+    setCheckingOut(true);
+    try {
+      const response = await axios.post(`${API}/employee-portal/attendance/check-out`, {}, { headers: getAuthHeaders() });
+      toast.success(response.data.message);
+      setTodayAttendance(prev => ({ ...prev, attendance: { ...prev?.attendance, check_out: response.data.check_out, hours_worked: response.data.hours_worked }, can_check_out: false }));
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al registrar salida");
+    } finally {
+      setCheckingOut(false);
+    }
+  };
+
+  // Fetch attendance history
+  const fetchAttendanceHistory = async (month) => {
+    try {
+      const response = await axios.get(`${API}/employee-portal/attendance/history?month=${month}`, { headers: getAuthHeaders() });
+      setAttendanceHistory(response.data);
+    } catch (error) {
+      console.error("Error fetching attendance history:", error);
+    }
+  };
+
   const formatCurrency = (value) => new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'DOP', maximumFractionDigits: 0 }).format(value || 0);
 
   if (loading) {
