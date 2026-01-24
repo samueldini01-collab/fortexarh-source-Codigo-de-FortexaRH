@@ -79,6 +79,7 @@ import axios from "axios";
 import { API } from "@/App";
 import GlobalSearch from "@/components/GlobalSearch";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import NotificationBell from "@/components/NotificationBell";
 
 // Default navigation items with feature mapping
 const DEFAULT_NAVIGATION = [
