@@ -81,6 +81,15 @@ class PartnerUpdate(BaseModel):
     website: Optional[str] = None
 
 
+class PayoutRequest(BaseModel):
+    amount: Optional[float] = None  # None means withdraw all available
+
+
+class StripeConnectOnboard(BaseModel):
+    return_url: str
+    refresh_url: str
+
+
 # ============== HELPER FUNCTIONS ==============
 
 async def send_client_invitation_email(
