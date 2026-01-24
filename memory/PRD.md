@@ -398,12 +398,16 @@ Portal B2B2B completo para firmas de contadores que gestionan múltiples cliente
 - **Colecciones MongoDB:** `accounting_firms`, `partner_clients`, `partner_commissions`
 - **Archivos:** `/app/backend/routes/partners.py`, páginas en `/app/frontend/src/pages/`
 
+### Panel Admin de Soporte - Implementado (2026-01-24)
+- **Ruta Frontend:** `/support-admin`
+- **API Endpoints:** GET stats, GET/PATCH tickets, POST respond
+- **Archivos:** `/app/backend/routes/support.py`, `/app/frontend/src/pages/SupportAdminPage.jsx`
+
 ## Próximas Tareas (P1-P2)
-1. **Panel Admin para Tickets de Soporte** - Dashboard para gestionar tickets recibidos
-2. **Panel de Dispositivos Biométricos** - Gestión de dispositivos y documentación
-3. **Notificaciones Push/Email** - Alertas para eventos del portal del empleado
-4. **Integrar CDC en operaciones CRUD** - Llamar `log_audit_event()` desde endpoints existentes
-5. **Envío de emails a clientes referidos** - Automatizar invitaciones desde el portal de partners
+1. **Panel de Dispositivos Biométricos** - Gestión de dispositivos y documentación de integración
+2. **Notificaciones Push/Email** - Alertas para eventos del portal del empleado
+3. **Integrar CDC en operaciones CRUD** - Llamar `log_audit_event()` desde endpoints existentes
+4. **Envío de emails a clientes referidos** - Automatizar invitaciones desde el portal de partners
 
 ## Tareas Futuras (P3)
 - Integraciones Enterprise reales (SAP, Oracle, Dynamics)
