@@ -633,6 +633,85 @@ async def create_manual_audit_log(
     }
 
 
+# ============== HELPER FUNCTION FOR OTHER MODULES ==============
+
+async def log_audit_event(
+    database,
+    collection: str,
+    operation: str,
+    document_id: str,
+    company_id: Optional[str] = None,
+    user_id: Optional[str] = None,
+    user_email: Optional[str] = None,
+    new_values: Optional[Dict] = None,
+    previous_values: Optional[Dict] = None,
+    changes: Optional[Dict] = None
+):
+    """
+    Helper function to log audit events from other modules.
+    Use this when Change Streams are not available or for explicit tracking.
+    
+    Usage from other modules:
+        from routes.cdc_audit import log_audit_event
+        await log_audit_event(
+            database=db,
+            collection="employees",
+            operation="update",
+            document_id=employee_id,
+            company_id=company_id,
+            user_id=user_id,
+            changes={"salary": new_salary}
+        )
+    """
+    try:
+        audit_entry = {
+            "log_id": f"audit_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}",
+            "collection": collection,
+            "collection_name": COLLECTION_NAMES.get(collection, collection),
+            "operation": operation,
+            "operation_name": OPERATION_TYPES.get(operation, operation),
+            "document_id": str(document_id),
+            "company_id": company_id,
+            "user_id": user_id,
+            "user_email": user_email,
+            "timestamp": datetime.now(timezone.utc),
+            "metadata": {"source": "manual_tracking"}
+        }
+        
+        if new_values:
+            audit_entry["new_values"] = sanitize_document(new_values)
+        if previous_values:
+            audit_entry["previous_values"] = sanitize_document(previous_values)
+        if changes:
+            audit_entry["changes"] = sanitize_document(changes)
+        
+        await database.audit_logs.insert_one(audit_entry)
+        logger.info(f"Audit logged: {operation} on {collection} - {document_id}")
+        
+        return audit_entry["log_id"]
+    except Exception as e:
+        logger.error(f"Failed to log audit event: {e}")
+        return None
+
+
+# ============== CHECK REPLICA SET SUPPORT ==============
+
+async def check_change_stream_support():
+    """Check if MongoDB supports Change Streams (requires replica set)"""
+    global change_streams_supported
+    try:
+        # Try to check if it's a replica set
+        result = await db.command("hello")
+        is_replica_set = "setName" in result
+        change_streams_supported = is_replica_set
+        return is_replica_set
+    except Exception:
+        change_streams_supported = False
+        return False
+
+change_streams_supported = False
+
+
 # ============== INDEXES ==============
 
 async def create_indexes():
