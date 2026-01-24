@@ -115,28 +115,164 @@ const STEPS = [
   }
 ];
 
+// Theme configurations
+const themes = {
+  light: {
+    name: "Claro",
+    icon: Sun,
+    bg: "bg-gradient-to-br from-slate-50 via-white to-emerald-50",
+    header: "bg-white/95 backdrop-blur-md border-b border-slate-200",
+    headerText: "text-slate-900",
+    headerSubtext: "text-emerald-600",
+    text: "text-slate-900",
+    textMuted: "text-slate-600",
+    textLight: "text-slate-500",
+    card: "bg-white border-slate-200 shadow-sm",
+    cardHover: "hover:shadow-md",
+    accent: "text-emerald-600",
+    accentBg: "bg-emerald-50",
+    badge: "bg-emerald-100 text-emerald-700",
+    button: "bg-emerald-500 hover:bg-emerald-600",
+    buttonGhost: "text-slate-600 hover:text-slate-900 hover:bg-slate-100",
+    section: "bg-slate-50",
+    border: "border-slate-200",
+    input: "bg-white border-slate-200"
+  },
+  dark: {
+    name: "Oscuro",
+    icon: Moon,
+    bg: "bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900",
+    header: "bg-slate-900/80 backdrop-blur-md border-b border-slate-700",
+    headerText: "text-white",
+    headerSubtext: "text-emerald-400",
+    text: "text-white",
+    textMuted: "text-slate-300",
+    textLight: "text-slate-400",
+    card: "bg-slate-800/50 border-slate-700",
+    cardHover: "hover:bg-slate-700/50",
+    accent: "text-emerald-400",
+    accentBg: "bg-emerald-500/20",
+    badge: "bg-emerald-500/20 text-emerald-400",
+    button: "bg-emerald-500 hover:bg-emerald-600",
+    buttonGhost: "text-slate-300 hover:text-white hover:bg-slate-700",
+    section: "bg-slate-800/50",
+    border: "border-slate-700",
+    input: "bg-slate-800 border-slate-700"
+  },
+  contrast: {
+    name: "Alto Contraste",
+    icon: Contrast,
+    bg: "bg-black",
+    header: "bg-black border-b-2 border-yellow-400",
+    headerText: "text-yellow-400",
+    headerSubtext: "text-yellow-300",
+    text: "text-yellow-400",
+    textMuted: "text-yellow-300",
+    textLight: "text-yellow-200",
+    card: "bg-black border-2 border-yellow-400",
+    cardHover: "hover:border-yellow-300",
+    accent: "text-yellow-400",
+    accentBg: "bg-yellow-400/10",
+    badge: "bg-yellow-400/20 text-yellow-400 border border-yellow-400",
+    button: "bg-yellow-400 hover:bg-yellow-300 text-black",
+    buttonGhost: "text-yellow-400 hover:text-yellow-300 hover:bg-yellow-400/10",
+    section: "bg-gray-950",
+    border: "border-yellow-400",
+    input: "bg-black border-2 border-yellow-400"
+  },
+  system: {
+    name: "Sistema",
+    icon: Monitor
+  }
+};
+
 export default function AccountantsSoftwarePage() {
   const [activeTab, setActiveTab] = useState("benefits");
+  const [currentTheme, setCurrentTheme] = useState("light"); // Default to light
+  
+  // Get system preference
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("accountants-theme");
+    if (savedTheme && savedTheme !== "system") {
+      setCurrentTheme(savedTheme);
+    }
+  }, []);
+  
+  // Handle theme change
+  const handleThemeChange = (themeName) => {
+    if (themeName === "system") {
+      const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      setCurrentTheme(isDark ? "dark" : "light");
+    } else {
+      setCurrentTheme(themeName);
+    }
+    localStorage.setItem("accountants-theme", themeName);
+  };
+  
+  const theme = themes[currentTheme] || themes.light;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900">
+    <div className={`min-h-screen ${theme.bg}`}>
       {/* Header */}
-      <header className="bg-slate-900/80 backdrop-blur-md border-b border-slate-700 sticky top-0 z-50">
+      <header className={`${theme.header} sticky top-0 z-50`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="flex items-center gap-2">
               <img src="/fortexarh-logo.png" alt="FortexaRH" className="h-8 w-auto" />
-              <span className="font-bold text-xl text-white">FortexaRH</span>
-              <span className="text-emerald-400 text-sm font-medium ml-2 hidden sm:inline">Para Contadores</span>
+              <span className={`font-bold text-xl ${theme.headerText}`}>FortexaRH</span>
+              <span className={`${theme.headerSubtext} text-sm font-medium ml-2 hidden sm:inline`}>Para Contadores</span>
             </Link>
-            <div className="flex items-center gap-4">
+            
+            <div className="flex items-center gap-2 sm:gap-4">
+              {/* Theme Selector */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className={theme.buttonGhost} data-testid="theme-toggle">
+                    {currentTheme === "light" && <Sun className="w-4 h-4" />}
+                    {currentTheme === "dark" && <Moon className="w-4 h-4" />}
+                    {currentTheme === "contrast" && <Contrast className="w-4 h-4" />}
+                    <span className="ml-2 hidden sm:inline">Apariencia</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem 
+                    onClick={() => handleThemeChange("light")}
+                    className={currentTheme === "light" ? "bg-emerald-50" : ""}
+                  >
+                    <Sun className="w-4 h-4 mr-2" />
+                    Claro
+                    {currentTheme === "light" && <Check className="w-4 h-4 ml-auto text-emerald-500" />}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => handleThemeChange("dark")}
+                    className={currentTheme === "dark" ? "bg-emerald-50" : ""}
+                  >
+                    <Moon className="w-4 h-4 mr-2" />
+                    Oscuro
+                    {currentTheme === "dark" && <Check className="w-4 h-4 ml-auto text-emerald-500" />}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => handleThemeChange("contrast")}
+                    className={currentTheme === "contrast" ? "bg-emerald-50" : ""}
+                  >
+                    <Contrast className="w-4 h-4 mr-2" />
+                    Alto Contraste
+                    {currentTheme === "contrast" && <Check className="w-4 h-4 ml-auto text-emerald-500" />}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleThemeChange("system")}>
+                    <Monitor className="w-4 h-4 mr-2" />
+                    Sistema
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
               <Link to="/login">
-                <Button variant="ghost" className="text-slate-300 hover:text-white hover:bg-slate-700">
+                <Button variant="ghost" className={theme.buttonGhost}>
                   Iniciar Sesión
                 </Button>
               </Link>
               <Link to="/partner-register">
-                <Button className="bg-emerald-500 hover:bg-emerald-600 text-white">
+                <Button className={theme.button}>
                   Registrar Firma
                 </Button>
               </Link>
@@ -152,19 +288,19 @@ export default function AccountantsSoftwarePage() {
         <div className="max-w-7xl mx-auto relative">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <div className={`inline-flex items-center gap-2 ${theme.badge} px-4 py-2 rounded-full text-sm font-medium mb-6`}>
                 <Award className="w-4 h-4" />
                 Programa de Partners para Firmas de Contadores
               </div>
               
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+              <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold ${theme.text} mb-6 leading-tight`}>
                 Crece tu firma con{" "}
-                <span className="text-emerald-400">FortexaRH</span>
+                <span className={theme.accent}>FortexaRH</span>
               </h1>
               
-              <p className="text-xl text-slate-300 mb-8 leading-relaxed">
+              <p className={`text-xl ${theme.textMuted} mb-8 leading-relaxed`}>
                 Ofrece a tus clientes el mejor sistema de nómina y RRHH de República Dominicana. 
-                <strong className="text-white"> Gana 30% de comisión recurrente</strong> por cada cliente referido.
+                <strong className={theme.text}> Gana 30% de comisión recurrente</strong> por cada cliente referido.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
