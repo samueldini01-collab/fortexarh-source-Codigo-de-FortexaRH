@@ -752,6 +752,7 @@ export default function LandingPage() {
               <ul className="space-y-2 text-slate-400 text-sm">
                 <li><Link to="/login" className="hover:text-white transition-colors">Iniciar Sesión</Link></li>
                 <li><Link to="/register" className="hover:text-white transition-colors">Crear Cuenta</Link></li>
+                <li><Link to="/soporte" className="hover:text-white transition-colors">Centro de Soporte</Link></li>
               </ul>
             </div>
             <div>
