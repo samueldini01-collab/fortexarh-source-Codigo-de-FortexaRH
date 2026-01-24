@@ -170,17 +170,31 @@ function EmployeeDashboard() {
   const [showVacationRequest, setShowVacationRequest] = useState(false);
   const [vacationForm, setVacationForm] = useState({ start_date: "", end_date: "", reason: "" });
   const [showPayslipDetail, setShowPayslipDetail] = useState(null);
+  
+  // New state for additional features
+  const [evaluations, setEvaluations] = useState({ evaluations: [], summary: {} });
+  const [leaves, setLeaves] = useState({ leaves: [], summary: {}, leave_types: {} });
+  const [todayAttendance, setTodayAttendance] = useState(null);
+  const [attendanceHistory, setAttendanceHistory] = useState({ records: [], summary: {} });
+  const [showLeaveRequest, setShowLeaveRequest] = useState(false);
+  const [leaveForm, setLeaveForm] = useState({ leave_type: "", start_date: "", end_date: "", reason: "" });
+  const [checkingIn, setCheckingIn] = useState(false);
+  const [checkingOut, setCheckingOut] = useState(false);
+  const [downloadingPdf, setDownloadingPdf] = useState(null);
 
   const fetchDashboard = useCallback(async () => {
     setLoading(true);
     try {
-      const [dashRes, payRes, loanRes, vacRes, balRes, profRes] = await Promise.all([
+      const [dashRes, payRes, loanRes, vacRes, balRes, profRes, evalRes, leaveRes, attRes] = await Promise.all([
         axios.get(`${API}/employee-portal/dashboard`, { headers: getAuthHeaders() }),
         axios.get(`${API}/employee-portal/payslips`, { headers: getAuthHeaders() }),
         axios.get(`${API}/employee-portal/loans`, { headers: getAuthHeaders() }),
         axios.get(`${API}/employee-portal/vacations/requests`, { headers: getAuthHeaders() }),
         axios.get(`${API}/employee-portal/vacations/balance`, { headers: getAuthHeaders() }),
-        axios.get(`${API}/employee-portal/profile`, { headers: getAuthHeaders() })
+        axios.get(`${API}/employee-portal/profile`, { headers: getAuthHeaders() }),
+        axios.get(`${API}/employee-portal/evaluations`, { headers: getAuthHeaders() }).catch(() => ({ data: { evaluations: [], summary: {} } })),
+        axios.get(`${API}/employee-portal/leaves`, { headers: getAuthHeaders() }).catch(() => ({ data: { leaves: [], summary: {}, leave_types: {} } })),
+        axios.get(`${API}/employee-portal/attendance/today`, { headers: getAuthHeaders() }).catch(() => ({ data: null }))
       ]);
       setDashboardData(dashRes.data);
       setPayslips(payRes.data);
@@ -188,6 +202,9 @@ function EmployeeDashboard() {
       setVacations(vacRes.data);
       setVacationBalance(balRes.data);
       setProfile(profRes.data.employee);
+      setEvaluations(evalRes.data);
+      setLeaves(leaveRes.data);
+      setTodayAttendance(attRes.data);
     } catch (error) {
       toast.error("Error al cargar datos");
     } finally {
