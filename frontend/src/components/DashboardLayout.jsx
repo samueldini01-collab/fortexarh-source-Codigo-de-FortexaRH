@@ -648,6 +648,14 @@ export default function DashboardLayout({ children, title }) {
                     <DropdownMenuItem onClick={() => navigate('/company-config')}>
                       <Building2 className="w-4 h-4 mr-2" /> Config. Empresa
                     </DropdownMenuItem>
+                    {user?.is_partner && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => navigate('/partner-dashboard')} className="text-emerald-600 dark:text-emerald-400">
+                          <Award className="w-4 h-4 mr-2" /> Portal de Partner
+                        </DropdownMenuItem>
+                      </>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => navigate('/settings')}>
                       <Settings className="w-4 h-4 mr-2" /> Configuración
