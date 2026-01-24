@@ -138,24 +138,31 @@
 | Google Auth | ✅ Funcionando |
 | QuickBooks, SAP, Oracle | MOCKED |
 
-## Arquitectura de Módulos Nuevos
+## Arquitectura Actualizada
 
 ```
 /app/backend/routes/
-├── attendance.py      # Control de asistencia (NEW)
-├── vacations.py       # Vacaciones y permisos (ENHANCED)
-└── evaluations.py     # Evaluaciones de desempeño (ENHANCED)
+├── attendance.py      # Control de asistencia
+├── vacations.py       # Vacaciones y permisos
+├── evaluations.py     # Evaluaciones de desempeño
+├── payroll_v2.py      # Nómina con flujo de aprobación (ENHANCED)
+├── metrics.py         # Dashboard de métricas (NEW)
+└── search.py          # Búsqueda AI con aprendizaje (ENHANCED)
 
 /app/frontend/src/pages/
-├── AttendancePage.jsx   # 4 tabs: Hoy, Historial, Turnos, Alertas
-├── VacationsPage.jsx    # 3 tabs: Solicitudes, Balance, Calendario
-└── EvaluationsPage.jsx  # 4 tabs: Evaluaciones, KPIs, Ciclos, Planes
+├── AttendancePage.jsx       # 4 tabs: Hoy, Historial, Turnos, Alertas
+├── VacationsPage.jsx        # 3 tabs: Solicitudes, Balance, Calendario
+├── EvaluationsPage.jsx      # 4 tabs: Evaluaciones, KPIs, Ciclos, Planes
+├── PayrollV2Page.jsx        # Flujo aprobación: Draft→Pending→Approved→Paid
+├── MetricsDashboardPage.jsx # Dashboard con datos reales
+└── CostsByDepartmentPage.jsx # Vista previa antes de exportar
 ```
 
-## Próximas Tareas (P2)
-1. **Reportes Avanzados y Exportables** - Gráficos interactivos, PDF/Excel
-2. **Notificaciones en Portal de Empleados** - Sistema de alertas
-3. **Historial de Auditoría** - Log de cambios del sistema
+## Próximas Tareas (P1-P2)
+1. **Panel de Dispositivos Biométricos** - Gestión de dispositivos y documentación
+2. **Reportes Avanzados y Exportables** - Gráficos interactivos, PDF/Excel
+3. **Notificaciones en Portal de Empleados** - Sistema de alertas
+4. **Historial de Auditoría** - Log de cambios del sistema
 
 ## Tareas Futuras (P3)
 - Integraciones Enterprise reales (QuickBooks, SAP, Oracle)
