@@ -180,7 +180,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-slate-900/98 backdrop-blur-md border-b border-slate-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             <Link to="/" className="flex items-center">
@@ -191,20 +191,128 @@ export default function LandingPage() {
               />
             </Link>
             
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-6 lg:gap-8">
-              <a href="#features" className="text-sm lg:text-base text-slate-600 hover:text-slate-900 transition-colors">Características</a>
-              <a href="#pricing" className="text-sm lg:text-base text-slate-600 hover:text-slate-900 transition-colors">Precios</a>
-              <a href="#contact" className="text-sm lg:text-base text-slate-600 hover:text-slate-900 transition-colors">Contacto</a>
+            {/* Desktop Navigation with Dropdowns */}
+            <nav className="hidden md:flex items-center gap-1 lg:gap-2" ref={dropdownRef}>
+              {/* Para Empresas Dropdown */}
+              <div className="relative">
+                <button 
+                  className={`flex items-center gap-1.5 px-4 py-2 text-sm lg:text-base rounded-lg transition-colors ${
+                    openDropdown === 'empresas' 
+                      ? 'text-white bg-slate-700' 
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                  }`}
+                  onClick={() => setOpenDropdown(openDropdown === 'empresas' ? null : 'empresas')}
+                  data-testid="nav-empresas"
+                >
+                  Para empresas
+                  <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'empresas' ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {openDropdown === 'empresas' && (
+                  <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-slate-200 py-3 animate-fade-in z-50">
+                    <div className="px-4 pb-2 mb-2 border-b border-slate-100">
+                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Solución para Empresas</p>
+                    </div>
+                    {empresaFeatures.map((feature, idx) => (
+                      <a 
+                        key={idx}
+                        href="#features"
+                        className="flex items-start gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors"
+                        onClick={() => setOpenDropdown(null)}
+                      >
+                        <feature.icon className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="text-sm font-medium text-slate-900">{feature.title}</p>
+                          <p className="text-xs text-slate-500">{feature.desc}</p>
+                        </div>
+                      </a>
+                    ))}
+                    <div className="px-4 pt-3 mt-2 border-t border-slate-100">
+                      <Link 
+                        to="/register"
+                        className="flex items-center justify-center gap-2 w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
+                        onClick={() => setOpenDropdown(null)}
+                      >
+                        Comenzar Prueba Gratis
+                        <ArrowRight className="w-4 h-4" />
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {/* Para Contadores Dropdown */}
+              <div className="relative">
+                <button 
+                  className={`flex items-center gap-1.5 px-4 py-2 text-sm lg:text-base rounded-lg transition-colors ${
+                    openDropdown === 'contadores' 
+                      ? 'text-white bg-slate-700' 
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                  }`}
+                  onClick={() => setOpenDropdown(openDropdown === 'contadores' ? null : 'contadores')}
+                  data-testid="nav-contadores"
+                >
+                  Contadores
+                  <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'contadores' ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {openDropdown === 'contadores' && (
+                  <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-slate-200 py-3 animate-fade-in z-50">
+                    <div className="px-4 pb-2 mb-2 border-b border-slate-100">
+                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Programa para Contadores</p>
+                    </div>
+                    {contadoresFeatures.map((feature, idx) => (
+                      <Link 
+                        key={idx}
+                        to="/accountants-software"
+                        className="flex items-start gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors"
+                        onClick={() => setOpenDropdown(null)}
+                      >
+                        <feature.icon className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="text-sm font-medium text-slate-900">{feature.title}</p>
+                          <p className="text-xs text-slate-500">{feature.desc}</p>
+                        </div>
+                      </Link>
+                    ))}
+                    <div className="px-4 pt-3 mt-2 border-t border-slate-100">
+                      <Link 
+                        to="/accountants-software"
+                        className="flex items-center justify-center gap-2 w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
+                        onClick={() => setOpenDropdown(null)}
+                      >
+                        <Award className="w-4 h-4" />
+                        Ver Programa de Partners
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {/* Simple Links */}
+              <a 
+                href="#pricing" 
+                className="px-4 py-2 text-sm lg:text-base text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+              >
+                Precios
+              </a>
+              <a 
+                href="#contact" 
+                className="px-4 py-2 text-sm lg:text-base text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+              >
+                Contacto
+              </a>
             </nav>
             
             {/* Desktop Buttons */}
             <div className="hidden md:flex items-center gap-2 lg:gap-3">
               <Link to="/login">
-                <Button variant="ghost" size="sm" className="text-sm" data-testid="login-btn">Iniciar Sesión</Button>
+                <Button variant="ghost" size="sm" className="text-sm text-slate-300 hover:text-white hover:bg-slate-800" data-testid="login-btn">
+                  Iniciar Sesión
+                </Button>
               </Link>
               <Link to="/register">
-                <Button size="sm" className="bg-slate-900 hover:bg-slate-800 text-sm" data-testid="register-btn">
+                <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600 text-sm" data-testid="register-btn">
                   Comenzar Gratis
                 </Button>
               </Link>
@@ -212,7 +320,7 @@ export default function LandingPage() {
             
             {/* Mobile Menu Button */}
             <button 
-              className="md:hidden p-2 -mr-2 text-slate-600"
+              className="md:hidden p-2 -mr-2 text-slate-300"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               data-testid="mobile-menu-btn"
             >
@@ -223,11 +331,85 @@ export default function LandingPage() {
         
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-white border-t border-slate-200 py-4 px-4 animate-fade-in">
-            <nav className="flex flex-col gap-3 mb-4">
+          <div className="md:hidden bg-slate-800 border-t border-slate-700 py-4 px-4 animate-fade-in">
+            <nav className="flex flex-col gap-2 mb-4">
+              {/* Mobile - Para Empresas */}
+              <div className="py-2">
+                <button 
+                  className="flex items-center justify-between w-full text-slate-300 py-2 px-3 rounded-lg"
+                  onClick={() => setOpenDropdown(openDropdown === 'empresas-mobile' ? null : 'empresas-mobile')}
+                >
+                  <span className="font-medium">Para Empresas</span>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'empresas-mobile' ? 'rotate-180' : ''}`} />
+                </button>
+                {openDropdown === 'empresas-mobile' && (
+                  <div className="mt-2 ml-3 pl-3 border-l-2 border-slate-600">
+                    {empresaFeatures.slice(0, 4).map((feature, idx) => (
+                      <a 
+                        key={idx}
+                        href="#features"
+                        className="flex items-center gap-2 py-2 text-sm text-slate-400 hover:text-white"
+                        onClick={() => { setOpenDropdown(null); setMobileMenuOpen(false); }}
+                      >
+                        <feature.icon className="w-4 h-4 text-emerald-400" />
+                        {feature.title}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+              
+              {/* Mobile - Para Contadores */}
+              <div className="py-2">
+                <button 
+                  className="flex items-center justify-between w-full text-slate-300 py-2 px-3 rounded-lg"
+                  onClick={() => setOpenDropdown(openDropdown === 'contadores-mobile' ? null : 'contadores-mobile')}
+                >
+                  <span className="font-medium">Para Contadores</span>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'contadores-mobile' ? 'rotate-180' : ''}`} />
+                </button>
+                {openDropdown === 'contadores-mobile' && (
+                  <div className="mt-2 ml-3 pl-3 border-l-2 border-slate-600">
+                    {contadoresFeatures.slice(0, 4).map((feature, idx) => (
+                      <Link 
+                        key={idx}
+                        to="/accountants-software"
+                        className="flex items-center gap-2 py-2 text-sm text-slate-400 hover:text-white"
+                        onClick={() => { setOpenDropdown(null); setMobileMenuOpen(false); }}
+                      >
+                        <feature.icon className="w-4 h-4 text-emerald-400" />
+                        {feature.title}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+              
               <a 
-                href="#features" 
-                className="text-slate-600 hover:text-slate-900 py-2 px-3 rounded-lg hover:bg-slate-50"
+                href="#pricing" 
+                className="text-slate-300 hover:text-white py-2 px-3 rounded-lg hover:bg-slate-700"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Precios
+              </a>
+              <a 
+                href="#contact" 
+                className="text-slate-300 hover:text-white py-2 px-3 rounded-lg hover:bg-slate-700"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Contacto
+              </a>
+            </nav>
+            <div className="flex flex-col gap-2 pt-3 border-t border-slate-700">
+              <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="outline" className="w-full border-slate-600 text-slate-300 hover:bg-slate-700">Iniciar Sesión</Button>
+              </Link>
+              <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
+                <Button className="w-full bg-emerald-500 hover:bg-emerald-600">Comenzar Gratis</Button>
+              </Link>
+            </div>
+          </div>
+        )}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Características
