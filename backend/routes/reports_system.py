@@ -74,6 +74,26 @@ REPORT_CATEGORIES = {
         "name": "Financiero/Contable",
         "icon": "wallet",
         "color": "rose"
+    },
+    "reclutamiento": {
+        "name": "Reclutamiento",
+        "icon": "briefcase",
+        "color": "cyan"
+    },
+    "capacitacion": {
+        "name": "Capacitación",
+        "icon": "graduation-cap",
+        "color": "orange"
+    },
+    "analytics": {
+        "name": "Análisis y KPIs",
+        "icon": "bar-chart",
+        "color": "violet"
+    },
+    "cumplimiento": {
+        "name": "Cumplimiento Legal",
+        "icon": "shield-check",
+        "color": "teal"
     }
 }
 
