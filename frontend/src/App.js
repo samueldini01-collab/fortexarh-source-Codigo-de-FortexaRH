@@ -347,6 +347,7 @@ function AppRouter() {
       <Route path="/loans" element={<ProtectedRoute><LoansPage /></ProtectedRoute>} />
       <Route path="/metrics-dashboard" element={<ProtectedRoute><MetricsDashboardPage /></ProtectedRoute>} />
       <Route path="/reports-advanced" element={<ProtectedRoute><ReportsAdvancedPage /></ProtectedRoute>} />
+      <Route path="/reports-system" element={<ProtectedRoute><ReportsSystemPage /></ProtectedRoute>} />
       <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
       <Route path="/costs-by-department" element={<ProtectedRoute><CostsByDepartmentPage /></ProtectedRoute>} />
       <Route path="/expenses" element={<ProtectedRoute><ExpensesPage /></ProtectedRoute>} />
