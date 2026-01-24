@@ -2686,6 +2686,7 @@ api_router.include_router(notifications_system_router)
 api_router.include_router(reports_advanced_router)
 api_router.include_router(reports_system_router)
 api_router.include_router(quickbooks_router)
+api_router.include_router(cdc_audit_router)
 
 # Include the API router
 app.include_router(api_router)
