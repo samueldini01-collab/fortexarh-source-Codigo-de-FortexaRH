@@ -351,24 +351,24 @@ export default function CDCAuditPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-              <Select value={filters.collection} onValueChange={(v) => setFilters({...filters, collection: v})}>
+              <Select value={filters.collection} onValueChange={(v) => setFilters({...filters, collection: v === "all" ? "" : v})}>
                 <SelectTrigger>
                   <SelectValue placeholder="Colección" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todas</SelectItem>
+                  <SelectItem value="all">Todas</SelectItem>
                   {cdcStatus?.collection_names && Object.entries(cdcStatus.collection_names).map(([key, name]) => (
                     <SelectItem key={key} value={key}>{name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
 
-              <Select value={filters.operation} onValueChange={(v) => setFilters({...filters, operation: v})}>
+              <Select value={filters.operation} onValueChange={(v) => setFilters({...filters, operation: v === "all" ? "" : v})}>
                 <SelectTrigger>
                   <SelectValue placeholder="Operación" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todas</SelectItem>
+                  <SelectItem value="all">Todas</SelectItem>
                   <SelectItem value="insert">Crear</SelectItem>
                   <SelectItem value="update">Actualizar</SelectItem>
                   <SelectItem value="delete">Eliminar</SelectItem>
