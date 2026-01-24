@@ -103,12 +103,18 @@ function EmployeeLogin() {
     }
   };
 
+  const LOGO_URL = "https://customer-assets.emergentagent.com/job_hrpay-manager-2/artifacts/y0ghj2zi_FortexaRH%20Logo.png";
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <User className="w-8 h-8 text-blue-600" />
+          <div className="flex justify-center mb-4">
+            <img 
+              src={LOGO_URL} 
+              alt="FortexaRH Logo" 
+              className="h-20 w-auto object-contain"
+            />
           </div>
           <CardTitle className="text-2xl">Portal del Empleado</CardTitle>
           <CardDescription>Accede a tu información personal</CardDescription>
