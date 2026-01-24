@@ -21,6 +21,9 @@ security = HTTPBearer(auto_error=False)
 resend.api_key = os.environ.get('RESEND_API_KEY', '')
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'noreply@fortexarh.com')
 
+# Stripe configuration for Connect
+stripe.api_key = os.environ.get('STRIPE_API_KEY', '')
+
 db = None
 _get_current_user_func: Callable = None
 
