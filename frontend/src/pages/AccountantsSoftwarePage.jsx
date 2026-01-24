@@ -535,47 +535,47 @@ export default function AccountantsSoftwarePage() {
       </section>
 
       {/* Comparison Table */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-800/50">
+      <section className={`py-20 px-4 sm:px-6 lg:px-8 ${theme.section}`}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+            <h2 className={`text-3xl sm:text-4xl font-bold ${theme.text} mb-4`}>
               Partner vs Plan Normal
             </h2>
           </div>
           
-          <div className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
+          <div className={`${theme.card} rounded-2xl overflow-hidden`}>
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-700">
-                  <th className="text-left p-4 text-slate-400 font-medium">Característica</th>
-                  <th className="text-center p-4 text-emerald-400 font-medium">Plan Partner</th>
-                  <th className="text-center p-4 text-slate-400 font-medium">Plan Normal</th>
+                <tr className={`${theme.border} border-b`}>
+                  <th className={`text-left p-4 ${theme.textLight} font-medium`}>Característica</th>
+                  <th className={`text-center p-4 ${theme.accent} font-medium`}>Plan Partner</th>
+                  <th className={`text-center p-4 ${theme.textLight} font-medium`}>Plan Normal</th>
                 </tr>
               </thead>
               <tbody>
                 {PRICING_COMPARISON.map((row, index) => (
-                  <tr key={index} className="border-b border-slate-700/50">
-                    <td className="p-4 text-slate-300">{row.feature}</td>
+                  <tr key={index} className={`${theme.border} border-b border-opacity-50`}>
+                    <td className={`p-4 ${theme.textMuted}`}>{row.feature}</td>
                     <td className="p-4 text-center">
                       {typeof row.partner === 'boolean' ? (
                         row.partner ? (
-                          <Check className="w-5 h-5 text-emerald-400 mx-auto" />
+                          <Check className={`w-5 h-5 ${theme.accent} mx-auto`} />
                         ) : (
-                          <span className="text-slate-500">—</span>
+                          <span className={theme.textLight}>—</span>
                         )
                       ) : (
-                        <span className="text-emerald-400 font-semibold">{row.partner}</span>
+                        <span className={`${theme.accent} font-semibold`}>{row.partner}</span>
                       )}
                     </td>
                     <td className="p-4 text-center">
                       {typeof row.normal === 'boolean' ? (
                         row.normal ? (
-                          <Check className="w-5 h-5 text-slate-400 mx-auto" />
+                          <Check className={`w-5 h-5 ${theme.textLight} mx-auto`} />
                         ) : (
-                          <span className="text-slate-500">—</span>
+                          <span className={theme.textLight}>—</span>
                         )
                       ) : (
-                        <span className="text-slate-400">{row.normal}</span>
+                        <span className={theme.textLight}>{row.normal}</span>
                       )}
                     </td>
                   </tr>
