@@ -679,9 +679,24 @@ export default function PartnerDashboardPage() {
                                     <Eye className="w-4 h-4 mr-2" />
                                     Ver Detalles
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
-                                    <Mail className="w-4 h-4 mr-2" />
-                                    Reenviar Invitación
+                                  {(client.status === "invited" || client.subscription_status === "pending") && (
+                                    <DropdownMenuItem 
+                                      className="text-slate-300 hover:text-white hover:bg-slate-700"
+                                      onClick={() => resendInvitation(client.client_id, client.email)}
+                                    >
+                                      <Mail className="w-4 h-4 mr-2" />
+                                      Reenviar Invitación
+                                    </DropdownMenuItem>
+                                  )}
+                                  <DropdownMenuItem 
+                                    className="text-slate-300 hover:text-white hover:bg-slate-700"
+                                    onClick={() => {
+                                      navigator.clipboard.writeText(client.invitation_link);
+                                      toast.success("Link de invitación copiado");
+                                    }}
+                                  >
+                                    <Copy className="w-4 h-4 mr-2" />
+                                    Copiar Link
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
