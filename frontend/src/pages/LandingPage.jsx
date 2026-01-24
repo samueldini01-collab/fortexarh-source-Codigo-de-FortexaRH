@@ -670,12 +670,13 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex flex-col mb-4">
                 <img 
-                  src="https://customer-assets.emergentagent.com/job_hrpulse-26/artifacts/ohljcqui_FortexaRH%20Logo.png" 
+                  src="https://customer-assets.emergentagent.com/job_hrpulse-26/artifacts/s3lghfxy_FortexaRH_Logo_transparent.png" 
                   alt="FortexaRH" 
-                  className="h-10 w-auto"
+                  className="h-12 w-auto"
                 />
+                <p className="text-xs text-slate-400 mt-1">Sistema de RRHH y Nómina</p>
               </div>
               <p className="text-slate-400 text-sm mb-4">
                 Sistema de gestión de recursos humanos y nómina para empresas modernas en República Dominicana.
