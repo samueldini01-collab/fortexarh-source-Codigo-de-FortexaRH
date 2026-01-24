@@ -404,18 +404,18 @@ export default function AccountantsSoftwarePage() {
             {BENEFITS.map((benefit, index) => (
               <Card 
                 key={index} 
-                className={`bg-slate-800/50 border-slate-700 hover:border-emerald-500/50 transition-all ${
+                className={`${theme.card} ${theme.cardHover} transition-all ${
                   benefit.highlight ? 'ring-2 ring-emerald-500/30' : ''
                 }`}
               >
                 <CardContent className="p-6">
                   <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${
-                    benefit.highlight ? 'bg-emerald-500/20' : 'bg-slate-700'
+                    benefit.highlight ? theme.accentBg : theme.section
                   }`}>
-                    <benefit.icon className={`w-6 h-6 ${benefit.highlight ? 'text-emerald-400' : 'text-slate-400'}`} />
+                    <benefit.icon className={`w-6 h-6 ${benefit.highlight ? theme.accent : theme.textLight}`} />
                   </div>
-                  <h3 className="text-lg font-semibold text-white mb-2">{benefit.title}</h3>
-                  <p className="text-slate-400 text-sm">{benefit.description}</p>
+                  <h3 className={`text-lg font-semibold ${theme.text} mb-2`}>{benefit.title}</h3>
+                  <p className={`${theme.textLight} text-sm`}>{benefit.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -427,10 +427,10 @@ export default function AccountantsSoftwarePage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+            <h2 className={`text-3xl sm:text-4xl font-bold ${theme.text} mb-4`}>
               ¿Cómo Funciona?
             </h2>
-            <p className="text-lg text-slate-400">
+            <p className={`text-lg ${theme.textLight}`}>
               Tres simples pasos para comenzar a ganar con FortexaRH
             </p>
           </div>
@@ -438,16 +438,16 @@ export default function AccountantsSoftwarePage() {
           <div className="grid md:grid-cols-3 gap-8">
             {STEPS.map((step, index) => (
               <div key={index} className="relative">
-                <div className="bg-slate-800 rounded-2xl p-8 border border-slate-700 h-full">
-                  <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-xl mb-6">
+                <div className={`${theme.card} rounded-2xl p-8 h-full`}>
+                  <div className={`w-12 h-12 ${theme.button} rounded-full flex items-center justify-center text-white font-bold text-xl mb-6`}>
                     {step.number}
                   </div>
-                  <h3 className="text-xl font-semibold text-white mb-3">{step.title}</h3>
-                  <p className="text-slate-400">{step.description}</p>
+                  <h3 className={`text-xl font-semibold ${theme.text} mb-3`}>{step.title}</h3>
+                  <p className={theme.textLight}>{step.description}</p>
                 </div>
                 {index < STEPS.length - 1 && (
                   <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2">
-                    <ChevronRight className="w-8 h-8 text-slate-600" />
+                    <ChevronRight className={`w-8 h-8 ${theme.textLight}`} />
                   </div>
                 )}
               </div>
@@ -457,7 +457,7 @@ export default function AccountantsSoftwarePage() {
       </section>
 
       {/* Commission Example */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-emerald-900/30">
+      <section className={`py-20 px-4 sm:px-6 lg:px-8 ${theme.accentBg}`}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
