@@ -627,3 +627,250 @@ async def get_quickbooks_company_info(current_user: dict = Depends(get_current_u
             return response.json().get("CompanyInfo", {})
         else:
             raise HTTPException(status_code=response.status_code, detail=response.text)
+
+
+# ============== WEBHOOKS ==============
+
+import hmac
+import hashlib
+import logging
+
+logger = logging.getLogger("quickbooks_webhooks")
+
+# Webhook verifier token from Intuit Developer Portal
+QB_WEBHOOK_VERIFIER_TOKEN = os.environ.get('QUICKBOOKS_WEBHOOK_VERIFIER_TOKEN', '')
+
+
+def verify_webhook_signature(payload: bytes, signature: str, verifier_token: str) -> bool:
+    """
+    Verify the webhook signature from Intuit
+    Intuit uses HMAC-SHA256 with the verifier token as the key
+    """
+    if not verifier_token:
+        logger.warning("No webhook verifier token configured")
+        return False
+    
+    try:
+        expected_signature = hmac.new(
+            verifier_token.encode('utf-8'),
+            payload,
+            hashlib.sha256
+        ).digest()
+        
+        expected_b64 = base64.b64encode(expected_signature).decode('utf-8')
+        return hmac.compare_digest(expected_b64, signature)
+    except Exception as e:
+        logger.error(f"Error verifying webhook signature: {e}")
+        return False
+
+
+@router.post("/webhook")
+async def quickbooks_webhook(request: Request):
+    """
+    Receive webhook notifications from QuickBooks Online
+    
+    Intuit sends webhooks for:
+    - Account, Bill, BillPayment, Budget, Class, CreditMemo
+    - Customer, Employee, Estimate, Invoice, Item, JournalEntry
+    - Payment, PaymentMethod, Purchase, PurchaseOrder, Vendor, etc.
+    
+    Events: Create, Update, Delete, Merge, Void
+    """
+    try:
+        # Get the raw body for signature verification
+        body = await request.body()
+        
+        # Get Intuit signature from headers
+        intuit_signature = request.headers.get("intuit-signature", "")
+        
+        # Verify signature if verifier token is configured
+        if QB_WEBHOOK_VERIFIER_TOKEN:
+            if not verify_webhook_signature(body, intuit_signature, QB_WEBHOOK_VERIFIER_TOKEN):
+                logger.warning("Invalid webhook signature received")
+                raise HTTPException(status_code=401, detail="Invalid webhook signature")
+        
+        # Parse the webhook payload
+        import json
+        try:
+            payload = json.loads(body.decode('utf-8'))
+        except json.JSONDecodeError:
+            raise HTTPException(status_code=400, detail="Invalid JSON payload")
+        
+        # Log the webhook event
+        logger.info(f"QuickBooks webhook received: {json.dumps(payload, indent=2)}")
+        
+        # Process the webhook events
+        event_notifications = payload.get("eventNotifications", [])
+        
+        processed_events = []
+        
+        for notification in event_notifications:
+            realm_id = notification.get("realmId")
+            data_change_event = notification.get("dataChangeEvent", {})
+            entities = data_change_event.get("entities", [])
+            
+            for entity in entities:
+                entity_name = entity.get("name")  # e.g., "Account", "Invoice", "Employee"
+                entity_id = entity.get("id")
+                operation = entity.get("operation")  # Create, Update, Delete, Merge, Void
+                last_updated = entity.get("lastUpdated")
+                
+                # Store webhook event in database
+                webhook_event = {
+                    "event_id": f"qb_webhook_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}",
+                    "realm_id": realm_id,
+                    "entity_name": entity_name,
+                    "entity_id": entity_id,
+                    "operation": operation,
+                    "last_updated": last_updated,
+                    "raw_payload": entity,
+                    "processed": False,
+                    "created_at": datetime.now(timezone.utc)
+                }
+                
+                await db.quickbooks_webhook_events.insert_one(webhook_event)
+                
+                processed_events.append({
+                    "entity": entity_name,
+                    "id": entity_id,
+                    "operation": operation,
+                    "event_id": webhook_event["event_id"]
+                })
+                
+                # Trigger specific handlers based on entity type
+                await process_webhook_entity(realm_id, entity_name, entity_id, operation)
+        
+        logger.info(f"Processed {len(processed_events)} webhook events")
+        
+        # Intuit expects a 200 OK response
+        return {"status": "received", "events_processed": len(processed_events)}
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error processing webhook: {e}")
+        # Still return 200 to prevent Intuit from retrying
+        return {"status": "error", "message": str(e)}
+
+
+async def process_webhook_entity(realm_id: str, entity_name: str, entity_id: str, operation: str):
+    """
+    Process specific entity changes from webhooks
+    This can trigger automatic syncs or notifications
+    """
+    try:
+        # Find the company connected to this realm
+        connection = await db.quickbooks_connections.find_one({
+            "realm_id": realm_id,
+            "is_active": True
+        })
+        
+        if not connection:
+            logger.warning(f"No active connection found for realm {realm_id}")
+            return
+        
+        company_id = connection.get("company_id")
+        
+        # Create notification for important changes
+        important_entities = ["Employee", "Account", "JournalEntry", "Invoice", "Bill", "Payment"]
+        
+        if entity_name in important_entities:
+            # Log to CDC audit system
+            from routes.cdc_audit import log_audit_event
+            await log_audit_event(
+                database=db,
+                collection=f"quickbooks_{entity_name.lower()}",
+                operation=operation.lower(),
+                document_id=entity_id,
+                company_id=company_id,
+                changes={"source": "quickbooks_webhook", "realm_id": realm_id}
+            )
+            
+            # Create system notification
+            notification = {
+                "notification_id": f"notif_qb_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}",
+                "company_id": company_id,
+                "type": "integration",
+                "title": f"QuickBooks: {entity_name} {operation}",
+                "message": f"Se ha {'creado' if operation == 'Create' else 'actualizado' if operation == 'Update' else 'eliminado'} un {entity_name} en QuickBooks (ID: {entity_id})",
+                "data": {
+                    "source": "quickbooks",
+                    "entity": entity_name,
+                    "entity_id": entity_id,
+                    "operation": operation,
+                    "realm_id": realm_id
+                },
+                "is_read": False,
+                "created_at": datetime.now(timezone.utc)
+            }
+            await db.notifications.insert_one(notification)
+            
+        logger.info(f"Processed {entity_name} {operation} for company {company_id}")
+        
+    except Exception as e:
+        logger.error(f"Error processing webhook entity: {e}")
+
+
+@router.get("/webhook/events")
+async def get_webhook_events(
+    limit: int = Query(50, le=200),
+    entity_name: Optional[str] = None,
+    operation: Optional[str] = None,
+    processed: Optional[bool] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get webhook events history"""
+    company_id = current_user.get("company_id")
+    
+    # Get realm_id for this company
+    connection = await db.quickbooks_connections.find_one({
+        "company_id": company_id,
+        "is_active": True
+    })
+    
+    if not connection:
+        return {"events": [], "total": 0}
+    
+    realm_id = connection.get("realm_id")
+    
+    # Build query
+    query = {"realm_id": realm_id}
+    
+    if entity_name:
+        query["entity_name"] = entity_name
+    if operation:
+        query["operation"] = operation
+    if processed is not None:
+        query["processed"] = processed
+    
+    # Fetch events
+    events = await db.quickbooks_webhook_events.find(
+        query,
+        {"_id": 0, "raw_payload": 0}
+    ).sort("created_at", -1).limit(limit).to_list(limit)
+    
+    total = await db.quickbooks_webhook_events.count_documents(query)
+    
+    return {
+        "events": events,
+        "total": total,
+        "realm_id": realm_id
+    }
+
+
+@router.post("/webhook/mark-processed/{event_id}")
+async def mark_webhook_processed(
+    event_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Mark a webhook event as processed"""
+    result = await db.quickbooks_webhook_events.update_one(
+        {"event_id": event_id},
+        {"$set": {"processed": True, "processed_at": datetime.now(timezone.utc)}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Event not found")
+    
+    return {"message": "Event marked as processed", "event_id": event_id}
+
