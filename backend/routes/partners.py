@@ -519,7 +519,7 @@ async def get_partner_commissions(
             else:
                 end_date = datetime(int(year), int(mon) + 1, 1, tzinfo=timezone.utc)
             query["created_at"] = {"$gte": start_date, "$lt": end_date}
-        except:
+        except (ValueError, AttributeError):
             pass
     
     commissions = await db.partner_commissions.find(
