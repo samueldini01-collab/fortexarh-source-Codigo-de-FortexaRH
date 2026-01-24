@@ -131,6 +131,9 @@ export function KeyboardShortcutsProvider({ children }) {
     };
 
     const getKeyString = (e) => {
+      // Guard against undefined key
+      if (!e.key) return "";
+      
       let key = e.key.toLowerCase();
       
       // Normalize special keys
