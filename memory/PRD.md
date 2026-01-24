@@ -160,31 +160,35 @@
 
 ```
 /app/backend/routes/
-├── attendance.py      # Control de asistencia
-├── vacations.py       # Vacaciones y permisos
-├── evaluations.py     # Evaluaciones de desempeño
-├── payroll_v2.py      # Nómina con flujo de aprobación (ENHANCED)
-├── metrics.py         # Dashboard de métricas (NEW)
-└── search.py          # Búsqueda AI con aprendizaje (ENHANCED)
+├── attendance.py           # Control de asistencia
+├── vacations.py            # Vacaciones y permisos
+├── evaluations.py          # Evaluaciones de desempeño
+├── payroll_v2.py           # Nómina con flujo de aprobación
+├── metrics.py              # Dashboard de métricas
+├── search.py               # Búsqueda AI con aprendizaje
+├── notifications_system.py # Sistema de notificaciones (NEW)
+└── reports_advanced.py     # Reportes PDF con reportlab (NEW)
 
-/app/frontend/src/pages/
-├── AttendancePage.jsx       # 4 tabs: Hoy, Historial, Turnos, Alertas
-├── VacationsPage.jsx        # 3 tabs: Solicitudes, Balance, Calendario
-├── EvaluationsPage.jsx      # 4 tabs: Evaluaciones, KPIs, Ciclos, Planes
-├── PayrollV2Page.jsx        # Flujo aprobación: Draft→Pending→Approved→Paid
-├── MetricsDashboardPage.jsx # Dashboard con datos reales
-└── CostsByDepartmentPage.jsx # Vista previa antes de exportar
+/app/frontend/src/
+├── components/
+│   ├── NotificationBell.jsx    # Campana notificaciones (NEW)
+│   └── DashboardLayout.jsx     # Header con NotificationBell
+└── pages/
+    ├── AttendancePage.jsx
+    ├── VacationsPage.jsx
+    ├── EvaluationsPage.jsx
+    ├── PayrollV2Page.jsx
+    ├── MetricsDashboardPage.jsx
+    ├── CostsByDepartmentPage.jsx
+    └── ReportsAdvancedPage.jsx # Reportes PDF (ENHANCED)
 ```
 
 ## Próximas Tareas (P1-P2)
 1. **Panel de Dispositivos Biométricos** - Gestión de dispositivos y documentación
-2. **Reportes Avanzados y Exportables** - Gráficos interactivos, PDF/Excel
-3. **Notificaciones en Portal de Empleados** - Sistema de alertas
-4. **Historial de Auditoría** - Log de cambios del sistema
+2. **Historial de Auditoría** - Log de cambios del sistema
+3. **PWA/Mobile App** - Versión móvil del portal del empleado
 
 ## Tareas Futuras (P3)
 - Integraciones Enterprise reales (QuickBooks, SAP, Oracle)
-- Más funciones para Portal de Autoservicio
-- PWA/Mobile App del portal
 - E-signature para documentos
 - Temas personalizados por empresa
