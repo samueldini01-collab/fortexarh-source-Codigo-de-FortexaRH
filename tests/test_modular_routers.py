@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 import uuid
 
 # Get BASE_URL from environment
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://hrpulse-26.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://hr-dashboard-105.preview.emergentagent.com')
 
 # Test credentials
 TEST_EMAIL = "test_refactor@fortexa.com"
