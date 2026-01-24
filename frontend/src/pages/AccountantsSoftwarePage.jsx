@@ -333,40 +333,40 @@ export default function AccountantsSoftwarePage() {
             <div className="relative">
               <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 border border-slate-700 shadow-2xl">
                 <div className="text-center mb-6">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-500/20 rounded-full mb-4">
-                    <Briefcase className="w-8 h-8 text-emerald-400" />
+                  <div className={`inline-flex items-center justify-center w-16 h-16 ${theme.accentBg} rounded-full mb-4`}>
+                    <Briefcase className={`w-8 h-8 ${theme.accent}`} />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Plan Partner</h3>
-                  <p className="text-slate-400">Para firmas de contadores</p>
+                  <h3 className={`text-2xl font-bold ${theme.text} mb-2`}>Plan Partner</h3>
+                  <p className={theme.textLight}>Para firmas de contadores</p>
                 </div>
                 
                 <div className="text-center mb-6">
                   <div className="flex items-baseline justify-center gap-1">
-                    <span className="text-5xl font-bold text-white">$10</span>
-                    <span className="text-slate-400">/mes</span>
+                    <span className={`text-5xl font-bold ${theme.text}`}>$10</span>
+                    <span className={theme.textLight}>/mes</span>
                   </div>
-                  <p className="text-emerald-400 font-medium mt-2">Empleados ilimitados incluidos</p>
+                  <p className={`${theme.accent} font-medium mt-2`}>Empleados ilimitados incluidos</p>
                 </div>
                 
                 <div className="space-y-3 mb-8">
-                  <div className="flex items-center gap-3 text-slate-300">
-                    <Check className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                  <div className={`flex items-center gap-3 ${theme.textMuted}`}>
+                    <Check className={`w-5 h-5 ${theme.accent} flex-shrink-0`} />
                     <span>Acceso completo al sistema</span>
                   </div>
-                  <div className="flex items-center gap-3 text-slate-300">
-                    <Check className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                  <div className={`flex items-center gap-3 ${theme.textMuted}`}>
+                    <Check className={`w-5 h-5 ${theme.accent} flex-shrink-0`} />
                     <span>Sin límite de empleados</span>
                   </div>
-                  <div className="flex items-center gap-3 text-slate-300">
-                    <Check className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                  <div className={`flex items-center gap-3 ${theme.textMuted}`}>
+                    <Check className={`w-5 h-5 ${theme.accent} flex-shrink-0`} />
                     <span>30% comisión por cliente</span>
                   </div>
-                  <div className="flex items-center gap-3 text-slate-300">
-                    <Check className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                  <div className={`flex items-center gap-3 ${theme.textMuted}`}>
+                    <Check className={`w-5 h-5 ${theme.accent} flex-shrink-0`} />
                     <span>Panel de gestión de clientes</span>
                   </div>
-                  <div className="flex items-center gap-3 text-slate-300">
-                    <Check className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                  <div className={`flex items-center gap-3 ${theme.textMuted}`}>
+                    <Check className={`w-5 h-5 ${theme.accent} flex-shrink-0`} />
                     <span>Link de referido único</span>
                   </div>
                 </div>
@@ -378,7 +378,7 @@ export default function AccountantsSoftwarePage() {
                 </div>
                 
                 <Link to="/partner-register" className="block">
-                  <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-lg py-6">
+                  <Button className={`w-full ${theme.button} text-lg py-6`}>
                     Comenzar Ahora
                   </Button>
                 </Link>
@@ -389,13 +389,13 @@ export default function AccountantsSoftwarePage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-800/50">
+      <section className={`py-20 px-4 sm:px-6 lg:px-8 ${theme.section}`}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+            <h2 className={`text-3xl sm:text-4xl font-bold ${theme.text} mb-4`}>
               Beneficios Exclusivos para Firmas
             </h2>
-            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+            <p className={`text-lg ${theme.textLight} max-w-2xl mx-auto`}>
               Maximiza tus ingresos y ofrece el mejor servicio a tus clientes con nuestro programa de partners.
             </p>
           </div>
