@@ -660,9 +660,15 @@ export default function LandingPage() {
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 heading mb-4">
               Contacto y Soporte
             </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-6">
               Estamos aquí para ayudarte. Contáctanos para cualquier consulta sobre nuestros servicios.
             </p>
+            <Link to="/soporte">
+              <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700">
+                <HeadphonesIcon className="w-5 h-5 mr-2" />
+                Centro de Soporte
+              </Button>
+            </Link>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
