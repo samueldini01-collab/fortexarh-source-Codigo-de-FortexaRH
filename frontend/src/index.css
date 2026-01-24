@@ -229,6 +229,78 @@ code, .mono {
 .stagger-4 { animation-delay: 0.2s; }
 .stagger-5 { animation-delay: 0.25s; }
 
+/* Scroll Reveal Animations */
+@keyframes scrollRevealUp {
+    from {
+        opacity: 0;
+        transform: translateY(60px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scrollRevealLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-60px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scrollRevealRight {
+    from {
+        opacity: 0;
+        transform: translateX(60px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scrollRevealScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Scroll reveal classes - initially hidden */
+.scroll-reveal {
+    opacity: 0;
+}
+
+.scroll-reveal.revealed {
+    animation: scrollRevealUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.scroll-reveal-left.revealed {
+    animation: scrollRevealLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.scroll-reveal-right.revealed {
+    animation: scrollRevealRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.scroll-reveal-scale.revealed {
+    animation: scrollRevealScale 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Staggered scroll reveal delays */
+.scroll-delay-1 { animation-delay: 0.1s !important; }
+.scroll-delay-2 { animation-delay: 0.2s !important; }
+.scroll-delay-3 { animation-delay: 0.3s !important; }
+.scroll-delay-4 { animation-delay: 0.4s !important; }
+
 /* ==================== HIGH CONTRAST MODE ENHANCEMENTS ==================== */
 
 /* High contrast cards */
