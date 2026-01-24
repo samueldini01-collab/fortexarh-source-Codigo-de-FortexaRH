@@ -305,26 +305,26 @@ export default function AccountantsSoftwarePage() {
               
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <Link to="/partner-register">
-                  <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white text-lg px-8 w-full sm:w-auto">
+                  <Button size="lg" className={`${theme.button} text-white text-lg px-8 w-full sm:w-auto`}>
                     Registrar mi Firma
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
                 <Link to="/soporte">
-                  <Button size="lg" variant="outline" className="border-slate-500 text-slate-300 hover:bg-slate-700 w-full sm:w-auto">
+                  <Button size="lg" variant="outline" className={`${theme.border} ${theme.textMuted} ${theme.buttonGhost} w-full sm:w-auto`}>
                     <HeadphonesIcon className="w-5 h-5 mr-2" />
                     Hablar con Ventas
                   </Button>
                 </Link>
               </div>
               
-              <div className="flex items-center gap-6 text-slate-400 text-sm">
+              <div className={`flex items-center gap-6 ${theme.textLight} text-sm`}>
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-400" />
+                  <Check className={`w-4 h-4 ${theme.accent}`} />
                   14 días de prueba gratis
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-400" />
+                  <Check className={`w-4 h-4 ${theme.accent}`} />
                   Sin tarjeta requerida
                 </div>
               </div>
