@@ -935,8 +935,11 @@ export default function LandingPage() {
               <p className="text-slate-400 text-sm mb-4">
                 Sistema de gestión de recursos humanos y nómina para empresas modernas en República Dominicana.
               </p>
-              <div className="text-slate-400 text-sm space-y-1">
-                <p className="flex items-center gap-2"><MapPin className="w-4 h-4" /> Av. Winston Churchill, Santo Domingo</p>
+              <div className="text-slate-400 text-sm space-y-2">
+                <p className="flex items-start gap-2">
+                  <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" /> 
+                  <span>Av. George Washington #503, Gazcue<br />Santo Domingo, Distrito Nacional</span>
+                </p>
                 <p className="flex items-center gap-2"><Mail className="w-4 h-4" /> info@fortexarh.com</p>
                 <p className="flex items-center gap-2"><Phone className="w-4 h-4" /> (809) 685-9898</p>
               </div>
