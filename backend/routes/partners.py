@@ -1254,6 +1254,7 @@ async def create_partner_indexes():
         await db.accounting_firms.create_index("email", unique=True)
         await db.accounting_firms.create_index("referral_code", unique=True)
         await db.accounting_firms.create_index("company_id")
+        await db.accounting_firms.create_index("stripe_connect_account_id", sparse=True)
         
         # Partner clients indexes
         await db.partner_clients.create_index("client_id", unique=True)
@@ -1265,6 +1266,13 @@ async def create_partner_indexes():
         await db.partner_commissions.create_index("partner_id")
         await db.partner_commissions.create_index("client_id")
         await db.partner_commissions.create_index([("partner_id", 1), ("created_at", -1)])
+        await db.partner_commissions.create_index([("partner_id", 1), ("status", 1)])
+        
+        # Partner payouts indexes
+        await db.partner_payouts.create_index("payout_id", unique=True)
+        await db.partner_payouts.create_index("partner_id")
+        await db.partner_payouts.create_index([("partner_id", 1), ("status", 1)])
+        await db.partner_payouts.create_index("stripe_transfer_id", sparse=True)
         
         print("Partner indexes created successfully")
     except Exception as e:
