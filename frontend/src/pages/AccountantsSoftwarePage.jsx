@@ -614,22 +614,22 @@ export default function AccountantsSoftwarePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 border-t border-slate-800 py-12 px-4 sm:px-6 lg:px-8">
+      <footer className={`${theme.section} ${theme.border} border-t py-12 px-4 sm:px-6 lg:px-8`}>
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-2">
-              <img src="/fortexarh-logo.png" alt="FortexaRH" className="h-8 w-auto brightness-0 invert" />
-              <span className="font-bold text-white">FortexaRH</span>
-              <span className="text-slate-500 text-sm">| Sistema de RRHH y Nómina</span>
+              <img src="/fortexarh-logo.png" alt="FortexaRH" className={`h-8 w-auto ${currentTheme === 'light' ? '' : 'brightness-0 invert'}`} />
+              <span className={`font-bold ${theme.text}`}>FortexaRH</span>
+              <span className={`${theme.textLight} text-sm`}>| Sistema de RRHH y Nómina</span>
             </div>
-            <div className="flex items-center gap-6 text-slate-400 text-sm">
-              <Link to="/terms" className="hover:text-white transition-colors">Términos</Link>
-              <Link to="/privacy" className="hover:text-white transition-colors">Privacidad</Link>
-              <Link to="/soporte" className="hover:text-white transition-colors">Soporte</Link>
-              <Link to="/" className="hover:text-white transition-colors">Inicio</Link>
+            <div className={`flex items-center gap-6 ${theme.textLight} text-sm`}>
+              <Link to="/terms" className={`hover:${theme.text} transition-colors`}>Términos</Link>
+              <Link to="/privacy" className={`hover:${theme.text} transition-colors`}>Privacidad</Link>
+              <Link to="/soporte" className={`hover:${theme.text} transition-colors`}>Soporte</Link>
+              <Link to="/" className={`hover:${theme.text} transition-colors`}>Inicio</Link>
             </div>
           </div>
-          <div className="mt-8 text-center text-slate-500 text-sm">
+          <div className={`mt-8 text-center ${theme.textLight} text-sm`}>
             © {new Date().getFullYear()} FortexaRH. Todos los derechos reservados.
           </div>
         </div>
