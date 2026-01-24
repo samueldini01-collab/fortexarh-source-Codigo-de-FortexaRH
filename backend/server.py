@@ -2644,6 +2644,8 @@ init_expenses_router(db, get_current_user)
 init_payroll_v2_router(db, get_current_user)
 init_projects_router(db, get_current_user)
 init_metrics_router(db, get_current_user)
+init_notifications_system_router(db, get_current_user)
+init_reports_advanced_router(db, get_current_user)
 
 # Include modular routers in api_router
 api_router.include_router(loans_router)
