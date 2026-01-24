@@ -347,10 +347,13 @@ function EmployeeDashboard() {
 
       <main className="max-w-6xl mx-auto p-4">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-6 bg-white shadow-sm">
+          <TabsList className="mb-6 bg-white shadow-sm flex-wrap">
             <TabsTrigger value="home"><Home className="w-4 h-4 mr-2" />Inicio</TabsTrigger>
+            <TabsTrigger value="attendance"><Clock className="w-4 h-4 mr-2" />Asistencia</TabsTrigger>
             <TabsTrigger value="payslips"><FileText className="w-4 h-4 mr-2" />Recibos</TabsTrigger>
             <TabsTrigger value="vacations"><Calendar className="w-4 h-4 mr-2" />Vacaciones</TabsTrigger>
+            <TabsTrigger value="leaves"><ClipboardList className="w-4 h-4 mr-2" />Permisos</TabsTrigger>
+            <TabsTrigger value="evaluations"><Target className="w-4 h-4 mr-2" />Evaluaciones</TabsTrigger>
             <TabsTrigger value="loans"><Wallet className="w-4 h-4 mr-2" />Préstamos</TabsTrigger>
             <TabsTrigger value="profile"><User className="w-4 h-4 mr-2" />Mis Datos</TabsTrigger>
           </TabsList>
