@@ -723,24 +723,71 @@ async def execute_action(data: AIActionRequest, current_user: dict = Depends(get
             "message": f"Error: {str(e)}"
         }
     
+    # Record the action execution for learning (regardless of success)
+    if db:
+        try:
+            await db.search_history.insert_one({
+                "company_id": company_id,
+                "user_id": current_user.get("user_id"),
+                "action_type": action_type,
+                "parameters": params,
+                "success": result.get("success", False),
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            })
+        except:
+            pass
+    
     return result
 
 
 @router.get("/search/suggestions")
 async def get_search_suggestions(q: str = "", current_user: dict = Depends(get_current_user)):
-    """Get smart search suggestions including action commands"""
+    """Get smart search suggestions including action commands based on user history"""
     suggestions = []
     query_lower = q.lower()
+    company_id = current_user.get("company_id")
+    user_id = current_user.get("user_id")
+    
+    # Get user's frequently used actions
+    frequent_actions = []
+    if db:
+        try:
+            freq_pipeline = [
+                {"$match": {"user_id": user_id, "success": True}},
+                {"$group": {"_id": "$action_type", "count": {"$sum": 1}}},
+                {"$sort": {"count": -1}},
+                {"$limit": 5}
+            ]
+            frequent_actions = await db.search_history.aggregate(freq_pipeline).to_list(5)
+        except:
+            pass
+    
+    # Get recent searches
+    recent_searches = []
+    if db:
+        try:
+            recent = await db.search_queries.find(
+                {"user_id": user_id},
+                {"_id": 0, "query": 1, "timestamp": 1}
+            ).sort("timestamp", -1).limit(5).to_list(5)
+            recent_searches = [r["query"] for r in recent]
+        except:
+            pass
     
     # Action suggestions
     action_suggestions = [
-        {"text": "Crear solicitud de vacaciones para...", "type": "action", "icon": "calendar"},
-        {"text": "Registrar entrada de...", "type": "action", "icon": "clock"},
-        {"text": "Registrar salida de...", "type": "action", "icon": "clock"},
-        {"text": "Aprobar vacaciones pendientes", "type": "action", "icon": "check"},
-        {"text": "Crear evaluación para...", "type": "action", "icon": "target"},
-        {"text": "Ver nómina de este mes", "type": "action", "icon": "dollar"},
+        {"text": "Crear solicitud de vacaciones para...", "type": "action", "icon": "calendar", "action": "crear_vacacion"},
+        {"text": "Registrar entrada de...", "type": "action", "icon": "clock", "action": "registrar_entrada"},
+        {"text": "Registrar salida de...", "type": "action", "icon": "clock", "action": "registrar_salida"},
+        {"text": "Aprobar vacaciones pendientes", "type": "action", "icon": "check", "action": "aprobar_vacaciones"},
+        {"text": "Crear evaluación para...", "type": "action", "icon": "target", "action": "crear_evaluacion"},
+        {"text": "Ver nómina de este mes", "type": "action", "icon": "dollar", "action": "ver_nomina"},
     ]
+    
+    # Reorder based on frequency
+    if frequent_actions:
+        freq_map = {f["_id"]: f["count"] for f in frequent_actions}
+        action_suggestions.sort(key=lambda x: freq_map.get(x.get("action", ""), 0), reverse=True)
     
     # Navigation suggestions
     nav_suggestions = [
@@ -751,8 +798,12 @@ async def get_search_suggestions(q: str = "", current_user: dict = Depends(get_c
         {"text": "Ir a Evaluaciones", "href": "/evaluations", "type": "navigation"},
     ]
     
-    # Example queries
-    example_queries = [
+    # Example queries (include recent if available)
+    example_queries = []
+    for query in recent_searches[:3]:
+        example_queries.append({"text": query, "type": "recent", "icon": "history"})
+    
+    default_examples = [
         {"text": "¿Quién tiene vacaciones esta semana?", "type": "example"},
         {"text": "Crear vacaciones para Juan del 1 al 5 de febrero", "type": "example"},
         {"text": "Registrar entrada de María", "type": "example"},
@@ -760,9 +811,35 @@ async def get_search_suggestions(q: str = "", current_user: dict = Depends(get_c
         {"text": "Aprobar vacaciones pendientes", "type": "example"},
     ]
     
+    # Fill remaining slots with defaults
+    for ex in default_examples:
+        if len(example_queries) >= 5:
+            break
+        if ex["text"] not in recent_searches:
+            example_queries.append(ex)
+    
     if len(query_lower) < 2:
-        # Show action and example suggestions when no query
-        suggestions = action_suggestions[:3] + example_queries[:4]
+        # Show personalized suggestions when no query
+        personalized = []
+        
+        # Add top frequent action
+        if frequent_actions and len(frequent_actions) > 0:
+            top_action = frequent_actions[0]["_id"]
+            for a in action_suggestions:
+                if a.get("action") == top_action:
+                    a["type"] = "frequent"
+                    personalized.append(a)
+                    break
+        
+        # Add recent searches first
+        personalized.extend(example_queries[:2])
+        
+        # Fill with action suggestions
+        for a in action_suggestions[:3]:
+            if a not in personalized:
+                personalized.append(a)
+        
+        suggestions = personalized[:7]
     else:
         # Filter based on query
         if "crear" in query_lower or "nueva" in query_lower or "nuevo" in query_lower:
@@ -773,5 +850,78 @@ async def get_search_suggestions(q: str = "", current_user: dict = Depends(get_c
             suggestions.extend([s for s in action_suggestions if "aprobar" in s["text"].lower()])
         if "ir" in query_lower or "ver" in query_lower:
             suggestions.extend(nav_suggestions)
+        
+        # Add matching recent searches
+        for recent in recent_searches:
+            if query_lower in recent.lower():
+                suggestions.insert(0, {"text": recent, "type": "recent", "icon": "history"})
     
     return {"suggestions": suggestions[:8]}
+
+
+@router.post("/search/log-query")
+async def log_search_query(data: AISearchRequest, current_user: dict = Depends(get_current_user)):
+    """Log a search query for learning purposes"""
+    if not db:
+        return {"logged": False}
+    
+    company_id = current_user.get("company_id")
+    user_id = current_user.get("user_id")
+    
+    try:
+        # Don't log very short queries
+        if len(data.query.strip()) < 3:
+            return {"logged": False}
+        
+        # Update or insert the query
+        await db.search_queries.update_one(
+            {"user_id": user_id, "query": data.query.strip()},
+            {
+                "$set": {
+                    "company_id": company_id,
+                    "timestamp": datetime.now(timezone.utc).isoformat()
+                },
+                "$inc": {"count": 1}
+            },
+            upsert=True
+        )
+        
+        return {"logged": True}
+    except Exception as e:
+        return {"logged": False, "error": str(e)}
+
+
+@router.get("/search/user-stats")
+async def get_user_search_stats(current_user: dict = Depends(get_current_user)):
+    """Get user's search and action statistics"""
+    if not db:
+        return {"stats": None}
+    
+    user_id = current_user.get("user_id")
+    
+    # Get action stats
+    action_pipeline = [
+        {"$match": {"user_id": user_id}},
+        {"$group": {
+            "_id": "$action_type",
+            "total": {"$sum": 1},
+            "successful": {"$sum": {"$cond": ["$success", 1, 0]}}
+        }},
+        {"$sort": {"total": -1}}
+    ]
+    action_stats = await db.search_history.aggregate(action_pipeline).to_list(20)
+    
+    # Get total queries
+    total_queries = await db.search_queries.count_documents({"user_id": user_id})
+    
+    # Get most frequent queries
+    top_queries = await db.search_queries.find(
+        {"user_id": user_id},
+        {"_id": 0, "query": 1, "count": 1}
+    ).sort("count", -1).limit(5).to_list(5)
+    
+    return {
+        "action_stats": action_stats,
+        "total_queries": total_queries,
+        "top_queries": top_queries
+    }
