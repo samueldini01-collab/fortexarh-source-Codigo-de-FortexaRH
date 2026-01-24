@@ -764,7 +764,7 @@ async def get_search_suggestions(q: str = "", current_user: dict = Depends(get_c
     
     # Get recent searches
     recent_searches = []
-    if db:
+    if db is not None:
         try:
             recent = await db.search_queries.find(
                 {"user_id": user_id},
