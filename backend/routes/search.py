@@ -750,7 +750,7 @@ async def get_search_suggestions(q: str = "", current_user: dict = Depends(get_c
     
     # Get user's frequently used actions
     frequent_actions = []
-    if db:
+    if db is not None:
         try:
             freq_pipeline = [
                 {"$match": {"user_id": user_id, "success": True}},
