@@ -762,6 +762,7 @@ export default function LandingPage() {
                 <li><Link to="/login" className="hover:text-white transition-colors">Iniciar Sesión</Link></li>
                 <li><Link to="/register" className="hover:text-white transition-colors">Crear Cuenta</Link></li>
                 <li><Link to="/soporte" className="hover:text-white transition-colors">Centro de Soporte</Link></li>
+                <li><Link to="/accountants-software" className="hover:text-emerald-400 transition-colors">Programa para Contadores</Link></li>
               </ul>
             </div>
             <div>
