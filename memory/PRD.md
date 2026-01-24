@@ -255,8 +255,9 @@
 ├── search.py               # Búsqueda AI con aprendizaje
 ├── notifications_system.py # Sistema de notificaciones
 ├── reports_advanced.py     # Reportes PDF con reportlab
-├── quickbooks.py           # Integración QuickBooks OAuth 2.0 (NEW)
-└── cdc_audit.py            # CDC & Auditoría con Change Streams (NEW)
+├── quickbooks.py           # Integración QuickBooks OAuth 2.0 + Webhooks
+├── cdc_audit.py            # CDC & Auditoría con Change Streams
+└── support.py              # Sistema de tickets de soporte (NEW)
 
 /app/frontend/src/
 ├── components/
@@ -270,14 +271,32 @@
     ├── MetricsDashboardPage.jsx
     ├── CostsByDepartmentPage.jsx
     ├── ReportsAdvancedPage.jsx
-    ├── CompanyConfigPage.jsx   # Integraciones QuickBooks (ENHANCED)
-    └── CDCAuditPage.jsx        # Dashboard de Auditoría CDC (NEW)
+    ├── CompanyConfigPage.jsx   # Integraciones QuickBooks
+    ├── CDCAuditPage.jsx        # Dashboard de Auditoría CDC
+    └── SupportPage.jsx         # Página de soporte público (NEW)
 ```
+
+### Página de Soporte Público - Implementado (2026-01-24)
+- **URL:** `https://fortexarh.com/soporte`
+- **Funcionalidades:**
+  - Formulario de contacto con categorías (General, Técnico, Bug, Facturación, Demo, Enterprise)
+  - Prioridades (Baja, Media, Alta, Crítica)
+  - Generación automática de ticket ID
+  - Envío de email al equipo de soporte (Resend)
+  - Email de confirmación al cliente
+  - Almacenamiento en MongoDB (`support_tickets`)
+- **Endpoints:**
+  - `POST /api/support/ticket` - Crear ticket
+  - `GET /api/support/tickets` - Listar tickets (admin)
+  - `GET /api/support/tickets/{ticket_id}` - Detalle de ticket
+  - `PATCH /api/support/tickets/{ticket_id}/status` - Actualizar estado
+- **Archivos:** `/app/backend/routes/support.py`, `/app/frontend/src/pages/SupportPage.jsx`
 
 ## Próximas Tareas (P1-P2)
 1. **Panel de Dispositivos Biométricos** - Gestión de dispositivos y documentación
 2. **Notificaciones Push/Email** - Alertas para eventos del portal del empleado
 3. **Integrar CDC en operaciones CRUD** - Llamar `log_audit_event()` desde endpoints existentes
+4. **Panel Admin para Tickets de Soporte** - Dashboard para gestionar tickets
 
 ## Tareas Futuras (P3)
 - Integraciones Enterprise reales (SAP, Oracle, Dynamics)
