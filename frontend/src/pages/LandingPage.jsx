@@ -473,6 +473,7 @@ export default function LandingPage() {
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Empleados ilimitados</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />7 usuarios incluidos</li>
                 <li className="flex items-center gap-2 text-sm font-medium"><Check className="w-4 h-4 text-emerald-500" />Todo lo del plan Pro</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" /><strong>QuickBooks Online</strong></li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-amber-500" /><strong>58 reportes avanzados</strong></li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-amber-500" />Reportes personalizables y guardados</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-amber-500" />Roles personalizados</li>
