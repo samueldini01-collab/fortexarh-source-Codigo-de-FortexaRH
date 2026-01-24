@@ -325,6 +325,86 @@ export default function PartnerDashboardPage() {
     }
   };
 
+  // Connect Stripe account
+  const connectStripeAccount = async () => {
+    setConnectingStripe(true);
+    try {
+      const response = await axios.post(`${API}/partners/connect/onboard`, {
+        return_url: `${window.location.origin}/partner-dashboard?stripe=success`,
+        refresh_url: `${window.location.origin}/partner-dashboard?stripe=refresh`
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // Redirect to Stripe onboarding
+      window.location.href = response.data.url;
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al conectar con Stripe");
+      setConnectingStripe(false);
+    }
+  };
+
+  // Open Stripe dashboard
+  const openStripeDashboard = async () => {
+    try {
+      const response = await axios.get(`${API}/partners/connect/dashboard`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      window.open(response.data.url, "_blank");
+    } catch (error) {
+      toast.error("Error al abrir el dashboard de Stripe");
+    }
+  };
+
+  // Request payout
+  const handleRequestPayout = async () => {
+    const amount = payoutAmount ? parseFloat(payoutAmount) : null;
+    
+    if (amount && amount < 50) {
+      toast.error("El monto mínimo para retiro es $50.00");
+      return;
+    }
+    
+    if (amount && amount > (payoutBalance?.available_balance || 0)) {
+      toast.error("Monto superior al balance disponible");
+      return;
+    }
+    
+    setRequestingPayout(true);
+    try {
+      const response = await axios.post(`${API}/partners/payouts/request`, {
+        amount: amount
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      toast.success(response.data.message);
+      setShowPayoutModal(false);
+      setPayoutAmount("");
+      fetchPayoutData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al procesar el retiro");
+    } finally {
+      setRequestingPayout(false);
+    }
+  };
+
+  // Check for Stripe return
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const stripeParam = urlParams.get("stripe");
+    
+    if (stripeParam === "success") {
+      toast.success("¡Cuenta de Stripe conectada exitosamente!");
+      fetchPayoutData();
+      // Clean URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (stripeParam === "refresh") {
+      toast.info("Por favor completa la configuración de tu cuenta de Stripe");
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [fetchPayoutData]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 flex items-center justify-center">
