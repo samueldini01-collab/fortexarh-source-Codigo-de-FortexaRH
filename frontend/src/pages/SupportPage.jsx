@@ -200,8 +200,8 @@ export default function SupportPage() {
                   <Mail className="w-5 h-5 text-slate-400 mt-0.5" />
                   <div>
                     <p className="text-sm text-slate-500">Email</p>
-                    <a href="mailto:soporte@fortexarh.com" className="text-emerald-600 hover:underline">
-                      soporte@fortexarh.com
+                    <a href="mailto:info@fortexarh.com" className="text-emerald-600 hover:underline">
+                      info@fortexarh.com
                     </a>
                   </div>
                 </div>
@@ -209,8 +209,8 @@ export default function SupportPage() {
                   <Phone className="w-5 h-5 text-slate-400 mt-0.5" />
                   <div>
                     <p className="text-sm text-slate-500">Teléfono</p>
-                    <a href="tel:+18095551234" className="text-emerald-600 hover:underline">
-                      +1 (809) 555-1234
+                    <a href="tel:+18096859898" className="text-emerald-600 hover:underline">
+                      (809) 685-9898
                     </a>
                   </div>
                 </div>
@@ -218,7 +218,10 @@ export default function SupportPage() {
                   <MapPin className="w-5 h-5 text-slate-400 mt-0.5" />
                   <div>
                     <p className="text-sm text-slate-500">Ubicación</p>
-                    <p className="text-slate-700">Santo Domingo, República Dominicana</p>
+                    <p className="text-slate-700">
+                      Av. George Washington #503, Gazcue<br />
+                      Santo Domingo, Distrito Nacional
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -244,11 +247,11 @@ export default function SupportPage() {
               <CardContent className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-slate-600">Lunes - Viernes</span>
-                  <span className="font-medium">8:00 AM - 6:00 PM</span>
+                  <span className="font-medium">9:00 AM - 4:00 PM</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-600">Sábados</span>
-                  <span className="font-medium">9:00 AM - 1:00 PM</span>
+                  <span className="text-slate-400">Cerrado</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-600">Domingos</span>
