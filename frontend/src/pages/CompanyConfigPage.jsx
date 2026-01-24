@@ -20,7 +20,7 @@ import {
   Building2, Image, Palette, Type, Bell, Link2, History,
   Save, Upload, Trash2, Sun, Moon, Monitor, Check, AlertCircle,
   Mail, MessageSquare, Smartphone, Users, Globe, Twitter, 
-  Facebook, Linkedin, Instagram, RefreshCw
+  Facebook, Linkedin, Instagram, RefreshCw, ExternalLink, Loader2
 } from "lucide-react";
 import { toast } from "sonner";
 
