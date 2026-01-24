@@ -600,13 +600,13 @@ export default function AttendancePage() {
                     data-testid="attendance-date-filter"
                   />
                 </div>
-                <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
+                <Select value={departmentFilter || "all"} onValueChange={(v) => setDepartmentFilter(v === "all" ? "" : v)}>
                   <SelectTrigger className="w-48" data-testid="department-filter">
                     <Building2 className="w-4 h-4 mr-2" />
                     <SelectValue placeholder="Departamento" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todos</SelectItem>
+                    <SelectItem value="all">Todos</SelectItem>
                     {departments.map(dept => (
                       <SelectItem key={dept} value={dept}>{dept}</SelectItem>
                     ))}
