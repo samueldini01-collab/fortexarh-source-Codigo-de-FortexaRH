@@ -4,12 +4,21 @@
 
 ## ✅ Completado Hoy (Sesión Actual)
 
-### 🖼️ Logo en Portal de Empleados (P0 - COMPLETADO)
-- **Página de Login:** Logo centrado sobre el formulario de acceso
-- **Header del Dashboard:** Logo en esquina superior izquierda junto al nombre del empleado
-- **URL del logo:** `https://customer-assets.emergentagent.com/job_hrpay-manager-2/artifacts/y0ghj2zi_FortexaRH%20Logo.png`
-- **Archivo:** `/app/frontend/src/pages/EmployeePortalPage.jsx`
-- **Verificado:** Screenshots confirmaron visualización correcta en ambas ubicaciones
+### 🖼️ Logo de FortexaRH Actualizado en Todo el Sistema (P0 - COMPLETADO)
+- **URL del nuevo logo:** `https://customer-assets.emergentagent.com/job_hrpulse-26/artifacts/ohljcqui_FortexaRH%20Logo.png`
+- **Ubicaciones actualizadas:**
+  - ✅ Landing page header (más grande)
+  - ✅ Landing page footer
+  - ✅ Página de login (h-32, logo grande)
+  - ✅ Página de registro (h-24, logo grande)
+  - ✅ Dashboard sidebar
+  - ✅ Portal de empleados (login y header)
+- **Archivos modificados:**
+  - `/app/frontend/src/pages/LandingPage.jsx`
+  - `/app/frontend/src/pages/LoginPage.jsx`
+  - `/app/frontend/src/pages/RegisterPage.jsx`
+  - `/app/frontend/src/components/DashboardLayout.jsx`
+  - `/app/frontend/src/pages/EmployeePortalPage.jsx`
 
 ### 📱 Portal de Empleados - 4 Nuevas Funcionalidades (P0 - COMPLETADO)
 
