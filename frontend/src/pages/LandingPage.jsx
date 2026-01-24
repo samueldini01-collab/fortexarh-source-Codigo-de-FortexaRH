@@ -703,7 +703,7 @@ export default function LandingPage() {
               Planes y Precios
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Elige el plan que mejor se adapte al tamaño de tu empresa. Prueba gratis por 5 días o compra directamente.
+              Elige el plan que mejor se adapte al tamaño de tu empresa. Prueba gratis por 14 días o compra directamente.
             </p>
           </div>
           
@@ -743,7 +743,7 @@ export default function LandingPage() {
                   <Button className="w-full bg-blue-600 hover:bg-blue-700" data-testid="buy-basic-btn">Comprar Plan</Button>
                 </Link>
                 <Link to="/register">
-                  <Button className="w-full" variant="outline" data-testid="trial-basic-btn">Probar 5 días gratis</Button>
+                  <Button className="w-full" variant="outline" data-testid="trial-basic-btn">Probar 14 días gratis</Button>
                 </Link>
               </div>
             </div>
@@ -787,7 +787,7 @@ export default function LandingPage() {
                   <Button className="w-full bg-purple-600 hover:bg-purple-700" data-testid="buy-pro-btn">Comprar Plan</Button>
                 </Link>
                 <Link to="/register">
-                  <Button className="w-full" variant="outline" data-testid="trial-pro-btn">Probar 5 días gratis</Button>
+                  <Button className="w-full" variant="outline" data-testid="trial-pro-btn">Probar 14 días gratis</Button>
                 </Link>
               </div>
             </div>
@@ -827,7 +827,7 @@ export default function LandingPage() {
                   <Button className="w-full bg-amber-600 hover:bg-amber-700" data-testid="buy-enterprise-btn">Comprar Plan</Button>
                 </Link>
                 <Link to="/register">
-                  <Button className="w-full" variant="outline" data-testid="trial-enterprise-btn">Probar 5 días gratis</Button>
+                  <Button className="w-full" variant="outline" data-testid="trial-enterprise-btn">Probar 14 días gratis</Button>
                 </Link>
               </div>
             </div>
@@ -997,6 +997,133 @@ export default function LandingPage() {
           <p className="text-center text-slate-500 mt-8 text-sm">
             * Usuarios adicionales disponibles a $2.50/mes por usuario
           </p>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section id="testimonials" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 to-emerald-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10 sm:mb-16">
+            <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
+              <Star className="w-4 h-4 fill-current" />
+              Testimonios de Clientes
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 heading mb-3 sm:mb-4">
+              Lo que dicen nuestros clientes
+            </h2>
+            <p className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto px-4">
+              Empresas de toda República Dominicana confían en FortexaRH para gestionar su talento humano
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+            {testimonials.map((testimonial, index) => (
+              <div 
+                key={index}
+                className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100 hover:shadow-lg transition-shadow animate-fade-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
+                data-testid={`testimonial-${index}`}
+              >
+                <div className="flex items-center gap-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 text-amber-400 fill-current" />
+                  ))}
+                </div>
+                <Quote className="w-8 h-8 text-emerald-200 mb-3" />
+                <p className="text-slate-700 text-base sm:text-lg mb-6 leading-relaxed">
+                  "{testimonial.content}"
+                </p>
+                <div className="flex items-center gap-4 pt-4 border-t border-slate-100">
+                  <img 
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    className="w-12 h-12 rounded-full object-cover border-2 border-emerald-100"
+                  />
+                  <div>
+                    <p className="font-semibold text-slate-900">{testimonial.name}</p>
+                    <p className="text-sm text-slate-500">{testimonial.role}</p>
+                    <p className="text-sm text-emerald-600 font-medium">{testimonial.company}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="text-center mt-10 sm:mt-12">
+            <div className="inline-flex items-center gap-3 bg-white rounded-full px-6 py-3 shadow-sm border border-slate-100">
+              <div className="flex -space-x-3">
+                {testimonials.slice(0, 4).map((t, i) => (
+                  <img 
+                    key={i}
+                    src={t.image}
+                    alt=""
+                    className="w-8 h-8 rounded-full border-2 border-white object-cover"
+                  />
+                ))}
+              </div>
+              <p className="text-sm text-slate-600">
+                <span className="font-semibold text-slate-900">+500 empresas</span> ya usan FortexaRH
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-10 sm:mb-16">
+            <div className="inline-flex items-center gap-2 bg-slate-100 text-slate-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
+              <HelpCircle className="w-4 h-4" />
+              Preguntas Frecuentes
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 heading mb-3 sm:mb-4">
+              ¿Tienes preguntas?
+            </h2>
+            <p className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto px-4">
+              Encuentra respuestas a las preguntas más comunes sobre FortexaRH
+            </p>
+          </div>
+          
+          <Accordion type="single" collapsible className="space-y-3" data-testid="faq-accordion">
+            {faqs.map((faq, index) => (
+              <AccordionItem 
+                key={index} 
+                value={`item-${index}`}
+                className="bg-slate-50 rounded-xl border-none px-6 data-[state=open]:bg-emerald-50 transition-colors"
+              >
+                <AccordionTrigger className="text-left text-base sm:text-lg font-medium text-slate-900 hover:no-underline py-5">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-slate-600 text-sm sm:text-base leading-relaxed pb-5">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+          
+          <div className="text-center mt-10 sm:mt-12 p-6 sm:p-8 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl">
+            <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
+              ¿No encontraste lo que buscabas?
+            </h3>
+            <p className="text-emerald-100 mb-6">
+              Nuestro equipo de soporte está listo para ayudarte
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link to="/soporte">
+                <Button size="lg" className="bg-white text-emerald-600 hover:bg-emerald-50">
+                  <HeadphonesIcon className="w-5 h-5 mr-2" />
+                  Contactar Soporte
+                </Button>
+              </Link>
+              <a href="mailto:info@fortexarh.com">
+                <Button size="lg" variant="outline" className="border-white text-white hover:bg-emerald-600">
+                  <Mail className="w-5 h-5 mr-2" />
+                  Enviar Email
+                </Button>
+              </a>
+            </div>
+          </div>
         </div>
       </section>
 
