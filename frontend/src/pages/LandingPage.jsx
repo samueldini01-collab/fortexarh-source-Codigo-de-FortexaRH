@@ -1031,7 +1031,7 @@ export default function LandingPage() {
                 </div>
                 <Quote className="w-8 h-8 text-emerald-200 mb-3" />
                 <p className="text-slate-700 text-base sm:text-lg mb-6 leading-relaxed">
-                  "{testimonial.content}"
+                  &ldquo;{testimonial.content}&rdquo;
                 </p>
                 <div className="flex items-center gap-4 pt-4 border-t border-slate-100">
                   <img 
