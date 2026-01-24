@@ -460,46 +460,46 @@ export default function AccountantsSoftwarePage() {
       <section className={`py-20 px-4 sm:px-6 lg:px-8 ${theme.accentBg}`}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+            <h2 className={`text-3xl sm:text-4xl font-bold ${theme.text} mb-4`}>
               Ejemplo de Ganancias
             </h2>
-            <p className="text-lg text-slate-400">
+            <p className={`text-lg ${theme.textLight}`}>
               Mira cuánto puedes ganar con solo 10 clientes
             </p>
           </div>
           
-          <div className="bg-slate-800 rounded-2xl p-8 border border-slate-700">
+          <div className={`${theme.card} rounded-2xl p-8`}>
             <div className="grid md:grid-cols-3 gap-8 text-center">
               <div>
-                <p className="text-slate-400 mb-2">Clientes Activos</p>
-                <p className="text-4xl font-bold text-white">10</p>
+                <p className={`${theme.textLight} mb-2`}>Clientes Activos</p>
+                <p className={`text-4xl font-bold ${theme.text}`}>10</p>
               </div>
               <div>
-                <p className="text-slate-400 mb-2">Pago Promedio/Cliente</p>
-                <p className="text-4xl font-bold text-white">$25</p>
-                <p className="text-sm text-slate-500">($10 base + 10 empleados)</p>
+                <p className={`${theme.textLight} mb-2`}>Pago Promedio/Cliente</p>
+                <p className={`text-4xl font-bold ${theme.text}`}>$25</p>
+                <p className={`text-sm ${theme.textLight}`}>($10 base + 10 empleados)</p>
               </div>
               <div>
-                <p className="text-slate-400 mb-2">Tu Comisión Mensual</p>
-                <p className="text-4xl font-bold text-emerald-400">$75</p>
-                <p className="text-sm text-slate-500">(30% de $250)</p>
+                <p className={`${theme.textLight} mb-2`}>Tu Comisión Mensual</p>
+                <p className={`text-4xl font-bold ${theme.accent}`}>$75</p>
+                <p className={`text-sm ${theme.textLight}`}>(30% de $250)</p>
               </div>
             </div>
             
-            <div className="mt-8 pt-8 border-t border-slate-700">
+            <div className={`mt-8 pt-8 ${theme.border} border-t`}>
               <div className="grid md:grid-cols-2 gap-6">
-                <div className="bg-slate-700/50 rounded-lg p-4">
-                  <p className="text-slate-400 text-sm mb-1">Tu costo mensual</p>
-                  <p className="text-2xl font-bold text-white">$10</p>
+                <div className={`${theme.section} rounded-lg p-4`}>
+                  <p className={`${theme.textLight} text-sm mb-1`}>Tu costo mensual</p>
+                  <p className={`text-2xl font-bold ${theme.text}`}>$10</p>
                 </div>
-                <div className="bg-emerald-500/20 rounded-lg p-4">
-                  <p className="text-emerald-400 text-sm mb-1">Ganancia neta mensual</p>
-                  <p className="text-2xl font-bold text-emerald-400">$65</p>
+                <div className={`${theme.accentBg} rounded-lg p-4`}>
+                  <p className={`${theme.accent} text-sm mb-1`}>Ganancia neta mensual</p>
+                  <p className={`text-2xl font-bold ${theme.accent}`}>$65</p>
                 </div>
               </div>
-              <p className="text-center text-slate-400 mt-6 text-sm">
-                Con 20 clientes ganarías <strong className="text-white">$140/mes neto</strong> • 
-                Con 50 clientes ganarías <strong className="text-white">$365/mes neto</strong>
+              <p className={`text-center ${theme.textLight} mt-6 text-sm`}>
+                Con 20 clientes ganarías <strong className={theme.text}>$140/mes neto</strong> • 
+                Con 50 clientes ganarías <strong className={theme.text}>$365/mes neto</strong>
               </p>
             </div>
           </div>
@@ -510,23 +510,23 @@ export default function AccountantsSoftwarePage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+            <h2 className={`text-3xl sm:text-4xl font-bold ${theme.text} mb-4`}>
               Todo lo que Incluye FortexaRH
             </h2>
-            <p className="text-lg text-slate-400">
+            <p className={`text-lg ${theme.textLight}`}>
               Ofrece a tus clientes un sistema completo de gestión de RRHH y Nómina
             </p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {FEATURES.map((feature, index) => (
-              <div key={index} className="flex items-start gap-4 bg-slate-800/50 rounded-lg p-6 border border-slate-700">
-                <div className="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <feature.icon className="w-5 h-5 text-emerald-400" />
+              <div key={index} className={`flex items-start gap-4 ${theme.card} rounded-lg p-6`}>
+                <div className={`w-10 h-10 ${theme.accentBg} rounded-lg flex items-center justify-center flex-shrink-0`}>
+                  <feature.icon className={`w-5 h-5 ${theme.accent}`} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white mb-1">{feature.name}</h3>
-                  <p className="text-slate-400 text-sm">{feature.desc}</p>
+                  <h3 className={`font-semibold ${theme.text} mb-1`}>{feature.name}</h3>
+                  <p className={`${theme.textLight} text-sm`}>{feature.desc}</p>
                 </div>
               </div>
             ))}
