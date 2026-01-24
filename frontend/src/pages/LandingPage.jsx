@@ -132,8 +132,42 @@ const benefits = [
   { icon: BarChart3, text: "Reportes en tiempo real" }
 ];
 
+// Features for dropdowns
+const empresaFeatures = [
+  { icon: Users, title: "Gestión de Empleados", desc: "Perfiles, documentos y organigramas" },
+  { icon: DollarSign, title: "Nómina Automatizada", desc: "ISR, TSS, AFP calculados automáticamente" },
+  { icon: Clock, title: "Control de Asistencia", desc: "Marcaje, horas extra, ausencias" },
+  { icon: Calendar, title: "Vacaciones y Permisos", desc: "Solicitudes y aprobaciones" },
+  { icon: Target, title: "Evaluaciones", desc: "Desempeño 360° y objetivos" },
+  { icon: FileBarChart, title: "Reportes Avanzados", desc: "58+ reportes con exportación" },
+  { icon: Brain, title: "Búsqueda con IA", desc: "Asistente inteligente integrado" },
+  { icon: Smartphone, title: "Portal de Empleados", desc: "Autogestión para tu equipo" }
+];
+
+const contadoresFeatures = [
+  { icon: DollarSign, title: "Solo $10/mes", desc: "Con empleados ilimitados para tu firma" },
+  { icon: Percent, title: "30% Comisión", desc: "De por vida por cada cliente referido" },
+  { icon: Building2, title: "Multi-Cliente", desc: "Gestiona todos tus clientes en un lugar" },
+  { icon: TrendingUp, title: "Dashboard de Ganancias", desc: "Visualiza comisiones en tiempo real" },
+  { icon: Calculator, title: "Nómina RD", desc: "TSS, AFP, ISR automatizados" },
+  { icon: FileText, title: "Reportes DGII", desc: "IR-17, TSS y formularios oficiales" }
+];
+
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Ensure full content renders on first load
   useEffect(() => {
