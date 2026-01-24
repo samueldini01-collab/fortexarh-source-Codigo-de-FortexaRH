@@ -616,7 +616,7 @@ function EmployeeDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Recibos de Pago</CardTitle>
-                <CardDescription>Historial de pagos recibidos</CardDescription>
+                <CardDescription>Historial de pagos recibidos - Descarga tus recibos en PDF</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -638,6 +638,19 @@ function EmployeeDashboard() {
                         </div>
                         <Button variant="outline" size="sm" onClick={() => setShowPayslipDetail(slip)}>
                           <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button 
+                          variant="default" 
+                          size="sm" 
+                          onClick={() => handleDownloadPayslip(slip.entry_id)}
+                          disabled={downloadingPdf === slip.entry_id}
+                          className="bg-blue-600 hover:bg-blue-700"
+                        >
+                          {downloadingPdf === slip.entry_id ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Download className="w-4 h-4" />
+                          )}
                         </Button>
                       </div>
                     </div>
