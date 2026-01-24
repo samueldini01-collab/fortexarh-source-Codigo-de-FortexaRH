@@ -370,14 +370,27 @@ async def start_cdc(
     current_user: dict = Depends(get_current_user)
 ):
     """Start CDC Change Streams (Admin only)"""
+    # Check if Change Streams are supported
+    supports_streams = await check_change_stream_support()
+    
+    if not supports_streams:
+        return {
+            "message": "MongoDB no soporta Change Streams (requiere replica set). El sistema usará tracking manual.",
+            "status": "manual_mode",
+            "mode": "manual_tracking",
+            "info": "Los cambios se registrarán automáticamente mediante hooks en las operaciones CRUD.",
+            "collections": WATCHED_COLLECTIONS
+        }
+    
     if is_cdc_running:
         return {"message": "CDC ya está ejecutándose", "status": "running"}
     
     background_tasks.add_task(start_all_change_streams)
     
     return {
-        "message": "CDC iniciado correctamente",
+        "message": "CDC iniciado correctamente con Change Streams",
         "status": "starting",
+        "mode": "change_streams",
         "collections": WATCHED_COLLECTIONS
     }
 
