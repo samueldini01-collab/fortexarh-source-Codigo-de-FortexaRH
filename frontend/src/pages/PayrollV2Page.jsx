@@ -543,6 +543,8 @@ export default function PayrollV2Page() {
   const getStatusBadge = (status) => {
     const badges = {
       'open': <Badge variant="outline" className="border-blue-500 text-blue-600 dark:text-blue-400">Abierto</Badge>,
+      'draft': <Badge variant="outline" className="border-slate-500 text-slate-600 dark:text-slate-400">Borrador</Badge>,
+      'pending_approval': <Badge className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">Pendiente Aprobación</Badge>,
       'calculated': <Badge className="bg-amber-100 text-amber-700 dark:text-amber-400">Calculado</Badge>,
       'approved': <Badge className="bg-emerald-100 text-emerald-700 dark:text-emerald-400">Aprobado</Badge>,
       'paid': <Badge className="bg-purple-100 text-purple-700 dark:text-purple-400">Pagado</Badge>,
