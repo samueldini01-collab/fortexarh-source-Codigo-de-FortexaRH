@@ -2649,6 +2649,7 @@ init_metrics_router(db, get_current_user)
 init_notifications_system_router(db, get_current_user)
 init_reports_advanced_router(db, get_current_user)
 init_reports_system_router(db, get_current_user)
+init_quickbooks_router(db, get_current_user)
 
 # Include modular routers in api_router
 api_router.include_router(loans_router)
@@ -2682,6 +2683,7 @@ api_router.include_router(metrics_router)
 api_router.include_router(notifications_system_router)
 api_router.include_router(reports_advanced_router)
 api_router.include_router(reports_system_router)
+api_router.include_router(quickbooks_router)
 
 # Include the API router
 app.include_router(api_router)
