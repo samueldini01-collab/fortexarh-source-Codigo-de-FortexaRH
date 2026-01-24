@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
@@ -14,7 +13,7 @@ import {
 import { 
   TrendingUp, TrendingDown, Users, DollarSign, Calendar, RefreshCw,
   Wallet, Building2, UserPlus, UserMinus, Clock, AlertCircle,
-  ArrowUpRight, ArrowDownRight, Percent
+  ArrowUpRight, ArrowDownRight, Percent, FileText, CheckCircle
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -24,31 +23,17 @@ export default function MetricsDashboardPage() {
   const { getAuthHeaders } = useAuth();
   const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [metrics, setMetrics] = useState(null);
-  const [payrollTrend, setPayrollTrend] = useState([]);
-  const [departmentCosts, setDepartmentCosts] = useState([]);
-  const [employeeMetrics, setEmployeeMetrics] = useState(null);
-  const [loanMetrics, setLoanMetrics] = useState(null);
+  const [dashboardData, setDashboardData] = useState(null);
 
   const fetchMetrics = useCallback(async () => {
     setLoading(true);
     try {
-      const [statsRes, payrollRes, loansRes, employeesRes] = await Promise.all([
-        axios.get(`${API}/dashboard/stats`, { headers: getAuthHeaders(), withCredentials: true }),
-        axios.get(`${API}/stats/payroll-trend?year=${selectedYear}`, { headers: getAuthHeaders(), withCredentials: true }).catch(() => ({ data: [] })),
-        axios.get(`${API}/loans/summary`, { headers: getAuthHeaders(), withCredentials: true }).catch(() => ({ data: null })),
-        axios.get(`${API}/stats/employees`, { headers: getAuthHeaders(), withCredentials: true }).catch(() => ({ data: null }))
-      ]);
-      
-      setMetrics(statsRes.data);
-      setPayrollTrend(payrollRes.data || []);
-      setLoanMetrics(loansRes.data);
-      setEmployeeMetrics(employeesRes.data);
-      
-      // Calculate department costs from stats
-      if (statsRes.data?.departments) {
-        setDepartmentCosts(statsRes.data.departments);
-      }
+      // Fetch from the new unified metrics endpoint
+      const response = await axios.get(`${API}/metrics/dashboard?year=${selectedYear}`, { 
+        headers: getAuthHeaders(), 
+        withCredentials: true 
+      });
+      setDashboardData(response.data);
     } catch (error) {
       console.error("Error fetching metrics:", error);
       toast.error("Error al cargar métricas");
@@ -69,31 +54,6 @@ export default function MetricsDashboardPage() {
     return `${(value || 0).toFixed(1)}%`;
   };
 
-  // Generate sample data if not available
-  const generatePayrollTrendData = () => {
-    if (payrollTrend.length > 0) return payrollTrend;
-    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    return months.map((month, i) => ({
-      month,
-      gross: Math.round(800000 + Math.random() * 200000),
-      net: Math.round(650000 + Math.random() * 150000),
-      deductions: Math.round(100000 + Math.random() * 50000),
-      employees: Math.round(25 + Math.random() * 10)
-    }));
-  };
-
-  const generateDepartmentData = () => {
-    if (departmentCosts.length > 0) return departmentCosts;
-    return [
-      { name: 'Administración', cost: 250000, employees: 8 },
-      { name: 'Ventas', cost: 380000, employees: 12 },
-      { name: 'TI', cost: 420000, employees: 10 },
-      { name: 'Marketing', cost: 180000, employees: 6 },
-      { name: 'RRHH', cost: 150000, employees: 4 },
-      { name: 'Finanzas', cost: 200000, employees: 5 }
-    ];
-  };
-
   if (loading) {
     return (
       <DashboardLayout title="Dashboard de Métricas">
@@ -104,13 +64,23 @@ export default function MetricsDashboardPage() {
     );
   }
 
-  const payrollData = generatePayrollTrendData();
-  const deptData = generateDepartmentData();
+  // Extract data from dashboard response
+  const payrollTrend = dashboardData?.payroll_trend || [];
+  const departmentCosts = dashboardData?.department_costs || [];
+  const employeeMetrics = dashboardData?.employee_metrics || {};
+  const loanMetrics = dashboardData?.loan_metrics || {};
+  const quickStats = dashboardData?.quick_stats || {};
 
-  // Calculate totals for current month
-  const currentMonthData = payrollData[payrollData.length - 1] || {};
-  const prevMonthData = payrollData[payrollData.length - 2] || {};
-  const grossChange = prevMonthData.gross ? ((currentMonthData.gross - prevMonthData.gross) / prevMonthData.gross * 100) : 0;
+  // Calculate current and previous month data
+  const currentMonth = new Date().getMonth();
+  const currentMonthData = payrollTrend[currentMonth] || { gross: 0, net: 0, employees: 0 };
+  const prevMonthData = currentMonth > 0 ? payrollTrend[currentMonth - 1] : { gross: 0 };
+  const grossChange = prevMonthData.gross > 0 
+    ? ((currentMonthData.gross - prevMonthData.gross) / prevMonthData.gross * 100) 
+    : 0;
+
+  // Total paid this year
+  const totalPaidThisYear = payrollTrend.reduce((sum, m) => sum + (m.net || 0), 0);
 
   return (
     <DashboardLayout title="Dashboard de Métricas">
@@ -119,7 +89,7 @@ export default function MetricsDashboardPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Dashboard de Métricas</h1>
-            <p className="text-slate-500 dark:text-slate-400">Análisis avanzado de nómina, empleados y préstamos</p>
+            <p className="text-slate-500 dark:text-slate-400">Análisis en tiempo real de nómina, empleados y préstamos</p>
           </div>
           <div className="flex items-center gap-4">
             <Select value={selectedYear.toString()} onValueChange={(v) => setSelectedYear(parseInt(v))}>
@@ -141,11 +111,11 @@ export default function MetricsDashboardPage() {
 
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card>
+          <Card data-testid="monthly-payroll-card">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Nómina Mensual</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Nómina del Mes</p>
                   <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{formatCurrency(currentMonthData.gross)}</p>
                   <div className={`flex items-center text-sm mt-1 ${grossChange >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
                     {grossChange >= 0 ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
@@ -159,15 +129,15 @@ export default function MetricsDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card data-testid="total-employees-card">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-500 dark:text-slate-400">Total Empleados</p>
-                  <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{metrics?.employee_count || currentMonthData.employees || 0}</p>
+                  <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{employeeMetrics.total_employees || 0}</p>
                   <div className="flex items-center text-sm mt-1 text-emerald-600 dark:text-emerald-400">
                     <UserPlus className="w-4 h-4 mr-1" />
-                    <span>{employeeMetrics?.new_this_month || 2} nuevos este mes</span>
+                    <span>{employeeMetrics.new_this_month || 0} nuevos este mes</span>
                   </div>
                 </div>
                 <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
@@ -177,14 +147,14 @@ export default function MetricsDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card data-testid="active-loans-card">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-500 dark:text-slate-400">Préstamos Activos</p>
-                  <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{loanMetrics?.total_active_loans || 0}</p>
+                  <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{loanMetrics.total_active_loans || 0}</p>
                   <p className="text-sm text-amber-600 mt-1">
-                    {formatCurrency(loanMetrics?.total_pending || 0)} pendiente
+                    {formatCurrency(loanMetrics.total_pending || 0)} pendiente
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
@@ -194,13 +164,13 @@ export default function MetricsDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card data-testid="cost-per-employee-card">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-500 dark:text-slate-400">Costo por Empleado</p>
                   <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">
-                    {formatCurrency(currentMonthData.gross / (currentMonthData.employees || 1))}
+                    {formatCurrency(currentMonthData.gross / (employeeMetrics.total_employees || 1))}
                   </p>
                   <p className="text-sm text-slate-500 mt-1">Promedio mensual</p>
                 </div>
@@ -215,7 +185,7 @@ export default function MetricsDashboardPage() {
         {/* Charts Row 1 */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Payroll Trend */}
-          <Card>
+          <Card data-testid="payroll-trend-chart">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-blue-500" />
@@ -225,7 +195,7 @@ export default function MetricsDashboardPage() {
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={payrollData}>
+                <AreaChart data={payrollTrend}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="month" stroke="#64748b" fontSize={12} />
                   <YAxis stroke="#64748b" fontSize={12} tickFormatter={(v) => `${(v/1000)}k`} />
@@ -242,7 +212,7 @@ export default function MetricsDashboardPage() {
           </Card>
 
           {/* Department Costs */}
-          <Card>
+          <Card data-testid="department-costs-chart">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-purple-500" />
@@ -251,22 +221,31 @@ export default function MetricsDashboardPage() {
               <CardDescription>Distribución del gasto de nómina</CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={deptData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis type="number" stroke="#64748b" fontSize={12} tickFormatter={(v) => `${(v/1000)}k`} />
-                  <YAxis dataKey="name" type="category" stroke="#64748b" fontSize={11} width={100} />
-                  <Tooltip 
-                    formatter={(value) => formatCurrency(value)}
-                    contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }}
-                  />
-                  <Bar dataKey="cost" name="Costo" radius={[0, 4, 4, 0]}>
-                    {deptData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+              {departmentCosts.length > 0 ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={departmentCosts} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis type="number" stroke="#64748b" fontSize={12} tickFormatter={(v) => `${(v/1000)}k`} />
+                    <YAxis dataKey="name" type="category" stroke="#64748b" fontSize={11} width={100} />
+                    <Tooltip 
+                      formatter={(value) => formatCurrency(value)}
+                      contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }}
+                    />
+                    <Bar dataKey="cost" name="Costo" radius={[0, 4, 4, 0]}>
+                      {departmentCosts.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-64 flex items-center justify-center text-slate-500">
+                  <div className="text-center">
+                    <Building2 className="w-12 h-12 mx-auto mb-2 opacity-30" />
+                    <p>Sin datos de departamentos</p>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -274,7 +253,7 @@ export default function MetricsDashboardPage() {
         {/* Charts Row 2 */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Employee Distribution */}
-          <Card>
+          <Card data-testid="employee-distribution-chart">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-emerald-500" />
@@ -282,31 +261,37 @@ export default function MetricsDashboardPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={250}>
-                <PieChart>
-                  <Pie
-                    data={deptData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={90}
-                    paddingAngle={2}
-                    dataKey="employees"
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    labelLine={false}
-                  >
-                    {deptData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value) => `${value} empleados`} />
-                </PieChart>
-              </ResponsiveContainer>
+              {departmentCosts.length > 0 ? (
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie
+                      data={departmentCosts}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={90}
+                      paddingAngle={2}
+                      dataKey="employees"
+                      label={({ name, percent }) => `${name?.substring(0, 8)} ${(percent * 100).toFixed(0)}%`}
+                      labelLine={false}
+                    >
+                      {departmentCosts.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value) => `${value} empleados`} />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-64 flex items-center justify-center text-slate-500">
+                  <p>Sin datos</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
           {/* Loan Status */}
-          <Card>
+          <Card data-testid="loan-status-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Wallet className="w-5 h-5 text-amber-500" />
@@ -315,28 +300,28 @@ export default function MetricsDashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                   <span className="text-sm text-blue-700 dark:text-blue-400">Total Prestado</span>
-                  <span className="font-bold text-blue-800">{formatCurrency(loanMetrics?.total_loaned || 0)}</span>
+                  <span className="font-bold text-blue-800 dark:text-blue-300">{formatCurrency(loanMetrics.total_loaned || 0)}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
                   <span className="text-sm text-emerald-700 dark:text-emerald-400">Total Cobrado</span>
-                  <span className="font-bold text-emerald-800">{formatCurrency(loanMetrics?.total_paid || 0)}</span>
+                  <span className="font-bold text-emerald-800 dark:text-emerald-300">{formatCurrency(loanMetrics.total_paid || 0)}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-amber-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
                   <span className="text-sm text-amber-700 dark:text-amber-400">Pendiente</span>
-                  <span className="font-bold text-amber-800">{formatCurrency(loanMetrics?.total_pending || 0)}</span>
+                  <span className="font-bold text-amber-800 dark:text-amber-300">{formatCurrency(loanMetrics.total_pending || 0)}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                  <span className="text-sm text-slate-700 dark:text-slate-200">Empleados con Préstamos</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-100">{loanMetrics?.employees_with_loans || 0}</span>
+                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                  <span className="text-sm text-slate-700 dark:text-slate-300">Empleados con Préstamos</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-200">{loanMetrics.employees_with_loans || 0}</span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Quick Stats */}
-          <Card>
+          <Card data-testid="quick-stats-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-blue-500" />
@@ -347,32 +332,32 @@ export default function MetricsDashboardPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600 dark:text-slate-300">Rotación de personal</span>
-                  <Badge className="bg-emerald-100 text-emerald-700 dark:text-emerald-400">
-                    {employeeMetrics?.turnover_rate || 5}%
+                  <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                    {employeeMetrics.turnover_rate || 0}%
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600 dark:text-slate-300">Vacaciones pendientes</span>
-                  <Badge className="bg-amber-100 text-amber-700 dark:text-amber-400">
-                    {metrics?.pending_vacations || 12} días
+                  <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+                    {quickStats.pending_vacations || 0} solicitudes
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600 dark:text-slate-300">Evaluaciones este mes</span>
-                  <Badge className="bg-blue-100 text-blue-700 dark:text-blue-400">
-                    {metrics?.evaluations_count || 8}
+                  <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+                    {quickStats.evaluations_this_month || 0}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600 dark:text-slate-300">Asistencia promedio</span>
-                  <Badge className="bg-emerald-100 text-emerald-700 dark:text-emerald-400">
-                    {metrics?.avg_attendance || 95}%
+                  <span className="text-sm text-slate-600 dark:text-slate-300">Asistencia hoy</span>
+                  <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                    {quickStats.attendance_rate || 0}%
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600 dark:text-slate-300">Nóminas procesadas</span>
-                  <Badge className="bg-purple-100 text-purple-700">
-                    {metrics?.payroll_count || payrollData.length}
+                  <span className="text-sm text-slate-600 dark:text-slate-300">Nóminas pendientes</span>
+                  <Badge className={`${quickStats.pending_payrolls > 0 ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'}`}>
+                    {quickStats.pending_payrolls || 0}
                   </Badge>
                 </div>
               </div>
@@ -381,10 +366,10 @@ export default function MetricsDashboardPage() {
         </div>
 
         {/* Monthly Comparison Table */}
-        <Card>
+        <Card data-testid="monthly-comparison-table">
           <CardHeader>
             <CardTitle>Comparativa Mensual</CardTitle>
-            <CardDescription>Detalle de nómina por mes</CardDescription>
+            <CardDescription>Detalle de nómina por mes - {selectedYear}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -400,21 +385,38 @@ export default function MetricsDashboardPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {payrollData.map((row, i) => (
-                    <tr key={i} className="border-b hover:bg-slate-50 dark:bg-slate-800">
+                  {payrollTrend.map((row, i) => (
+                    <tr key={i} className="border-b hover:bg-slate-50 dark:hover:bg-slate-800">
                       <td className="py-3 px-4 font-medium">{row.month}</td>
                       <td className="py-3 px-4 text-right">{formatCurrency(row.gross)}</td>
                       <td className="py-3 px-4 text-right text-red-600 dark:text-red-400">{formatCurrency(row.deductions)}</td>
-                      <td className="py-3 px-4 text-right text-emerald-600 font-medium">{formatCurrency(row.net)}</td>
+                      <td className="py-3 px-4 text-right text-emerald-600 dark:text-emerald-400 font-medium">{formatCurrency(row.net)}</td>
                       <td className="py-3 px-4 text-right">{row.employees}</td>
-                      <td className="py-3 px-4 text-right text-slate-500 dark:text-slate-400">{formatCurrency(row.gross / row.employees)}</td>
+                      <td className="py-3 px-4 text-right text-slate-500 dark:text-slate-400">
+                        {row.employees > 0 ? formatCurrency(row.gross / row.employees) : '-'}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
+                <tfoot>
+                  <tr className="bg-slate-100 dark:bg-slate-800 font-semibold">
+                    <td className="py-3 px-4">TOTAL {selectedYear}</td>
+                    <td className="py-3 px-4 text-right">{formatCurrency(payrollTrend.reduce((s, r) => s + r.gross, 0))}</td>
+                    <td className="py-3 px-4 text-right text-red-600 dark:text-red-400">{formatCurrency(payrollTrend.reduce((s, r) => s + r.deductions, 0))}</td>
+                    <td className="py-3 px-4 text-right text-emerald-600 dark:text-emerald-400">{formatCurrency(totalPaidThisYear)}</td>
+                    <td className="py-3 px-4 text-right">-</td>
+                    <td className="py-3 px-4 text-right">-</td>
+                  </tr>
+                </tfoot>
               </table>
             </div>
           </CardContent>
         </Card>
+
+        {/* Last Updated */}
+        <div className="text-center text-sm text-slate-500 dark:text-slate-400">
+          Última actualización: {dashboardData?.last_updated ? new Date(dashboardData.last_updated).toLocaleString('es-DO') : 'N/A'}
+        </div>
       </div>
     </DashboardLayout>
   );
