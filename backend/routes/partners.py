@@ -217,7 +217,7 @@ async def register_accounting_firm(data: PartnerRegistration):
         "company_id": company_id,
         "partner_id": partner_id,
         "email": data.email.lower(),
-        "password": password_hash,
+        "password_hash": password_hash,
         "name": data.contact_name,
         "role": "partner_admin",
         "is_active": True,
