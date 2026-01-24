@@ -7,11 +7,15 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import axios from "axios";
 import { 
   User, DollarSign, Calendar, Wallet, FileText, LogOut, Home,
   Phone, MapPin, Mail, Building2, CreditCard, AlertCircle, Check,
-  Clock, Download, Eye, EyeOff, Send, Loader2, Lock, ChevronRight
+  Clock, Download, Eye, EyeOff, Send, Loader2, Lock, ChevronRight,
+  Target, ClipboardList, PlayCircle, StopCircle, History, Star,
+  FileCheck, RefreshCw
 } from "lucide-react";
 import { toast, Toaster } from "sonner";
 
