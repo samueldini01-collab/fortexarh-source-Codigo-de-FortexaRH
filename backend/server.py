@@ -61,6 +61,7 @@ from routes.reports_system import router as reports_system_router, init_router a
 from routes.quickbooks import router as quickbooks_router, init_router as init_quickbooks_router
 from routes.cdc_audit import router as cdc_audit_router, init_router as init_cdc_audit_router, start_all_change_streams, create_indexes as create_cdc_indexes
 from routes.support import router as support_router, init_router as init_support_router
+from routes.partners import router as partners_router, init_router as init_partners_router, create_partner_indexes
 
 # MongoDB connection with production-ready settings
 mongo_url = os.environ['MONGO_URL']
@@ -2654,6 +2655,7 @@ init_reports_system_router(db, get_current_user)
 init_quickbooks_router(db, get_current_user)
 init_cdc_audit_router(db, get_current_user)
 init_support_router(db)
+init_partners_router(db, get_current_user)
 
 # Include modular routers in api_router
 api_router.include_router(loans_router)
@@ -2690,6 +2692,7 @@ api_router.include_router(reports_advanced_router)
 api_router.include_router(reports_system_router)
 api_router.include_router(quickbooks_router)
 api_router.include_router(cdc_audit_router)
+api_router.include_router(partners_router)
 
 # Include the API router
 app.include_router(api_router)
