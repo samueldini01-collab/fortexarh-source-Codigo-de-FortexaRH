@@ -393,6 +393,7 @@ export default function LandingPage() {
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Asistencias y vacaciones</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Módulo de préstamos</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Contabilidad básica</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" /><strong>QuickBooks Online</strong></li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-blue-500" /><strong>Reportes básicos</strong> (DGII, nómina)</li>
                 <li className="flex items-center gap-2 text-sm text-slate-400"><X className="w-4 h-4" />Gastos y viáticos</li>
                 <li className="flex items-center gap-2 text-sm text-slate-400"><X className="w-4 h-4" />Portal de empleados</li>
