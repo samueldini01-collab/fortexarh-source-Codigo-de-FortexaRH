@@ -141,7 +141,7 @@ async def create_payroll_period(data: PayrollPeriodCreateV2, current_user: dict 
         "exchange_rate": exchange_rate,
         "project_id": project_id,
         "template_id": data.template_id,
-        "status": "open",
+        "status": "draft",
         "total_gross": 0,
         "total_deductions": 0,
         "total_net": 0,
@@ -1040,10 +1040,77 @@ async def calculate_period(period_id: str, current_user: dict = Depends(get_curr
     return {"message": f"{len(entries)} entradas recalculadas"}
 
 
-@router.post("/periods/{period_id}/approve")
-async def approve_period(period_id: str, current_user: dict = Depends(get_current_user)):
-    """Approve a payroll period"""
+class ApprovalRequest(BaseModel):
+    """Solicitud de aprobación de nómina"""
+    comments: Optional[str] = None
+
+
+@router.post("/periods/{period_id}/submit-for-approval")
+async def submit_for_approval(period_id: str, data: ApprovalRequest = None, current_user: dict = Depends(get_current_user)):
+    """Submit a payroll period for approval (Draft -> Pending Approval)"""
     company_id = current_user.get("company_id")
+    user_id = current_user.get("user_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    if period.get("status") not in ["open", "draft"]:
+        raise HTTPException(status_code=400, detail=f"Solo se puede enviar a aprobación desde estado borrador. Estado actual: {period.get('status')}")
+    
+    if period.get("employee_count", 0) == 0:
+        raise HTTPException(status_code=400, detail="No hay empleados en esta nómina. Agregue empleados antes de enviar a aprobación.")
+    
+    # Create approval workflow entry
+    workflow_entry = {
+        "action": "submit_for_approval",
+        "from_status": period.get("status"),
+        "to_status": "pending_approval",
+        "user_id": user_id,
+        "user_name": current_user.get("email", current_user.get("name", "Usuario")),
+        "comments": data.comments if data else None,
+        "timestamp": now_iso()
+    }
+    
+    await db.payroll_periods.update_one(
+        {"period_id": period_id, "company_id": company_id},
+        {
+            "$set": {
+                "status": "pending_approval",
+                "submitted_at": now_iso(),
+                "submitted_by": user_id,
+                "updated_at": now_iso()
+            },
+            "$push": {
+                "workflow_history": workflow_entry
+            }
+        }
+    )
+    
+    await db.payroll_entries.update_many(
+        {"period_id": period_id, "company_id": company_id},
+        {"$set": {"status": "pending_approval"}}
+    )
+    
+    return {"message": "Nómina enviada para aprobación", "status": "pending_approval"}
+
+
+@router.post("/periods/{period_id}/approve")
+async def approve_period(period_id: str, data: ApprovalRequest = None, current_user: dict = Depends(get_current_user)):
+    """Approve a payroll period (Pending Approval -> Approved)"""
+    company_id = current_user.get("company_id")
+    user_id = current_user.get("user_id")
+    
+    # Check user permission for payroll approval
+    user_permissions = current_user.get("permissions", [])
+    user_role = current_user.get("role", "")
+    can_approve = "payroll_approve" in user_permissions or user_role in ["admin", "hr_manager", "finance_manager"]
+    
+    if not can_approve:
+        raise HTTPException(status_code=403, detail="No tiene permisos para aprobar nóminas")
     
     period = await db.payroll_periods.find_one(
         {"period_id": period_id, "company_id": company_id},
@@ -1055,13 +1122,33 @@ async def approve_period(period_id: str, current_user: dict = Depends(get_curren
     if period.get("status") == "paid":
         raise HTTPException(status_code=400, detail="Período ya pagado")
     
+    if period.get("status") not in ["pending_approval", "calculated", "open"]:
+        raise HTTPException(status_code=400, detail=f"No se puede aprobar desde estado: {period.get('status')}")
+    
+    # Create approval workflow entry
+    workflow_entry = {
+        "action": "approve",
+        "from_status": period.get("status"),
+        "to_status": "approved",
+        "user_id": user_id,
+        "user_name": current_user.get("email", current_user.get("name", "Usuario")),
+        "comments": data.comments if data else None,
+        "timestamp": now_iso()
+    }
+    
     await db.payroll_periods.update_one(
         {"period_id": period_id, "company_id": company_id},
-        {"$set": {
-            "status": "approved",
-            "approved_at": now_iso(),
-            "approved_by": current_user.get("user_id")
-        }}
+        {
+            "$set": {
+                "status": "approved",
+                "approved_at": now_iso(),
+                "approved_by": user_id,
+                "updated_at": now_iso()
+            },
+            "$push": {
+                "workflow_history": workflow_entry
+            }
+        }
     )
     
     await db.payroll_entries.update_many(
@@ -1069,7 +1156,100 @@ async def approve_period(period_id: str, current_user: dict = Depends(get_curren
         {"$set": {"status": "approved"}}
     )
     
-    return {"message": "Período aprobado"}
+    return {"message": "Período aprobado correctamente", "status": "approved"}
+
+
+@router.post("/periods/{period_id}/reject")
+async def reject_period(period_id: str, data: ApprovalRequest, current_user: dict = Depends(get_current_user)):
+    """Reject a payroll period (Pending Approval -> Draft)"""
+    company_id = current_user.get("company_id")
+    user_id = current_user.get("user_id")
+    
+    # Check user permission
+    user_permissions = current_user.get("permissions", [])
+    user_role = current_user.get("role", "")
+    can_approve = "payroll_approve" in user_permissions or user_role in ["admin", "hr_manager", "finance_manager"]
+    
+    if not can_approve:
+        raise HTTPException(status_code=403, detail="No tiene permisos para rechazar nóminas")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    if period.get("status") not in ["pending_approval"]:
+        raise HTTPException(status_code=400, detail="Solo se puede rechazar nóminas en estado 'Pendiente Aprobación'")
+    
+    if not data.comments:
+        raise HTTPException(status_code=400, detail="Debe proporcionar un motivo para el rechazo")
+    
+    # Create rejection workflow entry
+    workflow_entry = {
+        "action": "reject",
+        "from_status": period.get("status"),
+        "to_status": "draft",
+        "user_id": user_id,
+        "user_name": current_user.get("email", current_user.get("name", "Usuario")),
+        "comments": data.comments,
+        "timestamp": now_iso()
+    }
+    
+    await db.payroll_periods.update_one(
+        {"period_id": period_id, "company_id": company_id},
+        {
+            "$set": {
+                "status": "draft",
+                "rejected_at": now_iso(),
+                "rejected_by": user_id,
+                "rejection_reason": data.comments,
+                "updated_at": now_iso()
+            },
+            "$push": {
+                "workflow_history": workflow_entry
+            }
+        }
+    )
+    
+    await db.payroll_entries.update_many(
+        {"period_id": period_id, "company_id": company_id},
+        {"$set": {"status": "draft"}}
+    )
+    
+    return {"message": "Nómina rechazada y devuelta a borrador", "status": "draft", "reason": data.comments}
+
+
+@router.get("/periods/{period_id}/workflow-history")
+async def get_workflow_history(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Get the approval workflow history for a payroll period"""
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0, "workflow_history": 1, "status": 1, "created_at": 1, "created_by": 1}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    history = period.get("workflow_history", [])
+    
+    # Add creation entry if not in history
+    if not history:
+        history = [{
+            "action": "created",
+            "from_status": None,
+            "to_status": "draft",
+            "user_id": period.get("created_by"),
+            "timestamp": period.get("created_at")
+        }]
+    
+    return {
+        "period_id": period_id,
+        "current_status": period.get("status"),
+        "history": history
+    }
 
 
 # ===================== TEMPLATES =====================
