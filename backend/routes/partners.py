@@ -627,6 +627,65 @@ async def update_client_billing(
     }
 
 
+@router.post("/clients/{client_id}/resend-invitation")
+async def resend_client_invitation(
+    client_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Resend invitation email to a client"""
+    partner_id = current_user.get("partner_id")
+    
+    if not partner_id:
+        raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
+    
+    # Get client
+    client = await db.partner_clients.find_one(
+        {"client_id": client_id, "partner_id": partner_id}
+    )
+    
+    if not client:
+        raise HTTPException(status_code=404, detail="Cliente no encontrado")
+    
+    # Check if client already activated
+    if client.get("status") == "active":
+        raise HTTPException(status_code=400, detail="El cliente ya ha activado su cuenta")
+    
+    # Get firm info
+    firm = await db.accounting_firms.find_one(
+        {"partner_id": partner_id},
+        {"name": 1}
+    )
+    firm_name = firm.get("name", "Tu Contador") if firm else "Tu Contador"
+    
+    # Send invitation email
+    email_sent = await send_client_invitation_email(
+        client_email=client.get("email"),
+        client_name=client.get("contact_name"),
+        company_name=client.get("company_name"),
+        firm_name=firm_name,
+        invitation_link=client.get("invitation_link")
+    )
+    
+    if email_sent:
+        # Update client record
+        await db.partner_clients.update_one(
+            {"client_id": client_id},
+            {
+                "$set": {
+                    "invitation_sent": True,
+                    "invitation_sent_at": datetime.now(timezone.utc),
+                    "invitation_resent_count": client.get("invitation_resent_count", 0) + 1
+                }
+            }
+        )
+        return {
+            "message": "Invitación reenviada exitosamente",
+            "email_sent_to": client.get("email")
+        }
+    else:
+        raise HTTPException(status_code=500, detail="Error al enviar el email de invitación")
+
+
 # ============== COMMISSION ENDPOINTS ==============
 
 @router.get("/commissions")
