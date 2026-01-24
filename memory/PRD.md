@@ -1,73 +1,112 @@
 # FortexaRH - Sistema SaaS de RRHH y Nómina
 
-## Última Actualización: 2026-01-23
+## Última Actualización: 2026-01-24
 
 ## ✅ Completado en Esta Sesión
 
-### Tutorial Interactivo de Onboarding
+### 🕐 Módulo 1: Control de Asistencia y Tiempo
+**Características Backend:**
+- Gestión de turnos (crear, editar, eliminar)
+- Registro de entrada/salida (manual y automático)
+- Cálculo automático de horas trabajadas y extras
+- Dashboard de asistencia en tiempo real
+- Alertas de tardanzas y ausencias
+- API para integración biométrica (`/api/attendance/biometric/event`)
+- Exportación a CSV y Excel
+- Reportes por empleado y departamento
 
-#### Características:
-- **10 pasos guiados** para nuevos usuarios
-- **Modal de bienvenida** con logo y descripción
-- **Spotlight/highlight** de elementos con borde animado
-- **Tooltips posicionados** automáticamente
-- **Barra de progreso** visual
-- **Indicadores de paso** (dots)
-- **Navegación:** Anterior/Siguiente/Saltar
-- **Efecto confetti** al completar
-- **Auto-trigger** en primer login
-- **Repetible** desde menú de usuario
+**Características Frontend (4 Tabs):**
+- **Hoy:** Estadísticas del día, registro rápido
+- **Historial:** Tabla filtrable, exportación
+- **Turnos:** Gestión de horarios
+- **Alertas:** Notificaciones de ausencias/tardanzas
 
-#### Pasos del Tutorial:
-1. **Bienvenida** - Modal introductorio
-2. **Panel de Control** - Cards de estadísticas clickeables
-3. **Sidebar** - Navegación y colapso
-4. **Búsqueda Global** - Ctrl+K
-5. **Selector de Tema** - Claro/Oscuro/Alto Contraste
-6. **Menú de Usuario** - Perfil y configuración
-7. **Empleados** - Módulo principal
-8. **Nómina** - Cálculos y reportes DGII
-9. **Atajos de Teclado** - Productividad
-10. **Completado** - ¡Listo para empezar! (con confetti 🎉)
+**Archivos:**
+- `/app/backend/routes/attendance.py` - API completa
+- `/app/frontend/src/pages/AttendancePage.jsx` - UI completa
 
-#### Archivos Creados:
-- `/app/frontend/src/context/OnboardingContext.jsx`
-- `/app/frontend/src/components/OnboardingTutorial.jsx`
+### 🏖️ Módulo 2: Gestión de Vacaciones y Permisos
+**Características Backend:**
+- Solicitudes de vacaciones/permisos
+- Flujo de aprobación (aprobar/rechazar)
+- Balance automático según Ley 16-92 RD:
+  - 14 días después de 1 año de servicio
+  - +1 día por año adicional
+  - Máximo 18 días
+- 10 tipos de permiso configurados
+- Calendario de ausencias
+- Exportación a CSV y Excel
 
-#### Componentes:
-- `SpotlightOverlay` - Efecto de foco con SVG mask
-- `OnboardingTooltip` - Tooltips posicionados
-- `OnboardingModal` - Modales de bienvenida/completado
-- `StartTutorialButton` - Botón reutilizable
+**Características Frontend (3 Tabs):**
+- **Solicitudes:** Lista con filtros, aprobar/rechazar
+- **Balance:** Días disponibles por empleado
+- **Calendario:** Vista mensual de ausencias
 
-### Sistema Completo de UX
+**Archivos:**
+- `/app/backend/routes/vacations.py` - API completa
+- `/app/frontend/src/pages/VacationsPage.jsx` - UI completa
 
-| Característica | Estado |
-|---------------|--------|
-| 4 Modos de Tema | ✅ Claro, Oscuro, Alto Contraste, Sistema |
-| Dark Mode 38 páginas | ✅ |
-| Alto Contraste WCAG AAA | ✅ |
-| 18+ Atajos de Teclado | ✅ |
-| Tutorial Onboarding 10 pasos | ✅ |
+### 📈 Módulo 3: Evaluaciones de Desempeño
+**Características Backend:**
+- Ciclos de evaluación (anual, semestral, trimestral)
+- 6 competencias predefinidas con pesos
+- Escalas numéricas (1-5) y descriptivas
+- Objetivos/KPIs con seguimiento de progreso
+- Feedback 360° (pares, subordinados)
+- Planes de mejora con acciones
+- Dashboard analítico
+- Exportación a CSV y Excel
+
+**Características Frontend (4 Tabs):**
+- **Evaluaciones:** Cards con scores y barras de progreso
+- **Objetivos/KPIs:** Metas con tracking
+- **Ciclos:** Gestión de períodos
+- **Planes Mejora:** Acciones de desarrollo
+
+**Archivos:**
+- `/app/backend/routes/evaluations.py` - API completa
+- `/app/frontend/src/pages/EvaluationsPage.jsx` - UI completa
+
+### 📊 Resultados de Testing
+- **Backend:** 36/36 tests pasaron (100%)
+- **Frontend:** Todas las páginas funcionan correctamente
+- **Archivo de tests:** `/app/backend/tests/test_hrm_modules.py`
+- **Reporte:** `/app/test_reports/iteration_18.json`
 
 ## Credenciales de Prueba
 - **Admin:** test_refactor@fortexa.com / test123
 - **Employee Portal:** Cédula: 001-0000001-1 / Password: portal123
 
 ## Integraciones
-- **Stripe:** ✅ Funcionando
-- **Resend (Email):** ✅ Funcionando
-- **Google Auth:** ✅ Funcionando
-- **Enterprise (QuickBooks, SAP, Oracle):** MOCKED
+| Integración | Estado |
+|-------------|--------|
+| Stripe | ✅ Funcionando |
+| Resend (Email) | ✅ Funcionando |
+| Google Auth | ✅ Funcionando |
+| QuickBooks, SAP, Oracle | MOCKED |
+
+## Arquitectura de Módulos Nuevos
+
+```
+/app/backend/routes/
+├── attendance.py      # Control de asistencia (NEW)
+├── vacations.py       # Vacaciones y permisos (ENHANCED)
+└── evaluations.py     # Evaluaciones de desempeño (ENHANCED)
+
+/app/frontend/src/pages/
+├── AttendancePage.jsx   # 4 tabs: Hoy, Historial, Turnos, Alertas
+├── VacationsPage.jsx    # 3 tabs: Solicitudes, Balance, Calendario
+└── EvaluationsPage.jsx  # 4 tabs: Evaluaciones, KPIs, Ciclos, Planes
+```
 
 ## Próximas Tareas (P2)
-1. Añadir exportación a páginas pendientes (Nómina, Asistencias, Evaluaciones)
-2. Reportes avanzados exportables (PDF/Excel)
+1. **Reportes Avanzados y Exportables** - Gráficos interactivos, PDF/Excel
+2. **Notificaciones en Portal de Empleados** - Sistema de alertas
+3. **Historial de Auditoría** - Log de cambios del sistema
 
 ## Tareas Futuras (P3)
-- Temas personalizados por empresa
-- Notificaciones en Portal de Auto-Servicio
-- Historial de auditoría
-- Integraciones Enterprise reales
-- PWA/Mobile App
+- Integraciones Enterprise reales (QuickBooks, SAP, Oracle)
+- Más funciones para Portal de Autoservicio
+- PWA/Mobile App del portal
 - E-signature para documentos
+- Temas personalizados por empresa
