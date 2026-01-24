@@ -472,12 +472,12 @@ export default function VacationsPage() {
             {/* Filters and Export */}
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-2">
-                <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <Select value={typeFilter || "all"} onValueChange={(v) => setTypeFilter(v === "all" ? "" : v)}>
                   <SelectTrigger className="w-52">
                     <SelectValue placeholder="Tipo de permiso" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todos los tipos</SelectItem>
+                    <SelectItem value="all">Todos los tipos</SelectItem>
                     {leaveTypes.map(type => (
                       <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
                     ))}
