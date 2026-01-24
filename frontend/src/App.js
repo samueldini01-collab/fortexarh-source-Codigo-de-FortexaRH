@@ -52,6 +52,9 @@ import CostsByDepartmentPage from "@/pages/CostsByDepartmentPage";
 import ExpensesPage from "@/pages/ExpensesPage";
 import CDCAuditPage from "@/pages/CDCAuditPage";
 import SupportPage from "@/pages/SupportPage";
+import AccountantsSoftwarePage from "@/pages/AccountantsSoftwarePage";
+import PartnerRegisterPage from "@/pages/PartnerRegisterPage";
+import PartnerDashboardPage from "@/pages/PartnerDashboardPage";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
