@@ -45,6 +45,8 @@ async def get_current_user(request: Request, credentials=Depends(security)):
 PARTNER_FLAT_PRICE = 10.00  # $10/month for partners with active clients
 PARTNER_COMMISSION_RATE = 0.30  # 30% commission
 GRACE_PERIOD_DAYS = 7  # Days before losing partner benefits after last client cancels
+MINIMUM_PAYOUT_AMOUNT = 50.00  # Minimum $50 to request payout
+PAYOUT_FREQUENCY = "monthly"  # Monthly payouts
 
 
 # ============== MODELS ==============
