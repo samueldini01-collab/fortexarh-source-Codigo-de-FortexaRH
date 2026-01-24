@@ -200,6 +200,8 @@ export default function CDCAuditPage() {
     });
   };
 
+  const isManualMode = cdcStatus?.mode === "manual_tracking";
+
   return (
     <DashboardLayout>
       <div className="space-y-6" data-testid="cdc-audit-page">
@@ -214,32 +216,52 @@ export default function CDCAuditPage() {
               <RefreshCw className="w-4 h-4 mr-2" />
               Actualizar
             </Button>
-            {cdcStatus?.is_running ? (
-              <Button variant="destructive" onClick={handleStopCDC}>
-                <Square className="w-4 h-4 mr-2" />
-                Detener CDC
-              </Button>
-            ) : (
-              <Button onClick={handleStartCDC} className="bg-emerald-600 hover:bg-emerald-700">
-                <Play className="w-4 h-4 mr-2" />
-                Iniciar CDC
-              </Button>
+            {!isManualMode && (
+              cdcStatus?.is_running ? (
+                <Button variant="destructive" onClick={handleStopCDC}>
+                  <Square className="w-4 h-4 mr-2" />
+                  Detener CDC
+                </Button>
+              ) : (
+                <Button onClick={handleStartCDC} className="bg-emerald-600 hover:bg-emerald-700">
+                  <Play className="w-4 h-4 mr-2" />
+                  Iniciar CDC
+                </Button>
+              )
             )}
           </div>
         </div>
 
+        {/* Mode Info Banner */}
+        {isManualMode && (
+          <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-medium text-amber-800">Modo de Tracking Manual</h4>
+              <p className="text-sm text-amber-700">
+                MongoDB no soporta Change Streams (requiere replica set). Los cambios se registran automáticamente mediante hooks en las operaciones CRUD del sistema.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Status Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className={`border-l-4 ${cdcStatus?.is_running ? 'border-l-emerald-500' : 'border-l-slate-300'}`}>
+          <Card className={`border-l-4 ${isManualMode ? 'border-l-amber-500' : (cdcStatus?.is_running ? 'border-l-emerald-500' : 'border-l-slate-300')}`}>
             <CardContent className="pt-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Estado CDC</p>
-                  <p className="text-xl font-bold">
-                    {cdcStatus?.is_running ? (
+                  <p className="text-sm text-slate-500">Modo CDC</p>
+                  <p className="text-lg font-bold">
+                    {isManualMode ? (
+                      <span className="text-amber-600 flex items-center gap-2">
+                        <AlertCircle className="w-5 h-5" />
+                        Manual
+                      </span>
+                    ) : cdcStatus?.is_running ? (
                       <span className="text-emerald-600 flex items-center gap-2">
                         <Activity className="w-5 h-5 animate-pulse" />
-                        Activo
+                        Streams
                       </span>
                     ) : (
                       <span className="text-slate-400 flex items-center gap-2">
@@ -248,6 +270,11 @@ export default function CDCAuditPage() {
                       </span>
                     )}
                   </p>
+                </div>
+                <Database className="w-10 h-10 text-slate-300" />
+              </div>
+            </CardContent>
+          </Card>
                 </div>
                 <Database className="w-10 h-10 text-slate-300" />
               </div>
