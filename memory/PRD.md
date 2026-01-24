@@ -357,14 +357,25 @@ Portal B2B2B completo para firmas de contadores que gestionan múltiples cliente
   - `PATCH /api/support/tickets/{ticket_id}/status` - Actualizar estado
 - **Archivos:** `/app/backend/routes/support.py`, `/app/frontend/src/pages/SupportPage.jsx`
 
+### Portal para Contadores - Implementado (2026-01-24)
+- **Rutas Frontend:**
+  - `/accountants-software` - Landing page con diseño diferenciado
+  - `/partner-register` - Registro de firmas contables
+  - `/partner-dashboard` - Dashboard con KPIs, clientes, comisiones
+- **API Endpoints:** Ver sección "Portal para Firmas de Contadores" arriba
+- **Colecciones MongoDB:** `accounting_firms`, `partner_clients`, `partner_commissions`
+- **Archivos:** `/app/backend/routes/partners.py`, páginas en `/app/frontend/src/pages/`
+
 ## Próximas Tareas (P1-P2)
-1. **Panel de Dispositivos Biométricos** - Gestión de dispositivos y documentación
-2. **Notificaciones Push/Email** - Alertas para eventos del portal del empleado
-3. **Integrar CDC en operaciones CRUD** - Llamar `log_audit_event()` desde endpoints existentes
-4. **Panel Admin para Tickets de Soporte** - Dashboard para gestionar tickets
+1. **Panel Admin para Tickets de Soporte** - Dashboard para gestionar tickets recibidos
+2. **Panel de Dispositivos Biométricos** - Gestión de dispositivos y documentación
+3. **Notificaciones Push/Email** - Alertas para eventos del portal del empleado
+4. **Integrar CDC en operaciones CRUD** - Llamar `log_audit_event()` desde endpoints existentes
+5. **Envío de emails a clientes referidos** - Automatizar invitaciones desde el portal de partners
 
 ## Tareas Futuras (P3)
 - Integraciones Enterprise reales (SAP, Oracle, Dynamics)
 - PWA/Mobile App - Versión móvil del portal del empleado
 - E-signature para documentos
 - Temas personalizados por empresa
+- Sistema de pagos de comisiones a partners
