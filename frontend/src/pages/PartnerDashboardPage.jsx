@@ -1278,6 +1278,84 @@ export default function PartnerDashboardPage() {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Payout Request Modal */}
+      <Dialog open={showPayoutModal} onOpenChange={setShowPayoutModal}>
+        <DialogContent className="bg-slate-800 border-slate-700 max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-white">Solicitar Retiro</DialogTitle>
+            <DialogDescription className="text-slate-400">
+              Retira tus comisiones a tu cuenta bancaria
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="bg-slate-700/50 rounded-lg p-4">
+              <p className="text-slate-400 text-sm">Balance Disponible</p>
+              <p className="text-2xl font-bold text-emerald-400">
+                ${payoutBalance?.available_balance?.toFixed(2) || "0.00"}
+              </p>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="payout_amount" className="text-slate-300">
+                Monto a Retirar (USD)
+              </Label>
+              <Input
+                id="payout_amount"
+                type="number"
+                min="50"
+                max={payoutBalance?.available_balance || 0}
+                step="0.01"
+                value={payoutAmount}
+                onChange={(e) => setPayoutAmount(e.target.value)}
+                placeholder={`Mínimo $50 - Máximo $${payoutBalance?.available_balance?.toFixed(2) || "0.00"}`}
+                className="bg-slate-700 border-slate-600 text-white"
+                data-testid="payout-amount-input"
+              />
+              <p className="text-slate-500 text-xs">
+                Deja en blanco para retirar todo el balance disponible
+              </p>
+            </div>
+            
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
+              <p className="text-blue-400 text-sm flex items-center gap-2">
+                <Clock className="w-4 h-4" />
+                El dinero llegará a tu cuenta en 2-3 días hábiles
+              </p>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowPayoutModal(false)}
+              className="border-slate-600 text-slate-300"
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleRequestPayout}
+              className="bg-emerald-500 hover:bg-emerald-600"
+              disabled={requestingPayout}
+              data-testid="confirm-payout-btn"
+            >
+              {requestingPayout ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Procesando...
+                </>
+              ) : (
+                <>
+                  <Banknote className="w-4 h-4 mr-2" />
+                  Confirmar Retiro
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
