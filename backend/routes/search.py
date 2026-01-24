@@ -862,7 +862,7 @@ async def get_search_suggestions(q: str = "", current_user: dict = Depends(get_c
 @router.post("/search/log-query")
 async def log_search_query(data: AISearchRequest, current_user: dict = Depends(get_current_user)):
     """Log a search query for learning purposes"""
-    if not db:
+    if db is None:
         return {"logged": False}
     
     company_id = current_user.get("company_id")
