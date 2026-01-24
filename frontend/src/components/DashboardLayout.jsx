@@ -379,29 +379,40 @@ export default function DashboardLayout({ children, title }) {
       `}>
         <div className="flex flex-col h-full">
           {/* Logo with collapse button */}
-          <div className={`flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'gap-3 px-4'} py-5 border-b border-slate-100 dark:border-slate-700`}>
-            <img 
-              src="https://customer-assets.emergentagent.com/job_hrpulse-26/artifacts/ohljcqui_FortexaRH%20Logo.png" 
-              alt="FortexaRH" 
-              className={`${sidebarCollapsed ? 'h-8 w-8' : 'h-10'} object-contain shrink-0`}
-            />
+          <div className={`flex ${sidebarCollapsed ? 'flex-col items-center justify-center px-2' : 'flex-col items-center px-4'} py-5 border-b border-slate-100 dark:border-slate-700`}>
+            <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between w-full'}`}>
+              <img 
+                src="https://customer-assets.emergentagent.com/job_hrpulse-26/artifacts/ohljcqui_FortexaRH%20Logo.png" 
+                alt="FortexaRH" 
+                className={`${sidebarCollapsed ? 'h-8' : 'h-12'} object-contain`}
+              />
+              {!sidebarCollapsed && (
+                <button 
+                  className="hidden lg:flex p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                  onClick={toggleSidebarCollapsed}
+                  data-testid="collapse-sidebar-btn"
+                  title="Colapsar menú"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+              )}
+              {sidebarCollapsed && (
+                <button 
+                  className="hidden lg:flex p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors mt-2"
+                  onClick={toggleSidebarCollapsed}
+                  data-testid="collapse-sidebar-btn"
+                  title="Expandir menú"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              )}
+            </div>
             {!sidebarCollapsed && (
-              <div className="min-w-0 flex-1">
-                <p className="text-xs text-slate-500 dark:text-slate-400">Sistema de RRHH</p>
-              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 text-center">Sistema de RRHH y Nómina</p>
             )}
-            {/* Collapse button - Desktop only */}
-            <button 
-              className="hidden lg:flex p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
-              onClick={toggleSidebarCollapsed}
-              data-testid="collapse-sidebar-btn"
-              title={sidebarCollapsed ? "Expandir menú" : "Colapsar menú"}
-            >
-              {sidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-            </button>
             {/* Close button - Mobile only */}
             <button 
-              className="lg:hidden ml-auto p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
+              className="lg:hidden absolute right-2 top-2 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
               onClick={() => setSidebarOpen(false)}
             >
               <X className="w-5 h-5" />

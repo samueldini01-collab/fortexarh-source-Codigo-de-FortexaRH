@@ -44,13 +44,14 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-block mb-4">
+          <Link to="/" className="inline-block mb-2">
             <img 
               src="https://customer-assets.emergentagent.com/job_hrpulse-26/artifacts/ohljcqui_FortexaRH%20Logo.png" 
               alt="FortexaRH" 
               className="h-32 w-auto mx-auto"
             />
           </Link>
+          <p className="text-sm text-slate-500">Sistema de RRHH y Nómina</p>
         </div>
 
         <Card className="shadow-lg border-slate-200">

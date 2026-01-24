@@ -109,12 +109,13 @@ function EmployeeLogin() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
+          <div className="flex flex-col items-center mb-4">
             <img 
               src={LOGO_URL} 
               alt="FortexaRH Logo" 
               className="h-20 w-auto object-contain"
             />
+            <p className="text-sm text-slate-500 mt-2">Sistema de RRHH y Nómina</p>
           </div>
           <CardTitle className="text-2xl">Portal del Empleado</CardTitle>
           <CardDescription>Accede a tu información personal</CardDescription>
