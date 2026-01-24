@@ -205,6 +205,7 @@
 | Resend (Email) | ✅ Funcionando |
 | Google Auth | ✅ Funcionando |
 | QuickBooks Online | ✅ Integración OAuth 2.0 Completa |
+| CDC/Auditoría | ✅ Implementado (Manual + Change Streams) |
 | SAP, Oracle, Dynamics | MOCKED (Próximamente) |
 
 ### QuickBooks Online - Integración Completada (2026-01-24)
@@ -223,6 +224,25 @@
 - **Frontend:** Integración en página de Configuración de Empresa (tab Integraciones)
 - **Archivos:** `/app/backend/routes/quickbooks.py`, `/app/frontend/src/pages/CompanyConfigPage.jsx`
 
+### CDC (Change Data Capture) - Implementado (2026-01-24)
+- **Modos de operación:**
+  - **Change Streams** (MongoDB replica set): Captura en tiempo real
+  - **Manual Tracking**: Hooks en operaciones CRUD cuando no hay replica set
+- **Endpoints disponibles:**
+  - `GET /api/cdc/status` - Estado del sistema CDC
+  - `POST /api/cdc/start` - Iniciar Change Streams
+  - `POST /api/cdc/stop` - Detener Change Streams
+  - `GET /api/cdc/audit-logs` - Obtener logs con filtros
+  - `GET /api/cdc/audit-logs/{log_id}` - Detalle de un log
+  - `GET /api/cdc/audit-logs/document/{document_id}` - Historial de un documento
+  - `GET /api/cdc/statistics` - Estadísticas de auditoría
+  - `POST /api/cdc/manual-log` - Crear log manual
+  - `DELETE /api/cdc/cleanup` - Limpiar logs antiguos
+- **14 Colecciones Monitoreadas:** employees, payroll_entries, payroll_periods, attendance_records, vacation_requests, evaluations, users, companies, job_postings, candidates, documents_generated, loans, journal_entries, quickbooks_connections
+- **Función helper exportable:** `log_audit_event()` para uso desde otros módulos
+- **Frontend:** `/cdc-audit` - Dashboard de auditoría con filtros, estadísticas y detalle de eventos
+- **Archivos:** `/app/backend/routes/cdc_audit.py`, `/app/frontend/src/pages/CDCAuditPage.jsx`
+
 ## Arquitectura Actualizada
 
 ```
@@ -233,12 +253,14 @@
 ├── payroll_v2.py           # Nómina con flujo de aprobación
 ├── metrics.py              # Dashboard de métricas
 ├── search.py               # Búsqueda AI con aprendizaje
-├── notifications_system.py # Sistema de notificaciones (NEW)
-└── reports_advanced.py     # Reportes PDF con reportlab (NEW)
+├── notifications_system.py # Sistema de notificaciones
+├── reports_advanced.py     # Reportes PDF con reportlab
+├── quickbooks.py           # Integración QuickBooks OAuth 2.0 (NEW)
+└── cdc_audit.py            # CDC & Auditoría con Change Streams (NEW)
 
 /app/frontend/src/
 ├── components/
-│   ├── NotificationBell.jsx    # Campana notificaciones (NEW)
+│   ├── NotificationBell.jsx    # Campana notificaciones
 │   └── DashboardLayout.jsx     # Header con NotificationBell
 └── pages/
     ├── AttendancePage.jsx
@@ -247,13 +269,15 @@
     ├── PayrollV2Page.jsx
     ├── MetricsDashboardPage.jsx
     ├── CostsByDepartmentPage.jsx
-    └── ReportsAdvancedPage.jsx # Reportes PDF (ENHANCED)
+    ├── ReportsAdvancedPage.jsx
+    ├── CompanyConfigPage.jsx   # Integraciones QuickBooks (ENHANCED)
+    └── CDCAuditPage.jsx        # Dashboard de Auditoría CDC (NEW)
 ```
 
 ## Próximas Tareas (P1-P2)
 1. **Panel de Dispositivos Biométricos** - Gestión de dispositivos y documentación
-2. **Historial de Auditoría** - Log de cambios del sistema
-3. **Notificaciones Push/Email** - Alertas para eventos del portal del empleado
+2. **Notificaciones Push/Email** - Alertas para eventos del portal del empleado
+3. **Integrar CDC en operaciones CRUD** - Llamar `log_audit_event()` desde endpoints existentes
 
 ## Tareas Futuras (P3)
 - Integraciones Enterprise reales (SAP, Oracle, Dynamics)
