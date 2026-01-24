@@ -201,6 +201,28 @@ export default function PartnerDashboardPage() {
     }
   }, [token]);
 
+  // Fetch payout data
+  const fetchPayoutData = useCallback(async () => {
+    try {
+      const [balanceRes, historyRes, connectRes] = await Promise.all([
+        axios.get(`${API}/partners/payouts/balance`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        axios.get(`${API}/partners/payouts/history`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        axios.get(`${API}/partners/connect/status`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      ]);
+      setPayoutBalance(balanceRes.data);
+      setPayoutHistory(historyRes.data.payouts || []);
+      setStripeConnectStatus(connectRes.data);
+    } catch (error) {
+      console.error("Error fetching payout data:", error);
+    }
+  }, [token]);
+
   // Load all data
   useEffect(() => {
     const loadData = async () => {
