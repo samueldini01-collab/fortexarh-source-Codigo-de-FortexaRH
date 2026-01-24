@@ -253,9 +253,10 @@
 ## Próximas Tareas (P1-P2)
 1. **Panel de Dispositivos Biométricos** - Gestión de dispositivos y documentación
 2. **Historial de Auditoría** - Log de cambios del sistema
-3. **PWA/Mobile App** - Versión móvil del portal del empleado
+3. **Notificaciones Push/Email** - Alertas para eventos del portal del empleado
 
 ## Tareas Futuras (P3)
-- Integraciones Enterprise reales (QuickBooks, SAP, Oracle)
+- Integraciones Enterprise reales (SAP, Oracle, Dynamics)
+- PWA/Mobile App - Versión móvil del portal del empleado
 - E-signature para documentos
 - Temas personalizados por empresa
