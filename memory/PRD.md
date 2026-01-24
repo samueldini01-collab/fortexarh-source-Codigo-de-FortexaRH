@@ -2,6 +2,20 @@
 
 ## Última Actualización: 2026-01-24
 
+## ✅ Completado Hoy
+
+### 🔍 Búsqueda Global con IA (NUEVO)
+- **Barra centrada y más amplia** en el header
+- **Búsqueda asistida por IA** usando Gemini 3 Flash
+- Interpreta consultas en **lenguaje natural** (ej: "¿Quién tiene vacaciones esta semana?")
+- Sugerencias inteligentes y ejemplos de búsqueda
+- Atajo de teclado `Ctrl+K` / `⌘K`
+- Resultados agrupados por categoría con iconos y badges
+
+**Archivos:**
+- `/app/backend/routes/search.py` - API con endpoints `/search`, `/search/ai`, `/search/suggestions`
+- `/app/frontend/src/components/GlobalSearch.jsx` - Componente UI mejorado
+
 ## ✅ Completado en Esta Sesión
 
 ### 🕐 Módulo 1: Control de Asistencia y Tiempo
