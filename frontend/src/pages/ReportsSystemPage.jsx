@@ -471,14 +471,14 @@ export default function ReportsSystemPage() {
                                 </Select>
                               ) : filter === "status" ? (
                                 <Select 
-                                  value={filters[filter] || ""} 
-                                  onValueChange={(v) => setFilters({...filters, [filter]: v})}
+                                  value={filters[filter] || "all"} 
+                                  onValueChange={(v) => setFilters({...filters, [filter]: v === "all" ? "" : v})}
                                 >
                                   <SelectTrigger className="h-8 text-sm">
                                     <SelectValue placeholder="Todos" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="">Todos</SelectItem>
+                                    <SelectItem value="all">Todos</SelectItem>
                                     <SelectItem value="active">Activo</SelectItem>
                                     <SelectItem value="inactive">Inactivo</SelectItem>
                                     <SelectItem value="pending">Pendiente</SelectItem>
