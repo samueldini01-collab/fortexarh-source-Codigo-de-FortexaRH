@@ -822,27 +822,54 @@ export default function CompanyConfigPage() {
       </CardHeader>
       <CardContent className="space-y-4">
         {integrations.map(integration => (
-          <div key={integration.id} className="flex items-center justify-between p-4 rounded-lg border bg-white">
+          <div key={integration.id} className={`flex items-center justify-between p-4 rounded-lg border ${integration.connected ? 'bg-emerald-50 border-emerald-200' : 'bg-white'}`}>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center text-2xl">
+              <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-2xl ${integration.connected ? 'bg-emerald-100' : 'bg-slate-100'}`}>
                 {integration.icon}
               </div>
               <div>
-                <h4 className="font-medium">{integration.name}</h4>
+                <div className="flex items-center gap-2">
+                  <h4 className="font-medium">{integration.name}</h4>
+                  {integration.id === "quickbooks" && integration.type === "oauth" && (
+                    <Badge variant="secondary" className="text-xs">OAuth 2.0</Badge>
+                  )}
+                  {integration.type === "mock" && (
+                    <Badge variant="outline" className="text-xs text-amber-600">Próximamente</Badge>
+                  )}
+                </div>
                 <p className="text-sm text-slate-500 dark:text-slate-400">{integration.description}</p>
+                {integration.connected && integration.companyName && (
+                  <p className="text-xs text-emerald-600 mt-1">
+                    ✓ Conectado a: {integration.companyName}
+                  </p>
+                )}
               </div>
             </div>
-            <Button 
-              variant={integration.connected ? "outline" : "default"}
-              onClick={() => connectIntegration(integration.id)}
-              className={integration.connected ? "text-emerald-600 border-emerald-200" : ""}
-            >
-              {integration.connected ? (
-                <><Check className="w-4 h-4 mr-2" />Conectado</>
-              ) : (
-                "Conectar"
+            <div className="flex items-center gap-2">
+              {integration.connected && integration.id === "quickbooks" && (
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => window.open("https://app.qbo.intuit.com", "_blank")}
+                >
+                  <ExternalLink className="w-4 h-4" />
+                </Button>
               )}
-            </Button>
+              <Button 
+                variant={integration.connected ? "outline" : "default"}
+                onClick={() => connectIntegration(integration.id)}
+                className={integration.connected ? "text-emerald-600 border-emerald-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200" : ""}
+                disabled={integration.id === "quickbooks" && quickbooksLoading}
+              >
+                {integration.id === "quickbooks" && quickbooksLoading ? (
+                  <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Procesando...</>
+                ) : integration.connected ? (
+                  <><Check className="w-4 h-4 mr-2" />Desconectar</>
+                ) : (
+                  "Conectar"
+                )}
+              </Button>
+            </div>
           </div>
         ))}
         
