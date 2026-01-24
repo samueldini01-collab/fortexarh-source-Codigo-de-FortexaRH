@@ -473,15 +473,19 @@ async def add_partner_client(
     data: PartnerClientCreate,
     current_user: dict = Depends(get_current_user)
 ):
-    """Add a new client to the partner's portfolio"""
+    """Add a new client to the partner's portfolio and send invitation email"""
     partner_id = current_user.get("partner_id")
     
     if not partner_id:
         raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
     
-    # Get firm info to get referral code
-    firm = await db.accounting_firms.find_one({"partner_id": partner_id}, {"referral_code": 1})
+    # Get firm info to get referral code and name
+    firm = await db.accounting_firms.find_one(
+        {"partner_id": partner_id}, 
+        {"referral_code": 1, "name": 1}
+    )
     referral_code = firm.get("referral_code") if firm else "PARTNER"
+    firm_name = firm.get("name", "Tu Contador") if firm else "Tu Contador"
     
     # Check if client email already exists
     existing = await db.partner_clients.find_one({
@@ -493,6 +497,7 @@ async def add_partner_client(
     
     client_id = f"client_{secrets.token_hex(8)}"
     invitation_code = secrets.token_hex(16)
+    invitation_link = f"https://fortexarh.com/register?ref={referral_code}&invite={invitation_code}"
     
     client_data = {
         "client_id": client_id,
@@ -506,12 +511,14 @@ async def add_partner_client(
         "subscription_status": "pending",
         "subscription_plan": None,
         "invitation_code": invitation_code,
-        "invitation_link": f"https://fortexarh.com/register?ref={referral_code}&invite={invitation_code}",
+        "invitation_link": invitation_link,
         "invited_at": datetime.now(timezone.utc),
         "activated_at": None,
         "monthly_value": 0,
         "total_paid": 0,
         "commission_earned": 0,
+        "invitation_sent": False,
+        "invitation_sent_at": None,
         "created_at": datetime.now(timezone.utc),
         "updated_at": datetime.now(timezone.utc)
     }
@@ -524,11 +531,34 @@ async def add_partner_client(
         {"$inc": {"total_clients": 1}}
     )
     
+    # Send invitation email automatically
+    email_sent = await send_client_invitation_email(
+        client_email=data.email.lower(),
+        client_name=data.contact_name,
+        company_name=data.company_name,
+        firm_name=firm_name,
+        invitation_link=invitation_link
+    )
+    
+    # Update client record with email status
+    if email_sent:
+        await db.partner_clients.update_one(
+            {"client_id": client_id},
+            {
+                "$set": {
+                    "invitation_sent": True,
+                    "invitation_sent_at": datetime.now(timezone.utc)
+                }
+            }
+        )
+    
     return {
         "message": "Cliente agregado exitosamente",
         "client_id": client_id,
-        "invitation_link": client_data["invitation_link"],
-        "invitation_code": invitation_code
+        "invitation_link": invitation_link,
+        "invitation_code": invitation_code,
+        "email_sent": email_sent,
+        "email_sent_to": data.email.lower()
     }
 
 
