@@ -429,11 +429,17 @@ Portal B2B2B completo para firmas de contadores que gestionan múltiples cliente
 - **API Endpoints:** GET stats, GET/PATCH tickets, POST respond
 - **Archivos:** `/app/backend/routes/support.py`, `/app/frontend/src/pages/SupportAdminPage.jsx`
 
+### Sistema de Emails para Partners - Implementado (2026-01-24)
+- **Endpoint para agregar cliente:** Ahora envía email automáticamente con `email_sent: true`
+- **Endpoint de reenvío:** `POST /api/partners/clients/{id}/resend-invitation`
+- **Tracking:** Campos `invitation_sent`, `invitation_sent_at`, `invitation_resent_count`
+- **Template:** Email HTML profesional con branding, beneficios y CTA
+- **Archivos:** `/app/backend/routes/partners.py`, `/app/frontend/src/pages/PartnerDashboardPage.jsx`
+
 ## Próximas Tareas (P1-P2)
 1. **Panel de Dispositivos Biométricos** - Gestión de dispositivos y documentación de integración
 2. **Notificaciones Push/Email** - Alertas para eventos del portal del empleado
 3. **Integrar CDC en operaciones CRUD** - Llamar `log_audit_event()` desde endpoints existentes
-4. **Envío de emails a clientes referidos** - Automatizar invitaciones desde el portal de partners
 
 ## Tareas Futuras (P3)
 - Integraciones Enterprise reales (SAP, Oracle, Dynamics)
