@@ -244,13 +244,47 @@ export default function PayrollV2Page() {
     }
   };
 
+  const handleSubmitForApproval = async (periodId) => {
+    try {
+      await axios.post(`${API}/payroll-v2/periods/${periodId}/submit-for-approval`, {}, { headers: getAuthHeaders(), withCredentials: true });
+      toast.success("Nómina enviada para aprobación");
+      fetchPeriods();
+      if (selectedPeriod?.period_id === periodId) {
+        const updated = await axios.get(`${API}/payroll-v2/periods/${periodId}`, { headers: getAuthHeaders(), withCredentials: true });
+        setSelectedPeriod(prev => ({ ...prev, status: 'pending_approval' }));
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al enviar para aprobación");
+    }
+  };
+
   const handleApprovePeriod = async (periodId) => {
     try {
       await axios.post(`${API}/payroll-v2/periods/${periodId}/approve`, {}, { headers: getAuthHeaders(), withCredentials: true });
       toast.success("Período aprobado");
       fetchPeriods();
+      if (selectedPeriod?.period_id === periodId) {
+        setSelectedPeriod(prev => ({ ...prev, status: 'approved' }));
+      }
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error");
+      toast.error(error.response?.data?.detail || "Error al aprobar");
+    }
+  };
+
+  const handleRejectPeriod = async (periodId, reason) => {
+    if (!reason) {
+      toast.error("Debe proporcionar un motivo para el rechazo");
+      return;
+    }
+    try {
+      await axios.post(`${API}/payroll-v2/periods/${periodId}/reject`, { comments: reason }, { headers: getAuthHeaders(), withCredentials: true });
+      toast.success("Nómina rechazada y devuelta a borrador");
+      fetchPeriods();
+      if (selectedPeriod?.period_id === periodId) {
+        setSelectedPeriod(prev => ({ ...prev, status: 'draft' }));
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al rechazar");
     }
   };
 
