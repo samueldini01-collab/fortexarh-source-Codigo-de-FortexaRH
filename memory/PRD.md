@@ -4,6 +4,56 @@
 
 ## ✅ Completado Hoy (Sesión Actual)
 
+### 💰 Sistema de Pago de Comisiones a Partners con Stripe Connect (P1 - COMPLETADO)
+Sistema completo para que los partners retiren sus comisiones automáticamente a sus cuentas bancarias.
+
+#### Backend - Stripe Connect Endpoints
+- `POST /api/partners/connect/onboard` - Crear link de onboarding Stripe Express
+- `GET /api/partners/connect/status` - Verificar estado de conexión Stripe
+- `GET /api/partners/connect/dashboard` - Obtener link al dashboard Stripe del partner
+- `GET /api/partners/payouts/balance` - Obtener balance disponible para retiro
+- `POST /api/partners/payouts/request` - Solicitar retiro de comisiones
+- `GET /api/partners/payouts/history` - Historial de retiros
+
+#### Frontend - Nueva Pestaña "Retiros"
+- **Tarjetas de balance:** Balance disponible, Total ganado, Total pagado, En proceso
+- **Integración Stripe Connect:** Botón para conectar cuenta bancaria
+- **Verificación de estado:** Muestra si la cuenta está conectada y lista
+- **Modal de retiro:** Formulario para solicitar monto específico o total
+- **Historial de pagos:** Tabla con todos los retiros procesados
+
+#### Reglas del Sistema
+- **Método:** Stripe Connect (automático)
+- **Frecuencia:** Mensual
+- **Mínimo para retiro:** $50 USD
+- **Tiempo de llegada:** 2-3 días hábiles
+- **Comisión:** 30% de por vida por cliente referido
+
+#### Test Report
+- **Backend:** 21/21 tests passed (100%)
+- **Frontend:** 100% features verified
+- **Archivo:** `/app/test_reports/iteration_25.json`
+
+---
+
+### ✨ Animaciones Scroll-Reveal en Landing Page (P1 - COMPLETADO)
+Animaciones de entrada cuando los elementos entran en el viewport para mayor engagement.
+
+#### Implementación
+- **IntersectionObserver:** Detecta cuando elementos entran en el viewport
+- **Animaciones CSS:** scrollRevealUp, scrollRevealLeft, scrollRevealRight, scrollRevealScale
+- **Delays escalonados:** scroll-delay-1 a scroll-delay-4 para efectos en cascada
+
+#### Secciones Animadas
+- **Testimonios:** Título y 4 tarjetas de testimonios con delays escalonados
+- **FAQ:** Título, acordeón y CTA inferior con efecto scale
+
+#### Test Report
+- 9 elementos con scroll-reveal detectados y animados correctamente
+- **Archivo:** `/app/test_reports/iteration_25.json`
+
+---
+
 ### 🚀 Mejoras Landing Page: Hero, Video, Testimonios y FAQ (P0 - COMPLETADO)
 Implementación de mejoras significativas en la página principal para aumentar conversiones.
 
