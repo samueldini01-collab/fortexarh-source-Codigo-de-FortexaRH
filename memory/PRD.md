@@ -4,6 +4,71 @@
 
 ## ✅ Completado Hoy (Sesión Actual)
 
+### 🤝 Portal para Firmas de Contadores (P0 - COMPLETADO)
+Portal B2B2B completo para firmas de contadores que gestionan múltiples clientes.
+
+#### Landing Page (`/accountants-software`)
+- Diseño diferenciado (tema oscuro con acentos emerald)
+- Propuesta de valor clara: $10/mes, 30% comisión, empleados ilimitados
+- Secciones: Hero, Beneficios, Cómo Funciona, Ejemplo de Ganancias, Features, Comparación
+- CTA prominente para registro
+
+#### Registro de Partners (`/partner-register`)
+- Formulario de 2 pasos
+- Paso 1: Datos de la firma (nombre, RNC, contacto, email, ciudad, sitio web, dirección)
+- Paso 2: Teléfono, contraseña
+- Registro abierto sin validación
+- Crea: firma, empresa, usuario con rol `partner_admin`
+- **Endpoint:** `POST /api/partners/register`
+
+#### Dashboard de Partner (`/partner-dashboard`)
+- **KPIs:**
+  - Clientes Activos (con indicador de prueba)
+  - Comisiones Pendientes
+  - Total Ganado
+  - Tu Precio Mensual
+- **Banner de Link Referido:** Código y link para compartir con clientes
+- **Alerta de Beneficios:** Muestra cuando no tiene cliente activo para beneficios de $10/mes
+- **3 Tabs:**
+  1. **Resumen:** Clientes recientes, resumen comisiones, modelo de precios
+  2. **Clientes:** Tabla con gestión, agregar cliente, cambiar facturación
+  3. **Comisiones:** Historial con totales por estado
+
+#### Modelo de Precios Partner
+| Condición | Precio Mensual | Empleados | Comisión |
+|-----------|---------------|-----------|----------|
+| Con 1+ cliente activo | $10 fijo | Ilimitados | 30% de por vida |
+| Sin clientes activos | Plan estándar | $1.50/empleado | 0% |
+| Período de gracia | 7 días después de perder último cliente |
+
+#### API Endpoints Implementados
+- `POST /api/partners/register` - Registro de nueva firma
+- `GET /api/partners/dashboard` - KPIs y datos del dashboard
+- `GET /api/partners/clients` - Lista de clientes del partner
+- `POST /api/partners/clients` - Agregar nuevo cliente
+- `GET /api/partners/clients/{id}` - Detalle de cliente
+- `PATCH /api/partners/clients/{id}/billing` - Cambiar tipo de facturación
+- `GET /api/partners/commissions` - Historial de comisiones
+- `GET /api/partners/commissions/summary` - Resumen mensual
+- `GET /api/partners/subscription` - Estado de suscripción
+- `GET /api/partners/referral` - Info de link de referido
+
+#### Archivos Creados/Modificados
+- `/app/backend/routes/partners.py` - API completa (702 líneas)
+- `/app/frontend/src/pages/AccountantsSoftwarePage.jsx` - Landing page
+- `/app/frontend/src/pages/PartnerRegisterPage.jsx` - Registro
+- `/app/frontend/src/pages/PartnerDashboardPage.jsx` - Dashboard
+- `/app/frontend/src/App.js` - Rutas agregadas
+- `/app/backend/server.py` - Router registrado
+- `/app/frontend/src/components/DashboardLayout.jsx` - Link a portal en menú de usuario
+
+#### Test Report
+- **Backend:** 23/23 tests passed (100%)
+- **Frontend:** All pages load correctly
+- **Archivo:** `/app/test_reports/iteration_20.json`
+
+---
+
 ### 🖼️ Logo de FortexaRH Actualizado en Todo el Sistema (P0 - COMPLETADO)
 - **URL del nuevo logo:** `https://customer-assets.emergentagent.com/job_hrpulse-26/artifacts/ohljcqui_FortexaRH%20Logo.png`
 - **Ubicaciones actualizadas:**
