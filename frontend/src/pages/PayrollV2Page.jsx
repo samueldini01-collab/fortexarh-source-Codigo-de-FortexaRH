@@ -816,16 +816,38 @@ export default function PayrollV2Page() {
                       <div className="text-right">
                         {getStatusBadge(selectedPeriod.status)}
                         <div className="mt-3 flex gap-2 flex-wrap justify-end">
-                          {selectedPeriod.status === 'open' && (
+                          {/* Draft/Open: Add employees, Calculate, Submit for Approval */}
+                          {['open', 'draft'].includes(selectedPeriod.status) && (
                             <>
                               <Button size="sm" variant="secondary" onClick={() => handleAddEmployees(selectedPeriod.period_id)}><Users className="w-4 h-4 mr-1" />Agregar</Button>
                               <Button size="sm" variant="secondary" onClick={() => handleCalculatePeriod(selectedPeriod.period_id)}><Calculator className="w-4 h-4 mr-1" />Calcular</Button>
+                              {selectedPeriod.employee_count > 0 && (
+                                <Button size="sm" className="bg-orange-500 hover:bg-orange-600" onClick={() => handleSubmitForApproval(selectedPeriod.period_id)}>
+                                  <ChevronRight className="w-4 h-4 mr-1" />Enviar a Aprobación
+                                </Button>
+                              )}
                             </>
                           )}
+                          {/* Pending Approval: Approve or Reject */}
+                          {selectedPeriod.status === 'pending_approval' && (
+                            <>
+                              <Button size="sm" variant="secondary" onClick={() => {
+                                const reason = prompt("Motivo del rechazo:");
+                                if (reason) handleRejectPeriod(selectedPeriod.period_id, reason);
+                              }}>
+                                <X className="w-4 h-4 mr-1" />Rechazar
+                              </Button>
+                              <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={() => handleApprovePeriod(selectedPeriod.period_id)}>
+                                <Check className="w-4 h-4 mr-1" />Aprobar
+                              </Button>
+                            </>
+                          )}
+                          {/* Calculated (legacy support) */}
                           {selectedPeriod.status === 'calculated' && (
                             <Button size="sm" variant="secondary" onClick={() => handleApprovePeriod(selectedPeriod.period_id)}><Check className="w-4 h-4 mr-1" />Aprobar</Button>
                           )}
-                          {['calculated', 'approved'].includes(selectedPeriod.status) && (
+                          {/* Approved: Pay */}
+                          {selectedPeriod.status === 'approved' && (
                             <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={() => openPayDialog(selectedPeriod)}><CreditCard className="w-4 h-4 mr-1" />Pagar</Button>
                           )}
                           <Button size="sm" variant="secondary" onClick={() => handleExportExcel(selectedPeriod.period_id)}><Download className="w-4 h-4 mr-1" />Excel</Button>
