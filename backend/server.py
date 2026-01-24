@@ -2704,6 +2704,14 @@ async def startup_db_client():
         # Test database connection with timeout
         await asyncio.wait_for(db.command("ping"), timeout=10.0)
         logger.info("Database connection established successfully")
+        
+        # Create CDC audit indexes
+        await create_cdc_indexes()
+        
+        # Start CDC Change Streams in background (optional - can be started manually)
+        # Uncomment the next line to auto-start CDC on server startup
+        # asyncio.create_task(start_all_change_streams())
+        
     except asyncio.TimeoutError:
         logger.warning("Database connection timeout during startup - will retry on first request")
     except Exception as e:
