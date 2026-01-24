@@ -69,7 +69,11 @@ import {
   Receipt,
   FileText,
   Eye,
-  Edit2
+  Edit2,
+  Banknote,
+  ArrowUpRight,
+  ShieldCheck,
+  AlertTriangle
 } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
