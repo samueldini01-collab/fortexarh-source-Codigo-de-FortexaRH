@@ -96,7 +96,7 @@ const DEFAULT_NAVIGATION = [
   { id: "accounting", name: "Contabilidad", href: "/accounting", icon: BookOpen, visible: true, featureKey: "accounting" },
   { id: "evaluations", name: "Evaluaciones", href: "/evaluations", icon: Target, visible: true, featureKey: "evaluations" },
   { id: "recruitment", name: "Reclutamiento", href: "/recruitment", icon: Briefcase, visible: true, featureKey: "recruitment" },
-  { id: "reports-advanced", name: "Reportes Avanzados", href: "/reports-advanced", icon: FileBarChart, visible: true, featureKey: "reports" },
+  { id: "reports-system", name: "Centro de Reportes", href: "/reports-system", icon: FileBarChart, visible: true, featureKey: "reports" },
   { id: "dgii-reports", name: "Reportes DGII", href: "/dgii-reports", icon: FileText, visible: true, featureKey: "reports" },
   { id: "attendance", name: "Asistencias", href: "/attendance", icon: Clock, visible: true, featureKey: "attendance" },
   { id: "vacations", name: "Vacaciones", href: "/vacations", icon: Calendar, visible: true, featureKey: "vacations" },
