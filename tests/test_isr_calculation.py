@@ -16,7 +16,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://hr-dashboard-105.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://accountant-hub-24.preview.emergentagent.com')
 
 # TSS Rates
 TSS_EMPLOYEE_TOTAL = 0.0594  # 5.94% (SFS 3.07% + AFP 2.87%)

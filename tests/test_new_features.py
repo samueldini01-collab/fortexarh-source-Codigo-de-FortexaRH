@@ -8,7 +8,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://hr-dashboard-105.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://accountant-hub-24.preview.emergentagent.com')
 
 # Test credentials
 TEST_EMAIL = "test_refactor@fortexa.com"
