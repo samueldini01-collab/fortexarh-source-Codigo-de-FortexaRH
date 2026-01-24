@@ -50,6 +50,7 @@ import ResetPasswordPage from "@/pages/ResetPasswordPage";
 import NotificationsPage from "@/pages/NotificationsPage";
 import CostsByDepartmentPage from "@/pages/CostsByDepartmentPage";
 import ExpensesPage from "@/pages/ExpensesPage";
+import CDCAuditPage from "@/pages/CDCAuditPage";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
