@@ -42,6 +42,7 @@ import DGIIReportsPage from "@/pages/DGIIReportsPage";
 import LoansPage from "@/pages/LoansPage";
 import MetricsDashboardPage from "@/pages/MetricsDashboardPage";
 import ReportsAdvancedPage from "@/pages/ReportsAdvancedPage";
+import ReportsSystemPage from "@/pages/ReportsSystemPage";
 import EmployeePortalPage from "@/pages/EmployeePortalPage";
 import DocumentsPage from "@/pages/DocumentsPage";
 import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
