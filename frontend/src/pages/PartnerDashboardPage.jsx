@@ -230,7 +230,8 @@ export default function PartnerDashboardPage() {
       await Promise.all([
         fetchDashboard(),
         fetchClients(),
-        fetchCommissions()
+        fetchCommissions(),
+        fetchPayoutData()
       ]);
       setLoading(false);
     };
@@ -238,7 +239,7 @@ export default function PartnerDashboardPage() {
     if (token) {
       loadData();
     }
-  }, [token, fetchDashboard, fetchClients, fetchCommissions]);
+  }, [token, fetchDashboard, fetchClients, fetchCommissions, fetchPayoutData]);
 
   // Add new client
   const handleAddClient = async (e) => {
