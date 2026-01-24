@@ -222,6 +222,11 @@ export default function PartnerDashboardPage() {
       
       toast.success("Cliente agregado exitosamente");
       
+      // Show email sent status
+      if (response.data.email_sent) {
+        toast.success(`Invitación enviada a ${response.data.email_sent_to}`);
+      }
+      
       // Copy invitation link
       if (response.data.invitation_link) {
         navigator.clipboard.writeText(response.data.invitation_link);
@@ -254,6 +259,19 @@ export default function PartnerDashboardPage() {
     if (dashboardData?.firm?.referral_link) {
       navigator.clipboard.writeText(dashboardData.firm.referral_link);
       toast.success("Link de referido copiado al portapapeles");
+    }
+  };
+
+  // Resend invitation email
+  const resendInvitation = async (clientId, clientEmail) => {
+    try {
+      await axios.post(`${API}/partners/clients/${clientId}/resend-invitation`, null, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success(`Invitación reenviada a ${clientEmail}`);
+      fetchClients();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al reenviar invitación");
     }
   };
 
