@@ -1,6 +1,12 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { 
   Users, 
   DollarSign, 
@@ -39,8 +45,86 @@ import {
   Percent,
   Award,
   TrendingUp,
-  UserPlus
+  UserPlus,
+  Play,
+  Star,
+  Quote,
+  HelpCircle,
+  CheckCircle,
+  Sparkles
 } from "lucide-react";
+
+// Testimonials data
+const testimonials = [
+  {
+    name: "María González",
+    role: "Gerente de RRHH",
+    company: "Grupo Comercial del Caribe",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
+    content: "FortexaRH transformó nuestra gestión de nómina. Antes tardábamos 3 días en procesar pagos, ahora lo hacemos en 2 horas. El ahorro de tiempo es increíble.",
+    rating: 5
+  },
+  {
+    name: "Carlos Pérez",
+    role: "Director Administrativo", 
+    company: "Constructora Nacional SRL",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
+    content: "El cumplimiento automático con TSS y DGII nos quitó un peso enorme. Ya no tenemos que preocuparnos por las fechas límite ni los cálculos.",
+    rating: 5
+  },
+  {
+    name: "Ana Martínez",
+    role: "CEO",
+    company: "Tech Solutions RD",
+    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop&crop=face",
+    content: "El portal de empleados redujo las consultas de RRHH en un 70%. Nuestro equipo ahora puede ver sus recibos y solicitar vacaciones sin intermediarios.",
+    rating: 5
+  },
+  {
+    name: "Roberto Sánchez",
+    role: "Contador Principal",
+    company: "Deloitte RD Partner",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+    content: "Como firma contable, gestionamos 15 empresas con FortexaRH. La integración con QuickBooks y los reportes automáticos nos ahorran horas cada semana.",
+    rating: 5
+  }
+];
+
+// FAQ data
+const faqs = [
+  {
+    question: "¿Cuánto tiempo toma implementar FortexaRH?",
+    answer: "La implementación básica toma entre 1-3 días. Incluye configuración de la empresa, carga de empleados y capacitación inicial. Para empresas con más de 100 empleados o migraciones de datos complejas, el proceso puede tomar 1-2 semanas con acompañamiento dedicado."
+  },
+  {
+    question: "¿FortexaRH cumple con las regulaciones dominicanas (TSS, DGII)?",
+    answer: "Sí, FortexaRH está 100% adaptado a la legislación laboral dominicana. Calculamos automáticamente ISR, AFP, SFS según las tablas vigentes. Generamos los formatos oficiales IR-17, TSS-4 y otros reportes requeridos por la DGII y Tesorería de la Seguridad Social."
+  },
+  {
+    question: "¿Puedo migrar datos desde Excel u otro sistema?",
+    answer: "Absolutamente. Ofrecemos importación masiva desde Excel y CSV. También tenemos conectores para migrar desde sistemas populares. Nuestro equipo de soporte te asiste en todo el proceso de migración sin costo adicional."
+  },
+  {
+    question: "¿Qué tan segura es la información de mis empleados?",
+    answer: "Utilizamos encriptación AES-256 para datos en reposo y TLS 1.3 para datos en tránsito. Nuestros servidores están en AWS con certificación SOC 2. Realizamos backups automáticos cada hora y tienes control total sobre quién accede a qué información."
+  },
+  {
+    question: "¿Puedo probar el sistema antes de pagar?",
+    answer: "Sí, ofrecemos 14 días de prueba gratuita con acceso completo a todas las funcionalidades. No requiere tarjeta de crédito y puedes cancelar en cualquier momento. También ofrecemos demos personalizadas con nuestro equipo de ventas."
+  },
+  {
+    question: "¿Qué soporte técnico incluye?",
+    answer: "Todos los planes incluyen soporte por email y chat en horario laboral (L-V, 9AM-4PM). Los planes Profesional y Enterprise incluyen soporte telefónico prioritario y un gestor de cuenta dedicado. El plan Enterprise incluye soporte 24/7 para incidencias críticas."
+  },
+  {
+    question: "¿Se integra con sistemas de asistencia biométrica?",
+    answer: "Sí, nos integramos con los principales dispositivos biométricos del mercado (ZKTeco, Anviz, Suprema, entre otros). También soportamos marcaje por app móvil con geolocalización y reconocimiento facial para equipos remotos."
+  },
+  {
+    question: "¿Cuántos usuarios pueden acceder al sistema?",
+    answer: "No limitamos la cantidad de usuarios administradores. El precio se basa en la cantidad de empleados activos en nómina, no en usuarios del sistema. Todos los empleados pueden acceder al portal self-service sin costo adicional."
+  }
+];
 
 const features = [
   {
