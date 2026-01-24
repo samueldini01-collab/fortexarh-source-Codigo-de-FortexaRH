@@ -109,6 +109,7 @@ const DEFAULT_NAVIGATION = [
   { id: "users-management", name: "Usuarios", href: "/users-management", icon: UserCog, visible: true, featureKey: "settings" },
   { id: "subscriptions", name: "Suscripción", href: "/subscriptions", icon: CreditCard, visible: true, featureKey: "subscriptions" },
   { id: "payroll-config", name: "Config. Nómina", href: "/payroll-config", icon: Settings2, visible: true, featureKey: "employees" },
+  { id: "support-admin", name: "Centro Soporte", href: "/support-admin", icon: HelpCircle, visible: true, featureKey: "settings" },
   { id: "cdc-audit", name: "CDC & Auditoría", href: "/cdc-audit", icon: Activity, visible: true, featureKey: "settings" },
   { id: "company-config", name: "Configuración", href: "/company-config", icon: Building2, visible: true, featureKey: "settings" },
 ];
