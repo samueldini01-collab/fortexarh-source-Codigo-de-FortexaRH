@@ -9,68 +9,79 @@ The user wants to create a SaaS (Software as a Service) Human Resources and payr
 -   **Employee Self-Service Portal:** A portal for employees to manage their information and requests.
 -   **Integrations:** Stripe, Resend, QuickBooks Online, SAP, Oracle, Dynamics.
 -   **UI/UX:** A custom favicon, legal pages, contact section, Dark Mode, and consistent company branding.
--   **NEW - Partner Portal for Accounting Firms:**
-    -   A dedicated portal for accounting firms to manage multiple clients.
-    -   **Pricing Model:** Firms pay a flat rate of 0/month (with unlimited employees for their own firm) as long as they have at least one active, paying client.
-    -   **Default Pricing:** If a firm has no active clients, they are billed using the standard public pricing tiers.
-    -   **Grace Period:** A 7-day grace period is granted after a firm's last active client cancels before reverting to standard pricing.
-    -   **Commission:** Firms earn a 30% lifetime commission on all their referred clients.
-    -   **Registration:** Open registration for any user to sign up as an accounting firm.
-    -   **URL:** The portal's landing page should be accessible at .
+-   **Partner Portal for Accounting Firms:** A dedicated portal for accounting firms to manage multiple clients with special pricing, a 7-day grace period, and a 30% lifetime commission. The landing page is at .
+-   **Admin-side Support Ticket Management:** A UI for administrators to view, manage, and respond to support tickets.
+-   **Automated Partner Client Invitations:** Automatically send email invitations to new clients added by partners, with a feature to resend the invitation.
+-   **UI/UX Enhancements:**
+    -   Update the main landing page navbar with dropdowns for Para Empresas and Para Contadores.
+    -   Add a theme switcher (light/dark/contrast/system) to the partner portal landing page ().
+    -   Update company contact information (address, phone, email, hours) across the site.
+    -   Generate promotional videos for marketing.
+    -   Enhance the landing page with an improved Hero Section, video integration, testimonials, and an FAQ section.
 
 **User's preferred language**: Spanish (Español)
 
 **what currently exists?**
-The application is a comprehensive HR & Payroll SaaS platform. During this session, the agent successfully completed the full QuickBooks Online integration, including OAuth 2.0, API endpoints for data synchronization, and secure webhooks for real-time updates. The integration was configured with the user's production credentials. A Change Data Capture (CDC) system was implemented to log database changes, with a fallback to manual/polling mode for development environments. A public support page () was created for ticket submission. The agent also assisted the user by generating screenshots and providing text for the QuickBooks Marketplace listing. The agent has just started the implementation of a new Portal for Accounting Firms by creating the initial backend and frontend files.
+The application is a functional, full-stack HR & Payroll SaaS platform. During this session, the agent successfully built and tested several major features:
+1.  **Portal for Accounting Firms:** A complete B2B2B portal with registration, a dedicated dashboard (KPIs, client list, commissions), and client management capabilities.
+2.  **Admin Support Panel:** A full-featured admin page () to manage support tickets, including viewing, filtering, changing status/priority, and responding.
+3.  **Automated Email Invitations:** Integration with Resend to automatically email new clients added by partners, including a resend functionality in the partner dashboard.
+4.  **UI/UX Overhaul:** The main landing page navbar was updated with feature dropdowns, and the partner landing page received a theme switcher. All company contact information was updated sitewide.
+5.  **Promotional Content:** Two promotional videos were generated using Sora 2 and are available in .
+
+The application's health has been checked and is considered ready for deployment. The agent has just begun implementing the user's latest request for a major enhancement of the main landing page.
 
 **Last working item**:
--   **Last item agent was working:** Initiating the development of the Portal for Accounting Firms feature. The agent understood the business logic and created the foundational files.
+-   **Last item agent was working:** Implementing a set of significant improvements for the main landing page (). The user requested a new Hero Section, integration of the promotional video, a new testimonials section, and an FAQ section. The agent analyzed the file and was preparing to apply all the changes in a single, comprehensive update.
 -   **Status:** IN PROGRESS
 -   **Agent Testing Done:** N
--   **Which testing method agent to use?** both. Backend testing is needed for the new partner-specific subscription logic, commission calculations, and client management APIs. Frontend testing is required to verify the new accountant landing page, registration flow, and the partner dashboard.
+-   **Which testing method agent to use?** Frontend testing agent. The changes involve significant UI/UX updates to a critical page, justifying a full testing cycle. A screenshot can be used for a quick visual check.
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   There are no known pending issues or bugs.
+-   There are no known bugs or technical issues. The work is feature-driven.
 
 **In progress Task List**:
--   **Task 1:** Complete the Portal for Accounting Firms (P0)
+-   **Task 1:** Complete the Landing Page Enhancements (P0)
 
 **Task Detail:**
 -   **Task 1:**
-    -   **Where to resume:** The agent has created  and . The immediate next steps are:
-        1.  Populate  with the necessary API endpoints (registration, client management, commission tracking, subscription logic).
-        2.  Build the frontend for the  landing page.
-        3.  Create and implement the registration page for accounting firms ().
-        4.  Develop the partner-specific dashboard pages (client list, commissions, etc.).
-        5.  Register the new router in  and add the new routes in .
-    -   **What will be achieved with this?** A fully functional portal that allows accounting firms to sign up, manage their clients on FortexaRH, and benefit from the special pricing and commission structure.
+    -   **Where to resume:** The agent has analyzed  and has a clear plan. The next action is to use the  tool to update the JSX of the landing page to include:
+        1.  A new Hero Section with an embedded promotional video.
+        2.  A new Testimonials section with placeholder content.
+        3.  A new FAQ section with an accordion component.
+        4.  Updating the trial period from 5 days to 14 days in the CTA.
+    -   **What will be achieved with this?** A more modern, engaging, and professional landing page that increases social proof, clarifies the product's value, and improves conversion rates.
     -   **Status:** IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?** both
+    -   **Should Test frontend/backend/both after fix?** frontend
     -   **Blocked on something:** No
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **P1:** Build the admin-side UI for managing support tickets created via the  page.
     -   **P1:** Add a biometric device management panel and integration documentation.
     -   **P2:** Enhance the Employee Self-Service Portal with push notifications or email alerts.
     -   **P2:** Integrate the manual CDC logging helper () into all relevant data mutation endpoints (create, update, delete) to build a comprehensive audit trail.
 -   **Future Tasks:**
-    -   **P3:** Complete the QuickBooks Marketplace submission using the generated assets and text.
+    -   **P3:** Add an interactive ROI/Savings Calculator to the landing page.
+    -   **P3:** Add a floating WhatsApp chat widget.
+    -   **P3:** Implement a system for paying out commissions to partners.
+    -   **P3:** Complete the QuickBooks Marketplace submission.
     -   **P3:** Full Enterprise Integrations for SAP, Oracle, and Dynamics.
     -   **P3:** Develop a PWA/Mobile App version of the employee portal.
     -   **P3:** Implement E-signature functionality for documents.
 
 **Completed work in this session**
--   **Feature:** Completed the full QuickBooks Online integration (OAuth 2.0, API sync, Webhooks) and configured it with production credentials.
--   **Feature:** Implemented a CDC (Change Data Capture) & Audit system with a frontend viewer () and a fallback mechanism for non-replica set environments.
--   **Feature:** Created a public-facing support page () with a backend to handle ticket creation and email notifications.
--   **Feature:** Generated 6 marketing screenshots (640x400) for the QuickBooks Marketplace.
--   **User Support:** Provided detailed text descriptions and configuration guidance for the QuickBooks Marketplace listing.
--   **UI/UX:** Updated the pricing page to include QuickBooks Online in all three plans.
--   **UI/UX:** Reordered the main sidebar menu according to the user's specification.
--   **UI/UX:** Added the official QuickBooks logo to the integrations page, replacing a placeholder icon.
--   **Bug Fix:** Resolved an OAuth URL issue where an incorrect  was being used due to a stale environment variable, fixed by restarting the backend.
+-   **Feature:** **Portal for Accounting Firms** - Fully implemented and tested, including registration, login, dashboard, and client management.
+-   **Feature:** **Admin Support Panel** - Created a full CRUD interface for managing support tickets, with KPIs, filtering, and a response modal.
+-   **Feature:** **Automated Client Invitations** - Integrated Resend to automatically email new clients added by partners, with a status indicator and resend button in the UI.
+-   **Feature:** **Promotional Videos** - Generated two marketing videos using Sora 2 and saved them to .
+-   **UI/UX:** Revamped the main landing page with a new dark-themed navbar and dropdown menus for features.
+-   **UI/UX:** Added a dynamic theme switcher (light, dark, contrast, system) to the accountants' landing page.
+-   **UI/UX:** Updated all company contact information (email, phone, address, hours) on the landing page and support page.
+-   **Bug Fix:** Resolved a critical login failure for new partners by correcting the password hashing mismatch ( vs ) and the database field name ( vs ).
+-   **Bug Fix:** Fixed the partner referral link generation to correctly include the partner's .
+-   **Deployment Prep:** Ran a full health check, resolved deployment agent flags, and confirmed the application is ready for deployment.
+-   **Testing:** Successfully used the  after every major feature completion, ensuring high-quality, bug-free delivery.
 
 **Earlier issues found/mentioned but not fixed**
 -   None.
@@ -82,94 +93,99 @@ The application is a comprehensive HR & Payroll SaaS platform. During this sessi
 
 
 **Key Technical Concepts**
--   **B2B2B Partner Portal Architecture:** Designing a system with a new  user role, which has special subscription rules based on the activity of its child clients and a commission-based revenue model.
--   **Secure Webhook Implementation:** The QuickBooks integration now includes a webhook endpoint that verifies incoming request signatures using a  hash and a secret token, a critical security measure for production.
--   **Graceful Degradation:** The CDC system was built to prefer MongoDB Change Streams but automatically falls back to a manual logging mode if the feature is unsupported, ensuring functionality across different database setups.
--   **Dynamic Subscription Logic:** The plan for the partner portal requires a background job or trigger that periodically checks for a firm's active clients to dynamically apply the correct pricing model, including a 7-day grace period.
+-   **B2B2B SaaS Logic:** Implemented a full lifecycle for a partner program, including registration, login, dashboard KPIs, client management, and automated email notifications.
+-   **Dynamic Frontend Theming:** Created a theme switcher in React using  and conditional CSS classes to allow users to select light, dark, contrast, or system themes.
+-   **AI Video Generation:** Utilized  and the Sora 2 model to generate promotional videos from a sequence of screenshots.
+-   **Robust Testing Workflow:** Consistently used the  after each feature completion, ensuring new functionality was stable and regression-free before moving on.
+-   **Debugging:** Successfully diagnosed and fixed a critical authentication bug by comparing password hashing methods ( vs. ) and inspecting database schemas.
 
 **key DB schema**
--   : Stores change events captured by the CDC system. 
--   : Stores submissions from the support page. 
--   : Archives all incoming webhook events from QuickBooks. 
--   **To be created for Partner Portal:**
-    -   : 
-    -   : 
-    -   : 
+-   : Field  used for storing password.  can be .
+-   : 
+-   : 
+-   : Fields , , and  array added for admin management.
 
 **changes in tech stack**
--   No changes to the core tech stack.
+-   **Sora 2:** Introduced via  for AI video generation.
 
 **All files of reference**
--   **/app/backend/routes/partners.py**: New API for the accountants' portal.
--   **/app/frontend/src/pages/AccountantsSoftwarePage.jsx**: New landing page for the accountants' portal.
--   **/app/backend/routes/quickbooks.py**: Modified to add production webhook and OAuth logic.
--   **/app/backend/routes/cdc_audit.py**: New file for the Change Data Capture system.
--   **/app/frontend/src/pages/CDCAuditPage.jsx**: New page for viewing audit logs.
--   **/app/backend/routes/support.py**: New API for public support tickets.
--   **/app/frontend/src/pages/SupportPage.jsx**: New public-facing support page.
--   **/app/frontend/src/components/DashboardLayout.jsx**: Sidebar menu order was changed.
--   **/app/frontend/src/pages/LandingPage.jsx**: Pricing tables and links were updated.
--   **/app/backend/.env**: Updated with production credentials for QuickBooks.
+-   **/app/frontend/src/pages/LandingPage.jsx**: Target for the in-progress UI enhancement.
+-   **/app/backend/routes/partners.py**: Contains all backend logic for the partner portal.
+-   **/app/frontend/src/pages/PartnerDashboardPage.jsx**: Frontend for the partner dashboard.
+-   **/app/backend/routes/support.py**: Contains all backend logic for the support ticket system.
+-   **/app/frontend/src/pages/SupportAdminPage.jsx**: Frontend for the support admin panel.
+-   **/app/frontend/src/pages/AccountantsSoftwarePage.jsx**: Landing page for partners, now with a theme switcher.
+-   **/app/frontend/public/videos/fortexarh_promo.mp4**: Generated promotional video.
+-   **/app/frontend/public/videos/fortexarh_demo.mp4**: Generated promotional video.
+-   **/app/memory/PRD.md**: Consistently updated after each completed task.
 
 **Areas that need refactoring**:
--   As more routers are added,  is becoming cluttered. Router registration could be modularized into a separate configuration file.
--   The CDC system's manual logging function () needs to be systematically applied to all data-mutating operations across the application to provide a complete audit trail. This is more of a pending task than a refactor.
+-   The task of systematically applying the  function (from the CDC system) to all data-mutating operations is still pending and would provide a complete audit trail.
+-    continues to grow. Modularizing router registration into a separate configuration file would improve maintainability.
 
 **key api endpoints**
--   : Receives and verifies webhook events from Intuit.
--   : Returns the operational status of the CDC system.
--   : Creates a new support ticket from the public page.
--   **To be implemented:**
-    -   : To sign up a new accounting firm.
-    -   : To fetch KPIs for a logged-in firm.
-    -   : To list a firm's managed clients.
+-   : Registers a new accounting firm.
+-   : Fetches KPIs and data for the partner dashboard.
+-   : Adds a new client for a partner and sends an email invitation.
+-   : Re-sends the invitation email.
+-   : Gets summary KPIs for the support dashboard.
+-   : Gets details for a single ticket.
+-   : Updates a ticket's status.
+-   : Adds a reply to a ticket.
 
 **Critical Info for New Agent**
--   Your highest priority is to continue and complete the implementation of the Portal for Accounting Firms. You have the detailed business rules and the initial files are already in place.
--   The QuickBooks integration is configured for PRODUCTION. Do not modify the credentials in . The user has already configured the production URLs in their Intuit Developer account.
--   The user is highly engaged, understands the business and technical aspects, and has a clear vision for a multi-layered B2B2B SaaS model.
--   The application has a  script that provides a good overview of the system's status.
+-   Your immediate and highest priority is to complete the user-requested enhancements for the main landing page, which is currently in progress.
+-   The application is in a very stable state. Multiple major features were completed and rigorously tested in this session. Trust the test reports in .
+-   The user is highly engaged and provides clear, actionable feedback. Respond in Spanish.
+-   The promotional videos are located in  and are ready to be embedded into the newly designed landing page.
 
 **documents and test reports created in this job**
--    was updated.
--   6 screenshots for the QuickBooks Marketplace were created and saved in .
+-   /app/test_reports/iteration_20.json
+-   /app/test_reports/iteration_21.json
+-   /app/test_reports/iteration_22.json
+-   /app/test_reports/iteration_23.json
+-   /app/memory/PRD.md (updated multiple times)
+-   /app/frontend/public/videos/fortexarh_promo.mp4
+-   /app/frontend/public/videos/fortexarh_demo.mp4
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Confirmed the plan to implement the Portal for Accountants. (Status: **IN PROGRESS**)
-2.  **User:** Provided detailed business rules for the new portal (pricing, grace period, registration, URL). (Status: **RESOLVED**)
-3.  **User:** Proposed a new business model for accounting firms. (Status: **RESOLVED**)
-4.  **User:** Asked if it's possible to unify multiple systems developed on the platform. (Status: **RESOLVED**)
-5.  **User:** Requested a specific new order for the sidebar menu, providing an image. (Status: **RESOLVED**)
-6.  **User:** Sent a screenshot of an OAuth connection error with QuickBooks. (Status: **RESOLVED**)
-7.  **User:** Stated that the QuickBooks integration should be included in all pricing plans. (Status: **RESOLVED**)
-8.  **User:** Requested 6 screenshots with specific dimensions for the QuickBooks Marketplace. (Status: **RESOLVED**)
-9.  **User:** Confirmed they want to publish the app on the QuickBooks Marketplace. (Status: **RESOLVED**)
-10. **User:** Asked what to enter in the App Marketplace Listing URL fields. (Status: **RESOLVED**)
+1.  **User:** Requested specific improvements for the landing page: new Hero Section, video integration, testimonials, and FAQ. (Status: **IN PROGRESS**)
+2.  **User:** Asked for suggestions on how to improve the landing page. (Status: **RESOLVED**)
+3.  **User:** Requested a promotional video showing the main modules. (Status: **RESOLVED**)
+4.  **User:** Requested a deployment readiness check. (Status: **RESOLVED**)
+5.  **User:** Provided updated contact information (address, email, phone, hours) for the landing page and support page. (Status: **RESOLVED**)
+6.  **User:** Requested UI improvements: theme switcher for the accountants' page and a new navbar for the main landing page. (Status: **RESOLVED**)
+7.  **User:** Requested automation for sending invitation emails to partners' clients. (Status: **RESOLVED**)
+8.  **User:** Requested the development of the admin panel for managing support tickets. (Status: **RESOLVED**)
+9.  **User:** Confirmed the plan to continue with the Portal for Accounting Firms. (Status: **RESOLVED**)
+10. **User:** Provided requirements for the accountant portal: differentiated design, open registration, and specific dashboard features. (Status: **RESOLVED**)
 
 **Project Health Check:**
 -   **Broken:** None.
--   **Mocked:** The SAP, Oracle, and Dynamics integrations remain as placeholders.
+-   **Mocked:** Enterprise integrations (SAP, Oracle, Dynamics) remain as placeholders.
 
 **3rd Party Integrations**
 -   **Stripe (Payments):** ✅ Integrated
 -   **Resend (Email):** ✅ Integrated
 -   **Emergent-managed Google Auth (Authentication):** ✅ Integrated
--   **Gemini (AI Search):** ✅ Integrated (via  and Emergent LLM Key)
--   **QuickBooks Online (Accounting):** ✅ Fully Integrated (Production Ready: OAuth 2.0 + Webhooks)
+-   **Gemini (AI Search):** ✅ Integrated (via Emergent LLM Key)
+-   **QuickBooks Online (Accounting):** ✅ Fully Integrated (Production Ready)
+-   **Sora 2 (Video Generation):** ✅ Integrated (via Emergent LLM Key)
 -   **openpyxl (Excel I/O):** ✅ Integrated
 -   **reportlab (PDF Generation):** ✅ Integrated
 
 **Testing status**
--   **Testing agent used after significant changes:** NO
+-   **Testing agent used after significant changes:** YES (used 4 times for major features)
 -   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:** None.
+-   **Test files created:** None, but multiple JSON test reports exist.
 -   **Known regressions:** None.
 
 **Credentials to test flow:**
 -   **Admin User:**  / 
+-   **Partner User:**  / 
 -   **Employee Portal User:**
     -   **Cédula (Username):** 
     -   **Password:** 
 
 **What agent forgot to execute**
--   The implementation of the accountants' portal has just begun. The agent has created the initial files but has not yet populated them with code or registered the new routes. This is the immediate next step, not a forgotten task.</analysis>
+-   The agent did not forget anything but was actively working on the landing page enhancements when the session ended. The PRD file has not yet been updated with the plan for these in-progress enhancements.</analysis>
