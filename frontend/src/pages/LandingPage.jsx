@@ -433,6 +433,7 @@ export default function LandingPage() {
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Hasta 200 empleados</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />5 usuarios incluidos</li>
                 <li className="flex items-center gap-2 text-sm font-medium"><Check className="w-4 h-4 text-emerald-500" />Todo lo del plan Básico</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" /><strong>QuickBooks Online</strong></li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-purple-500" /><strong>30 reportes avanzados</strong></li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-purple-500" />Búsqueda con IA</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-purple-500" />Gastos y viáticos (doble aprobación)</li>
