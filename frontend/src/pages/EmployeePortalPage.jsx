@@ -1108,6 +1108,56 @@ function EmployeeDashboard() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Leave Request Modal */}
+      <Dialog open={showLeaveRequest} onOpenChange={setShowLeaveRequest}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Solicitar Permiso/Licencia</DialogTitle>
+            <DialogDescription>Complete los datos de su solicitud</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Tipo de Permiso</Label>
+              <Select value={leaveForm.leave_type} onValueChange={(v) => setLeaveForm(f => ({ ...f, leave_type: v }))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccione el tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(leaves.leave_types || {}).map(([key, value]) => (
+                    <SelectItem key={key} value={key}>{value.name} (máx. {value.max_days} días)</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Fecha Inicio</Label>
+                <Input type="date" value={leaveForm.start_date} onChange={(e) => setLeaveForm(f => ({ ...f, start_date: e.target.value }))} />
+              </div>
+              <div className="space-y-2">
+                <Label>Fecha Fin</Label>
+                <Input type="date" value={leaveForm.end_date} onChange={(e) => setLeaveForm(f => ({ ...f, end_date: e.target.value }))} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Motivo</Label>
+              <Textarea 
+                value={leaveForm.reason} 
+                onChange={(e) => setLeaveForm(f => ({ ...f, reason: e.target.value }))}
+                placeholder="Describa el motivo de su solicitud"
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowLeaveRequest(false)}>Cancelar</Button>
+            <Button onClick={handleLeaveRequest} disabled={!leaveForm.leave_type || !leaveForm.start_date || !leaveForm.end_date}>
+              <Send className="w-4 h-4 mr-2" />Enviar Solicitud
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
