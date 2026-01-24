@@ -28,7 +28,11 @@ import {
   Network,
   Wallet,
   BookOpen,
-  Building2
+  Building2,
+  Brain,
+  FileBarChart,
+  Smartphone,
+  Search
 } from "lucide-react";
 
 const features = [
@@ -40,7 +44,22 @@ const features = [
   {
     icon: DollarSign,
     title: "Nómina Automatizada",
-    description: "Calcula salarios, deducciones TSS e ISR automáticamente. Cumple con las regulaciones de RD."
+    description: "Calcula salarios, deducciones TSS e ISR automáticamente con flujo de aprobación multinivel."
+  },
+  {
+    icon: FileBarChart,
+    title: "Centro de Reportes Avanzado",
+    description: "Más de 58 reportes con filtros personalizables, vista previa y exportación a PDF, Excel y CSV."
+  },
+  {
+    icon: Brain,
+    title: "Búsqueda con IA",
+    description: "Asistente inteligente que entiende lenguaje natural y ejecuta acciones automáticamente."
+  },
+  {
+    icon: Smartphone,
+    title: "Portal de Empleados",
+    description: "Portal self-service donde empleados ven recibos, solicitan vacaciones y marcan asistencia."
   },
   {
     icon: Receipt,
@@ -65,7 +84,7 @@ const features = [
   {
     icon: Target,
     title: "Evaluaciones de Desempeño",
-    description: "Crea evaluaciones personalizadas, establece metas y da seguimiento al rendimiento."
+    description: "Crea evaluaciones personalizadas, establece KPIs y da seguimiento al rendimiento."
   },
   {
     icon: Briefcase,
@@ -84,13 +103,18 @@ const features = [
   },
   {
     icon: Bell,
-    title: "Notificaciones Automáticas",
-    description: "Recordatorios de nómina, cumpleaños de empleados y alertas personalizadas por email."
+    title: "Notificaciones en Tiempo Real",
+    description: "Sistema de notificaciones in-app con alertas de nómina, vacaciones y más."
   },
   {
     icon: FileText,
     title: "Reportes DGII",
     description: "Genera reportes TSS e ISR listos para presentar ante la DGII de República Dominicana."
+  },
+  {
+    icon: Search,
+    title: "Dashboard de Métricas",
+    description: "Métricas en tiempo real de nómina, asistencia, rotación y costos por departamento."
   }
 ];
 
