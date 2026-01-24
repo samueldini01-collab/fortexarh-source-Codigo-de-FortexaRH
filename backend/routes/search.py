@@ -250,29 +250,41 @@ async def get_ai_action_interpretation(query: str, company_id: str) -> Dict:
         chat = LlmChat(
             api_key=api_key,
             session_id=f"action_{datetime.now().strftime('%Y%m%d%H%M%S')}",
-            system_message="""Eres un asistente para un sistema de RRHH. Tu tarea es interpretar comandos en lenguaje natural y extraer la acción e información necesaria.
+            system_message="""Eres el asistente de IA de FortexaRH, un sistema de Recursos Humanos y Nómina. Tu tarea es interpretar comandos en lenguaje natural y extraer la acción e información necesaria.
 
-Acciones disponibles:
-- crear_vacacion: Crear solicitud de vacaciones/permiso
-- registrar_entrada: Marcar entrada de un empleado
+ACCIONES DISPONIBLES:
+- crear_vacacion: Crear solicitud de vacaciones/permiso para un empleado
+- registrar_entrada: Marcar entrada/llegada de un empleado
 - registrar_salida: Marcar salida de un empleado
 - crear_evaluacion: Crear evaluación de desempeño
 - crear_objetivo: Crear objetivo/KPI para un empleado
-- aprobar_vacaciones: Aprobar solicitudes pendientes
-- ver_empleado: Ver información de un empleado
-- ver_nomina: Ver nómina
-- navegar: Ir a una sección del sistema
-- buscar: Solo buscar información (no ejecutar acción)
+- aprobar_vacaciones: Aprobar solicitudes pendientes de vacaciones
+- ver_empleado: Ver información detallada de un empleado
+- ver_nomina: Ver la nómina actual o de un período
+- crear_empleado: Agregar un nuevo empleado al sistema
+- generar_reporte: Generar un reporte (nómina, asistencia, evaluaciones)
+- calcular_nomina: Calcular/procesar nómina de un período
+- crear_prestamo: Crear un préstamo para un empleado
+- resumen_dashboard: Ver el resumen del dashboard principal
+- navegar: Ir a una sección específica del sistema
+- buscar: Solo buscar información sin ejecutar acción
 
-Responde SIEMPRE con JSON válido con esta estructura:
+INTERPRETACIÓN:
+- Si el usuario pregunta "quién", "cuántos", "lista de" = buscar
+- Si el usuario dice "crear", "agregar", "registrar", "aprobar", "generar" = acción correspondiente
+- Identifica nombres de empleados en la consulta
+- Extrae fechas cuando se mencionen (hoy, mañana, próxima semana, 15 de enero, etc.)
+- Para vacaciones detecta: inicio y fin del período
+
+Responde SIEMPRE con JSON válido:
 {
   "action": "nombre_accion" o null si es solo búsqueda,
   "confidence": 0.0 a 1.0,
   "employee_name": "nombre extraído" o null,
   "dates": {"start": "YYYY-MM-DD", "end": "YYYY-MM-DD"} o null,
-  "parameters": {parámetros adicionales},
-  "message": "descripción de lo que se hará",
-  "confirmation_needed": true/false
+  "parameters": {parámetros adicionales relevantes},
+  "message": "descripción clara en español de lo que se hará",
+  "confirmation_needed": true si es una acción que modifica datos
 }"""
         ).with_model("gemini", "gemini-3-flash-preview")
         
