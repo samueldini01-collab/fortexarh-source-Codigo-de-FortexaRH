@@ -179,10 +179,36 @@ export default function CompanyConfigPage() {
     } finally {
       setLoading(false);
     }
-  }, [getAuthHeaders]);
+  }, [getAuthHeaders, fetchQuickbooksStatus]);
 
   useEffect(() => {
     fetchCompanyData();
+    
+    // Handle QuickBooks callback parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const qbStatus = urlParams.get('qb_status');
+    const qbCompany = urlParams.get('qb_company');
+    const qbError = urlParams.get('qb_error');
+    const tabParam = urlParams.get('tab');
+    
+    if (qbStatus === 'connected' && qbCompany) {
+      toast.success(`¡QuickBooks conectado exitosamente a ${decodeURIComponent(qbCompany)}!`);
+      setIntegrations(prev => 
+        prev.map(i => i.id === "quickbooks" 
+          ? {...i, connected: true, companyName: decodeURIComponent(qbCompany)} 
+          : i
+        )
+      );
+      // Clean URL parameters
+      window.history.replaceState({}, '', window.location.pathname);
+    } else if (qbStatus === 'error' && qbError) {
+      toast.error(`Error al conectar QuickBooks: ${decodeURIComponent(qbError)}`);
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+    
+    if (tabParam) {
+      setActiveTab(tabParam);
+    }
   }, [fetchCompanyData]);
 
   const handleSave = async (section) => {
