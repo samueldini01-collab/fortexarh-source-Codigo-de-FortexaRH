@@ -137,9 +137,16 @@ export default function CompanyConfigPage() {
           setLogoPreview(data.company.logo);
         }
       }
-      if (data.appearance) setAppearance(data.appearance);
-      if (data.branding) setBranding(data.branding);
-      if (data.notifications) setNotifications(data.notifications);
+      if (data.appearance) setAppearance(prev => ({...prev, ...data.appearance}));
+      if (data.branding) setBranding(prev => ({
+        ...prev, 
+        ...data.branding,
+        socialLinks: {
+          ...prev.socialLinks,
+          ...(data.branding.socialLinks || {})
+        }
+      }));
+      if (data.notifications) setNotifications(prev => ({...prev, ...data.notifications}));
       if (data.auditLog) setAuditLog(data.auditLog);
     } catch (error) {
       // Initialize with defaults
