@@ -954,6 +954,204 @@ export default function PartnerDashboardPage() {
               </CardContent>
             </Card>
           </TabsContent>
+
+          {/* Payouts Tab */}
+          <TabsContent value="payouts" className="space-y-6">
+            {/* Stripe Connect Status */}
+            {!stripeConnectStatus?.connected || stripeConnectStatus?.status !== "active" ? (
+              <Card className="bg-gradient-to-r from-purple-600/20 to-indigo-600/20 border-purple-500/30">
+                <CardContent className="p-6">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                        <CreditCard className="w-6 h-6 text-purple-400" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-white flex items-center gap-2">
+                          Conecta tu Cuenta Bancaria
+                        </h3>
+                        <p className="text-slate-300 text-sm mt-1 max-w-md">
+                          Para recibir tus comisiones, necesitas conectar tu cuenta bancaria a través de Stripe.
+                          Es seguro, rápido y solo toma unos minutos.
+                        </p>
+                        {stripeConnectStatus?.status === "pending" && (
+                          <p className="text-amber-400 text-sm mt-2 flex items-center gap-1">
+                            <AlertTriangle className="w-4 h-4" />
+                            Verificación pendiente - completa tu configuración
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      onClick={connectStripeAccount}
+                      disabled={connectingStripe}
+                      className="bg-purple-500 hover:bg-purple-600"
+                    >
+                      {connectingStripe ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Conectando...
+                        </>
+                      ) : stripeConnectStatus?.status === "pending" ? (
+                        <>
+                          <ArrowUpRight className="w-4 h-4 mr-2" />
+                          Completar Configuración
+                        </>
+                      ) : (
+                        <>
+                          <CreditCard className="w-4 h-4 mr-2" />
+                          Conectar con Stripe
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="bg-emerald-500/10 border-emerald-500/30">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <ShieldCheck className="w-6 h-6 text-emerald-400" />
+                      <div>
+                        <p className="text-emerald-400 font-medium">Cuenta de Stripe Conectada</p>
+                        <p className="text-slate-400 text-sm">Lista para recibir pagos</p>
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={openStripeDashboard}
+                      className="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20"
+                    >
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Ver Dashboard
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Balance Cards */}
+            <div className="grid md:grid-cols-4 gap-4">
+              <Card className="bg-slate-800/50 border-slate-700">
+                <CardContent className="p-6">
+                  <p className="text-slate-400 text-sm mb-1">Balance Disponible</p>
+                  <p className="text-3xl font-bold text-emerald-400">
+                    ${payoutBalance?.available_balance?.toFixed(2) || "0.00"}
+                  </p>
+                  <p className="text-slate-500 text-xs mt-1">
+                    Mínimo para retiro: ${payoutBalance?.minimum_payout || 50}
+                  </p>
+                </CardContent>
+              </Card>
+              <Card className="bg-slate-800/50 border-slate-700">
+                <CardContent className="p-6">
+                  <p className="text-slate-400 text-sm mb-1">Total Ganado</p>
+                  <p className="text-3xl font-bold text-white">
+                    ${payoutBalance?.total_earned?.toFixed(2) || "0.00"}
+                  </p>
+                </CardContent>
+              </Card>
+              <Card className="bg-slate-800/50 border-slate-700">
+                <CardContent className="p-6">
+                  <p className="text-slate-400 text-sm mb-1">Total Pagado</p>
+                  <p className="text-3xl font-bold text-blue-400">
+                    ${payoutBalance?.total_paid?.toFixed(2) || "0.00"}
+                  </p>
+                </CardContent>
+              </Card>
+              <Card className="bg-slate-800/50 border-slate-700">
+                <CardContent className="p-6">
+                  <p className="text-slate-400 text-sm mb-1">En Proceso</p>
+                  <p className="text-3xl font-bold text-amber-400">
+                    ${payoutBalance?.pending_payouts?.toFixed(2) || "0.00"}
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Withdraw Button */}
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardContent className="p-6">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div>
+                    <h3 className="text-white font-semibold">Solicitar Retiro</h3>
+                    <p className="text-slate-400 text-sm">
+                      Los pagos se procesan mensualmente. El dinero llega en 2-3 días hábiles.
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => setShowPayoutModal(true)}
+                    disabled={!payoutBalance?.can_withdraw}
+                    className="bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50"
+                    data-testid="request-payout-btn"
+                  >
+                    <Banknote className="w-4 h-4 mr-2" />
+                    {payoutBalance?.can_withdraw 
+                      ? "Retirar Fondos" 
+                      : payoutBalance?.stripe_connected 
+                        ? `Mínimo $${payoutBalance?.minimum_payout || 50}` 
+                        : "Conecta Stripe primero"}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Payout History */}
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader>
+                <CardTitle className="text-white">Historial de Retiros</CardTitle>
+                <CardDescription className="text-slate-400">
+                  Todos los retiros procesados y pendientes
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {payoutHistory.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-slate-700">
+                          <TableHead className="text-slate-400">Fecha</TableHead>
+                          <TableHead className="text-slate-400">ID</TableHead>
+                          <TableHead className="text-slate-400">Monto</TableHead>
+                          <TableHead className="text-slate-400">Estado</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {payoutHistory.map((payout, index) => (
+                          <TableRow key={payout.payout_id || index} className="border-slate-700">
+                            <TableCell className="text-slate-300">
+                              {new Date(payout.requested_at).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell className="text-slate-400 font-mono text-xs">
+                              {payout.payout_id}
+                            </TableCell>
+                            <TableCell className="text-emerald-400 font-medium">
+                              ${payout.amount?.toFixed(2) || "0.00"}
+                            </TableCell>
+                            <TableCell>
+                              <StatusBadge status={payout.status} />
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <Banknote className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-white mb-2">
+                      Sin retiros aún
+                    </h3>
+                    <p className="text-slate-400">
+                      Cuando solicites un retiro, aparecerá aquí
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </main>
 
