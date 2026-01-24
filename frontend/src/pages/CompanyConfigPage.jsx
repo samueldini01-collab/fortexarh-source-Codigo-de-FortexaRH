@@ -253,11 +253,54 @@ export default function CompanyConfigPage() {
     toast.info("Logo eliminado");
   };
 
-  const connectIntegration = (integrationId) => {
+  const connectIntegration = async (integrationId) => {
+    const integration = integrations.find(i => i.id === integrationId);
+    
+    if (integration?.type === "oauth" && integrationId === "quickbooks") {
+      if (integration.connected) {
+        // Disconnect QuickBooks
+        try {
+          setQuickbooksLoading(true);
+          await axios.post(`${API}/quickbooks/disconnect`, {}, {
+            headers: getAuthHeaders(),
+            withCredentials: true
+          });
+          setIntegrations(prev => 
+            prev.map(i => i.id === "quickbooks" ? {...i, connected: false, companyName: null, connectedAt: null} : i)
+          );
+          toast.success("QuickBooks desconectado exitosamente");
+        } catch (error) {
+          toast.error(error.response?.data?.detail || "Error al desconectar QuickBooks");
+        } finally {
+          setQuickbooksLoading(false);
+        }
+      } else {
+        // Connect QuickBooks - Initiate OAuth flow
+        try {
+          setQuickbooksLoading(true);
+          const response = await axios.get(`${API}/quickbooks/connect`, {
+            headers: getAuthHeaders(),
+            withCredentials: true
+          });
+          
+          // Redirect to QuickBooks authorization page
+          if (response.data.authorization_url) {
+            toast.info("Redirigiendo a QuickBooks para autorización...");
+            window.location.href = response.data.authorization_url;
+          }
+        } catch (error) {
+          toast.error(error.response?.data?.detail || "Error al conectar con QuickBooks");
+          setQuickbooksLoading(false);
+        }
+      }
+      return;
+    }
+    
+    // Mock integrations (FortexaERP, SAP, Oracle)
     setIntegrations(prev => 
       prev.map(i => i.id === integrationId ? {...i, connected: !i.connected} : i)
     );
-    toast.success("Integración actualizada");
+    toast.success("Integración actualizada (Simulada)");
   };
 
   // ===================== RENDER TABS =====================
