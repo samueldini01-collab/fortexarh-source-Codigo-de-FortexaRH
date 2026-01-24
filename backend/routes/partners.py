@@ -77,6 +77,108 @@ class PartnerUpdate(BaseModel):
 
 # ============== HELPER FUNCTIONS ==============
 
+async def send_client_invitation_email(
+    client_email: str,
+    client_name: str,
+    company_name: str,
+    firm_name: str,
+    invitation_link: str
+) -> bool:
+    """Send invitation email to a referred client"""
+    try:
+        invitation_html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }}
+                .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                .header {{ background: linear-gradient(135deg, #10b981, #14b8a6); color: white; padding: 30px; border-radius: 12px 12px 0 0; text-align: center; }}
+                .header h1 {{ margin: 0; font-size: 28px; }}
+                .header p {{ margin: 10px 0 0 0; opacity: 0.9; font-size: 16px; }}
+                .content {{ background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; border-top: none; }}
+                .highlight-box {{ background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #10b981; margin: 20px 0; }}
+                .cta-button {{ display: inline-block; background: #10b981; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px; margin: 20px 0; }}
+                .cta-button:hover {{ background: #059669; }}
+                .benefits {{ background: white; padding: 20px; border-radius: 8px; margin: 20px 0; }}
+                .benefit-item {{ padding: 8px 0; border-bottom: 1px solid #f3f4f6; }}
+                .benefit-item:last-child {{ border-bottom: none; }}
+                .benefit-icon {{ color: #10b981; margin-right: 10px; }}
+                .footer {{ text-align: center; padding: 20px; color: #6b7280; font-size: 12px; border-radius: 0 0 12px 12px; background: #f9fafb; border: 1px solid #e5e7eb; border-top: none; }}
+                .footer a {{ color: #10b981; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>🎉 ¡Estás Invitado!</h1>
+                    <p>Tu contador de confianza te invita a FortexaRH</p>
+                </div>
+                <div class="content">
+                    <p>Hola <strong>{client_name}</strong>,</p>
+                    
+                    <div class="highlight-box">
+                        <p style="margin: 0;"><strong>{firm_name}</strong> te ha invitado a gestionar los recursos humanos y nómina de <strong>{company_name}</strong> con FortexaRH.</p>
+                    </div>
+                    
+                    <p>FortexaRH es la plataforma líder en República Dominicana para la gestión de RRHH y nómina, cumpliendo con todas las regulaciones de la DGII, TSS y el Código de Trabajo.</p>
+                    
+                    <div class="benefits">
+                        <h3 style="margin-top: 0; color: #10b981;">¿Qué obtienes con FortexaRH?</h3>
+                        <div class="benefit-item">
+                            <span class="benefit-icon">✓</span> Nómina automatizada con cálculos de ISR, SFS y AFP
+                        </div>
+                        <div class="benefit-item">
+                            <span class="benefit-icon">✓</span> Control de asistencia y vacaciones
+                        </div>
+                        <div class="benefit-item">
+                            <span class="benefit-icon">✓</span> Portal de empleados para autogestión
+                        </div>
+                        <div class="benefit-item">
+                            <span class="benefit-icon">✓</span> Reportes para la DGII y TSS listos
+                        </div>
+                        <div class="benefit-item">
+                            <span class="benefit-icon">✓</span> Soporte de tu contador integrado
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <a href="{invitation_link}" class="cta-button">
+                            Crear mi Cuenta Gratis
+                        </a>
+                        <p style="color: #6b7280; font-size: 14px;">14 días de prueba gratuita • Sin tarjeta de crédito</p>
+                    </div>
+                    
+                    <p style="margin-top: 30px;">Si tienes preguntas, puedes contactar directamente a <strong>{firm_name}</strong> o a nuestro equipo de soporte.</p>
+                    
+                    <p>¡Esperamos verte pronto!</p>
+                    <p><strong>El Equipo de FortexaRH</strong></p>
+                </div>
+                <div class="footer">
+                    <p>FortexaRH - Sistema de RRHH y Nómina</p>
+                    <p>Santo Domingo, República Dominicana</p>
+                    <p><a href="https://fortexarh.com">www.fortexarh.com</a></p>
+                    <p style="margin-top: 15px; font-size: 11px; color: #9ca3af;">
+                        Recibiste este correo porque {firm_name} te invitó a usar FortexaRH.
+                    </p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        resend.Emails.send({
+            "from": f"FortexaRH <{SENDER_EMAIL}>",
+            "to": [client_email],
+            "subject": f"🎉 {firm_name} te invita a FortexaRH - Gestiona tu nómina fácilmente",
+            "html": invitation_html
+        })
+        return True
+    except Exception as e:
+        print(f"Error sending invitation email: {e}")
+        return False
+
+
 def generate_referral_code(firm_name: str) -> str:
     """Generate unique referral code for the firm"""
     prefix = ''.join(c for c in firm_name[:4].upper() if c.isalnum())
