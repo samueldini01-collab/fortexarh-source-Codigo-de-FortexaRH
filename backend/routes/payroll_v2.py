@@ -1050,6 +1050,7 @@ async def submit_for_approval(period_id: str, data: ApprovalRequest = None, curr
     """Submit a payroll period for approval (Draft -> Pending Approval)"""
     company_id = current_user.get("company_id")
     user_id = current_user.get("user_id")
+    user_name = current_user.get("name", current_user.get("email", "Usuario"))
     
     period = await db.payroll_periods.find_one(
         {"period_id": period_id, "company_id": company_id},
@@ -1094,6 +1095,25 @@ async def submit_for_approval(period_id: str, data: ApprovalRequest = None, curr
         {"period_id": period_id, "company_id": company_id},
         {"$set": {"status": "pending_approval"}}
     )
+    
+    # Create notification for approvers (admin, hr_manager, finance_manager)
+    period_desc = period.get("description", f"Período {period_id}")
+    notification = {
+        "notification_id": f"notif_{generate_id('')[7:]}",
+        "company_id": company_id,
+        "title": "Nómina Pendiente de Aprobación",
+        "message": f"{user_name} ha enviado la nómina '{period_desc}' para aprobación.",
+        "type": "payroll_approval",
+        "priority": "high",
+        "link": f"/payroll-v2?period={period_id}",
+        "target_user_id": None,
+        "target_role": "admin",
+        "metadata": {"period_id": period_id, "period_description": period_desc},
+        "read_by": [],
+        "created_by": user_id,
+        "created_at": now_iso()
+    }
+    await db.notifications.insert_one(notification)
     
     return {"message": "Nómina enviada para aprobación", "status": "pending_approval"}
 
