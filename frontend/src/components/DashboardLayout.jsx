@@ -587,8 +587,9 @@ export default function DashboardLayout({ children, title }) {
       <div className={`transition-all duration-300 ${sidebarCollapsed ? 'lg:pl-16' : 'lg:pl-64'}`}>
         {/* Top header */}
         <header className="sticky top-0 z-30 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
-          <div className="flex items-center justify-between px-4 py-3">
-            <div className="flex items-center gap-4">
+          <div className="flex items-center px-4 py-3 gap-4">
+            {/* Left section - Menu button and title */}
+            <div className="flex items-center gap-4 shrink-0">
               <button 
                 className="lg:hidden p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
                 onClick={() => setSidebarOpen(true)}
@@ -596,13 +597,16 @@ export default function DashboardLayout({ children, title }) {
               >
                 <Menu className="w-6 h-6 text-slate-600 dark:text-slate-300" />
               </button>
-              {title && <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100">{title}</h1>}
+              {title && <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100 hidden md:block">{title}</h1>}
             </div>
             
-            <div className="flex items-center gap-3">
-              {/* Global Search */}
+            {/* Center section - Search (flex-1 to take available space) */}
+            <div className="flex-1 flex justify-center">
               <GlobalSearch />
-              
+            </div>
+            
+            {/* Right section - Actions */}
+            <div className="flex items-center gap-2 shrink-0">
               {/* Theme Toggle */}
               <ThemeToggle />
               
