@@ -72,7 +72,8 @@ import {
   Keyboard,
   HelpCircle,
   Sparkles,
-  GraduationCap
+  GraduationCap,
+  Activity
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
