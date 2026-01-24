@@ -1,7 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Check,
   Users,
@@ -24,7 +30,11 @@ import {
   Percent,
   Wallet,
   UserPlus,
-  PieChart
+  PieChart,
+  Sun,
+  Moon,
+  Monitor,
+  Contrast
 } from "lucide-react";
 
 const BENEFITS = [
