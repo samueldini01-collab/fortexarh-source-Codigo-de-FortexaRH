@@ -101,6 +101,41 @@ ACTION_TYPES = {
         "route": "/payroll-v2",
         "icon": "dollar"
     },
+    "crear_empleado": {
+        "name": "Crear Nuevo Empleado",
+        "required": ["first_name", "last_name"],
+        "optional": ["email", "department", "position"],
+        "route": "/employees",
+        "icon": "user-plus"
+    },
+    "generar_reporte": {
+        "name": "Generar Reporte",
+        "required": ["report_type"],
+        "optional": ["start_date", "end_date"],
+        "route": "/reports-advanced",
+        "icon": "file-text"
+    },
+    "calcular_nomina": {
+        "name": "Calcular Nómina",
+        "required": [],
+        "optional": ["period", "department"],
+        "route": "/payroll-v2",
+        "icon": "calculator"
+    },
+    "crear_prestamo": {
+        "name": "Crear Préstamo",
+        "required": ["employee_id", "amount"],
+        "optional": ["installments", "reason"],
+        "route": "/loans",
+        "icon": "wallet"
+    },
+    "resumen_dashboard": {
+        "name": "Ver Resumen del Dashboard",
+        "required": [],
+        "optional": [],
+        "route": "/dashboard",
+        "icon": "layout-dashboard"
+    },
     "navegar": {
         "name": "Navegación",
         "required": ["destination"],
