@@ -360,6 +360,9 @@ function AppRouter() {
       <Route path="/employee-portal" element={<EmployeePortalPage />} />
       <Route path="/documents" element={<ProtectedRoute><DocumentsPage /></ProtectedRoute>} />
       <Route path="/soporte" element={<SupportPage />} />
+      <Route path="/accountants-software" element={<AccountantsSoftwarePage />} />
+      <Route path="/partner-register" element={<PartnerRegisterPage />} />
+      <Route path="/partner-dashboard" element={<ProtectedRoute><PartnerDashboardPage /></ProtectedRoute>} />
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
