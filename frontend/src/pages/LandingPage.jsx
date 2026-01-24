@@ -410,35 +410,6 @@ export default function LandingPage() {
             </div>
           </div>
         )}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Características
-              </a>
-              <a 
-                href="#pricing" 
-                className="text-slate-600 hover:text-slate-900 py-2 px-3 rounded-lg hover:bg-slate-50"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Precios
-              </a>
-              <a 
-                href="#contact" 
-                className="text-slate-600 hover:text-slate-900 py-2 px-3 rounded-lg hover:bg-slate-50"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Contacto
-              </a>
-            </nav>
-            <div className="flex flex-col gap-2 pt-3 border-t border-slate-100">
-              <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="outline" className="w-full">Iniciar Sesión</Button>
-              </Link>
-              <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
-                <Button className="w-full bg-slate-900 hover:bg-slate-800">Comenzar Gratis</Button>
-              </Link>
-            </div>
-          </div>
-        )}
       </header>
 
       {/* Hero Section */}
