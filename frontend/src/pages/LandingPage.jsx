@@ -1098,7 +1098,7 @@ export default function LandingPage() {
       {/* FAQ Section */}
       <section id="faq" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-10 sm:mb-16">
+          <div className="text-center mb-10 sm:mb-16 scroll-reveal">
             <div className="inline-flex items-center gap-2 bg-slate-100 text-slate-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
               <HelpCircle className="w-4 h-4" />
               Preguntas Frecuentes
@@ -1111,24 +1111,26 @@ export default function LandingPage() {
             </p>
           </div>
           
-          <Accordion type="single" collapsible className="space-y-3" data-testid="faq-accordion">
-            {faqs.map((faq, index) => (
-              <AccordionItem 
-                key={index} 
-                value={`item-${index}`}
-                className="bg-slate-50 rounded-xl border-none px-6 data-[state=open]:bg-emerald-50 transition-colors"
-              >
-                <AccordionTrigger className="text-left text-base sm:text-lg font-medium text-slate-900 hover:no-underline py-5">
-                  {faq.question}
-                </AccordionTrigger>
-                <AccordionContent className="text-slate-600 text-sm sm:text-base leading-relaxed pb-5">
-                  {faq.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+          <div className="scroll-reveal">
+            <Accordion type="single" collapsible className="space-y-3" data-testid="faq-accordion">
+              {faqs.map((faq, index) => (
+                <AccordionItem 
+                  key={index} 
+                  value={`item-${index}`}
+                  className="bg-slate-50 rounded-xl border-none px-6 data-[state=open]:bg-emerald-50 transition-colors"
+                >
+                  <AccordionTrigger className="text-left text-base sm:text-lg font-medium text-slate-900 hover:no-underline py-5">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-slate-600 text-sm sm:text-base leading-relaxed pb-5">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
           
-          <div className="text-center mt-10 sm:mt-12 p-6 sm:p-8 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl">
+          <div className="text-center mt-10 sm:mt-12 p-6 sm:p-8 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl scroll-reveal-scale scroll-reveal">
             <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
               ¿No encontraste lo que buscabas?
             </h3>
