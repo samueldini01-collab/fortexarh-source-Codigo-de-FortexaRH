@@ -1030,7 +1030,7 @@ export default function LandingPage() {
       {/* Testimonials Section */}
       <section id="testimonials" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 to-emerald-50">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-10 sm:mb-16">
+          <div className="text-center mb-10 sm:mb-16 scroll-reveal">
             <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
               <Star className="w-4 h-4 fill-current" />
               Testimonios de Clientes
@@ -1047,8 +1047,7 @@ export default function LandingPage() {
             {testimonials.map((testimonial, index) => (
               <div 
                 key={index}
-                className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100 hover:shadow-lg transition-shadow animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
+                className={`bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100 hover:shadow-lg transition-shadow scroll-reveal scroll-delay-${(index % 4) + 1}`}
                 data-testid={`testimonial-${index}`}
               >
                 <div className="flex items-center gap-1 mb-4">
@@ -1076,7 +1075,7 @@ export default function LandingPage() {
             ))}
           </div>
           
-          <div className="text-center mt-10 sm:mt-12">
+          <div className="text-center mt-10 sm:mt-12 scroll-reveal">
             <div className="inline-flex items-center gap-3 bg-white rounded-full px-6 py-3 shadow-sm border border-slate-100">
               <div className="flex -space-x-3">
                 {testimonials.slice(0, 4).map((t, i) => (
