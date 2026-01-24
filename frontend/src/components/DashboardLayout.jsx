@@ -611,10 +611,8 @@ export default function DashboardLayout({ children, title }) {
               {/* Theme Toggle */}
               <ThemeToggle />
               
-              <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg relative">
-                <Bell className="w-5 h-5 text-slate-600 dark:text-slate-300" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-              </button>
+              {/* Notification Bell with real-time updates */}
+              <NotificationBell />
               
               <div className="hidden md:flex items-center gap-2">
                 <DropdownMenu>
