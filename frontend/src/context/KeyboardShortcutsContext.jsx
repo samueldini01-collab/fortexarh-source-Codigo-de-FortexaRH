@@ -85,6 +85,9 @@ export function KeyboardShortcutsProvider({ children }) {
       const allowedInInput = ["escape", "ctrl+k"];
       const currentKey = getKeyString(e);
       
+      // Guard against empty key string
+      if (!currentKey) return;
+      
       if (isInput && !allowedInInput.includes(currentKey.toLowerCase())) {
         // Clear pending key sequence when typing
         if (pendingKey) {
@@ -94,7 +97,7 @@ export function KeyboardShortcutsProvider({ children }) {
       }
 
       // Build key string
-      const keyString = getKeyString(e);
+      const keyString = currentKey;
       
       // Check for two-key sequences (g + letter)
       if (pendingKey) {
