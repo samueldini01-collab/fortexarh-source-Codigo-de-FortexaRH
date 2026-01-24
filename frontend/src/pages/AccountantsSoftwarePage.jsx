@@ -188,15 +188,15 @@ const themes = {
 
 export default function AccountantsSoftwarePage() {
   const [activeTab, setActiveTab] = useState("benefits");
-  const [currentTheme, setCurrentTheme] = useState("light"); // Default to light
   
-  // Get system preference
-  useEffect(() => {
+  // Initialize theme from localStorage or default to light
+  const [currentTheme, setCurrentTheme] = useState(() => {
     const savedTheme = localStorage.getItem("accountants-theme");
     if (savedTheme && savedTheme !== "system") {
-      setCurrentTheme(savedTheme);
+      return savedTheme;
     }
-  }, []);
+    return "light";
+  });
   
   // Handle theme change
   const handleThemeChange = (themeName) => {
