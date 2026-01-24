@@ -2676,6 +2676,8 @@ api_router.include_router(expenses_router)
 api_router.include_router(payroll_v2_router)
 api_router.include_router(projects_router)
 api_router.include_router(metrics_router)
+api_router.include_router(notifications_system_router)
+api_router.include_router(reports_advanced_router)
 
 # Include the API router
 app.include_router(api_router)
