@@ -601,24 +601,42 @@ export default function LandingPage() {
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
+                  <td className="py-3 px-4 font-medium text-blue-700">Centro de Reportes Avanzados</td>
+                  <td className="py-3 px-4 text-center text-sm">Básicos</td>
+                  <td className="py-3 px-4 text-center text-sm font-medium text-purple-600">30 reportes</td>
+                  <td className="py-3 px-4 text-center text-sm font-medium text-amber-600">58 reportes</td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50">
+                  <td className="py-3 px-4">Búsqueda con IA</td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-purple-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100">
+                  <td className="py-3 px-4">Reportes personalizables y guardados</td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50">
                   <td className="py-3 px-4">Roles personalizados</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
                 </tr>
-                <tr className="border-b border-slate-100 bg-slate-50">
+                <tr className="border-b border-slate-100">
                   <td className="py-3 px-4">API personalizada</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
                 </tr>
-                <tr className="border-b border-slate-100">
+                <tr className="border-b border-slate-100 bg-slate-50">
                   <td className="py-3 px-4">Integración SAP/Oracle/Dynamics</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
                 </tr>
-                <tr className="border-b border-slate-100 bg-slate-50">
+                <tr className="border-b border-slate-100">
                   <td className="py-3 px-4">Soporte</td>
                   <td className="py-3 px-4 text-center">Email</td>
                   <td className="py-3 px-4 text-center">Prioritario</td>
