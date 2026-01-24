@@ -146,6 +146,15 @@ export default function PartnerDashboardPage() {
     billing_type: "direct"
   });
 
+  // Payouts state
+  const [payoutBalance, setPayoutBalance] = useState(null);
+  const [payoutHistory, setPayoutHistory] = useState([]);
+  const [stripeConnectStatus, setStripeConnectStatus] = useState(null);
+  const [requestingPayout, setRequestingPayout] = useState(false);
+  const [connectingStripe, setConnectingStripe] = useState(false);
+  const [showPayoutModal, setShowPayoutModal] = useState(false);
+  const [payoutAmount, setPayoutAmount] = useState("");
+
   // Fetch dashboard data
   const fetchDashboard = useCallback(async () => {
     try {
