@@ -32,7 +32,8 @@ import {
   Brain,
   FileBarChart,
   Smartphone,
-  Search
+  Search,
+  HeadphonesIcon
 } from "lucide-react";
 
 const features = [
