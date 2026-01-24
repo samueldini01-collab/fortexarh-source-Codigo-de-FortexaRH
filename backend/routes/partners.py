@@ -12,6 +12,7 @@ from bson import ObjectId
 import secrets
 import os
 import resend
+import stripe
 
 router = APIRouter(prefix="/partners", tags=["Partners"])
 security = HTTPBearer(auto_error=False)
