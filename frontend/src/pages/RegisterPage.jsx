@@ -127,9 +127,9 @@ export default function RegisterPage() {
         <div className="text-center mb-8">
           <Link to="/" className="inline-block mb-4">
             <img 
-              src="/favicon.png" 
+              src="https://customer-assets.emergentagent.com/job_hrpulse-26/artifacts/ohljcqui_FortexaRH%20Logo.png" 
               alt="FortexaRH" 
-              className="h-16 w-auto mx-auto"
+              className="h-24 w-auto mx-auto"
             />
           </Link>
         </div>

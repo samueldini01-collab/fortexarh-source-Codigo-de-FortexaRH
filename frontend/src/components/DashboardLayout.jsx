@@ -381,13 +381,12 @@ export default function DashboardLayout({ children, title }) {
           {/* Logo with collapse button */}
           <div className={`flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'gap-3 px-4'} py-5 border-b border-slate-100 dark:border-slate-700`}>
             <img 
-              src="/fortexarh-icon-128.png" 
+              src="https://customer-assets.emergentagent.com/job_hrpulse-26/artifacts/ohljcqui_FortexaRH%20Logo.png" 
               alt="FortexaRH" 
-              className="w-10 h-10 rounded-xl object-contain shrink-0"
+              className={`${sidebarCollapsed ? 'h-8 w-8' : 'h-10'} object-contain shrink-0`}
             />
             {!sidebarCollapsed && (
               <div className="min-w-0 flex-1">
-                <h1 className="font-bold text-slate-800 dark:text-slate-100 text-lg leading-tight truncate">FortexaRH</h1>
                 <p className="text-xs text-slate-500 dark:text-slate-400">Sistema de RRHH</p>
               </div>
             )}
