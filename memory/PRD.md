@@ -2,9 +2,48 @@
 
 ## Última Actualización: 2026-01-24
 
-## ✅ Completado Hoy
+## ✅ Completado Hoy (Sesión Actual)
 
-### 🔍 Búsqueda Global con IA (NUEVO)
+### 📋 4 Nuevas Funcionalidades Implementadas
+
+#### 1. Flujo de Aprobación de Nómina (P0 - COMPLETADO)
+- **Estados del flujo:** Draft → Pending Approval → Approved → Paid
+- **Endpoints nuevos:**
+  - `POST /api/payroll-v2/periods/{id}/submit-for-approval` - Enviar a aprobación
+  - `POST /api/payroll-v2/periods/{id}/reject` - Rechazar con motivo
+  - `GET /api/payroll-v2/periods/{id}/workflow-history` - Ver historial del flujo
+- **Permisos:** Solo usuarios con `payroll_approve` o roles `admin`, `hr_manager`, `finance_manager`
+- **Frontend:** Botones dinámicos según estado, rechazo con comentarios
+- **Archivos:** `/app/backend/routes/payroll_v2.py`, `/app/frontend/src/pages/PayrollV2Page.jsx`
+
+#### 2. Dashboard de Métricas Conectado (P0 - COMPLETADO)
+- **Nuevo endpoint:** `GET /api/metrics/dashboard?year=YYYY`
+- **Datos reales agregados de:**
+  - Nómina (tendencia mensual, bruto/neto)
+  - Empleados (total, nuevos, rotación)
+  - Préstamos (activos, pendientes, pagados)
+  - Costos por departamento
+  - Indicadores rápidos (vacaciones, evaluaciones, asistencia)
+- **Archivos:** `/app/backend/routes/metrics.py` (NUEVO), `/app/frontend/src/pages/MetricsDashboardPage.jsx`
+
+#### 3. Vista Previa de Reporte "Costos por Departamento" (P0 - COMPLETADO)
+- **Tabs:** "Vista Previa" y "Gráficos"
+- **Preview completo** antes de exportar con tabla detallada
+- **Exportación:** CSV y Excel con botones visibles
+- **Archivos:** `/app/frontend/src/pages/CostsByDepartmentPage.jsx`
+
+#### 4. Búsqueda AI que Aprende (P0 - COMPLETADO)
+- **Historial de acciones:** Guarda acciones ejecutadas por usuario
+- **Frecuencia:** Reordena sugerencias según uso frecuente
+- **Búsquedas recientes:** Muestra últimas consultas del usuario
+- **Nuevos endpoints:**
+  - `POST /api/search/log-query` - Guarda consultas
+  - `GET /api/search/user-stats` - Estadísticas de uso
+- **Archivos:** `/app/backend/routes/search.py`
+
+## ✅ Completado en Sesión Anterior
+
+### 🔍 Búsqueda Global con IA
 - **Barra centrada y más amplia** en el header
 - **Búsqueda asistida por IA** usando Gemini 3 Flash
 - Interpreta consultas en **lenguaje natural** (ej: "¿Quién tiene vacaciones esta semana?")
@@ -16,7 +55,7 @@
 - `/app/backend/routes/search.py` - API con endpoints `/search`, `/search/ai`, `/search/suggestions`
 - `/app/frontend/src/components/GlobalSearch.jsx` - Componente UI mejorado
 
-## ✅ Completado en Esta Sesión
+## ✅ Completado Previamente
 
 ### 🕐 Módulo 1: Control de Asistencia y Tiempo
 **Características Backend:**
