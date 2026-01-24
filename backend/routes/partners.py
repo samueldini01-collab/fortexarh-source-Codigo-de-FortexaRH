@@ -11,9 +11,14 @@ from datetime import datetime, timezone, timedelta
 from bson import ObjectId
 import secrets
 import os
+import resend
 
 router = APIRouter(prefix="/partners", tags=["Partners"])
 security = HTTPBearer(auto_error=False)
+
+# Resend configuration
+resend.api_key = os.environ.get('RESEND_API_KEY', '')
+SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'noreply@fortexarh.com')
 
 db = None
 _get_current_user_func: Callable = None
