@@ -623,8 +623,9 @@ export default function PartnerDashboardPage() {
                           <TableHead className="text-slate-400">Empresa</TableHead>
                           <TableHead className="text-slate-400">Contacto</TableHead>
                           <TableHead className="text-slate-400">Estado</TableHead>
+                          <TableHead className="text-slate-400">Invitación</TableHead>
                           <TableHead className="text-slate-400">Facturación</TableHead>
-                          <TableHead className="text-slate-400">Comisión Ganada</TableHead>
+                          <TableHead className="text-slate-400">Comisión</TableHead>
                           <TableHead className="text-slate-400">Acciones</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -647,6 +648,19 @@ export default function PartnerDashboardPage() {
                             </TableCell>
                             <TableCell>
                               <StatusBadge status={client.subscription_status || client.status} />
+                            </TableCell>
+                            <TableCell>
+                              {client.invitation_sent ? (
+                                <Badge variant="outline" className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
+                                  <Mail className="w-3 h-3 mr-1" />
+                                  Enviada
+                                </Badge>
+                              ) : (
+                                <Badge variant="outline" className="bg-amber-500/20 text-amber-400 border-amber-500/30">
+                                  <Clock className="w-3 h-3 mr-1" />
+                                  Pendiente
+                                </Badge>
+                              )}
                             </TableCell>
                             <TableCell>
                               <Select
