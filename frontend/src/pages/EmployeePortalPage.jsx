@@ -322,6 +322,8 @@ function EmployeeDashboard() {
 
   const formatCurrency = (value) => new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'DOP', maximumFractionDigits: 0 }).format(value || 0);
 
+  const LOGO_URL = "https://customer-assets.emergentagent.com/job_hrpay-manager-2/artifacts/y0ghj2zi_FortexaRH%20Logo.png";
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center">
@@ -335,13 +337,21 @@ function EmployeeDashboard() {
       {/* Header */}
       <header className="bg-white shadow-sm border-b sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-              <User className="w-5 h-5 text-blue-600" />
-            </div>
-            <div>
-              <h1 className="font-semibold text-slate-800">{dashboardData?.employee?.name}</h1>
-              <p className="text-xs text-slate-500">{dashboardData?.employee?.position}</p>
+          <div className="flex items-center gap-4">
+            <img 
+              src={LOGO_URL} 
+              alt="FortexaRH Logo" 
+              className="h-10 w-auto object-contain"
+            />
+            <div className="h-8 w-px bg-slate-200" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                <User className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <h1 className="font-semibold text-slate-800">{dashboardData?.employee?.name}</h1>
+                <p className="text-xs text-slate-500">{dashboardData?.employee?.position}</p>
+              </div>
             </div>
           </div>
           <Button variant="ghost" size="sm" onClick={logout}>
