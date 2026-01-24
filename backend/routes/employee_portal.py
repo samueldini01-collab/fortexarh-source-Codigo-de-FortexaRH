@@ -3,15 +3,25 @@ Employee Self-Service Portal Routes for FortexaRH
 Portal for employees to view their data, payslips, request vacations, etc.
 """
 from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import StreamingResponse
 from fastapi.security import HTTPBearer
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime, timezone, timedelta
 import uuid
 import logging
 import jwt
 import bcrypt
 import os
+import io
+
+# PDF Generation
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
 
 router = APIRouter(prefix="/employee-portal", tags=["Employee Portal"])
 
