@@ -4,6 +4,30 @@
 
 ## ✅ Completado Hoy (Sesión Actual)
 
+### 🎨 Mejoras UI: Landing Page Navbar y Selector de Tema (P1 - COMPLETADO)
+
+#### Landing Page - Nuevo Navbar
+- **Fondo oscuro** (slate-900) profesional para mayor impacto visual
+- **Dropdowns interactivos:**
+  - **Para Empresas:** 8 características con iconos (Gestión de Empleados, Nómina, Asistencia, Vacaciones, Evaluaciones, Reportes, IA, Portal)
+  - **Para Contadores:** 6 beneficios del programa ($10/mes, 30% Comisión, Multi-Cliente, Dashboard, Nómina RD, Reportes DGII)
+- **CTAs en dropdowns:** "Comenzar Prueba Gratis" y "Ver Programa de Partners"
+- **Links simples:** Precios, Contacto
+- **Menú móvil mejorado** con secciones expandibles
+
+#### Portal de Contadores - Selector de Apariencia
+- **Tema Claro (por defecto):** Fondo blanco/gris claro, texto oscuro
+- **Tema Oscuro:** Gradient slate-900 a emerald-900, texto claro
+- **Alto Contraste:** Amarillo sobre negro para accesibilidad
+- **Sistema:** Detecta preferencia del sistema operativo
+- **Persistencia:** Guardado en localStorage (`accountants-theme`)
+
+#### Test Report
+- **Frontend:** 11/11 features working (100%)
+- **Archivo:** `/app/test_reports/iteration_23.json`
+
+---
+
 ### 📧 Sistema de Emails de Invitación para Partners (P1 - COMPLETADO)
 Automatización del envío de emails a clientes referidos desde el Portal de Partners.
 
