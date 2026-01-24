@@ -329,3 +329,226 @@ async def update_ticket_status(ticket_id: str, status: str):
         raise HTTPException(status_code=404, detail="Ticket no encontrado")
     
     return {"message": f"Ticket actualizado a estado: {status}", "ticket_id": ticket_id}
+
+
+class TicketResponseCreate(BaseModel):
+    """Admin response to a ticket"""
+    message: str
+    internal_note: bool = False  # If true, only visible to staff
+
+
+class TicketAssignment(BaseModel):
+    """Assign ticket to a staff member"""
+    assigned_to: str
+    assigned_email: str
+
+
+@router.post("/tickets/{ticket_id}/respond")
+async def add_ticket_response(ticket_id: str, response: TicketResponseCreate):
+    """
+    Add a response to a support ticket (from admin/support staff)
+    """
+    if db is None:
+        raise HTTPException(status_code=404, detail="Ticket no encontrado")
+    
+    ticket = await db.support_tickets.find_one({"ticket_id": ticket_id})
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Ticket no encontrado")
+    
+    response_data = {
+        "response_id": f"RSP-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
+        "message": response.message,
+        "internal_note": response.internal_note,
+        "created_at": datetime.now(timezone.utc),
+        "created_by": "support_team"
+    }
+    
+    # Update ticket with new response
+    result = await db.support_tickets.update_one(
+        {"ticket_id": ticket_id},
+        {
+            "$push": {"responses": response_data},
+            "$set": {
+                "updated_at": datetime.now(timezone.utc),
+                "status": "in_progress" if ticket.get("status") == "open" else ticket.get("status")
+            }
+        }
+    )
+    
+    # Send email to customer if not internal note
+    if not response.internal_note:
+        try:
+            response_email_html = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                    .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                    .header {{ background: linear-gradient(135deg, #10b981, #14b8a6); color: white; padding: 20px; border-radius: 8px 8px 0 0; }}
+                    .content {{ background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }}
+                    .response-box {{ background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #10b981; margin: 15px 0; }}
+                    .footer {{ text-align: center; padding: 15px; color: #6b7280; font-size: 12px; }}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h2 style="margin: 0;">💬 Actualización de su Ticket</h2>
+                        <p style="margin: 5px 0 0 0; opacity: 0.9;">#{ticket_id}</p>
+                    </div>
+                    <div class="content">
+                        <p>Hola <strong>{ticket.get('name', 'Cliente')}</strong>,</p>
+                        <p>Hemos respondido a su ticket de soporte:</p>
+                        
+                        <div class="response-box">
+                            <div style="white-space: pre-wrap;">{response.message}</div>
+                        </div>
+                        
+                        <p><strong>Asunto original:</strong> {ticket.get('subject', 'N/A')}</p>
+                        
+                        <p>Si tiene preguntas adicionales, puede responder directamente a este correo.</p>
+                        
+                        <p>Saludos,<br>
+                        <strong>El Equipo de Soporte de FortexaRH</strong></p>
+                    </div>
+                    <div class="footer">
+                        FortexaRH - Sistema de RRHH y Nómina
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            
+            resend.Emails.send({
+                "from": f"FortexaRH Soporte <{SENDER_EMAIL}>",
+                "to": [ticket.get("email")],
+                "subject": f"Re: Ticket #{ticket_id} - {ticket.get('subject', 'Su solicitud')}",
+                "html": response_email_html,
+                "reply_to": SUPPORT_EMAIL
+            })
+        except Exception as e:
+            print(f"Error sending response email: {e}")
+    
+    return {
+        "message": "Respuesta agregada exitosamente",
+        "ticket_id": ticket_id,
+        "response_id": response_data["response_id"]
+    }
+
+
+@router.patch("/tickets/{ticket_id}/assign")
+async def assign_ticket(ticket_id: str, assignment: TicketAssignment):
+    """
+    Assign a ticket to a staff member
+    """
+    if db is None:
+        raise HTTPException(status_code=404, detail="Ticket no encontrado")
+    
+    result = await db.support_tickets.update_one(
+        {"ticket_id": ticket_id},
+        {
+            "$set": {
+                "assigned_to": assignment.assigned_to,
+                "assigned_email": assignment.assigned_email,
+                "updated_at": datetime.now(timezone.utc)
+            }
+        }
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Ticket no encontrado")
+    
+    return {
+        "message": f"Ticket asignado a {assignment.assigned_to}",
+        "ticket_id": ticket_id
+    }
+
+
+@router.patch("/tickets/{ticket_id}/priority")
+async def update_ticket_priority(ticket_id: str, priority: str):
+    """
+    Update ticket priority
+    """
+    if db is None:
+        raise HTTPException(status_code=404, detail="Ticket no encontrado")
+    
+    valid_priorities = ["low", "medium", "high", "critical"]
+    if priority not in valid_priorities:
+        raise HTTPException(status_code=400, detail=f"Prioridad inválida. Use: {valid_priorities}")
+    
+    result = await db.support_tickets.update_one(
+        {"ticket_id": ticket_id},
+        {
+            "$set": {
+                "priority": priority,
+                "priority_label": PRIORITY_LABELS.get(priority, priority),
+                "updated_at": datetime.now(timezone.utc)
+            }
+        }
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Ticket no encontrado")
+    
+    return {"message": f"Prioridad actualizada a: {PRIORITY_LABELS.get(priority)}", "ticket_id": ticket_id}
+
+
+@router.get("/stats")
+async def get_support_stats():
+    """
+    Get support ticket statistics for dashboard
+    """
+    if db is None:
+        return {
+            "total": 0,
+            "by_status": {},
+            "by_priority": {},
+            "by_category": {},
+            "avg_resolution_time": None
+        }
+    
+    # Total tickets
+    total = await db.support_tickets.count_documents({})
+    
+    # By status
+    pipeline_status = [
+        {"$group": {"_id": "$status", "count": {"$sum": 1}}}
+    ]
+    status_results = await db.support_tickets.aggregate(pipeline_status).to_list(10)
+    by_status = {item["_id"]: item["count"] for item in status_results}
+    
+    # By priority
+    pipeline_priority = [
+        {"$group": {"_id": "$priority", "count": {"$sum": 1}}}
+    ]
+    priority_results = await db.support_tickets.aggregate(pipeline_priority).to_list(10)
+    by_priority = {item["_id"]: item["count"] for item in priority_results}
+    
+    # By category
+    pipeline_category = [
+        {"$group": {"_id": "$category", "count": {"$sum": 1}}}
+    ]
+    category_results = await db.support_tickets.aggregate(pipeline_category).to_list(20)
+    by_category = {item["_id"]: item["count"] for item in category_results}
+    
+    # Recent tickets (last 7 days)
+    from datetime import timedelta
+    week_ago = datetime.now(timezone.utc) - timedelta(days=7)
+    recent_count = await db.support_tickets.count_documents({"created_at": {"$gte": week_ago}})
+    
+    return {
+        "total": total,
+        "recent_7_days": recent_count,
+        "by_status": by_status,
+        "by_priority": by_priority,
+        "by_category": by_category,
+        "status_labels": {
+            "open": "Abiertos",
+            "in_progress": "En Progreso",
+            "resolved": "Resueltos",
+            "closed": "Cerrados"
+        },
+        "priority_labels": PRIORITY_LABELS,
+        "category_labels": CATEGORY_LABELS
+    }
