@@ -1,0 +1,701 @@
+"""
+Partners/Accounting Firms Portal API
+Handles accounting firm registration, client management, commissions, and special pricing
+"""
+
+from fastapi import APIRouter, HTTPException, Depends, Request, Query
+from fastapi.security import HTTPBearer
+from pydantic import BaseModel, EmailStr
+from typing import Callable, Optional, List
+from datetime import datetime, timezone, timedelta
+from bson import ObjectId
+import secrets
+import os
+
+router = APIRouter(prefix="/partners", tags=["Partners"])
+security = HTTPBearer(auto_error=False)
+
+db = None
+_get_current_user_func: Callable = None
+
+
+def init_router(database, auth_dependency: Callable = None):
+    global db, _get_current_user_func
+    db = database
+    _get_current_user_func = auth_dependency
+
+
+async def get_current_user(request: Request, credentials=Depends(security)):
+    if _get_current_user_func is None:
+        raise HTTPException(status_code=500, detail="Auth not initialized")
+    return await _get_current_user_func(request, credentials)
+
+
+# ============== CONSTANTS ==============
+
+PARTNER_FLAT_PRICE = 10.00  # $10/month for partners with active clients
+PARTNER_COMMISSION_RATE = 0.30  # 30% commission
+GRACE_PERIOD_DAYS = 7  # Days before losing partner benefits after last client cancels
+
+
+# ============== MODELS ==============
+
+class PartnerRegistration(BaseModel):
+    firm_name: str
+    rnc: Optional[str] = None  # RNC (Tax ID) - optional
+    contact_name: str
+    email: EmailStr
+    phone: str
+    password: str
+    address: Optional[str] = None
+    city: Optional[str] = None
+    website: Optional[str] = None
+    employee_count: Optional[int] = 1
+
+
+class PartnerClientCreate(BaseModel):
+    company_name: str
+    contact_name: str
+    email: EmailStr
+    phone: Optional[str] = None
+    billing_type: str = "direct"  # "direct" (client pays) or "firm" (firm pays with discount)
+
+
+class PartnerUpdate(BaseModel):
+    firm_name: Optional[str] = None
+    contact_name: Optional[str] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    city: Optional[str] = None
+    website: Optional[str] = None
+
+
+# ============== HELPER FUNCTIONS ==============
+
+def generate_referral_code(firm_name: str) -> str:
+    """Generate unique referral code for the firm"""
+    prefix = ''.join(c for c in firm_name[:4].upper() if c.isalnum())
+    suffix = secrets.token_hex(3).upper()
+    return f"{prefix}-{suffix}"
+
+
+async def get_active_client_count(partner_id: str) -> int:
+    """Count active paying clients for a partner"""
+    count = await db.partner_clients.count_documents({
+        "partner_id": partner_id,
+        "status": "active",
+        "subscription_status": {"$in": ["active", "paid"]}
+    })
+    return count
+
+
+async def check_partner_benefits_status(partner_id: str) -> dict:
+    """Check if partner qualifies for flat rate benefits"""
+    active_clients = await get_active_client_count(partner_id)
+    
+    partner = await db.accounting_firms.find_one({"partner_id": partner_id})
+    
+    if active_clients >= 1:
+        return {
+            "has_benefits": True,
+            "reason": "active_clients",
+            "active_clients": active_clients,
+            "monthly_price": PARTNER_FLAT_PRICE,
+            "employee_cost": 0
+        }
+    
+    # Check grace period
+    if partner and partner.get("last_active_client_date"):
+        last_active = partner["last_active_client_date"]
+        grace_end = last_active + timedelta(days=GRACE_PERIOD_DAYS)
+        
+        if datetime.now(timezone.utc) < grace_end:
+            days_remaining = (grace_end - datetime.now(timezone.utc)).days
+            return {
+                "has_benefits": True,
+                "reason": "grace_period",
+                "active_clients": 0,
+                "grace_days_remaining": days_remaining,
+                "monthly_price": PARTNER_FLAT_PRICE,
+                "employee_cost": 0
+            }
+    
+    # No benefits - use normal pricing
+    return {
+        "has_benefits": False,
+        "reason": "no_active_clients",
+        "active_clients": 0,
+        "monthly_price": None,  # Will use standard plan pricing
+        "employee_cost": 1.50
+    }
+
+
+async def calculate_commission(client_payment: float) -> float:
+    """Calculate partner commission from client payment"""
+    return client_payment * PARTNER_COMMISSION_RATE
+
+
+# ============== REGISTRATION ENDPOINTS ==============
+
+@router.post("/register")
+async def register_accounting_firm(data: PartnerRegistration):
+    """Register a new accounting firm as a partner"""
+    
+    # Check if email already exists
+    existing = await db.users.find_one({"email": data.email.lower()})
+    if existing:
+        raise HTTPException(status_code=400, detail="Este correo ya está registrado")
+    
+    # Check if firm name exists
+    existing_firm = await db.accounting_firms.find_one({"firm_name": data.firm_name})
+    if existing_firm:
+        raise HTTPException(status_code=400, detail="Ya existe una firma con este nombre")
+    
+    # Generate IDs
+    partner_id = f"partner_{secrets.token_hex(8)}"
+    company_id = f"company_{secrets.token_hex(8)}"
+    user_id = f"user_{secrets.token_hex(8)}"
+    referral_code = generate_referral_code(data.firm_name)
+    
+    # Hash password
+    import hashlib
+    password_hash = hashlib.sha256(data.password.encode()).hexdigest()
+    
+    # Create accounting firm record
+    firm_data = {
+        "partner_id": partner_id,
+        "company_id": company_id,
+        "firm_name": data.firm_name,
+        "rnc": data.rnc,
+        "contact_name": data.contact_name,
+        "email": data.email.lower(),
+        "phone": data.phone,
+        "address": data.address,
+        "city": data.city,
+        "website": data.website,
+        "referral_code": referral_code,
+        "referral_link": f"https://fortexarh.com/register?ref={referral_code}",
+        "status": "active",
+        "subscription_status": "trial",
+        "subscription_plan": "partner",
+        "trial_ends_at": datetime.now(timezone.utc) + timedelta(days=14),
+        "total_clients": 0,
+        "active_clients": 0,
+        "total_commissions_earned": 0,
+        "pending_commissions": 0,
+        "last_active_client_date": None,
+        "created_at": datetime.now(timezone.utc),
+        "updated_at": datetime.now(timezone.utc)
+    }
+    
+    await db.accounting_firms.insert_one(firm_data)
+    
+    # Create company record (for firm's own HR management)
+    company_data = {
+        "company_id": company_id,
+        "partner_id": partner_id,
+        "name": data.firm_name,
+        "type": "accounting_firm",
+        "rnc": data.rnc,
+        "email": data.email.lower(),
+        "phone": data.phone,
+        "address": data.address,
+        "city": data.city,
+        "country": "República Dominicana",
+        "subscription_plan": "partner",
+        "subscription_status": "trial",
+        "is_partner_firm": True,
+        "created_at": datetime.now(timezone.utc),
+        "updated_at": datetime.now(timezone.utc)
+    }
+    
+    await db.companies.insert_one(company_data)
+    
+    # Create user record
+    user_data = {
+        "user_id": user_id,
+        "company_id": company_id,
+        "partner_id": partner_id,
+        "email": data.email.lower(),
+        "password": password_hash,
+        "name": data.contact_name,
+        "role": "partner_admin",
+        "is_active": True,
+        "is_partner": True,
+        "created_at": datetime.now(timezone.utc),
+        "updated_at": datetime.now(timezone.utc)
+    }
+    
+    await db.users.insert_one(user_data)
+    
+    return {
+        "message": "Firma de contadores registrada exitosamente",
+        "partner_id": partner_id,
+        "company_id": company_id,
+        "referral_code": referral_code,
+        "referral_link": f"https://fortexarh.com/register?ref={referral_code}",
+        "trial_days": 14
+    }
+
+
+# ============== DASHBOARD ENDPOINTS ==============
+
+@router.get("/dashboard")
+async def get_partner_dashboard(current_user: dict = Depends(get_current_user)):
+    """Get partner dashboard data"""
+    partner_id = current_user.get("partner_id")
+    
+    if not partner_id:
+        raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
+    
+    # Get firm data
+    firm = await db.accounting_firms.find_one(
+        {"partner_id": partner_id},
+        {"_id": 0}
+    )
+    
+    if not firm:
+        raise HTTPException(status_code=404, detail="Firma no encontrada")
+    
+    # Get client statistics
+    total_clients = await db.partner_clients.count_documents({"partner_id": partner_id})
+    active_clients = await db.partner_clients.count_documents({
+        "partner_id": partner_id,
+        "status": "active",
+        "subscription_status": {"$in": ["active", "paid"]}
+    })
+    trial_clients = await db.partner_clients.count_documents({
+        "partner_id": partner_id,
+        "subscription_status": "trial"
+    })
+    
+    # Get commission statistics
+    pipeline = [
+        {"$match": {"partner_id": partner_id}},
+        {"$group": {
+            "_id": None,
+            "total_earned": {"$sum": "$amount"},
+            "total_paid": {"$sum": {"$cond": [{"$eq": ["$status", "paid"]}, "$amount", 0]}},
+            "pending": {"$sum": {"$cond": [{"$eq": ["$status", "pending"]}, "$amount", 0]}}
+        }}
+    ]
+    
+    commission_stats = await db.partner_commissions.aggregate(pipeline).to_list(1)
+    commission_data = commission_stats[0] if commission_stats else {
+        "total_earned": 0,
+        "total_paid": 0,
+        "pending": 0
+    }
+    
+    # Get benefits status
+    benefits = await check_partner_benefits_status(partner_id)
+    
+    # Recent activity
+    recent_clients = await db.partner_clients.find(
+        {"partner_id": partner_id},
+        {"_id": 0}
+    ).sort("created_at", -1).limit(5).to_list(5)
+    
+    return {
+        "firm": {
+            "name": firm.get("firm_name"),
+            "referral_code": firm.get("referral_code"),
+            "referral_link": firm.get("referral_link"),
+            "status": firm.get("status"),
+            "subscription_status": firm.get("subscription_status"),
+            "trial_ends_at": firm.get("trial_ends_at")
+        },
+        "statistics": {
+            "total_clients": total_clients,
+            "active_clients": active_clients,
+            "trial_clients": trial_clients,
+            "inactive_clients": total_clients - active_clients - trial_clients
+        },
+        "commissions": {
+            "total_earned": commission_data.get("total_earned", 0),
+            "total_paid": commission_data.get("total_paid", 0),
+            "pending": commission_data.get("pending", 0),
+            "commission_rate": f"{PARTNER_COMMISSION_RATE * 100}%"
+        },
+        "benefits": benefits,
+        "pricing": {
+            "current_price": benefits.get("monthly_price") or "Plan estándar",
+            "employee_cost": benefits.get("employee_cost"),
+            "savings": "Empleados ilimitados" if benefits.get("has_benefits") else None
+        },
+        "recent_clients": recent_clients
+    }
+
+
+# ============== CLIENT MANAGEMENT ENDPOINTS ==============
+
+@router.get("/clients")
+async def get_partner_clients(
+    status: Optional[str] = None,
+    limit: int = Query(50, le=200),
+    skip: int = 0,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get all clients for the partner"""
+    partner_id = current_user.get("partner_id")
+    
+    if not partner_id:
+        raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
+    
+    query = {"partner_id": partner_id}
+    if status:
+        query["status"] = status
+    
+    clients = await db.partner_clients.find(
+        query,
+        {"_id": 0}
+    ).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
+    
+    total = await db.partner_clients.count_documents(query)
+    
+    return {
+        "clients": clients,
+        "total": total,
+        "limit": limit,
+        "skip": skip
+    }
+
+
+@router.post("/clients")
+async def add_partner_client(
+    data: PartnerClientCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Add a new client to the partner's portfolio"""
+    partner_id = current_user.get("partner_id")
+    
+    if not partner_id:
+        raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
+    
+    # Check if client email already exists
+    existing = await db.partner_clients.find_one({
+        "email": data.email.lower()
+    })
+    
+    if existing:
+        raise HTTPException(status_code=400, detail="Este cliente ya está registrado")
+    
+    client_id = f"client_{secrets.token_hex(8)}"
+    invitation_code = secrets.token_hex(16)
+    
+    client_data = {
+        "client_id": client_id,
+        "partner_id": partner_id,
+        "company_name": data.company_name,
+        "contact_name": data.contact_name,
+        "email": data.email.lower(),
+        "phone": data.phone,
+        "billing_type": data.billing_type,  # "direct" or "firm"
+        "status": "invited",
+        "subscription_status": "pending",
+        "subscription_plan": None,
+        "invitation_code": invitation_code,
+        "invitation_link": f"https://fortexarh.com/register?ref={current_user.get('referral_code')}&invite={invitation_code}",
+        "invited_at": datetime.now(timezone.utc),
+        "activated_at": None,
+        "monthly_value": 0,
+        "total_paid": 0,
+        "commission_earned": 0,
+        "created_at": datetime.now(timezone.utc),
+        "updated_at": datetime.now(timezone.utc)
+    }
+    
+    await db.partner_clients.insert_one(client_data)
+    
+    # Update firm's client count
+    await db.accounting_firms.update_one(
+        {"partner_id": partner_id},
+        {"$inc": {"total_clients": 1}}
+    )
+    
+    return {
+        "message": "Cliente agregado exitosamente",
+        "client_id": client_id,
+        "invitation_link": client_data["invitation_link"],
+        "invitation_code": invitation_code
+    }
+
+
+@router.get("/clients/{client_id}")
+async def get_client_detail(
+    client_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get detailed information about a specific client"""
+    partner_id = current_user.get("partner_id")
+    
+    if not partner_id:
+        raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
+    
+    client = await db.partner_clients.find_one(
+        {"client_id": client_id, "partner_id": partner_id},
+        {"_id": 0}
+    )
+    
+    if not client:
+        raise HTTPException(status_code=404, detail="Cliente no encontrado")
+    
+    # Get commission history for this client
+    commissions = await db.partner_commissions.find(
+        {"client_id": client_id, "partner_id": partner_id},
+        {"_id": 0}
+    ).sort("created_at", -1).limit(12).to_list(12)
+    
+    return {
+        "client": client,
+        "commission_history": commissions
+    }
+
+
+@router.patch("/clients/{client_id}/billing")
+async def update_client_billing(
+    client_id: str,
+    billing_type: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Update billing type for a client (direct or firm)"""
+    partner_id = current_user.get("partner_id")
+    
+    if not partner_id:
+        raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
+    
+    if billing_type not in ["direct", "firm"]:
+        raise HTTPException(status_code=400, detail="Tipo de facturación inválido")
+    
+    result = await db.partner_clients.update_one(
+        {"client_id": client_id, "partner_id": partner_id},
+        {
+            "$set": {
+                "billing_type": billing_type,
+                "updated_at": datetime.now(timezone.utc)
+            }
+        }
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Cliente no encontrado")
+    
+    return {
+        "message": f"Tipo de facturación actualizado a: {'Directo al cliente' if billing_type == 'direct' else 'A través de la firma'}",
+        "billing_type": billing_type
+    }
+
+
+# ============== COMMISSION ENDPOINTS ==============
+
+@router.get("/commissions")
+async def get_partner_commissions(
+    status: Optional[str] = None,
+    month: Optional[str] = None,  # Format: YYYY-MM
+    limit: int = Query(50, le=200),
+    current_user: dict = Depends(get_current_user)
+):
+    """Get commission history for the partner"""
+    partner_id = current_user.get("partner_id")
+    
+    if not partner_id:
+        raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
+    
+    query = {"partner_id": partner_id}
+    
+    if status:
+        query["status"] = status
+    
+    if month:
+        try:
+            year, mon = month.split("-")
+            start_date = datetime(int(year), int(mon), 1, tzinfo=timezone.utc)
+            if int(mon) == 12:
+                end_date = datetime(int(year) + 1, 1, 1, tzinfo=timezone.utc)
+            else:
+                end_date = datetime(int(year), int(mon) + 1, 1, tzinfo=timezone.utc)
+            query["created_at"] = {"$gte": start_date, "$lt": end_date}
+        except:
+            pass
+    
+    commissions = await db.partner_commissions.find(
+        query,
+        {"_id": 0}
+    ).sort("created_at", -1).limit(limit).to_list(limit)
+    
+    # Calculate totals
+    pipeline = [
+        {"$match": query},
+        {"$group": {
+            "_id": "$status",
+            "total": {"$sum": "$amount"},
+            "count": {"$sum": 1}
+        }}
+    ]
+    
+    totals_cursor = db.partner_commissions.aggregate(pipeline)
+    totals_list = await totals_cursor.to_list(10)
+    
+    totals = {item["_id"]: {"total": item["total"], "count": item["count"]} for item in totals_list}
+    
+    return {
+        "commissions": commissions,
+        "totals": totals,
+        "commission_rate": f"{PARTNER_COMMISSION_RATE * 100}%"
+    }
+
+
+@router.get("/commissions/summary")
+async def get_commissions_summary(
+    current_user: dict = Depends(get_current_user)
+):
+    """Get commission summary with monthly breakdown"""
+    partner_id = current_user.get("partner_id")
+    
+    if not partner_id:
+        raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
+    
+    # Monthly breakdown for last 12 months
+    pipeline = [
+        {"$match": {"partner_id": partner_id}},
+        {"$group": {
+            "_id": {
+                "year": {"$year": "$created_at"},
+                "month": {"$month": "$created_at"}
+            },
+            "total": {"$sum": "$amount"},
+            "count": {"$sum": 1}
+        }},
+        {"$sort": {"_id.year": -1, "_id.month": -1}},
+        {"$limit": 12}
+    ]
+    
+    monthly = await db.partner_commissions.aggregate(pipeline).to_list(12)
+    
+    # Format monthly data
+    monthly_data = [
+        {
+            "month": f"{item['_id']['year']}-{str(item['_id']['month']).zfill(2)}",
+            "total": item["total"],
+            "transactions": item["count"]
+        }
+        for item in monthly
+    ]
+    
+    return {
+        "monthly_breakdown": monthly_data,
+        "commission_rate": PARTNER_COMMISSION_RATE
+    }
+
+
+# ============== SUBSCRIPTION STATUS ENDPOINT ==============
+
+@router.get("/subscription")
+async def get_partner_subscription(current_user: dict = Depends(get_current_user)):
+    """Get current subscription status and pricing"""
+    partner_id = current_user.get("partner_id")
+    
+    if not partner_id:
+        raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
+    
+    firm = await db.accounting_firms.find_one(
+        {"partner_id": partner_id},
+        {"_id": 0}
+    )
+    
+    if not firm:
+        raise HTTPException(status_code=404, detail="Firma no encontrada")
+    
+    benefits = await check_partner_benefits_status(partner_id)
+    
+    # Get employee count for firm's own company
+    company_id = firm.get("company_id")
+    employee_count = await db.employees.count_documents({"company_id": company_id})
+    
+    # Calculate what they would pay without benefits
+    standard_price = 10 + (employee_count * 1.50)  # Pro plan as baseline
+    
+    return {
+        "subscription_status": firm.get("subscription_status"),
+        "subscription_plan": "partner" if benefits["has_benefits"] else "standard",
+        "benefits": benefits,
+        "pricing": {
+            "current_monthly": PARTNER_FLAT_PRICE if benefits["has_benefits"] else standard_price,
+            "standard_monthly": standard_price,
+            "savings": standard_price - PARTNER_FLAT_PRICE if benefits["has_benefits"] else 0,
+            "employee_count": employee_count,
+            "employee_cost": 0 if benefits["has_benefits"] else 1.50
+        },
+        "requirements": {
+            "minimum_active_clients": 1,
+            "current_active_clients": benefits.get("active_clients", 0),
+            "grace_period_days": GRACE_PERIOD_DAYS
+        }
+    }
+
+
+# ============== REFERRAL ENDPOINTS ==============
+
+@router.get("/referral")
+async def get_referral_info(current_user: dict = Depends(get_current_user)):
+    """Get referral link and statistics"""
+    partner_id = current_user.get("partner_id")
+    
+    if not partner_id:
+        raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
+    
+    firm = await db.accounting_firms.find_one(
+        {"partner_id": partner_id},
+        {"_id": 0, "referral_code": 1, "referral_link": 1, "firm_name": 1}
+    )
+    
+    if not firm:
+        raise HTTPException(status_code=404, detail="Firma no encontrada")
+    
+    # Count referral statistics
+    total_referrals = await db.partner_clients.count_documents({"partner_id": partner_id})
+    converted = await db.partner_clients.count_documents({
+        "partner_id": partner_id,
+        "status": "active"
+    })
+    
+    return {
+        "referral_code": firm.get("referral_code"),
+        "referral_link": firm.get("referral_link"),
+        "statistics": {
+            "total_referrals": total_referrals,
+            "converted": converted,
+            "conversion_rate": f"{(converted/total_referrals*100):.1f}%" if total_referrals > 0 else "0%"
+        },
+        "commission_info": {
+            "rate": f"{PARTNER_COMMISSION_RATE * 100}%",
+            "description": "Comisión recurrente de por vida sobre cada pago del cliente"
+        }
+    }
+
+
+# ============== INDEXES ==============
+
+async def create_partner_indexes():
+    """Create indexes for partner collections"""
+    try:
+        # Accounting firms indexes
+        await db.accounting_firms.create_index("partner_id", unique=True)
+        await db.accounting_firms.create_index("email", unique=True)
+        await db.accounting_firms.create_index("referral_code", unique=True)
+        await db.accounting_firms.create_index("company_id")
+        
+        # Partner clients indexes
+        await db.partner_clients.create_index("client_id", unique=True)
+        await db.partner_clients.create_index("partner_id")
+        await db.partner_clients.create_index("email")
+        await db.partner_clients.create_index([("partner_id", 1), ("status", 1)])
+        
+        # Partner commissions indexes
+        await db.partner_commissions.create_index("partner_id")
+        await db.partner_commissions.create_index("client_id")
+        await db.partner_commissions.create_index([("partner_id", 1), ("created_at", -1)])
+        
+        print("Partner indexes created successfully")
+    except Exception as e:
+        print(f"Error creating partner indexes: {e}")
