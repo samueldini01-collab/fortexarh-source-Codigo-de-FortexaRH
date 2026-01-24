@@ -581,6 +581,10 @@ export default function PartnerDashboardPage() {
               <DollarSign className="w-4 h-4 mr-2" />
               Comisiones
             </TabsTrigger>
+            <TabsTrigger value="payouts" className="data-[state=active]:bg-emerald-600">
+              <Banknote className="w-4 h-4 mr-2" />
+              Retiros
+            </TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
