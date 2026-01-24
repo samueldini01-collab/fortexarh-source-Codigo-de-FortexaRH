@@ -880,8 +880,8 @@ export default function LandingPage() {
               </div>
               <h3 className="font-semibold text-slate-900 mb-2">Dirección</h3>
               <p className="text-slate-600 text-sm">
-                Av. Winston Churchill<br />
-                Santo Domingo, RD
+                Av. George Washington #503, Gazcue<br />
+                Santo Domingo, Distrito Nacional
               </p>
             </div>
             
@@ -909,10 +909,10 @@ export default function LandingPage() {
               <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center mb-4">
                 <Clock3 className="w-6 h-6 text-amber-600" />
               </div>
-              <h3 className="font-semibold text-slate-900 mb-2">Horario</h3>
+              <h3 className="font-semibold text-slate-900 mb-2">Horario de Atención</h3>
               <p className="text-slate-600 text-sm">
-                Lunes a Viernes<br />
-                9:00 AM - 4:00 PM
+                Lunes - Viernes: 9:00 AM - 4:00 PM<br />
+                Sábados y Domingos: Cerrado
               </p>
             </div>
           </div>
