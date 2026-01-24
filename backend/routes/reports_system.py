@@ -460,6 +460,300 @@ REPORT_DEFINITIONS = {
         "supports_preview": True,
         "supports_pdf": True,
         "supports_excel": True
+    },
+    
+    # ========== RECLUTAMIENTO (6 reports) ==========
+    "reclutamiento_pipeline": {
+        "id": "reclutamiento_pipeline",
+        "name": "Pipeline de Candidatos",
+        "description": "Estado actual de candidatos en proceso de selección",
+        "category": "reclutamiento",
+        "filters": ["position", "status", "date_range"],
+        "columns": ["candidate", "position", "stage", "source", "days_in_process", "recruiter", "status"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "reclutamiento_tiempo_contratacion": {
+        "id": "reclutamiento_tiempo_contratacion",
+        "name": "Tiempo Promedio de Contratación",
+        "description": "Análisis de duración del proceso de contratación",
+        "category": "reclutamiento",
+        "filters": ["date_range", "department", "position"],
+        "columns": ["position", "department", "avg_days", "min_days", "max_days", "total_hired", "conversion_rate"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "reclutamiento_fuentes": {
+        "id": "reclutamiento_fuentes",
+        "name": "Fuentes de Reclutamiento",
+        "description": "Efectividad de canales de reclutamiento",
+        "category": "reclutamiento",
+        "filters": ["date_range"],
+        "columns": ["source", "candidates", "interviews", "hired", "conversion_rate", "avg_cost", "quality_score"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "reclutamiento_costos": {
+        "id": "reclutamiento_costos",
+        "name": "Costos de Reclutamiento",
+        "description": "Análisis de inversión en contratación",
+        "category": "reclutamiento",
+        "filters": ["date_range", "department"],
+        "columns": ["department", "positions_filled", "advertising_cost", "agency_fees", "other_costs", "total_cost", "cost_per_hire"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "reclutamiento_vacantes": {
+        "id": "reclutamiento_vacantes",
+        "name": "Vacantes Activas",
+        "description": "Posiciones abiertas pendientes de cubrir",
+        "category": "reclutamiento",
+        "filters": ["department", "priority", "status"],
+        "columns": ["position", "department", "priority", "salary_range", "posted_date", "days_open", "candidates", "status"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "reclutamiento_entrevistas": {
+        "id": "reclutamiento_entrevistas",
+        "name": "Calendario de Entrevistas",
+        "description": "Programación y resultados de entrevistas",
+        "category": "reclutamiento",
+        "filters": ["date_range", "interviewer", "status"],
+        "columns": ["date", "candidate", "position", "interviewer", "type", "result", "notes"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    
+    # ========== CAPACITACIÓN (6 reports) ==========
+    "capacitacion_horas": {
+        "id": "capacitacion_horas",
+        "name": "Horas de Capacitación",
+        "description": "Horas de formación por empleado y departamento",
+        "category": "capacitacion",
+        "filters": ["date_range", "department", "employee"],
+        "columns": ["employee", "department", "internal_hours", "external_hours", "online_hours", "total_hours", "target", "compliance"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "capacitacion_inversion": {
+        "id": "capacitacion_inversion",
+        "name": "Inversión en Formación",
+        "description": "Costos de capacitación por área y tipo",
+        "category": "capacitacion",
+        "filters": ["date_range", "department", "training_type"],
+        "columns": ["department", "employees_trained", "internal_cost", "external_cost", "total_cost", "cost_per_employee", "roi"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "capacitacion_certificaciones": {
+        "id": "capacitacion_certificaciones",
+        "name": "Certificaciones por Vencer",
+        "description": "Control de certificaciones y renovaciones",
+        "category": "capacitacion",
+        "filters": ["days_ahead", "certification_type", "department"],
+        "columns": ["employee", "certification", "issued_date", "expiry_date", "days_remaining", "renewal_cost", "status"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "capacitacion_plan": {
+        "id": "capacitacion_plan",
+        "name": "Plan de Capacitación Anual",
+        "description": "Programación y avance del plan de formación",
+        "category": "capacitacion",
+        "filters": ["year", "department", "status"],
+        "columns": ["training", "department", "target_employees", "completed", "scheduled_date", "budget", "actual_cost", "status"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "capacitacion_efectividad": {
+        "id": "capacitacion_efectividad",
+        "name": "Efectividad de Programas",
+        "description": "Evaluación de impacto de capacitaciones",
+        "category": "capacitacion",
+        "filters": ["date_range", "training_type"],
+        "columns": ["training", "participants", "pre_score", "post_score", "improvement", "satisfaction", "applied_percentage"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "capacitacion_necesidades": {
+        "id": "capacitacion_necesidades",
+        "name": "Detección de Necesidades",
+        "description": "Análisis de brechas de competencias",
+        "category": "capacitacion",
+        "filters": ["department", "competency_area"],
+        "columns": ["employee", "department", "competency", "current_level", "required_level", "gap", "priority", "recommended_training"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    
+    # ========== ANALYTICS Y KPIs (8 reports) ==========
+    "analytics_indicadores_rrhh": {
+        "id": "analytics_indicadores_rrhh",
+        "name": "Dashboard de Indicadores RRHH",
+        "description": "KPIs principales de gestión de talento",
+        "category": "analytics",
+        "filters": ["date_range"],
+        "columns": ["indicator", "current_value", "previous_value", "target", "variation", "trend", "status"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "analytics_costo_empleado": {
+        "id": "analytics_costo_empleado",
+        "name": "Costo Total por Empleado",
+        "description": "Análisis integral de costos laborales",
+        "category": "analytics",
+        "filters": ["department", "position_level"],
+        "columns": ["employee", "department", "salary", "benefits", "taxes", "training", "equipment", "total_cost"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "analytics_productividad": {
+        "id": "analytics_productividad",
+        "name": "Índices de Productividad",
+        "description": "Métricas de rendimiento por área",
+        "category": "analytics",
+        "filters": ["date_range", "department"],
+        "columns": ["department", "employees", "output_metric", "hours_worked", "productivity_index", "efficiency", "trend"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "analytics_satisfaccion": {
+        "id": "analytics_satisfaccion",
+        "name": "Índice de Satisfacción Laboral",
+        "description": "Resultados de encuestas de clima",
+        "category": "analytics",
+        "filters": ["survey_period", "department"],
+        "columns": ["department", "participation", "overall_score", "leadership", "environment", "growth", "compensation", "nps"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "analytics_benchmarking": {
+        "id": "analytics_benchmarking",
+        "name": "Benchmarking Salarial",
+        "description": "Comparación con mercado laboral",
+        "category": "analytics",
+        "filters": ["department", "position"],
+        "columns": ["position", "current_salary", "market_min", "market_median", "market_max", "percentile", "competitiveness", "recommendation"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "analytics_headcount": {
+        "id": "analytics_headcount",
+        "name": "Evolución de Plantilla",
+        "description": "Histórico de cambios en headcount",
+        "category": "analytics",
+        "filters": ["date_range", "department"],
+        "columns": ["month", "starting_count", "hires", "terminations", "transfers_in", "transfers_out", "ending_count", "net_change"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "analytics_absentismo": {
+        "id": "analytics_absentismo",
+        "name": "Análisis de Absentismo",
+        "description": "Patrones y costos de ausencias",
+        "category": "analytics",
+        "filters": ["date_range", "department", "absence_type"],
+        "columns": ["department", "total_absences", "sick_days", "personal_days", "unjustified", "absence_rate", "estimated_cost", "trend"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "analytics_diversidad": {
+        "id": "analytics_diversidad",
+        "name": "Métricas de Diversidad",
+        "description": "Indicadores de inclusión y equidad",
+        "category": "analytics",
+        "filters": ["department"],
+        "columns": ["metric", "male", "female", "other", "total", "female_percentage", "leadership_female", "pay_gap"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    
+    # ========== CUMPLIMIENTO LEGAL (6 reports) ==========
+    "cumplimiento_documentos": {
+        "id": "cumplimiento_documentos",
+        "name": "Estado de Documentos Legales",
+        "description": "Verificación de documentación requerida",
+        "category": "cumplimiento",
+        "filters": ["document_type", "status", "department"],
+        "columns": ["employee", "document", "required", "uploaded", "expiry_date", "days_remaining", "status"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "cumplimiento_contratos": {
+        "id": "cumplimiento_contratos",
+        "name": "Auditoría de Contratos",
+        "description": "Estado y cumplimiento de contratos laborales",
+        "category": "cumplimiento",
+        "filters": ["contract_type", "status"],
+        "columns": ["employee", "contract_type", "start_date", "end_date", "signed", "registered_mt", "amendments", "status"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "cumplimiento_auditoria": {
+        "id": "cumplimiento_auditoria",
+        "name": "Auditoría de Datos de Empleados",
+        "description": "Verificación de información completa",
+        "category": "cumplimiento",
+        "filters": ["department", "completeness_threshold"],
+        "columns": ["employee", "personal_data", "contact_info", "bank_info", "documents", "emergency_contact", "completeness", "missing_items"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "cumplimiento_vencimientos": {
+        "id": "cumplimiento_vencimientos",
+        "name": "Calendario de Vencimientos",
+        "description": "Próximas fechas críticas y renovaciones",
+        "category": "cumplimiento",
+        "filters": ["days_ahead", "type"],
+        "columns": ["type", "description", "related_to", "due_date", "days_remaining", "responsible", "priority", "action_required"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "cumplimiento_checklist": {
+        "id": "cumplimiento_checklist",
+        "name": "Checklist de Cumplimiento",
+        "description": "Estado de obligaciones laborales",
+        "category": "cumplimiento",
+        "filters": ["category"],
+        "columns": ["requirement", "category", "frequency", "last_completed", "next_due", "responsible", "status", "evidence"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
+    },
+    "cumplimiento_seguridad_social": {
+        "id": "cumplimiento_seguridad_social",
+        "name": "Registro Seguridad Social",
+        "description": "Estado de afiliaciones TSS",
+        "category": "cumplimiento",
+        "filters": ["status"],
+        "columns": ["employee", "cedula", "nss", "afp", "ars", "registration_date", "status", "last_payment"],
+        "supports_preview": True,
+        "supports_pdf": True,
+        "supports_excel": True
     }
 }
 
