@@ -717,6 +717,152 @@ function EmployeeDashboard() {
             </div>
           </TabsContent>
 
+          {/* Leaves/Permits Tab */}
+          <TabsContent value="leaves">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <Card className="lg:col-span-2">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <ClipboardList className="w-5 h-5" />
+                      Mis Permisos y Licencias
+                    </CardTitle>
+                    <Button onClick={() => setShowLeaveRequest(true)}>
+                      <Send className="w-4 h-4 mr-2" />Nueva Solicitud
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {leaves.leaves?.map(leave => (
+                      <div key={leave.leave_id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                        <div className="flex items-center gap-4">
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                            leave.status === 'approved' ? 'bg-emerald-100' :
+                            leave.status === 'rejected' ? 'bg-red-100' : 'bg-amber-100'
+                          }`}>
+                            <FileCheck className={`w-5 h-5 ${
+                              leave.status === 'approved' ? 'text-emerald-600' :
+                              leave.status === 'rejected' ? 'text-red-600' : 'text-amber-600'
+                            }`} />
+                          </div>
+                          <div>
+                            <p className="font-medium">{leave.leave_type_name}</p>
+                            <p className="text-sm text-slate-500">{leave.start_date} - {leave.end_date} ({leave.days} días)</p>
+                          </div>
+                        </div>
+                        <Badge className={
+                          leave.status === 'approved' ? 'bg-emerald-100 text-emerald-700' :
+                          leave.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
+                        }>
+                          {leave.status === 'approved' ? 'Aprobado' :
+                           leave.status === 'rejected' ? 'Rechazado' : 'Pendiente'}
+                        </Badge>
+                      </div>
+                    ))}
+                    {(!leaves.leaves || leaves.leaves.length === 0) && (
+                      <p className="text-center text-slate-500 py-8">No hay solicitudes de permisos</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Tipos de Permisos</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {Object.entries(leaves.leave_types || {}).map(([key, value]) => (
+                    <div key={key} className="flex justify-between items-center p-2 bg-slate-50 rounded text-sm">
+                      <span>{value.name}</span>
+                      <Badge variant="outline">{value.max_days} días</Badge>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Evaluations Tab */}
+          <TabsContent value="evaluations">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <Card className="lg:col-span-2">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Target className="w-5 h-5" />
+                    Mis Evaluaciones de Desempeño
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {evaluations.evaluations?.map(ev => (
+                      <div key={ev.evaluation_id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                        <div className="flex items-center gap-4">
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                            ev.overall_score >= 4 ? 'bg-emerald-100' :
+                            ev.overall_score >= 3 ? 'bg-amber-100' : 'bg-red-100'
+                          }`}>
+                            <Star className={`w-5 h-5 ${
+                              ev.overall_score >= 4 ? 'text-emerald-600' :
+                              ev.overall_score >= 3 ? 'text-amber-600' : 'text-red-600'
+                            }`} />
+                          </div>
+                          <div>
+                            <p className="font-medium">{ev.cycle_name || ev.evaluation_type || 'Evaluación'}</p>
+                            <p className="text-sm text-slate-500">{ev.evaluation_date?.split('T')[0] || ev.created_at?.split('T')[0]}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="text-right">
+                            <p className={`text-xl font-bold ${
+                              ev.overall_score >= 4 ? 'text-emerald-600' :
+                              ev.overall_score >= 3 ? 'text-amber-600' : 'text-red-600'
+                            }`}>
+                              {ev.overall_score?.toFixed(1) || 'N/A'}/5
+                            </p>
+                            <p className="text-xs text-slate-500">Puntuación</p>
+                          </div>
+                          <Badge className={
+                            ev.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                          }>
+                            {ev.status === 'completed' ? 'Completada' : 'Pendiente'}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                    {(!evaluations.evaluations || evaluations.evaluations.length === 0) && (
+                      <p className="text-center text-slate-500 py-8">No hay evaluaciones registradas</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Mi Rendimiento</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="text-center p-4 bg-blue-50 rounded-lg">
+                    <p className="text-3xl font-bold text-blue-600">{evaluations.summary?.average_score?.toFixed(1) || '0.0'}</p>
+                    <p className="text-sm text-blue-700">Promedio General</p>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                    <span className="text-sm text-slate-600">Total evaluaciones</span>
+                    <span className="font-bold">{evaluations.summary?.total || 0}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-emerald-50 rounded-lg">
+                    <span className="text-sm text-emerald-700">Completadas</span>
+                    <span className="font-bold text-emerald-600">{evaluations.summary?.completed || 0}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-amber-50 rounded-lg">
+                    <span className="text-sm text-amber-700">Pendientes</span>
+                    <span className="font-bold text-amber-600">{evaluations.summary?.pending || 0}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
           {/* Loans Tab */}
           <TabsContent value="loans">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
