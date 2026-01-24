@@ -850,8 +850,12 @@ export default function CompanyConfigPage() {
         {integrations.map(integration => (
           <div key={integration.id} className={`flex items-center justify-between p-4 rounded-lg border ${integration.connected ? 'bg-emerald-50 border-emerald-200' : 'bg-white'}`}>
             <div className="flex items-center gap-3">
-              <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-2xl ${integration.connected ? 'bg-emerald-100' : 'bg-slate-100'}`}>
-                {integration.icon}
+              <div className={`w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden ${integration.connected ? 'bg-emerald-100' : 'bg-slate-100'}`}>
+                {integration.logo ? (
+                  <img src={integration.logo} alt={integration.name} className="w-full h-full object-contain p-1" />
+                ) : (
+                  <span className="text-2xl">{integration.icon}</span>
+                )}
               </div>
               <div>
                 <div className="flex items-center gap-2">
