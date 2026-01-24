@@ -56,10 +56,10 @@ const THEMES = [
 ];
 
 const INTEGRATIONS = [
-  { id: "fortexaerp", name: "FortexaERP", description: "Sincronización nativa completa con el ecosistema Fortexa.", icon: "🏢", connected: false },
-  { id: "quickbooks", name: "QuickBooks Online", description: "Exporta nómina y asientos contables automáticamente a QBO.", icon: "📗", connected: false },
-  { id: "sap", name: "SAP Business One", description: "Integración empresarial para grandes organizaciones.", icon: "🔷", connected: false },
-  { id: "oracle", name: "Oracle NetSuite", description: "Conectividad en la nube para gestión financiera avanzada.", icon: "🌐", connected: false },
+  { id: "fortexaerp", name: "FortexaERP", description: "Sincronización nativa completa con el ecosistema Fortexa.", icon: "🏢", connected: false, type: "mock" },
+  { id: "quickbooks", name: "QuickBooks Online", description: "Exporta nómina y asientos contables automáticamente a QBO.", icon: "📗", connected: false, type: "oauth" },
+  { id: "sap", name: "SAP Business One", description: "Integración empresarial para grandes organizaciones.", icon: "🔷", connected: false, type: "mock" },
+  { id: "oracle", name: "Oracle NetSuite", description: "Conectividad en la nube para gestión financiera avanzada.", icon: "🌐", connected: false, type: "mock" },
 ];
 
 export default function CompanyConfigPage() {
