@@ -504,3 +504,588 @@ async def get_employee_dashboard(request: Request):
         },
         "pending_requests": pending_vacations
     }
+
+
+# ===================== PAYSLIP PDF DOWNLOAD =====================
+
+def format_currency(value):
+    """Format value as Dominican Peso"""
+    return f"RD${value:,.2f}" if value else "RD$0.00"
+
+
+@router.get("/payslips/{payslip_id}/pdf")
+async def download_payslip_pdf(payslip_id: str, request: Request):
+    """Download payslip as PDF"""
+    emp_data = await get_employee_from_token(request)
+    
+    # Get payslip
+    payslip = await db.payroll_entries.find_one(
+        {
+            "entry_id": payslip_id,
+            "employee_id": emp_data["employee_id"],
+            "company_id": emp_data["company_id"]
+        },
+        {"_id": 0}
+    )
+    
+    if not payslip:
+        raise HTTPException(status_code=404, detail="Recibo no encontrado")
+    
+    # Get company info
+    company = await db.companies.find_one(
+        {"company_id": emp_data["company_id"]},
+        {"_id": 0, "name": 1, "rnc": 1, "address": 1}
+    )
+    company_name = company.get("name", "Empresa") if company else "Empresa"
+    company_rnc = company.get("rnc", "") if company else ""
+    
+    # Get employee info
+    employee = await db.employees.find_one(
+        {"employee_id": emp_data["employee_id"]},
+        {"_id": 0}
+    )
+    
+    # Create PDF
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter, topMargin=0.5*inch, bottomMargin=0.5*inch)
+    elements = []
+    styles = getSampleStyleSheet()
+    
+    title_style = ParagraphStyle('Title', parent=styles['Heading1'], fontSize=16, alignment=TA_CENTER, spaceAfter=6)
+    subtitle_style = ParagraphStyle('Subtitle', parent=styles['Normal'], fontSize=10, alignment=TA_CENTER, spaceAfter=4)
+    section_style = ParagraphStyle('Section', parent=styles['Heading2'], fontSize=11, spaceAfter=8, spaceBefore=12)
+    
+    # Header
+    elements.append(Paragraph(company_name, title_style))
+    if company_rnc:
+        elements.append(Paragraph(f"RNC: {company_rnc}", subtitle_style))
+    elements.append(Paragraph("RECIBO DE NÓMINA", title_style))
+    elements.append(Spacer(1, 15))
+    
+    # Employee Info
+    emp_info = [
+        ["DATOS DEL EMPLEADO", "", "", ""],
+        ["Nombre:", f"{employee.get('first_name', '')} {employee.get('last_name', '')}", "Cédula:", employee.get('document_number', '')],
+        ["Cargo:", employee.get('position', 'N/A'), "Departamento:", employee.get('department', 'N/A')],
+        ["Período:", payslip.get('period', 'N/A'), "Fecha Pago:", payslip.get('payment_date', 'N/A')[:10] if payslip.get('payment_date') else 'N/A'],
+    ]
+    
+    emp_table = Table(emp_info, colWidths=[1.3*inch, 2.2*inch, 1.3*inch, 2.2*inch])
+    emp_table.setStyle(TableStyle([
+        ('SPAN', (0, 0), (3, 0)),
+        ('BACKGROUND', (0, 0), (3, 0), colors.HexColor('#1e3a5f')),
+        ('TEXTCOLOR', (0, 0), (3, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTNAME', (0, 1), (0, -1), 'Helvetica-Bold'),
+        ('FONTNAME', (2, 1), (2, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 9),
+        ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(emp_table)
+    elements.append(Spacer(1, 15))
+    
+    # Earnings
+    earnings_data = [
+        ["INGRESOS", "MONTO"],
+        ["Salario Base", format_currency(payslip.get('base_salary', 0))],
+        ["Horas Extras", format_currency(payslip.get('overtime_pay', 0))],
+        ["Bonificaciones", format_currency(payslip.get('bonuses', 0))],
+        ["Comisiones", format_currency(payslip.get('commissions', 0))],
+        ["Otros Ingresos", format_currency(payslip.get('other_income', 0))],
+        ["TOTAL INGRESOS", format_currency(payslip.get('gross_salary', 0))],
+    ]
+    
+    earnings_table = Table(earnings_data, colWidths=[4*inch, 2*inch])
+    earnings_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#28a745')),
+        ('BACKGROUND', (0, -1), (-1, -1), colors.HexColor('#d4edda')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 9),
+        ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('TOPPADDING', (0, 0), (-1, -1), 5),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+    ]))
+    elements.append(earnings_table)
+    elements.append(Spacer(1, 10))
+    
+    # Deductions
+    deductions_data = [
+        ["DEDUCCIONES", "MONTO"],
+        ["SFS (Seguro Familiar de Salud)", format_currency(payslip.get('sfs_employee', 0))],
+        ["AFP (Fondo de Pensiones)", format_currency(payslip.get('afp_employee', 0))],
+        ["ISR (Impuesto Sobre la Renta)", format_currency(payslip.get('isr', 0))],
+        ["Préstamos", format_currency(payslip.get('loan_deduction', 0))],
+        ["Otras Deducciones", format_currency(payslip.get('other_deductions', 0))],
+        ["TOTAL DEDUCCIONES", format_currency(
+            (payslip.get('sfs_employee', 0) or 0) + 
+            (payslip.get('afp_employee', 0) or 0) + 
+            (payslip.get('isr', 0) or 0) + 
+            (payslip.get('loan_deduction', 0) or 0) + 
+            (payslip.get('other_deductions', 0) or 0)
+        )],
+    ]
+    
+    deductions_table = Table(deductions_data, colWidths=[4*inch, 2*inch])
+    deductions_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#dc3545')),
+        ('BACKGROUND', (0, -1), (-1, -1), colors.HexColor('#f8d7da')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 9),
+        ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('TOPPADDING', (0, 0), (-1, -1), 5),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+    ]))
+    elements.append(deductions_table)
+    elements.append(Spacer(1, 15))
+    
+    # Net Pay
+    net_data = [
+        ["SALARIO NETO A PAGAR", format_currency(payslip.get('net_salary', 0))],
+    ]
+    net_table = Table(net_data, colWidths=[4*inch, 2*inch])
+    net_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#1e3a5f')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 12),
+        ('ALIGN', (1, 0), (1, 0), 'RIGHT'),
+        ('TOPPADDING', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+    ]))
+    elements.append(net_table)
+    
+    # Footer
+    elements.append(Spacer(1, 30))
+    footer_text = f"Generado el {datetime.now().strftime('%d/%m/%Y %H:%M')} desde Portal de Empleados"
+    elements.append(Paragraph(footer_text, ParagraphStyle('Footer', fontSize=8, alignment=TA_CENTER, textColor=colors.grey)))
+    
+    # Build PDF
+    doc.build(elements)
+    buffer.seek(0)
+    
+    period = payslip.get('period', 'recibo').replace(' ', '_').replace('/', '-')
+    filename = f"recibo_nomina_{period}.pdf"
+    
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+
+
+# ===================== PERFORMANCE EVALUATIONS =====================
+
+@router.get("/evaluations")
+async def get_employee_evaluations(request: Request):
+    """Get employee's performance evaluations"""
+    emp_data = await get_employee_from_token(request)
+    
+    evaluations = await db.evaluations.find(
+        {
+            "employee_id": emp_data["employee_id"],
+            "company_id": emp_data["company_id"]
+        },
+        {"_id": 0}
+    ).sort("evaluation_date", -1).to_list(20)
+    
+    # Get cycle info for each evaluation
+    for ev in evaluations:
+        if ev.get("cycle_id"):
+            cycle = await db.evaluation_cycles.find_one(
+                {"cycle_id": ev["cycle_id"]},
+                {"_id": 0, "name": 1}
+            )
+            ev["cycle_name"] = cycle.get("name") if cycle else "N/A"
+    
+    # Calculate averages
+    completed = [e for e in evaluations if e.get("status") == "completed"]
+    avg_score = sum(e.get("overall_score", 0) for e in completed) / len(completed) if completed else 0
+    
+    return {
+        "evaluations": evaluations,
+        "summary": {
+            "total": len(evaluations),
+            "completed": len(completed),
+            "average_score": round(avg_score, 2),
+            "pending": len([e for e in evaluations if e.get("status") == "pending"])
+        }
+    }
+
+
+@router.get("/evaluations/{evaluation_id}")
+async def get_evaluation_detail(evaluation_id: str, request: Request):
+    """Get detailed evaluation with competencies and feedback"""
+    emp_data = await get_employee_from_token(request)
+    
+    evaluation = await db.evaluations.find_one(
+        {
+            "evaluation_id": evaluation_id,
+            "employee_id": emp_data["employee_id"],
+            "company_id": emp_data["company_id"]
+        },
+        {"_id": 0}
+    )
+    
+    if not evaluation:
+        raise HTTPException(status_code=404, detail="Evaluación no encontrada")
+    
+    # Get cycle info
+    if evaluation.get("cycle_id"):
+        cycle = await db.evaluation_cycles.find_one(
+            {"cycle_id": evaluation["cycle_id"]},
+            {"_id": 0, "name": 1, "description": 1}
+        )
+        evaluation["cycle_info"] = cycle
+    
+    # Get evaluator name if available
+    if evaluation.get("evaluator_id"):
+        evaluator = await db.users.find_one(
+            {"user_id": evaluation["evaluator_id"]},
+            {"_id": 0, "name": 1, "email": 1}
+        )
+        evaluation["evaluator_name"] = evaluator.get("name", evaluator.get("email")) if evaluator else "N/A"
+    
+    return evaluation
+
+
+# ===================== LEAVE/PERMIT REQUESTS =====================
+
+class LeaveRequestCreate(BaseModel):
+    leave_type: str  # sick, personal, bereavement, maternity, paternity, other
+    start_date: str
+    end_date: str
+    reason: str
+    attachment_url: Optional[str] = None
+
+
+LEAVE_TYPES = {
+    "sick": {"name": "Licencia por Enfermedad", "max_days": 3, "requires_doc": True},
+    "personal": {"name": "Permiso Personal", "max_days": 1, "requires_doc": False},
+    "bereavement": {"name": "Licencia por Duelo", "max_days": 3, "requires_doc": True},
+    "maternity": {"name": "Licencia de Maternidad", "max_days": 84, "requires_doc": True},
+    "paternity": {"name": "Licencia de Paternidad", "max_days": 2, "requires_doc": True},
+    "medical_appointment": {"name": "Cita Médica", "max_days": 1, "requires_doc": True},
+    "other": {"name": "Otro Permiso", "max_days": 1, "requires_doc": True},
+}
+
+
+@router.get("/leaves")
+async def get_employee_leaves(request: Request):
+    """Get employee's leave/permit requests"""
+    emp_data = await get_employee_from_token(request)
+    
+    leaves = await db.leave_requests.find(
+        {
+            "employee_id": emp_data["employee_id"],
+            "company_id": emp_data["company_id"]
+        },
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(50)
+    
+    # Add leave type names
+    for leave in leaves:
+        leave_info = LEAVE_TYPES.get(leave.get("leave_type"), {})
+        leave["leave_type_name"] = leave_info.get("name", leave.get("leave_type"))
+    
+    # Summary
+    pending = len([l for l in leaves if l.get("status") == "pending"])
+    approved = len([l for l in leaves if l.get("status") == "approved"])
+    
+    return {
+        "leaves": leaves,
+        "summary": {
+            "total": len(leaves),
+            "pending": pending,
+            "approved": approved,
+            "rejected": len([l for l in leaves if l.get("status") == "rejected"])
+        },
+        "leave_types": LEAVE_TYPES
+    }
+
+
+@router.post("/leaves/request")
+async def create_leave_request(data: LeaveRequestCreate, request: Request):
+    """Create a new leave/permit request"""
+    emp_data = await get_employee_from_token(request)
+    
+    # Validate leave type
+    if data.leave_type not in LEAVE_TYPES:
+        raise HTTPException(status_code=400, detail="Tipo de permiso inválido")
+    
+    leave_info = LEAVE_TYPES[data.leave_type]
+    
+    # Calculate days
+    try:
+        start = datetime.strptime(data.start_date, "%Y-%m-%d")
+        end = datetime.strptime(data.end_date, "%Y-%m-%d")
+        days = (end - start).days + 1
+    except:
+        raise HTTPException(status_code=400, detail="Fechas inválidas")
+    
+    if days <= 0:
+        raise HTTPException(status_code=400, detail="La fecha fin debe ser posterior a la fecha inicio")
+    
+    if days > leave_info["max_days"]:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"El máximo de días para {leave_info['name']} es {leave_info['max_days']}"
+        )
+    
+    # Check if document is required
+    if leave_info["requires_doc"] and not data.attachment_url and days > 1:
+        # Only warn, don't block
+        pass
+    
+    # Check for overlapping requests
+    existing = await db.leave_requests.find_one({
+        "employee_id": emp_data["employee_id"],
+        "status": {"$in": ["pending", "approved"]},
+        "$or": [
+            {"start_date": {"$lte": data.end_date}, "end_date": {"$gte": data.start_date}},
+        ]
+    })
+    
+    if existing:
+        raise HTTPException(status_code=400, detail="Ya existe una solicitud para esas fechas")
+    
+    leave_id = f"leave_{uuid.uuid4().hex[:8]}"
+    leave_request = {
+        "leave_id": leave_id,
+        "employee_id": emp_data["employee_id"],
+        "company_id": emp_data["company_id"],
+        "leave_type": data.leave_type,
+        "leave_type_name": leave_info["name"],
+        "start_date": data.start_date,
+        "end_date": data.end_date,
+        "days": days,
+        "reason": data.reason,
+        "attachment_url": data.attachment_url,
+        "status": "pending",
+        "requested_via": "employee_portal",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.leave_requests.insert_one(leave_request)
+    
+    return {
+        "leave_id": leave_id,
+        "message": f"Solicitud de {leave_info['name']} enviada",
+        "days": days
+    }
+
+
+# ===================== ATTENDANCE REGISTRATION =====================
+
+@router.get("/attendance/today")
+async def get_today_attendance(request: Request):
+    """Get today's attendance record for employee"""
+    emp_data = await get_employee_from_token(request)
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    
+    attendance = await db.attendances.find_one(
+        {
+            "employee_id": emp_data["employee_id"],
+            "company_id": emp_data["company_id"],
+            "date": today
+        },
+        {"_id": 0}
+    )
+    
+    # Get employee's shift if any
+    employee = await db.employees.find_one(
+        {"employee_id": emp_data["employee_id"]},
+        {"_id": 0, "shift_id": 1}
+    )
+    
+    shift = None
+    if employee and employee.get("shift_id"):
+        shift = await db.shifts.find_one(
+            {"shift_id": employee["shift_id"]},
+            {"_id": 0}
+        )
+    
+    return {
+        "date": today,
+        "attendance": attendance,
+        "shift": shift,
+        "can_check_in": attendance is None or not attendance.get("check_in"),
+        "can_check_out": attendance is not None and attendance.get("check_in") and not attendance.get("check_out")
+    }
+
+
+@router.post("/attendance/check-in")
+async def employee_check_in(request: Request):
+    """Register employee check-in"""
+    emp_data = await get_employee_from_token(request)
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    now_time = datetime.now(timezone.utc).strftime("%H:%M:%S")
+    
+    # Check if already checked in
+    existing = await db.attendances.find_one({
+        "employee_id": emp_data["employee_id"],
+        "company_id": emp_data["company_id"],
+        "date": today
+    })
+    
+    if existing and existing.get("check_in"):
+        raise HTTPException(status_code=400, detail="Ya registraste tu entrada hoy")
+    
+    # Get employee's shift to determine status
+    employee = await db.employees.find_one(
+        {"employee_id": emp_data["employee_id"]},
+        {"_id": 0, "shift_id": 1}
+    )
+    
+    status = "on_time"
+    shift_start = "08:00:00"
+    
+    if employee and employee.get("shift_id"):
+        shift = await db.shifts.find_one({"shift_id": employee["shift_id"]}, {"_id": 0})
+        if shift:
+            shift_start = shift.get("start_time", "08:00:00")
+            # Allow 5 minutes grace period
+            grace_time = datetime.strptime(shift_start, "%H:%M:%S") + timedelta(minutes=5)
+            current_time = datetime.strptime(now_time, "%H:%M:%S")
+            if current_time > grace_time:
+                status = "late"
+    
+    attendance_id = f"att_{uuid.uuid4().hex[:8]}"
+    
+    if existing:
+        # Update existing record
+        await db.attendances.update_one(
+            {"attendance_id": existing["attendance_id"]},
+            {"$set": {
+                "check_in": now_time,
+                "check_in_source": "employee_portal",
+                "status": status,
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        attendance_id = existing["attendance_id"]
+    else:
+        # Create new record
+        attendance = {
+            "attendance_id": attendance_id,
+            "employee_id": emp_data["employee_id"],
+            "company_id": emp_data["company_id"],
+            "date": today,
+            "check_in": now_time,
+            "check_in_source": "employee_portal",
+            "status": status,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.attendances.insert_one(attendance)
+    
+    return {
+        "attendance_id": attendance_id,
+        "message": "Entrada registrada correctamente",
+        "check_in": now_time,
+        "status": status,
+        "status_message": "A tiempo" if status == "on_time" else "Tardanza registrada"
+    }
+
+
+@router.post("/attendance/check-out")
+async def employee_check_out(request: Request):
+    """Register employee check-out"""
+    emp_data = await get_employee_from_token(request)
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    now_time = datetime.now(timezone.utc).strftime("%H:%M:%S")
+    
+    # Find today's attendance record
+    attendance = await db.attendances.find_one({
+        "employee_id": emp_data["employee_id"],
+        "company_id": emp_data["company_id"],
+        "date": today
+    })
+    
+    if not attendance:
+        raise HTTPException(status_code=400, detail="No tienes registro de entrada hoy")
+    
+    if attendance.get("check_out"):
+        raise HTTPException(status_code=400, detail="Ya registraste tu salida hoy")
+    
+    # Calculate hours worked
+    check_in = datetime.strptime(attendance["check_in"], "%H:%M:%S")
+    check_out = datetime.strptime(now_time, "%H:%M:%S")
+    hours_worked = (check_out - check_in).total_seconds() / 3600
+    
+    # Calculate overtime (assuming 8 hour workday)
+    overtime_hours = max(0, hours_worked - 8)
+    
+    await db.attendances.update_one(
+        {"attendance_id": attendance["attendance_id"]},
+        {"$set": {
+            "check_out": now_time,
+            "check_out_source": "employee_portal",
+            "hours_worked": round(hours_worked, 2),
+            "overtime_hours": round(overtime_hours, 2),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    return {
+        "attendance_id": attendance["attendance_id"],
+        "message": "Salida registrada correctamente",
+        "check_out": now_time,
+        "hours_worked": round(hours_worked, 2),
+        "overtime_hours": round(overtime_hours, 2)
+    }
+
+
+@router.get("/attendance/history")
+async def get_attendance_history(request: Request, month: Optional[str] = None):
+    """Get attendance history for the employee"""
+    emp_data = await get_employee_from_token(request)
+    
+    # Default to current month
+    if not month:
+        month = datetime.now().strftime("%Y-%m")
+    
+    # Build date range
+    year, mon = month.split("-")
+    start_date = f"{year}-{mon}-01"
+    
+    # Get last day of month
+    if int(mon) == 12:
+        end_date = f"{int(year)+1}-01-01"
+    else:
+        end_date = f"{year}-{int(mon)+1:02d}-01"
+    
+    records = await db.attendances.find(
+        {
+            "employee_id": emp_data["employee_id"],
+            "company_id": emp_data["company_id"],
+            "date": {"$gte": start_date, "$lt": end_date}
+        },
+        {"_id": 0}
+    ).sort("date", -1).to_list(31)
+    
+    # Calculate summary
+    total_hours = sum(r.get("hours_worked", 0) for r in records)
+    total_overtime = sum(r.get("overtime_hours", 0) for r in records)
+    on_time = len([r for r in records if r.get("status") == "on_time"])
+    late = len([r for r in records if r.get("status") == "late"])
+    
+    return {
+        "month": month,
+        "records": records,
+        "summary": {
+            "days_worked": len(records),
+            "total_hours": round(total_hours, 2),
+            "total_overtime": round(total_overtime, 2),
+            "on_time": on_time,
+            "late": late,
+            "attendance_rate": round((on_time / len(records) * 100), 1) if records else 0
+        }
+    }
