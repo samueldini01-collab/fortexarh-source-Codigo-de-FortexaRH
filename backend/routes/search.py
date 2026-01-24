@@ -821,7 +821,7 @@ async def get_search_suggestions(q: str = "", current_user: dict = Depends(get_c
         except:
             pass
     
-    # Action suggestions
+    # Action suggestions - expanded
     action_suggestions = [
         {"text": "Crear solicitud de vacaciones para...", "type": "action", "icon": "calendar", "action": "crear_vacacion"},
         {"text": "Registrar entrada de...", "type": "action", "icon": "clock", "action": "registrar_entrada"},
@@ -829,6 +829,10 @@ async def get_search_suggestions(q: str = "", current_user: dict = Depends(get_c
         {"text": "Aprobar vacaciones pendientes", "type": "action", "icon": "check", "action": "aprobar_vacaciones"},
         {"text": "Crear evaluación para...", "type": "action", "icon": "target", "action": "crear_evaluacion"},
         {"text": "Ver nómina de este mes", "type": "action", "icon": "dollar", "action": "ver_nomina"},
+        {"text": "Generar reporte de nómina", "type": "action", "icon": "file-text", "action": "generar_reporte"},
+        {"text": "Calcular nómina del período", "type": "action", "icon": "calculator", "action": "calcular_nomina"},
+        {"text": "Crear préstamo para...", "type": "action", "icon": "wallet", "action": "crear_prestamo"},
+        {"text": "Ver resumen del dashboard", "type": "action", "icon": "layout-dashboard", "action": "resumen_dashboard"},
     ]
     
     # Reorder based on frequency
