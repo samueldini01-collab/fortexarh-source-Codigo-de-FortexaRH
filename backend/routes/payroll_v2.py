@@ -1426,3 +1426,237 @@ async def delete_payroll_template(template_id: str, current_user: dict = Depends
     company_id = current_user.get("company_id")
     await db.payroll_templates.delete_one({"template_id": template_id, "company_id": company_id})
     return {"message": "Plantilla eliminada"}
+
+
+# ===================== TSS REPORT GENERATION =====================
+
+@router.get("/periods/{period_id}/tss-report")
+async def generate_tss_report(period_id: str, current_user: dict = Depends(get_current_user)):
+    """
+    Generate TSS (Tesorería de Seguridad Social) report in TXT format
+    for SUIR+ system submission (Dominican Republic).
+    
+    Format: Autodeterminación Mensual (AM) - Nativo TSS
+    Structure: E (Header) + D (Detail per employee) + S (Summary)
+    """
+    company_id = current_user.get("company_id")
+    
+    # Get period
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    # Check if it's a regular payroll (TSS only applies to regular payrolls)
+    payroll_type = period.get("payroll_type", "REG")
+    if payroll_type == "OBREROS_NG":
+        raise HTTPException(
+            status_code=400, 
+            detail="El reporte TSS no aplica para nóminas de Obreros NG 07/2007. Este tipo de nómina solo requiere ISR 2%."
+        )
+    
+    # Get company info for RNC
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    company_rnc = company.get("rnc", "000000000") if company else "000000000"
+    company_name = company.get("name", "EMPRESA") if company else "EMPRESA"
+    
+    # Get payroll entries for this period
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    if not entries:
+        raise HTTPException(status_code=400, detail="No hay empleados en este período de nómina")
+    
+    # Build TSS file content
+    year = period.get("year", datetime.now().year)
+    month = period.get("month", datetime.now().month)
+    period_str = f"{month:02d}{year}"
+    
+    lines = []
+    
+    # === HEADER (E) ===
+    # Format: E|RNC|Period|CompanyName
+    header = f"E|{company_rnc}|{period_str}|{company_name}"
+    lines.append(header)
+    
+    # === DETAIL (D) - One per employee ===
+    total_salario_cotizable = 0
+    total_sfs_empleado = 0
+    total_afp_empleado = 0
+    total_sfs_patronal = 0
+    total_afp_patronal = 0
+    total_srl = 0
+    total_infotep = 0
+    employee_count = 0
+    
+    for entry in entries:
+        # Get employee cedula
+        employee_doc = entry.get("employee_document", "")
+        employee_name = entry.get("employee_name", "")
+        
+        # Salario cotizable (gross salary for TSS purposes)
+        salario_cotizable = entry.get("gross_salary", 0)
+        
+        # Employee contributions
+        sfs_empleado = entry.get("sfs_employee", 0)
+        afp_empleado = entry.get("afp_employee", 0)
+        
+        # Employer contributions
+        sfs_patronal = entry.get("sfs_employer", 0)
+        afp_patronal = entry.get("afp_employer", 0)
+        srl = entry.get("srl_employer", 0)
+        infotep = entry.get("infotep_employer", 0)
+        
+        # Format: D|Cedula|Name|SalarioCotizable|SFSEmpleado|AFPEmpleado|SFSPatronal|AFPPatronal|SRL|INFOTEP
+        detail_line = (
+            f"D|{employee_doc}|{employee_name}|"
+            f"{salario_cotizable:.2f}|{sfs_empleado:.2f}|{afp_empleado:.2f}|"
+            f"{sfs_patronal:.2f}|{afp_patronal:.2f}|{srl:.2f}|{infotep:.2f}"
+        )
+        lines.append(detail_line)
+        
+        # Accumulate totals
+        total_salario_cotizable += salario_cotizable
+        total_sfs_empleado += sfs_empleado
+        total_afp_empleado += afp_empleado
+        total_sfs_patronal += sfs_patronal
+        total_afp_patronal += afp_patronal
+        total_srl += srl
+        total_infotep += infotep
+        employee_count += 1
+    
+    # === SUMMARY (S) ===
+    # Format: S|TotalRegistros|TotalSalario|TotalSFSEmp|TotalAFPEmp|TotalSFSPat|TotalAFPPat|TotalSRL|TotalINFOTEP
+    summary = (
+        f"S|{employee_count}|{total_salario_cotizable:.2f}|"
+        f"{total_sfs_empleado:.2f}|{total_afp_empleado:.2f}|"
+        f"{total_sfs_patronal:.2f}|{total_afp_patronal:.2f}|"
+        f"{total_srl:.2f}|{total_infotep:.2f}"
+    )
+    lines.append(summary)
+    
+    # Join all lines
+    content = "\r\n".join(lines)
+    
+    # Generate filename: AM_RNC_MMYYYY.txt
+    filename = f"AM_{company_rnc}_{period_str}.txt"
+    
+    return Response(
+        content=content.encode("utf-8"),
+        media_type="text/plain; charset=utf-8",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+
+
+@router.get("/periods/{period_id}/tss-preview")
+async def preview_tss_report(period_id: str, current_user: dict = Depends(get_current_user)):
+    """
+    Preview TSS report data as JSON before downloading.
+    Shows all employee contributions and totals.
+    """
+    company_id = current_user.get("company_id")
+    
+    # Get period
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    payroll_type = period.get("payroll_type", "REG")
+    if payroll_type == "OBREROS_NG":
+        return {
+            "error": True,
+            "message": "El reporte TSS no aplica para nóminas de Obreros NG 07/2007",
+            "reason": "Este tipo de nómina solo requiere retención de ISR 2% sobre mano de obra, sin aportes a la TSS."
+        }
+    
+    # Get company info
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    company_rnc = company.get("rnc", "000000000") if company else "000000000"
+    company_name = company.get("name", "EMPRESA") if company else "EMPRESA"
+    
+    # Get payroll entries
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    year = period.get("year", datetime.now().year)
+    month = period.get("month", datetime.now().month)
+    
+    # Build preview data
+    employees = []
+    totals = {
+        "salario_cotizable": 0,
+        "sfs_empleado": 0,
+        "afp_empleado": 0,
+        "total_empleado": 0,
+        "sfs_patronal": 0,
+        "afp_patronal": 0,
+        "srl": 0,
+        "infotep": 0,
+        "total_patronal": 0
+    }
+    
+    for entry in entries:
+        emp_data = {
+            "cedula": entry.get("employee_document", ""),
+            "nombre": entry.get("employee_name", ""),
+            "salario_cotizable": entry.get("gross_salary", 0),
+            "sfs_empleado": entry.get("sfs_employee", 0),
+            "afp_empleado": entry.get("afp_employee", 0),
+            "sfs_patronal": entry.get("sfs_employer", 0),
+            "afp_patronal": entry.get("afp_employer", 0),
+            "srl": entry.get("srl_employer", 0),
+            "infotep": entry.get("infotep_employer", 0)
+        }
+        emp_data["total_empleado"] = emp_data["sfs_empleado"] + emp_data["afp_empleado"]
+        emp_data["total_patronal"] = emp_data["sfs_patronal"] + emp_data["afp_patronal"] + emp_data["srl"] + emp_data["infotep"]
+        
+        employees.append(emp_data)
+        
+        # Accumulate totals
+        totals["salario_cotizable"] += emp_data["salario_cotizable"]
+        totals["sfs_empleado"] += emp_data["sfs_empleado"]
+        totals["afp_empleado"] += emp_data["afp_empleado"]
+        totals["total_empleado"] += emp_data["total_empleado"]
+        totals["sfs_patronal"] += emp_data["sfs_patronal"]
+        totals["afp_patronal"] += emp_data["afp_patronal"]
+        totals["srl"] += emp_data["srl"]
+        totals["infotep"] += emp_data["infotep"]
+        totals["total_patronal"] += emp_data["total_patronal"]
+    
+    # Round totals
+    for key in totals:
+        totals[key] = round(totals[key], 2)
+    
+    return {
+        "company": {
+            "rnc": company_rnc,
+            "name": company_name
+        },
+        "period": {
+            "year": year,
+            "month": month,
+            "description": period.get("description", ""),
+            "payroll_type": payroll_type
+        },
+        "filename": f"AM_{company_rnc}_{month:02d}{year}.txt",
+        "employee_count": len(employees),
+        "employees": employees,
+        "totals": totals,
+        "rates": {
+            "sfs_empleado": f"{SFS_EMPLOYEE_RATE * 100:.2f}%",
+            "afp_empleado": f"{AFP_EMPLOYEE_RATE * 100:.2f}%",
+            "sfs_patronal": f"{SFS_EMPLOYER_RATE * 100:.2f}%",
+            "afp_patronal": f"{AFP_EMPLOYER_RATE * 100:.2f}%",
+            "srl": f"{SRL_EMPLOYER_RATE * 100:.2f}%",
+            "infotep": f"{INFOTEP_EMPLOYER_RATE * 100:.2f}%"
+        }
+    }
