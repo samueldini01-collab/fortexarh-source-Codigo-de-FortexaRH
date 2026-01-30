@@ -74,7 +74,8 @@ import {
   Sparkles,
   GraduationCap,
   Activity,
-  Award
+  Award,
+  MapPin
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
@@ -101,6 +102,7 @@ const DEFAULT_NAVIGATION = [
   { id: "recruitment", name: "Reclutamiento", href: "/recruitment", icon: Briefcase, visible: true, featureKey: "recruitment" },
   { id: "dgii-reports", name: "Reportes DGII-TSS", href: "/dgii-reports", icon: FileText, visible: true, featureKey: "reports" },
   { id: "attendance", name: "Asistencias", href: "/attendance", icon: Clock, visible: true, featureKey: "attendance" },
+  { id: "geo-locations", name: "Geolocalización", href: "/geo-locations", icon: MapPin, visible: true, featureKey: "attendance" },
   { id: "vacations", name: "Vacaciones", href: "/vacations", icon: Calendar, visible: true, featureKey: "vacations" },
   { id: "notifications", name: "Notificaciones", href: "/notifications", icon: Bell, visible: true, featureKey: "settings" },
   { id: "documents", name: "Documentos", href: "/documents", icon: FileCheck, visible: true, featureKey: "employees" },
