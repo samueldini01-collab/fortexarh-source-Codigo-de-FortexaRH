@@ -2657,6 +2657,7 @@ init_quickbooks_router(db, get_current_user)
 init_cdc_audit_router(db, get_current_user)
 init_support_router(db)
 init_partners_router(db, get_current_user)
+init_geolocation_attendance_router(db, get_current_user)
 
 # Include modular routers in api_router
 api_router.include_router(loans_router)
