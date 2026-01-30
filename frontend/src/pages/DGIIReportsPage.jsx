@@ -31,6 +31,22 @@ const MONTHLY_REPORTS = [
     color: "emerald"
   },
   {
+    id: "ir17",
+    name: "IR-17",
+    title: "Otras Retenciones y Retrib. Complementarias",
+    description: "Retenciones por servicios, alquileres, intereses, dividendos y retribuciones complementarias (27%)",
+    icon: FileText,
+    color: "rose"
+  },
+  {
+    id: "ir6",
+    name: "IR-6 (Anexo)",
+    title: "Anexo Detalle de Otras Retenciones",
+    description: "Detalle de retenciones a terceros: honorarios, alquileres, intereses, dividendos",
+    icon: FileSpreadsheet,
+    color: "orange"
+  },
+  {
     id: "tss-autodeterminacion",
     name: "TSS Autodeterminación",
     title: "Archivo de Autodeterminación TSS",
