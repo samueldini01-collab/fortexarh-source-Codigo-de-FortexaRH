@@ -4,6 +4,56 @@
 
 ## ✅ Completado Hoy (Sesión Actual)
 
+### 👁️ Vista Previa de CSV en Contabilidad (P1 - COMPLETADO)
+Nueva funcionalidad que permite visualizar el contenido del CSV antes de descargar.
+
+#### Funcionalidades
+- **Botón de Vista Previa:** Icono de ojo (👁️) en cada fila de asientos contables
+- **Modal de Preview:** Muestra los datos en formato tabla antes de exportar
+- **Toggle de Formato:** Botones para cambiar entre Resumido y Detallado sin cerrar el modal
+- **Descarga Directa:** Botón para descargar el CSV desde el modal de preview
+
+#### Endpoints
+```bash
+# Vista previa (JSON)
+GET /api/accounting/journal-entries/{id}/preview?format=summary|detailed
+
+# Exportación (CSV download)  
+GET /api/accounting/journal-entries/{id}/export?format=summary|detailed
+```
+
+#### Test Report: `/app/test_reports/iteration_28.json`
+
+---
+
+### 🏗️ Tipo de Nómina: Obreros NG 07/2027 (P1 - COMPLETADO)
+Nuevo tipo de nómina para empresas del sector construcción según la Norma General 07-2027.
+
+#### Características
+- **Solo ISR 2%:** Retención del 2% sobre mano de obra
+- **Sin TSS Empleado:** No se descuenta SFS (3.07%) ni AFP (2.87%)
+- **Sin Aportes Patronales TSS:** SFS, AFP, SRL e INFOTEP = 0
+
+#### Cálculo de Deducciones OBREROS_NG
+| Concepto | Tasa Regular | Tasa Obreros NG |
+|----------|--------------|-----------------|
+| SFS Empleado | 3.07% | 0% |
+| AFP Empleado | 2.87% | 0% |
+| ISR | Tabla DGII | 2% fijo |
+| SFS Patronal | 7.09% | 0% |
+| AFP Patronal | 7.10% | 0% |
+| SRL | 1.00% | 0% |
+| INFOTEP | 1.00% | 0% |
+
+#### Archivos Modificados
+- `/app/backend/utils/payroll_constants.py` - ISR_OBREROS_RATE = 0.02
+- `/app/backend/routes/payroll_v2.py` - Lógica especial en add_employees_to_period
+- `/app/frontend/src/pages/PayrollV2Page.jsx` - Tipo OBREROS_NG en selector
+
+#### Test Report: `/app/test_reports/iteration_28.json`
+
+---
+
 ### 🐛 Bug Fix: Exportación de Asientos Contables (P0 - COMPLETADO)
 Corrección de dos problemas en la funcionalidad de exportación CSV de asientos contables.
 
