@@ -32,6 +32,14 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu";
 import { 
   BookOpen, 
   Plus, 
@@ -48,7 +56,9 @@ import {
   Link2,
   AlertTriangle,
   CheckCircle,
-  X
+  X,
+  FileSpreadsheet,
+  List
 } from "lucide-react";
 import { toast } from "sonner";
 
