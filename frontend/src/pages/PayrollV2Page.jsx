@@ -207,6 +207,54 @@ export default function PayrollV2Page() {
     }
   }, [getAuthHeaders]);
 
+  // TSS Report functions
+  const openTssPreview = async (periodId) => {
+    setTssLoading(true);
+    setShowTssPreview(true);
+    try {
+      const response = await axios.get(
+        `${API}/payroll-v2/periods/${periodId}/tss-preview`,
+        { headers: getAuthHeaders(), withCredentials: true }
+      );
+      setTssPreviewData(response.data);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al cargar vista previa TSS");
+      setShowTssPreview(false);
+    } finally {
+      setTssLoading(false);
+    }
+  };
+
+  const downloadTssReport = async (periodId) => {
+    try {
+      const response = await axios.get(
+        `${API}/payroll-v2/periods/${periodId}/tss-report`,
+        { 
+          headers: getAuthHeaders(), 
+          withCredentials: true,
+          responseType: 'blob'
+        }
+      );
+      const blob = new Blob([response.data], { type: 'text/plain;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      const filename = tssPreviewData?.filename || `TSS_Report_${periodId}.txt`;
+      link.download = filename;
+      link.click();
+      toast.success("Reporte TSS descargado");
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al descargar reporte TSS");
+    }
+  };
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('es-DO', {
+      style: 'currency',
+      currency: 'DOP',
+      minimumFractionDigits: 2
+    }).format(amount || 0);
+  };
+
   useEffect(() => {
     fetchPeriods();
     fetchBankAccounts();
