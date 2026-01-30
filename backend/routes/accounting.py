@@ -777,23 +777,3 @@ async def export_journal_entry(
         media_type="text/csv; charset=utf-8",
         headers={"Content-Disposition": f"attachment; filename=asiento_{entry_id}_{format_suffix}.csv"}
     )
-                    round(totals["debit"], 2) if totals["debit"] else 0,
-                    round(totals["credit"], 2) if totals["credit"] else 0
-                ])
-    
-    writer.writerow([])
-    if has_cost_center:
-        writer.writerow(["", "", "TOTALES", entry.get("total_debits", 0), entry.get("total_credits", 0)])
-    else:
-        writer.writerow(["", "TOTALES", entry.get("total_debits", 0), entry.get("total_credits", 0)])
-    
-    # Add UTF-8 BOM for Excel compatibility
-    content = "\ufeff" + output.getvalue()
-    
-    format_suffix = "resumido" if format == "summary" else "detallado"
-    
-    return Response(
-        content=content.encode("utf-8"),
-        media_type="text/csv; charset=utf-8",
-        headers={"Content-Disposition": f"attachment; filename=asiento_{entry_id}_{format_suffix}.csv"}
-    )
