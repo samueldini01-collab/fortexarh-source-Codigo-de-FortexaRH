@@ -1,8 +1,42 @@
 # FortexaRH - Sistema SaaS de RRHH y Nómina
 
-## Última Actualización: 2026-01-24
+## Última Actualización: 2026-01-30
 
 ## ✅ Completado Hoy (Sesión Actual)
+
+### 🔔 Sistema de Notificaciones para Portal de Empleados (P2 - COMPLETADO)
+Sistema completo de notificaciones en tiempo real para el portal de autoservicio de empleados.
+
+#### Backend - Endpoints de Notificaciones
+- `GET /api/employee-portal/notifications` - Listar notificaciones del empleado
+- `POST /api/employee-portal/notifications/{id}/read` - Marcar como leída
+- `POST /api/employee-portal/notifications/read-all` - Marcar todas como leídas
+- `DELETE /api/employee-portal/notifications/{id}` - Eliminar notificación
+- `GET /api/employee-portal/announcements` - Obtener anuncios de la empresa
+
+#### Frontend - Sistema de Notificaciones
+- **Icono de campana** en el header con badge de notificaciones no leídas
+- **Panel desplegable** con lista de notificaciones, botón "Marcar todas", y opciones de eliminar
+- **Tipos de notificación:** success (verde), warning (amarillo), info (azul), alert (rojo)
+- **Categorías:** payroll, vacation, attendance, announcement, document, general
+
+#### Dashboard Mejorado
+- **Sección de Anuncios Importantes:** Cards destacadas con anuncios de la empresa
+- **Sección de Notificaciones Recientes:** Muestra las 3 más recientes no leídas con badge "X nuevas"
+
+#### Test Report
+- **Backend:** 12/12 tests passed (100%)
+- **Frontend:** 100% features verified
+- **Archivo:** `/app/test_reports/iteration_27.json`
+
+---
+
+### 🐛 Corrección de Bugs en Nómina (P0 - COMPLETADO)
+- **Error de exportación Excel:** Reestructurado endpoint para devolver JSON con datos completos
+- **Nombre de empresa:** Agregado `company_name` a `/api/auth/me` y `fetchCompanySettings()` en frontend
+- **Test Report:** `/app/test_reports/iteration_26.json`
+
+---
 
 ### 💰 Sistema de Pago de Comisiones a Partners con Stripe Connect (P1 - COMPLETADO)
 Sistema completo para que los partners retiren sus comisiones automáticamente a sus cuentas bancarias.
