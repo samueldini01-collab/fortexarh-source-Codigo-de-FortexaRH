@@ -63,6 +63,7 @@ export default function RolesPage() {
     permissions: {},
     color: "#3b82f6"
   });
+  const [permissionLabels, setPermissionLabels] = useState({});
 
   const fetchRoles = useCallback(async () => {
     setLoading(true);
@@ -77,6 +78,7 @@ export default function RolesPage() {
       setDefaultRoles(response.data.default_roles || []);
       setModules(response.data.modules || []);
       setPermissionTypes(response.data.permission_types || ["view", "create", "edit", "delete"]);
+      setPermissionLabels(response.data.permission_labels || {});
     } catch (error) {
       console.error("Error fetching roles:", error);
       toast.error("Error al cargar roles");
