@@ -56,6 +56,7 @@ import SupportAdminPage from "@/pages/SupportAdminPage";
 import AccountantsSoftwarePage from "@/pages/AccountantsSoftwarePage";
 import PartnerRegisterPage from "@/pages/PartnerRegisterPage";
 import PartnerDashboardPage from "@/pages/PartnerDashboardPage";
+import BrochurePage from "@/pages/BrochurePage";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
