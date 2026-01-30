@@ -4,6 +4,74 @@
 
 ## ✅ Completado Hoy (Sesión Actual)
 
+### 📍 Marcación de Asistencia con Geolocalización - Fase 1 (P0 - COMPLETADO)
+Sistema de control de asistencia usando GPS del dispositivo móvil del empleado con validación de geofencing.
+
+#### Funcionalidades Implementadas
+
+**Para Administradores (Panel /geo-locations):**
+- Crear, editar y eliminar ubicaciones autorizadas (geofences)
+- Definir coordenadas GPS y radio en metros para cada ubicación
+- Tipos de ubicación: Oficina, Proyecto/Obra, Sucursal, Cliente
+- Asignar empleados específicos a ubicaciones
+- Ver marcaciones del día con resumen de estadísticas
+- Panel de alertas para marcaciones fuera de zona
+- Aprobar/rechazar marcaciones pendientes
+
+**Para Empleados (Página móvil /geo-attendance):**
+- Interfaz móvil optimizada con tema oscuro
+- Acceso a GPS del dispositivo para capturar ubicación
+- Captura opcional de selfie para verificación
+- Visualización de ubicación más cercana y distancia
+- Botones de "Marcar Entrada" y "Marcar Salida"
+- Historial de marcaciones del día
+- Lista de ubicaciones autorizadas
+
+#### Validación de Geofence
+- Sistema calcula distancia usando fórmula Haversine
+- Si está dentro del radio → Estado: "approved" automático
+- Si está fuera del radio → Estado: "pending_review" (requiere aprobación)
+- Se guarda distancia exacta a la zona más cercana
+
+#### Endpoints API
+```bash
+# Gestión de Ubicaciones
+GET /api/geolocation-attendance/locations
+POST /api/geolocation-attendance/locations
+PUT /api/geolocation-attendance/locations/{id}
+DELETE /api/geolocation-attendance/locations/{id}
+
+# Asignación de Empleados
+POST /api/geolocation-attendance/locations/{id}/assign-employees
+GET /api/geolocation-attendance/locations/{id}/employees
+
+# Marcación de Asistencia
+POST /api/geolocation-attendance/mark
+GET /api/geolocation-attendance/my-marks
+GET /api/geolocation-attendance/my-locations
+GET /api/geolocation-attendance/my-history
+
+# Panel Admin
+GET /api/geolocation-attendance/admin/today
+GET /api/geolocation-attendance/admin/live-map
+GET /api/geolocation-attendance/admin/report
+POST /api/geolocation-attendance/admin/approve/{mark_id}
+POST /api/geolocation-attendance/admin/reject/{mark_id}
+```
+
+#### Archivos Creados/Modificados
+- `/app/backend/routes/geolocation_attendance.py` - Backend completo
+- `/app/frontend/src/pages/GeoLocationsPage.jsx` - Panel admin
+- `/app/frontend/src/pages/GeoAttendancePage.jsx` - Página móvil empleados
+- `/app/frontend/src/components/DashboardLayout.jsx` - Link en menú lateral
+- `/app/frontend/src/App.js` - Rutas agregadas
+
+#### Test Report: `/app/test_reports/iteration_29.json`
+- Backend: 100% (14 tests passed, 3 skipped)
+- Frontend: 100%
+
+---
+
 ### 📊 Reportes DGII: IR-17 e IR-6 (P1 - COMPLETADO)
 Implementación de reportes fiscales adicionales para la Dirección General de Impuestos Internos.
 
