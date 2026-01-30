@@ -1022,13 +1022,7 @@ async def export_ir4(period_id: str, current_user: dict = Depends(get_current_us
 async def export_ir17(period_id: str, current_user: dict = Depends(get_current_user)):
     """
     Export IR-17 report - Otras Retenciones y Retribuciones Complementarias
-    
-    This report includes:
-    - Retenciones por servicios profesionales (10%)
-    - Retenciones por alquileres (10%)  
-    - Retenciones por premios (15%)
-    - Retenciones por intereses pagados a PF (10%)
-    - Retribuciones complementarias (27%)
+    Formato oficial DGII con todos los códigos de retención
     """
     company_id = current_user.get("company_id")
     
@@ -1043,7 +1037,32 @@ async def export_ir17(period_id: str, current_user: dict = Depends(get_current_u
     company_name = company.get("name", "") if company else ""
     company_rnc = company.get("rnc", "") if company else ""
     
-    # Get expenses/payments that have withholdings (gastos y pagos con retenciones)
+    # Códigos oficiales DGII IR-17 con tasas
+    ir17_codes = {
+        1: {"name": "ALQUILERES", "rate": 10.00, "total": 0},
+        2: {"name": "HONORARIOS POR SERVICIOS INDEPENDIENTES", "rate": 10.00, "total": 0},
+        3: {"name": "PREMIOS (Ley 253-12)", "rate": 25.00, "total": 0},
+        4: {"name": "TRANSFERENCIA DE TÍTULO Y PROPIEDADES", "rate": 2.00, "total": 0},
+        5: {"name": "DIVIDENDOS (Ley 253-12)", "rate": 10.00, "total": 0},
+        6: {"name": "INTERESES A PERSONAS JURÍDICAS NO RESIDENTES (Ley 253-12)", "rate": 10.00, "total": 0},
+        7: {"name": "INTERESES A PERSONAS JURÍDICAS NO RESIDENTES (Ley 57-2007)", "rate": 5.00, "total": 0},
+        8: {"name": "INTERESES A PERSONAS FÍSICAS NO RESIDENTES (Ley 253-12)", "rate": 10.00, "total": 0},
+        9: {"name": "INTERESES A PERSONAS FÍSICAS NO RESIDENTES (Leyes 57-2007 y 253-12)", "rate": 5.00, "total": 0},
+        10: {"name": "REMESAS AL EXTERIOR (Ley 253-12)", "rate": 27.00, "total": 0},
+        11: {"name": "INTERESES PAGADOS POR ENTIDADES NO FINANCIERAS A PF RESIDENTES", "rate": 10.00, "total": 0},
+        12: {"name": "PAGOS A PROVEEDORES DEL ESTADO (Ley 253-12)", "rate": 5.00, "total": 0},
+        13: {"name": "JUEGOS TELEFÓNICOS (Norma 08-2011)", "rate": 5.00, "total": 0},
+        14: {"name": "GANANCIA DE CAPITAL (Norma 07-2011)", "rate": 1.00, "total": 0},
+        15: {"name": "JUEGOS VÍA INTERNET (Ley 139-11, Art. 7)", "rate": 10.00, "total": 0},
+        16: {"name": "OTRAS RENTAS (Ley 11-92, Art. 309 Lit. f)", "rate": 10.00, "total": 0},
+        17: {"name": "OTRAS RENTAS (Decreto 139-98, Art. 70 Lit. a y b)", "rate": 2.00, "total": 0},
+        18: {"name": "OTRAS RETENCIONES - OBREROS CONSTRUCCIÓN (Norma 07-2007)", "rate": 2.00, "total": 0},
+        19: {"name": "INTERESES POR ENTIDADES FINANCIERAS A PJ RESIDENTES (Norma 13-2011)", "rate": 1.00, "total": 0},
+        20: {"name": "INTERESES POR ENTIDADES FINANCIERAS A PF RESIDENTES (Ley 253-12)", "rate": 10.00, "total": 0},
+        21: {"name": "ADQUISICIÓN BIENES - GANADERÍA BOVINA (Norma 04-25)", "rate": 1.00, "total": 0},
+    }
+    
+    # Get expenses/payments
     expenses = await db.expenses.find(
         {
             "company_id": company_id,
@@ -1056,128 +1075,80 @@ async def export_ir17(period_id: str, current_user: dict = Depends(get_current_u
         {"_id": 0}
     ).to_list(500)
     
-    # Categories of IR-17 withholdings
-    withholding_categories = {
-        "honorarios": {"rate": 0.10, "name": "Honorarios y Servicios Profesionales", "total": 0, "retention": 0},
-        "alquileres": {"rate": 0.10, "name": "Alquileres a Personas Físicas", "total": 0, "retention": 0},
-        "intereses": {"rate": 0.10, "name": "Intereses Pagados a Personas Físicas", "total": 0, "retention": 0},
-        "premios": {"rate": 0.15, "name": "Premios", "total": 0, "retention": 0},
-        "dividendos": {"rate": 0.10, "name": "Dividendos", "total": 0, "retention": 0},
-        "otros": {"rate": 0.10, "name": "Otras Retenciones", "total": 0, "retention": 0},
-    }
-    
-    # Get payroll entries for complementary retributions (retribuciones complementarias)
+    # Get payroll entries for Obreros NG (code 18)
     entries = await db.payroll_entries.find(
-        {"period_id": period_id, "company_id": company_id},
+        {"period_id": period_id, "company_id": company_id, "payroll_type": "OBREROS_NG"},
         {"_id": 0}
     ).to_list(1000)
     
-    # Calculate complementary retributions (benefits in kind, bonuses not in payroll, etc.)
-    total_retrib_complementarias = 0
+    # Process Obreros NG - ISR 2% goes to code 18
     for entry in entries:
-        # Check for additional benefits that might be complementary retributions
-        bonuses = entry.get("bonuses", 0)
-        other_income = entry.get("other_income", 0)
-        if bonuses > 0 or other_income > 0:
-            total_retrib_complementarias += bonuses + other_income
+        isr = entry.get("isr", 0)
+        if isr > 0:
+            ir17_codes[18]["total"] += entry.get("gross_salary", 0)
     
-    # Process expenses by category
+    # Categorize expenses
     for expense in expenses:
-        category = expense.get("category", "otros").lower()
+        category = expense.get("category", "").lower()
         amount = expense.get("amount", 0)
+        code = expense.get("ir17_code", 0)  # Allow explicit code assignment
         
-        if "honorario" in category or "servicio" in category or "profesional" in category:
-            withholding_categories["honorarios"]["total"] += amount
-            withholding_categories["honorarios"]["retention"] += amount * 0.10
+        if code and code in ir17_codes:
+            ir17_codes[code]["total"] += amount
         elif "alquiler" in category or "renta" in category:
-            withholding_categories["alquileres"]["total"] += amount
-            withholding_categories["alquileres"]["retention"] += amount * 0.10
-        elif "interes" in category:
-            withholding_categories["intereses"]["total"] += amount
-            withholding_categories["intereses"]["retention"] += amount * 0.10
+            ir17_codes[1]["total"] += amount
+        elif "honorario" in category or "servicio" in category:
+            ir17_codes[2]["total"] += amount
         elif "premio" in category:
-            withholding_categories["premios"]["total"] += amount
-            withholding_categories["premios"]["retention"] += amount * 0.15
+            ir17_codes[3]["total"] += amount
         elif "dividendo" in category:
-            withholding_categories["dividendos"]["total"] += amount
-            withholding_categories["dividendos"]["retention"] += amount * 0.10
+            ir17_codes[5]["total"] += amount
+        elif "interes" in category:
+            ir17_codes[11]["total"] += amount
         else:
-            withholding_categories["otros"]["total"] += amount
-            withholding_categories["otros"]["retention"] += amount * 0.10
+            ir17_codes[16]["total"] += amount  # Default: Otras Rentas
     
-    # Calculate retribuciones complementarias retention (27%)
-    retrib_comp_retention = total_retrib_complementarias * 0.27
-    
-    # Generate Excel-compatible report
+    # Generate Excel report
     output = io.StringIO()
     writer = csv.writer(output, delimiter='\t')
     
     # Header
-    writer.writerow(["DECLARACIÓN IR-17 - OTRAS RETENCIONES Y RETRIBUCIONES COMPLEMENTARIAS"])
+    writer.writerow(["FORMULARIO IR-17 - DECLARACIÓN JURADA DE OTRAS RETENCIONES"])
     writer.writerow([])
-    writer.writerow(["Empresa:", company_name])
-    writer.writerow(["RNC:", company_rnc])
-    writer.writerow(["Período:", f"{period.get('month', '')}/{period.get('year', '')}"])
-    writer.writerow([])
-    
-    # Section 1: Other withholdings
-    writer.writerow(["=" * 60])
-    writer.writerow(["SECCIÓN I: OTRAS RETENCIONES (ISR)"])
-    writer.writerow(["=" * 60])
-    writer.writerow([])
-    writer.writerow(["Concepto", "Tasa", "Base Imponible", "Retención"])
-    writer.writerow(["-" * 40, "-" * 10, "-" * 15, "-" * 15])
-    
-    total_otras_retenciones = 0
-    for cat_id, cat_data in withholding_categories.items():
-        if cat_data["total"] > 0:
-            writer.writerow([
-                cat_data["name"],
-                f"{cat_data['rate']*100:.0f}%",
-                f"RD$ {cat_data['total']:,.2f}",
-                f"RD$ {cat_data['retention']:,.2f}"
-            ])
-            total_otras_retenciones += cat_data["retention"]
-    
-    if total_otras_retenciones == 0:
-        writer.writerow(["(No hay retenciones en este período)", "", "", ""])
-    
-    writer.writerow(["-" * 40, "-" * 10, "-" * 15, "-" * 15])
-    writer.writerow(["SUBTOTAL OTRAS RETENCIONES", "", "", f"RD$ {total_otras_retenciones:,.2f}"])
+    writer.writerow(["RNC/Cédula del Agente de Retención:", company_rnc])
+    writer.writerow(["Nombre/Razón Social:", company_name])
+    writer.writerow(["Período Fiscal:", f"{period.get('month'):02d}/{period.get('year')}"])
     writer.writerow([])
     
-    # Section 2: Complementary retributions
-    writer.writerow(["=" * 60])
-    writer.writerow(["SECCIÓN II: RETRIBUCIONES COMPLEMENTARIAS"])
-    writer.writerow(["=" * 60])
+    # Section: DETALLE DE LA RENTA NETA IMPONIBLE
+    writer.writerow(["DETALLE DE LA RENTA NETA IMPONIBLE O PÉRDIDA FISCAL"])
     writer.writerow([])
-    writer.writerow(["Concepto", "Tasa", "Base Imponible", "Retención"])
-    writer.writerow(["-" * 40, "-" * 10, "-" * 15, "-" * 15])
+    writer.writerow(["No.", "CONCEPTO", "TASA %", "MONTO IMPONIBLE (RD$)", "IMPUESTO RETENIDO (RD$)"])
     
-    if total_retrib_complementarias > 0:
+    total_imponible = 0
+    total_retenido = 0
+    
+    for code, data in ir17_codes.items():
+        monto = data["total"]
+        tasa = data["rate"]
+        retencion = round(monto * tasa / 100, 2)
+        
         writer.writerow([
-            "Retribuciones Complementarias",
-            "27%",
-            f"RD$ {total_retrib_complementarias:,.2f}",
-            f"RD$ {retrib_comp_retention:,.2f}"
+            f"{code}.",
+            data["name"],
+            f"{tasa:.2f}%",
+            f"{monto:,.2f}" if monto > 0 else "-",
+            f"{retencion:,.2f}" if retencion > 0 else "-"
         ])
-    else:
-        writer.writerow(["(No hay retribuciones complementarias)", "", "", ""])
+        
+        total_imponible += monto
+        total_retenido += retencion
     
-    writer.writerow(["-" * 40, "-" * 10, "-" * 15, "-" * 15])
-    writer.writerow(["SUBTOTAL RETRIB. COMPLEMENTARIAS", "", "", f"RD$ {retrib_comp_retention:,.2f}"])
     writer.writerow([])
+    writer.writerow(["", "TOTAL MONTO IMPONIBLE", "", f"{total_imponible:,.2f}", ""])
+    writer.writerow(["", "TOTAL IMPUESTO A PAGAR", "", "", f"{total_retenido:,.2f}"])
     
-    # Totals
-    writer.writerow(["=" * 60])
-    writer.writerow(["RESUMEN"])
-    writer.writerow(["=" * 60])
-    total_ir17 = total_otras_retenciones + retrib_comp_retention
-    writer.writerow(["Total Otras Retenciones:", f"RD$ {total_otras_retenciones:,.2f}"])
-    writer.writerow(["Total Retrib. Complementarias:", f"RD$ {retrib_comp_retention:,.2f}"])
-    writer.writerow(["TOTAL A PAGAR IR-17:", f"RD$ {total_ir17:,.2f}"])
-    
-    content = "\ufeff" + output.getvalue()  # UTF-8 BOM for Excel
+    content = "\ufeff" + output.getvalue()
     return Response(
         content=content.encode("utf-8"),
         media_type="application/vnd.ms-excel; charset=utf-8",
@@ -1189,13 +1160,7 @@ async def export_ir17(period_id: str, current_user: dict = Depends(get_current_u
 async def export_ir6(period_id: str, current_user: dict = Depends(get_current_user)):
     """
     Export IR-6 report - Anexo de Otras Retenciones del IR-17
-    
-    Detalle de retenciones realizadas a terceros (personas físicas):
-    - Honorarios profesionales
-    - Alquileres  
-    - Intereses
-    - Dividendos
-    - Otros pagos sujetos a retención
+    Formato oficial DGII con columnas requeridas
     """
     company_id = current_user.get("company_id")
     
@@ -1210,7 +1175,32 @@ async def export_ir6(period_id: str, current_user: dict = Depends(get_current_us
     company_name = company.get("name", "") if company else ""
     company_rnc = company.get("rnc", "") if company else ""
     
-    # Get expenses/suppliers with withholdings
+    # Códigos de concepto para IR-6
+    concept_codes = {
+        1: "ALQUILERES",
+        2: "HONORARIOS",
+        3: "PREMIOS",
+        4: "TRANSFERENCIAS",
+        5: "DIVIDENDOS",
+        6: "INTERESES PJ NO RES",
+        7: "INTERESES PJ NO RES 5%",
+        8: "INTERESES PF NO RES",
+        9: "INTERESES PF NO RES 5%",
+        10: "REMESAS EXTERIOR",
+        11: "INTERESES PF RES",
+        12: "PROVEEDORES ESTADO",
+        13: "JUEGOS TEL",
+        14: "GANANCIA CAPITAL",
+        15: "JUEGOS INTERNET",
+        16: "OTRAS RENTAS",
+        17: "OTRAS RENTAS 2%",
+        18: "OBREROS CONST.",
+        19: "INTERESES PJ FIN",
+        20: "INTERESES PF FIN",
+        21: "GANADERÍA",
+    }
+    
+    # Get expenses
     expenses = await db.expenses.find(
         {
             "company_id": company_id,
@@ -1223,13 +1213,17 @@ async def export_ir6(period_id: str, current_user: dict = Depends(get_current_us
         {"_id": 0}
     ).to_list(500)
     
-    # Also get suppliers/vendors with retentions
+    # Get Obreros NG entries
+    obreros_entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id, "payroll_type": "OBREROS_NG"},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    # Get suppliers lookup
     suppliers = await db.suppliers.find(
         {"company_id": company_id},
         {"_id": 0}
     ).to_list(500)
-    
-    # Build supplier lookup
     supplier_lookup = {s.get("supplier_id"): s for s in suppliers}
     
     output = io.StringIO()
@@ -1238,16 +1232,136 @@ async def export_ir6(period_id: str, current_user: dict = Depends(get_current_us
     # Header
     writer.writerow(["ANEXO IR-6 - DETALLE DE OTRAS RETENCIONES"])
     writer.writerow([])
-    writer.writerow(["Empresa:", company_name])
-    writer.writerow(["RNC:", company_rnc])
-    writer.writerow(["Período:", f"{period.get('month', '')}/{period.get('year', '')}"])
+    writer.writerow(["RNC/Cédula Agente Retención:", company_rnc])
+    writer.writerow(["Nombre/Razón Social:", company_name])
+    writer.writerow(["Período:", f"{period.get('month'):02d}/{period.get('year')}"])
     writer.writerow([])
     
-    # Detail header
+    # Column headers matching DGII format
     writer.writerow([
-        "Tipo Ret.",
-        "Cédula/RNC",
-        "Nombre/Razón Social",
+        "FECHA",
+        "MES",
+        "DÍA", 
+        "FORMA DE PAGO",
+        "NOMBRE DEL BENEFICIADO",
+        "RNC/CÉDULA O PASAPORTE",
+        "DIRECCIÓN",
+        "CÓDIGO CONCEPTO",
+        "MONTO DEL PAGO (RD$)",
+        "MONTO SUJETO A RETENCIÓN (RD$)",
+        "TASA",
+        "IMPUESTO RETENIDO (RD$)"
+    ])
+    
+    total_pago = 0
+    total_sujeto = 0
+    total_retenido = 0
+    row_count = 0
+    
+    # Process expenses
+    for expense in expenses:
+        amount = expense.get("amount", 0)
+        if amount <= 0:
+            continue
+        
+        # Determine code and rate
+        category = expense.get("category", "").lower()
+        code = expense.get("ir17_code", 16)  # Default: 16 - Otras Rentas
+        
+        if "alquiler" in category:
+            code, rate = 1, 10.00
+        elif "honorario" in category or "servicio" in category:
+            code, rate = 2, 10.00
+        elif "premio" in category:
+            code, rate = 3, 25.00
+        elif "dividendo" in category:
+            code, rate = 5, 10.00
+        elif "interes" in category:
+            code, rate = 11, 10.00
+        else:
+            code, rate = 16, 10.00
+        
+        retencion = round(amount * rate / 100, 2)
+        
+        # Parse date
+        expense_date = expense.get("expense_date", "")
+        mes = expense_date[5:7] if len(expense_date) >= 7 else ""
+        dia = expense_date[8:10] if len(expense_date) >= 10 else ""
+        
+        # Get supplier info
+        supplier_id = expense.get("supplier_id")
+        supplier = supplier_lookup.get(supplier_id, {})
+        
+        writer.writerow([
+            expense_date,
+            mes,
+            dia,
+            expense.get("payment_method", "TRANSFERENCIA"),
+            expense.get("vendor_name", supplier.get("name", "")),
+            expense.get("vendor_rnc", supplier.get("rnc", "")),
+            supplier.get("address", ""),
+            code,
+            f"{amount:,.2f}",
+            f"{amount:,.2f}",
+            f"{rate:.2f}%",
+            f"{retencion:,.2f}"
+        ])
+        
+        total_pago += amount
+        total_sujeto += amount
+        total_retenido += retencion
+        row_count += 1
+    
+    # Add Obreros NG entries (code 18)
+    for entry in obreros_entries:
+        gross = entry.get("gross_salary", 0)
+        isr = entry.get("isr", 0)
+        if isr <= 0:
+            continue
+        
+        writer.writerow([
+            "",
+            f"{period.get('month'):02d}",
+            "15",  # Mid-month for payroll
+            "NÓMINA",
+            entry.get("employee_name", ""),
+            entry.get("employee_document", ""),
+            "",
+            18,  # Obreros Construcción
+            f"{gross:,.2f}",
+            f"{gross:,.2f}",
+            "2.00%",
+            f"{isr:,.2f}"
+        ])
+        
+        total_pago += gross
+        total_sujeto += gross
+        total_retenido += isr
+        row_count += 1
+    
+    # Totals row
+    writer.writerow([])
+    writer.writerow([
+        "TOTALES",
+        "",
+        "",
+        "",
+        f"{row_count} registros",
+        "",
+        "",
+        "",
+        f"{total_pago:,.2f}",
+        f"{total_sujeto:,.2f}",
+        "",
+        f"{total_retenido:,.2f}"
+    ])
+    
+    content = "\ufeff" + output.getvalue()
+    return Response(
+        content=content.encode("utf-8"),
+        media_type="application/vnd.ms-excel; charset=utf-8",
+        headers={"Content-Disposition": f"attachment; filename=IR6_Anexo_{period.get('month'):02d}_{period.get('year')}.xls"}
+    )
         "Dirección",
         "Concepto",
         "Fecha Pago",
