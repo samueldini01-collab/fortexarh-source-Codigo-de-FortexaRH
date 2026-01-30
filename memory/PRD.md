@@ -4,6 +4,32 @@
 
 ## ✅ Completado Hoy (Sesión Actual)
 
+### 📄 Brochure Profesional con Descarga PDF (P1 - COMPLETADO)
+Brochure digital profesional del sistema para presentación a clientes potenciales.
+
+#### Acceso
+- **URL:** `/brochure`
+- **Acceso:** Público (no requiere login)
+
+#### Secciones del Brochure
+1. **Portada:** Logo, título, descripción y estadísticas (500+ empresas, 50,000+ empleados)
+2. **Características:** 6 features principales con iconos y descripciones
+3. **Cumplimiento Legal:** Banner destacando conformidad con TSS y DGII
+4. **Beneficios:** 6 ventajas clave del sistema
+5. **Módulos:** Lista completa de funcionalidades
+6. **Planes y Precios:** Básico (RD$2,500), Profesional (RD$5,000), Enterprise
+7. **Contacto:** Website, teléfono, email
+
+#### Funcionalidad PDF
+- Botón "Descargar PDF" en la barra superior
+- Generación con librería `html2pdf.js`
+- Archivo: `FortexaRH_Brochure.pdf`
+
+#### Archivo
+- `/app/frontend/src/pages/BrochurePage.jsx`
+
+---
+
 ### 📋 Reporte TSS Automático para SUIR+ (P1 - COMPLETADO)
 Nueva funcionalidad para generar el archivo TXT de autodeterminación para la Tesorería de Seguridad Social.
 
