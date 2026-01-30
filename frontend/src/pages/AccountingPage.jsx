@@ -76,6 +76,13 @@ export default function AccountingPage() {
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [selectedAccount, setSelectedAccount] = useState(null);
   
+  // CSV Preview states
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewData, setPreviewData] = useState(null);
+  const [previewFormat, setPreviewFormat] = useState("summary");
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewEntry, setPreviewEntry] = useState(null);
+  
   // Filters
   const [searchNumber, setSearchNumber] = useState("");
   const [startDate, setStartDate] = useState("");
