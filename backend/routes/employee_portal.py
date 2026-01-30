@@ -1089,3 +1089,159 @@ async def get_attendance_history(request: Request, month: Optional[str] = None):
             "attendance_rate": round((on_time / len(records) * 100), 1) if records else 0
         }
     }
+
+
+# ===================== EMPLOYEE NOTIFICATIONS =====================
+
+class MarkNotificationRead(BaseModel):
+    notification_id: str
+
+
+@router.get("/notifications")
+async def get_employee_notifications(request: Request, limit: int = 50, unread_only: bool = False):
+    """Get notifications for the employee"""
+    emp_data = await get_employee_from_token(request)
+    
+    query = {
+        "employee_id": emp_data["employee_id"],
+        "company_id": emp_data["company_id"]
+    }
+    
+    if unread_only:
+        query["read"] = False
+    
+    notifications = await db.employee_notifications.find(
+        query,
+        {"_id": 0}
+    ).sort("created_at", -1).limit(limit).to_list(limit)
+    
+    # Count unread
+    unread_count = await db.employee_notifications.count_documents({
+        "employee_id": emp_data["employee_id"],
+        "company_id": emp_data["company_id"],
+        "read": False
+    })
+    
+    return {
+        "notifications": notifications,
+        "unread_count": unread_count
+    }
+
+
+@router.post("/notifications/{notification_id}/read")
+async def mark_notification_read(notification_id: str, request: Request):
+    """Mark a notification as read"""
+    emp_data = await get_employee_from_token(request)
+    
+    result = await db.employee_notifications.update_one(
+        {
+            "notification_id": notification_id,
+            "employee_id": emp_data["employee_id"],
+            "company_id": emp_data["company_id"]
+        },
+        {"$set": {"read": True, "read_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Notificación no encontrada")
+    
+    return {"message": "Notificación marcada como leída"}
+
+
+@router.post("/notifications/read-all")
+async def mark_all_notifications_read(request: Request):
+    """Mark all notifications as read"""
+    emp_data = await get_employee_from_token(request)
+    
+    result = await db.employee_notifications.update_many(
+        {
+            "employee_id": emp_data["employee_id"],
+            "company_id": emp_data["company_id"],
+            "read": False
+        },
+        {"$set": {"read": True, "read_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"message": f"{result.modified_count} notificaciones marcadas como leídas"}
+
+
+@router.delete("/notifications/{notification_id}")
+async def delete_notification(notification_id: str, request: Request):
+    """Delete a notification"""
+    emp_data = await get_employee_from_token(request)
+    
+    result = await db.employee_notifications.delete_one({
+        "notification_id": notification_id,
+        "employee_id": emp_data["employee_id"],
+        "company_id": emp_data["company_id"]
+    })
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Notificación no encontrada")
+    
+    return {"message": "Notificación eliminada"}
+
+
+# Helper function to create employee notifications (called from other routes)
+async def create_employee_notification(
+    employee_id: str,
+    company_id: str,
+    title: str,
+    message: str,
+    notification_type: str = "info",  # info, success, warning, alert
+    category: str = "general",  # payroll, vacation, attendance, announcement, document
+    action_url: str = None,
+    metadata: dict = None
+):
+    """Create a notification for an employee"""
+    notification = {
+        "notification_id": f"notif_{uuid.uuid4().hex[:12]}",
+        "employee_id": employee_id,
+        "company_id": company_id,
+        "title": title,
+        "message": message,
+        "type": notification_type,
+        "category": category,
+        "action_url": action_url,
+        "metadata": metadata or {},
+        "read": False,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.employee_notifications.insert_one(notification)
+    return notification
+
+
+# ===================== ANNOUNCEMENTS =====================
+
+@router.get("/announcements")
+async def get_company_announcements(request: Request):
+    """Get company announcements for the employee"""
+    emp_data = await get_employee_from_token(request)
+    
+    # Get announcements that are active and for all employees or this employee's department
+    employee = await db.employees.find_one(
+        {"employee_id": emp_data["employee_id"]},
+        {"_id": 0, "department": 1}
+    )
+    
+    now = datetime.now(timezone.utc).isoformat()
+    
+    announcements = await db.announcements.find(
+        {
+            "company_id": emp_data["company_id"],
+            "active": True,
+            "$or": [
+                {"start_date": {"$lte": now}},
+                {"start_date": {"$exists": False}}
+            ],
+            "$or": [
+                {"target_audience": "all"},
+                {"target_audience": {"$exists": False}},
+                {"target_departments": employee.get("department") if employee else None}
+            ]
+        },
+        {"_id": 0}
+    ).sort("created_at", -1).limit(20).to_list(20)
+    
+    return {"announcements": announcements}
