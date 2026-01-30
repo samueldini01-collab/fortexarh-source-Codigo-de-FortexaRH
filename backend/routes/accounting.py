@@ -224,6 +224,9 @@ class JournalLine(BaseModel):
     debit: float = 0
     credit: float = 0
     description: Optional[str] = None
+    cost_center: Optional[str] = None
+    employee_id: Optional[str] = None
+    employee_name: Optional[str] = None
 
 
 class JournalEntryCreate(BaseModel):
