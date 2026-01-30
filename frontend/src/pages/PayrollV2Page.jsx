@@ -1122,10 +1122,10 @@ export default function PayrollV2Page() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <Shield className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     Archivos TSS
                   </CardTitle>
-                  <CardDescription>Tesorería de la Seguridad Social (v5.3 / v5.1)</CardDescription>
+                  <CardDescription>Tesorería de la Seguridad Social - Formato SUIR+ (v5.3 / v5.1)</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {periods.filter(p => p.status === 'paid').length === 0 ? (
@@ -1142,14 +1142,27 @@ export default function PayrollV2Page() {
                             {getPayrollTypeBadge(period.payroll_type)}
                           </div>
                           <div className="flex gap-2 flex-wrap">
-                            <Button variant="outline" size="sm" className="text-blue-600 border-blue-200 hover:bg-blue-50 dark:bg-blue-900/30" 
-                              onClick={() => handleDownloadTSSAutodeterminacion(period.period_id)}>
-                              <Download className="w-4 h-4 mr-1" />Autodeterminación
-                            </Button>
-                            <Button variant="outline" size="sm" className="text-purple-600 border-purple-200 hover:bg-purple-50 dark:bg-purple-900/30"
-                              onClick={() => handleDownloadTSSNovedades(period.period_id)}>
-                              <Download className="w-4 h-4 mr-1" />Novedades
-                            </Button>
+                            {period.payroll_type !== "OBREROS_NG" ? (
+                              <>
+                                <Button variant="outline" size="sm" className="text-emerald-600 border-emerald-200 hover:bg-emerald-50 dark:bg-emerald-900/30" 
+                                  onClick={() => openTssPreview(period.period_id)}>
+                                  <Eye className="w-4 h-4 mr-1" />Vista Previa
+                                </Button>
+                                <Button variant="outline" size="sm" className="text-blue-600 border-blue-200 hover:bg-blue-50 dark:bg-blue-900/30" 
+                                  onClick={() => handleDownloadTSSAutodeterminacion(period.period_id)}>
+                                  <Download className="w-4 h-4 mr-1" />Autodeterminación
+                                </Button>
+                                <Button variant="outline" size="sm" className="text-purple-600 border-purple-200 hover:bg-purple-50 dark:bg-purple-900/30"
+                                  onClick={() => handleDownloadTSSNovedades(period.period_id)}>
+                                  <Download className="w-4 h-4 mr-1" />Novedades
+                                </Button>
+                              </>
+                            ) : (
+                              <div className="text-sm text-amber-600 dark:text-amber-400 flex items-center gap-2">
+                                <AlertCircle className="w-4 h-4" />
+                                <span>Obreros NG no requiere TSS (solo ISR 2%)</span>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ))}
