@@ -553,6 +553,12 @@ export default function LandingPage() {
                     Ver Demo
                   </Button>
                 </a>
+                <Link to="/brochure" className="w-full sm:w-auto">
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 border-emerald-300 text-emerald-700 hover:bg-emerald-50" data-testid="brochure-btn">
+                    <FileText className="w-4 h-4 mr-2" />
+                    Ver Brochure
+                  </Button>
+                </Link>
               </div>
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-6 mt-6 sm:mt-8 text-xs sm:text-sm text-slate-500">
                 <div className="flex items-center gap-2">
