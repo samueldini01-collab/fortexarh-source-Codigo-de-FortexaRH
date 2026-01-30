@@ -642,9 +642,25 @@ export default function AccountingPage() {
                           <TableCell>{getStatusBadge(entry.status)}</TableCell>
                           <TableCell>
                             <div className="flex justify-end gap-1">
-                              <Button size="icon" variant="ghost" onClick={() => exportToCSV(entry)} title="Exportar CSV">
-                                <Download className="w-4 h-4" />
-                              </Button>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button size="icon" variant="ghost" title="Exportar">
+                                    <Download className="w-4 h-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>Exportar como</DropdownMenuLabel>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem onClick={() => exportToCSV(entry, "summary")}>
+                                    <FileSpreadsheet className="w-4 h-4 mr-2" />
+                                    Resumido (por cuenta)
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => exportToCSV(entry, "detailed")}>
+                                    <List className="w-4 h-4 mr-2" />
+                                    Detallado (por empleado)
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
                               <Button size="icon" variant="ghost" onClick={() => openEditEntry(entry)} title="Editar">
                                 <Edit className="w-4 h-4" />
                               </Button>
