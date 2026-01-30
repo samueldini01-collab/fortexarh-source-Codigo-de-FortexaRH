@@ -2,7 +2,7 @@
 Geolocation Attendance Routes - FortexaRH
 Marcación de asistencia con geolocalización y selfie
 """
-from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime, timezone, timedelta
@@ -22,11 +22,12 @@ def init_router(database, get_current_user_func):
     db = database
     _get_current_user_func = get_current_user_func
 
-async def get_current_user(request):
+async def get_current_user(request: Request):
     """Wrapper to call the injected get_current_user function"""
-    if _get_current_user_func is None:
-        raise HTTPException(status_code=500, detail="Auth not initialized")
-    return await _get_current_user_func(request)
+    from fastapi.security import HTTPBearer
+    security = HTTPBearer(auto_error=False)
+    credentials = await security(request)
+    return await _get_current_user_func(request, credentials)
 
 
 def generate_id(prefix: str) -> str:
