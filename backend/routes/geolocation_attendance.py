@@ -100,7 +100,7 @@ class EmployeeLocationAssignment(BaseModel):
 # ==================== LOCATION MANAGEMENT ====================
 
 @router.get("/locations")
-async def get_locations(current_user: dict = Depends(get_current_user)):
+async def get_locations(request: Request):
     """Get all geofence locations for the company"""
     company_id = current_user.get("company_id")
     
@@ -121,7 +121,7 @@ async def get_locations(current_user: dict = Depends(get_current_user)):
 
 
 @router.post("/locations")
-async def create_location(data: LocationCreate, current_user: dict = Depends(get_current_user)):
+async def create_location(data: LocationCreate, request: Request):
     """Create a new geofence location"""
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
@@ -153,7 +153,7 @@ async def create_location(data: LocationCreate, current_user: dict = Depends(get
 
 
 @router.put("/locations/{location_id}")
-async def update_location(location_id: str, data: LocationUpdate, current_user: dict = Depends(get_current_user)):
+async def update_location(location_id: str, data: LocationUpdate, request: Request):
     """Update a geofence location"""
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
@@ -176,7 +176,7 @@ async def update_location(location_id: str, data: LocationUpdate, current_user: 
 
 
 @router.delete("/locations/{location_id}")
-async def delete_location(location_id: str, current_user: dict = Depends(get_current_user)):
+async def delete_location(location_id: str, request: Request):
     """Delete a geofence location"""
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
@@ -202,7 +202,7 @@ async def delete_location(location_id: str, current_user: dict = Depends(get_cur
 
 
 @router.post("/locations/{location_id}/assign-employees")
-async def assign_employees_to_location(location_id: str, data: EmployeeLocationAssignment, current_user: dict = Depends(get_current_user)):
+async def assign_employees_to_location(location_id: str, data: EmployeeLocationAssignment, request: Request):
     """Assign employees to a geofence location"""
     company_id = current_user.get("company_id")
     
@@ -237,7 +237,7 @@ async def assign_employees_to_location(location_id: str, data: EmployeeLocationA
 
 
 @router.get("/locations/{location_id}/employees")
-async def get_location_employees(location_id: str, current_user: dict = Depends(get_current_user)):
+async def get_location_employees(location_id: str, request: Request):
     """Get employees assigned to a location"""
     company_id = current_user.get("company_id")
     
@@ -259,7 +259,7 @@ async def get_location_employees(location_id: str, current_user: dict = Depends(
 # ==================== ATTENDANCE MARKING ====================
 
 @router.post("/mark")
-async def mark_attendance(data: AttendanceMarkRequest, current_user: dict = Depends(get_current_user)):
+async def mark_attendance(data: AttendanceMarkRequest, request: Request):
     """Mark attendance with geolocation"""
     company_id = current_user.get("company_id")
     user_id = current_user.get("user_id")
@@ -446,7 +446,7 @@ async def mark_attendance(data: AttendanceMarkRequest, current_user: dict = Depe
 
 
 @router.get("/my-marks")
-async def get_my_marks(date: str = None, current_user: dict = Depends(get_current_user)):
+async def get_my_marks(date: str = None, request: Request):
     """Get current user's attendance marks"""
     company_id = current_user.get("company_id")
     user_id = current_user.get("user_id")
@@ -479,7 +479,7 @@ async def get_my_marks(date: str = None, current_user: dict = Depends(get_curren
 
 
 @router.get("/my-locations")
-async def get_my_locations(current_user: dict = Depends(get_current_user)):
+async def get_my_locations(request: Request):
     """Get locations assigned to current user"""
     company_id = current_user.get("company_id")
     user_id = current_user.get("user_id")
@@ -530,7 +530,7 @@ async def get_my_locations(current_user: dict = Depends(get_current_user)):
 
 
 @router.get("/my-history")
-async def get_my_history(month: int = None, year: int = None, current_user: dict = Depends(get_current_user)):
+async def get_my_history(month: int = None, year: int = None, request: Request):
     """Get current user's attendance history"""
     company_id = current_user.get("company_id")
     user_id = current_user.get("user_id")
@@ -595,7 +595,7 @@ async def get_my_history(month: int = None, year: int = None, current_user: dict
 # ==================== ADMIN REPORTS ====================
 
 @router.get("/admin/today")
-async def get_today_attendance(current_user: dict = Depends(get_current_user)):
+async def get_today_attendance(request: Request):
     """Get all attendance marks for today (admin view)"""
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
@@ -632,7 +632,7 @@ async def get_today_attendance(current_user: dict = Depends(get_current_user)):
 
 
 @router.get("/admin/live-map")
-async def get_live_map_data(current_user: dict = Depends(get_current_user)):
+async def get_live_map_data(request: Request):
     """Get data for live map view"""
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
@@ -674,7 +674,7 @@ async def get_attendance_report(
     start_date: str,
     end_date: str,
     location_id: str = None,
-    current_user: dict = Depends(get_current_user)
+    request: Request
 ):
     """Get attendance report for date range"""
     company_id = current_user.get("company_id")
@@ -738,7 +738,7 @@ async def get_attendance_report(
 
 
 @router.post("/admin/approve/{mark_id}")
-async def approve_mark(mark_id: str, current_user: dict = Depends(get_current_user)):
+async def approve_mark(mark_id: str, request: Request):
     """Approve a pending attendance mark"""
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
@@ -762,7 +762,7 @@ async def approve_mark(mark_id: str, current_user: dict = Depends(get_current_us
 
 
 @router.post("/admin/reject/{mark_id}")
-async def reject_mark(mark_id: str, reason: str = "", current_user: dict = Depends(get_current_user)):
+async def reject_mark(mark_id: str, reason: str = "", request: Request):
     """Reject a pending attendance mark"""
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
