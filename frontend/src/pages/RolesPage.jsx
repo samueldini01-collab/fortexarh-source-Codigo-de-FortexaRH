@@ -643,56 +643,84 @@ export default function RolesPage() {
               {/* Modules & Permissions */}
               <div>
                 <Label className="text-base font-semibold">Módulos y Permisos</Label>
-                <p className="text-sm text-slate-500 mb-4">Selecciona los módulos y permisos que tendrá este rol</p>
+                <p className="text-sm text-slate-500 mb-4">Selecciona los módulos y permisos específicos que tendrá este rol</p>
                 
-                <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
-                  {modules.map(mod => (
-                    <div 
-                      key={mod.id}
-                      className={`border rounded-lg p-3 transition-all ${
-                        formData.modules.includes(mod.id) ? 'border-blue-300 bg-blue-50' : 'border-slate-200'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <Checkbox 
-                            checked={formData.modules.includes(mod.id)}
-                            onCheckedChange={() => toggleModule(mod.id)}
-                          />
-                          <div>
-                            <p className="font-medium text-slate-800 dark:text-slate-100">{mod.name}</p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400">{mod.description}</p>
+                <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
+                  {modules.map(mod => {
+                    const modulePermissions = mod.permissions || ["view", "create", "edit", "delete"];
+                    return (
+                      <div 
+                        key={mod.id}
+                        className={`border rounded-lg p-4 transition-all ${
+                          formData.modules.includes(mod.id) ? 'border-blue-300 bg-blue-50' : 'border-slate-200'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <Checkbox 
+                              checked={formData.modules.includes(mod.id)}
+                              onCheckedChange={() => toggleModule(mod.id)}
+                            />
+                            <div>
+                              <p className="font-medium text-slate-800 dark:text-slate-100">{mod.name}</p>
+                              <p className="text-xs text-slate-500 dark:text-slate-400">{mod.description}</p>
+                            </div>
                           </div>
+                          {formData.modules.includes(mod.id) && (
+                            <Badge variant="outline" className="text-xs">
+                              {(formData.permissions[mod.id] || []).length} de {modulePermissions.length} permisos
+                            </Badge>
+                          )}
                         </div>
+                        
+                        {formData.modules.includes(mod.id) && (
+                          <div className="mt-3 pt-3 border-t">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-xs text-slate-500">Permisos disponibles para este módulo:</span>
+                              <button 
+                                type="button"
+                                className="text-xs text-blue-600 hover:text-blue-800"
+                                onClick={() => {
+                                  setFormData(prev => ({
+                                    ...prev,
+                                    permissions: {
+                                      ...prev.permissions,
+                                      [mod.id]: modulePermissions
+                                    }
+                                  }));
+                                }}
+                              >
+                                Seleccionar todos
+                              </button>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              {modulePermissions.map(perm => (
+                                <label 
+                                  key={perm}
+                                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm cursor-pointer transition-all ${
+                                    (formData.permissions[mod.id] || []).includes(perm)
+                                      ? 'bg-blue-500 text-white'
+                                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                  }`}
+                                >
+                                  <input 
+                                    type="checkbox"
+                                    className="sr-only"
+                                    checked={(formData.permissions[mod.id] || []).includes(perm)}
+                                    onChange={() => togglePermission(mod.id, perm)}
+                                  />
+                                  {(formData.permissions[mod.id] || []).includes(perm) && (
+                                    <Check className="w-3 h-3" />
+                                  )}
+                                  {getPermissionLabel(perm)}
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      
-                      {formData.modules.includes(mod.id) && (
-                        <div className="mt-3 pt-3 border-t flex flex-wrap gap-2">
-                          {permissionTypes.map(perm => (
-                            <label 
-                              key={perm}
-                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm cursor-pointer transition-all ${
-                                (formData.permissions[mod.id] || []).includes(perm)
-                                  ? 'bg-blue-500 text-white'
-                                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                              }`}
-                            >
-                              <input 
-                                type="checkbox"
-                                className="sr-only"
-                                checked={(formData.permissions[mod.id] || []).includes(perm)}
-                                onChange={() => togglePermission(mod.id, perm)}
-                              />
-                              {(formData.permissions[mod.id] || []).includes(perm) && (
-                                <Check className="w-3 h-3" />
-                              )}
-                              {getPermissionLabel(perm)}
-                            </label>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>
