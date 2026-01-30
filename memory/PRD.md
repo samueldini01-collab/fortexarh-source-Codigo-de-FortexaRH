@@ -62,8 +62,8 @@ GET /api/accounting/journal-entries/{id}/export?format=summary|detailed
 
 ---
 
-### 🏗️ Tipo de Nómina: Obreros NG 07/2027 (P1 - COMPLETADO)
-Nuevo tipo de nómina para empresas del sector construcción según la Norma General 07-2027.
+### 🏗️ Tipo de Nómina: Obreros NG 07/2007 (P1 - COMPLETADO)
+Nuevo tipo de nómina para empresas del sector construcción según la Norma General 07-2007.
 
 #### Características
 - **Solo ISR 2%:** Retención del 2% sobre mano de obra
