@@ -598,7 +598,7 @@ export default function DGIIReportsPage() {
               <div>
                 <h4 className="font-semibold text-slate-800 mb-2">Declaración Anual IR-13</h4>
                 <ol className="list-decimal list-inside text-sm text-slate-600 space-y-2">
-                  <li>Seleccione el año fiscal en la pestaña "Reporte Anual"</li>
+                  <li>Seleccione el año fiscal en la pestaña Reporte Anual</li>
                   <li>Descargue el <strong>IR-13</strong></li>
                   <li>Revise el detalle por empleado y resumen mensual</li>
                   <li>Complete la declaración en la Oficina Virtual</li>
