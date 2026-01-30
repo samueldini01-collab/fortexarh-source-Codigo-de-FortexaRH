@@ -1099,6 +1099,142 @@ export default function AccountingPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* CSV Preview Dialog */}
+        <Dialog open={showPreview} onOpenChange={setShowPreview}>
+          <DialogContent className="max-w-4xl max-h-[85vh] overflow-hidden flex flex-col">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Eye className="w-5 h-5" />
+                Vista Previa - {previewFormat === "summary" ? "Resumido" : "Detallado"}
+              </DialogTitle>
+              <DialogDescription>
+                {previewData?.description || "Asiento contable"}
+              </DialogDescription>
+            </DialogHeader>
+
+            {/* Format Toggle */}
+            <div className="flex items-center gap-2 py-2 border-b">
+              <span className="text-sm text-slate-500">Formato:</span>
+              <Button
+                size="sm"
+                variant={previewFormat === "summary" ? "default" : "outline"}
+                onClick={() => changePreviewFormat("summary")}
+                disabled={previewLoading}
+              >
+                <FileSpreadsheet className="w-4 h-4 mr-1" />
+                Resumido
+              </Button>
+              <Button
+                size="sm"
+                variant={previewFormat === "detailed" ? "default" : "outline"}
+                onClick={() => changePreviewFormat("detailed")}
+                disabled={previewLoading}
+              >
+                <List className="w-4 h-4 mr-1" />
+                Detallado
+              </Button>
+            </div>
+
+            {/* Preview Content */}
+            <div className="flex-1 overflow-auto min-h-0">
+              {previewLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <RefreshCw className="w-8 h-8 animate-spin text-slate-400" />
+                </div>
+              ) : previewData ? (
+                <div className="space-y-4">
+                  {/* Header Info */}
+                  <div className="grid grid-cols-3 gap-4 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg text-sm">
+                    <div>
+                      <span className="text-slate-500">Fecha:</span>
+                      <span className="ml-2 font-medium">{previewData.entry_date}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500">Referencia:</span>
+                      <span className="ml-2 font-medium">{previewData.reference || "-"}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500">ID:</span>
+                      <span className="ml-2 font-mono text-xs">{previewData.entry_id}</span>
+                    </div>
+                  </div>
+
+                  {/* Data Table */}
+                  <div className="border rounded-lg overflow-hidden">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-slate-100 dark:bg-slate-800">
+                          <TableHead className="font-semibold">Código</TableHead>
+                          <TableHead className="font-semibold">Nombre de Cuenta</TableHead>
+                          {previewData.has_cost_center && (
+                            <TableHead className="font-semibold">Centro de Costos</TableHead>
+                          )}
+                          {previewFormat === "detailed" && (
+                            <TableHead className="font-semibold">Empleado</TableHead>
+                          )}
+                          <TableHead className="text-right font-semibold">Débito</TableHead>
+                          <TableHead className="text-right font-semibold">Crédito</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {previewData.rows?.map((row, idx) => (
+                          <TableRow key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800">
+                            <TableCell className="font-mono text-sm">{row.account_code}</TableCell>
+                            <TableCell>{row.account_name}</TableCell>
+                            {previewData.has_cost_center && (
+                              <TableCell>{row.cost_center || "-"}</TableCell>
+                            )}
+                            {previewFormat === "detailed" && (
+                              <TableCell className="text-slate-600">{row.employee_name || "-"}</TableCell>
+                            )}
+                            <TableCell className="text-right font-mono">
+                              {row.debit > 0 ? formatCurrency(row.debit) : "-"}
+                            </TableCell>
+                            <TableCell className="text-right font-mono">
+                              {row.credit > 0 ? formatCurrency(row.credit) : "-"}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        {/* Totals Row */}
+                        <TableRow className="bg-slate-100 dark:bg-slate-800 font-bold border-t-2">
+                          <TableCell colSpan={previewData.has_cost_center ? (previewFormat === "detailed" ? 4 : 3) : (previewFormat === "detailed" ? 3 : 2)} className="text-right">
+                            TOTALES
+                          </TableCell>
+                          <TableCell className="text-right font-mono text-emerald-600 dark:text-emerald-400">
+                            {formatCurrency(previewData.totals?.debits || 0)}
+                          </TableCell>
+                          <TableCell className="text-right font-mono text-red-600 dark:text-red-400">
+                            {formatCurrency(previewData.totals?.credits || 0)}
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </div>
+
+                  {/* Row Count */}
+                  <div className="text-sm text-slate-500 text-right">
+                    {previewData.rows?.length || 0} líneas
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-12 text-slate-500">
+                  No hay datos para mostrar
+                </div>
+              )}
+            </div>
+
+            <DialogFooter className="border-t pt-4">
+              <Button variant="outline" onClick={() => setShowPreview(false)}>
+                Cerrar
+              </Button>
+              <Button onClick={downloadFromPreview} disabled={!previewData}>
+                <Download className="w-4 h-4 mr-2" />
+                Descargar CSV
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );
