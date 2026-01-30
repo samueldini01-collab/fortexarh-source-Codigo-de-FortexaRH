@@ -194,8 +194,9 @@ export default function PayrollV2Page() {
     fetchPeriods();
     fetchBankAccounts();
     fetchNoveltyTypes();
+    fetchCompanySettings();
     if (user?.company_name) setCompanyName(user.company_name);
-  }, [fetchPeriods, fetchBankAccounts, fetchNoveltyTypes, user?.company_name]);
+  }, [fetchPeriods, fetchBankAccounts, fetchNoveltyTypes, fetchCompanySettings, user?.company_name]);
 
   useEffect(() => {
     if (selectedPeriod) fetchPeriodDetails(selectedPeriod.period_id);
