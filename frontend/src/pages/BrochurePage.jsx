@@ -16,7 +16,22 @@ import {
   HeadphonesIcon,
   Zap,
   Award,
-  ArrowLeft
+  ArrowLeft,
+  X,
+  Briefcase,
+  Calendar,
+  Target,
+  Network,
+  Wallet,
+  Receipt,
+  Bell,
+  Search,
+  FileBarChart,
+  BookOpen,
+  Brain,
+  UserPlus,
+  Crown,
+  Rocket
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -48,13 +63,24 @@ export default function BrochurePage() {
     }
   };
 
+  // ALL system features
   const features = [
-    { icon: Users, title: "Gestión de Empleados", desc: "Expedientes digitales completos con documentos y historial" },
-    { icon: Calculator, title: "Nómina Automatizada", desc: "Cálculos TSS, ISR y deducciones según leyes de RD" },
-    { icon: Clock, title: "Control de Asistencia", desc: "Integración con relojes biométricos y geolocalización" },
-    { icon: FileText, title: "Reportes DGII/TSS", desc: "Generación automática de IR-3, IR-17 y autodeterminación" },
-    { icon: BarChart3, title: "Analytics Avanzados", desc: "Dashboards interactivos y métricas en tiempo real" },
-    { icon: Smartphone, title: "Portal de Empleados", desc: "Autoservicio para consultas, vacaciones y recibos" },
+    { icon: Users, title: "Gestión de Empleados", desc: "Expedientes digitales completos, documentos y historial laboral" },
+    { icon: Calculator, title: "Nómina Automatizada", desc: "Cálculos automáticos de TSS, ISR, AFP, SFS según leyes de RD" },
+    { icon: Clock, title: "Control de Asistencia", desc: "Integración con relojes biométricos y control de horarios" },
+    { icon: Calendar, title: "Gestión de Vacaciones", desc: "Solicitudes, aprobaciones y cálculo automático de días" },
+    { icon: FileBarChart, title: "Reportes DGII/TSS", desc: "Generación automática de IR-3, IR-17 y autodeterminación TSS" },
+    { icon: BarChart3, title: "Analytics y Métricas", desc: "Dashboards interactivos con KPIs en tiempo real" },
+    { icon: Smartphone, title: "Portal de Empleados", desc: "Autoservicio para consultas, solicitudes y recibos de pago" },
+    { icon: Network, title: "Organigrama Interactivo", desc: "Visualización jerárquica de la estructura organizacional" },
+    { icon: Wallet, title: "Módulo de Préstamos", desc: "Gestión de préstamos a empleados con descuento automático" },
+    { icon: Receipt, title: "Gastos y Viáticos", desc: "Control de gastos con flujo de doble aprobación" },
+    { icon: Target, title: "Evaluaciones de Desempeño", desc: "Evaluaciones 360°, objetivos y planes de desarrollo" },
+    { icon: UserPlus, title: "Reclutamiento", desc: "Gestión de vacantes, candidatos y proceso de selección" },
+    { icon: BookOpen, title: "Contabilidad Integrada", desc: "Asientos de diario automáticos y exportación contable" },
+    { icon: Brain, title: "Búsqueda con IA", desc: "Búsqueda inteligente en todo el sistema con lenguaje natural" },
+    { icon: Bell, title: "Notificaciones", desc: "Alertas en tiempo real de eventos importantes" },
+    { icon: Shield, title: "Roles y Permisos", desc: "Control de acceso granular por módulo y acción" },
   ];
 
   const benefits = [
@@ -63,13 +89,80 @@ export default function BrochurePage() {
     "Elimina errores de cálculo manual",
     "Acceso 24/7 desde cualquier dispositivo",
     "Soporte técnico en español",
-    "Actualizaciones automáticas sin costo adicional"
+    "Actualizaciones automáticas sin costo adicional",
+    "Integración con QuickBooks Online",
+    "Datos seguros en la nube con respaldo automático"
   ];
 
+  // Updated plans based on user's image
   const plans = [
-    { name: "Básico", price: "RD$ 2,500", employees: "1-15", features: ["Nómina", "Empleados", "Reportes básicos"] },
-    { name: "Profesional", price: "RD$ 5,000", employees: "16-50", features: ["Todo Básico", "Asistencia", "Portal empleados", "Soporte prioritario"] },
-    { name: "Enterprise", price: "Personalizado", employees: "50+", features: ["Todo Pro", "Integraciones", "API", "Capacitación", "SLA dedicado"] },
+    { 
+      name: "Básico", 
+      price: "$5", 
+      perEmployee: "$1.50",
+      employees: "Hasta 50", 
+      users: "3 usuarios",
+      target: "Para pequeñas empresas",
+      icon: Briefcase,
+      color: "blue",
+      features: [
+        { text: "Gestión de empleados", included: true },
+        { text: "Nómina con TSS e ISR", included: true },
+        { text: "Asistencias y vacaciones", included: true },
+        { text: "Módulo de préstamos", included: true },
+        { text: "Contabilidad básica", included: true },
+        { text: "QuickBooks Online", included: true },
+        { text: "Reportes básicos (DGII, nómina)", included: true },
+        { text: "Gastos y viáticos", included: false },
+        { text: "Portal de empleados", included: false },
+        { text: "Búsqueda con IA", included: false },
+      ]
+    },
+    { 
+      name: "Pro", 
+      price: "$10", 
+      perEmployee: "$1.50",
+      employees: "Hasta 200", 
+      users: "5 usuarios",
+      target: "Para empresas en crecimiento",
+      icon: Zap,
+      color: "purple",
+      popular: true,
+      features: [
+        { text: "Todo lo del plan Básico", included: true },
+        { text: "QuickBooks Online", included: true },
+        { text: "30 reportes avanzados", included: true },
+        { text: "Búsqueda con IA", included: true },
+        { text: "Gastos y viáticos (doble aprobación)", included: true },
+        { text: "Evaluaciones de desempeño", included: true },
+        { text: "Módulo de reclutamiento", included: true },
+        { text: "Portal autoservicio empleados", included: true },
+        { text: "Organigrama interactivo", included: true },
+        { text: "Notificaciones en tiempo real", included: true },
+      ]
+    },
+    { 
+      name: "Enterprise", 
+      price: "$20", 
+      perEmployee: "$1.50",
+      employees: "Ilimitados", 
+      users: "7 usuarios",
+      target: "Para grandes corporaciones",
+      icon: Crown,
+      color: "amber",
+      features: [
+        { text: "Todo lo del plan Pro", included: true },
+        { text: "QuickBooks Online", included: true },
+        { text: "58 reportes avanzados", included: true },
+        { text: "Reportes personalizables y guardados", included: true },
+        { text: "Roles personalizados", included: true },
+        { text: "API personalizada", included: true },
+        { text: "Integración SAP/Oracle/Dynamics", included: true },
+        { text: "Flujos de trabajo avanzados", included: true },
+        { text: "Múltiples sucursales", included: true },
+        { text: "Soporte 24/7 y gerente dedicado", included: true },
+      ]
+    },
   ];
 
   return (
@@ -99,11 +192,12 @@ export default function BrochurePage() {
           {/* Page 1: Cover */}
           <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 text-white p-12 min-h-[700px] flex flex-col justify-between">
             <div>
+              {/* Logo */}
               <div className="flex items-center gap-3 mb-8">
-                <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center">
-                  <Building2 className="w-7 h-7 text-white" />
+                <div className="w-14 h-14 bg-emerald-500 rounded-xl flex items-center justify-center">
+                  <Building2 className="w-8 h-8 text-white" />
                 </div>
-                <span className="text-3xl font-bold">
+                <span className="text-4xl font-bold">
                   Fortexa<span className="text-emerald-400">RH</span>
                 </span>
               </div>
@@ -116,58 +210,65 @@ export default function BrochurePage() {
               
               <p className="text-xl text-slate-300 max-w-lg">
                 La solución más completa para la gestión de capital humano 
-                en República Dominicana. Automatiza, simplifica y cumple.
+                en República Dominicana. Automatiza, simplifica y cumple con 
+                todas las regulaciones laborales.
               </p>
             </div>
             
-            <div className="flex items-center gap-8 mt-12">
-              <div className="text-center">
-                <p className="text-4xl font-bold text-emerald-400">500+</p>
-                <p className="text-sm text-slate-400">Empresas</p>
+            {/* Key Value Props instead of stats */}
+            <div className="grid grid-cols-3 gap-6 mt-12">
+              <div className="text-center p-4 bg-white/10 rounded-xl backdrop-blur">
+                <Shield className="w-10 h-10 mx-auto mb-3 text-emerald-400" />
+                <p className="font-semibold">Cumplimiento Legal</p>
+                <p className="text-sm text-slate-400">TSS, DGII, Código de Trabajo</p>
               </div>
-              <div className="text-center">
-                <p className="text-4xl font-bold text-emerald-400">50,000+</p>
-                <p className="text-sm text-slate-400">Empleados gestionados</p>
+              <div className="text-center p-4 bg-white/10 rounded-xl backdrop-blur">
+                <Zap className="w-10 h-10 mx-auto mb-3 text-emerald-400" />
+                <p className="font-semibold">Automatización Total</p>
+                <p className="text-sm text-slate-400">Nómina, reportes, asientos</p>
               </div>
-              <div className="text-center">
-                <p className="text-4xl font-bold text-emerald-400">100%</p>
-                <p className="text-sm text-slate-400">Cumplimiento TSS/DGII</p>
+              <div className="text-center p-4 bg-white/10 rounded-xl backdrop-blur">
+                <Globe className="w-10 h-10 mx-auto mb-3 text-emerald-400" />
+                <p className="font-semibold">100% en la Nube</p>
+                <p className="text-sm text-slate-400">Acceso desde cualquier lugar</p>
               </div>
             </div>
           </div>
 
           {/* Page 2: Features */}
-          <div className="p-12 bg-white min-h-[700px]">
-            <div className="text-center mb-10">
+          <div className="p-12 bg-white min-h-[800px]">
+            <div className="text-center mb-8">
               <p className="text-emerald-600 font-semibold mb-2">CARACTERÍSTICAS</p>
               <h2 className="text-3xl font-bold text-slate-800">Todo lo que necesita su empresa</h2>
+              <p className="text-slate-500 mt-2">Sistema completo de gestión de RRHH y Nómina</p>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {features.map((feature, idx) => (
                 <Card key={idx} className="border-slate-200 hover:border-emerald-300 transition-colors">
-                  <CardContent className="p-5">
-                    <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center mb-3">
+                  <CardContent className="p-4">
+                    <div className="w-9 h-9 bg-emerald-100 rounded-lg flex items-center justify-center mb-2">
                       <feature.icon className="w-5 h-5 text-emerald-600" />
                     </div>
-                    <h3 className="font-semibold text-slate-800 mb-1">{feature.title}</h3>
-                    <p className="text-sm text-slate-500">{feature.desc}</p>
+                    <h3 className="font-semibold text-slate-800 text-sm mb-1">{feature.title}</h3>
+                    <p className="text-xs text-slate-500">{feature.desc}</p>
                   </CardContent>
                 </Card>
               ))}
             </div>
 
-            <div className="mt-10 p-6 bg-gradient-to-r from-emerald-50 to-cyan-50 rounded-xl">
+            <div className="mt-8 p-5 bg-gradient-to-r from-emerald-50 to-cyan-50 rounded-xl">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
                   <Shield className="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h3 className="font-bold text-slate-800 text-lg mb-2">Cumplimiento Legal Garantizado</h3>
-                  <p className="text-slate-600">
+                  <p className="text-slate-600 text-sm">
                     FortexaRH está diseñado específicamente para cumplir con todas las regulaciones 
                     laborales de República Dominicana: TSS (Tesorería de Seguridad Social), 
-                    DGII (Dirección General de Impuestos Internos), Código de Trabajo y más.
+                    DGII (Dirección General de Impuestos Internos), Código de Trabajo, Norma General 07-2007 
+                    para Obreros de Construcción, y más.
                   </p>
                 </div>
               </div>
@@ -175,7 +276,7 @@ export default function BrochurePage() {
           </div>
 
           {/* Page 3: Benefits & Modules */}
-          <div className="p-12 bg-slate-50 min-h-[700px]">
+          <div className="p-12 bg-slate-50 min-h-[600px]">
             <div className="grid md:grid-cols-2 gap-10">
               <div>
                 <p className="text-emerald-600 font-semibold mb-2">BENEFICIOS</p>
@@ -191,23 +292,23 @@ export default function BrochurePage() {
               </div>
               
               <div>
-                <p className="text-emerald-600 font-semibold mb-2">MÓDULOS</p>
-                <h2 className="text-2xl font-bold text-slate-800 mb-6">Solución Completa</h2>
+                <p className="text-emerald-600 font-semibold mb-2">INTEGRACIONES</p>
+                <h2 className="text-2xl font-bold text-slate-800 mb-6">Conecta con tus herramientas</h2>
                 <div className="space-y-3">
                   {[
-                    "Gestión de Empleados y Expedientes",
-                    "Nómina con cálculos automáticos TSS/ISR",
-                    "Control de Asistencia y Horarios",
-                    "Gestión de Vacaciones y Licencias",
-                    "Evaluación de Desempeño",
-                    "Portal de Autoservicio para Empleados",
-                    "Reportes y Analytics",
-                    "Contabilidad y Asientos de Diario",
-                    "Integración con QuickBooks, SAP, Oracle"
-                  ].map((module, idx) => (
-                    <div key={idx} className="flex items-center gap-3 p-2 bg-white rounded-lg">
+                    "QuickBooks Online - Sincronización contable",
+                    "SAP Business One - ERP empresarial",
+                    "Oracle NetSuite - Gestión financiera",
+                    "Microsoft Dynamics 365 - CRM y ERP",
+                    "Relojes biométricos - Control de asistencia",
+                    "API REST - Integraciones personalizadas",
+                    "Exportación Excel/CSV - Reportes flexibles",
+                    "Generación de archivos TSS (SUIR+)",
+                    "Reportes DGII (IR-3, IR-17)"
+                  ].map((integration, idx) => (
+                    <div key={idx} className="flex items-center gap-3 p-2 bg-white rounded-lg shadow-sm">
                       <div className="w-2 h-2 bg-emerald-500 rounded-full" />
-                      <span className="text-slate-700 text-sm">{module}</span>
+                      <span className="text-slate-700 text-sm">{integration}</span>
                     </div>
                   ))}
                 </div>
@@ -216,30 +317,55 @@ export default function BrochurePage() {
           </div>
 
           {/* Page 4: Pricing */}
-          <div className="p-12 bg-white min-h-[600px]">
-            <div className="text-center mb-10">
+          <div className="p-12 bg-white min-h-[750px]">
+            <div className="text-center mb-8">
               <p className="text-emerald-600 font-semibold mb-2">PLANES Y PRECIOS</p>
               <h2 className="text-3xl font-bold text-slate-800">Inversión que se paga sola</h2>
               <p className="text-slate-500 mt-2">Planes flexibles para empresas de todos los tamaños</p>
             </div>
             
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 gap-5">
               {plans.map((plan, idx) => (
-                <Card key={idx} className={`border-2 ${idx === 1 ? 'border-emerald-500 shadow-lg' : 'border-slate-200'}`}>
-                  <CardContent className="p-6">
-                    {idx === 1 && (
-                      <div className="bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full w-fit mb-3">
-                        MÁS POPULAR
-                      </div>
-                    )}
-                    <h3 className="text-xl font-bold text-slate-800">{plan.name}</h3>
-                    <p className="text-3xl font-bold text-emerald-600 my-3">{plan.price}<span className="text-sm text-slate-400">/mes</span></p>
-                    <p className="text-sm text-slate-500 mb-4">{plan.employees} empleados</p>
+                <Card key={idx} className={`border-2 relative ${plan.popular ? 'border-purple-500 shadow-lg' : 'border-slate-200'}`}>
+                  {plan.popular && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-500 text-white text-xs font-bold px-4 py-1 rounded-full">
+                      Más Popular
+                    </div>
+                  )}
+                  <CardContent className="p-5">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
+                      plan.color === 'blue' ? 'bg-blue-100' : 
+                      plan.color === 'purple' ? 'bg-purple-100' : 'bg-amber-100'
+                    }`}>
+                      <plan.icon className={`w-6 h-6 ${
+                        plan.color === 'blue' ? 'text-blue-600' : 
+                        plan.color === 'purple' ? 'text-purple-600' : 'text-amber-600'
+                      }`} />
+                    </div>
+                    
+                    <h3 className="text-xl font-bold text-slate-800">FortexaRH {plan.name}</h3>
+                    <p className="text-sm text-slate-500 mb-3">{plan.target}</p>
+                    
+                    <div className="mb-4">
+                      <span className="text-3xl font-bold text-slate-800">{plan.price}</span>
+                      <span className="text-slate-500">/mes</span>
+                      <p className="text-sm text-emerald-600">+ {plan.perEmployee} por empleado</p>
+                    </div>
+                    
+                    <div className="border-t pt-3 mb-3">
+                      <p className="text-sm font-medium text-slate-700">{plan.employees} empleados</p>
+                      <p className="text-sm text-slate-500">{plan.users} incluidos</p>
+                    </div>
+                    
                     <div className="space-y-2">
                       {plan.features.map((f, i) => (
                         <div key={i} className="flex items-center gap-2 text-sm">
-                          <CheckCircle className="w-4 h-4 text-emerald-500" />
-                          <span className="text-slate-600">{f}</span>
+                          {f.included ? (
+                            <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                          ) : (
+                            <X className="w-4 h-4 text-slate-300 flex-shrink-0" />
+                          )}
+                          <span className={f.included ? "text-slate-700" : "text-slate-400"}>{f.text}</span>
                         </div>
                       ))}
                     </div>
@@ -254,12 +380,22 @@ export default function BrochurePage() {
           </div>
 
           {/* Page 5: Contact & CTA */}
-          <div className="bg-gradient-to-br from-slate-900 to-emerald-900 text-white p-12 min-h-[500px]">
+          <div className="bg-gradient-to-br from-slate-900 to-emerald-900 text-white p-12 min-h-[450px]">
             <div className="text-center mb-10">
+              {/* Logo */}
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center">
+                  <Building2 className="w-7 h-7 text-white" />
+                </div>
+                <span className="text-3xl font-bold">
+                  Fortexa<span className="text-emerald-400">RH</span>
+                </span>
+              </div>
+              
               <h2 className="text-3xl font-bold mb-4">¿Listo para transformar su gestión de RRHH?</h2>
               <p className="text-slate-300 max-w-xl mx-auto">
-                Únase a más de 500 empresas dominicanas que ya confían en FortexaRH 
-                para gestionar su nómina y recursos humanos.
+                Únase a las empresas dominicanas que ya confían en FortexaRH 
+                para gestionar su nómina y recursos humanos de manera eficiente.
               </p>
             </div>
             
@@ -272,7 +408,7 @@ export default function BrochurePage() {
               <div className="text-center p-6 bg-white/10 rounded-xl backdrop-blur">
                 <HeadphonesIcon className="w-8 h-8 mx-auto mb-3 text-emerald-400" />
                 <h3 className="font-semibold mb-1">Teléfono</h3>
-                <p className="text-emerald-300">+1 (809) 555-1234</p>
+                <p className="text-emerald-300">809-685-9898</p>
               </div>
               <div className="text-center p-6 bg-white/10 rounded-xl backdrop-blur">
                 <Zap className="w-8 h-8 mx-auto mb-3 text-emerald-400" />
@@ -284,11 +420,15 @@ export default function BrochurePage() {
             <div className="flex items-center justify-center gap-6">
               <div className="flex items-center gap-2 text-slate-300">
                 <Award className="w-5 h-5" />
-                <span className="text-sm">Certificación ISO 27001</span>
+                <span className="text-sm">Soporte en Español</span>
               </div>
               <div className="flex items-center gap-2 text-slate-300">
                 <Shield className="w-5 h-5" />
-                <span className="text-sm">Datos en la nube seguros</span>
+                <span className="text-sm">Datos Seguros en la Nube</span>
+              </div>
+              <div className="flex items-center gap-2 text-slate-300">
+                <Rocket className="w-5 h-5" />
+                <span className="text-sm">Actualizaciones Gratuitas</span>
               </div>
             </div>
             
