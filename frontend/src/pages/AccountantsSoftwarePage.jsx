@@ -80,7 +80,7 @@ const FEATURES = [
   { icon: Calculator, name: "Nómina Automatizada", desc: "Cálculo automático de TSS, AFP, ISR" },
   { icon: Users, name: "Gestión de Empleados", desc: "Perfiles, contratos, documentos" },
   { icon: Clock, name: "Control de Asistencia", desc: "Marcaje, horas extra, ausencias" },
-  { icon: FileText, name: "Reportes DGII", desc: "TSS, IR-17, formularios oficiales" },
+  { icon: FileText, name: "Reportes DGII-TSS", desc: "TSS, IR-17, formularios oficiales" },
   { icon: BarChart3, name: "58+ Reportes", desc: "Análisis completo de nómina y RRHH" },
   { icon: PieChart, name: "Contabilidad", desc: "Asientos, catálogos NIIF, exportación" }
 ];
@@ -88,7 +88,7 @@ const FEATURES = [
 const PRICING_COMPARISON = [
   { feature: "Acceso completo al sistema", partner: true, normal: true },
   { feature: "Gestión de nómina y RRHH", partner: true, normal: true },
-  { feature: "Reportes DGII", partner: true, normal: true },
+  { feature: "Reportes DGII-TSS", partner: true, normal: true },
   { feature: "Empleados ilimitados", partner: true, normal: false },
   { feature: "Costo por empleado", partner: "$0", normal: "$1.50" },
   { feature: "Comisión por referidos", partner: "30%", normal: "0%" },

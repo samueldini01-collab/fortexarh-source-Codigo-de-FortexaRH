@@ -1122,7 +1122,7 @@ export default function SubscriptionsPage() {
                     <ul className="text-sm text-red-700 space-y-1">
                       <li>• Procesamiento de nóminas</li>
                       <li>• Gestión de empleados</li>
-                      <li>• Reportes DGII y TSS</li>
+                      <li>• Reportes DGII-TSS</li>
                       <li>• Todas las funciones del sistema</li>
                     </ul>
                   </div>

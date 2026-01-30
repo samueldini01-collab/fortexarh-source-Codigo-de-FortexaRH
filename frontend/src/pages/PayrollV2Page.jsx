@@ -1180,7 +1180,7 @@ export default function PayrollV2Page() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                  Reportes DGII - Impuestos
+                  Reportes DGII-TSS
                 </CardTitle>
                 <CardDescription>Formularios IR-3 e IR-17 para Dirección General de Impuestos Internos</CardDescription>
               </CardHeader>
