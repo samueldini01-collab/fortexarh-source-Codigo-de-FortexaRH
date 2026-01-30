@@ -79,7 +79,7 @@ const payrollTypes = [
   { value: "REG13", label: "Regalía Pascual", icon: Gift, color: "emerald" },
   { value: "VAC", label: "Vacaciones", icon: Calendar, color: "cyan" },
   { value: "LIQ", label: "Liquidación", icon: FileText, color: "red" },
-  { value: "OBREROS_NG", label: "Obreros NG 07/2027", icon: Briefcase, color: "amber" },
+  { value: "OBREROS_NG", label: "Obreros NG 07/2007", icon: Briefcase, color: "amber" },
 ];
 
 const departments = ["Administración", "Ventas", "Marketing", "TI", "Recursos Humanos", "Finanzas", "Operaciones", "Legal", "Producción", "Logística"];
