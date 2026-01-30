@@ -406,9 +406,11 @@ export default function DGIIReportsPage() {
                   blue: { bg: 'bg-blue-50', icon: 'text-blue-500', border: 'border-blue-200' },
                   emerald: { bg: 'bg-emerald-50', icon: 'text-emerald-500', border: 'border-emerald-200' },
                   purple: { bg: 'bg-purple-50', icon: 'text-purple-500', border: 'border-purple-200' },
-                  amber: { bg: 'bg-amber-50', icon: 'text-amber-500', border: 'border-amber-200' }
+                  amber: { bg: 'bg-amber-50', icon: 'text-amber-500', border: 'border-amber-200' },
+                  rose: { bg: 'bg-rose-50', icon: 'text-rose-500', border: 'border-rose-200' },
+                  orange: { bg: 'bg-orange-50', icon: 'text-orange-500', border: 'border-orange-200' }
                 };
-                const colors = colorClasses[report.color];
+                const colors = colorClasses[report.color] || colorClasses.blue;
                 
                 return (
                   <Card 
