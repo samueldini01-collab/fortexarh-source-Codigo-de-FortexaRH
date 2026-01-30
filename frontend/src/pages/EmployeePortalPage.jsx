@@ -258,6 +258,75 @@ function EmployeeDashboard() {
     }
   };
 
+  // Notification handlers
+  const fetchNotifications = async () => {
+    setLoadingNotifications(true);
+    try {
+      const response = await axios.get(`${API}/employee-portal/notifications`, { headers: getAuthHeaders() });
+      setNotifications(response.data.notifications || []);
+      setUnreadCount(response.data.unread_count || 0);
+    } catch (error) {
+      console.error("Error fetching notifications");
+    } finally {
+      setLoadingNotifications(false);
+    }
+  };
+
+  const handleMarkAsRead = async (notificationId) => {
+    try {
+      await axios.post(`${API}/employee-portal/notifications/${notificationId}/read`, {}, { headers: getAuthHeaders() });
+      setNotifications(prev => prev.map(n => 
+        n.notification_id === notificationId ? { ...n, read: true } : n
+      ));
+      setUnreadCount(prev => Math.max(0, prev - 1));
+    } catch (error) {
+      toast.error("Error al marcar como leída");
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      await axios.post(`${API}/employee-portal/notifications/read-all`, {}, { headers: getAuthHeaders() });
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+      setUnreadCount(0);
+      toast.success("Todas las notificaciones marcadas como leídas");
+    } catch (error) {
+      toast.error("Error al marcar notificaciones");
+    }
+  };
+
+  const handleDeleteNotification = async (notificationId) => {
+    try {
+      await axios.delete(`${API}/employee-portal/notifications/${notificationId}`, { headers: getAuthHeaders() });
+      setNotifications(prev => prev.filter(n => n.notification_id !== notificationId));
+      toast.success("Notificación eliminada");
+    } catch (error) {
+      toast.error("Error al eliminar");
+    }
+  };
+
+  const getNotificationIcon = (type) => {
+    switch (type) {
+      case 'success': return <CheckCircle className="w-5 h-5 text-emerald-500" />;
+      case 'warning': return <AlertTriangle className="w-5 h-5 text-amber-500" />;
+      case 'alert': return <XCircle className="w-5 h-5 text-red-500" />;
+      default: return <Info className="w-5 h-5 text-blue-500" />;
+    }
+  };
+
+  const getCategoryBadge = (category) => {
+    const badges = {
+      payroll: { label: "Nómina", color: "bg-emerald-100 text-emerald-700" },
+      vacation: { label: "Vacaciones", color: "bg-blue-100 text-blue-700" },
+      attendance: { label: "Asistencia", color: "bg-purple-100 text-purple-700" },
+      announcement: { label: "Anuncio", color: "bg-amber-100 text-amber-700" },
+      document: { label: "Documento", color: "bg-slate-100 text-slate-700" },
+      general: { label: "General", color: "bg-gray-100 text-gray-700" }
+    };
+    const badge = badges[category] || badges.general;
+    return <span className={`text-xs px-2 py-0.5 rounded-full ${badge.color}`}>{badge.label}</span>;
+  };
+
   // Download payslip as PDF
   const handleDownloadPayslip = async (payslipId) => {
     setDownloadingPdf(payslipId);
