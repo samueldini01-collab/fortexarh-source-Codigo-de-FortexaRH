@@ -199,7 +199,7 @@ const features = [
   },
   {
     icon: FileText,
-    title: "Reportes DGII",
+    title: "Reportes DGII-TSS",
     description: "Genera reportes TSS e ISR listos para presentar ante la DGII de República Dominicana."
   },
   {
@@ -234,7 +234,7 @@ const contadoresFeatures = [
   { icon: Building2, title: "Multi-Cliente", desc: "Gestiona todos tus clientes en un lugar" },
   { icon: TrendingUp, title: "Dashboard de Ganancias", desc: "Visualiza comisiones en tiempo real" },
   { icon: Calculator, title: "Nómina RD", desc: "TSS, AFP, ISR automatizados" },
-  { icon: FileText, title: "Reportes DGII", desc: "IR-17, TSS y formularios oficiales" }
+  { icon: FileText, title: "Reportes DGII-TSS", desc: "IR-17, TSS y formularios oficiales" }
 ];
 
 export default function LandingPage() {
@@ -934,7 +934,7 @@ export default function LandingPage() {
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4">Reportes DGII (TSS, ISR)</td>
+                  <td className="py-3 px-4">Reportes DGII-TSS (ISR, TSS)</td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
