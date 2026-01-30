@@ -19,22 +19,146 @@ logger = logging.getLogger(__name__)
 
 # Default modules and permissions
 DEFAULT_MODULES = [
-    {"id": "dashboard", "name": "Dashboard", "description": "Panel principal"},
-    {"id": "employees", "name": "Empleados", "description": "Gestión de empleados"},
-    {"id": "payroll", "name": "Nómina", "description": "Procesamiento de nómina"},
-    {"id": "attendance", "name": "Asistencias", "description": "Control de asistencias"},
-    {"id": "vacations", "name": "Vacaciones", "description": "Gestión de vacaciones"},
-    {"id": "evaluations", "name": "Evaluaciones", "description": "Evaluaciones de desempeño"},
-    {"id": "recruitment", "name": "Reclutamiento", "description": "Gestión de candidatos"},
-    {"id": "organigrama", "name": "Organigrama", "description": "Estructura organizacional"},
-    {"id": "accounting", "name": "Contabilidad", "description": "Entradas de diario"},
-    {"id": "reports", "name": "Reportes", "description": "Generación de reportes"},
-    {"id": "settings", "name": "Configuración", "description": "Ajustes de la empresa"},
-    {"id": "subscriptions", "name": "Suscripciones", "description": "Gestión del plan"},
-    {"id": "users", "name": "Usuarios", "description": "Administración de usuarios"},
+    {
+        "id": "dashboard", 
+        "name": "Dashboard", 
+        "description": "Panel principal y estadísticas",
+        "permissions": ["view"]
+    },
+    {
+        "id": "employees", 
+        "name": "Empleados", 
+        "description": "Gestión de empleados",
+        "permissions": ["view", "create", "edit", "delete", "export", "import"]
+    },
+    {
+        "id": "payroll", 
+        "name": "Nómina", 
+        "description": "Procesamiento de nómina",
+        "permissions": ["view", "create", "edit", "delete", "calculate", "approve", "pay", "export", "reports"]
+    },
+    {
+        "id": "attendance", 
+        "name": "Asistencias", 
+        "description": "Control de asistencias",
+        "permissions": ["view", "create", "edit", "delete", "export", "reports"]
+    },
+    {
+        "id": "vacations", 
+        "name": "Vacaciones", 
+        "description": "Gestión de vacaciones",
+        "permissions": ["view", "create", "edit", "delete", "approve", "export"]
+    },
+    {
+        "id": "leaves", 
+        "name": "Licencias", 
+        "description": "Gestión de licencias y permisos",
+        "permissions": ["view", "create", "edit", "delete", "approve"]
+    },
+    {
+        "id": "evaluations", 
+        "name": "Evaluaciones", 
+        "description": "Evaluaciones de desempeño",
+        "permissions": ["view", "create", "edit", "delete", "assign", "reports"]
+    },
+    {
+        "id": "recruitment", 
+        "name": "Reclutamiento", 
+        "description": "Gestión de candidatos",
+        "permissions": ["view", "create", "edit", "delete", "schedule", "hire"]
+    },
+    {
+        "id": "organigrama", 
+        "name": "Organigrama", 
+        "description": "Estructura organizacional",
+        "permissions": ["view", "edit"]
+    },
+    {
+        "id": "loans", 
+        "name": "Préstamos", 
+        "description": "Gestión de préstamos a empleados",
+        "permissions": ["view", "create", "edit", "delete", "approve"]
+    },
+    {
+        "id": "accounting", 
+        "name": "Contabilidad", 
+        "description": "Entradas de diario y cuentas",
+        "permissions": ["view", "create", "edit", "delete", "export", "reports"]
+    },
+    {
+        "id": "reports", 
+        "name": "Reportes", 
+        "description": "Generación de reportes",
+        "permissions": ["view", "generate", "export", "schedule"]
+    },
+    {
+        "id": "documents", 
+        "name": "Documentos", 
+        "description": "Gestión de documentos",
+        "permissions": ["view", "create", "edit", "delete", "generate", "sign"]
+    },
+    {
+        "id": "settings", 
+        "name": "Configuración", 
+        "description": "Ajustes de la empresa",
+        "permissions": ["view", "edit"]
+    },
+    {
+        "id": "subscriptions", 
+        "name": "Suscripciones", 
+        "description": "Gestión del plan",
+        "permissions": ["view", "manage"]
+    },
+    {
+        "id": "users", 
+        "name": "Usuarios", 
+        "description": "Administración de usuarios",
+        "permissions": ["view", "create", "edit", "delete", "assign_roles"]
+    },
+    {
+        "id": "roles", 
+        "name": "Roles", 
+        "description": "Gestión de roles personalizados",
+        "permissions": ["view", "create", "edit", "delete"]
+    },
+    {
+        "id": "audit", 
+        "name": "Auditoría", 
+        "description": "Registro de cambios y actividad",
+        "permissions": ["view", "export"]
+    },
+    {
+        "id": "support", 
+        "name": "Soporte", 
+        "description": "Tickets de soporte",
+        "permissions": ["view", "create", "respond", "manage"]
+    },
 ]
 
-PERMISSION_TYPES = ["view", "create", "edit", "delete"]
+# Permission type labels in Spanish
+PERMISSION_LABELS = {
+    "view": "Ver",
+    "create": "Crear",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "export": "Exportar",
+    "import": "Importar",
+    "reports": "Reportes",
+    "calculate": "Calcular",
+    "approve": "Aprobar",
+    "pay": "Pagar",
+    "assign": "Asignar",
+    "schedule": "Programar",
+    "hire": "Contratar",
+    "generate": "Generar",
+    "sign": "Firmar",
+    "manage": "Gestionar",
+    "assign_roles": "Asignar Roles",
+    "respond": "Responder"
+}
+
+# All possible permission types
+PERMISSION_TYPES = list(PERMISSION_LABELS.keys())
 
 
 # Pydantic models
