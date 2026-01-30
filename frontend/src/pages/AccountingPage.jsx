@@ -404,6 +404,51 @@ export default function AccountingPage() {
     });
   };
 
+  // Preview functions
+  const openPreview = async (entry, format = "summary") => {
+    setPreviewEntry(entry);
+    setPreviewFormat(format);
+    setPreviewLoading(true);
+    setShowPreview(true);
+    
+    try {
+      const response = await axios.get(
+        `${API}/accounting/journal-entries/${entry.entry_id}/preview?format=${format}`,
+        { headers: getAuthHeaders(), withCredentials: true }
+      );
+      setPreviewData(response.data);
+    } catch (error) {
+      toast.error("Error al cargar vista previa");
+      setShowPreview(false);
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
+
+  const changePreviewFormat = async (newFormat) => {
+    if (!previewEntry || newFormat === previewFormat) return;
+    setPreviewFormat(newFormat);
+    setPreviewLoading(true);
+    
+    try {
+      const response = await axios.get(
+        `${API}/accounting/journal-entries/${previewEntry.entry_id}/preview?format=${newFormat}`,
+        { headers: getAuthHeaders(), withCredentials: true }
+      );
+      setPreviewData(response.data);
+    } catch (error) {
+      toast.error("Error al cambiar formato");
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
+
+  const downloadFromPreview = () => {
+    if (previewEntry) {
+      exportToCSV(previewEntry, previewFormat);
+    }
+  };
+
   // Export functions
   const exportToCSV = async (entry, format = "summary") => {
     try {
