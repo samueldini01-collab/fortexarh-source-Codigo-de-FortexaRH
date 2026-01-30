@@ -55,7 +55,10 @@ import {
   PlusCircle,
   MinusCircle,
   Gift,
-  Briefcase
+  Briefcase,
+  Eye,
+  Building2,
+  Shield
 } from "lucide-react";
 import { toast } from "sonner";
 
