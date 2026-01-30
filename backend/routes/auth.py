@@ -469,7 +469,20 @@ async def reset_password(data: PasswordResetConfirm):
 @router.get("/me")
 async def get_me(current_user: dict = Depends(get_current_user)):
     """Get current user info"""
-    return current_user
+    # Fetch company name if user has a company_id
+    company_name = None
+    if current_user.get("company_id"):
+        company = await db.companies.find_one(
+            {"company_id": current_user["company_id"]},
+            {"_id": 0, "name": 1}
+        )
+        if company:
+            company_name = company.get("name")
+    
+    return {
+        **current_user,
+        "company_name": company_name
+    }
 
 
 @router.post("/change-password")
