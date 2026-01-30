@@ -636,6 +636,8 @@ async def export_journal_entry(
     Formats:
     - summary: Grouped by account (one line per account with totals)
     - detailed: Line by line showing each employee/transaction
+    
+    Order: Expenses (5xxx) -> Liabilities (2xxx) -> Assets/Bank (1xxx)
     """
     company_id = current_user.get("company_id")
     
@@ -659,24 +661,43 @@ async def export_journal_entry(
     
     # Check if any line has cost_center
     has_cost_center = any(line.get("cost_center") for line in lines)
-    # Check if any line has employee info (for detailed export)
-    has_employee_info = any(line.get("employee_name") or line.get("employee_id") for line in lines)
     
-    if format == "detailed" and has_employee_info:
-        # Detailed export - line by line per employee
+    def get_account_sort_key(account_code):
+        """Sort accounts: Expenses (5,6,7) first, then Liabilities (2), then Assets (1)"""
+        if not account_code:
+            return (99, account_code)
+        first_digit = account_code[0] if account_code else '9'
+        # Order: 5,6,7 (expenses) = 1, 2 (liabilities) = 2, 1 (assets/bank) = 3, others = 4
+        if first_digit in ['5', '6', '7']:
+            return (1, account_code)
+        elif first_digit == '2':
+            return (2, account_code)
+        elif first_digit == '1':
+            return (3, account_code)
+        elif first_digit in ['3', '4']:
+            return (2, account_code)  # Equity and income with liabilities
+        else:
+            return (4, account_code)
+    
+    def clean_account_name(account_code, account_name):
+        """Remove account code from name if present"""
+        if account_name and account_code and account_name.startswith(account_code):
+            return account_name.replace(f"{account_code} - ", "").replace(f"{account_code}-", "").strip()
+        return account_name
+    
+    if format == "detailed":
+        # Detailed export - line by line (always show all lines)
         if has_cost_center:
             writer.writerow(["Codigo", "Nombre de Cuenta", "Centro de Costos", "Empleado", "Debito", "Credito"])
         else:
             writer.writerow(["Codigo", "Nombre de Cuenta", "Empleado", "Debito", "Credito"])
         
-        for line in lines:
+        # Sort lines by account type
+        sorted_lines = sorted(lines, key=lambda x: get_account_sort_key(x.get("account_code", "")))
+        
+        for line in sorted_lines:
             account_code = line.get("account_code", "")
-            account_name = line.get("account_name", "")
-            
-            # Clean account name if it contains the code
-            if account_name and account_code and account_name.startswith(account_code):
-                account_name = account_name.replace(f"{account_code} - ", "").replace(f"{account_code}-", "").strip()
-            
+            account_name = clean_account_name(account_code, line.get("account_name", ""))
             employee_name = line.get("employee_name", "")
             cost_center = line.get("cost_center", "")
             
@@ -699,19 +720,14 @@ async def export_journal_entry(
                 ])
     else:
         # Summary export - grouped by account
-        # Group lines by account
         account_totals = {}
         for line in lines:
             account_code = line.get("account_code", "")
-            account_name = line.get("account_name", "")
-            cost_center = line.get("cost_center", "")
-            
-            # Clean account name
-            if account_name and account_code and account_name.startswith(account_code):
-                account_name = account_name.replace(f"{account_code} - ", "").replace(f"{account_code}-", "").strip()
+            account_name = clean_account_name(account_code, line.get("account_name", ""))
+            cost_center = line.get("cost_center", "") if has_cost_center else ""
             
             # Create key based on account and optionally cost center
-            key = (account_code, account_name, cost_center) if has_cost_center else (account_code, account_name, "")
+            key = (account_code, account_name, cost_center)
             
             if key not in account_totals:
                 account_totals[key] = {"debit": 0, "credit": 0}
@@ -725,8 +741,10 @@ async def export_journal_entry(
         else:
             writer.writerow(["Codigo", "Nombre de Cuenta", "Debito", "Credito"])
         
-        # Sort by account code and write rows
-        for (account_code, account_name, cost_center), totals in sorted(account_totals.items()):
+        # Sort by account type (expenses -> liabilities -> assets) then by code
+        sorted_accounts = sorted(account_totals.items(), key=lambda x: get_account_sort_key(x[0][0]))
+        
+        for (account_code, account_name, cost_center), totals in sorted_accounts:
             if has_cost_center:
                 writer.writerow([
                     account_code,
@@ -739,6 +757,26 @@ async def export_journal_entry(
                 writer.writerow([
                     account_code,
                     account_name,
+                    round(totals["debit"], 2) if totals["debit"] else 0,
+                    round(totals["credit"], 2) if totals["credit"] else 0
+                ])
+    
+    writer.writerow([])
+    if has_cost_center:
+        writer.writerow(["", "", "TOTALES", round(entry.get("total_debits", 0), 2), round(entry.get("total_credits", 0), 2)])
+    else:
+        writer.writerow(["", "TOTALES", round(entry.get("total_debits", 0), 2), round(entry.get("total_credits", 0), 2)])
+    
+    # Add UTF-8 BOM for Excel compatibility
+    content = "\ufeff" + output.getvalue()
+    
+    format_suffix = "resumido" if format == "summary" else "detallado"
+    
+    return Response(
+        content=content.encode("utf-8"),
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": f"attachment; filename=asiento_{entry_id}_{format_suffix}.csv"}
+    )
                     round(totals["debit"], 2) if totals["debit"] else 0,
                     round(totals["credit"], 2) if totals["credit"] else 0
                 ])
