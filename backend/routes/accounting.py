@@ -2,7 +2,7 @@
 Accounting Routes - FortexaRH
 Handles accounting, chart of accounts, and journal entries
 """
-from fastapi import APIRouter, HTTPException, Depends, Response, Request
+from fastapi import APIRouter, HTTPException, Depends, Response, Request, Query
 from fastapi.security import HTTPBearer
 from pydantic import BaseModel
 from typing import Optional, List
