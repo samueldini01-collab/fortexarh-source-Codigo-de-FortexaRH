@@ -624,7 +624,7 @@ async def delete_journal_entry(entry_id: str, current_user: dict = Depends(get_c
 
 @router.get("/journal-entries/{entry_id}/export")
 async def export_journal_entry(entry_id: str, current_user: dict = Depends(get_current_user)):
-    """Export journal entry as CSV"""
+    """Export journal entry as CSV with proper UTF-8 encoding"""
     company_id = current_user.get("company_id")
     
     entry = await db.journal_entries.find_one(
@@ -639,14 +639,22 @@ async def export_journal_entry(entry_id: str, current_user: dict = Depends(get_c
     
     writer.writerow(["Fecha", entry.get("entry_date", "")])
     writer.writerow(["Referencia", entry.get("reference", "")])
-    writer.writerow(["Descripción", entry.get("description", "")])
+    writer.writerow(["Descripcion", entry.get("description", "")])
     writer.writerow([])
-    writer.writerow(["Código", "Cuenta", "Débito", "Crédito"])
+    writer.writerow(["Codigo", "Nombre de Cuenta", "Debito", "Credito"])
     
     for line in entry.get("lines", []):
+        # Extract account code and name separately
+        account_code = line.get("account_code", "")
+        account_name = line.get("account_name", "")
+        
+        # If account_name contains the code, remove it
+        if account_name and account_code and account_name.startswith(account_code):
+            account_name = account_name.replace(f"{account_code} - ", "").replace(f"{account_code}-", "").strip()
+        
         writer.writerow([
-            line.get("account_code", ""),
-            line.get("account_name", ""),
+            account_code,
+            account_name,
             line.get("debit", 0),
             line.get("credit", 0)
         ])
@@ -654,10 +662,11 @@ async def export_journal_entry(entry_id: str, current_user: dict = Depends(get_c
     writer.writerow([])
     writer.writerow(["", "TOTALES", entry.get("total_debits", 0), entry.get("total_credits", 0)])
     
-    content = output.getvalue()
+    # Add UTF-8 BOM for Excel compatibility
+    content = "\ufeff" + output.getvalue()
     
     return Response(
-        content=content,
-        media_type="text/csv",
+        content=content.encode("utf-8"),
+        media_type="text/csv; charset=utf-8",
         headers={"Content-Disposition": f"attachment; filename=asiento_{entry_id}.csv"}
     )
