@@ -143,12 +143,20 @@ export default function PayrollV2Page() {
   const fetchCompanySettings = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/company/settings`, { headers: getAuthHeaders(), withCredentials: true });
-      if (response.data?.name) {
-        setCompanyName(response.data.name);
+      // Company settings returns { company: { name: "..." }, ... }
+      if (response.data?.company?.name) {
+        setCompanyName(response.data.company.name);
       }
     } catch (_error) {
-      // If company settings endpoint fails, try from user
-      console.log("Company settings not available, using user data");
+      // If company settings endpoint fails, try from auth/me
+      try {
+        const meResponse = await axios.get(`${API}/auth/me`, { headers: getAuthHeaders(), withCredentials: true });
+        if (meResponse.data?.company_name) {
+          setCompanyName(meResponse.data.company_name);
+        }
+      } catch (meError) {
+        console.log("Could not fetch company name from auth/me");
+      }
     }
   }, [getAuthHeaders]);
 
