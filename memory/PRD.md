@@ -4,6 +4,44 @@
 
 ## ✅ Completado Hoy (Sesión Actual)
 
+### 🔐 Sistema de Roles con Permisos Granulares (P1 - COMPLETADO)
+Mejora del sistema de roles personalizados con permisos detallados por módulo.
+
+#### Permisos Expandidos
+- **Antes:** 4 tipos de permisos (view, create, edit, delete)
+- **Ahora:** 18 tipos de permisos específicos:
+  - `view`, `create`, `edit`, `delete` - Básicos
+  - `export`, `import` - Datos
+  - `calculate`, `approve`, `pay` - Nómina
+  - `reports`, `generate` - Reportes
+  - `assign`, `schedule`, `hire` - RRHH
+  - `sign`, `manage`, `respond`, `assign_roles` - Avanzados
+
+#### Módulos con Permisos Específicos
+- **Nómina:** 9 permisos (view, create, edit, delete, calculate, approve, pay, export, reports)
+- **Empleados:** 6 permisos (view, create, edit, delete, export, import)
+- **Dashboard:** 1 permiso (view)
+- **19 módulos totales** con permisos relevantes a cada función
+
+#### Roles Predeterminados Actualizados
+| Rol | Módulos | Permisos |
+|-----|---------|----------|
+| Administrador | 19 | 87 |
+| Gerente de RRHH | 11 | 47 |
+| Encargado de Nómina | 6 | 16 |
+| Supervisor | 6 | 12 |
+| Usuario | 3 | 4 |
+
+---
+
+### 🐛 Bug Fix: Calcular Nómina "Not Found" (P0 - COMPLETADO)
+- **Problema:** El endpoint `/api/payroll-v2/periods/{id}/calculate` retornaba 404
+- **Causa:** Faltaba el decorador `@router.post` en la función
+- **Solución:** Agregado el decorador correcto
+- **Test:** ✅ "4 entradas recalculadas"
+
+---
+
 ### 🔔 Sistema de Notificaciones para Portal de Empleados (P2 - COMPLETADO)
 Sistema completo de notificaciones en tiempo real para el portal de autoservicio de empleados.
 
