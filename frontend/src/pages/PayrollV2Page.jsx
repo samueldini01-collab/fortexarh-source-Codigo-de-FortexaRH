@@ -209,6 +209,10 @@ export default function PayrollV2Page() {
 
   // TSS Report functions
   const openTssPreview = async (periodId) => {
+    // Find and set the period for download button
+    const period = periods.find(p => p.period_id === periodId);
+    if (period) setSelectedPeriod(period);
+    
     setTssLoading(true);
     setShowTssPreview(true);
     try {
