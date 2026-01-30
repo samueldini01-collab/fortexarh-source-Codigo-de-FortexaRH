@@ -623,8 +623,17 @@ async def delete_journal_entry(entry_id: str, current_user: dict = Depends(get_c
 
 
 @router.get("/journal-entries/{entry_id}/export")
-async def export_journal_entry(entry_id: str, current_user: dict = Depends(get_current_user)):
-    """Export journal entry as CSV with proper UTF-8 encoding"""
+async def export_journal_entry(
+    entry_id: str, 
+    format: str = Query("summary", description="Export format: 'summary' (resumido) or 'detailed' (detallado)"),
+    current_user: dict = Depends(get_current_user)
+):
+    """Export journal entry as CSV with proper UTF-8 encoding
+    
+    Formats:
+    - summary: Grouped by account (one line per account with totals)
+    - detailed: Line by line showing each employee/transaction
+    """
     company_id = current_user.get("company_id")
     
     entry = await db.journal_entries.find_one(
@@ -637,36 +646,113 @@ async def export_journal_entry(entry_id: str, current_user: dict = Depends(get_c
     output = io.StringIO()
     writer = csv.writer(output)
     
+    # Header info
     writer.writerow(["Fecha", entry.get("entry_date", "")])
     writer.writerow(["Referencia", entry.get("reference", "")])
     writer.writerow(["Descripcion", entry.get("description", "")])
     writer.writerow([])
-    writer.writerow(["Codigo", "Nombre de Cuenta", "Debito", "Credito"])
     
-    for line in entry.get("lines", []):
-        # Extract account code and name separately
-        account_code = line.get("account_code", "")
-        account_name = line.get("account_name", "")
+    lines = entry.get("lines", [])
+    
+    # Check if any line has cost_center
+    has_cost_center = any(line.get("cost_center") for line in lines)
+    # Check if any line has employee info (for detailed export)
+    has_employee_info = any(line.get("employee_name") or line.get("employee_id") for line in lines)
+    
+    if format == "detailed" and has_employee_info:
+        # Detailed export - line by line per employee
+        if has_cost_center:
+            writer.writerow(["Codigo", "Nombre de Cuenta", "Centro de Costos", "Empleado", "Debito", "Credito"])
+        else:
+            writer.writerow(["Codigo", "Nombre de Cuenta", "Empleado", "Debito", "Credito"])
         
-        # If account_name contains the code, remove it
-        if account_name and account_code and account_name.startswith(account_code):
-            account_name = account_name.replace(f"{account_code} - ", "").replace(f"{account_code}-", "").strip()
+        for line in lines:
+            account_code = line.get("account_code", "")
+            account_name = line.get("account_name", "")
+            
+            # Clean account name if it contains the code
+            if account_name and account_code and account_name.startswith(account_code):
+                account_name = account_name.replace(f"{account_code} - ", "").replace(f"{account_code}-", "").strip()
+            
+            employee_name = line.get("employee_name", "")
+            cost_center = line.get("cost_center", "")
+            
+            if has_cost_center:
+                writer.writerow([
+                    account_code,
+                    account_name,
+                    cost_center,
+                    employee_name,
+                    line.get("debit", 0),
+                    line.get("credit", 0)
+                ])
+            else:
+                writer.writerow([
+                    account_code,
+                    account_name,
+                    employee_name,
+                    line.get("debit", 0),
+                    line.get("credit", 0)
+                ])
+    else:
+        # Summary export - grouped by account
+        # Group lines by account
+        account_totals = {}
+        for line in lines:
+            account_code = line.get("account_code", "")
+            account_name = line.get("account_name", "")
+            cost_center = line.get("cost_center", "")
+            
+            # Clean account name
+            if account_name and account_code and account_name.startswith(account_code):
+                account_name = account_name.replace(f"{account_code} - ", "").replace(f"{account_code}-", "").strip()
+            
+            # Create key based on account and optionally cost center
+            key = (account_code, account_name, cost_center) if has_cost_center else (account_code, account_name, "")
+            
+            if key not in account_totals:
+                account_totals[key] = {"debit": 0, "credit": 0}
+            
+            account_totals[key]["debit"] += line.get("debit", 0)
+            account_totals[key]["credit"] += line.get("credit", 0)
         
-        writer.writerow([
-            account_code,
-            account_name,
-            line.get("debit", 0),
-            line.get("credit", 0)
-        ])
+        # Write header based on whether we have cost centers
+        if has_cost_center:
+            writer.writerow(["Codigo", "Nombre de Cuenta", "Centro de Costos", "Debito", "Credito"])
+        else:
+            writer.writerow(["Codigo", "Nombre de Cuenta", "Debito", "Credito"])
+        
+        # Sort by account code and write rows
+        for (account_code, account_name, cost_center), totals in sorted(account_totals.items()):
+            if has_cost_center:
+                writer.writerow([
+                    account_code,
+                    account_name,
+                    cost_center,
+                    round(totals["debit"], 2) if totals["debit"] else 0,
+                    round(totals["credit"], 2) if totals["credit"] else 0
+                ])
+            else:
+                writer.writerow([
+                    account_code,
+                    account_name,
+                    round(totals["debit"], 2) if totals["debit"] else 0,
+                    round(totals["credit"], 2) if totals["credit"] else 0
+                ])
     
     writer.writerow([])
-    writer.writerow(["", "TOTALES", entry.get("total_debits", 0), entry.get("total_credits", 0)])
+    if has_cost_center:
+        writer.writerow(["", "", "TOTALES", entry.get("total_debits", 0), entry.get("total_credits", 0)])
+    else:
+        writer.writerow(["", "TOTALES", entry.get("total_debits", 0), entry.get("total_credits", 0)])
     
     # Add UTF-8 BOM for Excel compatibility
     content = "\ufeff" + output.getvalue()
     
+    format_suffix = "resumido" if format == "summary" else "detallado"
+    
     return Response(
         content=content.encode("utf-8"),
         media_type="text/csv; charset=utf-8",
-        headers={"Content-Disposition": f"attachment; filename=asiento_{entry_id}.csv"}
+        headers={"Content-Disposition": f"attachment; filename=asiento_{entry_id}_{format_suffix}.csv"}
     )
