@@ -242,76 +242,129 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
             salary = 0
         elif payroll_type == "VAC":
             salary = emp.get("salary", 0) / 23.83 * 14
+        elif payroll_type == "OBREROS_NG":
+            # Obreros NG uses regular salary calculation
+            if period.get("period_type", "").startswith("quincenal"):
+                salary = salary / 2
         
         entry_id = generate_id("pe")
-        entry = {
-            "entry_id": entry_id,
-            "period_id": period_id,
-            "company_id": company_id,
-            "employee_id": emp["employee_id"],
-            "employee_name": f"{emp['first_name']} {emp['last_name']}",
-            "employee_document": emp.get("document_number", ""),
-            "department": emp.get("department", ""),
-            "position": emp.get("position", ""),
-            "payroll_type": payroll_type,
-            "base_salary": salary,
-            "overtime_day_hours": 0,
-            "overtime_day_amount": 0,
-            "overtime_night_hours": 0,
-            "overtime_night_amount": 0,
-            "overtime_weekend_hours": 0,
-            "overtime_weekend_amount": 0,
-            "overtime_holiday_hours": 0,
-            "overtime_holiday_amount": 0,
-            "bonuses": 0,
-            "commissions": 0,
-            "other_income": 0,
-            "gross_salary": salary,
-            "sfs_employee": round(salary * SFS_EMPLOYEE_RATE, 2),
-            "afp_employee": round(salary * AFP_EMPLOYEE_RATE, 2),
-            "isr": 0,
-            "additional_deductions": emp.get("additional_deductions", []),
-            "total_additional_deductions": sum(d.get("amount", 0) for d in emp.get("additional_deductions", []) if not d.get("is_percentage")),
-            "total_deductions": 0,
-            "net_salary": 0,
-            "sfs_employer": round(salary * SFS_EMPLOYER_RATE, 2),
-            "afp_employer": round(salary * AFP_EMPLOYER_RATE, 2),
-            "srl_employer": round(salary * SRL_EMPLOYER_RATE, 2),
-            "infotep_employer": round(salary * INFOTEP_EMPLOYER_RATE, 2),
-            "total_employer_contributions": 0,
-            "status": "draft",
-            "created_at": now_iso()
-        }
         
-        isr_result = calculate_isr_monthly(salary)
-        entry["isr"] = isr_result["isr_monthly"]
-        
-        # Get loan deductions
-        loan_deduction = 0
-        active_loans = await db.loans.find({
-            "employee_id": emp["employee_id"],
-            "company_id": company_id,
-            "status": "active",
-            "deduct_from_payroll": True
-        }, {"_id": 0}).to_list(10)
-        
-        for loan in active_loans:
-            monthly_payment = loan.get("monthly_payment", 0)
-            remaining = loan.get("remaining_balance", 0)
-            deduction = min(monthly_payment, remaining)
-            loan_deduction += deduction
-        
-        entry["loan_deduction"] = round(loan_deduction, 2)
-        
-        entry["total_deductions"] = round(
-            entry["sfs_employee"] + entry["afp_employee"] + entry["isr"] + entry["total_additional_deductions"] + entry["loan_deduction"],
-            2
-        )
-        entry["net_salary"] = round(entry["gross_salary"] - entry["total_deductions"], 2)
-        entry["total_employer_contributions"] = round(
-            entry["sfs_employer"] + entry["afp_employer"] + entry["srl_employer"] + entry["infotep_employer"],
-            2
-        )
+        # For OBREROS_NG payroll type, only apply ISR 2% - no TSS deductions
+        if payroll_type == "OBREROS_NG":
+            # Only ISR 2% retention for construction workers (Norma General 07-2027)
+            isr_obreros = round(salary * ISR_OBREROS_RATE, 2)
+            entry = {
+                "entry_id": entry_id,
+                "period_id": period_id,
+                "company_id": company_id,
+                "employee_id": emp["employee_id"],
+                "employee_name": f"{emp['first_name']} {emp['last_name']}",
+                "employee_document": emp.get("document_number", ""),
+                "department": emp.get("department", ""),
+                "position": emp.get("position", ""),
+                "payroll_type": payroll_type,
+                "base_salary": salary,
+                "overtime_day_hours": 0,
+                "overtime_day_amount": 0,
+                "overtime_night_hours": 0,
+                "overtime_night_amount": 0,
+                "overtime_weekend_hours": 0,
+                "overtime_weekend_amount": 0,
+                "overtime_holiday_hours": 0,
+                "overtime_holiday_amount": 0,
+                "bonuses": 0,
+                "commissions": 0,
+                "other_income": 0,
+                "gross_salary": salary,
+                # No TSS deductions for OBREROS_NG
+                "sfs_employee": 0,
+                "afp_employee": 0,
+                "isr": isr_obreros,  # Only 2% ISR retention
+                "isr_obreros_rate": ISR_OBREROS_RATE,
+                "additional_deductions": [],
+                "total_additional_deductions": 0,
+                "total_deductions": isr_obreros,
+                "net_salary": round(salary - isr_obreros, 2),
+                # No employer TSS contributions for OBREROS_NG
+                "sfs_employer": 0,
+                "afp_employer": 0,
+                "srl_employer": 0,
+                "infotep_employer": 0,
+                "total_employer_contributions": 0,
+                "loan_deduction": 0,
+                "status": "draft",
+                "created_at": now_iso()
+            }
+        else:
+            # Regular payroll with full TSS deductions
+            entry = {
+                "entry_id": entry_id,
+                "period_id": period_id,
+                "company_id": company_id,
+                "employee_id": emp["employee_id"],
+                "employee_name": f"{emp['first_name']} {emp['last_name']}",
+                "employee_document": emp.get("document_number", ""),
+                "department": emp.get("department", ""),
+                "position": emp.get("position", ""),
+                "payroll_type": payroll_type,
+                "base_salary": salary,
+                "overtime_day_hours": 0,
+                "overtime_day_amount": 0,
+                "overtime_night_hours": 0,
+                "overtime_night_amount": 0,
+                "overtime_weekend_hours": 0,
+                "overtime_weekend_amount": 0,
+                "overtime_holiday_hours": 0,
+                "overtime_holiday_amount": 0,
+                "bonuses": 0,
+                "commissions": 0,
+                "other_income": 0,
+                "gross_salary": salary,
+                "sfs_employee": round(salary * SFS_EMPLOYEE_RATE, 2),
+                "afp_employee": round(salary * AFP_EMPLOYEE_RATE, 2),
+                "isr": 0,
+                "additional_deductions": emp.get("additional_deductions", []),
+                "total_additional_deductions": sum(d.get("amount", 0) for d in emp.get("additional_deductions", []) if not d.get("is_percentage")),
+                "total_deductions": 0,
+                "net_salary": 0,
+                "sfs_employer": round(salary * SFS_EMPLOYER_RATE, 2),
+                "afp_employer": round(salary * AFP_EMPLOYER_RATE, 2),
+                "srl_employer": round(salary * SRL_EMPLOYER_RATE, 2),
+                "infotep_employer": round(salary * INFOTEP_EMPLOYER_RATE, 2),
+                "total_employer_contributions": 0,
+                "status": "draft",
+                "created_at": now_iso()
+            }
+            
+            isr_result = calculate_isr_monthly(salary)
+            entry["isr"] = isr_result["isr_monthly"]
+            
+            # Get loan deductions
+            loan_deduction = 0
+            active_loans = await db.loans.find({
+                "employee_id": emp["employee_id"],
+                "company_id": company_id,
+                "status": "active",
+                "deduct_from_payroll": True
+            }, {"_id": 0}).to_list(10)
+            
+            for loan in active_loans:
+                monthly_payment = loan.get("monthly_payment", 0)
+                remaining = loan.get("remaining_balance", 0)
+                deduction = min(monthly_payment, remaining)
+                loan_deduction += deduction
+            
+            entry["loan_deduction"] = round(loan_deduction, 2)
+            
+            entry["total_deductions"] = round(
+                entry["sfs_employee"] + entry["afp_employee"] + entry["isr"] + entry["total_additional_deductions"] + entry["loan_deduction"],
+                2
+            )
+            entry["net_salary"] = round(entry["gross_salary"] - entry["total_deductions"], 2)
+            entry["total_employer_contributions"] = round(
+                entry["sfs_employer"] + entry["afp_employer"] + entry["srl_employer"] + entry["infotep_employer"],
+                2
+            )
         
         await db.payroll_entries.insert_one(entry)
         added_count += 1
