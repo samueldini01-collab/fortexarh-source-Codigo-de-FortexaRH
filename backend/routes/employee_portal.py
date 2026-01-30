@@ -1226,21 +1226,33 @@ async def get_company_announcements(request: Request):
     )
     
     now = datetime.now(timezone.utc).isoformat()
+    emp_department = employee.get("department") if employee else None
+    
+    # Build query conditions
+    query = {
+        "company_id": emp_data["company_id"],
+        "active": True,
+        "$and": [
+            {
+                "$or": [
+                    {"start_date": {"$lte": now}},
+                    {"start_date": {"$exists": False}},
+                    {"start_date": None}
+                ]
+            },
+            {
+                "$or": [
+                    {"target_audience": "all"},
+                    {"target_audience": {"$exists": False}},
+                    {"target_audience": None},
+                    {"target_departments": emp_department}
+                ]
+            }
+        ]
+    }
     
     announcements = await db.announcements.find(
-        {
-            "company_id": emp_data["company_id"],
-            "active": True,
-            "$or": [
-                {"start_date": {"$lte": now}},
-                {"start_date": {"$exists": False}}
-            ],
-            "$or": [
-                {"target_audience": "all"},
-                {"target_audience": {"$exists": False}},
-                {"target_departments": employee.get("department") if employee else None}
-            ]
-        },
+        query,
         {"_id": 0}
     ).sort("created_at", -1).limit(20).to_list(20)
     
