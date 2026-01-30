@@ -437,8 +437,11 @@ export default function PayrollV2Page() {
       const response = await axios.get(`${API}/payroll-v2/periods/${periodId}/export/excel`, { headers: getAuthHeaders(), withCredentials: true });
       const data = response.data;
       
+      // Use company name from response or state
+      const exportCompanyName = data.company_name || companyName;
+      
       // Create CSV content
-      let csv = `${companyName}\n`;
+      let csv = `${exportCompanyName}\n`;
       csv += `Nómina: ${data.period.description}\n`;
       csv += `Período: ${data.period.start_date} - ${data.period.end_date}\n\n`;
       csv += data.columns.join(",") + "\n";
@@ -451,8 +454,8 @@ export default function PayrollV2Page() {
       });
       
       csv += `\nTOTALES,,,,`;
-      csv += `${data.totals.salario_base},${data.totals.comisiones},${data.totals.bonos},0,0,0,0,0,`;
-      csv += `${data.totals.total_ingresos},${data.totals.sfs},${data.totals.afp},${data.totals.isr},0,`;
+      csv += `${data.totals.salario_base},${data.totals.comisiones},${data.totals.bonos},${data.totals.he_diurnas || 0},${data.totals.he_nocturnas || 0},${data.totals.he_finsemana || 0},${data.totals.he_feriados || 0},${data.totals.otros_ingresos || 0},`;
+      csv += `${data.totals.total_ingresos},${data.totals.sfs},${data.totals.afp},${data.totals.isr},${data.totals.otros_descuentos || 0},`;
       csv += `${data.totals.total_descuentos},${data.totals.neto}\n`;
 
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -462,7 +465,8 @@ export default function PayrollV2Page() {
       link.click();
       toast.success("Excel exportado");
     } catch (error) {
-      toast.error("Error al exportar");
+      console.error("Export error:", error);
+      toast.error(error.response?.data?.detail || "Error al exportar");
     }
   };
 
