@@ -5,10 +5,9 @@ Marcación de asistencia con geolocalización y selfie
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 from typing import Optional, List
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 import uuid
 import math
-import base64
 
 router = APIRouter(prefix="/geolocation-attendance", tags=["Geolocation Attendance"])
 
@@ -16,11 +15,13 @@ router = APIRouter(prefix="/geolocation-attendance", tags=["Geolocation Attendan
 db = None
 _get_current_user_func = None
 
+
 def init_router(database, get_current_user_func):
     """Initialize the router with database and auth dependencies"""
     global db, _get_current_user_func
     db = database
     _get_current_user_func = get_current_user_func
+
 
 async def get_current_user(request: Request):
     """Wrapper to call the injected get_current_user function"""
@@ -64,8 +65,8 @@ class LocationCreate(BaseModel):
     address: str
     latitude: float
     longitude: float
-    radius: int = 100  # meters
-    location_type: str = "office"  # office, project, branch, client
+    radius: int = 100
+    location_type: str = "office"
     is_active: bool = True
     valid_from: Optional[str] = None
     valid_until: Optional[str] = None
@@ -85,8 +86,8 @@ class LocationUpdate(BaseModel):
 class AttendanceMarkRequest(BaseModel):
     latitude: float
     longitude: float
-    accuracy: float  # GPS accuracy in meters
-    mark_type: str  # "entry" or "exit"
+    accuracy: float
+    mark_type: str
     selfie_base64: Optional[str] = None
     device_info: Optional[str] = None
     notes: Optional[str] = None
@@ -102,6 +103,7 @@ class EmployeeLocationAssignment(BaseModel):
 @router.get("/locations")
 async def get_locations(request: Request):
     """Get all geofence locations for the company"""
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     
     locations = await db.geo_locations.find(
@@ -109,7 +111,6 @@ async def get_locations(request: Request):
         {"_id": 0}
     ).sort("name", 1).to_list(100)
     
-    # Get employee count per location
     for loc in locations:
         count = await db.employee_locations.count_documents({
             "company_id": company_id,
@@ -123,6 +124,7 @@ async def get_locations(request: Request):
 @router.post("/locations")
 async def create_location(data: LocationCreate, request: Request):
     """Create a new geofence location"""
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
@@ -155,6 +157,7 @@ async def create_location(data: LocationCreate, request: Request):
 @router.put("/locations/{location_id}")
 async def update_location(location_id: str, data: LocationUpdate, request: Request):
     """Update a geofence location"""
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
@@ -178,13 +181,13 @@ async def update_location(location_id: str, data: LocationUpdate, request: Reque
 @router.delete("/locations/{location_id}")
 async def delete_location(location_id: str, request: Request):
     """Delete a geofence location"""
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
     if user_role not in ["admin", "hr_manager"]:
         raise HTTPException(status_code=403, detail="No tiene permisos para eliminar ubicaciones")
     
-    # Remove employee assignments first
     await db.employee_locations.delete_many({
         "company_id": company_id,
         "location_id": location_id
@@ -204,9 +207,9 @@ async def delete_location(location_id: str, request: Request):
 @router.post("/locations/{location_id}/assign-employees")
 async def assign_employees_to_location(location_id: str, data: EmployeeLocationAssignment, request: Request):
     """Assign employees to a geofence location"""
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     
-    # Verify location exists
     location = await db.geo_locations.find_one(
         {"location_id": location_id, "company_id": company_id},
         {"_id": 0}
@@ -214,9 +217,7 @@ async def assign_employees_to_location(location_id: str, data: EmployeeLocationA
     if not location:
         raise HTTPException(status_code=404, detail="Ubicación no encontrada")
     
-    # Add assignments
     for employee_id in data.employee_ids:
-        # Check if already assigned
         existing = await db.employee_locations.find_one({
             "company_id": company_id,
             "employee_id": employee_id,
@@ -239,6 +240,7 @@ async def assign_employees_to_location(location_id: str, data: EmployeeLocationA
 @router.get("/locations/{location_id}/employees")
 async def get_location_employees(location_id: str, request: Request):
     """Get employees assigned to a location"""
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     
     assignments = await db.employee_locations.find(
@@ -261,17 +263,16 @@ async def get_location_employees(location_id: str, request: Request):
 @router.post("/mark")
 async def mark_attendance(data: AttendanceMarkRequest, request: Request):
     """Mark attendance with geolocation"""
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     user_id = current_user.get("user_id")
     
-    # Get employee info
     employee = await db.employees.find_one(
         {"company_id": company_id, "user_id": user_id},
         {"_id": 0}
     )
     
     if not employee:
-        # Try to find by email
         user = await db.users.find_one({"user_id": user_id}, {"_id": 0, "email": 1})
         employee = await db.employees.find_one(
             {"company_id": company_id, "email": user.get("email") if user else ""},
@@ -284,7 +285,6 @@ async def mark_attendance(data: AttendanceMarkRequest, request: Request):
     employee_id = employee.get("employee_id")
     today = get_today_date()
     
-    # Check if already marked this type today
     existing_mark = await db.geo_attendance.find_one({
         "company_id": company_id,
         "employee_id": employee_id,
@@ -298,7 +298,6 @@ async def mark_attendance(data: AttendanceMarkRequest, request: Request):
             detail=f"Ya marcó {'entrada' if data.mark_type == 'entry' else 'salida'} hoy"
         )
     
-    # Get employee's assigned locations
     employee_locations = await db.employee_locations.find(
         {"company_id": company_id, "employee_id": employee_id},
         {"_id": 0, "location_id": 1}
@@ -306,7 +305,6 @@ async def mark_attendance(data: AttendanceMarkRequest, request: Request):
     
     location_ids = [el["location_id"] for el in employee_locations]
     
-    # Get active locations
     locations = await db.geo_locations.find(
         {
             "company_id": company_id,
@@ -316,14 +314,12 @@ async def mark_attendance(data: AttendanceMarkRequest, request: Request):
         {"_id": 0}
     ).to_list(50)
     
-    # If no specific locations assigned, get all company locations
     if not locations:
         locations = await db.geo_locations.find(
             {"company_id": company_id, "is_active": True},
             {"_id": 0}
         ).to_list(50)
     
-    # Check if within any geofence
     matched_location = None
     min_distance = float('inf')
     
@@ -340,29 +336,23 @@ async def mark_attendance(data: AttendanceMarkRequest, request: Request):
             matched_location = loc
             break
     
-    # Determine status
     is_within_zone = matched_location is not None
     status = "approved" if is_within_zone else "pending_review"
     
-    # Save selfie if provided
     selfie_url = None
     if data.selfie_base64:
-        # In production, upload to cloud storage
-        # For now, store a reference
         selfie_id = generate_id("selfie")
         selfie_url = f"/selfies/{selfie_id}"
         
-        # Store selfie data
         await db.attendance_selfies.insert_one({
             "selfie_id": selfie_id,
             "company_id": company_id,
             "employee_id": employee_id,
             "date": today,
-            "image_data": data.selfie_base64[:100] + "...",  # Store truncated for demo
+            "image_data": data.selfie_base64[:100] + "...",
             "created_at": now_iso()
         })
     
-    # Create attendance record
     mark_id = generate_id("geoatt")
     
     attendance_record = {
@@ -389,7 +379,6 @@ async def mark_attendance(data: AttendanceMarkRequest, request: Request):
     
     await db.geo_attendance.insert_one(attendance_record)
     
-    # Also create/update regular attendance record
     attendance_date_record = await db.attendances.find_one({
         "company_id": company_id,
         "employee_id": employee_id,
@@ -421,7 +410,7 @@ async def mark_attendance(data: AttendanceMarkRequest, request: Request):
                 "status": "present",
                 "created_at": now_iso()
             })
-    else:  # exit
+    else:
         if attendance_date_record:
             await db.attendances.update_one(
                 {"company_id": company_id, "employee_id": employee_id, "date": today},
@@ -446,12 +435,12 @@ async def mark_attendance(data: AttendanceMarkRequest, request: Request):
 
 
 @router.get("/my-marks")
-async def get_my_marks(date: str = None, request: Request):
+async def get_my_marks(request: Request, date: str = None):
     """Get current user's attendance marks"""
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     user_id = current_user.get("user_id")
     
-    # Get employee
     employee = await db.employees.find_one(
         {"company_id": company_id, "user_id": user_id},
         {"_id": 0, "employee_id": 1}
@@ -481,10 +470,10 @@ async def get_my_marks(date: str = None, request: Request):
 @router.get("/my-locations")
 async def get_my_locations(request: Request):
     """Get locations assigned to current user"""
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     user_id = current_user.get("user_id")
     
-    # Get employee
     employee = await db.employees.find_one(
         {"company_id": company_id, "user_id": user_id},
         {"_id": 0, "employee_id": 1}
@@ -498,7 +487,6 @@ async def get_my_locations(request: Request):
         )
     
     if not employee:
-        # Return all company locations if no employee found
         locations = await db.geo_locations.find(
             {"company_id": company_id, "is_active": True},
             {"_id": 0}
@@ -507,7 +495,6 @@ async def get_my_locations(request: Request):
     
     employee_id = employee.get("employee_id")
     
-    # Get assigned locations
     assignments = await db.employee_locations.find(
         {"company_id": company_id, "employee_id": employee_id},
         {"_id": 0, "location_id": 1}
@@ -520,7 +507,6 @@ async def get_my_locations(request: Request):
             {"_id": 0}
         ).to_list(50)
     else:
-        # If no specific assignments, return all company locations
         locations = await db.geo_locations.find(
             {"company_id": company_id, "is_active": True},
             {"_id": 0}
@@ -530,8 +516,9 @@ async def get_my_locations(request: Request):
 
 
 @router.get("/my-history")
-async def get_my_history(month: int = None, year: int = None, request: Request):
+async def get_my_history(request: Request, month: int = None, year: int = None):
     """Get current user's attendance history"""
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     user_id = current_user.get("user_id")
     
@@ -539,7 +526,6 @@ async def get_my_history(month: int = None, year: int = None, request: Request):
     target_month = month or now.month
     target_year = year or now.year
     
-    # Get employee
     employee = await db.employees.find_one(
         {"company_id": company_id, "user_id": user_id},
         {"_id": 0, "employee_id": 1}
@@ -557,7 +543,6 @@ async def get_my_history(month: int = None, year: int = None, request: Request):
     
     employee_id = employee.get("employee_id")
     
-    # Build date range
     start_date = f"{target_year}-{target_month:02d}-01"
     if target_month == 12:
         end_date = f"{target_year + 1}-01-01"
@@ -573,7 +558,6 @@ async def get_my_history(month: int = None, year: int = None, request: Request):
         {"_id": 0}
     ).sort("date", -1).to_list(100)
     
-    # Calculate summary
     entry_count = len([m for m in marks if m["mark_type"] == "entry"])
     exit_count = len([m for m in marks if m["mark_type"] == "exit"])
     within_zone_count = len([m for m in marks if m.get("is_within_zone", False)])
@@ -597,6 +581,7 @@ async def get_my_history(month: int = None, year: int = None, request: Request):
 @router.get("/admin/today")
 async def get_today_attendance(request: Request):
     """Get all attendance marks for today (admin view)"""
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
@@ -610,7 +595,6 @@ async def get_today_attendance(request: Request):
         {"_id": 0}
     ).sort("timestamp", -1).to_list(500)
     
-    # Get summary
     total_employees = await db.employees.count_documents({
         "company_id": company_id,
         "status": "active"
@@ -634,6 +618,7 @@ async def get_today_attendance(request: Request):
 @router.get("/admin/live-map")
 async def get_live_map_data(request: Request):
     """Get data for live map view"""
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
@@ -642,7 +627,6 @@ async def get_live_map_data(request: Request):
     
     today = get_today_date()
     
-    # Get latest mark per employee today
     pipeline = [
         {"$match": {"company_id": company_id, "date": today}},
         {"$sort": {"timestamp": -1}},
@@ -656,7 +640,6 @@ async def get_live_map_data(request: Request):
     
     latest_marks = await db.geo_attendance.aggregate(pipeline).to_list(500)
     
-    # Get all locations
     locations = await db.geo_locations.find(
         {"company_id": company_id, "is_active": True},
         {"_id": 0}
@@ -671,12 +654,13 @@ async def get_live_map_data(request: Request):
 
 @router.get("/admin/report")
 async def get_attendance_report(
+    request: Request,
     start_date: str,
     end_date: str,
-    location_id: str = None,
-    request: Request
+    location_id: str = None
 ):
     """Get attendance report for date range"""
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
@@ -693,7 +677,6 @@ async def get_attendance_report(
     
     marks = await db.geo_attendance.find(query, {"_id": 0}).sort("date", -1).to_list(5000)
     
-    # Calculate statistics
     by_employee = {}
     by_location = {}
     by_date = {}
@@ -701,10 +684,9 @@ async def get_attendance_report(
     
     for mark in marks:
         emp_id = mark["employee_id"]
-        loc_id = mark.get("location_id", "unknown")
+        loc_name = mark.get("location_name", "Desconocido")
         date = mark["date"]
         
-        # By employee
         if emp_id not in by_employee:
             by_employee[emp_id] = {"name": mark.get("employee_name", ""), "entries": 0, "exits": 0, "outside_zone": 0}
         if mark["mark_type"] == "entry":
@@ -715,13 +697,10 @@ async def get_attendance_report(
             by_employee[emp_id]["outside_zone"] += 1
             outside_zone_marks.append(mark)
         
-        # By location
-        loc_name = mark.get("location_name", "Desconocido")
         if loc_name not in by_location:
             by_location[loc_name] = 0
         by_location[loc_name] += 1
         
-        # By date
         if date not in by_date:
             by_date[date] = 0
         by_date[date] += 1
@@ -732,14 +711,15 @@ async def get_attendance_report(
         "by_employee": list(by_employee.values()),
         "by_location": by_location,
         "by_date": by_date,
-        "outside_zone_alerts": outside_zone_marks[:50],  # Limit to 50
-        "marks": marks[:500]  # Limit to 500 for performance
+        "outside_zone_alerts": outside_zone_marks[:50],
+        "marks": marks[:500]
     }
 
 
 @router.post("/admin/approve/{mark_id}")
 async def approve_mark(mark_id: str, request: Request):
     """Approve a pending attendance mark"""
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
@@ -762,8 +742,9 @@ async def approve_mark(mark_id: str, request: Request):
 
 
 @router.post("/admin/reject/{mark_id}")
-async def reject_mark(mark_id: str, reason: str = "", request: Request):
+async def reject_mark(mark_id: str, request: Request, reason: str = ""):
     """Reject a pending attendance mark"""
+    current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
