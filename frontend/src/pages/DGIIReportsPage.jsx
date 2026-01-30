@@ -284,7 +284,7 @@ export default function DGIIReportsPage() {
 
   if (loading) {
     return (
-      <DashboardLayout title="Reportes DGII">
+      <DashboardLayout title="Reportes DGII-TSS">
         <div className="flex items-center justify-center h-64">
           <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
         </div>
