@@ -47,7 +47,11 @@ PAYROLL_TYPES = [
     {"code": "REG13", "name": "Regalía Pascual", "description": "Nómina de salario 13"},
     {"code": "VAC", "name": "Vacaciones", "description": "Nómina de pago de vacaciones"},
     {"code": "LIQ", "name": "Liquidación", "description": "Nómina de liquidación de empleados"},
+    {"code": "OBREROS_NG", "name": "Obreros NG 07/2027", "description": "Nómina sector construcción - Solo ISR 2% mano de obra (Norma General 07-2027)"},
 ]
+
+# ISR rate for construction workers (Obreros NG 07/2027)
+ISR_OBREROS_RATE = 0.02  # 2% retention on labor income
 
 # ===================== NOVELTY TYPES =====================
 
