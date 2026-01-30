@@ -437,10 +437,112 @@ function EmployeeDashboard() {
               </div>
             </div>
           </div>
-          <Button variant="ghost" size="sm" onClick={logout}>
-            <LogOut className="w-4 h-4 mr-2" />
-            Salir
-          </Button>
+          <div className="flex items-center gap-2">
+            {/* Notification Bell */}
+            <div className="relative">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="relative"
+                data-testid="notification-bell"
+              >
+                <Bell className="w-5 h-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </Button>
+              
+              {/* Notification Dropdown */}
+              {showNotifications && (
+                <div className="absolute right-0 mt-2 w-96 bg-white rounded-xl shadow-2xl border border-slate-200 z-50" data-testid="notification-panel">
+                  <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+                    <h3 className="font-semibold text-slate-800">Notificaciones</h3>
+                    <div className="flex items-center gap-2">
+                      {unreadCount > 0 && (
+                        <Button variant="ghost" size="sm" onClick={handleMarkAllAsRead} className="text-xs">
+                          <CheckCircle className="w-3 h-3 mr-1" />
+                          Marcar todas
+                        </Button>
+                      )}
+                      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setShowNotifications(false)}>
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <ScrollArea className="max-h-96">
+                    {loadingNotifications ? (
+                      <div className="p-8 text-center">
+                        <Loader2 className="w-6 h-6 animate-spin mx-auto text-slate-400" />
+                      </div>
+                    ) : notifications.length === 0 ? (
+                      <div className="p-8 text-center">
+                        <BellOff className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+                        <p className="text-slate-500 text-sm">No tienes notificaciones</p>
+                      </div>
+                    ) : (
+                      <div className="divide-y divide-slate-100">
+                        {notifications.slice(0, 10).map((notification) => (
+                          <div 
+                            key={notification.notification_id}
+                            className={`p-4 hover:bg-slate-50 transition-colors cursor-pointer ${!notification.read ? 'bg-blue-50/50' : ''}`}
+                            onClick={() => !notification.read && handleMarkAsRead(notification.notification_id)}
+                          >
+                            <div className="flex items-start gap-3">
+                              {getNotificationIcon(notification.type)}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <p className={`text-sm font-medium ${!notification.read ? 'text-slate-900' : 'text-slate-600'}`}>
+                                    {notification.title}
+                                  </p>
+                                  {!notification.read && (
+                                    <span className="w-2 h-2 bg-blue-500 rounded-full" />
+                                  )}
+                                </div>
+                                <p className="text-xs text-slate-500 line-clamp-2">{notification.message}</p>
+                                <div className="flex items-center gap-2 mt-2">
+                                  {getCategoryBadge(notification.category)}
+                                  <span className="text-xs text-slate-400">
+                                    {new Date(notification.created_at).toLocaleDateString('es-DO', { 
+                                      day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' 
+                                    })}
+                                  </span>
+                                </div>
+                              </div>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-6 w-6 opacity-0 group-hover:opacity-100 hover:text-red-500"
+                                onClick={(e) => { e.stopPropagation(); handleDeleteNotification(notification.notification_id); }}
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </ScrollArea>
+                  
+                  {notifications.length > 10 && (
+                    <div className="p-3 border-t border-slate-100 text-center">
+                      <Button variant="link" size="sm" className="text-blue-600">
+                        Ver todas las notificaciones
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            
+            <Button variant="ghost" size="sm" onClick={logout}>
+              <LogOut className="w-4 h-4 mr-2" />
+              Salir
+            </Button>
+          </div>
         </div>
       </header>
 
