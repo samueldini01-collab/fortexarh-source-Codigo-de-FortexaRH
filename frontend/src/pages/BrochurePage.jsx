@@ -304,7 +304,7 @@ export default function BrochurePage() {
                     "API REST - Integraciones personalizadas",
                     "Exportación Excel/CSV - Reportes flexibles",
                     "Generación de archivos TSS (SUIR+)",
-                    "Reportes DGII (IR-3, IR-17)"
+                    "Reportes DGII-TSS (IR-3, IR-17)"
                   ].map((integration, idx) => (
                     <div key={idx} className="flex items-center gap-3 p-2 bg-white rounded-lg shadow-sm">
                       <div className="w-2 h-2 bg-emerald-500 rounded-full" />
