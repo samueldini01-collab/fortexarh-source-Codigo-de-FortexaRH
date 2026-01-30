@@ -777,3 +777,108 @@ async def export_journal_entry(
         media_type="text/csv; charset=utf-8",
         headers={"Content-Disposition": f"attachment; filename=asiento_{entry_id}_{format_suffix}.csv"}
     )
+
+
+@router.get("/journal-entries/{entry_id}/preview")
+async def preview_journal_entry(
+    entry_id: str, 
+    format: str = Query("summary", description="Export format: 'summary' (resumido) or 'detailed' (detallado)"),
+    current_user: dict = Depends(get_current_user)
+):
+    """Preview journal entry data as JSON for display before download
+    
+    Returns structured data for preview in UI
+    """
+    company_id = current_user.get("company_id")
+    
+    entry = await db.journal_entries.find_one(
+        {"entry_id": entry_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not entry:
+        raise HTTPException(status_code=404, detail="Asiento no encontrado")
+    
+    lines = entry.get("lines", [])
+    has_cost_center = any(line.get("cost_center") for line in lines)
+    
+    def get_account_sort_key(account_code):
+        """Sort accounts: Expenses (5,6,7) first, then Liabilities (2), then Assets (1)"""
+        if not account_code:
+            return (99, account_code)
+        first_digit = account_code[0] if account_code else '9'
+        if first_digit in ['5', '6', '7']:
+            return (1, account_code)
+        elif first_digit == '2':
+            return (2, account_code)
+        elif first_digit == '1':
+            return (3, account_code)
+        elif first_digit in ['3', '4']:
+            return (2, account_code)
+        else:
+            return (4, account_code)
+    
+    def clean_account_name(account_code, account_name):
+        """Remove account code from name if present"""
+        if account_name and account_code and account_name.startswith(account_code):
+            return account_name.replace(f"{account_code} - ", "").replace(f"{account_code}-", "").strip()
+        return account_name
+    
+    preview_data = {
+        "entry_id": entry_id,
+        "entry_date": entry.get("entry_date", ""),
+        "reference": entry.get("reference", ""),
+        "description": entry.get("description", ""),
+        "format": format,
+        "has_cost_center": has_cost_center,
+        "rows": [],
+        "totals": {
+            "debits": round(entry.get("total_debits", 0), 2),
+            "credits": round(entry.get("total_credits", 0), 2)
+        }
+    }
+    
+    if format == "detailed":
+        # Detailed preview - line by line
+        sorted_lines = sorted(lines, key=lambda x: get_account_sort_key(x.get("account_code", "")))
+        
+        for line in sorted_lines:
+            row = {
+                "account_code": line.get("account_code", ""),
+                "account_name": clean_account_name(line.get("account_code", ""), line.get("account_name", "")),
+                "employee_name": line.get("employee_name", ""),
+                "debit": line.get("debit", 0),
+                "credit": line.get("credit", 0)
+            }
+            if has_cost_center:
+                row["cost_center"] = line.get("cost_center", "")
+            preview_data["rows"].append(row)
+    else:
+        # Summary preview - grouped by account
+        account_totals = {}
+        for line in lines:
+            account_code = line.get("account_code", "")
+            account_name = clean_account_name(account_code, line.get("account_name", ""))
+            cost_center = line.get("cost_center", "") if has_cost_center else ""
+            
+            key = (account_code, account_name, cost_center)
+            
+            if key not in account_totals:
+                account_totals[key] = {"debit": 0, "credit": 0}
+            
+            account_totals[key]["debit"] += line.get("debit", 0)
+            account_totals[key]["credit"] += line.get("credit", 0)
+        
+        sorted_accounts = sorted(account_totals.items(), key=lambda x: get_account_sort_key(x[0][0]))
+        
+        for (account_code, account_name, cost_center), totals in sorted_accounts:
+            row = {
+                "account_code": account_code,
+                "account_name": account_name,
+                "debit": round(totals["debit"], 2) if totals["debit"] else 0,
+                "credit": round(totals["credit"], 2) if totals["credit"] else 0
+            }
+            if has_cost_center:
+                row["cost_center"] = cost_center
+            preview_data["rows"].append(row)
+    
+    return preview_data
