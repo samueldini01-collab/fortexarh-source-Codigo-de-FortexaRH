@@ -1775,6 +1775,118 @@ async def reject_period(period_id: str, data: ApprovalRequest, current_user: dic
     return {"message": "Nómina rechazada y devuelta a borrador", "status": "draft", "reason": data.comments}
 
 
+class PaymentRequest(BaseModel):
+    payment_bank: str = ""
+    payment_date: str = ""
+    reference: str = ""
+
+
+@router.post("/periods/{period_id}/pay")
+async def pay_period(period_id: str, data: PaymentRequest = None, current_user: dict = Depends(get_current_user)):
+    """Mark a payroll period as paid (Approved -> Paid)"""
+    company_id = current_user.get("company_id")
+    user_id = current_user.get("user_id")
+    
+    # Check user permission
+    user_permissions = current_user.get("permissions", [])
+    user_role = current_user.get("role", "")
+    can_pay = "payroll_pay" in user_permissions or user_role in ["admin", "hr_manager", "finance_manager"]
+    
+    if not can_pay:
+        raise HTTPException(status_code=403, detail="No tiene permisos para pagar nóminas")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    if period.get("status") != "approved":
+        raise HTTPException(status_code=400, detail="Solo se puede pagar nóminas en estado 'Aprobado'")
+    
+    # Create payment workflow entry
+    workflow_entry = {
+        "action": "pay",
+        "from_status": period.get("status"),
+        "to_status": "paid",
+        "user_id": user_id,
+        "user_name": current_user.get("email", current_user.get("name", "Usuario")),
+        "timestamp": now_iso(),
+        "payment_info": {
+            "bank": data.payment_bank if data else "",
+            "date": data.payment_date if data else now_iso()[:10],
+            "reference": data.reference if data else ""
+        }
+    }
+    
+    await db.payroll_periods.update_one(
+        {"period_id": period_id, "company_id": company_id},
+        {
+            "$set": {
+                "status": "paid",
+                "paid_at": now_iso(),
+                "paid_by": user_id,
+                "payment_bank": data.payment_bank if data else "",
+                "payment_date": data.payment_date if data else now_iso()[:10],
+                "payment_reference": data.reference if data else "",
+                "updated_at": now_iso()
+            },
+            "$push": {
+                "workflow_history": workflow_entry
+            }
+        }
+    )
+    
+    await db.payroll_entries.update_many(
+        {"period_id": period_id, "company_id": company_id},
+        {"$set": {"status": "paid"}}
+    )
+    
+    # Update loan balances for employees with deductions
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id, "loan_deduction": {"$gt": 0}},
+        {"_id": 0, "employee_id": 1, "loan_deduction": 1}
+    ).to_list(1000)
+    
+    for entry in entries:
+        employee_id = entry.get("employee_id")
+        deduction = entry.get("loan_deduction", 0)
+        
+        if deduction > 0:
+            # Update active loans
+            active_loans = await db.loans.find(
+                {"employee_id": employee_id, "company_id": company_id, "status": "active", "deduct_from_payroll": True},
+                {"_id": 0, "loan_id": 1, "monthly_payment": 1, "remaining_balance": 1}
+            ).to_list(10)
+            
+            remaining_deduction = deduction
+            for loan in active_loans:
+                if remaining_deduction <= 0:
+                    break
+                    
+                loan_id = loan.get("loan_id")
+                remaining = loan.get("remaining_balance", 0)
+                payment = min(remaining_deduction, loan.get("monthly_payment", 0), remaining)
+                
+                new_remaining = max(0, remaining - payment)
+                new_status = "paid_off" if new_remaining <= 0 else "active"
+                
+                await db.loans.update_one(
+                    {"loan_id": loan_id},
+                    {"$set": {
+                        "remaining_balance": new_remaining,
+                        "status": new_status,
+                        "last_payment_date": now_iso(),
+                        "updated_at": now_iso()
+                    }}
+                )
+                
+                remaining_deduction -= payment
+    
+    return {"message": "Nómina pagada correctamente", "status": "paid"}
+
+
 @router.get("/periods/{period_id}/workflow-history")
 async def get_workflow_history(period_id: str, current_user: dict = Depends(get_current_user)):
     """Get the approval workflow history for a payroll period"""
