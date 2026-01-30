@@ -1026,6 +1026,9 @@ async def export_ir13(year: int, current_user: dict = Depends(get_current_user))
         media_type="application/vnd.ms-excel",
         headers={"Content-Disposition": f"attachment; filename=IR13_{year}.xls"}
     )
+
+
+@router.post("/periods/{period_id}/calculate")
 async def calculate_period(period_id: str, current_user: dict = Depends(get_current_user)):
     """Recalculate all entries in a period"""
     company_id = current_user.get("company_id")
