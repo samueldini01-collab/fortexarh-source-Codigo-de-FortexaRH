@@ -211,7 +211,8 @@ async def get_available_modules(request: Request):
     await get_current_user(request)  # Verify auth
     return {
         "modules": DEFAULT_MODULES,
-        "permission_types": PERMISSION_TYPES
+        "permission_types": PERMISSION_TYPES,
+        "permission_labels": PERMISSION_LABELS
     }
 
 
