@@ -57,6 +57,8 @@ import AccountantsSoftwarePage from "@/pages/AccountantsSoftwarePage";
 import PartnerRegisterPage from "@/pages/PartnerRegisterPage";
 import PartnerDashboardPage from "@/pages/PartnerDashboardPage";
 import BrochurePage from "@/pages/BrochurePage";
+import GeoAttendancePage from "@/pages/GeoAttendancePage";
+import GeoLocationsPage from "@/pages/GeoLocationsPage";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
@@ -369,6 +371,8 @@ function AppRouter() {
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/brochure" element={<BrochurePage />} />
+      <Route path="/geo-attendance" element={<ProtectedRoute><GeoAttendancePage /></ProtectedRoute>} />
+      <Route path="/geo-locations" element={<ProtectedRoute><GeoLocationsPage /></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
