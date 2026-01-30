@@ -180,6 +180,14 @@ export default function DGIIReportsPage() {
           endpoint = `/payroll-v2/periods/${selectedPeriod}/export/ir4`;
           filename = "IR4_Detalle_Retenciones.xls";
           break;
+        case "ir17":
+          endpoint = `/payroll-v2/periods/${selectedPeriod}/export/ir17`;
+          filename = "IR17_Otras_Retenciones.xls";
+          break;
+        case "ir6":
+          endpoint = `/payroll-v2/periods/${selectedPeriod}/export/ir6`;
+          filename = "IR6_Anexo_Retenciones.xls";
+          break;
         case "tss-autodeterminacion":
           endpoint = `/payroll-v2/periods/${selectedPeriod}/export/tss-autodeterminacion`;
           filename = "TSS_Autodeterminacion.xls";
