@@ -619,6 +619,76 @@ function EmployeeDashboard() {
               </Card>
             </div>
 
+            {/* Announcements Section */}
+            {announcements.length > 0 && (
+              <Card className="mb-6 border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50">
+                <CardHeader className="pb-2">
+                  <CardTitle className="flex items-center gap-2 text-amber-800">
+                    <Megaphone className="w-5 h-5" />
+                    Anuncios Importantes
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {announcements.slice(0, 3).map((announcement, idx) => (
+                      <div key={idx} className="bg-white rounded-lg p-4 border border-amber-100 shadow-sm">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <Megaphone className="w-5 h-5 text-amber-600" />
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-slate-800">{announcement.title}</h4>
+                            <p className="text-sm text-slate-600 mt-1">{announcement.content}</p>
+                            <p className="text-xs text-slate-400 mt-2">
+                              {new Date(announcement.created_at).toLocaleDateString('es-DO', { 
+                                day: 'numeric', month: 'long', year: 'numeric' 
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Recent Notifications Card */}
+            {unreadCount > 0 && (
+              <Card className="mb-6 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2 text-blue-800">
+                      <Bell className="w-5 h-5" />
+                      Notificaciones Recientes
+                      <Badge variant="secondary" className="bg-blue-100 text-blue-700">{unreadCount} nuevas</Badge>
+                    </CardTitle>
+                    <Button variant="ghost" size="sm" onClick={() => setShowNotifications(true)}>
+                      Ver todas
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {notifications.filter(n => !n.read).slice(0, 3).map((notification) => (
+                      <div 
+                        key={notification.notification_id}
+                        className="flex items-start gap-3 bg-white rounded-lg p-3 border border-blue-100 cursor-pointer hover:bg-blue-50 transition-colors"
+                        onClick={() => handleMarkAsRead(notification.notification_id)}
+                      >
+                        {getNotificationIcon(notification.type)}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-slate-800">{notification.title}</p>
+                          <p className="text-xs text-slate-500 line-clamp-1">{notification.message}</p>
+                        </div>
+                        {getCategoryBadge(notification.category)}
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
