@@ -225,13 +225,13 @@ export default function RolesPage() {
   };
 
   const getPermissionLabel = (perm) => {
-    const labels = {
-      view: "Ver",
-      create: "Crear",
-      edit: "Editar",
-      delete: "Eliminar"
-    };
-    return labels[perm] || perm;
+    return permissionLabels[perm] || perm.charAt(0).toUpperCase() + perm.slice(1);
+  };
+
+  // Get available permissions for a specific module
+  const getModulePermissions = (moduleId) => {
+    const module = modules.find(m => m.id === moduleId);
+    return module?.permissions || ["view", "create", "edit", "delete"];
   };
 
   if (loading) {
