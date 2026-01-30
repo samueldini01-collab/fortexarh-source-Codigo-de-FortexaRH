@@ -293,12 +293,12 @@ export default function DGIIReportsPage() {
   }
 
   return (
-    <DashboardLayout title="Reportes DGII">
+    <DashboardLayout title="Reportes DGII-TSS">
       <div className="space-y-6" data-testid="dgii-reports-page">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Reportes DGII y TSS</h1>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Reportes DGII-TSS</h1>
             <p className="text-slate-500 dark:text-slate-400">Genera los formularios fiscales requeridos por la DGII y TSS</p>
           </div>
         </div>
