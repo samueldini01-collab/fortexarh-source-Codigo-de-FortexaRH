@@ -200,7 +200,7 @@ function EmployeeDashboard() {
   const fetchDashboard = useCallback(async () => {
     setLoading(true);
     try {
-      const [dashRes, payRes, loanRes, vacRes, balRes, profRes, evalRes, leaveRes, attRes] = await Promise.all([
+      const [dashRes, payRes, loanRes, vacRes, balRes, profRes, evalRes, leaveRes, attRes, notifRes, announceRes] = await Promise.all([
         axios.get(`${API}/employee-portal/dashboard`, { headers: getAuthHeaders() }),
         axios.get(`${API}/employee-portal/payslips`, { headers: getAuthHeaders() }),
         axios.get(`${API}/employee-portal/loans`, { headers: getAuthHeaders() }),
@@ -209,7 +209,9 @@ function EmployeeDashboard() {
         axios.get(`${API}/employee-portal/profile`, { headers: getAuthHeaders() }),
         axios.get(`${API}/employee-portal/evaluations`, { headers: getAuthHeaders() }).catch(() => ({ data: { evaluations: [], summary: {} } })),
         axios.get(`${API}/employee-portal/leaves`, { headers: getAuthHeaders() }).catch(() => ({ data: { leaves: [], summary: {}, leave_types: {} } })),
-        axios.get(`${API}/employee-portal/attendance/today`, { headers: getAuthHeaders() }).catch(() => ({ data: null }))
+        axios.get(`${API}/employee-portal/attendance/today`, { headers: getAuthHeaders() }).catch(() => ({ data: null })),
+        axios.get(`${API}/employee-portal/notifications`, { headers: getAuthHeaders() }).catch(() => ({ data: { notifications: [], unread_count: 0 } })),
+        axios.get(`${API}/employee-portal/announcements`, { headers: getAuthHeaders() }).catch(() => ({ data: { announcements: [] } }))
       ]);
       setDashboardData(dashRes.data);
       setPayslips(payRes.data);
@@ -220,6 +222,9 @@ function EmployeeDashboard() {
       setEvaluations(evalRes.data);
       setLeaves(leaveRes.data);
       setTodayAttendance(attRes.data);
+      setNotifications(notifRes.data.notifications || []);
+      setUnreadCount(notifRes.data.unread_count || 0);
+      setAnnouncements(announceRes.data.announcements || []);
     } catch (error) {
       toast.error("Error al cargar datos");
     } finally {
