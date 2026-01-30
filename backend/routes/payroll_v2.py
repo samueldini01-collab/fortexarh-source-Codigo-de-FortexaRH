@@ -675,7 +675,7 @@ async def get_available_years(current_user: dict = Depends(get_current_user)):
 
 @router.get("/periods/{period_id}/export/excel")
 async def export_period_excel(period_id: str, current_user: dict = Depends(get_current_user)):
-    """Export payroll period to Excel format"""
+    """Export payroll period to Excel format - Returns JSON for frontend processing"""
     company_id = current_user.get("company_id")
     
     period = await db.payroll_periods.find_one(
@@ -688,56 +688,99 @@ async def export_period_excel(period_id: str, current_user: dict = Depends(get_c
     entries = await db.payroll_entries.find(
         {"period_id": period_id, "company_id": company_id},
         {"_id": 0}
-    ).to_list(1000)
+    ).sort("employee_name", 1).to_list(1000)
     
-    output = io.StringIO()
-    writer = csv.writer(output, delimiter='\t')
-    
-    writer.writerow([
-        "Cédula", "Nombre", "Departamento", "Cargo", 
-        "Salario Base", "Horas Extras", "Bonos", "Comisiones", 
-        "Otros Ingresos", "Salario Bruto",
-        "SFS Empleado", "AFP Empleado", "ISR", 
-        "Otros Descuentos", "Total Descuentos", "Salario Neto",
-        "SFS Patronal", "AFP Patronal", "SRL", "INFOTEP"
-    ])
-    
-    for entry in entries:
-        overtime_total = (
-            entry.get("overtime_day_amount", 0) +
-            entry.get("overtime_night_amount", 0) +
-            entry.get("overtime_weekend_amount", 0) +
-            entry.get("overtime_holiday_amount", 0)
-        )
-        writer.writerow([
-            entry.get("employee_document", ""),
-            entry.get("employee_name", ""),
-            entry.get("department", ""),
-            entry.get("position", ""),
-            entry.get("base_salary", 0),
-            overtime_total,
-            entry.get("bonuses", 0),
-            entry.get("commissions", 0),
-            entry.get("other_income", 0),
-            entry.get("gross_salary", 0),
-            entry.get("sfs_employee", 0),
-            entry.get("afp_employee", 0),
-            entry.get("isr", 0),
-            entry.get("total_additional_deductions", 0),
-            entry.get("total_deductions", 0),
-            entry.get("net_salary", 0),
-            entry.get("sfs_employer", 0),
-            entry.get("afp_employer", 0),
-            entry.get("srl_employer", 0),
-            entry.get("infotep_employer", 0)
-        ])
-    
-    content = output.getvalue()
-    return Response(
-        content=content,
-        media_type="application/vnd.ms-excel",
-        headers={"Content-Disposition": f"attachment; filename=nomina_{period_id}.xls"}
+    # Get company name
+    company = await db.companies.find_one(
+        {"company_id": company_id},
+        {"_id": 0, "name": 1}
     )
+    company_name = company.get("name", "Sin Nombre") if company else "Sin Nombre"
+    
+    # Build structured response
+    columns = [
+        "No", "Cédula", "Nombre", "Cargo", "Departamento",
+        "Salario Base", "Comisiones", "Bonos", "HE Diurnas", "HE Nocturnas",
+        "HE Fin Semana", "HE Feriados", "Otros Ingresos", "Total Ingresos",
+        "SFS", "AFP", "ISR", "Otros Descuentos", "Total Descuentos", "Neto"
+    ]
+    
+    rows = []
+    totals = {
+        "salario_base": 0, "comisiones": 0, "bonos": 0,
+        "he_diurnas": 0, "he_nocturnas": 0, "he_finsemana": 0, "he_feriados": 0,
+        "otros_ingresos": 0, "total_ingresos": 0,
+        "sfs": 0, "afp": 0, "isr": 0, "otros_descuentos": 0,
+        "total_descuentos": 0, "neto": 0
+    }
+    
+    for idx, entry in enumerate(entries, 1):
+        he_diurnas = entry.get("overtime_day_amount", 0)
+        he_nocturnas = entry.get("overtime_night_amount", 0)
+        he_finsemana = entry.get("overtime_weekend_amount", 0)
+        he_feriados = entry.get("overtime_holiday_amount", 0)
+        otros_descuentos = entry.get("total_additional_deductions", 0)
+        
+        row = {
+            "no": idx,
+            "cedula": entry.get("employee_document", ""),
+            "nombre": entry.get("employee_name", ""),
+            "cargo": entry.get("position", ""),
+            "departamento": entry.get("department", ""),
+            "salario_base": round(entry.get("base_salary", 0), 2),
+            "comisiones": round(entry.get("commissions", 0), 2),
+            "bonos": round(entry.get("bonuses", 0), 2),
+            "he_diurnas": round(he_diurnas, 2),
+            "he_nocturnas": round(he_nocturnas, 2),
+            "he_finsemana": round(he_finsemana, 2),
+            "he_feriados": round(he_feriados, 2),
+            "otros_ingresos": round(entry.get("other_income", 0), 2),
+            "total_ingresos": round(entry.get("gross_salary", 0), 2),
+            "sfs": round(entry.get("sfs_employee", 0), 2),
+            "afp": round(entry.get("afp_employee", 0), 2),
+            "isr": round(entry.get("isr", 0), 2),
+            "otros_descuentos": round(otros_descuentos, 2),
+            "total_descuentos": round(entry.get("total_deductions", 0), 2),
+            "neto": round(entry.get("net_salary", 0), 2)
+        }
+        rows.append(row)
+        
+        # Accumulate totals
+        totals["salario_base"] += row["salario_base"]
+        totals["comisiones"] += row["comisiones"]
+        totals["bonos"] += row["bonos"]
+        totals["he_diurnas"] += row["he_diurnas"]
+        totals["he_nocturnas"] += row["he_nocturnas"]
+        totals["he_finsemana"] += row["he_finsemana"]
+        totals["he_feriados"] += row["he_feriados"]
+        totals["otros_ingresos"] += row["otros_ingresos"]
+        totals["total_ingresos"] += row["total_ingresos"]
+        totals["sfs"] += row["sfs"]
+        totals["afp"] += row["afp"]
+        totals["isr"] += row["isr"]
+        totals["otros_descuentos"] += row["otros_descuentos"]
+        totals["total_descuentos"] += row["total_descuentos"]
+        totals["neto"] += row["neto"]
+    
+    # Round totals
+    for key in totals:
+        totals[key] = round(totals[key], 2)
+    
+    return {
+        "company_name": company_name,
+        "period": {
+            "period_id": period.get("period_id"),
+            "description": period.get("description", ""),
+            "start_date": period.get("start_date", ""),
+            "end_date": period.get("end_date", ""),
+            "period_type": period.get("period_type", ""),
+            "status": period.get("status", "")
+        },
+        "columns": columns,
+        "rows": rows,
+        "totals": totals,
+        "employee_count": len(entries)
+    }
 
 
 @router.get("/periods/{period_id}/export/tss-autodeterminacion")
