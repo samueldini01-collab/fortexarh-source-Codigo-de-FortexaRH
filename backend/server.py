@@ -2694,6 +2694,7 @@ api_router.include_router(reports_system_router)
 api_router.include_router(quickbooks_router)
 api_router.include_router(cdc_audit_router)
 api_router.include_router(partners_router)
+api_router.include_router(geolocation_attendance_router)
 
 # Include the API router
 app.include_router(api_router)
