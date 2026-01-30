@@ -658,7 +658,6 @@ export default function PayrollV2Page() {
     }
   };
 
-  const formatCurrency = (value) => new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'DOP', minimumFractionDigits: 2 }).format(value || 0);
   const formatNumber = (value) => new Intl.NumberFormat('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value || 0);
 
   const getStatusBadge = (status) => {
