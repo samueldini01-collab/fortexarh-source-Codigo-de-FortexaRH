@@ -4,6 +4,42 @@
 
 ## ✅ Completado Hoy (Sesión Actual)
 
+### 📋 Reporte TSS Automático para SUIR+ (P1 - COMPLETADO)
+Nueva funcionalidad para generar el archivo TXT de autodeterminación para la Tesorería de Seguridad Social.
+
+#### Funcionalidades
+- **Vista Previa TSS:** Modal con desglose de aportes por empleado antes de descargar
+- **Descarga TXT:** Archivo en formato nativo TSS compatible con SUIR+
+- **Tasas Aplicadas:** Muestra las tasas de SFS, AFP, SRL e INFOTEP
+- **Totales:** Suma de aportes empleado y patronal
+- **Validación OBREROS_NG:** Muestra mensaje informativo para nóminas que no requieren TSS
+
+#### Formato del Archivo TXT
+```
+E|RNC|MMYYYY|NombreEmpresa           (Encabezado)
+D|Cedula|Nombre|SalarioCot|SFSEmp|AFPEmp|SFSPat|AFPPat|SRL|INFOTEP  (Detalle x N)
+S|TotalEmpleados|TotalSalario|TotalSFSEmp|TotalAFPEmp|...  (Sumario)
+```
+
+#### Endpoints
+```bash
+# Vista previa (JSON)
+GET /api/payroll-v2/periods/{id}/tss-preview
+
+# Reporte TXT (download)
+GET /api/payroll-v2/periods/{id}/tss-report
+```
+
+#### Test
+```bash
+curl "$API_URL/api/payroll-v2/periods/{period_id}/tss-report" -H "Authorization: Bearer $TOKEN"
+# Output: E|130-12345-6|012026|FortexaRH Demo Corp
+#         D|001-1234567-8|María García|65000.00|1995.50|1865.50|...
+#         S|4|330000.00|10131.00|9471.00|...
+```
+
+---
+
 ### 👁️ Vista Previa de CSV en Contabilidad (P1 - COMPLETADO)
 Nueva funcionalidad que permite visualizar el contenido del CSV antes de descargar.
 
