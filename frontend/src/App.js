@@ -368,6 +368,7 @@ function AppRouter() {
       <Route path="/partner-dashboard" element={<ProtectedRoute><PartnerDashboardPage /></ProtectedRoute>} />
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
+      <Route path="/brochure" element={<BrochurePage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
