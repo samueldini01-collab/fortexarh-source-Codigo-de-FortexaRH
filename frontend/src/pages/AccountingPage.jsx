@@ -388,24 +388,31 @@ export default function AccountingPage() {
   };
 
   // Export functions
-  const exportToCSV = (entry) => {
-    let csv = "Fecha,Cuenta,Descripción,Débito,Crédito\n";
-    entry.lines.forEach(line => {
-      csv += `${entry.entry_date},"${line.account_code} - ${line.account_name}","${line.description}",${line.debit},${line.credit}\n`;
-    });
-    csv += `,,Total,${entry.total_debits},${entry.total_credits}\n`;
-    
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `asiento_${entry.entry_number || entry.entry_id}.csv`;
-    link.click();
-    toast.success("CSV descargado");
+  const exportToCSV = async (entry, format = "summary") => {
+    try {
+      const response = await axios.get(
+        `${API}/accounting/journal-entries/${entry.entry_id}/export?format=${format}`,
+        { 
+          headers: getAuthHeaders(), 
+          withCredentials: true,
+          responseType: 'blob'
+        }
+      );
+      
+      const blob = new Blob([response.data], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      const formatSuffix = format === "summary" ? "resumido" : "detallado";
+      link.download = `asiento_${entry.entry_number || entry.entry_id}_${formatSuffix}.csv`;
+      link.click();
+      toast.success(`CSV ${format === "summary" ? "resumido" : "detallado"} descargado`);
+    } catch (error) {
+      toast.error("Error al exportar");
+    }
   };
 
-  const exportToExcel = async (entry) => {
-    // Simplified - creates a CSV that Excel can open
-    exportToCSV(entry);
+  const exportToExcel = async (entry, format = "summary") => {
+    await exportToCSV(entry, format);
   };
 
   const getStatusBadge = (status) => {
