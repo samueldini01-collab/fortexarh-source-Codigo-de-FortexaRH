@@ -1,8 +1,44 @@
 # FortexaRH - Sistema SaaS de RRHH y Nómina
 
-## Última Actualización: 2026-01-30
+## Última Actualización: 2026-01-31
 
 ## ✅ Completado Hoy (Sesión Actual)
+
+### 🐛 Bug Fix: Exportación de Asientos Contables (P0 - COMPLETADO)
+Corrección de dos problemas en la funcionalidad de exportación CSV de asientos contables.
+
+#### Problemas Resueltos
+1. **Orden incorrecto de cuentas:** Las líneas ahora se ordenan correctamente:
+   - Gastos (5xxx, 6xxx, 7xxx) → Primero
+   - Pasivos (2xxx) → Segundo
+   - Activos/Banco (1xxx) → Tercero
+   - Otros → Último
+
+2. **Formato detallado no funcionaba:** El parámetro `?format=detailed` ahora genera correctamente un reporte línea por línea con nombre de empleado, en lugar de resumir los datos.
+
+#### Correcciones Técnicas
+- Eliminado código duplicado en `/app/backend/routes/accounting.py`
+- Función `get_account_sort_key()` implementada para ordenar cuentas por tipo
+- El formato "detailed" ahora itera sobre las líneas originales (`entry['lines']`) en lugar de usar datos resumidos
+
+#### Formatos de Exportación
+| Formato | Descripción |
+|---------|-------------|
+| `summary` | Agrupado por cuenta y centro de costos (totales) |
+| `detailed` | Línea por línea con nombre de empleado |
+
+#### Test
+```bash
+# Summary Export
+curl "$API_URL/api/accounting/journal-entries/{id}/export?format=summary"
+
+# Detailed Export  
+curl "$API_URL/api/accounting/journal-entries/{id}/export?format=detailed"
+```
+- ✅ Orden verificado: 5101 → 5102 → 2105 → 2106 → 2107
+- ✅ Formato detallado muestra empleados: Juan Perez, Maria Garcia, Carlos Rodriguez
+
+---
 
 ### 🔐 Sistema de Roles con Permisos Granulares (P1 - COMPLETADO)
 Mejora del sistema de roles personalizados con permisos detallados por módulo.
