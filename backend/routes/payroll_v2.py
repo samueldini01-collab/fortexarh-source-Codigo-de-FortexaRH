@@ -15,7 +15,7 @@ import csv
 from utils.payroll_constants import (
     SFS_EMPLOYEE_RATE, AFP_EMPLOYEE_RATE,
     SFS_EMPLOYER_RATE, AFP_EMPLOYER_RATE, SRL_EMPLOYER_RATE, INFOTEP_EMPLOYER_RATE,
-    PAYROLL_TYPES, PAYROLL_NOVELTY_TYPES,
+    PAYROLL_TYPES, PAYROLL_NOVELTY_TYPES, ISR_OBREROS_RATE,
     PayrollPeriodCreateV2, PayrollNoveltyCreate, PayrollPaymentRequest,
     calculate_isr_monthly, generate_id, now_iso
 )
