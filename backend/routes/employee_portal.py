@@ -1102,6 +1102,8 @@ async def get_employee_notifications(request: Request, limit: int = 50, unread_o
     """Get notifications for the employee"""
     emp_data = await get_employee_from_token(request)
     
+    logger.info(f"Fetching notifications for employee_id: {emp_data.get('employee_id')}, company_id: {emp_data.get('company_id')}")
+    
     query = {
         "employee_id": emp_data["employee_id"],
         "company_id": emp_data["company_id"]
@@ -1114,6 +1116,8 @@ async def get_employee_notifications(request: Request, limit: int = 50, unread_o
         query,
         {"_id": 0}
     ).sort("created_at", -1).limit(limit).to_list(limit)
+    
+    logger.info(f"Found {len(notifications)} notifications")
     
     # Count unread
     unread_count = await db.employee_notifications.count_documents({
