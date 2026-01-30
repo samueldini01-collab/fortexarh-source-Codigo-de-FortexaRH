@@ -695,6 +695,9 @@ export default function AccountingPage() {
                           <TableCell>{getStatusBadge(entry.status)}</TableCell>
                           <TableCell>
                             <div className="flex justify-end gap-1">
+                              <Button size="icon" variant="ghost" onClick={() => openPreview(entry, "summary")} title="Vista Previa">
+                                <Eye className="w-4 h-4" />
+                              </Button>
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                   <Button size="icon" variant="ghost" title="Exportar">
