@@ -244,25 +244,61 @@ async def get_custom_roles(request: Request):
             "description": "Acceso completo a todas las funciones",
             "is_default": True,
             "modules": [m["id"] for m in DEFAULT_MODULES],
-            "permissions": {m["id"]: PERMISSION_TYPES for m in DEFAULT_MODULES},
+            "permissions": {m["id"]: m["permissions"] for m in DEFAULT_MODULES},
             "color": "#ef4444"
         },
         {
-            "role_id": "manager",
-            "name": "Gerente",
-            "description": "Acceso a gestión de equipo",
+            "role_id": "hr_manager",
+            "name": "Gerente de RRHH",
+            "description": "Gestión completa de recursos humanos",
             "is_default": True,
-            "modules": ["dashboard", "employees", "payroll", "attendance", "vacations", "evaluations", "reports"],
+            "modules": ["dashboard", "employees", "payroll", "attendance", "vacations", "leaves", "evaluations", "recruitment", "loans", "documents", "reports"],
             "permissions": {
                 "dashboard": ["view"],
-                "employees": ["view", "edit"],
-                "payroll": ["view", "create"],
-                "attendance": ["view", "create", "edit"],
-                "vacations": ["view", "create", "edit"],
-                "evaluations": ["view", "create", "edit"],
-                "reports": ["view"]
+                "employees": ["view", "create", "edit", "delete", "export"],
+                "payroll": ["view", "create", "edit", "calculate", "approve", "export", "reports"],
+                "attendance": ["view", "create", "edit", "export", "reports"],
+                "vacations": ["view", "create", "edit", "approve", "export"],
+                "leaves": ["view", "create", "edit", "approve"],
+                "evaluations": ["view", "create", "edit", "assign", "reports"],
+                "recruitment": ["view", "create", "edit", "schedule", "hire"],
+                "loans": ["view", "create", "edit", "approve"],
+                "documents": ["view", "create", "generate"],
+                "reports": ["view", "generate", "export"]
             },
             "color": "#8b5cf6"
+        },
+        {
+            "role_id": "payroll_manager",
+            "name": "Encargado de Nómina",
+            "description": "Procesamiento y gestión de nómina",
+            "is_default": True,
+            "modules": ["dashboard", "employees", "payroll", "attendance", "loans", "reports"],
+            "permissions": {
+                "dashboard": ["view"],
+                "employees": ["view"],
+                "payroll": ["view", "create", "edit", "calculate", "export", "reports"],
+                "attendance": ["view", "export"],
+                "loans": ["view", "create", "edit"],
+                "reports": ["view", "generate", "export"]
+            },
+            "color": "#22c55e"
+        },
+        {
+            "role_id": "supervisor",
+            "name": "Supervisor",
+            "description": "Supervisión de equipo y asistencias",
+            "is_default": True,
+            "modules": ["dashboard", "employees", "attendance", "vacations", "leaves", "evaluations"],
+            "permissions": {
+                "dashboard": ["view"],
+                "employees": ["view"],
+                "attendance": ["view", "create", "edit"],
+                "vacations": ["view", "approve"],
+                "leaves": ["view", "approve"],
+                "evaluations": ["view", "create", "assign"]
+            },
+            "color": "#3b82f6"
         },
         {
             "role_id": "user",
@@ -284,7 +320,8 @@ async def get_custom_roles(request: Request):
         "default_roles": default_roles,
         "is_enterprise": True,
         "modules": DEFAULT_MODULES,
-        "permission_types": PERMISSION_TYPES
+        "permission_types": PERMISSION_TYPES,
+        "permission_labels": PERMISSION_LABELS
     }
 
 
