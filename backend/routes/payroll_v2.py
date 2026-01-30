@@ -1018,6 +1018,435 @@ async def export_ir4(period_id: str, current_user: dict = Depends(get_current_us
     )
 
 
+@router.get("/periods/{period_id}/export/ir17")
+async def export_ir17(period_id: str, current_user: dict = Depends(get_current_user)):
+    """
+    Export IR-17 report - Otras Retenciones y Retribuciones Complementarias
+    
+    This report includes:
+    - Retenciones por servicios profesionales (10%)
+    - Retenciones por alquileres (10%)  
+    - Retenciones por premios (15%)
+    - Retenciones por intereses pagados a PF (10%)
+    - Retribuciones complementarias (27%)
+    """
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    company_name = company.get("name", "") if company else ""
+    company_rnc = company.get("rnc", "") if company else ""
+    
+    # Get expenses/payments that have withholdings (gastos y pagos con retenciones)
+    expenses = await db.expenses.find(
+        {
+            "company_id": company_id,
+            "status": "approved",
+            "expense_date": {
+                "$gte": f"{period.get('year')}-{period.get('month'):02d}-01",
+                "$lte": f"{period.get('year')}-{period.get('month'):02d}-31"
+            }
+        },
+        {"_id": 0}
+    ).to_list(500)
+    
+    # Categories of IR-17 withholdings
+    withholding_categories = {
+        "honorarios": {"rate": 0.10, "name": "Honorarios y Servicios Profesionales", "total": 0, "retention": 0},
+        "alquileres": {"rate": 0.10, "name": "Alquileres a Personas Físicas", "total": 0, "retention": 0},
+        "intereses": {"rate": 0.10, "name": "Intereses Pagados a Personas Físicas", "total": 0, "retention": 0},
+        "premios": {"rate": 0.15, "name": "Premios", "total": 0, "retention": 0},
+        "dividendos": {"rate": 0.10, "name": "Dividendos", "total": 0, "retention": 0},
+        "otros": {"rate": 0.10, "name": "Otras Retenciones", "total": 0, "retention": 0},
+    }
+    
+    # Get payroll entries for complementary retributions (retribuciones complementarias)
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    # Calculate complementary retributions (benefits in kind, bonuses not in payroll, etc.)
+    total_retrib_complementarias = 0
+    for entry in entries:
+        # Check for additional benefits that might be complementary retributions
+        bonuses = entry.get("bonuses", 0)
+        other_income = entry.get("other_income", 0)
+        if bonuses > 0 or other_income > 0:
+            total_retrib_complementarias += bonuses + other_income
+    
+    # Process expenses by category
+    for expense in expenses:
+        category = expense.get("category", "otros").lower()
+        amount = expense.get("amount", 0)
+        
+        if "honorario" in category or "servicio" in category or "profesional" in category:
+            withholding_categories["honorarios"]["total"] += amount
+            withholding_categories["honorarios"]["retention"] += amount * 0.10
+        elif "alquiler" in category or "renta" in category:
+            withholding_categories["alquileres"]["total"] += amount
+            withholding_categories["alquileres"]["retention"] += amount * 0.10
+        elif "interes" in category:
+            withholding_categories["intereses"]["total"] += amount
+            withholding_categories["intereses"]["retention"] += amount * 0.10
+        elif "premio" in category:
+            withholding_categories["premios"]["total"] += amount
+            withholding_categories["premios"]["retention"] += amount * 0.15
+        elif "dividendo" in category:
+            withholding_categories["dividendos"]["total"] += amount
+            withholding_categories["dividendos"]["retention"] += amount * 0.10
+        else:
+            withholding_categories["otros"]["total"] += amount
+            withholding_categories["otros"]["retention"] += amount * 0.10
+    
+    # Calculate retribuciones complementarias retention (27%)
+    retrib_comp_retention = total_retrib_complementarias * 0.27
+    
+    # Generate Excel-compatible report
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter='\t')
+    
+    # Header
+    writer.writerow(["DECLARACIÓN IR-17 - OTRAS RETENCIONES Y RETRIBUCIONES COMPLEMENTARIAS"])
+    writer.writerow([])
+    writer.writerow(["Empresa:", company_name])
+    writer.writerow(["RNC:", company_rnc])
+    writer.writerow(["Período:", f"{period.get('month', '')}/{period.get('year', '')}"])
+    writer.writerow([])
+    
+    # Section 1: Other withholdings
+    writer.writerow(["=" * 60])
+    writer.writerow(["SECCIÓN I: OTRAS RETENCIONES (ISR)"])
+    writer.writerow(["=" * 60])
+    writer.writerow([])
+    writer.writerow(["Concepto", "Tasa", "Base Imponible", "Retención"])
+    writer.writerow(["-" * 40, "-" * 10, "-" * 15, "-" * 15])
+    
+    total_otras_retenciones = 0
+    for cat_id, cat_data in withholding_categories.items():
+        if cat_data["total"] > 0:
+            writer.writerow([
+                cat_data["name"],
+                f"{cat_data['rate']*100:.0f}%",
+                f"RD$ {cat_data['total']:,.2f}",
+                f"RD$ {cat_data['retention']:,.2f}"
+            ])
+            total_otras_retenciones += cat_data["retention"]
+    
+    if total_otras_retenciones == 0:
+        writer.writerow(["(No hay retenciones en este período)", "", "", ""])
+    
+    writer.writerow(["-" * 40, "-" * 10, "-" * 15, "-" * 15])
+    writer.writerow(["SUBTOTAL OTRAS RETENCIONES", "", "", f"RD$ {total_otras_retenciones:,.2f}"])
+    writer.writerow([])
+    
+    # Section 2: Complementary retributions
+    writer.writerow(["=" * 60])
+    writer.writerow(["SECCIÓN II: RETRIBUCIONES COMPLEMENTARIAS"])
+    writer.writerow(["=" * 60])
+    writer.writerow([])
+    writer.writerow(["Concepto", "Tasa", "Base Imponible", "Retención"])
+    writer.writerow(["-" * 40, "-" * 10, "-" * 15, "-" * 15])
+    
+    if total_retrib_complementarias > 0:
+        writer.writerow([
+            "Retribuciones Complementarias",
+            "27%",
+            f"RD$ {total_retrib_complementarias:,.2f}",
+            f"RD$ {retrib_comp_retention:,.2f}"
+        ])
+    else:
+        writer.writerow(["(No hay retribuciones complementarias)", "", "", ""])
+    
+    writer.writerow(["-" * 40, "-" * 10, "-" * 15, "-" * 15])
+    writer.writerow(["SUBTOTAL RETRIB. COMPLEMENTARIAS", "", "", f"RD$ {retrib_comp_retention:,.2f}"])
+    writer.writerow([])
+    
+    # Totals
+    writer.writerow(["=" * 60])
+    writer.writerow(["RESUMEN"])
+    writer.writerow(["=" * 60])
+    total_ir17 = total_otras_retenciones + retrib_comp_retention
+    writer.writerow(["Total Otras Retenciones:", f"RD$ {total_otras_retenciones:,.2f}"])
+    writer.writerow(["Total Retrib. Complementarias:", f"RD$ {retrib_comp_retention:,.2f}"])
+    writer.writerow(["TOTAL A PAGAR IR-17:", f"RD$ {total_ir17:,.2f}"])
+    
+    content = "\ufeff" + output.getvalue()  # UTF-8 BOM for Excel
+    return Response(
+        content=content.encode("utf-8"),
+        media_type="application/vnd.ms-excel; charset=utf-8",
+        headers={"Content-Disposition": f"attachment; filename=IR17_{period.get('month'):02d}_{period.get('year')}.xls"}
+    )
+
+
+@router.get("/periods/{period_id}/export/ir6")
+async def export_ir6(period_id: str, current_user: dict = Depends(get_current_user)):
+    """
+    Export IR-6 report - Anexo de Otras Retenciones del IR-17
+    
+    Detalle de retenciones realizadas a terceros (personas físicas):
+    - Honorarios profesionales
+    - Alquileres  
+    - Intereses
+    - Dividendos
+    - Otros pagos sujetos a retención
+    """
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    company_name = company.get("name", "") if company else ""
+    company_rnc = company.get("rnc", "") if company else ""
+    
+    # Get expenses/suppliers with withholdings
+    expenses = await db.expenses.find(
+        {
+            "company_id": company_id,
+            "status": "approved",
+            "expense_date": {
+                "$gte": f"{period.get('year')}-{period.get('month'):02d}-01",
+                "$lte": f"{period.get('year')}-{period.get('month'):02d}-31"
+            }
+        },
+        {"_id": 0}
+    ).to_list(500)
+    
+    # Also get suppliers/vendors with retentions
+    suppliers = await db.suppliers.find(
+        {"company_id": company_id},
+        {"_id": 0}
+    ).to_list(500)
+    
+    # Build supplier lookup
+    supplier_lookup = {s.get("supplier_id"): s for s in suppliers}
+    
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter='\t')
+    
+    # Header
+    writer.writerow(["ANEXO IR-6 - DETALLE DE OTRAS RETENCIONES"])
+    writer.writerow([])
+    writer.writerow(["Empresa:", company_name])
+    writer.writerow(["RNC:", company_rnc])
+    writer.writerow(["Período:", f"{period.get('month', '')}/{period.get('year', '')}"])
+    writer.writerow([])
+    
+    # Detail header
+    writer.writerow([
+        "Tipo Ret.",
+        "Cédula/RNC",
+        "Nombre/Razón Social",
+        "Dirección",
+        "Concepto",
+        "Fecha Pago",
+        "No. Cheque/Trans.",
+        "Monto Bruto",
+        "Tasa %",
+        "Monto Retenido"
+    ])
+    writer.writerow(["-" * 10] * 10)
+    
+    # Retention type codes
+    type_codes = {
+        "honorarios": "01",
+        "alquileres": "02", 
+        "intereses": "03",
+        "dividendos": "04",
+        "premios": "05",
+        "otros": "99"
+    }
+    
+    total_bruto = 0
+    total_retenido = 0
+    row_count = 0
+    
+    for expense in expenses:
+        amount = expense.get("amount", 0)
+        if amount <= 0:
+            continue
+            
+        category = expense.get("category", "otros").lower()
+        
+        # Determine type and rate
+        if "honorario" in category or "servicio" in category:
+            tipo = "01"
+            tasa = 0.10
+        elif "alquiler" in category:
+            tipo = "02"
+            tasa = 0.10
+        elif "interes" in category:
+            tipo = "03"
+            tasa = 0.10
+        elif "dividendo" in category:
+            tipo = "04"
+            tasa = 0.10
+        elif "premio" in category:
+            tipo = "05"
+            tasa = 0.15
+        else:
+            tipo = "99"
+            tasa = 0.10
+        
+        retencion = round(amount * tasa, 2)
+        
+        # Get supplier info if available
+        supplier_id = expense.get("supplier_id")
+        supplier = supplier_lookup.get(supplier_id, {})
+        
+        writer.writerow([
+            tipo,
+            expense.get("vendor_rnc", supplier.get("rnc", "")),
+            expense.get("vendor_name", supplier.get("name", expense.get("description", "")[:30])),
+            supplier.get("address", ""),
+            expense.get("description", "")[:40],
+            expense.get("expense_date", ""),
+            expense.get("reference_number", ""),
+            f"{amount:,.2f}",
+            f"{tasa*100:.0f}%",
+            f"{retencion:,.2f}"
+        ])
+        
+        total_bruto += amount
+        total_retenido += retencion
+        row_count += 1
+    
+    # If no expenses, add placeholder row
+    if row_count == 0:
+        writer.writerow(["(No hay retenciones a terceros en este período)"] + [""] * 9)
+    
+    # Totals
+    writer.writerow(["-" * 10] * 10)
+    writer.writerow([
+        "TOTALES",
+        "",
+        "",
+        "",
+        "",
+        "",
+        f"{row_count} registros",
+        f"RD$ {total_bruto:,.2f}",
+        "",
+        f"RD$ {total_retenido:,.2f}"
+    ])
+    
+    writer.writerow([])
+    writer.writerow(["CÓDIGOS DE TIPO DE RETENCIÓN:"])
+    writer.writerow(["01 = Honorarios/Servicios Profesionales (10%)"])
+    writer.writerow(["02 = Alquileres a Personas Físicas (10%)"])
+    writer.writerow(["03 = Intereses Pagados (10%)"])
+    writer.writerow(["04 = Dividendos (10%)"])
+    writer.writerow(["05 = Premios (15%)"])
+    writer.writerow(["99 = Otras Retenciones"])
+    
+    content = "\ufeff" + output.getvalue()  # UTF-8 BOM for Excel
+    return Response(
+        content=content.encode("utf-8"),
+        media_type="application/vnd.ms-excel; charset=utf-8",
+        headers={"Content-Disposition": f"attachment; filename=IR6_Anexo_{period.get('month'):02d}_{period.get('year')}.xls"}
+    )
+
+
+@router.get("/periods/{period_id}/dgii-preview")
+async def preview_dgii_reports(period_id: str, current_user: dict = Depends(get_current_user)):
+    """
+    Preview all DGII reports data for a period (IR-3, IR-17, IR-6)
+    Returns JSON with summary data for preview before download
+    """
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    
+    # Get payroll entries for IR-3
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    # IR-3 data
+    total_isr_asalariados = sum(e.get("isr", 0) for e in entries)
+    total_gross = sum(e.get("gross_salary", 0) for e in entries)
+    employees_with_isr = len([e for e in entries if e.get("isr", 0) > 0])
+    
+    # Get expenses for IR-17/IR-6
+    expenses = await db.expenses.find(
+        {
+            "company_id": company_id,
+            "status": "approved",
+            "expense_date": {
+                "$gte": f"{period.get('year')}-{period.get('month'):02d}-01",
+                "$lte": f"{period.get('year')}-{period.get('month'):02d}-31"
+            }
+        },
+        {"_id": 0}
+    ).to_list(500)
+    
+    # Calculate IR-17 totals
+    total_otras_retenciones = 0
+    for expense in expenses:
+        amount = expense.get("amount", 0)
+        category = expense.get("category", "").lower()
+        if "premio" in category:
+            total_otras_retenciones += amount * 0.15
+        else:
+            total_otras_retenciones += amount * 0.10
+    
+    # Retribuciones complementarias
+    total_retrib = sum(e.get("bonuses", 0) + e.get("other_income", 0) for e in entries)
+    retrib_retencion = total_retrib * 0.27
+    
+    return {
+        "period": {
+            "period_id": period_id,
+            "month": period.get("month"),
+            "year": period.get("year"),
+            "description": period.get("description", "")
+        },
+        "company": {
+            "name": company.get("name", "") if company else "",
+            "rnc": company.get("rnc", "") if company else ""
+        },
+        "ir3": {
+            "name": "IR-3 - Retenciones de Asalariados",
+            "total_employees": len(entries),
+            "employees_with_isr": employees_with_isr,
+            "total_gross": round(total_gross, 2),
+            "total_isr": round(total_isr_asalariados, 2)
+        },
+        "ir17": {
+            "name": "IR-17 - Otras Retenciones",
+            "total_otras_retenciones": round(total_otras_retenciones, 2),
+            "total_retrib_complementarias": round(retrib_retencion, 2),
+            "total_ir17": round(total_otras_retenciones + retrib_retencion, 2),
+            "expense_count": len(expenses)
+        },
+        "ir6": {
+            "name": "IR-6 - Anexo Detalle Retenciones",
+            "record_count": len(expenses),
+            "total_retenido": round(total_otras_retenciones, 2)
+        },
+        "total_a_pagar_dgii": round(total_isr_asalariados + total_otras_retenciones + retrib_retencion, 2)
+    }
+
+
 @router.get("/annual-report/ir13/{year}")
 async def export_ir13(year: int, current_user: dict = Depends(get_current_user)):
     """Export IR-13 annual report"""
