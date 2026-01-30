@@ -18,70 +18,73 @@ The user wants to create a SaaS (Software as a Service) Human Resources and payr
     -   Update company contact information (address, phone, email, hours) across the site.
     -   Generate promotional videos for marketing.
     -   Enhance the landing page with an improved Hero Section, video integration, testimonials, and an FAQ section.
+-   **System de Pago de Comisiones a Partners:** A system for partners to withdraw their commissions using Stripe Connect.
+-   **Granular Role-Based Access Control (RBAC):** Ability to define custom roles with specific permissions (view, create, edit, delete, export, etc.) for each module.
+-   **Journal Entry Export Options:** Provide options to export accounting journal entries in a summary or detailed (per-employee) format, including cost center information.
 
 **User's preferred language**: Spanish (Español)
 
 **what currently exists?**
-The application is a functional, full-stack HR & Payroll SaaS platform. During this session, the agent successfully built and tested several major features:
-1.  **Portal for Accounting Firms:** A complete B2B2B portal with registration, a dedicated dashboard (KPIs, client list, commissions), and client management capabilities.
-2.  **Admin Support Panel:** A full-featured admin page () to manage support tickets, including viewing, filtering, changing status/priority, and responding.
-3.  **Automated Email Invitations:** Integration with Resend to automatically email new clients added by partners, including a resend functionality in the partner dashboard.
-4.  **UI/UX Overhaul:** The main landing page navbar was updated with feature dropdowns, and the partner landing page received a theme switcher. All company contact information was updated sitewide.
-5.  **Promotional Content:** Two promotional videos were generated using Sora 2 and are available in .
+The application is a mature HR & Payroll SaaS platform. In this session, the agent implemented several key features and bug fixes:
+1.  **Landing Page Overhaul:** The main landing page was significantly enhanced with a new Hero Section, an embedded promotional video, a testimonials section, and a dynamic FAQ accordion. Scroll-reveal animations were also added for a more modern feel.
+2.  **Partner Commission Payouts:** A full-featured commission payout system was integrated using Stripe Connect. Partners can now connect their Stripe accounts and request payouts from a new Retiros (Withdrawals) tab in their dashboard.
+3.  **Employee Portal Notifications:** The employee self-service portal was upgraded with a real-time notification system, including a bell icon, a notification panel, and a dedicated announcements section.
+4.  **Granular Role Management:** The role creation system was enhanced to support granular permissions (e.g., view, create, edit, delete, export) on a per-module basis, an Enterprise plan feature.
+5.  **Bug Fixes:** Several bugs were resolved, including a Not Found error during payroll calculation, incorrect company name display in the payroll module, and UTF-8 encoding issues in the accounting CSV export.
 
-The application's health has been checked and is considered ready for deployment. The agent has just begun implementing the user's latest request for a major enhancement of the main landing page.
+The application is stable and has been approved for deployment after a health check. The agent is currently addressing a bug related to the accounting export functionality.
 
 **Last working item**:
--   **Last item agent was working:** Implementing a set of significant improvements for the main landing page (). The user requested a new Hero Section, integration of the promotional video, a new testimonials section, and an FAQ section. The agent analyzed the file and was preparing to apply all the changes in a single, comprehensive update.
+-   **Last item agent was working:** Fixing two issues in the accounting journal entry CSV export functionality:
+    1.  The sort order of the exported lines was incorrect. The user wants Expenses (account codes 5xxx) first, then Liabilities/Deductions (2xxx), and finally Assets/Bank (1xxx).
+    2.  The Detailed export option () was incorrectly generating a summarized report instead of a line-by-line report per employee.
 -   **Status:** IN PROGRESS
--   **Agent Testing Done:** N
--   **Which testing method agent to use?** Frontend testing agent. The changes involve significant UI/UX updates to a critical page, justifying a full testing cycle. A screenshot can be used for a quick visual check.
+-   **Agent Testing Done:** N (The agent performed a partial fix and test, but the user confirmed the detailed export issue persists).
+-   **Which testing method agent to use?** backend testing agent. A  command should be used to test both  and  exports to verify the content and order of the resulting CSV files.
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   There are no known bugs or technical issues. The work is feature-driven.
+-   **Issue 1:** Journal Entry export is incorrect (P0)
+
+**Issues Detail:**
+-   **Issue 1:**
+    -   **Attempted fixes:** The agent modified the export function in  to add sorting logic and handle the  parameter. However, the logic for the detailed export was flawed, as it still summarized the data instead of creating a line for each employee.
+    -   **Next debug checklist:**
+        1.  **View File:** Review the  function in .
+        2.  **Fix Sorting:** Implement a custom sort key for the  list that orders account codes by their first digit: 5, 2, then 1, and others last. Example: .
+        3.  **Fix Detailed Export:** Inside the  block, ensure the code iterates through the original, non-aggregated entry lines () and writes a row for each line that has . Do not use the  data for the detailed export.
+        4.  **Test:** Create a test journal entry with employee details and then run  commands to export it in both summary and detailed formats, validating the output of each.
+    -   **Why fix this issue and what will be achieved with the fix?** To provide accurate and correctly formatted accounting data, which is a critical function for a payroll system.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** backend
+    -   **Blocked on other issue:** No
 
 **In progress Task List**:
--   **Task 1:** Complete the Landing Page Enhancements (P0)
-
-**Task Detail:**
--   **Task 1:**
-    -   **Where to resume:** The agent has analyzed  and has a clear plan. The next action is to use the  tool to update the JSX of the landing page to include:
-        1.  A new Hero Section with an embedded promotional video.
-        2.  A new Testimonials section with placeholder content.
-        3.  A new FAQ section with an accordion component.
-        4.  Updating the trial period from 5 days to 14 days in the CTA.
-    -   **What will be achieved with this?** A more modern, engaging, and professional landing page that increases social proof, clarifies the product's value, and improves conversion rates.
-    -   **Status:** IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?** frontend
-    -   **Blocked on something:** No
+-   There are no other in-progress tasks.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
     -   **P1:** Add a biometric device management panel and integration documentation.
-    -   **P2:** Enhance the Employee Self-Service Portal with push notifications or email alerts.
-    -   **P2:** Integrate the manual CDC logging helper () into all relevant data mutation endpoints (create, update, delete) to build a comprehensive audit trail.
 -   **Future Tasks:**
+    -   **P2:** Implement WebSockets for real-time notifications in the Employee Portal.
     -   **P3:** Add an interactive ROI/Savings Calculator to the landing page.
     -   **P3:** Add a floating WhatsApp chat widget.
-    -   **P3:** Implement a system for paying out commissions to partners.
     -   **P3:** Complete the QuickBooks Marketplace submission.
     -   **P3:** Full Enterprise Integrations for SAP, Oracle, and Dynamics.
     -   **P3:** Develop a PWA/Mobile App version of the employee portal.
     -   **P3:** Implement E-signature functionality for documents.
+    -   **P3:** Implement the CDC logging helper () for a comprehensive audit trail.
 
 **Completed work in this session**
--   **Feature:** **Portal for Accounting Firms** - Fully implemented and tested, including registration, login, dashboard, and client management.
--   **Feature:** **Admin Support Panel** - Created a full CRUD interface for managing support tickets, with KPIs, filtering, and a response modal.
--   **Feature:** **Automated Client Invitations** - Integrated Resend to automatically email new clients added by partners, with a status indicator and resend button in the UI.
--   **Feature:** **Promotional Videos** - Generated two marketing videos using Sora 2 and saved them to .
--   **UI/UX:** Revamped the main landing page with a new dark-themed navbar and dropdown menus for features.
--   **UI/UX:** Added a dynamic theme switcher (light, dark, contrast, system) to the accountants' landing page.
--   **UI/UX:** Updated all company contact information (email, phone, address, hours) on the landing page and support page.
--   **Bug Fix:** Resolved a critical login failure for new partners by correcting the password hashing mismatch ( vs ) and the database field name ( vs ).
--   **Bug Fix:** Fixed the partner referral link generation to correctly include the partner's .
--   **Deployment Prep:** Ran a full health check, resolved deployment agent flags, and confirmed the application is ready for deployment.
--   **Testing:** Successfully used the  after every major feature completion, ensuring high-quality, bug-free delivery.
+-   **Feature:** Landing Page Enhancements (Hero, Video, Testimonials, FAQ) implemented in .
+-   **Feature:** Partner Commission Payout System with Stripe Connect implemented in  and .
+-   **Feature:** Scroll-reveal animations added to  and .
+-   **Feature:** Employee Portal Notifications system implemented in  and .
+-   **Feature:** Granular Role-Based Access Control implemented in  and .
+-   **Bug Fix:** Corrected payroll calculation Not Found error by adding  decorator in .
+-   **Bug Fix:** Fixed incorrect company name display in Payroll by enhancing the  endpoint in .
+-   **Bug Fix:** Resolved UTF-8 encoding and column structure issues in accounting CSV export in .
 
 **Earlier issues found/mentioned but not fixed**
 -   None.
@@ -93,79 +96,79 @@ The application's health has been checked and is considered ready for deployment
 
 
 **Key Technical Concepts**
--   **B2B2B SaaS Logic:** Implemented a full lifecycle for a partner program, including registration, login, dashboard KPIs, client management, and automated email notifications.
--   **Dynamic Frontend Theming:** Created a theme switcher in React using  and conditional CSS classes to allow users to select light, dark, contrast, or system themes.
--   **AI Video Generation:** Utilized  and the Sora 2 model to generate promotional videos from a sequence of screenshots.
--   **Robust Testing Workflow:** Consistently used the  after each feature completion, ensuring new functionality was stable and regression-free before moving on.
--   **Debugging:** Successfully diagnosed and fixed a critical authentication bug by comparing password hashing methods ( vs. ) and inspecting database schemas.
+-   **Stripe Connect Integration:** Implemented backend logic for creating Stripe Express accounts, generating account links, and handling payouts for partners.
+-   **Granular RBAC:** Designed a permission system allowing per-module, per-action (view, create, edit, delete, export) access control for custom roles.
+-   **Frontend Animations:** Used CSS keyframes and a custom React hook to trigger fade-in and slide-up animations on scroll (scroll-reveal).
+-   **CSV Generation with Encoding:** Fixed CSV export issues by prepending a UTF-8 BOM () to the file stream to ensure correct character rendering in Excel.
+-   **Complex Data Aggregation:** Implemented backend logic to summarize accounting data for reports, grouping by account and cost center.
 
 **key DB schema**
--   : Field  used for storing password.  can be .
--   : 
--   : 
--   : Fields , , and  array added for admin management.
+-   : Field  is now dynamically joined from the  collection in the  response.
+-   : Model in  updated to include optional  and .
+-   : New collection .
+-   : New collection for company/global announcements shown in the employee portal.
+-   : New collection .
+-   : Model updated to include  and .
 
 **changes in tech stack**
--   **Sora 2:** Introduced via  for AI video generation.
+-   No new technologies, but a deeper integration with **Stripe Connect** for marketplace/platform payouts.
 
 **All files of reference**
--   **/app/frontend/src/pages/LandingPage.jsx**: Target for the in-progress UI enhancement.
--   **/app/backend/routes/partners.py**: Contains all backend logic for the partner portal.
--   **/app/frontend/src/pages/PartnerDashboardPage.jsx**: Frontend for the partner dashboard.
--   **/app/backend/routes/support.py**: Contains all backend logic for the support ticket system.
--   **/app/frontend/src/pages/SupportAdminPage.jsx**: Frontend for the support admin panel.
--   **/app/frontend/src/pages/AccountantsSoftwarePage.jsx**: Landing page for partners, now with a theme switcher.
--   **/app/frontend/public/videos/fortexarh_promo.mp4**: Generated promotional video.
--   **/app/frontend/public/videos/fortexarh_demo.mp4**: Generated promotional video.
--   **/app/memory/PRD.md**: Consistently updated after each completed task.
+-   **/app/backend/routes/accounting.py**: Contains the logic for the current bug in the journal entry export.
+-   **/app/frontend/src/pages/AccountingPage.jsx**: Frontend for the accounting module, where the export options are located.
+-   **/app/backend/routes/partners.py**: Contains the Stripe Connect integration logic.
+-   **/app/frontend/src/pages/PartnerDashboardPage.jsx**: Contains the UI for partner commission withdrawals.
+-   **/app/backend/routes/employee_portal.py**: Backend for the employee notification system.
+-   **/app/frontend/src/pages/EmployeePortalPage.jsx**: Frontend for the employee notification system.
+-   **/app/backend/routes/roles.py**: Backend for the granular role permissions.
+-   **/app/frontend/src/pages/RolesPage.jsx**: Frontend for the granular role permissions.
+-   **/app/frontend/src/pages/LandingPage.jsx**: The newly enhanced main landing page.
 
 **Areas that need refactoring**:
--   The task of systematically applying the  function (from the CDC system) to all data-mutating operations is still pending and would provide a complete audit trail.
--    continues to grow. Modularizing router registration into a separate configuration file would improve maintainability.
+-   The task of systematically applying the  function (from the CDC system) to all data-mutating operations is still pending.
+-    could be modularized to improve maintainability as more routers are added.
 
 **key api endpoints**
--   : Registers a new accounting firm.
--   : Fetches KPIs and data for the partner dashboard.
--   : Adds a new client for a partner and sends an email invitation.
--   : Re-sends the invitation email.
--   : Gets summary KPIs for the support dashboard.
--   : Gets details for a single ticket.
--   : Updates a ticket's status.
--   : Adds a reply to a ticket.
+-   : Creates a Stripe Express account for a partner.
+-   : Submits a payout request for a partner.
+-   : Fetches notifications for the logged-in employee.
+-   : Marks all notifications as read.
+-   : Fetches company-wide announcements.
+-   : Fetches available modules and their specific, granular permission types.
+-   : Recalculates a payroll period (endpoint fixed).
+-   : Exports a journal entry as CSV, with  query parameter.
 
 **Critical Info for New Agent**
--   Your immediate and highest priority is to complete the user-requested enhancements for the main landing page, which is currently in progress.
--   The application is in a very stable state. Multiple major features were completed and rigorously tested in this session. Trust the test reports in .
--   The user is highly engaged and provides clear, actionable feedback. Respond in Spanish.
--   The promotional videos are located in  and are ready to be embedded into the newly designed landing page.
+-   Your immediate priority (P0) is to fix the journal entry CSV export functionality in . The detailed format is broken, and the account sort order is incorrect.
+-   The user has provided an image showing the desired sort order for the journal entry export (Expenses > Liabilities > Bank).
+-   The application is otherwise in a very stable, deployment-ready state. The previous session successfully passed a deployment health check.
+-   Always respond in Spanish.
 
 **documents and test reports created in this job**
--   /app/test_reports/iteration_20.json
--   /app/test_reports/iteration_21.json
--   /app/test_reports/iteration_22.json
--   /app/test_reports/iteration_23.json
+-   /app/test_reports/iteration_24.json
+-   /app/test_reports/iteration_25.json
+-   /app/test_reports/iteration_26.json
+-   /app/test_reports/iteration_27.json
 -   /app/memory/PRD.md (updated multiple times)
--   /app/frontend/public/videos/fortexarh_promo.mp4
--   /app/frontend/public/videos/fortexarh_demo.mp4
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Requested specific improvements for the landing page: new Hero Section, video integration, testimonials, and FAQ. (Status: **IN PROGRESS**)
-2.  **User:** Asked for suggestions on how to improve the landing page. (Status: **RESOLVED**)
-3.  **User:** Requested a promotional video showing the main modules. (Status: **RESOLVED**)
-4.  **User:** Requested a deployment readiness check. (Status: **RESOLVED**)
-5.  **User:** Provided updated contact information (address, email, phone, hours) for the landing page and support page. (Status: **RESOLVED**)
-6.  **User:** Requested UI improvements: theme switcher for the accountants' page and a new navbar for the main landing page. (Status: **RESOLVED**)
-7.  **User:** Requested automation for sending invitation emails to partners' clients. (Status: **RESOLVED**)
-8.  **User:** Requested the development of the admin panel for managing support tickets. (Status: **RESOLVED**)
-9.  **User:** Confirmed the plan to continue with the Portal for Accounting Firms. (Status: **RESOLVED**)
-10. **User:** Provided requirements for the accountant portal: differentiated design, open registration, and specific dashboard features. (Status: **RESOLVED**)
+1.  **User:** Reported issues with journal entry export: incorrect sort order and detailed format exporting as summary. (Status: **IN PROGRESS**)
+2.  **User:** Requested options for journal entry export (summary vs. detailed) and inclusion of cost centers. (Status: **RESOLVED**, but with bugs)
+3.  **User:** Reported UTF-8 encoding and column structure issues in the journal entry CSV export. (Status: **RESOLVED**)
+4.  **User:** Reported granular permission needs for roles and a Not Found error when calculating payroll. (Status: **RESOLVED**)
+5.  **User:** Requested improvements to the employee portal with notifications. (Status: **RESOLVED**)
+6.  **User:** Reported bugs in the payroll module: Error al exportar and NOMBRE DE LA EMPRESA placeholder. (Status: **RESOLVED**)
+7.  **User:** Asked about the employee self-service portal. (Status: **RESOLVED**)
+8.  **User:** Asked if they can transfer their Hostinger domain to Emergent. (Status: **RESOLVED**)
+9.  **User:** Requested a deployment readiness check. (Status: **RESOLVED**)
+10. **User:** Approved the plan to implement the commission payout system and landing page animations. (Status: **RESOLVED**)
 
 **Project Health Check:**
 -   **Broken:** None.
--   **Mocked:** Enterprise integrations (SAP, Oracle, Dynamics) remain as placeholders.
+-   **Mocked:** Enterprise integrations (SAP, Oracle, Dynamics) are still placeholders.
 
 **3rd Party Integrations**
--   **Stripe (Payments):** ✅ Integrated
+-   **Stripe (Payments):** ✅ Integrated (Now includes **Stripe Connect** for partner payouts)
 -   **Resend (Email):** ✅ Integrated
 -   **Emergent-managed Google Auth (Authentication):** ✅ Integrated
 -   **Gemini (AI Search):** ✅ Integrated (via Emergent LLM Key)
@@ -175,10 +178,10 @@ The application's health has been checked and is considered ready for deployment
 -   **reportlab (PDF Generation):** ✅ Integrated
 
 **Testing status**
--   **Testing agent used after significant changes:** YES (used 4 times for major features)
+-   **Testing agent used after significant changes:** YES (used for landing page, commissions, notifications, and bug fixes).
 -   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:** None, but multiple JSON test reports exist.
--   **Known regressions:** None.
+-   **Test files created:** None.
+-   **Known regressions:** The detailed format for journal entry export is a regression from the user's perspective, as the new feature does not work as requested.
 
 **Credentials to test flow:**
 -   **Admin User:**  / 
@@ -188,4 +191,4 @@ The application's health has been checked and is considered ready for deployment
     -   **Password:** 
 
 **What agent forgot to execute**
--   The agent did not forget anything but was actively working on the landing page enhancements when the session ended. The PRD file has not yet been updated with the plan for these in-progress enhancements.</analysis>
+-   The agent's implementation of the detailed export in  was incorrect. It continued to use summarized data instead of iterating through the full, non-aggregated list of journal entry lines for employees. This needs to be completely rewritten for the  case.</analysis>
