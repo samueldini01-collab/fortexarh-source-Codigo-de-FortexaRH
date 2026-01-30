@@ -139,6 +139,19 @@ export default function PayrollV2Page() {
 
   const { getAuthHeaders, user } = useAuth();
 
+  // Fetch company settings
+  const fetchCompanySettings = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API}/company/settings`, { headers: getAuthHeaders(), withCredentials: true });
+      if (response.data?.name) {
+        setCompanyName(response.data.name);
+      }
+    } catch (_error) {
+      // If company settings endpoint fails, try from user
+      console.log("Company settings not available, using user data");
+    }
+  }, [getAuthHeaders]);
+
   const fetchPeriods = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/payroll-v2/periods`, { headers: getAuthHeaders(), withCredentials: true });
