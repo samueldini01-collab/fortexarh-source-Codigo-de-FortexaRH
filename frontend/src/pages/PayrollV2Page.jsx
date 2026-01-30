@@ -119,6 +119,11 @@ export default function PayrollV2Page() {
   const [quickFilter, setQuickFilter] = useState(null);
   const [departmentFilter, setDepartmentFilter] = useState("all");
   
+  // TSS Report states
+  const [showTssPreview, setShowTssPreview] = useState(false);
+  const [tssPreviewData, setTssPreviewData] = useState(null);
+  const [tssLoading, setTssLoading] = useState(false);
+  
   // Form states
   const [newPeriodForm, setNewPeriodForm] = useState({
     period_type: "quincenal_1",
