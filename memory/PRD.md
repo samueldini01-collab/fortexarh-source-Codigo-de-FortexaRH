@@ -4,6 +4,48 @@
 
 ## ✅ Completado Hoy (Sesión Actual)
 
+### 📊 Reportes DGII: IR-17 e IR-6 (P1 - COMPLETADO)
+Implementación de reportes fiscales adicionales para la Dirección General de Impuestos Internos.
+
+#### IR-17 - Otras Retenciones y Retribuciones Complementarias
+Declaración mensual de retenciones a terceros y retribuciones complementarias.
+
+**Sección I - Otras Retenciones ISR:**
+| Tipo | Tasa |
+|------|------|
+| Honorarios/Servicios Profesionales | 10% |
+| Alquileres a Personas Físicas | 10% |
+| Intereses Pagados | 10% |
+| Dividendos | 10% |
+| Premios | 15% |
+
+**Sección II - Retribuciones Complementarias:** 27%
+
+#### IR-6 - Anexo de Otras Retenciones
+Detalle línea por línea de cada retención a terceros con:
+- Tipo de retención (código 01-99)
+- Cédula/RNC del beneficiario
+- Nombre/Razón Social
+- Monto bruto y retención calculada
+
+#### Endpoints
+```bash
+# Exportar IR-17
+GET /api/payroll-v2/periods/{id}/export/ir17
+
+# Exportar IR-6 Anexo
+GET /api/payroll-v2/periods/{id}/export/ir6
+
+# Vista previa DGII (todos los reportes)
+GET /api/payroll-v2/periods/{id}/dgii-preview
+```
+
+#### Archivos Modificados
+- `/app/backend/routes/payroll_v2.py` - Endpoints export_ir17, export_ir6, preview_dgii_reports
+- `/app/frontend/src/pages/DGIIReportsPage.jsx` - UI para IR-17 e IR-6
+
+---
+
 ### 📄 Brochure Profesional con Descarga PDF (P1 - COMPLETADO)
 Brochure digital profesional del sistema para presentación a clientes potenciales.
 
