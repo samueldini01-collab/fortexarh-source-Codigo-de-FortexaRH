@@ -141,6 +141,74 @@ export default function GeoLocationsPage() {
     }
   }, [getAuthHeaders]);
 
+  const fetchDepartments = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API}/employees`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      const depts = [...new Set(response.data.map(e => e.department).filter(Boolean))];
+      setDepartments(depts);
+    } catch (error) {
+      console.error("Error fetching departments");
+    }
+  }, [getAuthHeaders]);
+
+  const generateReport = async () => {
+    setLoadingReport(true);
+    try {
+      const params = new URLSearchParams({
+        start_date: reportFilters.startDate,
+        end_date: reportFilters.endDate
+      });
+      if (reportFilters.locationId !== "all") {
+        params.append("location_id", reportFilters.locationId);
+      }
+      
+      const response = await axios.get(
+        `${API}/geolocation-attendance/admin/report?${params.toString()}`,
+        { headers: getAuthHeaders(), withCredentials: true }
+      );
+      setReportData(response.data);
+      
+      if (reportFilters.format === "excel" || reportFilters.format === "csv") {
+        downloadReport(response.data, reportFilters.format);
+      }
+      
+      toast.success("Reporte generado correctamente");
+    } catch (error) {
+      toast.error("Error al generar el reporte");
+    } finally {
+      setLoadingReport(false);
+    }
+  };
+
+  const downloadReport = (data, format) => {
+    const marks = data.marks || [];
+    
+    // Build CSV content
+    const headers = ["Fecha", "Empleado", "Tipo", "Hora", "Ubicación", "Dentro de Zona", "Distancia (m)", "Estado"];
+    const rows = marks.map(m => [
+      m.date,
+      m.employee_name,
+      m.mark_type === "entry" ? "Entrada" : "Salida",
+      new Date(m.timestamp).toLocaleTimeString("es-DO"),
+      m.location_name,
+      m.is_within_zone ? "Sí" : "No",
+      Math.round(m.distance_to_zone || 0),
+      m.status === "approved" ? "Aprobado" : m.status === "rejected" ? "Rechazado" : "Pendiente"
+    ]);
+    
+    const csvContent = [headers, ...rows].map(row => row.join(",")).join("\n");
+    const BOM = "\uFEFF";
+    const blob = new Blob([BOM + csvContent], { type: "text/csv;charset=utf-8;" });
+    
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `reporte_asistencia_geo_${reportFilters.startDate}_${reportFilters.endDate}.csv`;
+    link.click();
+  };
+
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
