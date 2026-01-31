@@ -290,6 +290,74 @@ export default function BrochurePage() {
             </div>
           </div>
 
+          {/* Page 2.5: Geolocation Feature Highlight (NEW) */}
+          <div className="p-12 bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 text-white min-h-[500px]">
+            <div className="text-center mb-8">
+              <span className="bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mb-4">
+                🚀 NUEVA FUNCIONALIDAD
+              </span>
+              <h2 className="text-3xl font-bold mb-3">Control de Asistencia con <span className="text-emerald-400">Geolocalización</span></h2>
+              <p className="text-slate-300 max-w-2xl mx-auto">
+                La forma más moderna y segura de controlar la asistencia. GPS en tiempo real, 
+                detección de fraude automática y alertas instantáneas.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/10">
+                <div className="w-10 h-10 bg-emerald-500/30 rounded-lg flex items-center justify-center mb-3">
+                  <MapPin className="w-5 h-5 text-emerald-400" />
+                </div>
+                <h3 className="font-semibold mb-2">Marcación GPS + Selfie</h3>
+                <p className="text-slate-400 text-sm">
+                  Empleados marcan asistencia desde su celular con ubicación GPS y foto de verificación.
+                </p>
+              </div>
+              
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/10">
+                <div className="w-10 h-10 bg-blue-500/30 rounded-lg flex items-center justify-center mb-3">
+                  <Map className="w-5 h-5 text-blue-400" />
+                </div>
+                <h3 className="font-semibold mb-2">Mapa en Tiempo Real</h3>
+                <p className="text-slate-400 text-sm">
+                  Visualiza en un mapa interactivo dónde están tus empleados con actualización automática.
+                </p>
+              </div>
+              
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/10">
+                <div className="w-10 h-10 bg-red-500/30 rounded-lg flex items-center justify-center mb-3">
+                  <AlertTriangle className="w-5 h-5 text-red-400" />
+                </div>
+                <h3 className="font-semibold mb-2">Detección de Fraude</h3>
+                <p className="text-slate-400 text-sm">
+                  Sistema inteligente que detecta velocidad imposible, GPS falso y marcaciones sospechosas.
+                </p>
+              </div>
+              
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/10">
+                <div className="w-10 h-10 bg-amber-500/30 rounded-lg flex items-center justify-center mb-3">
+                  <Mail className="w-5 h-5 text-amber-400" />
+                </div>
+                <h3 className="font-semibold mb-2">Alertas por Email</h3>
+                <p className="text-slate-400 text-sm">
+                  Recibe notificaciones inmediatas cuando se detecta una anomalía o marcación fuera de zona.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+              <h4 className="font-semibold text-emerald-400 mb-3">Ideal para:</h4>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {["Personal de campo", "Construcción", "Delivery", "Ventas", "Supervisores", "Rutas de distribución", "Técnicos", "Promotores"].map((item, idx) => (
+                  <div key={idx} className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="w-4 h-4 text-emerald-400" />
+                    <span className="text-slate-300">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
           {/* Page 3: Benefits & Modules */}
           <div className="p-12 bg-slate-50 min-h-[600px]">
             <div className="grid md:grid-cols-2 gap-10">
