@@ -326,10 +326,10 @@ export default function LandingPage() {
               {/* Para Empresas Dropdown */}
               <div className="relative">
                 <button 
-                  className={`flex items-center gap-1.5 px-4 py-2 text-sm lg:text-base rounded-lg transition-colors ${
+                  className={`flex items-center gap-1.5 px-4 py-2 text-sm lg:text-base font-medium rounded-lg transition-colors ${
                     openDropdown === 'empresas' 
                       ? 'text-white bg-slate-700' 
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                      : 'text-white hover:bg-slate-800'
                   }`}
                   onClick={() => setOpenDropdown(openDropdown === 'empresas' ? null : 'empresas')}
                   data-testid="nav-empresas"
