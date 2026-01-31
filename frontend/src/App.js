@@ -391,6 +391,7 @@ function AppWithShortcuts() {
             <AccessibilityIndicator />
             <KeyboardShortcutsHelp />
             <OnboardingTutorial />
+            <PWAInstallPrompt />
           </SubscriptionProvider>
         </AuthProvider>
       </OnboardingProvider>
