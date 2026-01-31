@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext, useCallback } from "react";
+import { useState, useEffect, createContext, useContext, useCallback, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,13 +10,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import axios from "axios";
+import { useSwipeable } from "react-swipeable";
 import { 
   User, DollarSign, Calendar, Wallet, FileText, LogOut, Home,
   Phone, MapPin, Mail, Building2, CreditCard, AlertCircle, Check,
   Clock, Download, Eye, EyeOff, Send, Loader2, Lock, ChevronRight,
   Target, ClipboardList, PlayCircle, StopCircle, History, Star,
   FileCheck, RefreshCw, Bell, BellOff, Trash2, X, Megaphone,
-  CheckCircle, Info, AlertTriangle, XCircle
+  CheckCircle, Info, AlertTriangle, XCircle, ChevronLeft
 } from "lucide-react";
 import { toast, Toaster } from "sonner";
 
