@@ -602,20 +602,31 @@ export default function ReportsSystemPage() {
                                     {col.replace("_", " ")}
                                   </th>
                                 ))}
+                                <th className="w-8"></th>
                               </tr>
                             </thead>
                             <tbody>
                               {previewData.data?.slice(0, 50).map((row, idx) => (
-                                <tr key={idx} className="border-b hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                <tr 
+                                  key={idx} 
+                                  className="border-b hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors"
+                                  onClick={() => handleRowDrillDown(row)}
+                                >
                                   {previewData.columns?.map((col) => (
                                     <td key={col} className="px-3 py-2 whitespace-nowrap">
                                       {formatCellValue(row[col], col)}
                                     </td>
                                   ))}
+                                  <td className="px-2">
+                                    <ChevronRight className="w-4 h-4 text-slate-400" />
+                                  </td>
                                 </tr>
                               ))}
                             </tbody>
                           </table>
+                          <p className="text-xs text-slate-400 mt-2 text-center">
+                            Click en una fila para ver detalle completo
+                          </p>
                         </div>
                         
                         {/* Totals */}
