@@ -653,7 +653,8 @@ export default function DashboardLayout({ children, title }) {
                 }
                 
                 // For groups with collapsible submenus
-                const isExpanded = expandedGroups[group.id] || groupActive;
+                // User has full control - expandedGroups[group.id] is the source of truth
+                const isExpanded = expandedGroups[group.id];
                 
                 return (
                   <Collapsible
