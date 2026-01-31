@@ -385,6 +385,16 @@ export default function PayrollDashboardPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Drill-Down Modal */}
+        <DrillDownModal
+          open={drillDown.open}
+          onClose={closeDrillDown}
+          title={drillDown.title}
+          data={drillDown.data}
+          columns={drillDown.columns}
+          loading={drillDownLoading}
+        />
       </div>
     </DashboardLayout>
   );
