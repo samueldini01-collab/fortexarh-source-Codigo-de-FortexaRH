@@ -50,9 +50,28 @@ Mapa interactivo que muestra la ubicación de empleados que han marcado asistenc
   - Lista de últimas marcaciones con hora
 - **Leyenda:** Explicación de colores
 
+#### Filtros del Mapa (NUEVO)
+- **Por Departamento:** Filtra empleados por su departamento
+- **Por Ubicación:** Muestra solo empleados de una ubicación específica
+- **Por Estado:** Filtrar por "Dentro de zona", "Fuera de zona", "Pendientes"
+- **Botón "Limpiar filtros":** Resetea todos los filtros
+
+#### Exportación de Reportes (NUEVO)
+- **Diálogo de Exportación:**
+  - Selector de fecha inicio y fin
+  - Filtro por ubicación
+  - Formato: Excel/CSV o Vista Previa
+- **Contenido del CSV:**
+  - Fecha, Empleado, Tipo (Entrada/Salida), Hora
+  - Ubicación, Dentro de Zona (Sí/No), Distancia, Estado
+- **Vista Previa del Reporte:**
+  - Total de marcaciones
+  - Desglose por ubicación
+  - Alertas fuera de zona
+
 #### Archivos
 - `/app/frontend/src/components/GeoMap.jsx` - Componente del mapa
-- `/app/frontend/src/pages/GeoLocationsPage.jsx` - Tab "Mapa en Vivo"
+- `/app/frontend/src/pages/GeoLocationsPage.jsx` - Tab "Mapa en Vivo" con filtros y exportación
 
 #### Dependencias Agregadas
 - `react-leaflet@5.0.0`
