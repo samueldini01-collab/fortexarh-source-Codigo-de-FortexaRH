@@ -29,9 +29,10 @@ import {
 import { 
   Wallet, Plus, Eye, Trash2, DollarSign, Users, Calendar,
   RefreshCw, TrendingUp, TrendingDown, CreditCard, Receipt,
-  ChevronDown, ChevronUp, AlertCircle, Download
+  ChevronDown, ChevronUp, AlertCircle, Download, History
 } from "lucide-react";
 import { toast } from "sonner";
+import { LoanPaymentsDrillDown } from "@/components/DrillDown";
 
 export default function LoansPage() {
   const { getAuthHeaders } = useAuth();
