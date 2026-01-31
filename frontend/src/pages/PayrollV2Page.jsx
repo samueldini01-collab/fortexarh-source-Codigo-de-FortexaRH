@@ -690,12 +690,14 @@ export default function PayrollV2Page() {
     setDrillDown({ open: true, title: "", data: [], columns: [] });
     
     try {
-      const response = await axios.get(`${API}/payroll-v2/periods/${period.period_id}/entries`, {
+      // Use existing endpoint that returns period with entries
+      const response = await axios.get(`${API}/payroll-v2/periods/${period.period_id}`, {
         headers: getAuthHeaders(),
         withCredentials: true
       });
       
-      const entries = response.data || [];
+      // Entries are included in the period response
+      const entries = response.data?.entries || response.data?.employee_records || [];
       const columns = [
         { header: "Empleado", accessor: "employee_name" },
         { header: "Departamento", accessor: "department" },
