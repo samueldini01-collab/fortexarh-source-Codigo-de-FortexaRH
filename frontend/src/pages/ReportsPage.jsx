@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -21,8 +22,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-import { BarChart3, Download, DollarSign, Clock, Users } from "lucide-react";
+import { BarChart3, Download, DollarSign, Clock, Users, ChevronRight, Eye } from "lucide-react";
 import { toast } from "sonner";
+import { DrillDownModal } from "@/components/DrillDown";
 
 const COLORS = ["#10B981", "#3B82F6", "#F59E0B", "#EF4444", "#8B5CF6"];
 
