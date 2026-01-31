@@ -198,6 +198,45 @@ function EmployeeDashboard() {
   const [loadingNotifications, setLoadingNotifications] = useState(false);
   const [announcements, setAnnouncements] = useState([]);
 
+  // Tab navigation with swipe support
+  const tabs = useMemo(() => [
+    { id: "home", label: "Inicio", icon: Home },
+    { id: "attendance", label: "Asistencia", icon: Clock },
+    { id: "payslips", label: "Recibos", icon: FileText },
+    { id: "vacations", label: "Vacaciones", icon: Calendar },
+    { id: "leaves", label: "Permisos", icon: ClipboardList },
+    { id: "evaluations", label: "Evaluaciones", icon: Target },
+    { id: "loans", label: "Préstamos", icon: Wallet },
+    { id: "profile", label: "Mis Datos", icon: User }
+  ], []);
+
+  const currentTabIndex = tabs.findIndex(t => t.id === activeTab);
+  
+  const goToNextTab = useCallback(() => {
+    const nextIndex = currentTabIndex + 1;
+    if (nextIndex < tabs.length) {
+      setActiveTab(tabs[nextIndex].id);
+    }
+  }, [currentTabIndex, tabs]);
+
+  const goToPrevTab = useCallback(() => {
+    const prevIndex = currentTabIndex - 1;
+    if (prevIndex >= 0) {
+      setActiveTab(tabs[prevIndex].id);
+    }
+  }, [currentTabIndex, tabs]);
+
+  // Swipe handlers for mobile navigation
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => goToNextTab(),
+    onSwipedRight: () => goToPrevTab(),
+    preventScrollOnSwipe: true,
+    trackMouse: false,
+    trackTouch: true,
+    delta: 50,
+    swipeDuration: 500,
+  });
+
   const fetchDashboard = useCallback(async () => {
     setLoading(true);
     try {
