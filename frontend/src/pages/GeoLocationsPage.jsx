@@ -267,6 +267,60 @@ export default function GeoLocationsPage() {
     link.click();
   };
 
+  const updateAlertStatus = async (alertId, newStatus) => {
+    try {
+      await axios.put(
+        `${API}/geolocation-attendance/admin/fraud-alerts/${alertId}?status=${newStatus}`,
+        {},
+        { headers: getAuthHeaders(), withCredentials: true }
+      );
+      toast.success("Alerta actualizada");
+      fetchFraudAlerts();
+    } catch (error) {
+      toast.error("Error al actualizar alerta");
+    }
+  };
+
+  const saveAlertSettings = async () => {
+    try {
+      const recipients = settingsForm.recipients
+        .split(",")
+        .map(e => e.trim())
+        .filter(e => e.includes("@"));
+      
+      await axios.put(
+        `${API}/geolocation-attendance/admin/alert-settings`,
+        {
+          enabled: settingsForm.enabled,
+          alert_outside_zone: settingsForm.alert_outside_zone,
+          alert_fraud: settingsForm.alert_fraud,
+          alert_daily_summary: settingsForm.alert_daily_summary,
+          recipients: recipients,
+          outside_zone_threshold_meters: settingsForm.outside_zone_threshold_meters
+        },
+        { headers: getAuthHeaders(), withCredentials: true }
+      );
+      toast.success("Configuración guardada");
+      setShowSettingsDialog(false);
+      fetchAlertSettings();
+    } catch (error) {
+      toast.error("Error al guardar configuración");
+    }
+  };
+
+  const sendDailySummary = async () => {
+    try {
+      await axios.post(
+        `${API}/geolocation-attendance/admin/send-daily-summary`,
+        {},
+        { headers: getAuthHeaders(), withCredentials: true }
+      );
+      toast.success("Resumen enviado correctamente");
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al enviar resumen");
+    }
+  };
+
   // Filter map data
   const getFilteredMapData = () => {
     let filteredEmployees = [...(liveMapData.employees || [])];
