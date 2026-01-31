@@ -73,6 +73,20 @@ export default function GeoLocationsPage() {
   const [reportData, setReportData] = useState(null);
   const [loadingReport, setLoadingReport] = useState(false);
   
+  // Fraud & Alert states
+  const [fraudAlerts, setFraudAlerts] = useState({ alerts: [], summary: {} });
+  const [fraudStats, setFraudStats] = useState(null);
+  const [alertSettings, setAlertSettings] = useState(null);
+  const [showSettingsDialog, setShowSettingsDialog] = useState(false);
+  const [settingsForm, setSettingsForm] = useState({
+    enabled: false,
+    alert_outside_zone: true,
+    alert_fraud: true,
+    alert_daily_summary: true,
+    recipients: "",
+    outside_zone_threshold_meters: 500
+  });
+  
   // Dialog states
   const [showLocationDialog, setShowLocationDialog] = useState(false);
   const [showAssignDialog, setShowAssignDialog] = useState(false);
