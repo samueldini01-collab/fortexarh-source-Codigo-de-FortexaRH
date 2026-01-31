@@ -317,7 +317,7 @@ export default function LandingPage() {
               <img 
                 src="https://customer-assets.emergentagent.com/job_hr-dominican/artifacts/3k6l3c5h_FortexaRH_Logo_sin%20fondo%201.png" 
                 alt="FortexaRH" 
-                className="h-10 sm:h-12 md:h-14 w-auto"
+                className="h-12 sm:h-14 md:h-16 w-auto"
               />
             </Link>
             
