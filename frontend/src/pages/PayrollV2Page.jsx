@@ -876,6 +876,17 @@ export default function PayrollV2Page() {
                             <p className="font-mono font-semibold">{formatCurrency(period.total_net)}</p>
                           </div>
                           {getStatusBadge(period.status)}
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={(e) => { 
+                              e.stopPropagation(); 
+                              handlePeriodDrillDown(period); 
+                            }}
+                            title="Ver desglose rápido"
+                          >
+                            <List className="w-4 h-4" />
+                          </Button>
                           <ChevronRight className="w-5 h-5 text-slate-400" />
                         </div>
                       </div>
