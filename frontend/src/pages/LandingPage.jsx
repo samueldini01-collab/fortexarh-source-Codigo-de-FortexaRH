@@ -1102,34 +1102,34 @@ export default function LandingPage() {
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4">Roles personalizados</td>
+                  <td className="py-3 px-4 text-slate-700">Roles personalizados</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4">API personalizada</td>
+                  <td className="py-3 px-4 text-slate-700">API personalizada</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4">Integración SAP/Oracle/Dynamics</td>
+                  <td className="py-3 px-4 text-slate-700">Integración SAP/Oracle/Dynamics</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4">Soporte</td>
-                  <td className="py-3 px-4 text-center">Email</td>
-                  <td className="py-3 px-4 text-center">Prioritario</td>
-                  <td className="py-3 px-4 text-center">24/7 + Gerente dedicado</td>
+                  <td className="py-3 px-4 text-slate-700">Soporte</td>
+                  <td className="py-3 px-4 text-center text-slate-700">Email</td>
+                  <td className="py-3 px-4 text-center text-slate-700">Prioritario</td>
+                  <td className="py-3 px-4 text-center text-slate-700">24/7 + Gerente dedicado</td>
                 </tr>
               </tbody>
             </table>
           </div>
           
-          <p className="text-center text-slate-500 mt-8 text-sm">
+          <p className="text-center text-slate-600 mt-8 text-sm">
             * Usuarios adicionales disponibles a $2.50/mes por usuario
           </p>
         </div>
