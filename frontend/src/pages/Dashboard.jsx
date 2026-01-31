@@ -394,13 +394,13 @@ export default function Dashboard() {
         )}
         
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
           {loading ? (
             Array(6).fill(0).map((_, i) => (
               <Card key={i} className="border-slate-200 dark:border-slate-700">
-                <CardContent className="p-6">
-                  <Skeleton className="h-4 w-24 mb-2" />
-                  <Skeleton className="h-8 w-16" />
+                <CardContent className="p-3 sm:p-4 md:p-6">
+                  <Skeleton className="h-4 w-20 sm:w-24 mb-2" />
+                  <Skeleton className="h-6 sm:h-8 w-12 sm:w-16" />
                 </CardContent>
               </Card>
             ))
@@ -415,17 +415,17 @@ export default function Dashboard() {
                   className="border-0 shadow-none bg-transparent"
                   data-testid={`stat-card-${index}`}
                 >
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">{stat.title}</p>
-                        <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">{stat.value}</p>
+                  <CardContent className="p-3 sm:p-4 md:p-6">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-1 truncate">{stat.title}</p>
+                        <p className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-100">{stat.value}</p>
                       </div>
-                      <div className={`w-12 h-12 ${stat.bgColor} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                        <stat.icon className={`w-6 h-6 ${stat.textColor}`} />
+                      <div className={`w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 ${stat.bgColor} rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0`}>
+                        <stat.icon className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 ${stat.textColor}`} />
                       </div>
                     </div>
-                    <div className="flex items-center justify-end mt-3 text-xs text-slate-400">
+                    <div className="hidden sm:flex items-center justify-end mt-3 text-xs text-slate-400">
                       <span>Click para ver detalles</span>
                       <ChevronRight className="w-3 h-3 ml-1" />
                     </div>
