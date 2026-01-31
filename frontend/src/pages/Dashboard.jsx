@@ -311,18 +311,18 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout title="Dashboard">
-      <div className="space-y-8" data-testid="dashboard-page">
+      <div className="space-y-4 sm:space-y-6 md:space-y-8" data-testid="dashboard-page">
         
         {/* Personalized Greeting */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100">
               {getGreeting()}, <span className="text-emerald-600 dark:text-emerald-400">{user?.name?.split(' ')[0] || 'Usuario'}!</span>
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-1">Aquí está el resumen de tu gestión de RRHH</p>
+            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1">Aquí está el resumen de tu gestión de RRHH</p>
           </div>
-          <div className="text-right hidden md:block">
-            <p className="text-sm text-slate-500 dark:text-slate-400">{new Date().toLocaleDateString('es-DO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          <div className="text-left sm:text-right">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">{new Date().toLocaleDateString('es-DO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
           </div>
         </div>
         
