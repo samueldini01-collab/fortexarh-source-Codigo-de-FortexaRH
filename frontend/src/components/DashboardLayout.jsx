@@ -257,6 +257,30 @@ export default function DashboardLayout({ children, title }) {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // State for expanded menu groups
+  const [expandedGroups, setExpandedGroups] = useState(() => {
+    // Initialize with default open groups
+    const initial = {};
+    MENU_GROUPS.forEach(group => {
+      if (group.isGroup) {
+        initial[group.id] = group.defaultOpen || false;
+      }
+    });
+    return initial;
+  });
+
+  const toggleGroup = (groupId) => {
+    setExpandedGroups(prev => ({
+      ...prev,
+      [groupId]: !prev[groupId]
+    }));
+  };
+
+  // Check if any item in a group is active
+  const isGroupActive = (group) => {
+    return group.items.some(item => location.pathname === item.href);
+  };
+
   // Show onboarding for first-time users
   useEffect(() => {
     if (!onboardingCompleted && location.pathname === "/dashboard") {
