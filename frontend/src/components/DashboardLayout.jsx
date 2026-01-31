@@ -21,6 +21,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Users,
@@ -75,7 +80,9 @@ import {
   GraduationCap,
   Activity,
   Award,
-  MapPin
+  MapPin,
+  UserCircle,
+  FolderOpen
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
@@ -84,7 +91,102 @@ import GlobalSearch from "@/components/GlobalSearch";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import NotificationBell from "@/components/NotificationBell";
 
-// Default navigation items with feature mapping
+// Menu groups with collapsible submenus
+const MENU_GROUPS = [
+  {
+    id: "dashboards",
+    name: "Dashboards",
+    icon: LayoutDashboard,
+    isGroup: false,
+    items: [
+      { id: "dashboard", name: "Dashboard Principal", href: "/dashboard", icon: LayoutDashboard, featureKey: "dashboard" },
+      { id: "payroll-dashboard", name: "Dashboard Nómina", href: "/payroll-dashboard", icon: BarChart3, featureKey: "reports" },
+      { id: "metrics-dashboard", name: "Métricas", href: "/metrics-dashboard", icon: TrendingUp, featureKey: "reports" },
+    ]
+  },
+  {
+    id: "gestion-humana",
+    name: "Gestión Humana",
+    subtitle: "Core RRHH",
+    icon: UserCircle,
+    isGroup: true,
+    defaultOpen: true,
+    items: [
+      { id: "employees", name: "Empleados", href: "/employees", icon: Users, featureKey: "employees" },
+      { id: "organigrama", name: "Organigrama", href: "/organigrama", icon: Network, featureKey: "organigrama" },
+      { id: "evaluations", name: "Evaluaciones", href: "/evaluations", icon: Target, featureKey: "evaluations" },
+      { id: "documents", name: "Documentos", href: "/documents", icon: FileCheck, featureKey: "employees" },
+      { id: "templates", name: "Plantillas", href: "/templates", icon: FileText, featureKey: "employees" },
+      { id: "notifications", name: "Notificaciones", href: "/notifications", icon: Bell, featureKey: "settings" },
+    ]
+  },
+  {
+    id: "nomina-finanzas",
+    name: "Nómina y Finanzas",
+    icon: DollarSign,
+    isGroup: true,
+    defaultOpen: false,
+    items: [
+      { id: "payroll-v2", name: "Nómina", href: "/payroll-v2", icon: DollarSign, featureKey: "employees" },
+      { id: "payroll-calculator", name: "Calculadora", href: "/payroll-calculator", icon: Calculator, featureKey: "payroll_calculator" },
+      { id: "loans", name: "Préstamos", href: "/loans", icon: Wallet, featureKey: "loans" },
+      { id: "expenses", name: "Gastos y Viáticos", href: "/expenses", icon: Receipt, featureKey: "expenses" },
+      { id: "accounting", name: "Contabilidad", href: "/accounting", icon: BookOpen, featureKey: "accounting" },
+      { id: "payroll-config", name: "Config. Nómina", href: "/payroll-config", icon: Settings2, featureKey: "employees" },
+    ]
+  },
+  {
+    id: "tiempo-asistencia",
+    name: "Tiempo y Asistencia",
+    icon: Clock,
+    isGroup: true,
+    defaultOpen: false,
+    items: [
+      { id: "attendance", name: "Asistencias", href: "/attendance", icon: Clock, featureKey: "attendance" },
+      { id: "geo-locations", name: "Geolocalización", href: "/geo-locations", icon: MapPin, featureKey: "attendance", isNew: true },
+      { id: "vacations", name: "Vacaciones", href: "/vacations", icon: Calendar, featureKey: "vacations" },
+    ]
+  },
+  {
+    id: "reportes",
+    name: "Reportes",
+    icon: FileBarChart,
+    isGroup: true,
+    defaultOpen: false,
+    items: [
+      { id: "reports-system", name: "Centro de Reportes", href: "/reports-system", icon: FileBarChart, featureKey: "reports" },
+      { id: "costs-by-department", name: "Costos por Depto", href: "/costs-by-department", icon: PieChart, featureKey: "reports" },
+      { id: "dgii-reports", name: "Reportes DGII-TSS", href: "/dgii-reports", icon: FileText, featureKey: "reports" },
+    ]
+  },
+  {
+    id: "talento",
+    name: "Talento",
+    icon: Briefcase,
+    isGroup: true,
+    defaultOpen: false,
+    items: [
+      { id: "recruitment", name: "Reclutamiento", href: "/recruitment", icon: Briefcase, featureKey: "recruitment" },
+    ]
+  },
+  {
+    id: "administracion",
+    name: "Administración",
+    icon: Settings,
+    isGroup: true,
+    defaultOpen: false,
+    items: [
+      { id: "roles", name: "Roles", href: "/roles", icon: Shield, featureKey: "custom_roles" },
+      { id: "users-management", name: "Usuarios", href: "/users-management", icon: UserCog, featureKey: "settings" },
+      { id: "subscriptions", name: "Suscripción", href: "/subscriptions", icon: CreditCard, featureKey: "subscriptions" },
+      { id: "support-admin", name: "Centro Soporte", href: "/support-admin", icon: HelpCircle, featureKey: "settings" },
+      { id: "cdc-audit", name: "CDC & Auditoría", href: "/cdc-audit", icon: Activity, featureKey: "settings" },
+      { id: "company-config", name: "Configuración", href: "/company-config", icon: Building2, featureKey: "settings" },
+    ]
+  },
+];
+
+// Default navigation items with feature mapping (keeping for backward compatibility)
 const DEFAULT_NAVIGATION = [
   { id: "dashboard", name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, visible: true, featureKey: "dashboard" },
   { id: "payroll-dashboard", name: "Dashboard Nómina", href: "/payroll-dashboard", icon: BarChart3, visible: true, featureKey: "reports" },
