@@ -72,6 +72,7 @@ export default function MetricsDashboardPage() {
       
       switch (type) {
         case "employees":
+        case "total_employees":
           response = await axios.get(`${API}/employees`, {
             headers: getAuthHeaders(),
             withCredentials: true
@@ -83,6 +84,7 @@ export default function MetricsDashboardPage() {
             { header: "Departamento", accessor: "department" },
             { header: "Cargo", accessor: "position" },
             { header: "Ingreso", accessor: "hire_date" },
+            { header: "Salario", accessor: "salary", render: (val) => val ? formatCurrency(val) : "-", className: "text-right", cellClassName: "text-right" },
             { header: "Estado", accessor: "status", render: (val) => (
               <Badge className={val === "active" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"}>
                 {val === "active" ? "Activo" : "Inactivo"}
@@ -102,18 +104,83 @@ export default function MetricsDashboardPage() {
           columns = [
             { header: "Nombre", accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
             { header: "Cargo", accessor: "position" },
+            { header: "Email", accessor: "email" },
             { header: "Salario", accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" }
           ];
           break;
           
         case "payroll_month":
-          const monthName = dataPoint?.month || dataPoint?.name;
-          title = `Desglose Nómina - ${monthName}`;
-          data = dataPoint?.employees || [];
+          const monthData = dataPoint;
+          title = `Desglose Nómina - ${monthData?.month || 'Mes'}`;
+          // Fetch period data for this month
+          try {
+            const periodsRes = await axios.get(`${API}/payroll-v2/periods?year=${selectedYear}`, {
+              headers: getAuthHeaders(),
+              withCredentials: true
+            });
+            const periods = periodsRes.data || [];
+            const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            const monthIndex = monthNames.indexOf(monthData?.month?.substring(0, 3));
+            const monthPeriod = periods.find(p => p.month === (monthIndex + 1));
+            
+            if (monthPeriod) {
+              const detailRes = await axios.get(`${API}/payroll-v2/periods/${monthPeriod.period_id}`, {
+                headers: getAuthHeaders(),
+                withCredentials: true
+              });
+              data = detailRes.data?.entries || [];
+            }
+          } catch (e) {
+            console.log("Could not fetch month details", e);
+            data = [];
+          }
           columns = [
             { header: "Empleado", accessor: "employee_name" },
-            { header: "Bruto", accessor: "gross", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
-            { header: "Neto", accessor: "net", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-emerald-600" }
+            { header: "Departamento", accessor: "department" },
+            { header: "Bruto", accessor: "gross_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+            { header: "Deducciones", accessor: "total_deductions", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right text-red-600" },
+            { header: "Neto", accessor: "net_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-emerald-600" }
+          ];
+          break;
+
+        case "loans":
+          response = await axios.get(`${API}/loans`, {
+            headers: getAuthHeaders(),
+            withCredentials: true
+          });
+          title = "Préstamos Activos";
+          data = (response.data || []).filter(l => l.status === 'active');
+          columns = [
+            { header: "Empleado", accessor: "employee_name" },
+            { header: "Monto", accessor: "amount", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+            { header: "Pagado", accessor: "total_paid", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right text-emerald-600" },
+            { header: "Pendiente", accessor: "balance", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right text-amber-600" },
+            { header: "Cuotas", accessor: "term_months" },
+            { header: "Estado", accessor: "status", render: (val) => (
+              <Badge className={val === "active" ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-700"}>
+                {val === "active" ? "Activo" : val}
+              </Badge>
+            )}
+          ];
+          break;
+
+        case "department_cost":
+          const dept = dataPoint;
+          response = await axios.get(`${API}/employees?department=${encodeURIComponent(dept?.name || '')}`, {
+            headers: getAuthHeaders(),
+            withCredentials: true
+          });
+          title = `Costos - ${dept?.name || 'Departamento'}`;
+          data = response.data || [];
+          columns = [
+            { header: "Empleado", accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
+            { header: "Cargo", accessor: "position" },
+            { header: "Salario", accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" },
+            { header: "Estado", accessor: "status", render: (val) => (
+              <Badge className={val === "active" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"}>
+                {val === "active" ? "Activo" : "Inactivo"}
+              </Badge>
+            )}
           ];
           break;
           
