@@ -693,6 +693,16 @@ export default function DGIIReportsPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Drill-Down Modal */}
+        <DrillDownModal
+          open={drillDown.open}
+          onClose={closeDrillDown}
+          title={drillDown.title}
+          data={drillDown.data}
+          columns={drillDown.columns}
+          loading={drillDownLoading}
+        />
       </div>
     </DashboardLayout>
   );
