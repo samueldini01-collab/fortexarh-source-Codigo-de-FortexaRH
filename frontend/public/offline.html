@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sin Conexión - FortexaRH</title>
+  <link rel="icon" type="image/png" href="/fortexarh-favicon.png">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      text-align: center;
+      max-width: 400px;
+    }
+    
+    .logo {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 24px;
+      opacity: 0.9;
+    }
+    
+    .icon {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 24px;
+      fill: #94a3b8;
+    }
+    
+    h1 {
+      color: #f1f5f9;
+      font-size: 24px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    
+    p {
+      color: #94a3b8;
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #10b981;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+    
+    .btn:hover {
+      background: #059669;
+    }
+    
+    .btn svg {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .tips {
+      margin-top: 32px;
+      padding: 16px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      text-align: left;
+    }
+    
+    .tips h3 {
+      color: #e2e8f0;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    
+    .tips ul {
+      color: #94a3b8;
+      font-size: 13px;
+      padding-left: 20px;
+    }
+    
+    .tips li {
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="/fortexarh-logo-200.png" alt="FortexaRH" class="logo">
+    
+    <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M1.5 3.75a.75.75 0 011.06 0l17.69 17.69a.75.75 0 11-1.06 1.06L1.5 4.81a.75.75 0 010-1.06z"/>
+      <path d="M9 6.75A.75.75 0 019.75 6h9a2.25 2.25 0 012.25 2.25v9a.75.75 0 01-1.5 0v-9a.75.75 0 00-.75-.75h-9A.75.75 0 019 6.75zM3 8.25A2.25 2.25 0 015.25 6h.75a.75.75 0 010 1.5h-.75a.75.75 0 00-.75.75v9c0 .414.336.75.75.75h9a.75.75 0 00.75-.75v-.75a.75.75 0 011.5 0v.75A2.25 2.25 0 0114.25 19.5h-9A2.25 2.25 0 013 17.25v-9z"/>
+    </svg>
+    
+    <h1>Sin Conexión a Internet</h1>
+    <p>No pudimos conectar con FortexaRH. Verifica tu conexión a internet e intenta nuevamente.</p>
+    
+    <a href="/" class="btn" onclick="window.location.reload(); return false;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+      </svg>
+      Reintentar
+    </a>
+    
+    <div class="tips">
+      <h3>Sugerencias:</h3>
+      <ul>
+        <li>Verifica que tu WiFi o datos móviles estén activos</li>
+        <li>Intenta acercarte al router</li>
+        <li>Reinicia tu conexión de red</li>
+        <li>Contacta a soporte si el problema persiste</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

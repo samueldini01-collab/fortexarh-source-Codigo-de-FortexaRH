@@ -1,0 +1,100 @@
+{
+  "name": "FortexaRH - Sistema de RRHH y Nómina",
+  "short_name": "FortexaRH",
+  "description": "Sistema de Gestión de Recursos Humanos y Nómina para República Dominicana",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#10b981",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/fortexarh-icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/fortexarh-logo-200.png",
+      "sizes": "200x200",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/fortexarh-logo-300.png",
+      "sizes": "300x300",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/fortexarh-favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/fortexarh-logo-full.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/1_dashboard.jpeg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Dashboard Principal"
+    },
+    {
+      "src": "/screenshots/2_employees.jpeg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Gestión de Empleados"
+    },
+    {
+      "src": "/screenshots/3_payroll.jpeg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Nómina"
+    }
+  ],
+  "categories": ["business", "productivity", "finance"],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Ver el dashboard principal",
+      "url": "/dashboard",
+      "icons": [{ "src": "/fortexarh-icon-128.png", "sizes": "128x128" }]
+    },
+    {
+      "name": "Empleados",
+      "short_name": "Empleados",
+      "description": "Gestión de empleados",
+      "url": "/employees",
+      "icons": [{ "src": "/fortexarh-icon-128.png", "sizes": "128x128" }]
+    },
+    {
+      "name": "Nómina",
+      "short_name": "Nómina",
+      "description": "Procesar nómina",
+      "url": "/payroll",
+      "icons": [{ "src": "/fortexarh-icon-128.png", "sizes": "128x128" }]
+    },
+    {
+      "name": "Portal Empleado",
+      "short_name": "Portal",
+      "description": "Portal de autoservicio",
+      "url": "/employee-portal",
+      "icons": [{ "src": "/fortexarh-icon-128.png", "sizes": "128x128" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
