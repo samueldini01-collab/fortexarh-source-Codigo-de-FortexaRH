@@ -422,13 +422,13 @@ export default function LandingPage() {
               {/* Simple Links */}
               <a 
                 href="#pricing" 
-                className="px-4 py-2 text-sm lg:text-base text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm lg:text-base font-medium text-white hover:bg-slate-800 rounded-lg transition-colors"
               >
                 Precios
               </a>
               <a 
                 href="#contact" 
-                className="px-4 py-2 text-sm lg:text-base text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm lg:text-base font-medium text-white hover:bg-slate-800 rounded-lg transition-colors"
               >
                 Contacto
               </a>
@@ -437,7 +437,7 @@ export default function LandingPage() {
             {/* Desktop Buttons */}
             <div className="hidden md:flex items-center gap-2 lg:gap-3">
               <Link to="/login">
-                <Button variant="ghost" size="sm" className="text-sm text-slate-300 hover:text-white hover:bg-slate-800" data-testid="login-btn">
+                <Button variant="ghost" size="sm" className="text-sm font-medium text-white hover:bg-slate-800" data-testid="login-btn">
                   Iniciar Sesión
                 </Button>
               </Link>
