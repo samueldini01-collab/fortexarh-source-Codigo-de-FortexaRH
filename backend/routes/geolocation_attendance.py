@@ -279,8 +279,8 @@ async def get_location_employees(location_id: str, request: Request):
 # ==================== ATTENDANCE MARKING ====================
 
 @router.post("/mark")
-async def mark_attendance(data: AttendanceMarkRequest, request: Request):
-    """Mark attendance with geolocation"""
+async def mark_attendance(data: AttendanceMarkRequest, request: Request, background_tasks: BackgroundTasks):
+    """Mark attendance with geolocation and fraud detection"""
     current_user = await get_current_user(request)
     company_id = current_user.get("company_id")
     user_id = current_user.get("user_id")
@@ -301,6 +301,7 @@ async def mark_attendance(data: AttendanceMarkRequest, request: Request):
         raise HTTPException(status_code=404, detail="Empleado no encontrado")
     
     employee_id = employee.get("employee_id")
+    employee_name = f"{employee.get('first_name', '')} {employee.get('last_name', '')}"
     today = get_today_date()
     
     existing_mark = await db.geo_attendance.find_one({
@@ -377,7 +378,7 @@ async def mark_attendance(data: AttendanceMarkRequest, request: Request):
         "mark_id": mark_id,
         "company_id": company_id,
         "employee_id": employee_id,
-        "employee_name": f"{employee.get('first_name', '')} {employee.get('last_name', '')}",
+        "employee_name": employee_name,
         "date": today,
         "mark_type": data.mark_type,
         "timestamp": now_iso(),
@@ -395,8 +396,95 @@ async def mark_attendance(data: AttendanceMarkRequest, request: Request):
         "created_at": now_iso()
     }
     
+    # === FRAUD DETECTION ===
+    # Get previous marks for this employee (last 24 hours)
+    yesterday = (datetime.now(timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%d")
+    previous_marks = await db.geo_attendance.find(
+        {
+            "company_id": company_id,
+            "employee_id": employee_id,
+            "date": {"$gte": yesterday}
+        },
+        {"_id": 0}
+    ).sort("timestamp", -1).to_list(20)
+    
+    # Get employee history for pattern analysis
+    week_ago = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%d")
+    employee_history = await db.geo_attendance.find(
+        {
+            "company_id": company_id,
+            "employee_id": employee_id,
+            "date": {"$gte": week_ago}
+        },
+        {"_id": 0}
+    ).to_list(100)
+    
+    # Run fraud detection
+    fraud_alerts = run_fraud_detection(attendance_record, previous_marks, employee_history)
+    
+    # Store fraud alerts if any
+    if fraud_alerts:
+        attendance_record["fraud_alerts"] = fraud_alerts
+        attendance_record["fraud_alert_count"] = len(fraud_alerts)
+        attendance_record["highest_alert_level"] = max(
+            [a.get("level", "low") for a in fraud_alerts],
+            key=lambda x: {"critical": 4, "high": 3, "medium": 2, "low": 1}.get(x, 0)
+        )
+        
+        # Save fraud alert record
+        for alert in fraud_alerts:
+            await db.fraud_alerts.insert_one({
+                "alert_id": generate_id("fraud"),
+                "company_id": company_id,
+                "employee_id": employee_id,
+                "employee_name": employee_name,
+                "mark_id": mark_id,
+                "alert_type": alert.get("type"),
+                "alert_level": alert.get("level"),
+                "message": alert.get("message"),
+                "details": alert.get("details"),
+                "status": "new",
+                "created_at": now_iso()
+            })
+    
     await db.geo_attendance.insert_one(attendance_record)
     
+    # === SEND EMAIL ALERTS (Background) ===
+    # Get alert settings for this company
+    alert_settings = await db.geo_alert_settings.find_one(
+        {"company_id": company_id},
+        {"_id": 0}
+    )
+    
+    if alert_settings and alert_settings.get("enabled", False):
+        recipients = alert_settings.get("recipients", [])
+        company = await db.companies.find_one({"company_id": company_id}, {"_id": 0, "name": 1})
+        company_name = company.get("name", "Su Empresa") if company else "Su Empresa"
+        
+        # Send outside zone alert
+        if not is_within_zone and alert_settings.get("alert_outside_zone", True):
+            background_tasks.add_task(
+                send_outside_zone_alert,
+                employee_name,
+                attendance_record,
+                recipients,
+                company_name
+            )
+        
+        # Send fraud alert
+        if fraud_alerts and alert_settings.get("alert_fraud", True):
+            significant_alerts = [a for a in fraud_alerts if a.get("level") in ["medium", "high", "critical"]]
+            if significant_alerts:
+                background_tasks.add_task(
+                    send_fraud_alert,
+                    employee_name,
+                    significant_alerts,
+                    attendance_record,
+                    recipients,
+                    company_name
+                )
+    
+    # Update attendances collection
     attendance_date_record = await db.attendances.find_one({
         "company_id": company_id,
         "employee_id": employee_id,
@@ -448,7 +536,8 @@ async def mark_attendance(data: AttendanceMarkRequest, request: Request):
         "location_name": matched_location["name"] if matched_location else "Fuera de zona autorizada",
         "distance": round(min_distance, 2),
         "status": status,
-        "timestamp": attendance_record["timestamp"]
+        "timestamp": attendance_record["timestamp"],
+        "fraud_alerts_count": len(fraud_alerts) if fraud_alerts else 0
     }
 
 
