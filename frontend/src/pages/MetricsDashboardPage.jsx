@@ -25,6 +25,10 @@ export default function MetricsDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [dashboardData, setDashboardData] = useState(null);
+  
+  // Drill-down state
+  const [drillDown, setDrillDown] = useState({ open: false, title: "", data: [], columns: [] });
+  const [drillDownLoading, setDrillDownLoading] = useState(false);
 
   const fetchMetrics = useCallback(async () => {
     setLoading(true);
