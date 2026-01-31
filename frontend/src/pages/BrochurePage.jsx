@@ -380,7 +380,14 @@ export default function BrochurePage() {
                           ) : (
                             <X className="w-4 h-4 text-slate-300 flex-shrink-0" />
                           )}
-                          <span className={f.included ? "text-slate-700" : "text-slate-400"}>{f.text}</span>
+                          <span className={f.included ? "text-slate-700" : "text-slate-400"}>
+                            {f.text}
+                            {f.isNew && f.included && (
+                              <span className="ml-1 text-[10px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-bold">
+                                NUEVO
+                              </span>
+                            )}
+                          </span>
                         </div>
                       ))}
                     </div>
