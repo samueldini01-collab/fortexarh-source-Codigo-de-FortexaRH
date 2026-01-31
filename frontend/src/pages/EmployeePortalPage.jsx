@@ -538,25 +538,25 @@ function EmployeeDashboard() {
               )}
             </div>
             
-            <Button variant="ghost" size="sm" onClick={logout}>
-              <LogOut className="w-4 h-4 mr-2" />
-              Salir
+            <Button variant="ghost" size="sm" onClick={logout} className="h-8 px-2 sm:px-3">
+              <LogOut className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Salir</span>
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto p-4">
+      <main className="max-w-6xl mx-auto p-3 sm:p-4">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-6 bg-white shadow-sm flex-wrap">
-            <TabsTrigger value="home"><Home className="w-4 h-4 mr-2" />Inicio</TabsTrigger>
-            <TabsTrigger value="attendance"><Clock className="w-4 h-4 mr-2" />Asistencia</TabsTrigger>
-            <TabsTrigger value="payslips"><FileText className="w-4 h-4 mr-2" />Recibos</TabsTrigger>
-            <TabsTrigger value="vacations"><Calendar className="w-4 h-4 mr-2" />Vacaciones</TabsTrigger>
-            <TabsTrigger value="leaves"><ClipboardList className="w-4 h-4 mr-2" />Permisos</TabsTrigger>
-            <TabsTrigger value="evaluations"><Target className="w-4 h-4 mr-2" />Evaluaciones</TabsTrigger>
-            <TabsTrigger value="loans"><Wallet className="w-4 h-4 mr-2" />Préstamos</TabsTrigger>
-            <TabsTrigger value="profile"><User className="w-4 h-4 mr-2" />Mis Datos</TabsTrigger>
+          <TabsList className="mb-4 sm:mb-6 bg-white shadow-sm flex flex-wrap gap-1 h-auto p-1">
+            <TabsTrigger value="home" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2"><Home className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" /><span className="hidden sm:inline">Inicio</span></TabsTrigger>
+            <TabsTrigger value="attendance" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2"><Clock className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" /><span className="hidden sm:inline">Asistencia</span></TabsTrigger>
+            <TabsTrigger value="payslips" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2"><FileText className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" /><span className="hidden sm:inline">Recibos</span></TabsTrigger>
+            <TabsTrigger value="vacations" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2"><Calendar className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" /><span className="hidden sm:inline">Vacaciones</span></TabsTrigger>
+            <TabsTrigger value="leaves" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2"><ClipboardList className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" /><span className="hidden sm:inline">Permisos</span></TabsTrigger>
+            <TabsTrigger value="evaluations" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2"><Target className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" /><span className="hidden sm:inline">Evaluaciones</span></TabsTrigger>
+            <TabsTrigger value="loans" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2"><Wallet className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" /><span className="hidden sm:inline">Préstamos</span></TabsTrigger>
+            <TabsTrigger value="profile" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2"><User className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" /><span className="hidden sm:inline">Mis Datos</span></TabsTrigger>
           </TabsList>
 
           {/* Home Tab */}
