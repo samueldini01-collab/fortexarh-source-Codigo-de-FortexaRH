@@ -123,9 +123,9 @@ export default function BrochurePage() {
         { text: "Contabilidad básica", included: true },
         { text: "QuickBooks Online", included: true },
         { text: "Reportes básicos (DGII, nómina)", included: true },
-        { text: "Gastos y viáticos", included: false },
+        { text: "Geolocalización GPS", included: false },
+        { text: "Detección de fraude", included: false },
         { text: "Portal de empleados", included: false },
-        { text: "Búsqueda con IA", included: false },
       ]
     },
     { 
@@ -140,15 +140,15 @@ export default function BrochurePage() {
       popular: true,
       features: [
         { text: "Todo lo del plan Básico", included: true },
-        { text: "QuickBooks Online", included: true },
-        { text: "30 reportes avanzados", included: true },
+        { text: "Geolocalización GPS + Selfie", included: true, isNew: true },
+        { text: "Mapa en tiempo real", included: true, isNew: true },
+        { text: "Detección de fraude básica", included: true, isNew: true },
+        { text: "Alertas por email", included: true, isNew: true },
         { text: "Búsqueda con IA", included: true },
         { text: "Gastos y viáticos (doble aprobación)", included: true },
         { text: "Evaluaciones de desempeño", included: true },
-        { text: "Módulo de reclutamiento", included: true },
         { text: "Portal autoservicio empleados", included: true },
-        { text: "Organigrama interactivo", included: true },
-        { text: "Notificaciones en tiempo real", included: true },
+        { text: "30 reportes avanzados", included: true },
       ]
     },
     { 
@@ -162,13 +162,13 @@ export default function BrochurePage() {
       color: "amber",
       features: [
         { text: "Todo lo del plan Pro", included: true },
-        { text: "QuickBooks Online", included: true },
+        { text: "Geolocalización avanzada + Geofencing", included: true, isNew: true },
+        { text: "Detección de fraude avanzada", included: true, isNew: true },
+        { text: "Reportes de fraude y auditoría", included: true, isNew: true },
         { text: "58 reportes avanzados", included: true },
-        { text: "Reportes personalizables y guardados", included: true },
         { text: "Roles personalizados", included: true },
         { text: "API personalizada", included: true },
         { text: "Integración SAP/Oracle/Dynamics", included: true },
-        { text: "Flujos de trabajo avanzados", included: true },
         { text: "Múltiples sucursales", included: true },
         { text: "Soporte 24/7 y gerente dedicado", included: true },
       ]
