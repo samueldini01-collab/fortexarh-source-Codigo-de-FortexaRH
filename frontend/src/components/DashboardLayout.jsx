@@ -270,10 +270,18 @@ export default function DashboardLayout({ children, title }) {
     return initial;
   });
 
+  // Track if user has manually toggled a group
+  const [userToggledGroups, setUserToggledGroups] = useState({});
+
   const toggleGroup = (groupId) => {
     setExpandedGroups(prev => ({
       ...prev,
       [groupId]: !prev[groupId]
+    }));
+    // Mark this group as manually toggled by user
+    setUserToggledGroups(prev => ({
+      ...prev,
+      [groupId]: true
     }));
   };
 
@@ -281,6 +289,18 @@ export default function DashboardLayout({ children, title }) {
   const isGroupActive = (group) => {
     return group.items.some(item => location.pathname === item.href);
   };
+
+  // Auto-expand group when navigating to an item (only if user hasn't manually toggled it)
+  useEffect(() => {
+    MENU_GROUPS.forEach(group => {
+      if (group.isGroup && isGroupActive(group) && !userToggledGroups[group.id]) {
+        setExpandedGroups(prev => ({
+          ...prev,
+          [group.id]: true
+        }));
+      }
+    });
+  }, [location.pathname, userToggledGroups]);
 
   // Show onboarding for first-time users
   useEffect(() => {
