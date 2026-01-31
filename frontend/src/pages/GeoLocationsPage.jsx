@@ -109,6 +109,19 @@ export default function GeoLocationsPage() {
     }
   }, [getAuthHeaders]);
 
+  const fetchLiveMapData = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API}/geolocation-attendance/admin/live-map`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      setLiveMapData(response.data);
+      setLastUpdate(new Date());
+    } catch (error) {
+      console.error("Error fetching live map data");
+    }
+  }, [getAuthHeaders]);
+
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
