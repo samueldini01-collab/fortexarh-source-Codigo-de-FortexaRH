@@ -527,7 +527,7 @@ export default function DashboardLayout({ children, title }) {
       <aside className={`
         fixed top-0 left-0 z-50 h-full bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700
         transform transition-all duration-300 ease-in-out
-        ${sidebarCollapsed ? 'w-16' : 'w-64'}
+        ${sidebarCollapsed ? 'w-16' : 'w-64 max-w-[85vw]'}
         lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         <div className="flex flex-col h-full">
@@ -836,26 +836,26 @@ export default function DashboardLayout({ children, title }) {
       <div className={`transition-all duration-300 ${sidebarCollapsed ? 'lg:pl-16' : 'lg:pl-64'}`}>
         {/* Top header */}
         <header className="sticky top-0 z-30 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
-          <div className="flex items-center px-4 py-3 gap-4">
+          <div className="flex items-center px-2 sm:px-4 py-2 sm:py-3 gap-2 sm:gap-4">
             {/* Left section - Menu button and title */}
-            <div className="flex items-center gap-4 shrink-0">
+            <div className="flex items-center gap-2 sm:gap-4 shrink-0">
               <button 
-                className="lg:hidden p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
+                className="lg:hidden p-1.5 sm:p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
                 onClick={() => setSidebarOpen(true)}
                 data-testid="mobile-menu-btn"
               >
-                <Menu className="w-6 h-6 text-slate-600 dark:text-slate-300" />
+                <Menu className="w-5 h-5 sm:w-6 sm:h-6 text-slate-600 dark:text-slate-300" />
               </button>
-              {title && <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100 hidden md:block">{title}</h1>}
+              {title && <h1 className="text-base sm:text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100 hidden sm:block truncate max-w-[150px] md:max-w-none">{title}</h1>}
             </div>
             
             {/* Center section - Search (flex-1 to take available space) */}
-            <div className="flex-1 flex justify-center">
+            <div className="flex-1 flex justify-center min-w-0">
               <GlobalSearch />
             </div>
             
             {/* Right section - Actions */}
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
               {/* Theme Toggle */}
               <ThemeToggle />
               
@@ -910,7 +910,7 @@ export default function DashboardLayout({ children, title }) {
         </header>
 
         {/* Page content */}
-        <main className="p-4 md:p-6 min-h-screen bg-slate-50 dark:bg-slate-950">
+        <main className="p-3 sm:p-4 md:p-6 min-h-screen bg-slate-50 dark:bg-slate-950">
           {children}
         </main>
       </div>
