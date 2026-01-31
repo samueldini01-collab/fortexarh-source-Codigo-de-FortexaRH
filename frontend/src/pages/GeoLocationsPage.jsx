@@ -1543,6 +1543,104 @@ export default function GeoLocationsPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Alert Settings Dialog */}
+        <Dialog open={showSettingsDialog} onOpenChange={setShowSettingsDialog}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Target className="w-5 h-5 text-blue-600" />
+                Configuración de Alertas
+              </DialogTitle>
+              <DialogDescription>
+                Configure las alertas automáticas por email
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4 py-4">
+              <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <div>
+                  <p className="font-medium">Alertas por Email</p>
+                  <p className="text-sm text-slate-500">Activar notificaciones automáticas</p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={settingsForm.enabled}
+                  onChange={(e) => setSettingsForm({...settingsForm, enabled: e.target.checked})}
+                  className="w-5 h-5"
+                />
+              </div>
+
+              <div className="space-y-3">
+                <Label>Destinatarios (emails separados por coma)</Label>
+                <Input
+                  value={settingsForm.recipients}
+                  onChange={(e) => setSettingsForm({...settingsForm, recipients: e.target.value})}
+                  placeholder="admin@empresa.com, rrhh@empresa.com"
+                />
+              </div>
+
+              <div className="space-y-3">
+                <p className="font-medium text-sm">Tipos de Alerta</p>
+                
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={settingsForm.alert_outside_zone}
+                    onChange={(e) => setSettingsForm({...settingsForm, alert_outside_zone: e.target.checked})}
+                    className="w-4 h-4"
+                  />
+                  <div>
+                    <p className="font-medium text-sm">Marcaciones fuera de zona</p>
+                    <p className="text-xs text-slate-500">Email inmediato cuando alguien marca fuera del área</p>
+                  </div>
+                </label>
+                
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={settingsForm.alert_fraud}
+                    onChange={(e) => setSettingsForm({...settingsForm, alert_fraud: e.target.checked})}
+                    className="w-4 h-4"
+                  />
+                  <div>
+                    <p className="font-medium text-sm">Detección de fraude</p>
+                    <p className="text-xs text-slate-500">Alertas de velocidad imposible, duplicados, etc.</p>
+                  </div>
+                </label>
+                
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={settingsForm.alert_daily_summary}
+                    onChange={(e) => setSettingsForm({...settingsForm, alert_daily_summary: e.target.checked})}
+                    className="w-4 h-4"
+                  />
+                  <div>
+                    <p className="font-medium text-sm">Resumen diario</p>
+                    <p className="text-xs text-slate-500">Email con estadísticas del día</p>
+                  </div>
+                </label>
+              </div>
+
+              <div className="pt-2">
+                <Button variant="outline" size="sm" onClick={sendDailySummary} className="w-full">
+                  <Download className="w-4 h-4 mr-2" />
+                  Enviar Resumen Ahora
+                </Button>
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowSettingsDialog(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={saveAlertSettings}>
+                Guardar Configuración
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );
