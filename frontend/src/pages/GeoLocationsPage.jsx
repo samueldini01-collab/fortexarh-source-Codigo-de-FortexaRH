@@ -1009,6 +1009,217 @@ export default function GeoLocationsPage() {
             </Card>
           </TabsContent>
 
+          {/* Fraud Detection Tab */}
+          <TabsContent value="fraud">
+            <div className="space-y-4">
+              {/* Stats Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <Card className="bg-red-50 dark:bg-red-900/20 border-red-200">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-red-600 dark:text-red-400">Críticas</p>
+                        <p className="text-2xl font-bold text-red-700">{fraudAlerts.summary?.by_level?.critical || 0}</p>
+                      </div>
+                      <AlertTriangle className="w-8 h-8 text-red-500" />
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="bg-orange-50 dark:bg-orange-900/20 border-orange-200">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-orange-600 dark:text-orange-400">Altas</p>
+                        <p className="text-2xl font-bold text-orange-700">{fraudAlerts.summary?.by_level?.high || 0}</p>
+                      </div>
+                      <AlertTriangle className="w-8 h-8 text-orange-500" />
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="bg-amber-50 dark:bg-amber-900/20 border-amber-200">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-amber-600 dark:text-amber-400">Medias</p>
+                        <p className="text-2xl font-bold text-amber-700">{fraudAlerts.summary?.by_level?.medium || 0}</p>
+                      </div>
+                      <AlertTriangle className="w-8 h-8 text-amber-500" />
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-blue-600 dark:text-blue-400">Bajas</p>
+                        <p className="text-2xl font-bold text-blue-700">{fraudAlerts.summary?.by_level?.low || 0}</p>
+                      </div>
+                      <AlertTriangle className="w-8 h-8 text-blue-500" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Actions Row */}
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Alertas de Fraude Detectadas</h3>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={fetchFraudAlerts}>
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Actualizar
+                  </Button>
+                  <Button variant="default" size="sm" onClick={() => setShowSettingsDialog(true)}>
+                    <Target className="w-4 h-4 mr-2" />
+                    Configurar Alertas
+                  </Button>
+                </div>
+              </div>
+
+              {/* Fraud Alerts Table */}
+              <Card>
+                <CardContent className="p-0">
+                  {fraudAlerts.alerts?.length === 0 ? (
+                    <div className="text-center py-12 text-slate-500">
+                      <CheckCircle className="w-12 h-12 mx-auto text-emerald-400 mb-3" />
+                      <p>No hay alertas de fraude detectadas</p>
+                      <p className="text-sm mt-1">El sistema monitorea automáticamente las marcaciones</p>
+                    </div>
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Nivel</TableHead>
+                          <TableHead>Empleado</TableHead>
+                          <TableHead>Tipo</TableHead>
+                          <TableHead>Mensaje</TableHead>
+                          <TableHead>Fecha</TableHead>
+                          <TableHead>Estado</TableHead>
+                          <TableHead>Acciones</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {fraudAlerts.alerts?.slice(0, 20).map((alert, idx) => (
+                          <TableRow key={idx}>
+                            <TableCell>
+                              <Badge className={
+                                alert.alert_level === "critical" ? "bg-red-500 text-white" :
+                                alert.alert_level === "high" ? "bg-orange-500 text-white" :
+                                alert.alert_level === "medium" ? "bg-amber-500 text-white" :
+                                "bg-blue-500 text-white"
+                              }>
+                                {alert.alert_level === "critical" ? "CRÍTICA" :
+                                 alert.alert_level === "high" ? "ALTA" :
+                                 alert.alert_level === "medium" ? "MEDIA" : "BAJA"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="font-medium">{alert.employee_name}</TableCell>
+                            <TableCell>
+                              <code className="text-xs bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">
+                                {alert.alert_type}
+                              </code>
+                            </TableCell>
+                            <TableCell className="max-w-xs truncate">{alert.message}</TableCell>
+                            <TableCell className="text-sm text-slate-500">
+                              {new Date(alert.created_at).toLocaleDateString("es-DO")}
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant={
+                                alert.status === "new" ? "destructive" :
+                                alert.status === "reviewed" ? "secondary" :
+                                alert.status === "resolved" ? "default" : "outline"
+                              }>
+                                {alert.status === "new" ? "Nueva" :
+                                 alert.status === "reviewed" ? "Revisada" :
+                                 alert.status === "resolved" ? "Resuelta" : "Descartada"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Select
+                                value={alert.status}
+                                onValueChange={(v) => updateAlertStatus(alert.alert_id, v)}
+                              >
+                                <SelectTrigger className="w-[120px]">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="new">Nueva</SelectItem>
+                                  <SelectItem value="reviewed">Revisada</SelectItem>
+                                  <SelectItem value="resolved">Resuelta</SelectItem>
+                                  <SelectItem value="dismissed">Descartar</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Top Suspicious Employees */}
+              {fraudStats?.top_employees?.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">Empleados con Más Alertas (Últimos 30 días)</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {fraudStats.top_employees.slice(0, 5).map((emp, idx) => (
+                        <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
+                              idx === 0 ? "bg-red-500" : idx === 1 ? "bg-orange-500" : "bg-amber-500"
+                            }`}>
+                              {idx + 1}
+                            </div>
+                            <span className="font-medium">{emp.employee_name}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {emp.critical > 0 && <Badge className="bg-red-500 text-white">{emp.critical} críticas</Badge>}
+                            {emp.high > 0 && <Badge className="bg-orange-500 text-white">{emp.high} altas</Badge>}
+                            {emp.medium > 0 && <Badge className="bg-amber-500 text-white">{emp.medium} medias</Badge>}
+                            <span className="text-slate-500 text-sm ml-2">Total: {emp.total_alerts}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Detection Thresholds Info */}
+              <Card className="bg-slate-50 dark:bg-slate-800/50">
+                <CardHeader>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Target className="w-5 h-5" />
+                    Umbrales de Detección
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <p className="text-slate-500">Velocidad máxima</p>
+                      <p className="font-medium">{fraudStats?.thresholds?.max_speed_kmh || 150} km/h</p>
+                    </div>
+                    <div>
+                      <p className="text-slate-500">Ventana duplicados</p>
+                      <p className="font-medium">{fraudStats?.thresholds?.duplicate_window_minutes || 5} min</p>
+                    </div>
+                    <div>
+                      <p className="text-slate-500">Precisión GPS mínima</p>
+                      <p className="font-medium">{fraudStats?.thresholds?.low_accuracy_threshold || 100}m</p>
+                    </div>
+                    <div>
+                      <p className="text-slate-500">Horario normal</p>
+                      <p className="font-medium">{fraudStats?.thresholds?.unusual_hour_start || 5}:00 - {fraudStats?.thresholds?.unusual_hour_end || 23}:00</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
           {/* Alerts Tab */}
           <TabsContent value="alerts">
             <Card>
