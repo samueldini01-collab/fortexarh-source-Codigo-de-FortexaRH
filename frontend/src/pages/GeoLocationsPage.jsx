@@ -591,7 +591,7 @@ export default function GeoLocationsPage() {
           <TabsContent value="live-map">
             <Card>
               <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between flex-wrap gap-4">
                   <div>
                     <CardTitle className="flex items-center gap-2">
                       <Globe className="w-5 h-5 text-blue-600" />
@@ -601,7 +601,7 @@ export default function GeoLocationsPage() {
                       Ubicación de empleados que han marcado asistencia hoy
                     </CardDescription>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 flex-wrap">
                     <div className="flex items-center gap-2">
                       <label className="text-sm text-slate-500">Auto-actualizar</label>
                       <input
@@ -622,12 +622,87 @@ export default function GeoLocationsPage() {
                       <RefreshCw className="w-4 h-4 mr-2" />
                       Actualizar
                     </Button>
+                    <Button 
+                      variant="default" 
+                      size="sm"
+                      onClick={() => setShowReportDialog(true)}
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Exportar Reporte
+                    </Button>
                     {lastUpdate && (
                       <span className="text-xs text-slate-500">
-                        Última actualización: {lastUpdate.toLocaleTimeString('es-DO')}
+                        Última act.: {lastUpdate.toLocaleTimeString('es-DO')}
                       </span>
                     )}
                   </div>
+                </div>
+                
+                {/* Filters Row */}
+                <div className="flex items-center gap-4 mt-4 pt-4 border-t flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <Label className="text-sm whitespace-nowrap">Departamento:</Label>
+                    <Select 
+                      value={mapFilters.department} 
+                      onValueChange={(v) => setMapFilters(prev => ({...prev, department: v}))}
+                    >
+                      <SelectTrigger className="w-[160px]">
+                        <SelectValue placeholder="Todos" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todos</SelectItem>
+                        {departments.map(dept => (
+                          <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Label className="text-sm whitespace-nowrap">Ubicación:</Label>
+                    <Select 
+                      value={mapFilters.location} 
+                      onValueChange={(v) => setMapFilters(prev => ({...prev, location: v}))}
+                    >
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Todas" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todas</SelectItem>
+                        {locations.map(loc => (
+                          <SelectItem key={loc.location_id} value={loc.location_id}>{loc.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Label className="text-sm whitespace-nowrap">Estado:</Label>
+                    <Select 
+                      value={mapFilters.status} 
+                      onValueChange={(v) => setMapFilters(prev => ({...prev, status: v}))}
+                    >
+                      <SelectTrigger className="w-[150px]">
+                        <SelectValue placeholder="Todos" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todos</SelectItem>
+                        <SelectItem value="within">Dentro de zona</SelectItem>
+                        <SelectItem value="outside">Fuera de zona</SelectItem>
+                        <SelectItem value="pending">Pendientes</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  {(mapFilters.department !== "all" || mapFilters.location !== "all" || mapFilters.status !== "all") && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => setMapFilters({ department: "all", location: "all", status: "all" })}
+                    >
+                      Limpiar filtros
+                    </Button>
+                  )}
                 </div>
               </CardHeader>
               <CardContent>
@@ -635,8 +710,8 @@ export default function GeoLocationsPage() {
                   {/* Map */}
                   <div className="lg:col-span-3">
                     <GeoMap 
-                      locations={liveMapData.locations}
-                      employees={liveMapData.employees}
+                      locations={getFilteredMapData().locations}
+                      employees={getFilteredMapData().employees}
                       height="500px"
                       showLegend={true}
                       onEmployeeClick={(emp) => {
@@ -650,6 +725,18 @@ export default function GeoLocationsPage() {
                   
                   {/* Stats Sidebar */}
                   <div className="space-y-4">
+                    {/* Filter Summary */}
+                    {(mapFilters.department !== "all" || mapFilters.location !== "all" || mapFilters.status !== "all") && (
+                      <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200">
+                        <CardContent className="p-3">
+                          <div className="text-xs text-blue-700 dark:text-blue-300 font-medium mb-1">Filtros activos:</div>
+                          <div className="text-sm text-blue-600 dark:text-blue-400">
+                            Mostrando {getFilteredMapData().employees.length} de {liveMapData.employees?.length || 0} empleados
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+                    
                     {/* Quick Stats */}
                     <Card className="bg-slate-50 dark:bg-slate-800/50">
                       <CardHeader className="pb-2">
@@ -677,7 +764,7 @@ export default function GeoLocationsPage() {
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-slate-600 dark:text-slate-400">En el mapa</span>
                           <Badge variant="secondary">
-                            {liveMapData.employees?.length || 0}
+                            {getFilteredMapData().employees?.length || 0}
                           </Badge>
                         </div>
                       </CardContent>
