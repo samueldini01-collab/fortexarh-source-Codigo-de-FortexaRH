@@ -59,6 +59,10 @@ export default function ReportsSystemPage() {
   const [saveConfig, setSaveConfig] = useState({ name: "", description: "", is_favorite: false });
   const [exporting, setExporting] = useState(false);
   const [selectedColumns, setSelectedColumns] = useState([]);
+  
+  // Drill-down state
+  const [drillDown, setDrillDown] = useState({ open: false, title: "", data: [], columns: [], row: null });
+  const [drillDownLoading, setDrillDownLoading] = useState(false);
 
   // Fetch catalog
   const fetchCatalog = useCallback(async () => {
