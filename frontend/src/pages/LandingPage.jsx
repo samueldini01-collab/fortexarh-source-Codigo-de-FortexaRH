@@ -138,6 +138,30 @@ const features = [
     description: "Calcula salarios, deducciones TSS e ISR automáticamente con flujo de aprobación multinivel."
   },
   {
+    icon: MapPin,
+    title: "Geolocalización GPS",
+    description: "Marcación de asistencia con GPS y selfie. Define zonas autorizadas y valida ubicaciones en tiempo real.",
+    isNew: true
+  },
+  {
+    icon: Globe,
+    title: "Mapa en Tiempo Real",
+    description: "Visualiza la ubicación de tus empleados en un mapa interactivo con actualizaciones automáticas.",
+    isNew: true
+  },
+  {
+    icon: Shield,
+    title: "Detección de Fraude",
+    description: "Sistema inteligente que detecta velocidad imposible, marcaciones duplicadas y GPS falso automáticamente.",
+    isNew: true
+  },
+  {
+    icon: Bell,
+    title: "Alertas Automáticas",
+    description: "Recibe emails inmediatos cuando se detecta una marcación fuera de zona o patrón sospechoso.",
+    isNew: true
+  },
+  {
     icon: FileBarChart,
     title: "Centro de Reportes Avanzado",
     description: "Más de 58 reportes con filtros personalizables, vista previa y exportación a PDF, Excel y CSV."
@@ -193,14 +217,9 @@ const features = [
     description: "Catálogo de cuentas NIIF, asientos contables automáticos desde nómina."
   },
   {
-    icon: Bell,
-    title: "Notificaciones en Tiempo Real",
-    description: "Sistema de notificaciones in-app con alertas de nómina, vacaciones y más."
-  },
-  {
     icon: FileText,
     title: "Reportes DGII-TSS",
-    description: "Genera reportes TSS e ISR listos para presentar ante la DGII de República Dominicana."
+    description: "Genera reportes TSS, IR-17, IR-6 e ISR listos para presentar ante la DGII de República Dominicana."
   },
   {
     icon: Search,
