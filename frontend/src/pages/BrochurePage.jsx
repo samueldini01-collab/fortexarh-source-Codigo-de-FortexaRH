@@ -94,7 +94,9 @@ export default function BrochurePage() {
   const benefits = [
     "Reduce hasta 70% el tiempo de procesamiento de nómina",
     "Cumplimiento 100% con TSS y DGII de Rep. Dominicana",
-    "Elimina errores de cálculo manual",
+    "Control de asistencia GPS con detección de fraude",
+    "Mapa en tiempo real de ubicación de empleados",
+    "Alertas automáticas por email de anomalías",
     "Acceso 24/7 desde cualquier dispositivo",
     "Soporte técnico en español",
     "Actualizaciones automáticas sin costo adicional",
