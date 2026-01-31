@@ -238,6 +238,38 @@ export default function LoansPage() {
     setShowPaymentModal(true);
   };
 
+  // Drill-down: view payment history for a loan
+  const openPaymentHistory = async (loan) => {
+    setDrillDownLoading(true);
+    setPaymentsDrillDown({ open: true, loan, payments: [] });
+    
+    try {
+      const response = await axios.get(`${API}/loans/${loan.loan_id}`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      
+      const loanDetail = response.data;
+      const payments = loanDetail.payment_schedule || loanDetail.payments || [];
+      
+      setPaymentsDrillDown({
+        open: true,
+        loan: { ...loan, ...loanDetail },
+        payments
+      });
+    } catch (error) {
+      console.error("Error fetching payment history:", error);
+      toast.error("Error al cargar historial de pagos");
+      setPaymentsDrillDown({ open: false, loan: null, payments: [] });
+    } finally {
+      setDrillDownLoading(false);
+    }
+  };
+
+  const closePaymentHistory = () => {
+    setPaymentsDrillDown({ open: false, loan: null, payments: [] });
+  };
+
   const formatCurrency = (value, currency = "DOP") => {
     const symbols = { DOP: "RD$", USD: "$", EUR: "€" };
     const symbol = symbols[currency] || "RD$";
