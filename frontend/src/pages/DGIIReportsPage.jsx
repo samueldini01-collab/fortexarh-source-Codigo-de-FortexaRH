@@ -9,9 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   FileText, Download, Calendar, Building2, FileSpreadsheet, 
-  AlertCircle, RefreshCw, CheckCircle2, Info, CalendarDays
+  AlertCircle, RefreshCw, CheckCircle2, Info, CalendarDays, ChevronRight
 } from "lucide-react";
 import { toast } from "sonner";
+import { DrillDownModal } from "@/components/DrillDown";
 
 const MONTHLY_REPORTS = [
   {
