@@ -259,7 +259,11 @@ export default function MetricsDashboardPage() {
 
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card data-testid="monthly-payroll-card">
+          <Card 
+            data-testid="monthly-payroll-card"
+            className="cursor-pointer hover:shadow-md transition-all"
+            onClick={() => handleChartDrillDown("payroll_month", payrollTrend[currentMonth])}
+          >
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -274,10 +278,17 @@ export default function MetricsDashboardPage() {
                   <DollarSign className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                 </div>
               </div>
+              <p className="text-xs text-slate-400 mt-2 flex items-center">
+                <ChevronRight className="w-3 h-3" /> Click para ver desglose
+              </p>
             </CardContent>
           </Card>
 
-          <Card data-testid="total-employees-card">
+          <Card 
+            data-testid="total-employees-card"
+            className="cursor-pointer hover:shadow-md transition-all"
+            onClick={() => handleChartDrillDown("total_employees")}
+          >
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -292,10 +303,17 @@ export default function MetricsDashboardPage() {
                   <Users className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
                 </div>
               </div>
+              <p className="text-xs text-slate-400 mt-2 flex items-center">
+                <ChevronRight className="w-3 h-3" /> Click para ver desglose
+              </p>
             </CardContent>
           </Card>
 
-          <Card data-testid="active-loans-card">
+          <Card 
+            data-testid="active-loans-card"
+            className="cursor-pointer hover:shadow-md transition-all"
+            onClick={() => handleChartDrillDown("loans")}
+          >
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -309,6 +327,9 @@ export default function MetricsDashboardPage() {
                   <Wallet className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
               </div>
+              <p className="text-xs text-slate-400 mt-2 flex items-center">
+                <ChevronRight className="w-3 h-3" /> Click para ver desglose
+              </p>
             </CardContent>
           </Card>
 
