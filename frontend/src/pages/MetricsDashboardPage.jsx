@@ -501,6 +501,16 @@ export default function MetricsDashboardPage() {
         <div className="text-center text-sm text-slate-500 dark:text-slate-400">
           Última actualización: {dashboardData?.last_updated ? new Date(dashboardData.last_updated).toLocaleString('es-DO') : 'N/A'}
         </div>
+
+        {/* Drill-Down Modal */}
+        <DrillDownModal
+          open={drillDown.open}
+          onClose={closeDrillDown}
+          title={drillDown.title}
+          data={drillDown.data}
+          columns={drillDown.columns}
+          loading={drillDownLoading}
+        />
       </div>
     </DashboardLayout>
   );
