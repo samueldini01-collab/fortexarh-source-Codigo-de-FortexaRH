@@ -468,6 +468,137 @@ export default function GeoLocationsPage() {
             </Card>
           </TabsContent>
 
+          {/* Live Map Tab */}
+          <TabsContent value="live-map">
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Globe className="w-5 h-5 text-blue-600" />
+                      Mapa en Tiempo Real
+                    </CardTitle>
+                    <CardDescription>
+                      Ubicación de empleados que han marcado asistencia hoy
+                    </CardDescription>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <label className="text-sm text-slate-500">Auto-actualizar</label>
+                      <input
+                        type="checkbox"
+                        checked={autoRefresh}
+                        onChange={(e) => setAutoRefresh(e.target.checked)}
+                        className="w-4 h-4"
+                      />
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        fetchLiveMapData();
+                        fetchTodayAttendance();
+                      }}
+                    >
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                      Actualizar
+                    </Button>
+                    {lastUpdate && (
+                      <span className="text-xs text-slate-500">
+                        Última actualización: {lastUpdate.toLocaleTimeString('es-DO')}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                  {/* Map */}
+                  <div className="lg:col-span-3">
+                    <GeoMap 
+                      locations={liveMapData.locations}
+                      employees={liveMapData.employees}
+                      height="500px"
+                      showLegend={true}
+                      onEmployeeClick={(emp) => {
+                        toast.info(`${emp.employee_name} - ${emp.mark_type === 'entry' ? 'Entrada' : 'Salida'}`);
+                      }}
+                      onLocationClick={(loc) => {
+                        toast.info(`${loc.name} - Radio: ${loc.radius}m`);
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Stats Sidebar */}
+                  <div className="space-y-4">
+                    {/* Quick Stats */}
+                    <Card className="bg-slate-50 dark:bg-slate-800/50">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Resumen del Día</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-slate-600 dark:text-slate-400">Marcaron</span>
+                          <Badge className="bg-emerald-100 text-emerald-700">
+                            {todayAttendance?.summary?.marked_today || 0}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-slate-600 dark:text-slate-400">Pendientes</span>
+                          <Badge className="bg-amber-100 text-amber-700">
+                            {todayAttendance?.summary?.pending || 0}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-slate-600 dark:text-slate-400">Fuera de zona</span>
+                          <Badge className="bg-red-100 text-red-700">
+                            {todayAttendance?.summary?.outside_zone_alerts || 0}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-slate-600 dark:text-slate-400">En el mapa</span>
+                          <Badge variant="secondary">
+                            {liveMapData.employees?.length || 0}
+                          </Badge>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    {/* Recent Marks */}
+                    <Card className="bg-slate-50 dark:bg-slate-800/50">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Últimas Marcaciones</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2 max-h-[280px] overflow-y-auto">
+                          {liveMapData.employees?.slice(0, 10).map((emp, idx) => (
+                            <div 
+                              key={idx} 
+                              className="flex items-center justify-between p-2 bg-white dark:bg-slate-900 rounded-lg text-sm"
+                            >
+                              <div className="flex items-center gap-2">
+                                <div className={`w-2 h-2 rounded-full ${emp.is_within_zone ? 'bg-emerald-500' : 'bg-amber-500'}`}></div>
+                                <span className="truncate max-w-[100px]">{emp.employee_name?.split(' ')[0]}</span>
+                              </div>
+                              <span className="text-xs text-slate-500">
+                                {new Date(emp.timestamp).toLocaleTimeString('es-DO', { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            </div>
+                          ))}
+                          {(!liveMapData.employees || liveMapData.employees.length === 0) && (
+                            <p className="text-center text-slate-500 text-sm py-4">
+                              Sin marcaciones hoy
+                            </p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Today's Attendance Tab */}
           <TabsContent value="today">
             <Card>
