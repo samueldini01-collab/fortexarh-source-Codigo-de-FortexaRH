@@ -125,11 +125,23 @@ export default function GeoLocationsPage() {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await Promise.all([fetchLocations(), fetchEmployees(), fetchTodayAttendance()]);
+      await Promise.all([fetchLocations(), fetchEmployees(), fetchTodayAttendance(), fetchLiveMapData()]);
       setLoading(false);
     };
     loadData();
-  }, [fetchLocations, fetchEmployees, fetchTodayAttendance]);
+  }, [fetchLocations, fetchEmployees, fetchTodayAttendance, fetchLiveMapData]);
+
+  // Auto-refresh for live map (every 30 seconds)
+  useEffect(() => {
+    if (!autoRefresh || activeTab !== "live-map") return;
+    
+    const interval = setInterval(() => {
+      fetchLiveMapData();
+      fetchTodayAttendance();
+    }, 30000);
+    
+    return () => clearInterval(interval);
+  }, [autoRefresh, activeTab, fetchLiveMapData, fetchTodayAttendance]);
 
   // Location CRUD
   const handleSaveLocation = async () => {
