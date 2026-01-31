@@ -263,7 +263,7 @@ export default function PayrollDashboardPage() {
           <Card>
             <CardHeader>
               <CardTitle>Distribución por Departamento</CardTitle>
-              <CardDescription>Empleados y salarios por área</CardDescription>
+              <CardDescription>Empleados y salarios por área (click para ver detalle)</CardDescription>
             </CardHeader>
             <CardContent>
               {department_distribution && department_distribution.length > 0 ? (
@@ -277,6 +277,8 @@ export default function PayrollDashboardPage() {
                       cy="50%"
                       outerRadius={100}
                       label={({ department, count }) => `${department}: ${count}`}
+                      onClick={(data) => handleDrillDown("department", { department: data.department })}
+                      style={{ cursor: 'pointer' }}
                     >
                       {department_distribution.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
