@@ -684,6 +684,46 @@ export default function PayrollV2Page() {
     return <Badge className={`bg-${pt.color}-100 text-${pt.color}-700`}>{pt.label}</Badge>;
   };
 
+  // Drill-down for period details
+  const handlePeriodDrillDown = async (period) => {
+    setDrillDownLoading(true);
+    setDrillDown({ open: true, title: "", data: [], columns: [] });
+    
+    try {
+      const response = await axios.get(`${API}/payroll-v2/periods/${period.period_id}/entries`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      
+      const entries = response.data || [];
+      const columns = [
+        { header: "Empleado", accessor: "employee_name" },
+        { header: "Departamento", accessor: "department" },
+        { header: "Salario Base", accessor: "base_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+        { header: "Bruto", accessor: "gross_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+        { header: "Deducciones", accessor: "total_deductions", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right text-red-600" },
+        { header: "Neto", accessor: "net_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-bold text-emerald-600" }
+      ];
+      
+      setDrillDown({
+        open: true,
+        title: `Desglose: ${period.description}`,
+        data: entries,
+        columns
+      });
+    } catch (error) {
+      console.error("Error fetching period entries:", error);
+      toast.error("Error al cargar desglose");
+      setDrillDown({ open: false, title: "", data: [], columns: [] });
+    } finally {
+      setDrillDownLoading(false);
+    }
+  };
+
+  const closeDrillDown = () => {
+    setDrillDown({ open: false, title: "", data: [], columns: [] });
+  };
+
   // Render editable cell
   const renderEditableCell = (entry, field, value, isCurrency = true) => {
     const isEditing = editingCell?.entryId === entry.entry_id && editingCell?.field === field;
