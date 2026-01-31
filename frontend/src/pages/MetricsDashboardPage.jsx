@@ -360,11 +360,15 @@ export default function MetricsDashboardPage() {
                 <TrendingUp className="w-5 h-5 text-blue-500" />
                 Tendencia de Nómina {selectedYear}
               </CardTitle>
-              <CardDescription>Evolución mensual de costos de nómina</CardDescription>
+              <CardDescription>Evolución mensual de costos de nómina (click en barra para ver desglose)</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={payrollTrend}>
+                <AreaChart data={payrollTrend} onClick={(data) => {
+                  if (data && data.activePayload && data.activePayload[0]) {
+                    handleChartDrillDown("payroll_month", data.activePayload[0].payload);
+                  }
+                }} style={{ cursor: 'pointer' }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="month" stroke="#64748b" fontSize={12} />
                   <YAxis stroke="#64748b" fontSize={12} tickFormatter={(v) => `${(v/1000)}k`} />
@@ -387,12 +391,16 @@ export default function MetricsDashboardPage() {
                 <Building2 className="w-5 h-5 text-purple-500" />
                 Costos por Departamento
               </CardTitle>
-              <CardDescription>Distribución del gasto de nómina</CardDescription>
+              <CardDescription>Distribución del gasto de nómina (click en barra para ver empleados)</CardDescription>
             </CardHeader>
             <CardContent>
               {departmentCosts.length > 0 ? (
                 <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={departmentCosts} layout="vertical">
+                  <BarChart data={departmentCosts} layout="vertical" onClick={(data) => {
+                    if (data && data.activePayload && data.activePayload[0]) {
+                      handleChartDrillDown("department_cost", data.activePayload[0].payload);
+                    }
+                  }} style={{ cursor: 'pointer' }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                     <XAxis type="number" stroke="#64748b" fontSize={12} tickFormatter={(v) => `${(v/1000)}k`} />
                     <YAxis dataKey="name" type="category" stroke="#64748b" fontSize={11} width={100} />
