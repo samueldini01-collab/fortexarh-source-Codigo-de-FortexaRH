@@ -60,6 +60,43 @@ export default function ReportsPage() {
     fetchReports();
   }, [fetchReports]);
 
+  // Drill-down handler for table rows
+  const handleRowDrillDown = (row, type) => {
+    let title = "";
+    let data = [];
+    let columns = [];
+    
+    if (type === "payroll") {
+      title = `Detalle Nómina - ${row.employee_name}`;
+      data = [row];
+      columns = [
+        { header: "Empleado", accessor: "employee_name" },
+        { header: "Departamento", accessor: "department" },
+        { header: "Bruto", accessor: "gross_salary", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right" },
+        { header: "ISR", accessor: "isr", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right text-red-600" },
+        { header: "SFS", accessor: "sfs", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right text-red-600" },
+        { header: "AFP", accessor: "afp", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right text-red-600" },
+        { header: "Neto", accessor: "net_salary", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right font-bold text-emerald-600" }
+      ];
+    } else if (type === "attendance") {
+      title = `Detalle Asistencia - ${row.employee_name}`;
+      data = [row];
+      columns = [
+        { header: "Empleado", accessor: "employee_name" },
+        { header: "Días Trabajados", accessor: "days_worked", className: "text-center", cellClassName: "text-center" },
+        { header: "Ausencias", accessor: "absences", className: "text-center", cellClassName: "text-center text-red-600" },
+        { header: "Tardanzas", accessor: "late_arrivals", className: "text-center", cellClassName: "text-center text-amber-600" },
+        { header: "Horas Extra", accessor: "overtime_hours", className: "text-center", cellClassName: "text-center text-blue-600" }
+      ];
+    }
+    
+    setDrillDown({ open: true, title, data, columns });
+  };
+
+  const closeDrillDown = () => {
+    setDrillDown({ open: false, title: "", data: [], columns: [] });
+  };
+
   const months = [
     { value: "1", label: "Enero" }, { value: "2", label: "Febrero" }, { value: "3", label: "Marzo" },
     { value: "4", label: "Abril" }, { value: "5", label: "Mayo" }, { value: "6", label: "Junio" },
