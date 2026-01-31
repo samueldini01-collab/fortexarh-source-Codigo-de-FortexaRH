@@ -27,48 +27,36 @@ Sistema de control de asistencia usando GPS del dispositivo móvil del empleado 
 - Historial de marcaciones del día
 - Lista de ubicaciones autorizadas
 
-#### Validación de Geofence
-- Sistema calcula distancia usando fórmula Haversine
-- Si está dentro del radio → Estado: "approved" automático
-- Si está fuera del radio → Estado: "pending_review" (requiere aprobación)
-- Se guarda distancia exacta a la zona más cercana
-
-#### Endpoints API
-```bash
-# Gestión de Ubicaciones
-GET /api/geolocation-attendance/locations
-POST /api/geolocation-attendance/locations
-PUT /api/geolocation-attendance/locations/{id}
-DELETE /api/geolocation-attendance/locations/{id}
-
-# Asignación de Empleados
-POST /api/geolocation-attendance/locations/{id}/assign-employees
-GET /api/geolocation-attendance/locations/{id}/employees
-
-# Marcación de Asistencia
-POST /api/geolocation-attendance/mark
-GET /api/geolocation-attendance/my-marks
-GET /api/geolocation-attendance/my-locations
-GET /api/geolocation-attendance/my-history
-
-# Panel Admin
-GET /api/geolocation-attendance/admin/today
-GET /api/geolocation-attendance/admin/live-map
-GET /api/geolocation-attendance/admin/report
-POST /api/geolocation-attendance/admin/approve/{mark_id}
-POST /api/geolocation-attendance/admin/reject/{mark_id}
-```
-
-#### Archivos Creados/Modificados
-- `/app/backend/routes/geolocation_attendance.py` - Backend completo
-- `/app/frontend/src/pages/GeoLocationsPage.jsx` - Panel admin
-- `/app/frontend/src/pages/GeoAttendancePage.jsx` - Página móvil empleados
-- `/app/frontend/src/components/DashboardLayout.jsx` - Link en menú lateral
-- `/app/frontend/src/App.js` - Rutas agregadas
-
 #### Test Report: `/app/test_reports/iteration_29.json`
 - Backend: 100% (14 tests passed, 3 skipped)
 - Frontend: 100%
+
+---
+
+### 🗺️ Mapa en Tiempo Real - Fase 2 (P0 - COMPLETADO)
+Mapa interactivo que muestra la ubicación de empleados que han marcado asistencia.
+
+#### Funcionalidades
+- **Mapa Interactivo:** Leaflet + OpenStreetMap (gratuito, sin API key)
+- **Geofences:** Círculos verdes mostrando las zonas autorizadas
+- **Marcadores de Empleados:**
+  - 🟢 Verde: Dentro de zona autorizada
+  - 🟡 Amarillo: Fuera de zona (pendiente revisión)
+  - 🔴 Rojo: Marcación rechazada
+- **Click en Marcador:** Muestra popup con detalles del empleado
+- **Auto-actualización:** Cada 30 segundos (configurable)
+- **Panel Lateral:**
+  - Resumen del día (marcaron, pendientes, fuera de zona)
+  - Lista de últimas marcaciones con hora
+- **Leyenda:** Explicación de colores
+
+#### Archivos
+- `/app/frontend/src/components/GeoMap.jsx` - Componente del mapa
+- `/app/frontend/src/pages/GeoLocationsPage.jsx` - Tab "Mapa en Vivo"
+
+#### Dependencias Agregadas
+- `react-leaflet@5.0.0`
+- `leaflet@1.9.4`
 
 ---
 
