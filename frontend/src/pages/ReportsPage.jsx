@@ -289,11 +289,16 @@ export default function ReportsPage() {
                     <TableHead className="text-center">Ausentes</TableHead>
                     <TableHead className="text-center">Tardanzas</TableHead>
                     <TableHead className="text-center">Horas Totales</TableHead>
+                    <TableHead className="text-center">Detalle</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {attendanceReport.by_employee.map((emp, index) => (
-                    <TableRow key={index}>
+                    <TableRow 
+                      key={index}
+                      className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800"
+                      onClick={() => handleRowDrillDown(emp, "attendance")}
+                    >
                       <TableCell className="font-medium">{emp.employee_name}</TableCell>
                       <TableCell className="text-center">
                         <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-emerald-50 text-emerald-700 dark:text-emerald-400">
@@ -311,6 +316,9 @@ export default function ReportsPage() {
                         </span>
                       </TableCell>
                       <TableCell className="text-center font-medium">{emp.total_hours.toFixed(1)} hrs</TableCell>
+                      <TableCell className="text-center">
+                        <ChevronRight className="w-4 h-4 mx-auto text-slate-400" />
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
