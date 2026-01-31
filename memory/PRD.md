@@ -19,6 +19,12 @@ Sistema de exploración de datos que permite a los usuarios hacer clic en métri
 9. **Geolocalización - Alertas** - Filas de alertas clickeables muestran detalle completo
 10. **Centro de Reportes Avanzado** - Filas de vista previa clickeables con detalle completo
 
+#### Gráficos Interactivos Avanzados (Dashboard de Métricas)
+- **Comparativa Año vs Año (YoY)** - Gráfico de barras 2026 vs 2025 clickeable
+- **Proyección de Gastos** - Líneas Real/Proyectado/Tendencia con estimación anual
+- **Análisis de Rotación de Personal** - Contratados vs Salidas con balance neto
+- **KPIs de Rotación** - Métricas: Retención, Antigüedad, Costo por Rotación
+
 #### Exportación desde Drill-Down
 - **Excel (.xls)** - Tabla formateada con estilos
 - **PDF** - Documento imprimible/descargable
@@ -39,7 +45,7 @@ Sistema de exploración de datos que permite a los usuarios hacer clic en métri
 - `/app/frontend/src/pages/GeoLocationsPage.jsx`
 - `/app/frontend/src/pages/DGIIReportsPage.jsx`
 - `/app/frontend/src/pages/PayrollV2Page.jsx`
-- `/app/frontend/src/pages/MetricsDashboardPage.jsx` - Drill-down completo en KPIs, gráficos y tabla
+- `/app/frontend/src/pages/MetricsDashboardPage.jsx` - Drill-down completo + gráficos avanzados YoY/Proyección/Rotación
 - `/app/frontend/src/pages/ReportsPage.jsx`
 - `/app/frontend/src/pages/ReportsSystemPage.jsx` - Drill-down en filas de vista previa
 
