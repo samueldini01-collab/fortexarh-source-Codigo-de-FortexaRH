@@ -1105,7 +1105,11 @@ export default function GeoLocationsPage() {
                       </TableHeader>
                       <TableBody>
                         {fraudAlerts.alerts?.slice(0, 20).map((alert, idx) => (
-                          <TableRow key={idx}>
+                          <TableRow 
+                            key={idx}
+                            className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800"
+                            onClick={() => setAlertDrillDown({ open: true, alert })}
+                          >
                             <TableCell>
                               <Badge className={
                                 alert.alert_level === "critical" ? "bg-red-500 text-white" :
@@ -1139,21 +1143,33 @@ export default function GeoLocationsPage() {
                                  alert.status === "resolved" ? "Resuelta" : "Descartada"}
                               </Badge>
                             </TableCell>
-                            <TableCell>
-                              <Select
-                                value={alert.status}
-                                onValueChange={(v) => updateAlertStatus(alert.alert_id, v)}
-                              >
-                                <SelectTrigger className="w-[120px]">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="new">Nueva</SelectItem>
-                                  <SelectItem value="reviewed">Revisada</SelectItem>
-                                  <SelectItem value="resolved">Resuelta</SelectItem>
-                                  <SelectItem value="dismissed">Descartar</SelectItem>
-                                </SelectContent>
-                              </Select>
+                            <TableCell onClick={(e) => e.stopPropagation()}>
+                              <div className="flex items-center gap-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setAlertDrillDown({ open: true, alert });
+                                  }}
+                                >
+                                  <Info className="w-4 h-4" />
+                                </Button>
+                                <Select
+                                  value={alert.status}
+                                  onValueChange={(v) => updateAlertStatus(alert.alert_id, v)}
+                                >
+                                  <SelectTrigger className="w-[120px]">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="new">Nueva</SelectItem>
+                                    <SelectItem value="reviewed">Revisada</SelectItem>
+                                    <SelectItem value="resolved">Resuelta</SelectItem>
+                                    <SelectItem value="dismissed">Descartar</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))}
