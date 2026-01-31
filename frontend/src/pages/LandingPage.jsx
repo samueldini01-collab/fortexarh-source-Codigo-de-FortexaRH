@@ -693,6 +693,84 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* NEW: Geolocation Feature Highlight */}
+      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 text-white overflow-hidden relative">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-emerald-400 rounded-full filter blur-3xl"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-400 rounded-full filter blur-3xl"></div>
+        </div>
+        <div className="max-w-7xl mx-auto relative">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <span className="bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">
+              🚀 NUEVO
+            </span>
+          </div>
+          <div className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+              Control de Asistencia con <span className="text-emerald-400">Geolocalización</span>
+            </h2>
+            <p className="text-slate-300 max-w-2xl mx-auto text-sm sm:text-base">
+              La forma más moderna y segura de controlar la asistencia de tus empleados. 
+              GPS en tiempo real, detección de fraude y alertas automáticas.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-emerald-400/50 transition-all">
+              <div className="w-12 h-12 bg-emerald-500/20 rounded-lg flex items-center justify-center mb-4">
+                <MapPin className="w-6 h-6 text-emerald-400" />
+              </div>
+              <h3 className="font-semibold text-lg mb-2">Marcación GPS + Selfie</h3>
+              <p className="text-slate-400 text-sm">
+                Empleados marcan asistencia desde su celular con ubicación GPS y foto de verificación.
+              </p>
+            </div>
+            
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-emerald-400/50 transition-all">
+              <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4">
+                <Globe className="w-6 h-6 text-blue-400" />
+              </div>
+              <h3 className="font-semibold text-lg mb-2">Mapa en Tiempo Real</h3>
+              <p className="text-slate-400 text-sm">
+                Visualiza en un mapa interactivo dónde están tus empleados con actualización automática.
+              </p>
+            </div>
+            
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-emerald-400/50 transition-all">
+              <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center mb-4">
+                <Shield className="w-6 h-6 text-red-400" />
+              </div>
+              <h3 className="font-semibold text-lg mb-2">Detección de Fraude</h3>
+              <p className="text-slate-400 text-sm">
+                Sistema inteligente que detecta velocidad imposible, GPS falso y marcaciones sospechosas.
+              </p>
+            </div>
+            
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-emerald-400/50 transition-all">
+              <div className="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center mb-4">
+                <Bell className="w-6 h-6 text-amber-400" />
+              </div>
+              <h3 className="font-semibold text-lg mb-2">Alertas por Email</h3>
+              <p className="text-slate-400 text-sm">
+                Recibe notificaciones inmediatas cuando se detecta una anomalía o marcación fuera de zona.
+              </p>
+            </div>
+          </div>
+          
+          <div className="mt-10 text-center">
+            <p className="text-slate-400 text-sm mb-4">
+              Ideal para empresas con personal de campo, construcción, delivery, ventas y más.
+            </p>
+            <Link to="/register">
+              <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white">
+                Probar Gratis por 14 Días
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section id="features" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
