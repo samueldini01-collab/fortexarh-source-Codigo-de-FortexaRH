@@ -601,6 +601,13 @@ export default function GeoLocationsPage() {
               <Clock className="w-4 h-4 mr-2" />
               Asistencia Hoy
             </TabsTrigger>
+            <TabsTrigger value="fraud">
+              <AlertTriangle className="w-4 h-4 mr-2 text-red-500" />
+              Fraude
+              {fraudAlerts.summary?.by_level?.critical > 0 && (
+                <Badge className="ml-2 bg-red-500 text-white text-xs">{fraudAlerts.summary.by_level.critical}</Badge>
+              )}
+            </TabsTrigger>
             <TabsTrigger value="alerts">
               <AlertTriangle className="w-4 h-4 mr-2" />
               Alertas
