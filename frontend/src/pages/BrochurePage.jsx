@@ -31,7 +31,11 @@ import {
   Brain,
   UserPlus,
   Crown,
-  Rocket
+  Rocket,
+  MapPin,
+  AlertTriangle,
+  Mail,
+  Map
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
