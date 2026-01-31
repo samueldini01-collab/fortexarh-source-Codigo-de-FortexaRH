@@ -6,6 +6,7 @@ import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import {
   Users,
   DollarSign,
@@ -20,9 +21,11 @@ import {
   X,
   Target,
   Network,
-  UserCheck
+  UserCheck,
+  ChevronRight
 } from "lucide-react";
 import { toast } from "sonner";
+import { DrillDownModal, DrillDownCard, EmployeeListDrillDown } from "@/components/DrillDown";
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
