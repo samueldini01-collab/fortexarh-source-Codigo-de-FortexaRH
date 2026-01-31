@@ -1663,6 +1663,13 @@ export default function GeoLocationsPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Fraud Alert Drill-Down */}
+        <FraudAlertDrillDown
+          open={alertDrillDown.open}
+          onClose={() => setAlertDrillDown({ open: false, alert: null })}
+          alert={alertDrillDown.alert}
+        />
       </div>
     </DashboardLayout>
   );
