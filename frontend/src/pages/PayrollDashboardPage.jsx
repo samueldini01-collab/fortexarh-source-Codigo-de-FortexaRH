@@ -11,9 +11,11 @@ import {
 } from 'recharts';
 import { 
   Users, DollarSign, TrendingUp, AlertTriangle, 
-  Building2, RefreshCw, ArrowUpRight, ArrowDownRight 
+  Building2, RefreshCw, ArrowUpRight, ArrowDownRight,
+  ChevronRight
 } from "lucide-react";
 import { toast } from "sonner";
+import { DrillDownModal, DrillDownCard } from "@/components/DrillDown";
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
 
