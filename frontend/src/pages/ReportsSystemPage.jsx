@@ -798,6 +798,17 @@ export default function ReportsSystemPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Drill-Down Modal */}
+      <DrillDownModal
+        open={drillDown.open}
+        onClose={closeDrillDown}
+        title={drillDown.title}
+        data={drillDown.data}
+        columns={drillDown.columns}
+        loading={drillDownLoading}
+        showExport={true}
+      />
     </div>
   );
 }
