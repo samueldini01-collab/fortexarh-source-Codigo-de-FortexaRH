@@ -78,6 +78,48 @@ export default function CostsByDepartmentPage() {
     fetchDepartmentComparison();
   }, [fetchCostReport, fetchDepartmentComparison]);
 
+  // Drill-down handler - click on department to see employees
+  const handleDepartmentDrillDown = async (department) => {
+    setDrillDownLoading(true);
+    setDrillDown({ open: true, title: "", data: [], columns: [] });
+    
+    try {
+      const response = await axios.get(`${API}/employees?department=${encodeURIComponent(department)}`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      
+      const employees = response.data || [];
+      const columns = [
+        { header: "Nombre", accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
+        { header: "Cargo", accessor: "position" },
+        { header: "Salario", accessor: "salary", render: (val) => formatCurrency(val || 0), className: "text-right", cellClassName: "text-right font-medium" },
+        { header: "Estado", accessor: "status", render: (val) => (
+          <Badge className={val === "active" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"}>
+            {val === "active" ? "Activo" : "Inactivo"}
+          </Badge>
+        )}
+      ];
+      
+      setDrillDown({
+        open: true,
+        title: `Empleados - ${department}`,
+        data: employees,
+        columns
+      });
+    } catch (error) {
+      console.error("Error fetching department employees:", error);
+      toast.error("Error al cargar empleados del departamento");
+      setDrillDown({ open: false, title: "", data: [], columns: [] });
+    } finally {
+      setDrillDownLoading(false);
+    }
+  };
+
+  const closeDrillDown = () => {
+    setDrillDown({ open: false, title: "", data: [], columns: [] });
+  };
+
   const exportToCSV = async () => {
     if (!costReport) return;
     
