@@ -103,6 +103,149 @@ export default function Dashboard() {
     }
   }, [user, searchParams, checkPaymentStatus, fetchStats]);
 
+  // Drill-down handler for stat cards
+  const handleDrillDown = async (type) => {
+    setDrillDownLoading(true);
+    setDrillDownModal({ open: true, type, title: "", data: [] });
+    
+    try {
+      let response;
+      let title = "";
+      let columns = [];
+      let data = [];
+      
+      switch (type) {
+        case "employees":
+          response = await axios.get(`${API}/employees?status=active`, {
+            headers: getAuthHeaders(),
+            withCredentials: true
+          });
+          title = "Empleados Activos";
+          data = response.data || [];
+          columns = [
+            { header: "Nombre", accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
+            { header: "Departamento", accessor: "department" },
+            { header: "Cargo", accessor: "position" },
+            { header: "Estado", accessor: "status", render: (val) => (
+              <Badge className={val === "active" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"}>
+                {val === "active" ? "Activo" : "Inactivo"}
+              </Badge>
+            )}
+          ];
+          break;
+          
+        case "payrolls":
+          response = await axios.get(`${API}/payroll-v2/periods?status=open,draft,pending_approval,calculated`, {
+            headers: getAuthHeaders(),
+            withCredentials: true
+          });
+          title = "Nóminas Pendientes";
+          data = (response.data || []).filter(p => ["open", "draft", "pending_approval", "calculated"].includes(p.status));
+          columns = [
+            { header: "Período", accessor: "description" },
+            { header: "Fechas", accessor: "dates", render: (_, row) => `${row.start_date} - ${row.end_date}` },
+            { header: "Empleados", accessor: "employee_count" },
+            { header: "Total Neto", accessor: "total_net", render: (val) => `RD$ ${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right font-medium" },
+            { header: "Estado", accessor: "status", render: (val) => {
+              const statusMap = {
+                'open': { label: 'Abierto', class: 'bg-blue-100 text-blue-700' },
+                'draft': { label: 'Borrador', class: 'bg-slate-100 text-slate-700' },
+                'pending_approval': { label: 'Pendiente', class: 'bg-orange-100 text-orange-700' },
+                'calculated': { label: 'Calculado', class: 'bg-amber-100 text-amber-700' }
+              };
+              const s = statusMap[val] || { label: val, class: 'bg-slate-100 text-slate-700' };
+              return <Badge className={s.class}>{s.label}</Badge>;
+            }}
+          ];
+          break;
+          
+        case "attendance":
+          response = await axios.get(`${API}/attendance/today`, {
+            headers: getAuthHeaders(),
+            withCredentials: true
+          });
+          title = "Presentes Hoy";
+          data = response.data?.records || [];
+          columns = [
+            { header: "Empleado", accessor: "employee_name" },
+            { header: "Entrada", accessor: "check_in", render: (val) => val ? new Date(val).toLocaleTimeString('es-DO', { hour: '2-digit', minute: '2-digit' }) : "-" },
+            { header: "Salida", accessor: "check_out", render: (val) => val ? new Date(val).toLocaleTimeString('es-DO', { hour: '2-digit', minute: '2-digit' }) : "-" },
+            { header: "Estado", accessor: "status", render: (val) => (
+              <Badge className={val === "present" ? "bg-emerald-100 text-emerald-700" : val === "late" ? "bg-amber-100 text-amber-700" : "bg-slate-100 text-slate-700"}>
+                {val === "present" ? "Presente" : val === "late" ? "Tardanza" : val}
+              </Badge>
+            )}
+          ];
+          break;
+          
+        case "vacations":
+          response = await axios.get(`${API}/vacations/requests?status=pending`, {
+            headers: getAuthHeaders(),
+            withCredentials: true
+          });
+          title = "Vacaciones Pendientes";
+          data = response.data?.requests || [];
+          columns = [
+            { header: "Empleado", accessor: "employee_name" },
+            { header: "Desde", accessor: "start_date" },
+            { header: "Hasta", accessor: "end_date" },
+            { header: "Días", accessor: "days" },
+            { header: "Estado", accessor: "status", render: (val) => (
+              <Badge className="bg-amber-100 text-amber-700">{val === "pending" ? "Pendiente" : val}</Badge>
+            )}
+          ];
+          break;
+          
+        case "jobs":
+          response = await axios.get(`${API}/recruitment/jobs?status=open`, {
+            headers: getAuthHeaders(),
+            withCredentials: true
+          });
+          title = "Vacantes Abiertas";
+          data = response.data || [];
+          columns = [
+            { header: "Título", accessor: "title" },
+            { header: "Departamento", accessor: "department" },
+            { header: "Ubicación", accessor: "location" },
+            { header: "Candidatos", accessor: "applicant_count", render: (val) => val || 0 }
+          ];
+          break;
+          
+        case "candidates":
+          response = await axios.get(`${API}/recruitment/candidates?limit=50`, {
+            headers: getAuthHeaders(),
+            withCredentials: true
+          });
+          title = "Nuevos Candidatos";
+          data = response.data || [];
+          columns = [
+            { header: "Nombre", accessor: "name" },
+            { header: "Email", accessor: "email" },
+            { header: "Puesto", accessor: "job_title" },
+            { header: "Estado", accessor: "status", render: (val) => (
+              <Badge className="bg-cyan-100 text-cyan-700">{val}</Badge>
+            )}
+          ];
+          break;
+          
+        default:
+          break;
+      }
+      
+      setDrillDownModal({ open: true, type, title, data, columns });
+    } catch (error) {
+      console.error("Error fetching drill-down data:", error);
+      toast.error("Error al cargar detalles");
+      setDrillDownModal({ open: false, type: null, title: "", data: [] });
+    } finally {
+      setDrillDownLoading(false);
+    }
+  };
+
+  const closeDrillDown = () => {
+    setDrillDownModal({ open: false, type: null, title: "", data: [] });
+  };
+
   const statCards = [
     {
       title: "Empleados Activos",
