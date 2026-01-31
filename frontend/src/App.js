@@ -59,6 +59,7 @@ import PartnerDashboardPage from "@/pages/PartnerDashboardPage";
 import BrochurePage from "@/pages/BrochurePage";
 import GeoAttendancePage from "@/pages/GeoAttendancePage";
 import GeoLocationsPage from "@/pages/GeoLocationsPage";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
