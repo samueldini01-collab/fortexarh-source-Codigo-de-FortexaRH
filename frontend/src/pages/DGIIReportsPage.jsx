@@ -491,7 +491,8 @@ export default function DGIIReportsPage() {
                 return (
                   <Card 
                     key={report.id}
-                    className={`border-2 ${selectedPeriod ? 'hover:shadow-md transition-shadow' : 'opacity-60'}`}
+                    className={`border-2 ${selectedPeriod ? 'hover:shadow-md transition-shadow cursor-pointer' : 'opacity-60'}`}
+                    onClick={() => selectedPeriod && handleReportDrillDown(report.id)}
                   >
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between">
@@ -506,11 +507,17 @@ export default function DGIIReportsPage() {
                             </div>
                             <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{report.title}</p>
                             <p className="text-sm text-slate-500 mt-1">{report.description}</p>
+                            {selectedPeriod && (
+                              <p className="text-xs text-slate-400 mt-2 flex items-center">
+                                <ChevronRight className="w-3 h-3 mr-1" />
+                                Click para ver desglose por empleado
+                              </p>
+                            )}
                           </div>
                         </div>
                       </div>
                       
-                      <div className="mt-4 flex justify-end">
+                      <div className="mt-4 flex justify-end" onClick={(e) => e.stopPropagation()}>
                         <Button
                           onClick={() => handleDownload(report.id)}
                           disabled={!selectedPeriod || downloading === report.id}
