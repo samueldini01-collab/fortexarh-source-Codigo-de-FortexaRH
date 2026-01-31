@@ -610,6 +610,16 @@ export default function CostsByDepartmentPage() {
         </Tabs>
       </div>
 
+      {/* Drill-Down Modal */}
+      <DrillDownModal
+        open={drillDown.open}
+        onClose={closeDrillDown}
+        title={drillDown.title}
+        data={drillDown.data}
+        columns={drillDown.columns}
+        loading={drillDownLoading}
+      />
+
       {/* Print Styles */}
       <style>{`
         @media print {
