@@ -47,6 +47,10 @@ export default function LoansPage() {
   const [filterStatus, setFilterStatus] = useState("all");
   const [expandedLoan, setExpandedLoan] = useState(null);
   
+  // Drill-down for payment history
+  const [paymentsDrillDown, setPaymentsDrillDown] = useState({ open: false, loan: null, payments: [] });
+  const [drillDownLoading, setDrillDownLoading] = useState(false);
+  
   // Form state
   const [formData, setFormData] = useState({
     employee_id: "",
