@@ -54,6 +54,25 @@ export default function GeoLocationsPage() {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [lastUpdate, setLastUpdate] = useState(null);
   
+  // Filter states for map
+  const [mapFilters, setMapFilters] = useState({
+    department: "all",
+    location: "all",
+    status: "all"
+  });
+  const [departments, setDepartments] = useState([]);
+  
+  // Report states
+  const [showReportDialog, setShowReportDialog] = useState(false);
+  const [reportFilters, setReportFilters] = useState({
+    startDate: new Date().toISOString().split('T')[0],
+    endDate: new Date().toISOString().split('T')[0],
+    locationId: "all",
+    format: "excel"
+  });
+  const [reportData, setReportData] = useState(null);
+  const [loadingReport, setLoadingReport] = useState(false);
+  
   // Dialog states
   const [showLocationDialog, setShowLocationDialog] = useState(false);
   const [showAssignDialog, setShowAssignDialog] = useState(false);
