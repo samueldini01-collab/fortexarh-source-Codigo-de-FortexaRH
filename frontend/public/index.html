@@ -3,10 +3,21 @@
     <head>
         <meta charset="utf-8" />
         <link rel="icon" type="image/png" href="%PUBLIC_URL%/fortexarh-favicon.png" />
-        <link rel="apple-touch-icon" href="%PUBLIC_URL%/fortexarh-favicon.png" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="apple-touch-icon" href="%PUBLIC_URL%/fortexarh-logo-200.png" />
+        <link rel="apple-touch-icon" sizes="128x128" href="%PUBLIC_URL%/fortexarh-icon-128.png" />
+        <link rel="apple-touch-icon" sizes="200x200" href="%PUBLIC_URL%/fortexarh-logo-200.png" />
+        <link rel="apple-touch-icon" sizes="300x300" href="%PUBLIC_URL%/fortexarh-logo-300.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
         <meta name="theme-color" content="#10b981" />
-        <meta name="description" content="FortexaRH - Sistema de Gestión de Recursos Humanos y Nómina" />
+        <meta name="description" content="FortexaRH - Sistema de Gestión de Recursos Humanos y Nómina para República Dominicana" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="FortexaRH" />
+        <meta name="application-name" content="FortexaRH" />
+        <meta name="msapplication-TileColor" content="#10b981" />
+        <meta name="msapplication-TileImage" content="%PUBLIC_URL%/fortexarh-logo-200.png" />
+        <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
         <title>FortexaRH - Sistema de RH y Nómina</title>
         <script src="https://assets.emergent.sh/scripts/emergent-main.js"></script>
         <!--
@@ -36,6 +47,36 @@
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
         <div id="root"></div>
+        
+        <!-- PWA Service Worker Registration -->
+        <script>
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/service-worker.js')
+                        .then(function(registration) {
+                            console.log('[PWA] Service Worker registrado:', registration.scope);
+                            
+                            // Check for updates
+                            registration.addEventListener('updatefound', function() {
+                                const newWorker = registration.installing;
+                                newWorker.addEventListener('statechange', function() {
+                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                        // New content available, show update notification
+                                        if (confirm('Nueva versión de FortexaRH disponible. ¿Actualizar ahora?')) {
+                                            newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                            window.location.reload();
+                                        }
+                                    }
+                                });
+                            });
+                        })
+                        .catch(function(error) {
+                            console.log('[PWA] Error al registrar Service Worker:', error);
+                        });
+                });
+            }
+        </script>
+        
         <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
