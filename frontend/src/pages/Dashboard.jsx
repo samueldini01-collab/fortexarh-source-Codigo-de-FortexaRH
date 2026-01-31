@@ -254,7 +254,8 @@ export default function Dashboard() {
       color: "bg-blue-500",
       bgColor: "bg-blue-50 dark:bg-blue-900/30",
       textColor: "text-blue-600 dark:text-blue-400",
-      href: "/employees"
+      href: "/employees",
+      drillDownType: "employees"
     },
     {
       title: "Nóminas Pendientes",
@@ -263,7 +264,8 @@ export default function Dashboard() {
       color: "bg-emerald-500",
       bgColor: "bg-emerald-50 dark:bg-emerald-900/30",
       textColor: "text-emerald-600 dark:text-emerald-400",
-      href: "/payroll-v2"
+      href: "/payroll-v2",
+      drillDownType: "payrolls"
     },
     {
       title: "Presentes Hoy",
@@ -272,7 +274,8 @@ export default function Dashboard() {
       color: "bg-amber-500",
       bgColor: "bg-amber-50 dark:bg-amber-900/30",
       textColor: "text-amber-600 dark:text-amber-400",
-      href: "/attendance"
+      href: "/attendance",
+      drillDownType: "attendance"
     },
     {
       title: "Vacaciones Pendientes",
@@ -281,7 +284,8 @@ export default function Dashboard() {
       color: "bg-purple-500",
       bgColor: "bg-purple-50 dark:bg-purple-900/30",
       textColor: "text-purple-600 dark:text-purple-400",
-      href: "/vacations"
+      href: "/vacations",
+      drillDownType: "vacations"
     },
     {
       title: "Vacantes Abiertas",
@@ -290,7 +294,8 @@ export default function Dashboard() {
       color: "bg-rose-500",
       bgColor: "bg-rose-50 dark:bg-rose-900/30",
       textColor: "text-rose-600 dark:text-rose-400",
-      href: "/recruitment"
+      href: "/recruitment",
+      drillDownType: "jobs"
     },
     {
       title: "Nuevos Candidatos",
@@ -299,7 +304,8 @@ export default function Dashboard() {
       color: "bg-cyan-500",
       bgColor: "bg-cyan-50 dark:bg-cyan-900/30",
       textColor: "text-cyan-600 dark:text-cyan-400",
-      href: "/recruitment"
+      href: "/recruitment",
+      drillDownType: "candidates"
     }
   ];
 
