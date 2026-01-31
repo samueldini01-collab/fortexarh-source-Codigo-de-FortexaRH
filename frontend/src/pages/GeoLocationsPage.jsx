@@ -353,6 +353,10 @@ export default function GeoLocationsPage() {
               <MapPin className="w-4 h-4 mr-2" />
               Ubicaciones
             </TabsTrigger>
+            <TabsTrigger value="live-map">
+              <Globe className="w-4 h-4 mr-2" />
+              Mapa en Vivo
+            </TabsTrigger>
             <TabsTrigger value="today">
               <Clock className="w-4 h-4 mr-2" />
               Asistencia Hoy
