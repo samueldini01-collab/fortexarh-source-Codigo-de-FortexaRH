@@ -212,11 +212,11 @@ export default function GeoLocationsPage() {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await Promise.all([fetchLocations(), fetchEmployees(), fetchTodayAttendance(), fetchLiveMapData()]);
+      await Promise.all([fetchLocations(), fetchEmployees(), fetchTodayAttendance(), fetchLiveMapData(), fetchDepartments()]);
       setLoading(false);
     };
     loadData();
-  }, [fetchLocations, fetchEmployees, fetchTodayAttendance, fetchLiveMapData]);
+  }, [fetchLocations, fetchEmployees, fetchTodayAttendance, fetchLiveMapData, fetchDepartments]);
 
   // Auto-refresh for live map (every 30 seconds)
   useEffect(() => {
