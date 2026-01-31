@@ -168,6 +168,50 @@ export default function GeoLocationsPage() {
     }
   }, [getAuthHeaders]);
 
+  const fetchFraudAlerts = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API}/geolocation-attendance/admin/fraud-alerts?limit=100`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      setFraudAlerts(response.data);
+    } catch (error) {
+      console.error("Error fetching fraud alerts");
+    }
+  }, [getAuthHeaders]);
+
+  const fetchFraudStats = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API}/geolocation-attendance/admin/fraud-stats?days=30`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      setFraudStats(response.data);
+    } catch (error) {
+      console.error("Error fetching fraud stats");
+    }
+  }, [getAuthHeaders]);
+
+  const fetchAlertSettings = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API}/geolocation-attendance/admin/alert-settings`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      setAlertSettings(response.data);
+      setSettingsForm({
+        enabled: response.data.enabled || false,
+        alert_outside_zone: response.data.alert_outside_zone !== false,
+        alert_fraud: response.data.alert_fraud !== false,
+        alert_daily_summary: response.data.alert_daily_summary !== false,
+        recipients: (response.data.recipients || []).join(", "),
+        outside_zone_threshold_meters: response.data.outside_zone_threshold_meters || 500
+      });
+    } catch (error) {
+      console.error("Error fetching alert settings");
+    }
+  }, [getAuthHeaders]);
+
   const generateReport = async () => {
     setLoadingReport(true);
     try {
