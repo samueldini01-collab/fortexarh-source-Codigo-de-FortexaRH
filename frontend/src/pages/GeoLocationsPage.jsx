@@ -209,6 +209,38 @@ export default function GeoLocationsPage() {
     link.click();
   };
 
+  // Filter map data
+  const getFilteredMapData = () => {
+    let filteredEmployees = [...(liveMapData.employees || [])];
+    
+    // Filter by location
+    if (mapFilters.location !== "all") {
+      filteredEmployees = filteredEmployees.filter(e => e.location_id === mapFilters.location);
+    }
+    
+    // Filter by status (within zone or not)
+    if (mapFilters.status === "within") {
+      filteredEmployees = filteredEmployees.filter(e => e.is_within_zone);
+    } else if (mapFilters.status === "outside") {
+      filteredEmployees = filteredEmployees.filter(e => !e.is_within_zone);
+    } else if (mapFilters.status === "pending") {
+      filteredEmployees = filteredEmployees.filter(e => e.status === "pending_review");
+    }
+    
+    // Filter by department (need to look up employee)
+    if (mapFilters.department !== "all") {
+      const empsByDept = employees.filter(e => e.department === mapFilters.department).map(e => e.employee_id);
+      filteredEmployees = filteredEmployees.filter(e => empsByDept.includes(e.employee_id));
+    }
+    
+    return {
+      employees: filteredEmployees,
+      locations: mapFilters.location !== "all" 
+        ? liveMapData.locations.filter(l => l.location_id === mapFilters.location)
+        : liveMapData.locations
+    };
+  };
+
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
