@@ -50,32 +50,63 @@ Mapa interactivo que muestra la ubicación de empleados que han marcado asistenc
   - Lista de últimas marcaciones con hora
 - **Leyenda:** Explicación de colores
 
-#### Filtros del Mapa (NUEVO)
+#### Filtros del Mapa
 - **Por Departamento:** Filtra empleados por su departamento
 - **Por Ubicación:** Muestra solo empleados de una ubicación específica
 - **Por Estado:** Filtrar por "Dentro de zona", "Fuera de zona", "Pendientes"
 - **Botón "Limpiar filtros":** Resetea todos los filtros
 
-#### Exportación de Reportes (NUEVO)
-- **Diálogo de Exportación:**
-  - Selector de fecha inicio y fin
-  - Filtro por ubicación
-  - Formato: Excel/CSV o Vista Previa
-- **Contenido del CSV:**
-  - Fecha, Empleado, Tipo (Entrada/Salida), Hora
-  - Ubicación, Dentro de Zona (Sí/No), Distancia, Estado
-- **Vista Previa del Reporte:**
-  - Total de marcaciones
-  - Desglose por ubicación
-  - Alertas fuera de zona
+#### Exportación de Reportes
+- **Diálogo de Exportación:** Selector de rango de fechas, filtro por ubicación
+- **Formato CSV:** Fecha, Empleado, Tipo, Hora, Ubicación, Estado
+- **Vista Previa:** Estadísticas antes de descargar
 
-#### Archivos
-- `/app/frontend/src/components/GeoMap.jsx` - Componente del mapa
-- `/app/frontend/src/pages/GeoLocationsPage.jsx` - Tab "Mapa en Vivo" con filtros y exportación
+---
 
-#### Dependencias Agregadas
-- `react-leaflet@5.0.0`
-- `leaflet@1.9.4`
+### 🚨 Detección de Fraude y Alertas - Fase 3 (P0 - COMPLETADO)
+Sistema automático de detección de patrones sospechosos y alertas por email.
+
+#### Tipos de Fraude Detectados
+- **⚡ Velocidad Imposible:** Marcaciones en ubicaciones distantes en tiempo muy corto (>150 km/h)
+- **🔄 Marcaciones Duplicadas:** Mismo empleado marcando múltiples veces en menos de 5 minutos
+- **📍 Fuera de Zona Frecuente:** Empleado que siempre marca fuera de sus ubicaciones
+- **🕐 Horarios Atípicos:** Marcaciones antes de 5am o después de 11pm
+- **📱 GPS Spoofing:** Precisión GPS baja (>100m) o coordenadas sospechosamente exactas
+
+#### Niveles de Alerta
+- 🔴 **CRÍTICA:** Fraude evidente (velocidad >300 km/h)
+- 🟠 **ALTA:** Velocidad imposible (<300 km/h pero >150 km/h)
+- 🟡 **MEDIA:** Patrón repetitivo, GPS sospechoso, horarios inusuales
+- 🔵 **BAJA:** Fuera de zona ocasional
+
+#### Alertas por Email
+- **Alerta inmediata:** Cuando empleado marca fuera de zona
+- **Alerta de fraude:** Cuando se detecta patrón sospechoso (MEDIA/ALTA/CRÍTICA)
+- **Resumen diario:** Estadísticas del día enviadas al final de la jornada
+- **Configuración:** Activar/desactivar por tipo, lista de destinatarios
+
+#### Panel de Administración (Tab "Fraude")
+- Cards con conteo por nivel de alerta
+- Tabla de alertas con filtros y acciones
+- Ranking de empleados con más alertas
+- Umbrales de detección configurables
+- Botón "Configurar Alertas" para email settings
+
+#### Endpoints API
+```bash
+GET /api/geolocation-attendance/admin/fraud-alerts
+PUT /api/geolocation-attendance/admin/fraud-alerts/{alert_id}
+GET /api/geolocation-attendance/admin/fraud-stats
+GET /api/geolocation-attendance/admin/alert-settings
+PUT /api/geolocation-attendance/admin/alert-settings
+POST /api/geolocation-attendance/admin/send-daily-summary
+```
+
+#### Archivos Creados
+- `/app/backend/services/fraud_detection.py` - Lógica de detección
+- `/app/backend/services/geo_alerts.py` - Servicio de emails
+- `/app/backend/routes/geolocation_attendance.py` - Endpoints actualizados
+- `/app/frontend/src/pages/GeoLocationsPage.jsx` - Tab "Fraude" y configuración
 
 ---
 
