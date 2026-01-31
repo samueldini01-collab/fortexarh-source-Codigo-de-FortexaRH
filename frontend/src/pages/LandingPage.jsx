@@ -889,95 +889,95 @@ export default function LandingPage() {
                 <span className="bg-purple-500 text-white px-3 sm:px-4 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap">Más Popular</span>
               </div>
               
-              <div className="text-center mb-6">
-                <div className="w-14 h-14 mx-auto rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white mb-4">
-                  <Zap className="w-7 h-7" />
+              <div className="text-center mb-4 sm:mb-6 pt-2">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white mb-3 sm:mb-4">
+                  <Zap className="w-6 h-6 sm:w-7 sm:h-7" />
                 </div>
-                <h3 className="text-2xl font-bold heading">FortexaRH Pro</h3>
-                <p className="text-slate-500 mt-1">Para empresas en crecimiento</p>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">$10</span>
+                <h3 className="text-xl sm:text-2xl font-bold heading">FortexaRH Pro</h3>
+                <p className="text-slate-500 mt-1 text-sm sm:text-base">Para empresas en crecimiento</p>
+                <div className="mt-3 sm:mt-4">
+                  <span className="text-3xl sm:text-4xl font-bold">$10</span>
                   <span className="text-slate-500">/mes</span>
-                  <p className="text-sm text-slate-500">+ $1.50 por empleado</p>
+                  <p className="text-xs sm:text-sm text-slate-500">+ $1.50 por empleado</p>
                 </div>
               </div>
               
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Hasta 200 empleados</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />5 usuarios incluidos</li>
-                <li className="flex items-center gap-2 text-sm font-medium"><Check className="w-4 h-4 text-emerald-500" />Todo lo del plan Básico</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" /><strong>QuickBooks Online</strong></li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-purple-500" /><strong>30 reportes avanzados</strong></li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-purple-500" />Búsqueda con IA</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-purple-500" />Gastos y viáticos (doble aprobación)</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-purple-500" />Evaluaciones de desempeño</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-purple-500" />Módulo de reclutamiento</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-purple-500" />Portal autoservicio empleados</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-purple-500" />Organigrama interactivo</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Notificaciones en tiempo real</li>
+              <ul className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />Hasta 200 empleados</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />5 usuarios incluidos</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm font-medium"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />Todo lo del plan Básico</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" /><strong>QuickBooks Online</strong></li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" /><strong>30 reportes avanzados</strong></li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" />Búsqueda con IA</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" />Gastos y viáticos (doble aprobación)</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" />Evaluaciones de desempeño</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" />Módulo de reclutamiento</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" />Portal autoservicio empleados</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" />Organigrama interactivo</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />Notificaciones en tiempo real</li>
               </ul>
               
               <div className="space-y-2">
                 <Link to="/checkout?plan=pro">
-                  <Button className="w-full bg-purple-600 hover:bg-purple-700" data-testid="buy-pro-btn">Comprar Plan</Button>
+                  <Button className="w-full bg-purple-600 hover:bg-purple-700 text-sm sm:text-base" data-testid="buy-pro-btn">Comprar Plan</Button>
                 </Link>
                 <Link to="/register">
-                  <Button className="w-full" variant="outline" data-testid="trial-pro-btn">Probar 14 días gratis</Button>
+                  <Button className="w-full text-sm sm:text-base" variant="outline" data-testid="trial-pro-btn">Probar 14 días gratis</Button>
                 </Link>
               </div>
             </div>
             
             {/* Plan Enterprise */}
-            <div className="rounded-2xl border-2 border-slate-200 p-8 hover:border-slate-300 transition-all bg-gradient-to-br from-amber-50 to-white">
-              <div className="text-center mb-6">
-                <div className="w-14 h-14 mx-auto rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white mb-4">
-                  <Crown className="w-7 h-7" />
+            <div className="rounded-xl sm:rounded-2xl border-2 border-slate-200 p-4 sm:p-6 lg:p-8 hover:border-slate-300 transition-all bg-gradient-to-br from-amber-50 to-white">
+              <div className="text-center mb-4 sm:mb-6">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white mb-3 sm:mb-4">
+                  <Crown className="w-6 h-6 sm:w-7 sm:h-7" />
                 </div>
-                <h3 className="text-2xl font-bold heading">FortexaRH Enterprise</h3>
-                <p className="text-slate-500 mt-1">Para grandes corporaciones</p>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">$20</span>
+                <h3 className="text-xl sm:text-2xl font-bold heading">FortexaRH Enterprise</h3>
+                <p className="text-slate-500 mt-1 text-sm sm:text-base">Para grandes corporaciones</p>
+                <div className="mt-3 sm:mt-4">
+                  <span className="text-3xl sm:text-4xl font-bold">$20</span>
                   <span className="text-slate-500">/mes</span>
-                  <p className="text-sm text-slate-500">+ $1.50 por empleado</p>
+                  <p className="text-xs sm:text-sm text-slate-500">+ $1.50 por empleado</p>
                 </div>
               </div>
               
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Empleados ilimitados</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />7 usuarios incluidos</li>
-                <li className="flex items-center gap-2 text-sm font-medium"><Check className="w-4 h-4 text-emerald-500" />Todo lo del plan Pro</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" /><strong>QuickBooks Online</strong></li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-amber-500" /><strong>58 reportes avanzados</strong></li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-amber-500" />Reportes personalizables y guardados</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-amber-500" />Roles personalizados</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-amber-500" />API personalizada</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-amber-500" />Integración SAP/Oracle/Dynamics</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-amber-500" />Flujos de trabajo avanzados</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-amber-500" />Múltiples sucursales</li>
-                <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500" />Soporte 24/7 y gerente dedicado</li>
+              <ul className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />Empleados ilimitados</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />7 usuarios incluidos</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm font-medium"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />Todo lo del plan Pro</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" /><strong>QuickBooks Online</strong></li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" /><strong>58 reportes avanzados</strong></li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Reportes personalizables y guardados</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Roles personalizados</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />API personalizada</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Integración SAP/Oracle/Dynamics</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Flujos de trabajo avanzados</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Múltiples sucursales</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />Soporte 24/7 y gerente dedicado</li>
               </ul>
               
               <div className="space-y-2">
                 <Link to="/checkout?plan=enterprise">
-                  <Button className="w-full bg-amber-600 hover:bg-amber-700" data-testid="buy-enterprise-btn">Comprar Plan</Button>
+                  <Button className="w-full bg-amber-600 hover:bg-amber-700 text-sm sm:text-base" data-testid="buy-enterprise-btn">Comprar Plan</Button>
                 </Link>
                 <Link to="/register">
-                  <Button className="w-full" variant="outline" data-testid="trial-enterprise-btn">Probar 14 días gratis</Button>
+                  <Button className="w-full text-sm sm:text-base" variant="outline" data-testid="trial-enterprise-btn">Probar 14 días gratis</Button>
                 </Link>
               </div>
             </div>
           </div>
           
           {/* Comparison Table */}
-          <div className="overflow-x-auto">
-            <h3 className="text-2xl font-bold text-center mb-8 heading">Comparación de Planes</h3>
-            <table className="w-full border-collapse">
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+            <h3 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8 heading">Comparación de Planes</h3>
+            <table className="w-full border-collapse min-w-[600px]">
               <thead>
                 <tr className="border-b-2 border-slate-200">
-                  <th className="text-left py-4 px-4 font-semibold">Característica</th>
-                  <th className="text-center py-4 px-4 font-semibold text-blue-600">Básico</th>
-                  <th className="text-center py-4 px-4 font-semibold text-purple-600">Pro</th>
-                  <th className="text-center py-4 px-4 font-semibold text-amber-600">Enterprise</th>
+                  <th className="text-left py-3 sm:py-4 px-2 sm:px-4 font-semibold text-xs sm:text-sm">Característica</th>
+                  <th className="text-center py-3 sm:py-4 px-2 sm:px-4 font-semibold text-blue-600 text-xs sm:text-sm">Básico</th>
+                  <th className="text-center py-3 sm:py-4 px-2 sm:px-4 font-semibold text-purple-600 text-xs sm:text-sm">Pro</th>
+                  <th className="text-center py-3 sm:py-4 px-2 sm:px-4 font-semibold text-amber-600 text-xs sm:text-sm">Enterprise</th>
                 </tr>
               </thead>
               <tbody className="text-sm">
