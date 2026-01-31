@@ -549,6 +549,31 @@ export default function Dashboard() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Drill-Down Modal */}
+        <DrillDownModal
+          open={drillDownModal.open}
+          onClose={closeDrillDown}
+          title={drillDownModal.title}
+          data={drillDownModal.data}
+          columns={drillDownModal.columns || []}
+          loading={drillDownLoading}
+          onRowClick={(row) => {
+            // Navigate to detail page based on drill-down type
+            const routes = {
+              employees: `/employees/${row.employee_id}`,
+              payrolls: `/payroll-v2`,
+              attendance: `/attendance`,
+              vacations: `/vacations`,
+              jobs: `/recruitment`,
+              candidates: `/recruitment`
+            };
+            if (routes[drillDownModal.type]) {
+              navigate(routes[drillDownModal.type]);
+              closeDrillDown();
+            }
+          }}
+        />
       </div>
     </DashboardLayout>
   );
