@@ -39,6 +39,10 @@ export default function Dashboard() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   
+  // Drill-down states
+  const [drillDownModal, setDrillDownModal] = useState({ open: false, type: null, title: "", data: [] });
+  const [drillDownLoading, setDrillDownLoading] = useState(false);
+  
   // Check if user is on basic or trial plan (show upgrade banner)
   const currentPlan = getCurrentPlan();
   const shouldShowUpgradeBanner = currentPlan === "basic" || currentPlan === "trial";
