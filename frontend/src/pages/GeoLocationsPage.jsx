@@ -1078,6 +1078,132 @@ export default function GeoLocationsPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Export Report Dialog */}
+        <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Download className="w-5 h-5 text-blue-600" />
+                Exportar Reporte de Asistencia
+              </DialogTitle>
+              <DialogDescription>
+                Genere un reporte de marcaciones por rango de fechas
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Fecha Inicio</Label>
+                  <Input
+                    type="date"
+                    value={reportFilters.startDate}
+                    onChange={(e) => setReportFilters({ ...reportFilters, startDate: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Fecha Fin</Label>
+                  <Input
+                    type="date"
+                    value={reportFilters.endDate}
+                    onChange={(e) => setReportFilters({ ...reportFilters, endDate: e.target.value })}
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Ubicación</Label>
+                <Select 
+                  value={reportFilters.locationId} 
+                  onValueChange={(v) => setReportFilters({ ...reportFilters, locationId: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Todas las ubicaciones" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas las ubicaciones</SelectItem>
+                    {locations.map(loc => (
+                      <SelectItem key={loc.location_id} value={loc.location_id}>{loc.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Formato de Exportación</Label>
+                <Select 
+                  value={reportFilters.format} 
+                  onValueChange={(v) => setReportFilters({ ...reportFilters, format: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="excel">Excel/CSV</SelectItem>
+                    <SelectItem value="preview">Solo Vista Previa</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {reportData && (
+                <Card className="bg-slate-50 dark:bg-slate-800/50">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">Vista Previa del Reporte</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>Total de marcaciones:</div>
+                      <div className="font-medium">{reportData.total_marks}</div>
+                      <div>Período:</div>
+                      <div className="font-medium">{reportData.period?.start} - {reportData.period?.end}</div>
+                      <div>Empleados:</div>
+                      <div className="font-medium">{reportData.by_employee?.length || 0}</div>
+                      <div>Alertas fuera de zona:</div>
+                      <div className="font-medium text-amber-600">{reportData.outside_zone_alerts?.length || 0}</div>
+                    </div>
+                    
+                    {reportData.by_location && Object.keys(reportData.by_location).length > 0 && (
+                      <div className="mt-3 pt-3 border-t">
+                        <p className="text-xs font-medium mb-2">Por Ubicación:</p>
+                        <div className="space-y-1">
+                          {Object.entries(reportData.by_location).slice(0, 5).map(([loc, count]) => (
+                            <div key={loc} className="flex justify-between text-xs">
+                              <span className="text-slate-600 dark:text-slate-400">{loc}</span>
+                              <Badge variant="secondary" className="text-xs">{count}</Badge>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => {
+                setShowReportDialog(false);
+                setReportData(null);
+              }}>
+                Cerrar
+              </Button>
+              <Button onClick={generateReport} disabled={loadingReport}>
+                {loadingReport ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                    Generando...
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-4 h-4 mr-2" />
+                    {reportFilters.format === "preview" ? "Ver Reporte" : "Descargar CSV"}
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );
