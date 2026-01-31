@@ -328,64 +328,65 @@ export default function Dashboard() {
         
         {/* Pro Plan Promotional Banner - For Basic and Trial users */}
         {shouldShowUpgradeBanner && showProBanner && (
-          <div className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-700 rounded-2xl p-6 text-white shadow-lg">
+          <div className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-lg">
             {/* Background decoration */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+            <div className="absolute top-0 right-0 w-32 sm:w-64 h-32 sm:h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-16 sm:w-32 h-16 sm:h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
             
             {/* Close button */}
             <button 
               onClick={handleCloseBanner}
-              className="absolute top-4 right-4 p-1 hover:bg-white/20 rounded-full transition-colors"
+              className="absolute top-2 right-2 sm:top-4 sm:right-4 p-1 hover:bg-white/20 rounded-full transition-colors"
               aria-label="Cerrar banner"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
             
-            <div className="relative flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+            <div className="relative flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <Sparkles className="w-5 h-5 text-amber-300" />
-                  <span className="text-sm font-medium text-purple-200">Actualiza a FortexaRH Pro</span>
+                  <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-amber-300" />
+                  <span className="text-xs sm:text-sm font-medium text-purple-200">Actualiza a FortexaRH Pro</span>
                 </div>
-                <h3 className="text-2xl font-bold mb-2">Desbloquea todo el potencial de tu gestión de RRHH</h3>
-                <p className="text-purple-100 text-sm mb-4 max-w-xl">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2">Desbloquea todo el potencial de tu gestión de RRHH</h3>
+                <p className="text-purple-100 text-xs sm:text-sm mb-4 max-w-xl hidden sm:block">
                   Con el plan Pro obtienes acceso a herramientas avanzadas que transformarán la manera en que gestionas tu equipo.
                 </p>
                 
                 {/* Feature highlights */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
-                    <Briefcase className="w-4 h-4 text-amber-300" />
-                    <span className="text-sm">Reclutamiento</span>
+                <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                  <div className="flex items-center gap-1.5 sm:gap-2 bg-white/10 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2">
+                    <Briefcase className="w-3 h-3 sm:w-4 sm:h-4 text-amber-300" />
+                    <span className="text-xs sm:text-sm truncate">Reclutamiento</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
-                    <UserCheck className="w-4 h-4 text-amber-300" />
-                    <span className="text-sm">Portal Empleados</span>
+                  <div className="flex items-center gap-1.5 sm:gap-2 bg-white/10 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2">
+                    <UserCheck className="w-3 h-3 sm:w-4 sm:h-4 text-amber-300" />
+                    <span className="text-xs sm:text-sm truncate">Portal Empleados</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
-                    <Target className="w-4 h-4 text-amber-300" />
-                    <span className="text-sm">Evaluaciones</span>
+                  <div className="flex items-center gap-1.5 sm:gap-2 bg-white/10 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2">
+                    <Target className="w-3 h-3 sm:w-4 sm:h-4 text-amber-300" />
+                    <span className="text-xs sm:text-sm truncate">Evaluaciones</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
-                    <Network className="w-4 h-4 text-amber-300" />
-                    <span className="text-sm">Organigrama</span>
+                  <div className="flex items-center gap-1.5 sm:gap-2 bg-white/10 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2">
+                    <Network className="w-3 h-3 sm:w-4 sm:h-4 text-amber-300" />
+                    <span className="text-xs sm:text-sm truncate">Organigrama</span>
                   </div>
                 </div>
               </div>
               
-              <div className="flex flex-col items-start lg:items-end gap-2">
-                <div className="text-right">
-                  <p className="text-purple-200 text-sm">Desde solo</p>
-                  <p className="text-3xl font-bold">$10<span className="text-lg font-normal">/mes</span></p>
-                  <p className="text-purple-200 text-xs">+ $1.50 por empleado</p>
+              <div className="flex flex-row lg:flex-col items-center lg:items-end gap-3 sm:gap-2 w-full lg:w-auto">
+                <div className="text-left lg:text-right flex-1 lg:flex-none">
+                  <p className="text-purple-200 text-xs sm:text-sm">Desde solo</p>
+                  <p className="text-2xl sm:text-3xl font-bold">$10<span className="text-base sm:text-lg font-normal">/mes</span></p>
+                  <p className="text-purple-200 text-[10px] sm:text-xs">+ $1.50 por empleado</p>
                 </div>
                 <Button 
                   onClick={() => navigate('/subscriptions')}
-                  className="bg-white text-purple-700 hover:bg-purple-50 font-semibold px-6"
+                  className="bg-white text-purple-700 hover:bg-purple-50 font-semibold px-4 sm:px-6 text-sm"
                   data-testid="upgrade-pro-btn"
                 >
-                  Actualizar a Pro
+                  <span className="hidden sm:inline">Actualizar a Pro</span>
+                  <span className="sm:hidden">Ver Pro</span>
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
