@@ -172,7 +172,7 @@ const exportToPDF = async (data, columns, filename, title = "") => {
 };
 
 /**
- * DrillDownModal - Modal para mostrar detalles de drill-down
+ * DrillDownModal - Modal para mostrar detalles de drill-down con exportación
  */
 export function DrillDownModal({ 
   open, 
@@ -184,8 +184,42 @@ export function DrillDownModal({
   loading = false,
   onRowClick,
   actions,
-  summary
+  summary,
+  showExport = true
 }) {
+  const [exporting, setExporting] = useState(false);
+
+  const handleExport = async (format) => {
+    setExporting(true);
+    try {
+      const filename = title?.replace(/[^a-zA-Z0-9]/g, "_") || "reporte";
+      
+      // Prepare data for export - extract raw values
+      const exportData = data.map(row => {
+        const exportRow = {};
+        columns.forEach(col => {
+          let value = row[col.accessor];
+          // For render functions, try to get the raw value
+          if (value === undefined && col.render) {
+            value = row[col.accessor] || "";
+          }
+          exportRow[col.accessor] = value;
+        });
+        return exportRow;
+      });
+
+      if (format === 'csv') {
+        exportToCSV(exportData, columns, filename);
+      } else if (format === 'excel') {
+        await exportToExcel(exportData, columns, filename, title);
+      } else if (format === 'pdf') {
+        await exportToPDF(exportData, columns, filename, title);
+      }
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[85vh]">
@@ -253,11 +287,48 @@ export function DrillDownModal({
           )}
         </ScrollArea>
         
-        {actions && (
-          <div className="flex justify-end gap-2 pt-4 border-t">
-            {actions}
-          </div>
-        )}
+        {/* Export Actions */}
+        <div className="flex items-center justify-between pt-4 border-t">
+          {showExport && data.length > 0 ? (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-500 mr-2">Exportar:</span>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => handleExport('excel')}
+                disabled={exporting}
+              >
+                {exporting ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <FileSpreadsheet className="w-3 h-3 mr-1" />}
+                Excel
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => handleExport('pdf')}
+                disabled={exporting}
+              >
+                {exporting ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <FileText className="w-3 h-3 mr-1" />}
+                PDF
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => handleExport('csv')}
+                disabled={exporting}
+              >
+                {exporting ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Download className="w-3 h-3 mr-1" />}
+                CSV
+              </Button>
+            </div>
+          ) : (
+            <div />
+          )}
+          {actions && (
+            <div className="flex gap-2">
+              {actions}
+            </div>
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   );
