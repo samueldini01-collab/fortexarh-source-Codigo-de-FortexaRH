@@ -12,6 +12,7 @@ import { Badge } from "../components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "../components/ui/dialog";
 import { ScrollArea } from "../components/ui/scroll-area";
 import { Checkbox } from "../components/ui/checkbox";
+import { DrillDownModal } from "../components/DrillDown";
 import { 
   FileText, Download, Eye, Save, Star, Clock, Filter, Search,
   DollarSign, Users, Calendar, Target, Wallet, ChevronRight,
