@@ -593,64 +593,148 @@ export default function DashboardLayout({ children, title }) {
             )}
             
             <div className="space-y-1">
-              {visibleMenuItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = location.pathname === item.href;
-                const hasAccess = canAccessFeature(item.featureKey);
-                const isLocked = !hasAccess && item.featureKey !== "subscriptions" && item.featureKey !== "settings";
+              {MENU_GROUPS.map((group) => {
+                const GroupIcon = group.icon;
+                const groupActive = isGroupActive(group);
                 
-                if (isLocked) {
-                  // Determine which plan is needed
-                  const needsPro = ["evaluations", "recruitment", "organigrama", "employee_portal"].includes(item.featureKey);
-                  const needsEnterprise = ["custom_roles", "api"].includes(item.featureKey);
-                  const requiredPlan = needsEnterprise ? "Enterprise" : needsPro ? "Pro" : "Superior";
-                  
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => {
-                        setBlockedFeature(item.name);
-                        setShowUpgradeModal(true);
-                      }}
-                      className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'gap-3 px-3'} py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-amber-50 hover:text-amber-600 transition-colors group`}
-                      title={sidebarCollapsed ? item.name : `Disponible en plan ${requiredPlan}`}
-                    >
-                      <Icon className="w-5 h-5 text-slate-300 group-hover:text-amber-400 shrink-0" />
-                      {!sidebarCollapsed && (
-                        <>
-                          <span className="flex-1 text-left truncate">{item.name}</span>
-                          <span className="flex items-center gap-1">
-                            <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded font-medium hidden group-hover:inline">
-                              {requiredPlan}
-                            </span>
-                            <Lock className="w-4 h-4 text-slate-300 group-hover:text-amber-500" />
-                          </span>
-                        </>
-                      )}
-                    </button>
-                  );
+                // For single items (dashboards without submenu)
+                if (!group.isGroup) {
+                  return group.items.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = location.pathname === item.href;
+                    const hasAccess = canAccessFeature(item.featureKey);
+                    const isLocked = !hasAccess && item.featureKey !== "subscriptions" && item.featureKey !== "settings";
+                    
+                    if (isLocked) return null;
+                    
+                    return (
+                      <Link
+                        key={item.id}
+                        to={item.href}
+                        className={`
+                          flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'gap-3 px-3'} py-2.5 rounded-lg text-sm font-medium
+                          transition-all duration-200
+                          ${isActive 
+                            ? sidebarCollapsed 
+                              ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' 
+                              : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-l-4 border-emerald-500 -ml-1 pl-4'
+                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
+                          }
+                        `}
+                        onClick={() => setSidebarOpen(false)}
+                        title={sidebarCollapsed ? item.name : undefined}
+                      >
+                        <Icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`} />
+                        {!sidebarCollapsed && <span className="truncate">{item.name}</span>}
+                      </Link>
+                    );
+                  });
                 }
                 
+                // For groups with collapsible submenus
+                const isExpanded = expandedGroups[group.id] || groupActive;
+                
                 return (
-                  <Link
-                    key={item.id}
-                    to={item.href}
-                    className={`
-                      flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'gap-3 px-3'} py-2.5 rounded-lg text-sm font-medium
-                      transition-all duration-200
-                      ${isActive 
-                        ? sidebarCollapsed 
-                          ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' 
-                          : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-l-4 border-emerald-500 -ml-1 pl-4'
-                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
-                      }
-                    `}
-                    onClick={() => setSidebarOpen(false)}
-                    title={sidebarCollapsed ? item.name : undefined}
+                  <Collapsible
+                    key={group.id}
+                    open={isExpanded}
+                    onOpenChange={() => toggleGroup(group.id)}
                   >
-                    <Icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`} />
-                    {!sidebarCollapsed && <span className="truncate">{item.name}</span>}
-                  </Link>
+                    <CollapsibleTrigger asChild>
+                      <button
+                        className={`
+                          w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'justify-between px-3'} py-2.5 rounded-lg text-sm font-medium
+                          transition-all duration-200
+                          ${groupActive && !isExpanded
+                            ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400'
+                            : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                          }
+                        `}
+                        title={sidebarCollapsed ? group.name : undefined}
+                      >
+                        <div className={`flex items-center ${sidebarCollapsed ? '' : 'gap-3'}`}>
+                          <GroupIcon className={`w-5 h-5 shrink-0 ${groupActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`} />
+                          {!sidebarCollapsed && (
+                            <div className="text-left">
+                              <span className="block">{group.name}</span>
+                              {group.subtitle && (
+                                <span className="text-[10px] text-slate-400 dark:text-slate-500 font-normal">{group.subtitle}</span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        {!sidebarCollapsed && (
+                          <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                        )}
+                      </button>
+                    </CollapsibleTrigger>
+                    
+                    <CollapsibleContent className="mt-1">
+                      <div className={`space-y-0.5 ${sidebarCollapsed ? '' : 'ml-4 pl-3 border-l-2 border-slate-200 dark:border-slate-700'}`}>
+                        {group.items.map((item) => {
+                          const Icon = item.icon;
+                          const isActive = location.pathname === item.href;
+                          const hasAccess = canAccessFeature(item.featureKey);
+                          const isLocked = !hasAccess && item.featureKey !== "subscriptions" && item.featureKey !== "settings";
+                          
+                          if (isLocked) {
+                            const needsPro = ["evaluations", "recruitment", "organigrama", "employee_portal"].includes(item.featureKey);
+                            const needsEnterprise = ["custom_roles", "api"].includes(item.featureKey);
+                            const requiredPlan = needsEnterprise ? "Enterprise" : needsPro ? "Pro" : "Superior";
+                            
+                            return (
+                              <button
+                                key={item.id}
+                                onClick={() => {
+                                  setBlockedFeature(item.name);
+                                  setShowUpgradeModal(true);
+                                }}
+                                className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'gap-3 px-3'} py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-amber-50 hover:text-amber-600 transition-colors group`}
+                                title={sidebarCollapsed ? item.name : `Disponible en plan ${requiredPlan}`}
+                              >
+                                <Icon className="w-4 h-4 text-slate-300 group-hover:text-amber-400 shrink-0" />
+                                {!sidebarCollapsed && (
+                                  <>
+                                    <span className="flex-1 text-left truncate">{item.name}</span>
+                                    <Lock className="w-3 h-3 text-slate-300 group-hover:text-amber-500" />
+                                  </>
+                                )}
+                              </button>
+                            );
+                          }
+                          
+                          return (
+                            <Link
+                              key={item.id}
+                              to={item.href}
+                              className={`
+                                flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'gap-3 px-3'} py-2 rounded-lg text-sm
+                                transition-all duration-200
+                                ${isActive 
+                                  ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-medium' 
+                                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
+                                }
+                              `}
+                              onClick={() => setSidebarOpen(false)}
+                              title={sidebarCollapsed ? item.name : undefined}
+                            >
+                              <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`} />
+                              {!sidebarCollapsed && (
+                                <span className="truncate flex items-center gap-2">
+                                  {item.name}
+                                  {item.isNew && (
+                                    <span className="text-[9px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-bold">
+                                      NUEVO
+                                    </span>
+                                  )}
+                                </span>
+                              )}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
                 );
               })}
             </div>
