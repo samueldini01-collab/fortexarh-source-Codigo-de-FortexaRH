@@ -126,6 +126,10 @@ export default function PayrollV2Page() {
   const [tssPreviewData, setTssPreviewData] = useState(null);
   const [tssLoading, setTssLoading] = useState(false);
   
+  // Drill-down state for period details
+  const [drillDown, setDrillDown] = useState({ open: false, title: "", data: [], columns: [] });
+  const [drillDownLoading, setDrillDownLoading] = useState(false);
+  
   // Form states
   const [newPeriodForm, setNewPeriodForm] = useState({
     period_type: "quincenal_1",
