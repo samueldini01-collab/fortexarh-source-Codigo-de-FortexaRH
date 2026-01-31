@@ -13,6 +13,7 @@ import axios from "axios";
 import { useAuth } from "@/App";
 import DashboardLayout from "@/components/DashboardLayout";
 import GeoMap from "@/components/GeoMap";
+import { FraudAlertDrillDown } from "@/components/DrillDown";
 import { 
   MapPin, 
   Plus, 
@@ -31,7 +32,8 @@ import {
   Map,
   Target,
   Calendar,
-  Globe
+  Globe,
+  Info
 } from "lucide-react";
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api";
