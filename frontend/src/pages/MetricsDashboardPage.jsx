@@ -339,6 +339,7 @@ export default function MetricsDashboardPage() {
               <CardTitle className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-emerald-500" />
                 Distribución de Empleados
+                <span className="text-xs text-slate-400 font-normal ml-2">(click para ver)</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -355,6 +356,8 @@ export default function MetricsDashboardPage() {
                       dataKey="employees"
                       label={({ name, percent }) => `${name?.substring(0, 8)} ${(percent * 100).toFixed(0)}%`}
                       labelLine={false}
+                      onClick={(data) => handleChartDrillDown("department", data)}
+                      style={{ cursor: 'pointer' }}
                     >
                       {departmentCosts.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
