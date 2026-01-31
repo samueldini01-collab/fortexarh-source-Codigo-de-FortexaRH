@@ -955,14 +955,21 @@ Portal B2B2B completo para firmas de contadores que gestionan múltiples cliente
 - **Template:** Email HTML profesional con branding, beneficios y CTA
 - **Archivos:** `/app/backend/routes/partners.py`, `/app/frontend/src/pages/PartnerDashboardPage.jsx`
 
-## Próximas Tareas (P1-P2)
-1. **Panel de Dispositivos Biométricos** - Gestión de dispositivos y documentación de integración
-2. **Notificaciones Push/Email** - Alertas para eventos del portal del empleado
-3. **Integrar CDC en operaciones CRUD** - Llamar `log_audit_event()` desde endpoints existentes
+## Próximas Tareas (P1)
+1. **2FA (Autenticación de dos factores)** - Seguridad mejorada para usuarios
+2. **E-signature para contratos y recibos** - Firma electrónica integrada
+3. **Integración con Bancos Dominicanos (ACH)** - Archivos para BHD, Popular, Banreservas
 
-## Tareas Futuras (P3)
+## Tareas Futuras (P2-P3)
+- PWA/Mobile App para empleados y supervisores
+- Panel de dispositivos biométricos
+- Módulo de comunicación interna (chat, anuncios, encuestas)
+- Sistema de gestión de aprendizaje (LMS)
+- Módulo de beneficios (seguros, pensiones)
+- Módulo de incidentes/accidentes (reportes ARL)
+- Diseñador avanzado de workflows
+- WebSockets para notificaciones en tiempo real
+- Calculadora ROI/Ahorro en landing page
+- Widget flotante de WhatsApp
 - Integraciones Enterprise reales (SAP, Oracle, Dynamics)
-- PWA/Mobile App - Versión móvil del portal del empleado
-- E-signature para documentos
-- Temas personalizados por empresa
-- Sistema de pagos de comisiones a partners
+- Versión en inglés del brochure e interfaz
