@@ -152,6 +152,77 @@ export default function DGIIReportsPage() {
       console.error("Error fetching available years:", error);
     }
   }, [getAuthHeaders]);
+
+  // Drill-down for report totals
+  const handleReportDrillDown = async (reportType, reportData) => {
+    setDrillDownLoading(true);
+    setDrillDown({ open: true, title: "", data: [], columns: [] });
+    
+    try {
+      // Fetch employee breakdown for the selected period
+      const period = periods.find(p => p.period_id === selectedPeriod);
+      if (!period) {
+        toast.error("Seleccione un período válido");
+        setDrillDown({ open: false, title: "", data: [], columns: [] });
+        return;
+      }
+      
+      const response = await axios.get(`${API}/payroll-v2/periods/${selectedPeriod}/details`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      
+      const employees = response.data?.employee_records || response.data?.employees || [];
+      let title = "";
+      let columns = [];
+      let data = employees;
+      
+      switch (reportType) {
+        case "ir3":
+        case "ir4":
+          title = `Desglose ISR - ${period.description || `${period.month}/${period.year}`}`;
+          columns = [
+            { header: "Empleado", accessor: "employee_name" },
+            { header: "Cédula", accessor: "cedula" },
+            { header: "Salario Bruto", accessor: "gross", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+            { header: "ISR Retenido", accessor: "isr", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-red-600" }
+          ];
+          break;
+          
+        case "tss-autodeterminacion":
+          title = `Desglose TSS - ${period.description || `${period.month}/${period.year}`}`;
+          columns = [
+            { header: "Empleado", accessor: "employee_name" },
+            { header: "Cédula", accessor: "cedula" },
+            { header: "Salario", accessor: "gross", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+            { header: "SFS", accessor: "sfs", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+            { header: "AFP", accessor: "afp", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+            { header: "Patronal", accessor: "employer_total", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-amber-600" }
+          ];
+          break;
+          
+        default:
+          title = `Desglose ${reportType.toUpperCase()} - ${period.description}`;
+          columns = [
+            { header: "Empleado", accessor: "employee_name" },
+            { header: "Cédula", accessor: "cedula" },
+            { header: "Monto", accessor: "total", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" }
+          ];
+      }
+      
+      setDrillDown({ open: true, title, data, columns });
+    } catch (error) {
+      console.error("Error fetching report breakdown:", error);
+      toast.error("Error al cargar desglose");
+      setDrillDown({ open: false, title: "", data: [], columns: [] });
+    } finally {
+      setDrillDownLoading(false);
+    }
+  };
+
+  const closeDrillDown = () => {
+    setDrillDown({ open: false, title: "", data: [], columns: [] });
+  };
   
   useEffect(() => {
     fetchPeriods();
