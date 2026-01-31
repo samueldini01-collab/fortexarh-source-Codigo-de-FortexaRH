@@ -406,24 +406,32 @@ export default function Dashboard() {
             ))
           ) : (
             statCards.map((stat, index) => (
-              <Card 
-                key={index} 
-                className="border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow cursor-pointer group bg-white dark:bg-slate-900"
-                data-testid={`stat-card-${index}`}
-                onClick={() => stat.href && navigate(stat.href)}
+              <DrillDownCard 
+                key={index}
+                onClick={() => handleDrillDown(stat.drillDownType)}
+                className="border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl border"
               >
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">{stat.title}</p>
-                      <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">{stat.value}</p>
+                <Card 
+                  className="border-0 shadow-none bg-transparent"
+                  data-testid={`stat-card-${index}`}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">{stat.title}</p>
+                        <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">{stat.value}</p>
+                      </div>
+                      <div className={`w-12 h-12 ${stat.bgColor} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                        <stat.icon className={`w-6 h-6 ${stat.textColor}`} />
+                      </div>
                     </div>
-                    <div className={`w-12 h-12 ${stat.bgColor} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                      <stat.icon className={`w-6 h-6 ${stat.textColor}`} />
+                    <div className="flex items-center justify-end mt-3 text-xs text-slate-400">
+                      <span>Click para ver detalles</span>
+                      <ChevronRight className="w-3 h-3 ml-1" />
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </DrillDownCard>
             ))
           )}
         </div>
