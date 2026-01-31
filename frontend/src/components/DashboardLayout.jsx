@@ -97,7 +97,8 @@ const MENU_GROUPS = [
     id: "dashboards",
     name: "Dashboards",
     icon: LayoutDashboard,
-    isGroup: false,
+    isGroup: true,
+    defaultOpen: true,
     items: [
       { id: "dashboard", name: "Dashboard Principal", href: "/dashboard", icon: LayoutDashboard, featureKey: "dashboard" },
       { id: "payroll-dashboard", name: "Dashboard Nómina", href: "/payroll-dashboard", icon: BarChart3, featureKey: "reports" },
