@@ -273,16 +273,17 @@ export default function GlobalSearch() {
       {/* Search Trigger */}
       <button 
         onClick={() => setOpen(true)}
-        className="flex items-center gap-3 px-4 py-2 text-sm text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 w-[320px] md:w-[400px] lg:w-[500px] border border-transparent hover:border-slate-300 dark:hover:border-slate-600 shadow-sm hover:shadow"
+        className="flex items-center gap-2 sm:gap-3 px-2.5 sm:px-4 py-2 text-sm text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg sm:rounded-xl transition-all duration-200 w-full max-w-[200px] sm:max-w-[280px] md:max-w-[400px] lg:max-w-[500px] border border-transparent hover:border-slate-300 dark:hover:border-slate-600 shadow-sm hover:shadow"
         data-testid="global-search-trigger"
       >
-        <Search className="w-4 h-4 text-slate-400" />
-        <span className="flex-1 text-left truncate">Buscar o ejecutar acciones con IA...</span>
-        <div className="flex items-center gap-1">
+        <Search className="w-4 h-4 text-slate-400 flex-shrink-0" />
+        <span className="flex-1 text-left truncate text-xs sm:text-sm hidden xs:inline">Buscar o ejecutar acciones con IA...</span>
+        <span className="flex-1 text-left truncate text-xs xs:hidden">Buscar...</span>
+        <div className="hidden sm:flex items-center gap-1">
           <Sparkles className="w-3.5 h-3.5 text-purple-500" />
           <span className="text-xs text-purple-500 font-medium">IA</span>
         </div>
-        <kbd className="hidden sm:inline-flex h-6 items-center gap-1 rounded-md border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-2 font-mono text-[11px] font-medium text-slate-500 dark:text-slate-400 ml-2">
+        <kbd className="hidden md:inline-flex h-6 items-center gap-1 rounded-md border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-2 font-mono text-[11px] font-medium text-slate-500 dark:text-slate-400 ml-2">
           <Command className="w-3 h-3" /><span>K</span>
         </kbd>
       </button>
