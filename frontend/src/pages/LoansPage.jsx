@@ -470,6 +470,14 @@ export default function LoansPage() {
                       <TableCell>{getStatusBadge(loan.status)}</TableCell>
                       <TableCell>
                         <div className="flex gap-2 justify-end">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => openPaymentHistory(loan)}
+                            title="Ver historial de pagos"
+                          >
+                            <History className="w-4 h-4" />
+                          </Button>
                           <Button variant="ghost" size="sm" onClick={() => openLoanDetail(loan)}>
                             <Eye className="w-4 h-4" />
                           </Button>
@@ -497,6 +505,15 @@ export default function LoansPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Loan Payments Drill-Down */}
+        <LoanPaymentsDrillDown
+          open={paymentsDrillDown.open}
+          onClose={closePaymentHistory}
+          loan={paymentsDrillDown.loan}
+          payments={paymentsDrillDown.payments}
+          loading={drillDownLoading}
+        />
 
         {/* Create Loan Modal */}
         <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
