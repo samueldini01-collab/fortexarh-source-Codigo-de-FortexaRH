@@ -10,21 +10,28 @@ Sistema de exploración de datos que permite a los usuarios hacer clic en métri
 #### Módulos con Drill-Down Implementados
 1. **Dashboard Principal** - Tarjetas de estadísticas clickeables (Empleados, Nóminas, Presentes, Vacaciones, Vacantes, Candidatos)
 2. **Dashboard Nómina** - Tarjeta de empleados y gráfico de distribución por departamento
-3. **Métricas** - Gráficos de pie clickeables que muestran empleados por departamento
+3. **Dashboard de Métricas** - KPIs clickeables, gráficos de tendencia y barras, tabla mensual con filas clickeables
 4. **Centro de Reportes** - Filas de tabla de asistencia clickeables para ver detalle
 5. **Costos por Departamento** - Clic en fila de departamento muestra sus empleados
 6. **Reportes DGII-TSS** - Tarjetas de reporte clickeables muestran desglose por empleado
 7. **Períodos de Nómina** - Botón de lista muestra desglose de empleados del período
 8. **Préstamos** - Botón de historial muestra pagos del préstamo
 9. **Geolocalización - Alertas** - Filas de alertas clickeables muestran detalle completo
-10. **Mapa en Tiempo Real** - Click en ubicación muestra empleados asignados
+10. **Centro de Reportes Avanzado** - Filas de vista previa clickeables con detalle completo
+
+#### Exportación desde Drill-Down
+- **Excel (.xls)** - Tabla formateada con estilos
+- **PDF** - Documento imprimible/descargable
+- **CSV** - Datos crudos para análisis
 
 #### Componentes Creados/Modificados
 - **DrillDown.jsx** - Componente reutilizable con `DrillDownModal`, `DrillDownSheet`, `DrillDownCard`
 - **LoanPaymentsDrillDown** - Historial de pagos de préstamos
 - **FraudAlertDrillDown** - Detalle de alertas de fraude
+- **Funciones de exportación** - `exportToCSV`, `exportToExcel`, `exportToPDF`
 
 #### Archivos Modificados
+- `/app/frontend/src/components/DrillDown.jsx` - Agregadas funciones de exportación
 - `/app/frontend/src/pages/Dashboard.jsx`
 - `/app/frontend/src/pages/PayrollDashboardPage.jsx`
 - `/app/frontend/src/pages/CostsByDepartmentPage.jsx`
@@ -32,8 +39,9 @@ Sistema de exploración de datos que permite a los usuarios hacer clic en métri
 - `/app/frontend/src/pages/GeoLocationsPage.jsx`
 - `/app/frontend/src/pages/DGIIReportsPage.jsx`
 - `/app/frontend/src/pages/PayrollV2Page.jsx`
-- `/app/frontend/src/pages/MetricsDashboardPage.jsx`
+- `/app/frontend/src/pages/MetricsDashboardPage.jsx` - Drill-down completo en KPIs, gráficos y tabla
 - `/app/frontend/src/pages/ReportsPage.jsx`
+- `/app/frontend/src/pages/ReportsSystemPage.jsx` - Drill-down en filas de vista previa
 
 #### Test Report: `/app/test_reports/iteration_30.json`
 - Frontend: 100% (10/10 módulos con drill-down funcionando)
