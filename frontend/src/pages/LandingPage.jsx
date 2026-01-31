@@ -933,28 +933,28 @@ export default function LandingPage() {
                 <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white mb-3 sm:mb-4">
                   <Crown className="w-6 h-6 sm:w-7 sm:h-7" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold heading">FortexaRH Enterprise</h3>
-                <p className="text-slate-500 mt-1 text-sm sm:text-base">Para grandes corporaciones</p>
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 heading">FortexaRH Enterprise</h3>
+                <p className="text-slate-600 mt-1 text-sm sm:text-base">Para grandes corporaciones</p>
                 <div className="mt-3 sm:mt-4">
-                  <span className="text-3xl sm:text-4xl font-bold">$20</span>
-                  <span className="text-slate-500">/mes</span>
-                  <p className="text-xs sm:text-sm text-slate-500">+ $1.50 por empleado</p>
+                  <span className="text-3xl sm:text-4xl font-bold text-slate-900">$20</span>
+                  <span className="text-slate-600">/mes</span>
+                  <p className="text-xs sm:text-sm text-slate-600">+ $1.50 por empleado</p>
                 </div>
               </div>
               
               <ul className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
-                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />Empleados ilimitados</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />7 usuarios incluidos</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm font-medium"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />Todo lo del plan Pro</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" /><strong>QuickBooks Online</strong></li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" /><strong>58 reportes avanzados</strong></li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Reportes personalizables y guardados</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Roles personalizados</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />API personalizada</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Integración SAP/Oracle/Dynamics</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Flujos de trabajo avanzados</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Múltiples sucursales</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />Soporte 24/7 y gerente dedicado</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />Empleados ilimitados</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />7 usuarios incluidos</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700 font-medium"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />Todo lo del plan Pro</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" /><strong>QuickBooks Online</strong></li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" /><strong>58 reportes avanzados</strong></li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Reportes personalizables y guardados</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Roles personalizados</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />API personalizada</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Integración SAP/Oracle/Dynamics</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Flujos de trabajo avanzados</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Múltiples sucursales</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />Soporte 24/7 y gerente dedicado</li>
               </ul>
               
               <div className="space-y-2">
