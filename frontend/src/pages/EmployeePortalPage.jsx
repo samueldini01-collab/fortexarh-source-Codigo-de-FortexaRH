@@ -1392,6 +1392,7 @@ function EmployeeDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+          </div>{/* End swipeable content area */}
         </Tabs>
       </main>
 
