@@ -549,7 +549,7 @@ export default function MetricsDashboardPage() {
         <Card data-testid="monthly-comparison-table">
           <CardHeader>
             <CardTitle>Comparativa Mensual</CardTitle>
-            <CardDescription>Detalle de nómina por mes - {selectedYear}</CardDescription>
+            <CardDescription>Detalle de nómina por mes - {selectedYear} (click en fila para ver desglose)</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -562,11 +562,16 @@ export default function MetricsDashboardPage() {
                     <th className="text-right py-3 px-4 font-medium text-slate-600 dark:text-slate-300">Neto</th>
                     <th className="text-right py-3 px-4 font-medium text-slate-600 dark:text-slate-300">Empleados</th>
                     <th className="text-right py-3 px-4 font-medium text-slate-600 dark:text-slate-300">Costo/Emp</th>
+                    <th className="w-10"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {payrollTrend.map((row, i) => (
-                    <tr key={i} className="border-b hover:bg-slate-50 dark:hover:bg-slate-800">
+                    <tr 
+                      key={i} 
+                      className="border-b hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors"
+                      onClick={() => handleChartDrillDown("payroll_month", row)}
+                    >
                       <td className="py-3 px-4 font-medium">{row.month}</td>
                       <td className="py-3 px-4 text-right">{formatCurrency(row.gross)}</td>
                       <td className="py-3 px-4 text-right text-red-600 dark:text-red-400">{formatCurrency(row.deductions)}</td>
@@ -574,6 +579,9 @@ export default function MetricsDashboardPage() {
                       <td className="py-3 px-4 text-right">{row.employees}</td>
                       <td className="py-3 px-4 text-right text-slate-500 dark:text-slate-400">
                         {row.employees > 0 ? formatCurrency(row.gross / row.employees) : '-'}
+                      </td>
+                      <td className="py-3 px-4">
+                        <ChevronRight className="w-4 h-4 text-slate-400" />
                       </td>
                     </tr>
                   ))}
@@ -586,6 +594,7 @@ export default function MetricsDashboardPage() {
                     <td className="py-3 px-4 text-right text-emerald-600 dark:text-emerald-400">{formatCurrency(totalPaidThisYear)}</td>
                     <td className="py-3 px-4 text-right">-</td>
                     <td className="py-3 px-4 text-right">-</td>
+                    <td></td>
                   </tr>
                 </tfoot>
               </table>
