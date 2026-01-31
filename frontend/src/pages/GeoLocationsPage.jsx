@@ -89,6 +89,10 @@ export default function GeoLocationsPage() {
     outside_zone_threshold_meters: 500
   });
   
+  // Drill-down for fraud alerts
+  const [alertDrillDown, setAlertDrillDown] = useState({ open: false, alert: null });
+  const [drillDownLoading, setDrillDownLoading] = useState(false);
+  
   // Dialog states
   const [showLocationDialog, setShowLocationDialog] = useState(false);
   const [showAssignDialog, setShowAssignDialog] = useState(false);
