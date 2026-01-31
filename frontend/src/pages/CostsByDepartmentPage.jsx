@@ -40,6 +40,10 @@ export default function CostsByDepartmentPage() {
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   });
   const [departmentComparison, setDepartmentComparison] = useState([]);
+  
+  // Drill-down states
+  const [drillDown, setDrillDown] = useState({ open: false, title: "", data: [], columns: [] });
+  const [drillDownLoading, setDrillDownLoading] = useState(false);
 
   const fetchCostReport = useCallback(async () => {
     setLoading(true);
