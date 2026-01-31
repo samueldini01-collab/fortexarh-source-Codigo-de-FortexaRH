@@ -17,7 +17,159 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { X, Download, ExternalLink, ChevronRight } from "lucide-react";
+import { X, Download, ExternalLink, ChevronRight, FileSpreadsheet, FileText, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+
+/**
+ * Export utility functions
+ */
+const exportToCSV = (data, columns, filename) => {
+  if (!data || data.length === 0) {
+    toast.error("No hay datos para exportar");
+    return;
+  }
+  
+  const headers = columns.map(c => c.header).join(",");
+  const rows = data.map(row => 
+    columns.map(col => {
+      let value = row[col.accessor];
+      if (value === null || value === undefined) value = "";
+      // Escape commas and quotes
+      if (typeof value === "string") {
+        value = value.replace(/"/g, '""');
+        if (value.includes(",") || value.includes('"') || value.includes("\n")) {
+          value = `"${value}"`;
+        }
+      }
+      return value;
+    }).join(",")
+  ).join("\n");
+  
+  const csvContent = `${headers}\n${rows}`;
+  const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", `${filename}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  toast.success("Exportado a CSV exitosamente");
+};
+
+const exportToExcel = async (data, columns, filename, title = "") => {
+  if (!data || data.length === 0) {
+    toast.error("No hay datos para exportar");
+    return;
+  }
+  
+  // Build HTML table for Excel
+  let html = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        table { border-collapse: collapse; font-family: Arial, sans-serif; }
+        th { background-color: #4F46E5; color: white; font-weight: bold; padding: 10px; border: 1px solid #ddd; }
+        td { padding: 8px; border: 1px solid #ddd; }
+        tr:nth-child(even) { background-color: #f9fafb; }
+        .title { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+        .date { font-size: 12px; color: #666; margin-bottom: 20px; }
+        .number { text-align: right; }
+      </style>
+    </head>
+    <body>
+      ${title ? `<p class="title">${title}</p>` : ''}
+      <p class="date">Generado: ${new Date().toLocaleString('es-DO')}</p>
+      <table>
+        <thead><tr>${columns.map(c => `<th>${c.header}</th>`).join("")}</tr></thead>
+        <tbody>
+          ${data.map(row => `<tr>${columns.map(col => {
+            let value = row[col.accessor];
+            if (value === null || value === undefined) value = "";
+            const isNumber = typeof value === "number";
+            return `<td class="${isNumber ? 'number' : ''}">${value}</td>`;
+          }).join("")}</tr>`).join("")}
+        </tbody>
+      </table>
+    </body>
+    </html>
+  `;
+  
+  const blob = new Blob([html], { type: "application/vnd.ms-excel" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", `${filename}.xls`);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  toast.success("Exportado a Excel exitosamente");
+};
+
+const exportToPDF = async (data, columns, filename, title = "") => {
+  if (!data || data.length === 0) {
+    toast.error("No hay datos para exportar");
+    return;
+  }
+
+  // Create printable HTML
+  const printContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>${title || filename}</title>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h1 { color: #1e40af; font-size: 24px; margin-bottom: 5px; }
+        .date { color: #666; font-size: 12px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 11px; }
+        th { background-color: #1e40af; color: white; padding: 10px 8px; text-align: left; }
+        td { padding: 8px; border-bottom: 1px solid #e5e7eb; }
+        tr:nth-child(even) { background-color: #f9fafb; }
+        .number { text-align: right; }
+        .footer { margin-top: 30px; font-size: 10px; color: #666; text-align: center; }
+        @media print {
+          body { margin: 0; padding: 10px; }
+          h1 { font-size: 18px; }
+        }
+      </style>
+    </head>
+    <body>
+      <h1>${title || 'Reporte'}</h1>
+      <p class="date">Generado: ${new Date().toLocaleString('es-DO')}</p>
+      <table>
+        <thead><tr>${columns.map(c => `<th>${c.header}</th>`).join("")}</tr></thead>
+        <tbody>
+          ${data.map(row => `<tr>${columns.map(col => {
+            let value = row[col.accessor];
+            if (value === null || value === undefined) value = "";
+            const isNumber = typeof value === "number";
+            return `<td class="${isNumber ? 'number' : ''}">${value}</td>`;
+          }).join("")}</tr>`).join("")}
+        </tbody>
+      </table>
+      <p class="footer">FortexaRH - Sistema de Gestión de Recursos Humanos</p>
+    </body>
+    </html>
+  `;
+
+  const printWindow = window.open('', '_blank');
+  if (printWindow) {
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+    }, 500);
+    toast.success("Documento listo para imprimir/guardar como PDF");
+  } else {
+    toast.error("No se pudo abrir la ventana de impresión");
+  }
+};
 
 /**
  * DrillDownModal - Modal para mostrar detalles de drill-down
