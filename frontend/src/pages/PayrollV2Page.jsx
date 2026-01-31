@@ -58,9 +58,11 @@ import {
   Briefcase,
   Eye,
   Building2,
-  Shield
+  Shield,
+  List
 } from "lucide-react";
 import { toast } from "sonner";
+import { DrillDownModal } from "@/components/DrillDown";
 
 const months = [
   { value: 1, label: "Enero" }, { value: 2, label: "Febrero" }, { value: 3, label: "Marzo" },
