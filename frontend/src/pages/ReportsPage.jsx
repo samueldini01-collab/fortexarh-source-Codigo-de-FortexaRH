@@ -35,6 +35,10 @@ export default function ReportsPage() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
   const [selectedMonth, setSelectedMonth] = useState((new Date().getMonth() + 1).toString());
   const { getAuthHeaders } = useAuth();
+  
+  // Drill-down state
+  const [drillDown, setDrillDown] = useState({ open: false, title: "", data: [], columns: [] });
+  const [drillDownLoading, setDrillDownLoading] = useState(false);
 
   const fetchReports = useCallback(async () => {
     setLoading(true);
