@@ -172,17 +172,23 @@ export default function PayrollDashboardPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-blue-100 text-sm">Empleados Activos</p>
-                  <p className="text-3xl font-bold">{summary?.total_employees || 0}</p>
+          <DrillDownCard onClick={() => handleDrillDown("employees")}>
+            <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-blue-100 text-sm">Empleados Activos</p>
+                    <p className="text-3xl font-bold">{summary?.total_employees || 0}</p>
+                  </div>
+                  <Users className="w-12 h-12 text-blue-200" />
                 </div>
-                <Users className="w-12 h-12 text-blue-200" />
-              </div>
-            </CardContent>
-          </Card>
+                <div className="flex items-center mt-2 text-xs text-blue-100">
+                  <span>Click para ver detalle</span>
+                  <ChevronRight className="w-3 h-3 ml-1" />
+                </div>
+              </CardContent>
+            </Card>
+          </DrillDownCard>
 
           <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
             <CardContent className="p-6">
