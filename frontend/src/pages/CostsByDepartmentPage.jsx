@@ -386,7 +386,12 @@ export default function CostsByDepartmentPage() {
                       </thead>
                       <tbody>
                         {costReport.departments.map((dept, idx) => (
-                          <tr key={idx} className="border-b hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                          <tr 
+                            key={idx} 
+                            className="border-b hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer group"
+                            onClick={() => handleDepartmentDrillDown(dept.department)}
+                            data-testid={`dept-row-${idx}`}
+                          >
                             <td className="py-3 px-4">
                               <div className="flex items-center gap-2">
                                 <div 
@@ -394,6 +399,7 @@ export default function CostsByDepartmentPage() {
                                   style={{ backgroundColor: COLORS[idx % COLORS.length] }}
                                 />
                                 <span className="font-medium">{dept.department}</span>
+                                <ChevronRight className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                               </div>
                             </td>
                             <td className="py-3 px-4 text-center">
