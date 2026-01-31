@@ -872,3 +872,288 @@ async def reject_mark(mark_id: str, request: Request, reason: str = ""):
         raise HTTPException(status_code=404, detail="Marcación no encontrada")
     
     return {"message": "Marcación rechazada"}
+
+
+# ==================== FRAUD DETECTION & ALERTS ====================
+
+class AlertSettingsUpdate(BaseModel):
+    enabled: bool = True
+    alert_outside_zone: bool = True
+    alert_fraud: bool = True
+    alert_daily_summary: bool = True
+    recipients: List[str] = []
+    outside_zone_threshold_meters: int = 500
+
+
+@router.get("/admin/fraud-alerts")
+async def get_fraud_alerts(
+    request: Request,
+    status: str = None,
+    level: str = None,
+    start_date: str = None,
+    end_date: str = None,
+    limit: int = 100
+):
+    """Get fraud alerts for the company"""
+    current_user = await get_current_user(request)
+    company_id = current_user.get("company_id")
+    user_role = current_user.get("role", "")
+    
+    if user_role not in ["admin", "hr_manager", "supervisor"]:
+        raise HTTPException(status_code=403, detail="No tiene permisos para ver alertas de fraude")
+    
+    query = {"company_id": company_id}
+    
+    if status:
+        query["status"] = status
+    if level:
+        query["alert_level"] = level
+    if start_date:
+        query["created_at"] = {"$gte": start_date}
+    if end_date:
+        if "created_at" in query:
+            query["created_at"]["$lte"] = end_date + "T23:59:59"
+        else:
+            query["created_at"] = {"$lte": end_date + "T23:59:59"}
+    
+    alerts = await db.fraud_alerts.find(query, {"_id": 0}).sort("created_at", -1).to_list(limit)
+    
+    # Get summary
+    summary = {
+        "total": len(alerts),
+        "by_level": {
+            "critical": len([a for a in alerts if a.get("alert_level") == "critical"]),
+            "high": len([a for a in alerts if a.get("alert_level") == "high"]),
+            "medium": len([a for a in alerts if a.get("alert_level") == "medium"]),
+            "low": len([a for a in alerts if a.get("alert_level") == "low"])
+        },
+        "by_status": {
+            "new": len([a for a in alerts if a.get("status") == "new"]),
+            "reviewed": len([a for a in alerts if a.get("status") == "reviewed"]),
+            "resolved": len([a for a in alerts if a.get("status") == "resolved"]),
+            "dismissed": len([a for a in alerts if a.get("status") == "dismissed"])
+        },
+        "by_type": {}
+    }
+    
+    for alert in alerts:
+        alert_type = alert.get("alert_type", "unknown")
+        summary["by_type"][alert_type] = summary["by_type"].get(alert_type, 0) + 1
+    
+    return {
+        "alerts": alerts,
+        "summary": summary
+    }
+
+
+@router.put("/admin/fraud-alerts/{alert_id}")
+async def update_fraud_alert(alert_id: str, request: Request, status: str, notes: str = ""):
+    """Update fraud alert status"""
+    current_user = await get_current_user(request)
+    company_id = current_user.get("company_id")
+    user_role = current_user.get("role", "")
+    
+    if user_role not in ["admin", "hr_manager", "supervisor"]:
+        raise HTTPException(status_code=403, detail="No tiene permisos para actualizar alertas")
+    
+    valid_statuses = ["new", "reviewed", "resolved", "dismissed"]
+    if status not in valid_statuses:
+        raise HTTPException(status_code=400, detail=f"Estado inválido. Usar: {valid_statuses}")
+    
+    result = await db.fraud_alerts.update_one(
+        {"alert_id": alert_id, "company_id": company_id},
+        {"$set": {
+            "status": status,
+            "reviewed_by": current_user.get("user_id"),
+            "reviewed_at": now_iso(),
+            "review_notes": notes
+        }}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Alerta no encontrada")
+    
+    return {"message": "Alerta actualizada"}
+
+
+@router.get("/admin/fraud-stats")
+async def get_fraud_stats(request: Request, days: int = 30):
+    """Get fraud detection statistics"""
+    current_user = await get_current_user(request)
+    company_id = current_user.get("company_id")
+    user_role = current_user.get("role", "")
+    
+    if user_role not in ["admin", "hr_manager", "supervisor"]:
+        raise HTTPException(status_code=403, detail="No tiene permisos para ver estadísticas")
+    
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+    
+    alerts = await db.fraud_alerts.find(
+        {"company_id": company_id, "created_at": {"$gte": cutoff}},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    # Group by employee
+    by_employee = {}
+    for alert in alerts:
+        emp_id = alert.get("employee_id")
+        emp_name = alert.get("employee_name", "Desconocido")
+        
+        if emp_id not in by_employee:
+            by_employee[emp_id] = {
+                "employee_id": emp_id,
+                "employee_name": emp_name,
+                "total_alerts": 0,
+                "critical": 0,
+                "high": 0,
+                "medium": 0,
+                "low": 0
+            }
+        
+        by_employee[emp_id]["total_alerts"] += 1
+        level = alert.get("alert_level", "low")
+        by_employee[emp_id][level] = by_employee[emp_id].get(level, 0) + 1
+    
+    # Sort by total alerts (most suspicious first)
+    top_employees = sorted(by_employee.values(), key=lambda x: x["total_alerts"], reverse=True)[:10]
+    
+    # Group by date
+    by_date = {}
+    for alert in alerts:
+        date = alert.get("created_at", "")[:10]
+        by_date[date] = by_date.get(date, 0) + 1
+    
+    # Group by type
+    by_type = {}
+    for alert in alerts:
+        alert_type = alert.get("alert_type", "unknown")
+        by_type[alert_type] = by_type.get(alert_type, 0) + 1
+    
+    return {
+        "period_days": days,
+        "total_alerts": len(alerts),
+        "top_employees": top_employees,
+        "by_date": by_date,
+        "by_type": by_type,
+        "thresholds": THRESHOLDS
+    }
+
+
+@router.get("/admin/alert-settings")
+async def get_alert_settings(request: Request):
+    """Get alert settings for the company"""
+    current_user = await get_current_user(request)
+    company_id = current_user.get("company_id")
+    user_role = current_user.get("role", "")
+    
+    if user_role not in ["admin", "hr_manager"]:
+        raise HTTPException(status_code=403, detail="No tiene permisos para ver configuración")
+    
+    settings = await db.geo_alert_settings.find_one(
+        {"company_id": company_id},
+        {"_id": 0}
+    )
+    
+    if not settings:
+        settings = {
+            "company_id": company_id,
+            "enabled": False,
+            "alert_outside_zone": True,
+            "alert_fraud": True,
+            "alert_daily_summary": True,
+            "recipients": [],
+            "outside_zone_threshold_meters": 500
+        }
+    
+    return settings
+
+
+@router.put("/admin/alert-settings")
+async def update_alert_settings(data: AlertSettingsUpdate, request: Request):
+    """Update alert settings for the company"""
+    current_user = await get_current_user(request)
+    company_id = current_user.get("company_id")
+    user_role = current_user.get("role", "")
+    
+    if user_role not in ["admin", "hr_manager"]:
+        raise HTTPException(status_code=403, detail="No tiene permisos para modificar configuración")
+    
+    settings_data = {
+        "company_id": company_id,
+        "enabled": data.enabled,
+        "alert_outside_zone": data.alert_outside_zone,
+        "alert_fraud": data.alert_fraud,
+        "alert_daily_summary": data.alert_daily_summary,
+        "recipients": data.recipients,
+        "outside_zone_threshold_meters": data.outside_zone_threshold_meters,
+        "updated_at": now_iso(),
+        "updated_by": current_user.get("user_id")
+    }
+    
+    await db.geo_alert_settings.update_one(
+        {"company_id": company_id},
+        {"$set": settings_data},
+        upsert=True
+    )
+    
+    return {"message": "Configuración actualizada"}
+
+
+@router.post("/admin/send-daily-summary")
+async def send_daily_summary_manual(request: Request, date: str = None):
+    """Manually trigger daily summary email"""
+    current_user = await get_current_user(request)
+    company_id = current_user.get("company_id")
+    user_role = current_user.get("role", "")
+    
+    if user_role not in ["admin", "hr_manager"]:
+        raise HTTPException(status_code=403, detail="No tiene permisos para enviar resumen")
+    
+    target_date = date or get_today_date()
+    
+    # Get summary data
+    marks = await db.geo_attendance.find(
+        {"company_id": company_id, "date": target_date},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    fraud_alerts = await db.fraud_alerts.find(
+        {"company_id": company_id, "created_at": {"$gte": target_date}},
+        {"_id": 0}
+    ).to_list(500)
+    
+    total_employees = await db.employees.count_documents({
+        "company_id": company_id,
+        "status": "active"
+    })
+    
+    marked_employees = len(set([m["employee_id"] for m in marks if m["mark_type"] == "entry"]))
+    
+    summary_data = {
+        "total_marks": len(marks),
+        "outside_zone": len([m for m in marks if not m.get("is_within_zone", True)]),
+        "fraud_alerts": len(fraud_alerts),
+        "employees_marked": marked_employees,
+        "employees_pending": total_employees - marked_employees
+    }
+    
+    # Get settings and send
+    settings = await db.geo_alert_settings.find_one({"company_id": company_id}, {"_id": 0})
+    
+    if not settings or not settings.get("recipients"):
+        raise HTTPException(status_code=400, detail="No hay destinatarios configurados")
+    
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0, "name": 1})
+    company_name = company.get("name", "Su Empresa") if company else "Su Empresa"
+    
+    success = await send_daily_summary(
+        summary_data,
+        settings.get("recipients", []),
+        company_name,
+        target_date
+    )
+    
+    if success:
+        return {"message": "Resumen enviado correctamente"}
+    else:
+        raise HTTPException(status_code=500, detail="Error al enviar resumen. Verifique la configuración de email.")
