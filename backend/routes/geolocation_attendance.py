@@ -2,12 +2,30 @@
 Geolocation Attendance Routes - FortexaRH
 Marcación de asistencia con geolocalización y selfie
 """
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, BackgroundTasks
 from pydantic import BaseModel
 from typing import Optional, List
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import uuid
 import math
+import logging
+
+# Import fraud detection and alerts services
+from services.fraud_detection import (
+    run_fraud_detection, 
+    analyze_outside_zone_pattern,
+    summarize_alerts,
+    AlertLevel,
+    FraudType,
+    THRESHOLDS
+)
+from services.geo_alerts import (
+    send_outside_zone_alert,
+    send_fraud_alert,
+    send_daily_summary
+)
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/geolocation-attendance", tags=["Geolocation Attendance"])
 
