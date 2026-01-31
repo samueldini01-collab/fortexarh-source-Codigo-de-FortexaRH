@@ -13,7 +13,8 @@ import {
 import { 
   TrendingUp, TrendingDown, Users, DollarSign, Calendar, RefreshCw,
   Wallet, Building2, UserPlus, UserMinus, Clock, AlertCircle,
-  ArrowUpRight, ArrowDownRight, Percent, FileText, CheckCircle, ChevronRight
+  ArrowUpRight, ArrowDownRight, Percent, FileText, CheckCircle, ChevronRight,
+  BarChart3, Target
 } from "lucide-react";
 import { toast } from "sonner";
 import { DrillDownModal } from "@/components/DrillDown";
