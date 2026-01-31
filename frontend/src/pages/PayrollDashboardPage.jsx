@@ -23,6 +23,10 @@ export default function PayrollDashboardPage() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const { getAuthHeaders } = useAuth();
+  
+  // Drill-down states
+  const [drillDown, setDrillDown] = useState({ open: false, type: null, title: "", data: [], columns: [] });
+  const [drillDownLoading, setDrillDownLoading] = useState(false);
 
   const fetchStats = useCallback(async () => {
     setLoading(true);
