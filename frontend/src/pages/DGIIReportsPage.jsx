@@ -85,6 +85,10 @@ export default function DGIIReportsPage() {
   const [availableYears, setAvailableYears] = useState([]);
   const [selectedYear, setSelectedYear] = useState(null);
   const [periodDetails, setPeriodDetails] = useState(null);
+  
+  // Drill-down state for report breakdown
+  const [drillDown, setDrillDown] = useState({ open: false, title: "", data: [], columns: [] });
+  const [drillDownLoading, setDrillDownLoading] = useState(false);
 
   const fetchPeriods = useCallback(async () => {
     setLoading(true);
