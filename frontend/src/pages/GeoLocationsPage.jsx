@@ -50,6 +50,9 @@ export default function GeoLocationsPage() {
   const [employees, setEmployees] = useState([]);
   const [todayAttendance, setTodayAttendance] = useState(null);
   const [activeTab, setActiveTab] = useState("locations");
+  const [liveMapData, setLiveMapData] = useState({ employees: [], locations: [], timestamp: null });
+  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [lastUpdate, setLastUpdate] = useState(null);
   
   // Dialog states
   const [showLocationDialog, setShowLocationDialog] = useState(false);
