@@ -345,9 +345,12 @@ export default function PayrollDashboardPage() {
           </Card>
 
           {/* Top Salaries */}
-          <Card>
+          <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleDrillDown("top_salary")}>
             <CardHeader>
-              <CardTitle>Top 10 Salarios</CardTitle>
+              <CardTitle className="flex items-center justify-between">
+                Top 10 Salarios
+                <ChevronRight className="w-4 h-4 text-slate-400" />
+              </CardTitle>
               <CardDescription>Empleados con mayor salario base</CardDescription>
             </CardHeader>
             <CardContent>
