@@ -315,7 +315,7 @@ export default function LandingPage() {
           <div className="flex items-center justify-between h-16 md:h-20">
             <Link to="/" className="flex items-center">
               <img 
-                src="https://customer-assets.emergentagent.com/job_hrpulse-26/artifacts/ohljcqui_FortexaRH%20Logo.png" 
+                src="https://customer-assets.emergentagent.com/job_hr-dominican/artifacts/3k6l3c5h_FortexaRH_Logo_sin%20fondo%201.png" 
                 alt="FortexaRH" 
                 className="h-10 sm:h-12 md:h-14 w-auto"
               />
