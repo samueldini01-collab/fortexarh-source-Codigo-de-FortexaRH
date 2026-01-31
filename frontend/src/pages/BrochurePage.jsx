@@ -255,10 +255,15 @@ export default function BrochurePage() {
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {features.map((feature, idx) => (
-                <Card key={idx} className="border-slate-200 hover:border-emerald-300 transition-colors">
+                <Card key={idx} className={`border-slate-200 hover:border-emerald-300 transition-colors relative ${feature.isNew ? 'border-emerald-300 bg-emerald-50/30' : ''}`}>
+                  {feature.isNew && (
+                    <span className="absolute -top-2 -right-2 bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10">
+                      NUEVO
+                    </span>
+                  )}
                   <CardContent className="p-4">
-                    <div className="w-9 h-9 bg-emerald-100 rounded-lg flex items-center justify-center mb-2">
-                      <feature.icon className="w-5 h-5 text-emerald-600" />
+                    <div className={`w-9 h-9 ${feature.isNew ? 'bg-emerald-200' : 'bg-emerald-100'} rounded-lg flex items-center justify-center mb-2`}>
+                      <feature.icon className={`w-5 h-5 ${feature.isNew ? 'text-emerald-700' : 'text-emerald-600'}`} />
                     </div>
                     <h3 className="font-semibold text-slate-800 text-sm mb-1">{feature.title}</h3>
                     <p className="text-xs text-slate-500">{feature.desc}</p>
