@@ -1264,61 +1264,61 @@ export default function LandingPage() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50">
+      <section id="contact" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-slate-50">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 heading mb-4">
+          <div className="text-center mb-8 sm:mb-12 md:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 heading mb-3 sm:mb-4">
               Contacto y Soporte
             </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-6">
+            <p className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto mb-4 sm:mb-6 px-4">
               Estamos aquí para ayudarte. Contáctanos para cualquier consulta sobre nuestros servicios.
             </p>
             <Link to="/soporte">
-              <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700">
-                <HeadphonesIcon className="w-5 h-5 mr-2" />
+              <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700 text-sm sm:text-base">
+                <HeadphonesIcon className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Centro de Soporte
               </Button>
             </Link>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center mb-4">
-                <MapPin className="w-6 h-6 text-emerald-600" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+            <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-emerald-100 flex items-center justify-center mb-3 sm:mb-4">
+                <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
               </div>
-              <h3 className="font-semibold text-slate-900 mb-2">Dirección</h3>
-              <p className="text-slate-600 text-sm">
+              <h3 className="font-semibold text-slate-900 mb-2 text-sm sm:text-base">Dirección</h3>
+              <p className="text-slate-600 text-xs sm:text-sm">
                 Av. George Washington #503, Gazcue<br />
                 Santo Domingo, Distrito Nacional
               </p>
             </div>
             
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-4">
-                <Mail className="w-6 h-6 text-blue-600" />
+            <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-blue-100 flex items-center justify-center mb-3 sm:mb-4">
+                <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
               </div>
-              <h3 className="font-semibold text-slate-900 mb-2">Email</h3>
-              <a href="mailto:info@fortexarh.com" className="text-blue-600 hover:text-blue-700 text-sm">
+              <h3 className="font-semibold text-slate-900 mb-2 text-sm sm:text-base">Email</h3>
+              <a href="mailto:info@fortexarh.com" className="text-blue-600 hover:text-blue-700 text-xs sm:text-sm">
                 info@fortexarh.com
               </a>
             </div>
             
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center mb-4">
-                <Phone className="w-6 h-6 text-purple-600" />
+            <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-purple-100 flex items-center justify-center mb-3 sm:mb-4">
+                <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
               </div>
-              <h3 className="font-semibold text-slate-900 mb-2">Teléfono</h3>
-              <a href="tel:+18096859898" className="text-purple-600 hover:text-purple-700 text-sm">
+              <h3 className="font-semibold text-slate-900 mb-2 text-sm sm:text-base">Teléfono</h3>
+              <a href="tel:+18096859898" className="text-purple-600 hover:text-purple-700 text-xs sm:text-sm">
                 (809) 685-9898
               </a>
             </div>
             
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center mb-4">
-                <Clock3 className="w-6 h-6 text-amber-600" />
+            <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-amber-100 flex items-center justify-center mb-3 sm:mb-4">
+                <Clock3 className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600" />
               </div>
-              <h3 className="font-semibold text-slate-900 mb-2">Horario de Atención</h3>
-              <p className="text-slate-600 text-sm">
+              <h3 className="font-semibold text-slate-900 mb-2 text-sm sm:text-base">Horario de Atención</h3>
+              <p className="text-slate-600 text-xs sm:text-sm">
                 Lunes - Viernes: 9:00 AM - 4:00 PM<br />
                 Sábados y Domingos: Cerrado
               </p>
@@ -1328,41 +1328,42 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 sm:px-6 lg:px-8 bg-slate-900 text-white">
+      <footer className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 bg-slate-900 text-white">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
+            <div className="col-span-2 md:col-span-1">
               <div className="flex flex-col mb-4">
                 <img 
                   src="https://customer-assets.emergentagent.com/job_hrpulse-26/artifacts/s3lghfxy_FortexaRH_Logo_transparent.png" 
                   alt="FortexaRH" 
-                  className="h-12 w-auto"
+                  className="h-10 sm:h-12 w-auto"
                 />
                 <p className="text-xs text-slate-400 mt-1">Sistema de RRHH y Nómina</p>
               </div>
-              <p className="text-slate-400 text-sm mb-4">
+              <p className="text-slate-400 text-xs sm:text-sm mb-4 hidden sm:block">
                 Sistema de gestión de recursos humanos y nómina para empresas modernas en República Dominicana.
               </p>
-              <div className="text-slate-400 text-sm space-y-2">
+              <div className="text-slate-400 text-xs sm:text-sm space-y-1 sm:space-y-2">
                 <p className="flex items-start gap-2">
-                  <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" /> 
-                  <span>Av. George Washington #503, Gazcue<br />Santo Domingo, Distrito Nacional</span>
+                  <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mt-0.5 flex-shrink-0" /> 
+                  <span className="hidden sm:inline">Av. George Washington #503, Gazcue<br />Santo Domingo, Distrito Nacional</span>
+                  <span className="sm:hidden">Santo Domingo, D.N.</span>
                 </p>
-                <p className="flex items-center gap-2"><Mail className="w-4 h-4" /> info@fortexarh.com</p>
-                <p className="flex items-center gap-2"><Phone className="w-4 h-4" /> (809) 685-9898</p>
+                <p className="flex items-center gap-2"><Mail className="w-3 h-3 sm:w-4 sm:h-4" /> info@fortexarh.com</p>
+                <p className="flex items-center gap-2"><Phone className="w-3 h-3 sm:w-4 sm:h-4" /> (809) 685-9898</p>
               </div>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Producto</h4>
-              <ul className="space-y-2 text-slate-400 text-sm">
+              <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Producto</h4>
+              <ul className="space-y-1.5 sm:space-y-2 text-slate-400 text-xs sm:text-sm">
                 <li><a href="#features" className="hover:text-white transition-colors">Características</a></li>
                 <li><a href="#pricing" className="hover:text-white transition-colors">Precios</a></li>
                 <li><a href="#contact" className="hover:text-white transition-colors">Contacto</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Recursos</h4>
-              <ul className="space-y-2 text-slate-400 text-sm">
+              <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Recursos</h4>
+              <ul className="space-y-1.5 sm:space-y-2 text-slate-400 text-xs sm:text-sm">
                 <li><Link to="/login" className="hover:text-white transition-colors">Iniciar Sesión</Link></li>
                 <li><Link to="/register" className="hover:text-white transition-colors">Crear Cuenta</Link></li>
                 <li><Link to="/soporte" className="hover:text-white transition-colors">Centro de Soporte</Link></li>
@@ -1370,14 +1371,14 @@ export default function LandingPage() {
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Legal</h4>
-              <ul className="space-y-2 text-slate-400 text-sm">
+              <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Legal</h4>
+              <ul className="space-y-1.5 sm:space-y-2 text-slate-400 text-xs sm:text-sm">
                 <li><Link to="/privacy" className="hover:text-white transition-colors">Política de Privacidad</Link></li>
                 <li><Link to="/terms" className="hover:text-white transition-colors">Términos de Servicio</Link></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-slate-800 pt-8 text-center text-slate-400 text-sm">
+          <div className="border-t border-slate-800 pt-6 sm:pt-8 text-center text-slate-400 text-xs sm:text-sm">
             © {new Date().getFullYear()} FortexaRH. Todos los derechos reservados. República Dominicana.
           </div>
         </div>
