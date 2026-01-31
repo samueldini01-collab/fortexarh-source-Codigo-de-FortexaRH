@@ -159,7 +159,7 @@ export default function DGIIReportsPage() {
     setDrillDown({ open: true, title: "", data: [], columns: [] });
     
     try {
-      // Fetch employee breakdown for the selected period
+      // Fetch period data which includes employee records
       const period = periods.find(p => p.period_id === selectedPeriod);
       if (!period) {
         toast.error("Seleccione un período válido");
@@ -167,12 +167,13 @@ export default function DGIIReportsPage() {
         return;
       }
       
-      const response = await axios.get(`${API}/payroll-v2/periods/${selectedPeriod}/details`, {
+      // Use existing endpoint that returns period with entries
+      const response = await axios.get(`${API}/payroll-v2/periods/${selectedPeriod}`, {
         headers: getAuthHeaders(),
         withCredentials: true
       });
       
-      const employees = response.data?.employee_records || response.data?.employees || [];
+      const employees = response.data?.entries || response.data?.employee_records || [];
       let title = "";
       let columns = [];
       let data = employees;
@@ -184,7 +185,7 @@ export default function DGIIReportsPage() {
           columns = [
             { header: "Empleado", accessor: "employee_name" },
             { header: "Cédula", accessor: "cedula" },
-            { header: "Salario Bruto", accessor: "gross", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+            { header: "Salario Bruto", accessor: "gross_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
             { header: "ISR Retenido", accessor: "isr", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-red-600" }
           ];
           break;
@@ -194,10 +195,10 @@ export default function DGIIReportsPage() {
           columns = [
             { header: "Empleado", accessor: "employee_name" },
             { header: "Cédula", accessor: "cedula" },
-            { header: "Salario", accessor: "gross", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
-            { header: "SFS", accessor: "sfs", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
-            { header: "AFP", accessor: "afp", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
-            { header: "Patronal", accessor: "employer_total", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-amber-600" }
+            { header: "Salario", accessor: "gross_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+            { header: "SFS", accessor: "sfs_employee", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+            { header: "AFP", accessor: "afp_employee", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+            { header: "ISR", accessor: "isr", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-amber-600" }
           ];
           break;
           
@@ -206,7 +207,7 @@ export default function DGIIReportsPage() {
           columns = [
             { header: "Empleado", accessor: "employee_name" },
             { header: "Cédula", accessor: "cedula" },
-            { header: "Monto", accessor: "total", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" }
+            { header: "Neto", accessor: "net_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" }
           ];
       }
       
