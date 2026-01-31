@@ -59,6 +59,82 @@ export default function MetricsDashboardPage() {
     return `${(value || 0).toFixed(1)}%`;
   };
 
+  // Drill-down handler for chart clicks
+  const handleChartDrillDown = async (type, dataPoint = null) => {
+    setDrillDownLoading(true);
+    setDrillDown({ open: true, title: "", data: [], columns: [] });
+    
+    try {
+      let response;
+      let title = "";
+      let columns = [];
+      let data = [];
+      
+      switch (type) {
+        case "employees":
+          response = await axios.get(`${API}/employees`, {
+            headers: getAuthHeaders(),
+            withCredentials: true
+          });
+          title = "Empleados";
+          data = response.data || [];
+          columns = [
+            { header: "Nombre", accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
+            { header: "Departamento", accessor: "department" },
+            { header: "Cargo", accessor: "position" },
+            { header: "Ingreso", accessor: "hire_date" },
+            { header: "Estado", accessor: "status", render: (val) => (
+              <Badge className={val === "active" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"}>
+                {val === "active" ? "Activo" : "Inactivo"}
+              </Badge>
+            )}
+          ];
+          break;
+          
+        case "department":
+          const deptName = dataPoint?.name || dataPoint?.department;
+          response = await axios.get(`${API}/employees?department=${encodeURIComponent(deptName || '')}`, {
+            headers: getAuthHeaders(),
+            withCredentials: true
+          });
+          title = `Empleados - ${deptName}`;
+          data = response.data || [];
+          columns = [
+            { header: "Nombre", accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
+            { header: "Cargo", accessor: "position" },
+            { header: "Salario", accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" }
+          ];
+          break;
+          
+        case "payroll_month":
+          const monthName = dataPoint?.month || dataPoint?.name;
+          title = `Desglose Nómina - ${monthName}`;
+          data = dataPoint?.employees || [];
+          columns = [
+            { header: "Empleado", accessor: "employee_name" },
+            { header: "Bruto", accessor: "gross", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+            { header: "Neto", accessor: "net", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-emerald-600" }
+          ];
+          break;
+          
+        default:
+          break;
+      }
+      
+      setDrillDown({ open: true, title, data, columns });
+    } catch (error) {
+      console.error("Error fetching drill-down data:", error);
+      toast.error("Error al cargar detalles");
+      setDrillDown({ open: false, title: "", data: [], columns: [] });
+    } finally {
+      setDrillDownLoading(false);
+    }
+  };
+
+  const closeDrillDown = () => {
+    setDrillDown({ open: false, title: "", data: [], columns: [] });
+  };
+
   if (loading) {
     return (
       <DashboardLayout title="Dashboard de Métricas">
