@@ -295,6 +295,32 @@ export default function ReportsSystemPage() {
     return String(value);
   };
 
+  // Handle row click drill-down
+  const handleRowDrillDown = (row) => {
+    if (!row) return;
+    
+    const columns = previewData?.columns?.map(col => ({
+      header: col.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+      accessor: col,
+      render: (val) => formatCellValue(val, col),
+      className: typeof row[col] === 'number' ? 'text-right' : '',
+      cellClassName: typeof row[col] === 'number' ? 'text-right font-medium' : ''
+    })) || [];
+
+    setDrillDown({
+      open: true,
+      title: `Detalle del Registro`,
+      data: [row],
+      columns,
+      row
+    });
+  };
+
+  // Close drill-down
+  const closeDrillDown = () => {
+    setDrillDown({ open: false, title: "", data: [], columns: [], row: null });
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
