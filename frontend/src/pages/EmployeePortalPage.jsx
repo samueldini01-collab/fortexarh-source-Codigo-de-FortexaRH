@@ -588,16 +588,75 @@ function EmployeeDashboard() {
 
       <main className="max-w-6xl mx-auto p-3 sm:p-4">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-4 sm:mb-6 bg-white shadow-sm flex flex-wrap gap-1 h-auto p-1">
-            <TabsTrigger value="home" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2"><Home className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" /><span className="hidden sm:inline">Inicio</span></TabsTrigger>
-            <TabsTrigger value="attendance" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2"><Clock className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" /><span className="hidden sm:inline">Asistencia</span></TabsTrigger>
-            <TabsTrigger value="payslips" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2"><FileText className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" /><span className="hidden sm:inline">Recibos</span></TabsTrigger>
-            <TabsTrigger value="vacations" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2"><Calendar className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" /><span className="hidden sm:inline">Vacaciones</span></TabsTrigger>
-            <TabsTrigger value="leaves" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2"><ClipboardList className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" /><span className="hidden sm:inline">Permisos</span></TabsTrigger>
-            <TabsTrigger value="evaluations" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2"><Target className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" /><span className="hidden sm:inline">Evaluaciones</span></TabsTrigger>
-            <TabsTrigger value="loans" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2"><Wallet className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" /><span className="hidden sm:inline">Préstamos</span></TabsTrigger>
-            <TabsTrigger value="profile" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2"><User className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" /><span className="hidden sm:inline">Mis Datos</span></TabsTrigger>
+          {/* Mobile swipe indicator - only shown on small screens */}
+          <div className="sm:hidden mb-3">
+            <div className="flex items-center justify-between px-2">
+              <button 
+                onClick={goToPrevTab}
+                disabled={currentTabIndex === 0}
+                className={`p-2 rounded-full transition-all ${currentTabIndex === 0 ? 'text-slate-300' : 'text-emerald-600 hover:bg-emerald-50 active:scale-95'}`}
+                data-testid="swipe-prev-btn"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              
+              <div className="flex flex-col items-center">
+                <div className="flex items-center gap-1.5 text-slate-700 font-medium">
+                  {(() => {
+                    const CurrentIcon = tabs[currentTabIndex]?.icon;
+                    return CurrentIcon ? <CurrentIcon className="w-4 h-4" /> : null;
+                  })()}
+                  <span className="text-sm">{tabs[currentTabIndex]?.label}</span>
+                </div>
+                <p className="text-[10px] text-slate-400 mt-0.5">Desliza para navegar</p>
+              </div>
+              
+              <button 
+                onClick={goToNextTab}
+                disabled={currentTabIndex === tabs.length - 1}
+                className={`p-2 rounded-full transition-all ${currentTabIndex === tabs.length - 1 ? 'text-slate-300' : 'text-emerald-600 hover:bg-emerald-50 active:scale-95'}`}
+                data-testid="swipe-next-btn"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+            
+            {/* Progress dots */}
+            <div className="flex justify-center gap-1.5 mt-2">
+              {tabs.map((tab, index) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    index === currentTabIndex 
+                      ? 'w-6 bg-emerald-500' 
+                      : 'bg-slate-300 hover:bg-slate-400'
+                  }`}
+                  aria-label={`Ir a ${tab.label}`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Desktop/Tablet tabs - hidden on mobile */}
+          <TabsList className="mb-4 sm:mb-6 bg-white shadow-sm hidden sm:flex flex-wrap gap-1 h-auto p-1">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <TabsTrigger 
+                  key={tab.id}
+                  value={tab.id} 
+                  className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2"
+                >
+                  <Icon className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">{tab.label}</span>
+                </TabsTrigger>
+              );
+            })}
           </TabsList>
+
+          {/* Swipeable content area */}
+          <div {...swipeHandlers} className="touch-pan-y"  data-testid="swipeable-content">
 
           {/* Home Tab */}
           <TabsContent value="home">
