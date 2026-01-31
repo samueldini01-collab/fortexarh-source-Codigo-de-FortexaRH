@@ -419,37 +419,37 @@ function EmployeeDashboard() {
     <div className="min-h-screen bg-slate-100">
       {/* Header */}
       <header className="bg-white shadow-sm border-b sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
             <img 
               src={LOGO_URL} 
               alt="FortexaRH Logo" 
-              className="h-10 w-auto object-contain"
+              className="h-8 sm:h-10 w-auto object-contain flex-shrink-0"
             />
-            <div className="h-8 w-px bg-slate-200" />
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                <User className="w-5 h-5 text-blue-600" />
+            <div className="h-6 sm:h-8 w-px bg-slate-200 hidden sm:block" />
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
+                <User className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
               </div>
-              <div>
-                <h1 className="font-semibold text-slate-800">{dashboardData?.employee?.name}</h1>
-                <p className="text-xs text-slate-500">{dashboardData?.employee?.position}</p>
+              <div className="min-w-0 hidden xs:block">
+                <h1 className="font-semibold text-slate-800 text-sm sm:text-base truncate">{dashboardData?.employee?.name}</h1>
+                <p className="text-xs text-slate-500 truncate">{dashboardData?.employee?.position}</p>
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
             {/* Notification Bell */}
             <div className="relative">
               <Button 
                 variant="ghost" 
                 size="icon" 
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="relative"
+                className="relative h-8 w-8 sm:h-9 sm:w-9"
                 data-testid="notification-bell"
               >
-                <Bell className="w-5 h-5" />
+                <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium">
+                  <span className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-red-500 text-white text-[10px] sm:text-xs rounded-full flex items-center justify-center font-medium">
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </span>
                 )}
@@ -457,14 +457,14 @@ function EmployeeDashboard() {
               
               {/* Notification Dropdown */}
               {showNotifications && (
-                <div className="absolute right-0 mt-2 w-96 bg-white rounded-xl shadow-2xl border border-slate-200 z-50" data-testid="notification-panel">
-                  <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                    <h3 className="font-semibold text-slate-800">Notificaciones</h3>
-                    <div className="flex items-center gap-2">
+                <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-96 max-w-[400px] bg-white rounded-xl shadow-2xl border border-slate-200 z-50" data-testid="notification-panel">
+                  <div className="p-3 sm:p-4 border-b border-slate-100 flex items-center justify-between">
+                    <h3 className="font-semibold text-slate-800 text-sm sm:text-base">Notificaciones</h3>
+                    <div className="flex items-center gap-1 sm:gap-2">
                       {unreadCount > 0 && (
-                        <Button variant="ghost" size="sm" onClick={handleMarkAllAsRead} className="text-xs">
+                        <Button variant="ghost" size="sm" onClick={handleMarkAllAsRead} className="text-xs h-7 px-2">
                           <CheckCircle className="w-3 h-3 mr-1" />
-                          Marcar todas
+                          <span className="hidden sm:inline">Marcar todas</span>
                         </Button>
                       )}
                       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setShowNotifications(false)}>
