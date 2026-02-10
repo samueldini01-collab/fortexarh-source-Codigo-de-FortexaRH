@@ -333,11 +333,17 @@
       }
     },
     "pricing": {
-      "title": "Plans & Pricing",
-      "subtitle": "Choose the plan that best fits your company",
+      "title": "Choose the perfect plan for your team",
+      "subtitle": "Hybrid model: pay a base fee plus a cost per employee. Scale as you grow.",
+      "badge": "Flexible plans for every company",
       "monthly": "month",
+      "month": "month",
       "perEmployee": "per employee",
       "fromOnly": "From only",
+      "mostPopular": "Most Popular",
+      "selectPlan": "Select Plan",
+      "startFree": "Get Started Free",
+      "goToDashboard": "Go to Dashboard",
       "basic": "Basic",
       "basicDesc": "For small businesses",
       "pro": "Pro",
@@ -347,6 +353,45 @@
       "popular": "Most Popular",
       "buyPlan": "Buy Plan",
       "tryFree": "Try 14 days free",
+      "plans": {
+        "free": {
+          "name": "Free Trial",
+          "features": {
+            "employees": "Up to 5 employees",
+            "management": "Basic employee management",
+            "attendance": "Attendance control",
+            "support": "Email support"
+          }
+        },
+        "basic": {
+          "name": "FortexaRH Basic"
+        },
+        "pro": {
+          "name": "FortexaRH Pro"
+        },
+        "enterprise": {
+          "name": "FortexaRH Enterprise"
+        }
+      },
+      "faq": {
+        "title": "Frequently Asked Questions",
+        "changePlan": {
+          "question": "Can I change my plan?",
+          "answer": "Yes, you can upgrade or downgrade your plan at any time. Changes apply to your next billing cycle."
+        },
+        "perEmployee": {
+          "question": "How does per-employee billing work?",
+          "answer": "You pay the base plan fee plus a fixed amount for each active employee in your system at the time of billing."
+        },
+        "trial": {
+          "question": "Is there a trial period?",
+          "answer": "The free plan allows you to test the system with up to 5 employees without time limits."
+        },
+        "payment": {
+          "question": "What payment methods do you accept?",
+          "answer": "We accept all major credit and debit cards through Stripe."
+        }
+      },
       "features": {
         "employees": "employees",
         "unlimited": "Unlimited",
