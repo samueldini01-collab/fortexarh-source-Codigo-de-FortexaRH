@@ -231,10 +231,10 @@ function OnboardingModal({ step, onNext, onSkip, currentStep, totalSteps }) {
 
             {/* Content */}
             <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-3">
-              {step.title}
+              {step.titleKey ? t(step.titleKey) : step.title}
             </h2>
             <p className="text-slate-600 dark:text-slate-400 mb-6 whitespace-pre-line">
-              {step.description}
+              {step.descriptionKey ? t(step.descriptionKey) : step.description}
             </p>
 
             {/* Step indicator */}
@@ -257,7 +257,7 @@ function OnboardingModal({ step, onNext, onSkip, currentStep, totalSteps }) {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               {currentStep === 0 && (
                 <Button variant="outline" onClick={onSkip} className="order-2 sm:order-1">
-                  Saltar Tutorial
+                  {t('onboarding.skipTutorial')}
                 </Button>
               )}
               <Button 
@@ -265,7 +265,7 @@ function OnboardingModal({ step, onNext, onSkip, currentStep, totalSteps }) {
                 className="bg-emerald-600 hover:bg-emerald-700 order-1 sm:order-2"
                 size="lg"
               >
-                {currentStep === 0 ? "Comenzar Tour" : currentStep === totalSteps - 1 ? "¡Empezar a Usar!" : "Continuar"}
+                {currentStep === 0 ? t('onboarding.startTour') : currentStep === totalSteps - 1 ? t('onboarding.startUsing') : t('onboarding.continue')}
                 {currentStep < totalSteps - 1 && <ChevronRight className="w-4 h-4 ml-1" />}
               </Button>
             </div>
