@@ -1253,6 +1253,120 @@
       "system": "Sistema"
     }
   },
+  "settings": {
+    "title": "Configuración de Empresa",
+    "tabs": {
+      "general": "General",
+      "logo": "Logo",
+      "appearance": "Apariencia",
+      "branding": "Marca y Textos",
+      "notifications": "Notificaciones",
+      "integrations": "Integraciones",
+      "audit": "Auditoría"
+    },
+    "fontSizes": {
+      "small": "Pequeño",
+      "medium": "Mediano",
+      "large": "Grande"
+    },
+    "themes": {
+      "light": "Claro",
+      "dark": "Oscuro",
+      "auto": "Automático"
+    },
+    "general": {
+      "title": "Información General",
+      "subtitle": "Datos básicos de su empresa",
+      "name": "Nombre de la Empresa",
+      "slogan": "Slogan",
+      "description": "Descripción",
+      "rnc": "RNC",
+      "address": "Dirección",
+      "phone": "Teléfono",
+      "email": "Correo Electrónico",
+      "website": "Sitio Web"
+    },
+    "logo": {
+      "title": "Logo de la Empresa",
+      "subtitle": "Suba o actualice el logo de su empresa",
+      "currentLogo": "Logo Actual",
+      "noLogo": "Sin logo",
+      "uploadNew": "Subir Nuevo Logo",
+      "remove": "Eliminar",
+      "preview": "Vista Previa",
+      "formats": "Formatos: PNG, JPG, GIF (máx. 5MB)"
+    },
+    "appearance": {
+      "title": "Personalización Visual",
+      "subtitle": "Configure los colores y tipografía del sistema",
+      "colors": "Colores del Sistema",
+      "primaryColor": "Color Primario",
+      "secondaryColor": "Color Secundario",
+      "accentColor": "Color de Acento",
+      "typography": "Tipografía",
+      "fontFamily": "Familia de Fuente",
+      "fontSize": "Tamaño de Texto",
+      "theme": "Tema",
+      "preview": "Vista Previa"
+    },
+    "branding": {
+      "title": "Marca y Textos",
+      "subtitle": "Personalice los textos que aparecen en el sistema",
+      "headerText": "Texto del Encabezado",
+      "footerText": "Texto del Pie de Página",
+      "welcomeMessage": "Mensaje de Bienvenida",
+      "socialLinks": "Redes Sociales"
+    },
+    "notifications": {
+      "title": "Preferencias de Notificaciones",
+      "subtitle": "Configure cómo y cuándo recibir notificaciones",
+      "email": "Notificaciones por Email",
+      "emailDesc": "Recibir alertas y resúmenes por correo electrónico",
+      "sms": "Notificaciones SMS",
+      "smsDesc": "Alertas urgentes vía mensaje de texto",
+      "push": "Notificaciones Push",
+      "pushDesc": "Notificaciones en el navegador y dispositivos móviles",
+      "selfService": "Portal de Empleados",
+      "selfServiceDesc": "Permitir a empleados gestionar solicitudes"
+    },
+    "integrations": {
+      "title": "Integraciones",
+      "subtitle": "Conecte FortexaRH con otras plataformas",
+      "connected": "Conectado",
+      "connect": "Conectar",
+      "disconnect": "Desconectar",
+      "connectedTo": "Conectado a",
+      "manage": "Gestionar",
+      "connecting": "Conectando...",
+      "confirmDisconnect": "¿Desconectar de QuickBooks? Se perderá la sincronización automática."
+    },
+    "audit": {
+      "title": "Registro de Auditoría",
+      "subtitle": "Historial de cambios y acciones en el sistema",
+      "action": "Acción",
+      "user": "Usuario",
+      "date": "Fecha",
+      "details": "Detalles",
+      "noRecords": "No hay registros de auditoría disponibles"
+    },
+    "buttons": {
+      "save": "Guardar Cambios",
+      "saving": "Guardando...",
+      "upload": "Subir"
+    },
+    "messages": {
+      "saved": "Configuración guardada",
+      "errorSaving": "Error al guardar",
+      "qbConnected": "¡QuickBooks conectado exitosamente a",
+      "qbError": "Error al conectar QuickBooks",
+      "qbDisconnected": "QuickBooks desconectado",
+      "errorDisconnecting": "Error al desconectar",
+      "logoUploaded": "Logo actualizado",
+      "logoRemoved": "Logo eliminado",
+      "imageTooLarge": "Imagen muy grande (máx. 5MB)",
+      "invalidFormat": "Formato no válido"
+    }
+  },
   "documents": {
     "title": "Documentos",
     "header": {
