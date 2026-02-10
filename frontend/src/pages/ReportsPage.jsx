@@ -64,18 +64,18 @@ export default function ReportsPage() {
 
   // Build months with translations
   const getMonths = () => [
-    { value: "1", label: t('reports.months.january') },
-    { value: "2", label: t('reports.months.february') },
-    { value: "3", label: t('reports.months.march') },
-    { value: "4", label: t('reports.months.april') },
-    { value: "5", label: t('reports.months.may') },
-    { value: "6", label: t('reports.months.june') },
-    { value: "7", label: t('reports.months.july') },
-    { value: "8", label: t('reports.months.august') },
-    { value: "9", label: t('reports.months.september') },
-    { value: "10", label: t('reports.months.october') },
-    { value: "11", label: t('reports.months.november') },
-    { value: "12", label: t('reports.months.december') }
+    { value: "1", label: t('reportsPage.months.january') },
+    { value: "2", label: t('reportsPage.months.february') },
+    { value: "3", label: t('reportsPage.months.march') },
+    { value: "4", label: t('reportsPage.months.april') },
+    { value: "5", label: t('reportsPage.months.may') },
+    { value: "6", label: t('reportsPage.months.june') },
+    { value: "7", label: t('reportsPage.months.july') },
+    { value: "8", label: t('reportsPage.months.august') },
+    { value: "9", label: t('reportsPage.months.september') },
+    { value: "10", label: t('reportsPage.months.october') },
+    { value: "11", label: t('reportsPage.months.november') },
+    { value: "12", label: t('reportsPage.months.december') }
   ];
 
   // Drill-down handler for table rows
@@ -85,26 +85,26 @@ export default function ReportsPage() {
     let columns = [];
     
     if (type === "payroll") {
-      title = `${t('reports.drillDown.payrollDetail')} - ${row.employee_name}`;
+      title = `${t('reportsPage.drillDown.payrollDetail')} - ${row.employee_name}`;
       data = [row];
       columns = [
-        { header: t('reports.drillDown.employee'), accessor: "employee_name" },
-        { header: t('reports.drillDown.department'), accessor: "department" },
-        { header: t('reports.drillDown.gross'), accessor: "gross_salary", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right" },
-        { header: t('reports.drillDown.isr'), accessor: "isr", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right text-red-600" },
-        { header: t('reports.drillDown.sfs'), accessor: "sfs", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right text-red-600" },
-        { header: t('reports.drillDown.afp'), accessor: "afp", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right text-red-600" },
-        { header: t('reports.drillDown.net'), accessor: "net_salary", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right font-bold text-emerald-600" }
+        { header: t('reportsPage.drillDown.employee'), accessor: "employee_name" },
+        { header: t('reportsPage.drillDown.department'), accessor: "department" },
+        { header: t('reportsPage.drillDown.gross'), accessor: "gross_salary", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right" },
+        { header: t('reportsPage.drillDown.isr'), accessor: "isr", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right text-red-600" },
+        { header: t('reportsPage.drillDown.sfs'), accessor: "sfs", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right text-red-600" },
+        { header: t('reportsPage.drillDown.afp'), accessor: "afp", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right text-red-600" },
+        { header: t('reportsPage.drillDown.net'), accessor: "net_salary", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right font-bold text-emerald-600" }
       ];
     } else if (type === "attendance") {
-      title = `${t('reports.drillDown.attendanceDetail')} - ${row.employee_name}`;
+      title = `${t('reportsPage.drillDown.attendanceDetail')} - ${row.employee_name}`;
       data = [row];
       columns = [
-        { header: t('reports.drillDown.employee'), accessor: "employee_name" },
-        { header: t('reports.drillDown.daysWorked'), accessor: "days_worked", className: "text-center", cellClassName: "text-center" },
-        { header: t('reports.drillDown.absences'), accessor: "absences", className: "text-center", cellClassName: "text-center text-red-600" },
-        { header: t('reports.drillDown.lateArrivals'), accessor: "late_arrivals", className: "text-center", cellClassName: "text-center text-amber-600" },
-        { header: t('reports.drillDown.overtimeHours'), accessor: "overtime_hours", className: "text-center", cellClassName: "text-center text-blue-600" }
+        { header: t('reportsPage.drillDown.employee'), accessor: "employee_name" },
+        { header: t('reportsPage.drillDown.daysWorked'), accessor: "days_worked", className: "text-center", cellClassName: "text-center" },
+        { header: t('reportsPage.drillDown.absences'), accessor: "absences", className: "text-center", cellClassName: "text-center text-red-600" },
+        { header: t('reportsPage.drillDown.lateArrivals'), accessor: "late_arrivals", className: "text-center", cellClassName: "text-center text-amber-600" },
+        { header: t('reportsPage.drillDown.overtimeHours'), accessor: "overtime_hours", className: "text-center", cellClassName: "text-center text-blue-600" }
       ];
     }
     
@@ -125,20 +125,20 @@ export default function ReportsPage() {
   })) || [];
 
   const attendancePieData = attendanceReport?.summary ? [
-    { name: t('reports.pieChart.present'), value: attendanceReport.summary.total_present },
-    { name: t('reports.pieChart.absent'), value: attendanceReport.summary.total_absent },
-    { name: t('reports.pieChart.late'), value: attendanceReport.summary.total_late }
+    { name: t('reportsPage.pieChart.present'), value: attendanceReport.summary.total_present },
+    { name: t('reportsPage.pieChart.absent'), value: attendanceReport.summary.total_absent },
+    { name: t('reportsPage.pieChart.late'), value: attendanceReport.summary.total_late }
   ] : [];
 
   return (
-    <DashboardLayout title={t('reports.title')}>
+    <DashboardLayout title={t('reportsPage.title')}>
       <div className="space-y-6" data-testid="reports-page">
         {/* Filters */}
         <Card className="border-slate-200 dark:border-slate-700">
           <CardContent className="p-4">
             <div className="flex flex-wrap gap-4 items-center">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-slate-600 dark:text-slate-300">{t('reports.period')}:</span>
+                <span className="text-sm text-slate-600 dark:text-slate-300">{t('reportsPage.period')}:</span>
                 <Select value={selectedMonth} onValueChange={setSelectedMonth}>
                   <SelectTrigger className="w-32" data-testid="report-month">
                     <SelectValue />
@@ -168,7 +168,7 @@ export default function ReportsPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="border-emerald-200 bg-emerald-50/50">
             <CardContent className="p-6">
-              <p className="text-sm text-emerald-600 dark:text-emerald-400">{t('reports.summary.totalPayroll')}</p>
+              <p className="text-sm text-emerald-600 dark:text-emerald-400">{t('reportsPage.summary.totalPayroll')}</p>
               <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">
                 ${(payrollReport?.summary?.total_net_salary || 0).toLocaleString('es-MX')}
               </p>
@@ -176,7 +176,7 @@ export default function ReportsPage() {
           </Card>
           <Card className="border-blue-200 bg-blue-50/50">
             <CardContent className="p-6">
-              <p className="text-sm text-blue-600 dark:text-blue-400">{t('reports.summary.baseSalary')}</p>
+              <p className="text-sm text-blue-600 dark:text-blue-400">{t('reportsPage.summary.baseSalary')}</p>
               <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">
                 ${(payrollReport?.summary?.total_base_salary || 0).toLocaleString('es-MX')}
               </p>
@@ -184,7 +184,7 @@ export default function ReportsPage() {
           </Card>
           <Card className="border-amber-200 bg-amber-50/50">
             <CardContent className="p-6">
-              <p className="text-sm text-amber-600 dark:text-amber-400">{t('reports.summary.bonuses')}</p>
+              <p className="text-sm text-amber-600 dark:text-amber-400">{t('reportsPage.summary.bonuses')}</p>
               <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">
                 ${(payrollReport?.summary?.total_bonuses || 0).toLocaleString('es-MX')}
               </p>
@@ -192,7 +192,7 @@ export default function ReportsPage() {
           </Card>
           <Card className="border-red-200 bg-red-50/50">
             <CardContent className="p-6">
-              <p className="text-sm text-red-600 dark:text-red-400">{t('reports.summary.taxes')}</p>
+              <p className="text-sm text-red-600 dark:text-red-400">{t('reportsPage.summary.taxes')}</p>
               <p className="text-2xl font-bold text-red-700">
                 ${(payrollReport?.summary?.total_taxes || 0).toLocaleString('es-MX')}
               </p>
@@ -207,7 +207,7 @@ export default function ReportsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <DollarSign className="w-5 h-5 text-slate-500 dark:text-slate-400" />
-                {t('reports.charts.payrollByEmployee')}
+                {t('reportsPage.charts.payrollByEmployee')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -225,7 +225,7 @@ export default function ReportsPage() {
                 </ResponsiveContainer>
               ) : (
                 <div className="h-64 flex items-center justify-center text-slate-500 dark:text-slate-400">
-                  {t('reports.charts.noData')}
+                  {t('reportsPage.charts.noData')}
                 </div>
               )}
             </CardContent>
@@ -236,7 +236,7 @@ export default function ReportsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Clock className="w-5 h-5 text-slate-500 dark:text-slate-400" />
-                {t('reports.charts.attendanceSummary')}
+                {t('reportsPage.charts.attendanceSummary')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -273,7 +273,7 @@ export default function ReportsPage() {
                 </div>
               ) : (
                 <div className="h-64 flex items-center justify-center text-slate-500 dark:text-slate-400">
-                  {t('reports.charts.noData')}
+                  {t('reportsPage.charts.noData')}
                 </div>
               )}
             </CardContent>
@@ -285,7 +285,7 @@ export default function ReportsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="w-5 h-5 text-slate-500 dark:text-slate-400" />
-              {t('reports.attendance.byEmployee')}
+              {t('reportsPage.attendance.byEmployee')}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -297,12 +297,12 @@ export default function ReportsPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{t('reports.attendance.employee')}</TableHead>
-                    <TableHead className="text-center">{t('reports.attendance.present')}</TableHead>
-                    <TableHead className="text-center">{t('reports.attendance.absent')}</TableHead>
-                    <TableHead className="text-center">{t('reports.attendance.late')}</TableHead>
-                    <TableHead className="text-center">{t('reports.attendance.totalHours')}</TableHead>
-                    <TableHead className="text-center">{t('reports.attendance.detail')}</TableHead>
+                    <TableHead>{t('reportsPage.attendance.employee')}</TableHead>
+                    <TableHead className="text-center">{t('reportsPage.attendance.present')}</TableHead>
+                    <TableHead className="text-center">{t('reportsPage.attendance.absent')}</TableHead>
+                    <TableHead className="text-center">{t('reportsPage.attendance.late')}</TableHead>
+                    <TableHead className="text-center">{t('reportsPage.attendance.totalHours')}</TableHead>
+                    <TableHead className="text-center">{t('reportsPage.attendance.detail')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -338,7 +338,7 @@ export default function ReportsPage() {
               </Table>
             ) : (
               <div className="text-center py-12 text-slate-500 dark:text-slate-400">
-                {t('reports.attendance.noData')}
+                {t('reportsPage.attendance.noData')}
               </div>
             )}
           </CardContent>
