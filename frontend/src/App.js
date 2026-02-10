@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, createContext, useContext, useCallback } from "react";
 import "@/App.css";
+import "@/i18n"; // Initialize i18n
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
 import axios from "axios";
 import { Toaster } from "@/components/ui/sonner";
