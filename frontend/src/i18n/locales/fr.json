@@ -822,24 +822,116 @@
   },
   "attendance": {
     "title": "Contrôle des Présences",
-    "clockIn": "Pointer l'entrée",
-    "clockOut": "Pointer la sortie",
+    "pageTitle": "Contrôle du Temps et des Présences",
+    "clockIn": "Pointer l'Entrée",
+    "clockOut": "Pointer la Sortie",
+    "registerManual": "Enregistrement Manuel",
+    "registerAttendance": "Enregistrer Présence",
     "today": "Aujourd'hui",
     "week": "Cette Semaine",
     "month": "Ce Mois",
-    "summary": {
+    "tabs": {
+      "today": "Aujourd'hui",
+      "history": "Historique",
+      "shifts": "Équipes",
+      "alerts": "Alertes"
+    },
+    "stats": {
+      "totalEmployees": "Total Employés",
       "present": "Présents",
       "absent": "Absents",
-      "late": "En Retard",
-      "onTime": "À l'heure"
+      "late": "Retards",
+      "onTime": "À l'Heure",
+      "notCheckedOut": "Sans Sortie",
+      "overtimeHours": "Heures Supplémentaires",
+      "total": "Total"
     },
     "table": {
       "employee": "Employé",
+      "department": "Département",
       "date": "Date",
       "clockIn": "Entrée",
       "clockOut": "Sortie",
       "hoursWorked": "Heures Travaillées",
+      "overtime": "H. Sup.",
       "status": "Statut"
+    },
+    "status": {
+      "present": "Présent",
+      "absent": "Absent",
+      "late": "En Retard"
+    },
+    "form": {
+      "selectEmployee": "Sélectionner employé",
+      "date": "Date",
+      "entry": "Entrée",
+      "exit": "Sortie",
+      "status": "Statut",
+      "notes": "Notes (optionnel)",
+      "notesPlaceholder": "Notes supplémentaires...",
+      "register": "Enregistrer"
+    },
+    "todayDashboard": {
+      "attendanceRate": "Taux de Présence Aujourd'hui",
+      "employeesPresent": "employés présents",
+      "of": "sur",
+      "quickRegister": "Enregistrement Rapide - Employés Non Pointés Aujourd'hui",
+      "allCheckedIn": "Tous les employés ont pointé aujourd'hui",
+      "pendingCheckout": "En Attente de Sortie",
+      "entry": "Entrée"
+    },
+    "shifts": {
+      "title": "Gestion des Équipes",
+      "subtitle": "Configurez les horaires de travail de votre entreprise",
+      "newShift": "Nouvelle Équipe",
+      "createShift": "Créer Équipe",
+      "noShifts": "Aucune équipe configurée",
+      "noShiftsDesc": "Créez une équipe pour attribuer des horaires aux employés",
+      "shiftName": "Nom de l'Équipe",
+      "shiftNamePlaceholder": "Ex: Équipe Matin, Équipe Nuit",
+      "startTime": "Heure d'Entrée",
+      "endTime": "Heure de Sortie",
+      "breakMinutes": "Minutes de Pause",
+      "gracePeriod": "Tolérance (min)",
+      "isNightShift": "Est équipe de nuit",
+      "created": "Équipe créée"
+    },
+    "alerts": {
+      "title": "Alertes de Présence",
+      "activeAlerts": "alertes actives pour aujourd'hui",
+      "noAlerts": "Pas d'alertes en attente",
+      "allUpToDate": "Tous les membres de l'équipe sont à jour avec leurs enregistrements",
+      "missingCheckin": "Pointage manquant",
+      "lateArrival": "Arrivée tardive",
+      "missingCheckout": "Sortie manquante",
+      "register": "Enregistrer"
+    },
+    "export": {
+      "csv": "CSV",
+      "excel": "Excel",
+      "exported": "Fichier exporté",
+      "error": "Erreur d'exportation"
+    },
+    "filters": {
+      "date": "Date",
+      "department": "Département",
+      "all": "Tous",
+      "clearFilters": "Effacer filtres",
+      "status": "Statut",
+      "dept": "Dépt",
+      "records": "enregistrements"
+    },
+    "messages": {
+      "entryRegistered": "Entrée enregistrée",
+      "exitRegistered": "Sortie enregistrée",
+      "attendanceRegistered": "Présence enregistrée",
+      "errorRegisterEntry": "Erreur enregistrement entrée",
+      "errorRegisterExit": "Erreur enregistrement sortie",
+      "errorRegister": "Erreur enregistrement",
+      "errorLoading": "Erreur chargement données",
+      "errorCreateShift": "Erreur création équipe",
+      "noRecordsDate": "Pas d'enregistrements pour cette date",
+      "noRecordsFilter": "Pas d'enregistrements avec ces filtres"
     }
   },
   "vacations": {
