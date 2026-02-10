@@ -241,16 +241,16 @@ export default function DocumentsPage() {
   };
 
   const handleDeleteTemplate = async (templateId) => {
-    if (!confirm("¿Eliminar esta plantilla?")) return;
+    if (!confirm(t('documents.messages.confirmDeleteTemplate'))) return;
     
     try {
       await axios.delete(`${API}/doc-generator/templates/${templateId}`, {
         headers: getAuthHeaders(), withCredentials: true
       });
-      toast.success("Plantilla eliminada");
+      toast.success(t('documents.messages.templateDeleted'));
       fetchData();
     } catch (error) {
-      toast.error("Error al eliminar");
+      toast.error(t('documents.messages.errorDeleting'));
     }
   };
 
