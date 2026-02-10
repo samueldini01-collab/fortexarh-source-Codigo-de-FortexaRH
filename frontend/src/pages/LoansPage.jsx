@@ -309,7 +309,7 @@ export default function LoansPage() {
 
   if (loading) {
     return (
-      <DashboardLayout title="Préstamos a Empleados">
+      <DashboardLayout title={t('loans.pageTitle')}>
         <div className="flex items-center justify-center h-64">
           <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
         </div>
@@ -318,22 +318,22 @@ export default function LoansPage() {
   }
 
   return (
-    <DashboardLayout title="Préstamos a Empleados">
+    <DashboardLayout title={t('loans.pageTitle')}>
       <div className="space-y-6" data-testid="loans-page">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Préstamos a Empleados</h1>
-            <p className="text-slate-500 dark:text-slate-400">Gestiona préstamos y descuentos automáticos en nómina</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{t('loans.pageTitle')}</h1>
+            <p className="text-slate-500 dark:text-slate-400">{t('loans.subtitle')}</p>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" onClick={exportToCSV} size="sm">
               <Download className="w-4 h-4 mr-2" />
-              Exportar
+              {t('loans.export')}
             </Button>
             <Button onClick={() => { resetForm(); setShowCreateModal(true); }} data-testid="create-loan-btn">
               <Plus className="w-4 h-4 mr-2" />
-              Nuevo Préstamo
+              {t('loans.newLoan')}
             </Button>
           </div>
         </div>
@@ -348,7 +348,7 @@ export default function LoansPage() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Préstamos Activos</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{t('loans.stats.activeLoans')}</p>
                     <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{summary.total_active_loans}</p>
                   </div>
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
@@ -362,7 +362,7 @@ export default function LoansPage() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Total Prestado</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{t('loans.stats.totalLoaned')}</p>
                     <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(summary.total_loaned)}</p>
                   </div>
                   <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
@@ -379,7 +379,7 @@ export default function LoansPage() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Pagados</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{t('loans.stats.totalPaid')}</p>
                     <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{formatCurrency(summary.total_paid)}</p>
                   </div>
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
@@ -396,7 +396,7 @@ export default function LoansPage() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">En Mora</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{t('loans.stats.inDefault')}</p>
                     <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{formatCurrency(summary.total_pending)}</p>
                   </div>
                   <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
