@@ -91,6 +91,7 @@ const payrollTypes = [
 const departments = ["Administración", "Ventas", "Marketing", "TI", "Recursos Humanos", "Finanzas", "Operaciones", "Legal", "Producción", "Logística"];
 
 export default function PayrollV2Page() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [periods, setPeriods] = useState([]);
   const [selectedPeriod, setSelectedPeriod] = useState(null);
