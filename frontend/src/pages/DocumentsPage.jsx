@@ -56,6 +56,7 @@ const categoryColors = {
 };
 
 export default function DocumentsPage() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("generate");
   const [templates, setTemplates] = useState([]);
   const [employees, setEmployees] = useState([]);
