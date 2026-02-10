@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth, useSubscription, API } from "@/App";
 import axios from "axios";
@@ -28,6 +29,7 @@ import { toast } from "sonner";
 import { DrillDownModal, DrillDownCard, EmployeeListDrillDown } from "@/components/DrillDown";
 
 export default function Dashboard() {
+  const { t, i18n } = useTranslation();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   // Check localStorage for banner preference
@@ -50,9 +52,17 @@ export default function Dashboard() {
   // Get greeting based on time of day
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return "Buenos días";
-    if (hour < 18) return "Buenas tardes";
-    return "Buenas noches";
+    if (hour < 12) return t('dashboard.greeting.morning');
+    if (hour < 18) return t('dashboard.greeting.afternoon');
+    return t('dashboard.greeting.evening');
+  };
+  
+  // Get locale for date formatting
+  const getDateLocale = () => {
+    const lang = i18n.language;
+    if (lang === 'en') return 'en-US';
+    if (lang === 'fr') return 'fr-FR';
+    return 'es-DO';
   };
   
   // Handle banner close with localStorage
@@ -68,13 +78,13 @@ export default function Dashboard() {
         withCredentials: true
       });
       if (response.data.payment_status === "paid") {
-        toast.success("¡Pago exitoso! Tu suscripción ha sido activada.");
+        toast.success(t('dashboard.paymentSuccess'));
         window.history.replaceState({}, document.title, "/dashboard");
       }
     } catch (error) {
       console.error("Error checking payment:", error);
     }
-  }, [getAuthHeaders]);
+  }, [getAuthHeaders, t]);
 
   const fetchStats = useCallback(async () => {
     try {
