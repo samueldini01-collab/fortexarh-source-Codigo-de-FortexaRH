@@ -1145,6 +1145,79 @@
       "noData": "No hay datos para el período seleccionado"
     }
   },
+  "loans": {
+    "title": "Préstamos a Empleados",
+    "pageTitle": "Préstamos a Empleados",
+    "subtitle": "Gestiona préstamos y descuentos automáticos en nómina",
+    "newLoan": "Nuevo Préstamo",
+    "export": "Exportar",
+    "stats": {
+      "activeLoans": "Préstamos Activos",
+      "totalLoaned": "Total Prestado",
+      "totalPaid": "Pagados",
+      "inDefault": "En Mora",
+      "pendingBalance": "Saldo Pendiente"
+    },
+    "status": {
+      "active": "Activo",
+      "paid": "Pagado",
+      "defaulted": "En Mora",
+      "cancelled": "Cancelado"
+    },
+    "form": {
+      "employee": "Empleado",
+      "selectEmployee": "Seleccionar empleado",
+      "amount": "Monto del Préstamo",
+      "currency": "Moneda",
+      "interestRate": "Tasa de Interés (%)",
+      "installments": "Número de Cuotas",
+      "installmentAmount": "Monto por Cuota",
+      "startDate": "Fecha de Inicio",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Motivo del préstamo...",
+      "autoDeduct": "Descuento automático en nómina",
+      "createLoan": "Crear Préstamo"
+    },
+    "table": {
+      "employee": "Empleado",
+      "amount": "Monto",
+      "balance": "Saldo",
+      "installments": "Cuotas",
+      "status": "Estado",
+      "progress": "Progreso",
+      "actions": "Acciones"
+    },
+    "payment": {
+      "registerPayment": "Registrar Pago",
+      "paymentAmount": "Monto del Pago",
+      "paymentDate": "Fecha de Pago",
+      "paymentMethod": "Método de Pago",
+      "manual": "Manual",
+      "payroll": "Descuento en Nómina",
+      "notes": "Notas",
+      "register": "Registrar"
+    },
+    "detail": {
+      "loanDetails": "Detalles del Préstamo",
+      "originalAmount": "Monto Original",
+      "remainingBalance": "Saldo Restante",
+      "paidAmount": "Monto Pagado",
+      "installmentsPaid": "Cuotas Pagadas",
+      "paymentHistory": "Historial de Pagos",
+      "noPayments": "Sin pagos registrados"
+    },
+    "messages": {
+      "loanCreated": "Préstamo creado correctamente",
+      "paymentRegistered": "Pago registrado",
+      "loanDeleted": "Préstamo eliminado",
+      "exportSuccess": "Exportación exitosa",
+      "errorCreating": "Error al crear préstamo",
+      "errorPayment": "Error al registrar pago",
+      "errorDeleting": "Error al eliminar",
+      "noLoans": "No hay préstamos registrados",
+      "noLoansFilter": "No hay préstamos con estos filtros"
+    }
+  },
   "portal": {
     "title": "Portal del Empleado",
     "welcome": "Bienvenido al Portal",
