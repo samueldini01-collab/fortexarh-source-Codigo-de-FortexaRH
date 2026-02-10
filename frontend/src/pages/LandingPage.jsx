@@ -259,6 +259,7 @@ const contadoresFeatures = [
 ];
 
 export default function LandingPage() {
+  const { t } = useTranslation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const dropdownRef = useRef(null);
