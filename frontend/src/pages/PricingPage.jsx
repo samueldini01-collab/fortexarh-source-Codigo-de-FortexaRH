@@ -1,17 +1,36 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth, API } from "@/App";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Check, ArrowLeft, Zap } from "lucide-react";
+import { Users, Check, ArrowLeft, Zap, Globe } from "lucide-react";
 import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+const languages = [
+  { code: 'es', name: 'Español', flag: '🇪🇸' },
+  { code: 'en', name: 'English', flag: '🇺🇸' },
+  { code: 'fr', name: 'Français', flag: '🇫🇷' }
+];
 
 export default function PricingPage() {
+  const { t, i18n } = useTranslation();
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user, getAuthHeaders } = useAuth();
   const navigate = useNavigate();
+
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem('i18nextLng', lng);
+  };
 
   useEffect(() => {
     fetchPlans();
