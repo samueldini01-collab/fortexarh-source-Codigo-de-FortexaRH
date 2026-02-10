@@ -2,7 +2,7 @@
   "common": {
     "loading": "Loading...",
     "save": "Save",
-    "cancel": "Cancel",
+    "cancel": "Cancel without card",
     "delete": "Delete",
     "edit": "Edit",
     "create": "Create",
@@ -47,7 +47,13 @@
     "logout": "Log out",
     "login": "Log in",
     "register": "Sign up",
-    "welcome": "Welcome"
+    "welcome": "Welcome",
+    "new": "NEW",
+    "mostPopular": "Most Popular",
+    "companiesTrust": "Companies trust us",
+    "avgRating": "Average rating",
+    "companiesUse": "companies already use FortexaRH",
+    "sendEmail": "Send Email"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -79,7 +85,8 @@
       "title": "HR & Payroll System for the Dominican Republic",
       "subtitle": "Manage your human capital with the most complete platform. Payroll, TSS, DGII, and more.",
       "cta": "Start Free",
-      "demo": "Watch Demo"
+      "demo": "Watch Demo",
+      "brochure": "Brochure"
     },
     "nav": {
       "forCompanies": "For Companies",
@@ -91,7 +98,7 @@
     },
     "features": {
       "title": "Everything you need to manage your team",
-      "subtitle": "Simplify HR administration with powerful tools",
+      "subtitle": "From hiring to payroll, we have all the tools your HR department needs.",
       "payroll": "Automated Payroll",
       "payrollDesc": "Automatic calculations for TSS, ISR, AFP and more",
       "employees": "Employee Management",
@@ -104,6 +111,64 @@
       "portalDesc": "Self-service for your team",
       "accounting": "Accounting",
       "accountingDesc": "QuickBooks integration"
+    },
+    "video": {
+      "title": "See FortexaRH in Action",
+      "subtitle": "Discover how our platform can transform your team management in minutes",
+      "avgTime": "Average payroll time",
+      "compliance": "DGII Compliance",
+      "lessQueries": "Less HR queries",
+      "access": "Information access"
+    },
+    "benefits": {
+      "implementation": "Implementation in minutes",
+      "secure": "Secure encrypted data",
+      "anywhere": "Access from anywhere",
+      "realtime": "Real-time reports"
+    },
+    "geolocation": {
+      "title": "Attendance Control with",
+      "highlight": "Geolocation",
+      "subtitle": "The most modern and secure way to control your employees' attendance. Real-time GPS, fraud detection and automatic alerts.",
+      "gps": "GPS + Selfie Check-in",
+      "gpsDesc": "Employees clock in from their phone with GPS location and verification photo.",
+      "realtime": "Real-Time Map",
+      "realtimeDesc": "View your employees' locations on an interactive map with automatic updates.",
+      "fraud": "Fraud Detection",
+      "fraudDesc": "Smart system that detects impossible speed, fake GPS and suspicious check-ins.",
+      "alerts": "Email Alerts",
+      "alertsDesc": "Receive immediate notifications when an anomaly or out-of-zone check-in is detected.",
+      "ideal": "Ideal for companies with field staff, construction, delivery, sales and more.",
+      "tryFree": "Try Free for 14 Days"
+    },
+    "cta": {
+      "title": "Ready to transform your HR management?",
+      "subtitle": "Join hundreds of companies that have already optimized their human resources management with FortexaRH.",
+      "startTrial": "Start Free Trial",
+      "viewPlans": "View Plans & Pricing"
+    },
+    "comparison": {
+      "title": "Plan Comparison",
+      "feature": "Feature",
+      "basePrice": "Base monthly price",
+      "pricePerEmployee": "Price per employee",
+      "usersIncluded": "Users included",
+      "maxEmployees": "Maximum employees",
+      "unlimited": "Unlimited",
+      "basic": "Basic"
+    },
+    "testimonials": {
+      "badge": "Customer Testimonials",
+      "title": "What our customers say",
+      "subtitle": "Companies across the Dominican Republic trust FortexaRH to manage their human talent"
+    },
+    "faq": {
+      "badge": "Frequently Asked Questions",
+      "title": "Have questions?",
+      "subtitle": "Find answers to the most common questions about FortexaRH",
+      "notFound": "Didn't find what you were looking for?",
+      "supportReady": "Our support team is ready to help you",
+      "contactSupport": "Contact Support"
     },
     "pricing": {
       "title": "Plans & Pricing",
@@ -150,12 +215,13 @@
     },
     "contact": {
       "title": "Contact & Support",
-      "subtitle": "We're here to help",
+      "subtitle": "We're here to help. Contact us for any questions about our services.",
       "address": "Address",
       "email": "Email",
       "phone": "Phone",
       "hours": "Business Hours",
       "weekdays": "Monday - Friday",
+      "saturday": "Saturday and Sunday",
       "closed": "Closed",
       "supportCenter": "Support Center"
     },
@@ -172,7 +238,9 @@
       "legal": "Legal",
       "privacy": "Privacy Policy",
       "terms": "Terms of Service",
-      "rights": "All rights reserved"
+      "rights": "All rights reserved",
+      "tagline": "HR & Payroll System",
+      "description": "Human resources and payroll management system for modern companies in the Dominican Republic."
     }
   },
   "auth": {
