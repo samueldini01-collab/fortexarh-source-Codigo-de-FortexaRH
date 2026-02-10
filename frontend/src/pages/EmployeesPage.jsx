@@ -150,6 +150,7 @@ const initialEmergencyContactForm = {
 };
 
 export default function EmployeesPage() {
+  const { t } = useTranslation();
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
