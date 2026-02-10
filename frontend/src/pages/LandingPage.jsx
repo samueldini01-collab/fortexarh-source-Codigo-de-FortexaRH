@@ -1341,10 +1341,10 @@ export default function LandingPage() {
                   alt="FortexaRH" 
                   className="h-10 sm:h-12 w-auto"
                 />
-                <p className="text-xs text-slate-400 mt-1">Sistema de RRHH y Nómina</p>
+                <p className="text-xs text-slate-400 mt-1">{t('landing.footer.tagline')}</p>
               </div>
               <p className="text-slate-400 text-xs sm:text-sm mb-4 hidden sm:block">
-                Sistema de gestión de recursos humanos y nómina para empresas modernas en República Dominicana.
+                {t('landing.footer.description')}
               </p>
               <div className="text-slate-400 text-xs sm:text-sm space-y-1 sm:space-y-2">
                 <p className="flex items-start gap-2">
@@ -1357,32 +1357,32 @@ export default function LandingPage() {
               </div>
             </div>
             <div>
-              <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Producto</h4>
+              <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">{t('landing.footer.product')}</h4>
               <ul className="space-y-1.5 sm:space-y-2 text-slate-400 text-xs sm:text-sm">
-                <li><a href="#features" className="hover:text-white transition-colors">Características</a></li>
-                <li><a href="#pricing" className="hover:text-white transition-colors">Precios</a></li>
-                <li><a href="#contact" className="hover:text-white transition-colors">Contacto</a></li>
+                <li><a href="#features" className="hover:text-white transition-colors">{t('landing.footer.features')}</a></li>
+                <li><a href="#pricing" className="hover:text-white transition-colors">{t('landing.footer.pricing')}</a></li>
+                <li><a href="#contact" className="hover:text-white transition-colors">{t('landing.footer.contact')}</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Recursos</h4>
+              <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">{t('landing.footer.resources')}</h4>
               <ul className="space-y-1.5 sm:space-y-2 text-slate-400 text-xs sm:text-sm">
-                <li><Link to="/login" className="hover:text-white transition-colors">Iniciar Sesión</Link></li>
-                <li><Link to="/register" className="hover:text-white transition-colors">Crear Cuenta</Link></li>
-                <li><Link to="/soporte" className="hover:text-white transition-colors">Centro de Soporte</Link></li>
-                <li><Link to="/accountants-software" className="hover:text-emerald-400 transition-colors">Programa para Contadores</Link></li>
+                <li><Link to="/login" className="hover:text-white transition-colors">{t('landing.footer.login')}</Link></li>
+                <li><Link to="/register" className="hover:text-white transition-colors">{t('landing.footer.createAccount')}</Link></li>
+                <li><Link to="/soporte" className="hover:text-white transition-colors">{t('landing.footer.supportCenter')}</Link></li>
+                <li><Link to="/accountants-software" className="hover:text-emerald-400 transition-colors">{t('landing.footer.accountantProgram')}</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Legal</h4>
+              <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">{t('landing.footer.legal')}</h4>
               <ul className="space-y-1.5 sm:space-y-2 text-slate-400 text-xs sm:text-sm">
-                <li><Link to="/privacy" className="hover:text-white transition-colors">Política de Privacidad</Link></li>
-                <li><Link to="/terms" className="hover:text-white transition-colors">Términos de Servicio</Link></li>
+                <li><Link to="/privacy" className="hover:text-white transition-colors">{t('landing.footer.privacy')}</Link></li>
+                <li><Link to="/terms" className="hover:text-white transition-colors">{t('landing.footer.terms')}</Link></li>
               </ul>
             </div>
           </div>
           <div className="border-t border-slate-800 pt-6 sm:pt-8 text-center text-slate-400 text-xs sm:text-sm">
-            © {new Date().getFullYear()} FortexaRH. Todos los derechos reservados. República Dominicana.
+            © {new Date().getFullYear()} FortexaRH. {t('landing.footer.rights')}. República Dominicana.
           </div>
         </div>
       </footer>
