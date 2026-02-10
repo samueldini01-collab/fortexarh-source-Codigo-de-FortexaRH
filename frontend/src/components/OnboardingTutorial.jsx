@@ -128,23 +128,23 @@ function OnboardingTooltip({ step, targetRect, onNext, onPrev, onSkip, currentSt
         {/* Step counter */}
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-full">
-            Paso {currentStep + 1} de {totalSteps}
+            {t('onboarding.step')} {currentStep + 1} {t('onboarding.of')} {totalSteps}
           </span>
           <button 
             onClick={onSkip}
             className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 flex items-center gap-1"
           >
             <SkipForward className="w-3 h-3" />
-            Saltar
+            {t('onboarding.skip')}
           </button>
         </div>
 
         {/* Content */}
         <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">
-          {step.title}
+          {step.titleKey ? t(step.titleKey) : step.title}
         </h3>
         <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 whitespace-pre-line">
-          {step.description}
+          {step.descriptionKey ? t(step.descriptionKey) : step.description}
         </p>
 
         {/* Navigation */}
@@ -157,14 +157,14 @@ function OnboardingTooltip({ step, targetRect, onNext, onPrev, onSkip, currentSt
             className="text-slate-500"
           >
             <ChevronLeft className="w-4 h-4 mr-1" />
-            Anterior
+            {t('onboarding.previous')}
           </Button>
           <Button 
             size="sm" 
             onClick={onNext}
             className="bg-emerald-600 hover:bg-emerald-700"
           >
-            {currentStep === totalSteps - 1 ? "Finalizar" : "Siguiente"}
+            {currentStep === totalSteps - 1 ? t('onboarding.finish') : t('onboarding.next')}
             {currentStep < totalSteps - 1 && <ChevronRight className="w-4 h-4 ml-1" />}
           </Button>
         </div>
