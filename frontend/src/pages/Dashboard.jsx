@@ -258,7 +258,7 @@ export default function Dashboard() {
 
   const statCards = [
     {
-      title: "Empleados Activos",
+      title: t('dashboard.stats.activeEmployees'),
       value: stats?.total_employees || 0,
       icon: Users,
       color: "bg-blue-500",
@@ -268,7 +268,7 @@ export default function Dashboard() {
       drillDownType: "employees"
     },
     {
-      title: "Nóminas Pendientes",
+      title: t('dashboard.stats.pendingPayrolls'),
       value: stats?.pending_payrolls || 0,
       icon: DollarSign,
       color: "bg-emerald-500",
@@ -278,7 +278,7 @@ export default function Dashboard() {
       drillDownType: "payrolls"
     },
     {
-      title: "Presentes Hoy",
+      title: t('dashboard.stats.presentToday'),
       value: stats?.today_attendance || 0,
       icon: Clock,
       color: "bg-amber-500",
@@ -288,7 +288,7 @@ export default function Dashboard() {
       drillDownType: "attendance"
     },
     {
-      title: "Vacaciones Pendientes",
+      title: t('dashboard.stats.pendingVacations'),
       value: stats?.pending_vacations || 0,
       icon: Calendar,
       color: "bg-purple-500",
@@ -298,7 +298,7 @@ export default function Dashboard() {
       drillDownType: "vacations"
     },
     {
-      title: "Vacantes Abiertas",
+      title: t('dashboard.stats.openJobs'),
       value: stats?.open_jobs || 0,
       icon: Briefcase,
       color: "bg-rose-500",
@@ -308,7 +308,7 @@ export default function Dashboard() {
       drillDownType: "jobs"
     },
     {
-      title: "Nuevos Candidatos",
+      title: t('dashboard.stats.newCandidates'),
       value: stats?.new_candidates || 0,
       icon: UserPlus,
       color: "bg-cyan-500",
@@ -320,7 +320,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <DashboardLayout title="Dashboard">
+    <DashboardLayout title={t('nav.dashboard')}>
       <div className="space-y-4 sm:space-y-6 md:space-y-8" data-testid="dashboard-page">
         
         {/* Personalized Greeting */}
@@ -329,10 +329,10 @@ export default function Dashboard() {
             <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100">
               {getGreeting()}, <span className="text-emerald-600 dark:text-emerald-400">{user?.name?.split(' ')[0] || 'Usuario'}!</span>
             </h1>
-            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1">Aquí está el resumen de tu gestión de RRHH</p>
+            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1">{t('dashboard.summary')}</p>
           </div>
           <div className="text-left sm:text-right">
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">{new Date().toLocaleDateString('es-DO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">{new Date().toLocaleDateString(getDateLocale(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
           </div>
         </div>
         
