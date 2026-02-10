@@ -555,48 +555,47 @@ export default function LandingPage() {
             <div className="animate-fade-in text-center lg:text-left">
               <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6 border border-emerald-200">
                 <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
-                #1 Sistema de RRHH en República Dominicana
+                #1 {t('landing.hero.title')}
               </div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight heading mb-4 sm:mb-6">
-                Nómina y RRHH
-                <span className="text-emerald-600 block sm:inline"> sin complicaciones</span>
+                {t('landing.features.payroll')}
+                <span className="text-emerald-600 block sm:inline"> {t('landing.hero.subtitle').split('.')[0]}</span>
               </h1>
               <p className="text-base sm:text-lg text-slate-600 mb-6 sm:mb-8 max-w-xl mx-auto lg:mx-0">
-                Automatiza TSS, ISR y AFP. Genera reportes DGII en un clic. 
-                Más de 500 empresas dominicanas ya confían en nosotros.
+                {t('landing.hero.subtitle')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
                 <Link to="/register" className="w-full sm:w-auto">
                   <Button size="lg" className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-sm sm:text-base px-6 sm:px-8 shadow-lg shadow-emerald-200" data-testid="hero-cta-btn">
-                    Prueba Gratis 14 Días
+                    {t('landing.hero.cta')}
                     <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
                   </Button>
                 </Link>
                 <a href="#demo-video" className="w-full sm:w-auto">
                   <Button size="lg" variant="outline" className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 border-slate-300 hover:bg-slate-50" data-testid="watch-demo-btn">
                     <Play className="w-4 h-4 mr-2" />
-                    Ver Demo
+                    {t('landing.hero.demo')}
                   </Button>
                 </a>
                 <Link to="/brochure" className="w-full sm:w-auto">
                   <Button size="lg" variant="outline" className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 border-emerald-300 text-emerald-700 hover:bg-emerald-50" data-testid="brochure-btn">
                     <FileText className="w-4 h-4 mr-2" />
-                    Ver Brochure
+                    Brochure
                   </Button>
                 </Link>
               </div>
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-6 mt-6 sm:mt-8 text-xs sm:text-sm text-slate-500">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" />
-                  Sin tarjeta de crédito
+                  {t('landing.pricing.tryFree')}
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" />
-                  Cancela cuando quieras
+                  {t('common.cancel')}
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" />
-                  Soporte en español
+                  {t('landing.contact.supportCenter')}
                 </div>
               </div>
             </div>
