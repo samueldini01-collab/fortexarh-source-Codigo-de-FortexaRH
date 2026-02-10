@@ -311,33 +311,33 @@ export default function VacationsPage() {
   };
 
   return (
-    <DashboardLayout title="Gestión de Vacaciones y Permisos">
+    <DashboardLayout title={t('vacations.pageTitle')}>
       <div className="space-y-6" data-testid="vacations-page">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <TabsList className="grid grid-cols-3 w-full sm:w-auto">
-              <TabsTrigger value="requests" data-testid="tab-requests">Solicitudes</TabsTrigger>
-              <TabsTrigger value="balances" data-testid="tab-balances">Balance</TabsTrigger>
-              <TabsTrigger value="calendar" data-testid="tab-calendar">Calendario</TabsTrigger>
+              <TabsTrigger value="requests" data-testid="tab-requests">{t('vacations.tabs.requests')}</TabsTrigger>
+              <TabsTrigger value="balances" data-testid="tab-balances">{t('vacations.tabs.balances')}</TabsTrigger>
+              <TabsTrigger value="calendar" data-testid="tab-calendar">{t('vacations.tabs.calendar')}</TabsTrigger>
             </TabsList>
             
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900" data-testid="add-vacation-btn">
                   <Plus className="w-4 h-4 mr-2" />
-                  Nueva Solicitud
+                  {t('vacations.newRequest')}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-lg">
                 <DialogHeader>
-                  <DialogTitle className="heading">Solicitar Permiso</DialogTitle>
+                  <DialogTitle className="heading">{t('vacations.request')}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                   <div className="space-y-2">
-                    <Label>Empleado</Label>
+                    <Label>{t('vacations.form.employee')}</Label>
                     <Select value={formData.employee_id} onValueChange={(v) => setFormData({...formData, employee_id: v})}>
                       <SelectTrigger data-testid="vacation-employee">
-                        <SelectValue placeholder="Seleccionar empleado" />
+                        <SelectValue placeholder={t('vacations.form.selectEmployee')} />
                       </SelectTrigger>
                       <SelectContent>
                         {employees.map(emp => (
@@ -349,7 +349,7 @@ export default function VacationsPage() {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>Tipo de Permiso</Label>
+                    <Label>{t('vacations.form.leaveType')}</Label>
                     <Select value={formData.leave_type} onValueChange={(v) => setFormData({...formData, leave_type: v})}>
                       <SelectTrigger data-testid="vacation-type">
                         <SelectValue />
@@ -368,7 +368,7 @@ export default function VacationsPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Fecha Inicio</Label>
+                      <Label>{t('vacations.form.startDate')}</Label>
                       <Input
                         type="date"
                         value={formData.start_date}
@@ -378,7 +378,7 @@ export default function VacationsPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Fecha Fin</Label>
+                      <Label>{t('vacations.form.endDate')}</Label>
                       <Input
                         type="date"
                         value={formData.end_date}
@@ -391,12 +391,12 @@ export default function VacationsPage() {
                   {daysRequested > 0 && (
                     <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
                       <p className="text-sm text-blue-700 dark:text-blue-400">
-                        <strong>{daysRequested}</strong> días hábiles solicitados
+                        <strong>{daysRequested}</strong> {t('vacations.form.businessDays')}
                       </p>
                     </div>
                   )}
                   <div className="space-y-2">
-                    <Label>Motivo (opcional)</Label>
+                    <Label>{t('vacations.form.reason')} ({t('common.optional')})</Label>
                     <Textarea
                       value={formData.reason}
                       onChange={(e) => setFormData({...formData, reason: e.target.value})}
