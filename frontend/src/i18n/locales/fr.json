@@ -1253,9 +1253,137 @@
       "system": "Système"
     }
   },
-  "reports": {
-    "title": "Rapports et Analyses",
-    "period": "Période",
+  "documents": {
+    "title": "Documents",
+    "header": {
+      "title": "Documents et Lettres",
+      "subtitle": "Générez des attestations, lettres et certificats"
+    },
+    "tabs": {
+      "generate": "Générer",
+      "templates": "Modèles",
+      "history": "Historique"
+    },
+    "buttons": {
+      "refresh": "Actualiser",
+      "newTemplate": "Nouveau Modèle",
+      "generate": "Générer Document",
+      "print": "Imprimer",
+      "copy": "Copier",
+      "download": "Télécharger PDF",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "close": "Fermer"
+    },
+    "generate": {
+      "selectTemplate": "Sélectionner Modèle",
+      "selectTemplateDesc": "Choisissez le type de document à générer",
+      "all": "Tous",
+      "configuration": "Configuration",
+      "employee": "Employé",
+      "selectEmployee": "Sélectionner employé"
+    },
+    "options": {
+      "title": "Options de l'Attestation",
+      "desc": "Sélectionnez les informations à inclure dans le document",
+      "hireDate": "Date d'embauche",
+      "position": "Poste / Fonction",
+      "department": "Département",
+      "salary": "Salaire mensuel"
+    },
+    "purpose": {
+      "title": "Objectif",
+      "select": "Sélectionner objectif",
+      "bankLoan": "Prêt bancaire",
+      "housingRental": "Location de logement",
+      "visaApplication": "Demande de visa",
+      "personalProcedures": "Démarches personnelles"
+    },
+    "recommendation": {
+      "title": "Informations Supplémentaires",
+      "endDate": "Date de Départ",
+      "additionalComments": "Commentaires Supplémentaires",
+      "placeholder": "Qualités remarquables de l'employé..."
+    },
+    "raise": {
+      "title": "Détails de l'Augmentation",
+      "effectiveDate": "Date d'Effet",
+      "newSalary": "Nouveau Salaire (RD$)",
+      "percentage": "Pourcentage d'Augmentation"
+    },
+    "termination": {
+      "title": "Détails de la Résiliation",
+      "terminationDate": "Date de Résiliation",
+      "reason": "Motif",
+      "selectReason": "Sélectionner motif",
+      "voluntaryResignation": "Démission volontaire",
+      "dismissal": "Licenciement",
+      "justifiedDismissal": "Licenciement justifié",
+      "mutualAgreement": "Accord mutuel",
+      "contractEnd": "Fin de contrat",
+      "notice": "Préavis",
+      "severance": "Indemnités"
+    },
+    "preview": {
+      "title": "Aperçu du Document",
+      "generating": "Génération...",
+      "generatedBy": "Généré par FortexaRH"
+    },
+    "templates": {
+      "title": "Gérer les Modèles",
+      "subtitle": "Créez et modifiez vos modèles de documents",
+      "name": "Nom",
+      "category": "Catégorie",
+      "description": "Description",
+      "actions": "Actions",
+      "noTemplates": "Aucun modèle",
+      "createFirst": "Créez votre premier modèle"
+    },
+    "templateForm": {
+      "createTitle": "Créer Modèle",
+      "editTitle": "Modifier Modèle",
+      "namePlaceholder": "Nom du modèle",
+      "descPlaceholder": "Description brève",
+      "content": "Contenu",
+      "contentPlaceholder": "Écrivez le contenu du modèle...",
+      "variablesHelp": "Utilisez {{variable}} pour les champs dynamiques"
+    },
+    "history": {
+      "title": "Historique des Documents",
+      "subtitle": "Documents générés précédemment",
+      "document": "Document",
+      "employee": "Employé",
+      "date": "Date",
+      "actions": "Actions",
+      "noHistory": "Aucun document généré",
+      "generateFirst": "Les documents générés apparaîtront ici"
+    },
+    "messages": {
+      "errorLoading": "Erreur de chargement des données",
+      "selectBoth": "Sélectionnez modèle et employé",
+      "generated": "Document généré",
+      "errorGenerating": "Erreur de génération du document",
+      "copied": "Contenu copié",
+      "errorCopying": "Erreur de copie",
+      "confirmDeleteDoc": "Supprimer ce document de l'historique?",
+      "docDeleted": "Document supprimé",
+      "errorDeleting": "Erreur de suppression",
+      "errorLoadingDoc": "Erreur de chargement du document",
+      "completeFields": "Complétez le nom et le contenu",
+      "templateUpdated": "Modèle mis à jour",
+      "templateCreated": "Modèle créé",
+      "errorSaving": "Erreur d'enregistrement",
+      "confirmDeleteTemplate": "Supprimer ce modèle?",
+      "templateDeleted": "Modèle supprimé"
+    },
+    "categories": {
+      "constancia": "Attestation",
+      "carta": "Lettre",
+      "certificado": "Certificat",
+      "notificacion": "Notification"
+    }
+  },
+  "reportsPage": {
     "months": {
       "january": "Janvier",
       "february": "Février",
