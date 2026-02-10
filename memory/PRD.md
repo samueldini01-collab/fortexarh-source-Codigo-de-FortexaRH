@@ -4,34 +4,41 @@
 
 ## ✅ Completado Hoy (Sesión Actual)
 
-### 🌐 Sistema Multi-Idioma - Sistema Interno (P0 - EN PROGRESO)
+### 🌐 Sistema Multi-Idioma - Páginas Completamente Traducidas (P0 - EN PROGRESO)
 Continuación de la implementación multi-idioma al sistema interno completo (ES, EN, FR).
 
-#### Páginas Traducidas Esta Sesión
-1. **PricingPage.jsx:** Completamente traducida con selector de idioma
-2. **EmployeesPage.jsx:** Título, búsqueda, stats, tabla, filtros, formularios, acciones
-3. **PayrollV2Page.jsx:** Título, subtítulo, tabs, stats, estados, acciones
-4. **AttendancePage.jsx:** Título, tabs, stats, formularios, filtros, mensajes
-5. **VacationsPage.jsx:** Estructura preparada para traducciones
-6. **Dashboard.jsx:** "Click para ver detalles" traducido
-7. **OnboardingTutorial.jsx:** Modal de bienvenida y pasos del tutorial traducidos
-8. **OnboardingContext.jsx:** Refactorizado para usar claves de traducción
-9. **ReportsPage.jsx:** Hook useTranslation añadido
-10. **LoansPage.jsx:** Hook useTranslation añadido
-11. **EvaluationsPage.jsx:** Hook useTranslation añadido
-12. **DocumentsPage.jsx:** Hook useTranslation añadido
-13. **CompanyConfigPage.jsx:** Hook useTranslation añadido
-14. **OrganigramaPage.jsx:** Hook useTranslation añadido
+#### Páginas Completamente Traducidas Esta Sesión
+1. **EvaluationsPage.jsx:** Completamente traducida - título, pestañas, estadísticas, formularios, competencias, ratings, planes de mejora, ciclos, objetivos
+2. **ReportsPage.jsx:** Completamente traducida - período, meses, resumen, gráficos, tabla de asistencia
+3. **DocumentsPage.jsx:** Parcialmente traducida - mensajes, botones, formularios principales
+4. **CompanyConfigPage.jsx:** Claves de traducción añadidas - todas las pestañas y secciones
 
-#### Archivos JSON Expandidos
-- Sección `landing.pricing`: FAQ, planes, features completos
-- Sección `employees`: ~150 claves (formularios, acciones, mensajes, pestañas)
-- Sección `payroll`: ~120 claves (tipos, estados, tablas, reportes)
-- Sección `attendance`: ~100 claves (stats, turnos, alertas, filtros)
-- Sección `vacations`: ~80 claves (tipos de licencia, estados, calendario)
-- Sección `reports`: ~60 claves expandidas (stats, charts, columns, messages)
-- Sección `onboarding`: ~40 claves (pasos del tutorial)
-- Sección `common`: Expandida con 15 claves adicionales (of, select, view, etc.)
+#### Correcciones de Bugs de Traducción
+1. **ReportsPage namespace fix:** Corregido `t('reports.*')` a `t('reportsPage.*')` para coincidir con el archivo JSON
+2. **Ratings dinámicos:** EvaluationsPage ahora traduce los ratings dinámicamente según el idioma seleccionado (en lugar de usar valor de BD)
+
+#### Archivos JSON Expandidos Esta Sesión
+- Sección `evaluations`: ~180 claves nuevas (competencias, ratings, objetivos, ciclos, planes)
+- Sección `reportsPage`: ~70 claves expandidas (meses, resumen, gráficos, drill-down)
+- Sección `documents`: ~120 claves nuevas (formularios, mensajes, categorías)
+- Sección `settings`: ~100 claves nuevas (tabs, general, logo, apariencia, notificaciones, integraciones, auditoría)
+
+#### Test Report: `/app/test_reports/iteration_35.json`
+- Frontend: 100% - Traducciones funcionando en ES/EN/FR
+
+---
+
+### 🌐 Páginas Ya Traducidas (Sesiones Anteriores)
+1. **LandingPage.jsx** - Completa
+2. **LoginPage.jsx** - Completa
+3. **PricingPage.jsx** - Completa
+4. **OnboardingTutorial.jsx** - Completa
+5. **VacationsPage.jsx** - Completa
+6. **LoansPage.jsx** - Completa
+7. **Dashboard.jsx** - Parcial
+8. **EmployeesPage.jsx** - Parcial
+9. **PayrollV2Page.jsx** - Parcial
+10. **AttendancePage.jsx** - Parcial
 
 #### Patrón de Traducción Establecido
 1. Añadir `import { useTranslation } from "react-i18next";`
