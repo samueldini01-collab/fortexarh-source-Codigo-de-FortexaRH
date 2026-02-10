@@ -1089,8 +1089,23 @@
   },
   "reports": {
     "title": "Reports Center",
+    "pageTitle": "Reports & Analytics",
+    "subtitle": "View and export your company information",
     "generate": "Generate Report",
     "export": "Export",
+    "download": "Download",
+    "preview": "Preview",
+    "print": "Print",
+    "selectPeriod": "Select Period",
+    "year": "Year",
+    "month": "Month",
+    "viewDetails": "View Details",
+    "stats": {
+      "totalPayroll": "Total Payroll",
+      "employeesPaid": "Employees Paid",
+      "avgSalary": "Average Salary",
+      "attendanceRate": "Attendance Rate"
+    },
     "types": {
       "payroll": "Payroll Report",
       "employees": "Employees Report",
@@ -1105,6 +1120,29 @@
       "ir13": "IR-13 - ISR Withholdings",
       "ir17": "IR-17 - Withholding Declaration",
       "ir6": "IR-6 - Purchase of Goods"
+    },
+    "charts": {
+      "payrollByDept": "Payroll by Department",
+      "employeesByDept": "Employees by Department",
+      "attendanceByDept": "Attendance by Department",
+      "monthlyCost": "Monthly Cost"
+    },
+    "columns": {
+      "department": "Department",
+      "employees": "Employees",
+      "gross": "Gross",
+      "deductions": "Deductions",
+      "net": "Net",
+      "present": "Present",
+      "absent": "Absent",
+      "late": "Late"
+    },
+    "messages": {
+      "reportGenerated": "Report generated",
+      "exportSuccess": "Export successful",
+      "errorGenerating": "Error generating report",
+      "errorExporting": "Error exporting",
+      "noData": "No data for selected period"
     }
   },
   "portal": {
