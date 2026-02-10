@@ -1254,6 +1254,120 @@
       "system": "System"
     }
   },
+  "settings": {
+    "title": "Company Settings",
+    "tabs": {
+      "general": "General",
+      "logo": "Logo",
+      "appearance": "Appearance",
+      "branding": "Branding & Text",
+      "notifications": "Notifications",
+      "integrations": "Integrations",
+      "audit": "Audit"
+    },
+    "fontSizes": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
+    },
+    "themes": {
+      "light": "Light",
+      "dark": "Dark",
+      "auto": "Auto"
+    },
+    "general": {
+      "title": "General Information",
+      "subtitle": "Basic company data",
+      "name": "Company Name",
+      "slogan": "Slogan",
+      "description": "Description",
+      "rnc": "Tax ID (RNC)",
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email",
+      "website": "Website"
+    },
+    "logo": {
+      "title": "Company Logo",
+      "subtitle": "Upload or update your company logo",
+      "currentLogo": "Current Logo",
+      "noLogo": "No logo",
+      "uploadNew": "Upload New Logo",
+      "remove": "Remove",
+      "preview": "Preview",
+      "formats": "Formats: PNG, JPG, GIF (max. 5MB)"
+    },
+    "appearance": {
+      "title": "Visual Customization",
+      "subtitle": "Configure system colors and typography",
+      "colors": "System Colors",
+      "primaryColor": "Primary Color",
+      "secondaryColor": "Secondary Color",
+      "accentColor": "Accent Color",
+      "typography": "Typography",
+      "fontFamily": "Font Family",
+      "fontSize": "Font Size",
+      "theme": "Theme",
+      "preview": "Preview"
+    },
+    "branding": {
+      "title": "Branding & Text",
+      "subtitle": "Customize the texts that appear in the system",
+      "headerText": "Header Text",
+      "footerText": "Footer Text",
+      "welcomeMessage": "Welcome Message",
+      "socialLinks": "Social Networks"
+    },
+    "notifications": {
+      "title": "Notification Preferences",
+      "subtitle": "Configure how and when to receive notifications",
+      "email": "Email Notifications",
+      "emailDesc": "Receive alerts and summaries by email",
+      "sms": "SMS Notifications",
+      "smsDesc": "Urgent alerts via text message",
+      "push": "Push Notifications",
+      "pushDesc": "Browser and mobile device notifications",
+      "selfService": "Employee Portal",
+      "selfServiceDesc": "Allow employees to manage requests"
+    },
+    "integrations": {
+      "title": "Integrations",
+      "subtitle": "Connect FortexaRH with other platforms",
+      "connected": "Connected",
+      "connect": "Connect",
+      "disconnect": "Disconnect",
+      "connectedTo": "Connected to",
+      "manage": "Manage",
+      "connecting": "Connecting...",
+      "confirmDisconnect": "Disconnect from QuickBooks? Automatic synchronization will be lost."
+    },
+    "audit": {
+      "title": "Audit Log",
+      "subtitle": "History of changes and actions in the system",
+      "action": "Action",
+      "user": "User",
+      "date": "Date",
+      "details": "Details",
+      "noRecords": "No audit records available"
+    },
+    "buttons": {
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "upload": "Upload"
+    },
+    "messages": {
+      "saved": "Settings saved",
+      "errorSaving": "Error saving",
+      "qbConnected": "QuickBooks connected successfully to",
+      "qbError": "Error connecting QuickBooks",
+      "qbDisconnected": "QuickBooks disconnected",
+      "errorDisconnecting": "Error disconnecting",
+      "logoUploaded": "Logo updated",
+      "logoRemoved": "Logo removed",
+      "imageTooLarge": "Image too large (max. 5MB)",
+      "invalidFormat": "Invalid format"
+    }
+  },
   "documents": {
     "title": "Documents",
     "header": {
