@@ -68,15 +68,15 @@ export default function PricingPage() {
   // Build localized free plan
   const getFreePlan = () => ({
     plan_id: "free",
-    name: t('pricing.plans.free.name'),
+    name: t('landing.pricing.plans.free.name'),
     base_price: 0,
     price_per_employee: 0,
     max_employees: 5,
     features: [
-      t('pricing.plans.free.features.employees'),
-      t('pricing.plans.free.features.management'),
-      t('pricing.plans.free.features.attendance'),
-      t('pricing.plans.free.features.support')
+      t('landing.pricing.plans.free.features.employees'),
+      t('landing.pricing.plans.free.features.management'),
+      t('landing.pricing.plans.free.features.attendance'),
+      t('landing.pricing.plans.free.features.support')
     ]
   });
 
@@ -85,7 +85,7 @@ export default function PricingPage() {
     ...plans.map(plan => ({
       ...plan,
       // Translate plan names and features if they come from API
-      name: t(`pricing.plans.${plan.plan_id}.name`, plan.name),
+      name: t(`landing.pricing.plans.${plan.plan_id}.name`, plan.name),
       features: plan.features_key 
         ? plan.features_key.map(key => t(key))
         : plan.features
@@ -131,16 +131,16 @@ export default function PricingPage() {
                 <Link to="/dashboard">
                   <Button variant="outline" data-testid="go-dashboard-btn">
                     <ArrowLeft className="w-4 h-4 mr-2" />
-                    {t('pricing.goToDashboard')}
+                    {t('landing.pricing.goToDashboard')}
                   </Button>
                 </Link>
               ) : (
                 <>
                   <Link to="/login">
-                    <Button variant="ghost">{t('nav.login')}</Button>
+                    <Button variant="ghost">{t('landing.nav.login')}</Button>
                   </Link>
                   <Link to="/register">
-                    <Button className="bg-slate-900 hover:bg-slate-800">{t('nav.getStarted')}</Button>
+                    <Button className="bg-slate-900 hover:bg-slate-800">{t('landing.nav.getStarted')}</Button>
                   </Link>
                 </>
               )}
@@ -156,13 +156,13 @@ export default function PricingPage() {
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
               <Zap className="w-4 h-4" />
-              {t('pricing.badge')}
+              {t('landing.pricing.badge')}
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 heading mb-4">
-              {t('pricing.title')}
+              {t('landing.pricing.title')}
             </h1>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              {t('pricing.subtitle')}
+              {t('landing.pricing.subtitle')}
             </p>
           </div>
 
@@ -180,18 +180,18 @@ export default function PricingPage() {
                 >
                   {isPopular && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-emerald-500 text-white text-xs font-semibold rounded-full">
-                      {t('pricing.mostPopular')}
+                      {t('landing.pricing.mostPopular')}
                     </div>
                   )}
                   <CardHeader className="text-center pb-4">
                     <CardTitle className="text-xl heading">{plan.name}</CardTitle>
                     <div className="mt-4">
                       <span className="text-4xl font-bold text-slate-900">${plan.base_price}</span>
-                      <span className="text-slate-500">/{t('pricing.month')}</span>
+                      <span className="text-slate-500">/{t('landing.pricing.month')}</span>
                     </div>
                     {plan.price_per_employee > 0 && (
                       <p className="text-sm text-slate-500 mt-1">
-                        + ${plan.price_per_employee} {t('pricing.perEmployee')}
+                        + ${plan.price_per_employee} {t('landing.pricing.perEmployee')}
                       </p>
                     )}
                   </CardHeader>
@@ -215,7 +215,7 @@ export default function PricingPage() {
                       onClick={() => isFree ? navigate("/register") : handleSelectPlan(plan.plan_id)}
                       data-testid={`select-plan-${plan.plan_id}`}
                     >
-                      {isFree ? t('pricing.startFree') : t('pricing.selectPlan')}
+                      {isFree ? t('landing.pricing.startFree') : t('landing.pricing.selectPlan')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -226,31 +226,31 @@ export default function PricingPage() {
           {/* FAQ Section */}
           <div className="mt-20 text-center">
             <h2 className="text-2xl font-bold text-slate-900 heading mb-8">
-              {t('pricing.faq.title')}
+              {t('landing.pricing.faq.title')}
             </h2>
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto text-left">
               <div>
-                <h3 className="font-semibold text-slate-900 mb-2">{t('pricing.faq.changePlan.question')}</h3>
+                <h3 className="font-semibold text-slate-900 mb-2">{t('landing.pricing.faq.changePlan.question')}</h3>
                 <p className="text-slate-600 text-sm">
-                  {t('pricing.faq.changePlan.answer')}
+                  {t('landing.pricing.faq.changePlan.answer')}
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold text-slate-900 mb-2">{t('pricing.faq.perEmployee.question')}</h3>
+                <h3 className="font-semibold text-slate-900 mb-2">{t('landing.pricing.faq.perEmployee.question')}</h3>
                 <p className="text-slate-600 text-sm">
-                  {t('pricing.faq.perEmployee.answer')}
+                  {t('landing.pricing.faq.perEmployee.answer')}
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold text-slate-900 mb-2">{t('pricing.faq.trial.question')}</h3>
+                <h3 className="font-semibold text-slate-900 mb-2">{t('landing.pricing.faq.trial.question')}</h3>
                 <p className="text-slate-600 text-sm">
-                  {t('pricing.faq.trial.answer')}
+                  {t('landing.pricing.faq.trial.answer')}
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold text-slate-900 mb-2">{t('pricing.faq.payment.question')}</h3>
+                <h3 className="font-semibold text-slate-900 mb-2">{t('landing.pricing.faq.payment.question')}</h3>
                 <p className="text-slate-600 text-sm">
-                  {t('pricing.faq.payment.answer')}
+                  {t('landing.pricing.faq.payment.answer')}
                 </p>
               </div>
             </div>
@@ -262,7 +262,7 @@ export default function PricingPage() {
       <footer className="bg-slate-900 text-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-slate-400">
-            © {new Date().getFullYear()} FortexaRH. {t('footer.allRightsReserved')}
+            © {new Date().getFullYear()} FortexaRH. {t('landing.footer.allRightsReserved')}
           </p>
         </div>
       </footer>
