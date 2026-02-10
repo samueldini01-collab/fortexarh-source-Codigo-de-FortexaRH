@@ -1145,6 +1145,79 @@
       "noData": "Pas de données pour la période sélectionnée"
     }
   },
+  "loans": {
+    "title": "Prêts aux Employés",
+    "pageTitle": "Prêts aux Employés",
+    "subtitle": "Gérez les prêts et les déductions automatiques sur la paie",
+    "newLoan": "Nouveau Prêt",
+    "export": "Exporter",
+    "stats": {
+      "activeLoans": "Prêts Actifs",
+      "totalLoaned": "Total Prêté",
+      "totalPaid": "Total Payé",
+      "inDefault": "En Défaut",
+      "pendingBalance": "Solde en Attente"
+    },
+    "status": {
+      "active": "Actif",
+      "paid": "Payé",
+      "defaulted": "En Défaut",
+      "cancelled": "Annulé"
+    },
+    "form": {
+      "employee": "Employé",
+      "selectEmployee": "Sélectionner employé",
+      "amount": "Montant du Prêt",
+      "currency": "Devise",
+      "interestRate": "Taux d'Intérêt (%)",
+      "installments": "Nombre de Versements",
+      "installmentAmount": "Montant par Versement",
+      "startDate": "Date de Début",
+      "description": "Description",
+      "descriptionPlaceholder": "Motif du prêt...",
+      "autoDeduct": "Déduction automatique sur la paie",
+      "createLoan": "Créer Prêt"
+    },
+    "table": {
+      "employee": "Employé",
+      "amount": "Montant",
+      "balance": "Solde",
+      "installments": "Versements",
+      "status": "Statut",
+      "progress": "Progression",
+      "actions": "Actions"
+    },
+    "payment": {
+      "registerPayment": "Enregistrer Paiement",
+      "paymentAmount": "Montant du Paiement",
+      "paymentDate": "Date de Paiement",
+      "paymentMethod": "Mode de Paiement",
+      "manual": "Manuel",
+      "payroll": "Déduction Paie",
+      "notes": "Notes",
+      "register": "Enregistrer"
+    },
+    "detail": {
+      "loanDetails": "Détails du Prêt",
+      "originalAmount": "Montant Original",
+      "remainingBalance": "Solde Restant",
+      "paidAmount": "Montant Payé",
+      "installmentsPaid": "Versements Payés",
+      "paymentHistory": "Historique des Paiements",
+      "noPayments": "Aucun paiement enregistré"
+    },
+    "messages": {
+      "loanCreated": "Prêt créé avec succès",
+      "paymentRegistered": "Paiement enregistré",
+      "loanDeleted": "Prêt supprimé",
+      "exportSuccess": "Exportation réussie",
+      "errorCreating": "Erreur création prêt",
+      "errorPayment": "Erreur enregistrement paiement",
+      "errorDeleting": "Erreur suppression",
+      "noLoans": "Aucun prêt enregistré",
+      "noLoansFilter": "Aucun prêt avec ces filtres"
+    }
+  },
   "portal": {
     "title": "Portail Employé",
     "welcome": "Bienvenue sur le Portail",
