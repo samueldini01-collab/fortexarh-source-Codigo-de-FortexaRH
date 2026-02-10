@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { useOnboarding } from "@/context/OnboardingContext";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
