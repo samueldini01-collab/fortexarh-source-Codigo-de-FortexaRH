@@ -228,6 +228,7 @@ const RECENT_SEARCHES_KEY = "fortexarh_recent_searches";
 const MAX_RECENT_SEARCHES = 8;
 
 export default function DashboardLayout({ children, title }) {
+  const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     // Load collapsed state from localStorage
