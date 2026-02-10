@@ -954,19 +954,91 @@
   },
   "vacations": {
     "title": "Vacation Management",
+    "pageTitle": "Vacation and Leave Management",
+    "pageSubtitle": "Manage vacation requests and time off for your team",
     "request": "Request Vacation",
+    "newRequest": "New Request",
     "balance": "Vacation Balance",
     "available": "Available",
     "used": "Used",
     "pending": "Pending",
     "approved": "Approved",
     "rejected": "Rejected",
+    "tabs": {
+      "requests": "Requests",
+      "balances": "Balances",
+      "calendar": "Calendar",
+      "reports": "Reports"
+    },
+    "stats": {
+      "pendingRequests": "Pending Requests",
+      "approvedThisMonth": "Approved This Month",
+      "onLeaveToday": "On Leave Today",
+      "avgBalance": "Average Balance"
+    },
+    "leaveTypes": {
+      "vacation": "Vacation",
+      "sick": "Sick Leave",
+      "maternity": "Maternity Leave",
+      "paternity": "Paternity Leave",
+      "personal": "Personal Leave",
+      "bereavement": "Bereavement Leave",
+      "marriage": "Marriage Leave",
+      "study": "Study Leave",
+      "medical_appointment": "Medical Appointment",
+      "unpaid": "Unpaid Leave"
+    },
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled"
+    },
     "form": {
+      "employee": "Employee",
+      "selectEmployee": "Select employee",
+      "leaveType": "Leave Type",
+      "selectType": "Select type",
       "startDate": "Start Date",
       "endDate": "End Date",
       "days": "Days",
+      "businessDays": "business days",
       "reason": "Reason",
-      "submit": "Submit Request"
+      "reasonPlaceholder": "Reason for request...",
+      "submit": "Submit Request",
+      "cancel": "Cancel"
+    },
+    "table": {
+      "employee": "Employee",
+      "type": "Type",
+      "dates": "Dates",
+      "days": "Days",
+      "status": "Status",
+      "actions": "Actions",
+      "requestedAt": "Requested"
+    },
+    "actions": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "cancel": "Cancel",
+      "view": "View",
+      "export": "Export"
+    },
+    "messages": {
+      "requestCreated": "Request created successfully",
+      "requestApproved": "Request approved",
+      "requestRejected": "Request rejected",
+      "requestCancelled": "Request cancelled",
+      "errorCreating": "Error creating request",
+      "errorApproving": "Error approving",
+      "errorRejecting": "Error rejecting",
+      "noRequests": "No vacation requests",
+      "noBalances": "No balances registered"
+    },
+    "calendar": {
+      "today": "Today",
+      "month": "Month",
+      "week": "Week"
     }
   },
   "reports": {
