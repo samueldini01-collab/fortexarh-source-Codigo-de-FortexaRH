@@ -175,6 +175,7 @@ function OnboardingTooltip({ step, targetRect, onNext, onPrev, onSkip, currentSt
 
 // Modal for welcome/completion steps
 function OnboardingModal({ step, onNext, onSkip, currentStep, totalSteps }) {
+  const { t } = useTranslation();
   const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
