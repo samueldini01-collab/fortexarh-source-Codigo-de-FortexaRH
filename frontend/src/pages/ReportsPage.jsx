@@ -62,6 +62,22 @@ export default function ReportsPage() {
     fetchReports();
   }, [fetchReports]);
 
+  // Build months with translations
+  const getMonths = () => [
+    { value: "1", label: t('reports.months.january') },
+    { value: "2", label: t('reports.months.february') },
+    { value: "3", label: t('reports.months.march') },
+    { value: "4", label: t('reports.months.april') },
+    { value: "5", label: t('reports.months.may') },
+    { value: "6", label: t('reports.months.june') },
+    { value: "7", label: t('reports.months.july') },
+    { value: "8", label: t('reports.months.august') },
+    { value: "9", label: t('reports.months.september') },
+    { value: "10", label: t('reports.months.october') },
+    { value: "11", label: t('reports.months.november') },
+    { value: "12", label: t('reports.months.december') }
+  ];
+
   // Drill-down handler for table rows
   const handleRowDrillDown = (row, type) => {
     let title = "";
@@ -69,26 +85,26 @@ export default function ReportsPage() {
     let columns = [];
     
     if (type === "payroll") {
-      title = `Detalle Nómina - ${row.employee_name}`;
+      title = `${t('reports.drillDown.payrollDetail')} - ${row.employee_name}`;
       data = [row];
       columns = [
-        { header: "Empleado", accessor: "employee_name" },
-        { header: "Departamento", accessor: "department" },
-        { header: "Bruto", accessor: "gross_salary", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right" },
-        { header: "ISR", accessor: "isr", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right text-red-600" },
-        { header: "SFS", accessor: "sfs", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right text-red-600" },
-        { header: "AFP", accessor: "afp", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right text-red-600" },
-        { header: "Neto", accessor: "net_salary", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right font-bold text-emerald-600" }
+        { header: t('reports.drillDown.employee'), accessor: "employee_name" },
+        { header: t('reports.drillDown.department'), accessor: "department" },
+        { header: t('reports.drillDown.gross'), accessor: "gross_salary", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right" },
+        { header: t('reports.drillDown.isr'), accessor: "isr", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right text-red-600" },
+        { header: t('reports.drillDown.sfs'), accessor: "sfs", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right text-red-600" },
+        { header: t('reports.drillDown.afp'), accessor: "afp", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right text-red-600" },
+        { header: t('reports.drillDown.net'), accessor: "net_salary", render: (val) => `RD$${(val || 0).toLocaleString()}`, className: "text-right", cellClassName: "text-right font-bold text-emerald-600" }
       ];
     } else if (type === "attendance") {
-      title = `Detalle Asistencia - ${row.employee_name}`;
+      title = `${t('reports.drillDown.attendanceDetail')} - ${row.employee_name}`;
       data = [row];
       columns = [
-        { header: "Empleado", accessor: "employee_name" },
-        { header: "Días Trabajados", accessor: "days_worked", className: "text-center", cellClassName: "text-center" },
-        { header: "Ausencias", accessor: "absences", className: "text-center", cellClassName: "text-center text-red-600" },
-        { header: "Tardanzas", accessor: "late_arrivals", className: "text-center", cellClassName: "text-center text-amber-600" },
-        { header: "Horas Extra", accessor: "overtime_hours", className: "text-center", cellClassName: "text-center text-blue-600" }
+        { header: t('reports.drillDown.employee'), accessor: "employee_name" },
+        { header: t('reports.drillDown.daysWorked'), accessor: "days_worked", className: "text-center", cellClassName: "text-center" },
+        { header: t('reports.drillDown.absences'), accessor: "absences", className: "text-center", cellClassName: "text-center text-red-600" },
+        { header: t('reports.drillDown.lateArrivals'), accessor: "late_arrivals", className: "text-center", cellClassName: "text-center text-amber-600" },
+        { header: t('reports.drillDown.overtimeHours'), accessor: "overtime_hours", className: "text-center", cellClassName: "text-center text-blue-600" }
       ];
     }
     
@@ -99,12 +115,7 @@ export default function ReportsPage() {
     setDrillDown({ open: false, title: "", data: [], columns: [] });
   };
 
-  const months = [
-    { value: "1", label: "Enero" }, { value: "2", label: "Febrero" }, { value: "3", label: "Marzo" },
-    { value: "4", label: "Abril" }, { value: "5", label: "Mayo" }, { value: "6", label: "Junio" },
-    { value: "7", label: "Julio" }, { value: "8", label: "Agosto" }, { value: "9", label: "Septiembre" },
-    { value: "10", label: "Octubre" }, { value: "11", label: "Noviembre" }, { value: "12", label: "Diciembre" }
-  ];
+  const months = getMonths();
 
   const years = Array.from({ length: 5 }, (_, i) => (new Date().getFullYear() - i).toString());
 
