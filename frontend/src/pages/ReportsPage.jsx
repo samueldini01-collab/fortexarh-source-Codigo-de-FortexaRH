@@ -338,7 +338,7 @@ export default function ReportsPage() {
               </Table>
             ) : (
               <div className="text-center py-12 text-slate-500 dark:text-slate-400">
-                No hay datos de asistencia para este período
+                {t('reports.attendance.noData')}
               </div>
             )}
           </CardContent>
