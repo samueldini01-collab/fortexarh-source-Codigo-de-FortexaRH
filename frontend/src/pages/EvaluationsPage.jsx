@@ -34,21 +34,23 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-const COMPETENCIES = [
-  { code: "performance", name: "Desempeño Laboral", weight: 25 },
-  { code: "goals", name: "Cumplimiento de Objetivos", weight: 25 },
-  { code: "teamwork", name: "Trabajo en Equipo", weight: 15 },
-  { code: "communication", name: "Comunicación", weight: 15 },
-  { code: "initiative", name: "Iniciativa", weight: 10 },
-  { code: "punctuality", name: "Puntualidad y Asistencia", weight: 10 },
+// Competency codes with weights - names are translated dynamically
+const COMPETENCY_CODES = [
+  { code: "performance", weight: 25 },
+  { code: "goals", weight: 25 },
+  { code: "teamwork", weight: 15 },
+  { code: "communication", weight: 15 },
+  { code: "initiative", weight: 10 },
+  { code: "punctuality", weight: 10 },
 ];
 
-const RATING_LABELS = {
-  1: { label: "Insatisfactorio", color: "text-red-600 dark:text-red-400", bg: "bg-red-500" },
-  2: { label: "Necesita Mejora", color: "text-orange-600 dark:text-orange-400", bg: "bg-orange-500" },
-  3: { label: "Satisfactorio", color: "text-yellow-600 dark:text-yellow-400", bg: "bg-yellow-500" },
-  4: { label: "Bueno", color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-500" },
-  5: { label: "Excepcional", color: "text-green-600 dark:text-green-400", bg: "bg-green-600" }
+// Rating colors - labels are translated dynamically
+const RATING_COLORS = {
+  1: { color: "text-red-600 dark:text-red-400", bg: "bg-red-500" },
+  2: { color: "text-orange-600 dark:text-orange-400", bg: "bg-orange-500" },
+  3: { color: "text-yellow-600 dark:text-yellow-400", bg: "bg-yellow-500" },
+  4: { color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-500" },
+  5: { color: "text-green-600 dark:text-green-400", bg: "bg-green-600" }
 };
 
 export default function EvaluationsPage() {
