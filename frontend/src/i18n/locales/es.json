@@ -1253,6 +1253,65 @@
       "system": "Sistema"
     }
   },
+  "reports": {
+    "title": "Reportes y Analytics",
+    "period": "Período",
+    "months": {
+      "january": "Enero",
+      "february": "Febrero",
+      "march": "Marzo",
+      "april": "Abril",
+      "may": "Mayo",
+      "june": "Junio",
+      "july": "Julio",
+      "august": "Agosto",
+      "september": "Septiembre",
+      "october": "Octubre",
+      "november": "Noviembre",
+      "december": "Diciembre"
+    },
+    "summary": {
+      "totalPayroll": "Total Nómina",
+      "baseSalary": "Salario Base",
+      "bonuses": "Bonos",
+      "taxes": "Impuestos"
+    },
+    "charts": {
+      "payrollByEmployee": "Nómina por Empleado",
+      "attendanceSummary": "Resumen de Asistencias",
+      "noData": "No hay datos para mostrar"
+    },
+    "attendance": {
+      "byEmployee": "Asistencia por Empleado",
+      "employee": "Empleado",
+      "present": "Presentes",
+      "absent": "Ausentes",
+      "late": "Tardanzas",
+      "totalHours": "Horas Totales",
+      "detail": "Detalle",
+      "noData": "No hay datos de asistencia para este período"
+    },
+    "pieChart": {
+      "present": "Presentes",
+      "absent": "Ausentes",
+      "late": "Tardanzas"
+    },
+    "drillDown": {
+      "payrollDetail": "Detalle Nómina",
+      "attendanceDetail": "Detalle Asistencia",
+      "employee": "Empleado",
+      "department": "Departamento",
+      "gross": "Bruto",
+      "isr": "ISR",
+      "sfs": "SFS",
+      "afp": "AFP",
+      "net": "Neto",
+      "daysWorked": "Días Trabajados",
+      "absences": "Ausencias",
+      "lateArrivals": "Tardanzas",
+      "overtimeHours": "Horas Extra"
+    }
+  },
   "evaluations": {
     "title": "Evaluaciones de Desempeño",
     "tabs": {

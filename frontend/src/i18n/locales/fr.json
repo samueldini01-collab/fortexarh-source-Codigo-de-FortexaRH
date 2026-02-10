@@ -1253,6 +1253,65 @@
       "system": "Système"
     }
   },
+  "reports": {
+    "title": "Rapports et Analyses",
+    "period": "Période",
+    "months": {
+      "january": "Janvier",
+      "february": "Février",
+      "march": "Mars",
+      "april": "Avril",
+      "may": "Mai",
+      "june": "Juin",
+      "july": "Juillet",
+      "august": "Août",
+      "september": "Septembre",
+      "october": "Octobre",
+      "november": "Novembre",
+      "december": "Décembre"
+    },
+    "summary": {
+      "totalPayroll": "Total Paie",
+      "baseSalary": "Salaire de Base",
+      "bonuses": "Primes",
+      "taxes": "Impôts"
+    },
+    "charts": {
+      "payrollByEmployee": "Paie par Employé",
+      "attendanceSummary": "Résumé des Présences",
+      "noData": "Aucune donnée à afficher"
+    },
+    "attendance": {
+      "byEmployee": "Présence par Employé",
+      "employee": "Employé",
+      "present": "Présents",
+      "absent": "Absents",
+      "late": "En Retard",
+      "totalHours": "Heures Totales",
+      "detail": "Détail",
+      "noData": "Aucune donnée de présence pour cette période"
+    },
+    "pieChart": {
+      "present": "Présents",
+      "absent": "Absents",
+      "late": "En Retard"
+    },
+    "drillDown": {
+      "payrollDetail": "Détail Paie",
+      "attendanceDetail": "Détail Présence",
+      "employee": "Employé",
+      "department": "Département",
+      "gross": "Brut",
+      "isr": "ISR",
+      "sfs": "SFS",
+      "afp": "AFP",
+      "net": "Net",
+      "daysWorked": "Jours Travaillés",
+      "absences": "Absences",
+      "lateArrivals": "Retards",
+      "overtimeHours": "Heures Supplémentaires"
+    }
+  },
   "evaluations": {
     "title": "Évaluations de Performance",
     "tabs": {

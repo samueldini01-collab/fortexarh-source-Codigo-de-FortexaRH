@@ -1254,6 +1254,65 @@
       "system": "System"
     }
   },
+  "reports": {
+    "title": "Reports and Analytics",
+    "period": "Period",
+    "months": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    },
+    "summary": {
+      "totalPayroll": "Total Payroll",
+      "baseSalary": "Base Salary",
+      "bonuses": "Bonuses",
+      "taxes": "Taxes"
+    },
+    "charts": {
+      "payrollByEmployee": "Payroll by Employee",
+      "attendanceSummary": "Attendance Summary",
+      "noData": "No data to display"
+    },
+    "attendance": {
+      "byEmployee": "Attendance by Employee",
+      "employee": "Employee",
+      "present": "Present",
+      "absent": "Absent",
+      "late": "Late",
+      "totalHours": "Total Hours",
+      "detail": "Detail",
+      "noData": "No attendance data for this period"
+    },
+    "pieChart": {
+      "present": "Present",
+      "absent": "Absent",
+      "late": "Late"
+    },
+    "drillDown": {
+      "payrollDetail": "Payroll Detail",
+      "attendanceDetail": "Attendance Detail",
+      "employee": "Employee",
+      "department": "Department",
+      "gross": "Gross",
+      "isr": "ISR",
+      "sfs": "SFS",
+      "afp": "AFP",
+      "net": "Net",
+      "daysWorked": "Days Worked",
+      "absences": "Absences",
+      "lateArrivals": "Late Arrivals",
+      "overtimeHours": "Overtime Hours"
+    }
+  },
   "evaluations": {
     "title": "Performance Evaluations",
     "tabs": {
