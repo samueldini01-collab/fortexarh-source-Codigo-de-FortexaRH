@@ -648,6 +648,8 @@
   },
   "payroll": {
     "title": "Nómina",
+    "pageTitle": "Nómina de Pago",
+    "pageSubtitle": "Procesa nóminas por tipo, período o grupos",
     "process": "Procesar Nómina",
     "history": "Historial",
     "currentPeriod": "Período Actual",
@@ -655,6 +657,52 @@
     "calculate": "Calcular",
     "approve": "Aprobar",
     "pay": "Pagar",
+    "refresh": "Actualizar",
+    "newPayroll": "Nueva Nómina",
+    "createFirst": "Crear Primera Nómina",
+    "selectPeriodMsg": "Seleccione un período",
+    "viewPeriods": "Ver períodos",
+    "noEmployees": "No hay empleados",
+    "addEmployees": "Agregar empleados",
+    "tabs": {
+      "dashboard": "Dashboard",
+      "periods": "Períodos",
+      "payrollSheet": "Hoja de Nómina",
+      "approval": "Aprobación",
+      "reports": "Reportes"
+    },
+    "stats": {
+      "openPeriods": "Períodos Abiertos",
+      "pendingPayrolls": "Nóminas Pendientes",
+      "totalPaid": "Total Pagado",
+      "payrollTypes": "Tipos de Nómina"
+    },
+    "status": {
+      "open": "Abierto",
+      "draft": "Borrador",
+      "pendingApproval": "Pendiente Aprobación",
+      "calculated": "Calculado",
+      "approved": "Aprobado",
+      "paid": "Pagado"
+    },
+    "actions": {
+      "add": "Agregar",
+      "calculate": "Calcular",
+      "sendForApproval": "Enviar a Aprobación",
+      "reject": "Rechazar",
+      "rejectReason": "Motivo del rechazo:",
+      "excel": "Excel",
+      "preview": "Vista Previa"
+    },
+    "types": {
+      "regular": "Regular",
+      "temporary": "Temporal",
+      "bonus": "Bono/Extraordinaria",
+      "christmas": "Regalía Pascual",
+      "vacation": "Vacaciones",
+      "liquidation": "Liquidación",
+      "obrerosNG": "Obreros NG 07/2007"
+    },
     "summary": {
       "grossSalary": "Salario Bruto",
       "deductions": "Deducciones",
@@ -662,7 +710,26 @@
       "tss": "TSS Empleado",
       "tssEmployer": "TSS Patronal",
       "isr": "ISR",
-      "totalCost": "Costo Total"
+      "totalCost": "Costo Total",
+      "totalNet": "Total Neto"
+    },
+    "table": {
+      "no": "NO.",
+      "employee": "EMPLEADO",
+      "cedula": "CÉDULA",
+      "salary": "SALARIO",
+      "commissions": "COMIS.",
+      "bonuses": "BONOS",
+      "overtime": "H.EXTRAS",
+      "noveltiesIncome": "NOVEDADES+",
+      "gross": "BRUTO",
+      "sfs": "SFS",
+      "afp": "AFP",
+      "isr": "ISR",
+      "noveltiesDeduction": "NOVEDADES-",
+      "deductions": "DEDUCCIONES",
+      "net": "NETO",
+      "totals": "TOTALES"
     },
     "details": {
       "employee": "Empleado",
@@ -674,6 +741,83 @@
       "loans": "Préstamos",
       "advances": "Avances",
       "netPay": "Pago Neto"
+    },
+    "period": {
+      "noPeriods": "No hay períodos de nómina",
+      "employees": "empleados",
+      "periodType": "Tipo de Período",
+      "payrollType": "Tipo de Nómina",
+      "year": "Año",
+      "month": "Mes",
+      "startDate": "Fecha Inicio",
+      "endDate": "Fecha Fin",
+      "description": "Descripción",
+      "departmentFilter": "Filtrar por Departamento",
+      "allDepartments": "Todos los Departamentos",
+      "create": "Crear Período"
+    },
+    "approval": {
+      "pendingApproval": "Nóminas Pendientes de Aprobación",
+      "noPending": "No hay pendientes",
+      "readyToPay": "Listos para Pagar",
+      "noApproved": "No hay aprobados",
+      "view": "Ver"
+    },
+    "payment": {
+      "payNow": "Pagar Ahora",
+      "confirmPayment": "Confirmar Pago de Nómina",
+      "paymentDesc": "Se generará el asiento contable automático y se marcarán todos los empleados como pagados.",
+      "selectBankAccount": "Cuenta Bancaria de Origen",
+      "generateBankFile": "Generar Archivo de Pago Bancario (ACH)",
+      "selectBank": "Seleccionar Banco",
+      "confirmAndPay": "Confirmar y Pagar"
+    },
+    "reports": {
+      "exportPayrolls": "Exportar Nóminas",
+      "downloadFormat": "Descarga en formato Excel o CSV",
+      "noExport": "No hay nóminas para exportar",
+      "tssFiles": "Archivos TSS",
+      "tssDesc": "Tesorería de la Seguridad Social - Formato SUIR+",
+      "payTssNote": "Pague una nómina para generar archivos TSS",
+      "autodeterminacion": "Autodeterminación",
+      "novedades": "Novedades",
+      "obrerosNote": "Obreros NG no requiere TSS (solo ISR 2%)",
+      "dgiiReports": "Reportes DGII-TSS",
+      "dgiiDesc": "Formularios IR-3 e IR-17 para Dirección General de Impuestos Internos",
+      "payDgiiNote": "Pague una nómina para generar reportes de impuestos"
+    },
+    "novelty": {
+      "addNovelty": "Agregar novedad",
+      "deleteNovelty": "Eliminar novedad",
+      "type": "Tipo de Novedad",
+      "income": "Ingreso",
+      "deduction": "Descuento",
+      "code": "Código",
+      "name": "Nombre",
+      "amount": "Monto",
+      "isPercentage": "Es porcentaje",
+      "add": "Agregar Novedad"
+    },
+    "messages": {
+      "periodCreated": "Período creado correctamente",
+      "employeesAdded": "Empleados agregados",
+      "calculated": "Nóminas calculadas",
+      "sentForApproval": "Nómina enviada para aprobación",
+      "approved": "Período aprobado",
+      "rejected": "Nómina rechazada y devuelta a borrador",
+      "paid": "Nómina pagada",
+      "deleted": "Período eliminado",
+      "updated": "Actualizado",
+      "noveltyAdded": "Novedad agregada",
+      "noveltyDeleted": "Novedad eliminada",
+      "exportSuccess": "Excel exportado",
+      "tssDownloaded": "Reporte TSS descargado",
+      "errorCreate": "Error al crear período",
+      "errorCalculate": "Error al calcular",
+      "errorApprove": "Error al aprobar",
+      "errorPay": "Error al pagar",
+      "errorExport": "Error al exportar",
+      "rejectReasonRequired": "Debe proporcionar un motivo para el rechazo"
     }
   },
   "attendance": {
