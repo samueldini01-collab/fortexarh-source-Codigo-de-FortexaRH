@@ -517,41 +517,41 @@ export default function EvaluationsPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Fortalezas (una por línea)</Label>
+                      <Label>{t('evaluations.form.strengths')}</Label>
                       <Textarea
                         value={evalFormData.strengths.join('\n')}
                         onChange={(e) => setEvalFormData({...evalFormData, strengths: e.target.value.split('\n').filter(s => s.trim())})}
-                        placeholder="Ej: Excelente comunicación con el equipo&#10;Cumple deadlines consistentemente"
+                        placeholder={t('evaluations.form.strengthsPlaceholder')}
                         rows={3}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Áreas de Mejora (una por línea)</Label>
+                      <Label>{t('evaluations.form.areasForImprovement')}</Label>
                       <Textarea
                         value={evalFormData.areas_for_improvement.join('\n')}
                         onChange={(e) => setEvalFormData({...evalFormData, areas_for_improvement: e.target.value.split('\n').filter(s => s.trim())})}
-                        placeholder="Ej: Gestión del tiempo&#10;Documentación de procesos"
+                        placeholder={t('evaluations.form.areasPlaceholder')}
                         rows={3}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Comentarios Generales</Label>
+                      <Label>{t('evaluations.form.overallComments')}</Label>
                       <Textarea
                         value={evalFormData.overall_comments}
                         onChange={(e) => setEvalFormData({...evalFormData, overall_comments: e.target.value})}
-                        placeholder="Observaciones adicionales sobre el desempeño..."
+                        placeholder={t('evaluations.form.commentsPlaceholder')}
                         rows={3}
                       />
                     </div>
 
                     <div className="flex justify-end gap-3 pt-4">
                       <Button type="button" variant="outline" onClick={() => setIsEvalDialogOpen(false)}>
-                        Cancelar
+                        {t('evaluations.form.cancel')}
                       </Button>
                       <Button type="submit" className="bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900" data-testid="save-eval-btn">
-                        Guardar Evaluación
+                        {t('evaluations.form.save')}
                       </Button>
                     </div>
                   </form>
