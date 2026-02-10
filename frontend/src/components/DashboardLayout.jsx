@@ -93,132 +93,39 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import NotificationBell from "@/components/NotificationBell";
 import LanguageSelector from "@/components/LanguageSelector";
 
-// Menu groups with collapsible submenus
-const MENU_GROUPS = [
-  {
-    id: "dashboards",
-    name: "Dashboards",
-    icon: LayoutDashboard,
-    isGroup: true,
-    defaultOpen: true,
-    items: [
-      { id: "dashboard", name: "Dashboard Principal", href: "/dashboard", icon: LayoutDashboard, featureKey: "dashboard" },
-      { id: "payroll-dashboard", name: "Dashboard Nómina", href: "/payroll-dashboard", icon: BarChart3, featureKey: "reports" },
-      { id: "metrics-dashboard", name: "Métricas", href: "/metrics-dashboard", icon: TrendingUp, featureKey: "reports" },
-    ]
-  },
-  {
-    id: "gestion-humana",
-    name: "Gestión Humana",
-    subtitle: "Core RRHH",
-    icon: UserCircle,
-    isGroup: true,
-    defaultOpen: true,
-    items: [
-      { id: "employees", name: "Empleados", href: "/employees", icon: Users, featureKey: "employees" },
-      { id: "organigrama", name: "Organigrama", href: "/organigrama", icon: Network, featureKey: "organigrama" },
-      { id: "evaluations", name: "Evaluaciones", href: "/evaluations", icon: Target, featureKey: "evaluations" },
-      { id: "documents", name: "Documentos", href: "/documents", icon: FileCheck, featureKey: "employees" },
-      { id: "templates", name: "Plantillas", href: "/templates", icon: FileText, featureKey: "employees" },
-      { id: "notifications", name: "Notificaciones", href: "/notifications", icon: Bell, featureKey: "settings" },
-    ]
-  },
-  {
-    id: "nomina-finanzas",
-    name: "Nómina y Finanzas",
-    icon: DollarSign,
-    isGroup: true,
-    defaultOpen: false,
-    items: [
-      { id: "payroll-v2", name: "Nómina", href: "/payroll-v2", icon: DollarSign, featureKey: "employees" },
-      { id: "payroll-calculator", name: "Calculadora", href: "/payroll-calculator", icon: Calculator, featureKey: "payroll_calculator" },
-      { id: "loans", name: "Préstamos", href: "/loans", icon: Wallet, featureKey: "loans" },
-      { id: "expenses", name: "Gastos y Viáticos", href: "/expenses", icon: Receipt, featureKey: "expenses" },
-      { id: "accounting", name: "Contabilidad", href: "/accounting", icon: BookOpen, featureKey: "accounting" },
-      { id: "payroll-config", name: "Config. Nómina", href: "/payroll-config", icon: Settings2, featureKey: "employees" },
-    ]
-  },
-  {
-    id: "tiempo-asistencia",
-    name: "Tiempo y Asistencia",
-    icon: Clock,
-    isGroup: true,
-    defaultOpen: false,
-    items: [
-      { id: "attendance", name: "Asistencias", href: "/attendance", icon: Clock, featureKey: "attendance" },
-      { id: "geo-locations", name: "Geolocalización", href: "/geo-locations", icon: MapPin, featureKey: "attendance", isNew: true },
-      { id: "vacations", name: "Vacaciones", href: "/vacations", icon: Calendar, featureKey: "vacations" },
-    ]
-  },
-  {
-    id: "reportes",
-    name: "Reportes",
-    icon: FileBarChart,
-    isGroup: true,
-    defaultOpen: false,
-    items: [
-      { id: "reports-system", name: "Centro de Reportes", href: "/reports-system", icon: FileBarChart, featureKey: "reports" },
-      { id: "costs-by-department", name: "Costos por Depto", href: "/costs-by-department", icon: PieChart, featureKey: "reports" },
-      { id: "dgii-reports", name: "Reportes DGII-TSS", href: "/dgii-reports", icon: FileText, featureKey: "reports" },
-    ]
-  },
-  {
-    id: "talento",
-    name: "Talento",
-    icon: Briefcase,
-    isGroup: true,
-    defaultOpen: false,
-    items: [
-      { id: "recruitment", name: "Reclutamiento", href: "/recruitment", icon: Briefcase, featureKey: "recruitment" },
-    ]
-  },
-  {
-    id: "administracion",
-    name: "Administración",
-    icon: Settings,
-    isGroup: true,
-    defaultOpen: false,
-    items: [
-      { id: "roles", name: "Roles", href: "/roles", icon: Shield, featureKey: "custom_roles" },
-      { id: "users-management", name: "Usuarios", href: "/users-management", icon: UserCog, featureKey: "settings" },
-      { id: "subscriptions", name: "Suscripción", href: "/subscriptions", icon: CreditCard, featureKey: "subscriptions" },
-      { id: "support-admin", name: "Centro Soporte", href: "/support-admin", icon: HelpCircle, featureKey: "settings" },
-      { id: "cdc-audit", name: "CDC & Auditoría", href: "/cdc-audit", icon: Activity, featureKey: "settings" },
-      { id: "company-config", name: "Configuración", href: "/company-config", icon: Building2, featureKey: "settings" },
-    ]
-  },
-];
+// Menu groups will be generated dynamically inside the component to support i18n
+// Using nameKey instead of static name
 
 // Default navigation items with feature mapping (keeping for backward compatibility)
 const DEFAULT_NAVIGATION = [
-  { id: "dashboard", name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, visible: true, featureKey: "dashboard" },
-  { id: "payroll-dashboard", name: "Dashboard Nómina", href: "/payroll-dashboard", icon: BarChart3, visible: true, featureKey: "reports" },
-  { id: "metrics-dashboard", name: "Métricas", href: "/metrics-dashboard", icon: TrendingUp, visible: true, featureKey: "reports" },
-  { id: "employees", name: "Empleados", href: "/employees", icon: Users, visible: true, featureKey: "employees" },
-  { id: "organigrama", name: "Organigrama", href: "/organigrama", icon: Network, visible: true, featureKey: "organigrama" },
-  { id: "payroll-v2", name: "Nómina", href: "/payroll-v2", icon: DollarSign, visible: true, featureKey: "employees" },
-  { id: "payroll-calculator", name: "Calculadora", href: "/payroll-calculator", icon: Calculator, visible: true, featureKey: "payroll_calculator" },
-  { id: "loans", name: "Préstamos", href: "/loans", icon: Wallet, visible: true, featureKey: "loans" },
-  { id: "reports-system", name: "Centro de Reportes", href: "/reports-system", icon: FileBarChart, visible: true, featureKey: "reports" },
-  { id: "costs-by-department", name: "Costos por Depto", href: "/costs-by-department", icon: PieChart, visible: true, featureKey: "reports" },
-  { id: "expenses", name: "Gastos y Viáticos", href: "/expenses", icon: Receipt, visible: true, featureKey: "expenses" },
-  { id: "accounting", name: "Contabilidad", href: "/accounting", icon: BookOpen, visible: true, featureKey: "accounting" },
-  { id: "evaluations", name: "Evaluaciones", href: "/evaluations", icon: Target, visible: true, featureKey: "evaluations" },
-  { id: "recruitment", name: "Reclutamiento", href: "/recruitment", icon: Briefcase, visible: true, featureKey: "recruitment" },
-  { id: "dgii-reports", name: "Reportes DGII-TSS", href: "/dgii-reports", icon: FileText, visible: true, featureKey: "reports" },
-  { id: "attendance", name: "Asistencias", href: "/attendance", icon: Clock, visible: true, featureKey: "attendance" },
-  { id: "geo-locations", name: "Geolocalización", href: "/geo-locations", icon: MapPin, visible: true, featureKey: "attendance" },
-  { id: "vacations", name: "Vacaciones", href: "/vacations", icon: Calendar, visible: true, featureKey: "vacations" },
-  { id: "notifications", name: "Notificaciones", href: "/notifications", icon: Bell, visible: true, featureKey: "settings" },
-  { id: "documents", name: "Documentos", href: "/documents", icon: FileCheck, visible: true, featureKey: "employees" },
-  { id: "templates", name: "Plantillas", href: "/templates", icon: FileText, visible: true, featureKey: "employees" },
-  { id: "roles", name: "Roles", href: "/roles", icon: Shield, visible: true, featureKey: "custom_roles" },
-  { id: "users-management", name: "Usuarios", href: "/users-management", icon: UserCog, visible: true, featureKey: "settings" },
-  { id: "subscriptions", name: "Suscripción", href: "/subscriptions", icon: CreditCard, visible: true, featureKey: "subscriptions" },
-  { id: "payroll-config", name: "Config. Nómina", href: "/payroll-config", icon: Settings2, visible: true, featureKey: "employees" },
-  { id: "support-admin", name: "Centro Soporte", href: "/support-admin", icon: HelpCircle, visible: true, featureKey: "settings" },
-  { id: "cdc-audit", name: "CDC & Auditoría", href: "/cdc-audit", icon: Activity, visible: true, featureKey: "settings" },
-  { id: "company-config", name: "Configuración", href: "/company-config", icon: Building2, visible: true, featureKey: "settings" },
+  { id: "dashboard", nameKey: "dashboardMain", href: "/dashboard", icon: LayoutDashboard, visible: true, featureKey: "dashboard" },
+  { id: "payroll-dashboard", nameKey: "dashboardPayroll", href: "/payroll-dashboard", icon: BarChart3, visible: true, featureKey: "reports" },
+  { id: "metrics-dashboard", nameKey: "metrics", href: "/metrics-dashboard", icon: TrendingUp, visible: true, featureKey: "reports" },
+  { id: "employees", nameKey: "employees", href: "/employees", icon: Users, visible: true, featureKey: "employees" },
+  { id: "organigrama", nameKey: "orgChart", href: "/organigrama", icon: Network, visible: true, featureKey: "organigrama" },
+  { id: "payroll-v2", nameKey: "payroll", href: "/payroll-v2", icon: DollarSign, visible: true, featureKey: "employees" },
+  { id: "payroll-calculator", nameKey: "payrollCalculator", href: "/payroll-calculator", icon: Calculator, visible: true, featureKey: "payroll_calculator" },
+  { id: "loans", nameKey: "loans", href: "/loans", icon: Wallet, visible: true, featureKey: "loans" },
+  { id: "reports-system", nameKey: "reportsCenter", href: "/reports-system", icon: FileBarChart, visible: true, featureKey: "reports" },
+  { id: "costs-by-department", nameKey: "costsByDept", href: "/costs-by-department", icon: PieChart, visible: true, featureKey: "reports" },
+  { id: "expenses", nameKey: "expenses", href: "/expenses", icon: Receipt, visible: true, featureKey: "expenses" },
+  { id: "accounting", nameKey: "accounting", href: "/accounting", icon: BookOpen, visible: true, featureKey: "accounting" },
+  { id: "evaluations", nameKey: "evaluations", href: "/evaluations", icon: Target, visible: true, featureKey: "evaluations" },
+  { id: "recruitment", nameKey: "recruitment", href: "/recruitment", icon: Briefcase, visible: true, featureKey: "recruitment" },
+  { id: "dgii-reports", nameKey: "dgiiReports", href: "/dgii-reports", icon: FileText, visible: true, featureKey: "reports" },
+  { id: "attendance", nameKey: "attendance", href: "/attendance", icon: Clock, visible: true, featureKey: "attendance" },
+  { id: "geo-locations", nameKey: "geolocation", href: "/geo-locations", icon: MapPin, visible: true, featureKey: "attendance" },
+  { id: "vacations", nameKey: "vacations", href: "/vacations", icon: Calendar, visible: true, featureKey: "vacations" },
+  { id: "notifications", nameKey: "notifications", href: "/notifications", icon: Bell, visible: true, featureKey: "settings" },
+  { id: "documents", nameKey: "documents", href: "/documents", icon: FileCheck, visible: true, featureKey: "employees" },
+  { id: "templates", nameKey: "templates", href: "/templates", icon: FileText, visible: true, featureKey: "employees" },
+  { id: "roles", nameKey: "roles", href: "/roles", icon: Shield, visible: true, featureKey: "custom_roles" },
+  { id: "users-management", nameKey: "users", href: "/users-management", icon: UserCog, visible: true, featureKey: "settings" },
+  { id: "subscriptions", nameKey: "subscriptions", href: "/subscriptions", icon: CreditCard, visible: true, featureKey: "subscriptions" },
+  { id: "payroll-config", nameKey: "payrollConfig", href: "/payroll-config", icon: Settings2, visible: true, featureKey: "employees" },
+  { id: "support-admin", nameKey: "support", href: "/support-admin", icon: HelpCircle, visible: true, featureKey: "settings" },
+  { id: "cdc-audit", nameKey: "cdcAudit", href: "/cdc-audit", icon: Activity, visible: true, featureKey: "settings" },
+  { id: "company-config", nameKey: "settings", href: "/company-config", icon: Building2, visible: true, featureKey: "settings" },
 ];
 
 // Local storage keys
@@ -227,8 +134,107 @@ const SIDEBAR_COLLAPSED_KEY = "fortexarh_sidebar_collapsed";
 const RECENT_SEARCHES_KEY = "fortexarh_recent_searches";
 const MAX_RECENT_SEARCHES = 8;
 
+// Function to generate menu groups with translations
+const getMenuGroups = (t) => [
+  {
+    id: "dashboards",
+    nameKey: "groups.dashboards",
+    icon: LayoutDashboard,
+    isGroup: true,
+    defaultOpen: true,
+    items: [
+      { id: "dashboard", nameKey: "dashboardMain", href: "/dashboard", icon: LayoutDashboard, featureKey: "dashboard" },
+      { id: "payroll-dashboard", nameKey: "dashboardPayroll", href: "/payroll-dashboard", icon: BarChart3, featureKey: "reports" },
+      { id: "metrics-dashboard", nameKey: "metrics", href: "/metrics-dashboard", icon: TrendingUp, featureKey: "reports" },
+    ]
+  },
+  {
+    id: "gestion-humana",
+    nameKey: "groups.humanResources",
+    subtitle: "Core RRHH",
+    icon: UserCircle,
+    isGroup: true,
+    defaultOpen: true,
+    items: [
+      { id: "employees", nameKey: "employees", href: "/employees", icon: Users, featureKey: "employees" },
+      { id: "organigrama", nameKey: "orgChart", href: "/organigrama", icon: Network, featureKey: "organigrama" },
+      { id: "evaluations", nameKey: "evaluations", href: "/evaluations", icon: Target, featureKey: "evaluations" },
+      { id: "documents", nameKey: "documents", href: "/documents", icon: FileCheck, featureKey: "employees" },
+      { id: "templates", nameKey: "templates", href: "/templates", icon: FileText, featureKey: "employees" },
+      { id: "notifications", nameKey: "notifications", href: "/notifications", icon: Bell, featureKey: "settings" },
+    ]
+  },
+  {
+    id: "nomina-finanzas",
+    nameKey: "groups.payrollFinance",
+    icon: DollarSign,
+    isGroup: true,
+    defaultOpen: false,
+    items: [
+      { id: "payroll-v2", nameKey: "payroll", href: "/payroll-v2", icon: DollarSign, featureKey: "employees" },
+      { id: "payroll-calculator", nameKey: "payrollCalculator", href: "/payroll-calculator", icon: Calculator, featureKey: "payroll_calculator" },
+      { id: "loans", nameKey: "loans", href: "/loans", icon: Wallet, featureKey: "loans" },
+      { id: "expenses", nameKey: "expenses", href: "/expenses", icon: Receipt, featureKey: "expenses" },
+      { id: "accounting", nameKey: "accounting", href: "/accounting", icon: BookOpen, featureKey: "accounting" },
+      { id: "payroll-config", nameKey: "payrollConfig", href: "/payroll-config", icon: Settings2, featureKey: "employees" },
+    ]
+  },
+  {
+    id: "tiempo-asistencia",
+    nameKey: "groups.timeAttendance",
+    icon: Clock,
+    isGroup: true,
+    defaultOpen: false,
+    items: [
+      { id: "attendance", nameKey: "attendance", href: "/attendance", icon: Clock, featureKey: "attendance" },
+      { id: "geo-locations", nameKey: "geolocation", href: "/geo-locations", icon: MapPin, featureKey: "attendance", isNew: true },
+      { id: "vacations", nameKey: "vacations", href: "/vacations", icon: Calendar, featureKey: "vacations" },
+    ]
+  },
+  {
+    id: "reportes",
+    nameKey: "groups.reports",
+    icon: FileBarChart,
+    isGroup: true,
+    defaultOpen: false,
+    items: [
+      { id: "reports-system", nameKey: "reportsCenter", href: "/reports-system", icon: FileBarChart, featureKey: "reports" },
+      { id: "costs-by-department", nameKey: "costsByDept", href: "/costs-by-department", icon: PieChart, featureKey: "reports" },
+      { id: "dgii-reports", nameKey: "dgiiReports", href: "/dgii-reports", icon: FileText, featureKey: "reports" },
+    ]
+  },
+  {
+    id: "talento",
+    nameKey: "groups.talent",
+    icon: Briefcase,
+    isGroup: true,
+    defaultOpen: false,
+    items: [
+      { id: "recruitment", nameKey: "recruitment", href: "/recruitment", icon: Briefcase, featureKey: "recruitment" },
+    ]
+  },
+  {
+    id: "administracion",
+    nameKey: "groups.administration",
+    icon: Settings,
+    isGroup: true,
+    defaultOpen: false,
+    items: [
+      { id: "roles", nameKey: "roles", href: "/roles", icon: Shield, featureKey: "custom_roles" },
+      { id: "users-management", nameKey: "users", href: "/users-management", icon: UserCog, featureKey: "settings" },
+      { id: "subscriptions", nameKey: "subscriptions", href: "/subscriptions", icon: CreditCard, featureKey: "subscriptions" },
+      { id: "support-admin", nameKey: "support", href: "/support-admin", icon: HelpCircle, featureKey: "settings" },
+      { id: "cdc-audit", nameKey: "cdcAudit", href: "/cdc-audit", icon: Activity, featureKey: "settings" },
+      { id: "company-config", nameKey: "settings", href: "/company-config", icon: Building2, featureKey: "settings" },
+    ]
+  },
+];
+
 export default function DashboardLayout({ children, title }) {
   const { t } = useTranslation();
+  
+  // Generate menu groups with current translations
+  const MENU_GROUPS = getMenuGroups(t);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     // Load collapsed state from localStorage
