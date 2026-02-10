@@ -1089,8 +1089,23 @@
   },
   "reports": {
     "title": "Centre de Rapports",
-    "generate": "Générer un Rapport",
+    "pageTitle": "Rapports et Analyses",
+    "subtitle": "Visualisez et exportez les informations de votre entreprise",
+    "generate": "Générer Rapport",
     "export": "Exporter",
+    "download": "Télécharger",
+    "preview": "Aperçu",
+    "print": "Imprimer",
+    "selectPeriod": "Sélectionner la Période",
+    "year": "Année",
+    "month": "Mois",
+    "viewDetails": "Voir les Détails",
+    "stats": {
+      "totalPayroll": "Total Paie",
+      "employeesPaid": "Employés Payés",
+      "avgSalary": "Salaire Moyen",
+      "attendanceRate": "Taux de Présence"
+    },
     "types": {
       "payroll": "Rapport de Paie",
       "employees": "Rapport des Employés",
@@ -1105,6 +1120,29 @@
       "ir13": "IR-13 - Retenues ISR",
       "ir17": "IR-17 - Déclaration des Retenues",
       "ir6": "IR-6 - Achats de Biens"
+    },
+    "charts": {
+      "payrollByDept": "Paie par Département",
+      "employeesByDept": "Employés par Département",
+      "attendanceByDept": "Présence par Département",
+      "monthlyCost": "Coût Mensuel"
+    },
+    "columns": {
+      "department": "Département",
+      "employees": "Employés",
+      "gross": "Brut",
+      "deductions": "Retenues",
+      "net": "Net",
+      "present": "Présents",
+      "absent": "Absents",
+      "late": "Retard"
+    },
+    "messages": {
+      "reportGenerated": "Rapport généré",
+      "exportSuccess": "Exportation réussie",
+      "errorGenerating": "Erreur de génération du rapport",
+      "errorExporting": "Erreur d'exportation",
+      "noData": "Pas de données pour la période sélectionnée"
     }
   },
   "portal": {
