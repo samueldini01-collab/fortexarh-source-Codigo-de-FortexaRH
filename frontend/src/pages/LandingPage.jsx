@@ -385,14 +385,14 @@ export default function LandingPage() {
                   onClick={() => setOpenDropdown(openDropdown === 'contadores' ? null : 'contadores')}
                   data-testid="nav-contadores"
                 >
-                  Contadores
+                  {t('landing.nav.accountants')}
                   <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'contadores' ? 'rotate-180' : ''}`} />
                 </button>
                 
                 {openDropdown === 'contadores' && (
                   <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-slate-200 py-3 animate-fade-in z-50">
                     <div className="px-4 pb-2 mb-2 border-b border-slate-100">
-                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Programa para Contadores</p>
+                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">{t('landing.footer.accountantProgram')}</p>
                     </div>
                     {contadoresFeatures.map((feature, idx) => (
                       <Link 
@@ -415,7 +415,7 @@ export default function LandingPage() {
                         onClick={() => setOpenDropdown(null)}
                       >
                         <Award className="w-4 h-4" />
-                        Ver Programa de Partners
+                        {t('landing.footer.accountantProgram')}
                       </Link>
                     </div>
                   </div>
@@ -427,13 +427,13 @@ export default function LandingPage() {
                 href="#pricing" 
                 className="px-4 py-2 text-sm lg:text-base font-medium text-white hover:bg-slate-800 rounded-lg transition-colors"
               >
-                Precios
+                {t('landing.nav.pricing')}
               </a>
               <a 
                 href="#contact" 
                 className="px-4 py-2 text-sm lg:text-base font-medium text-white hover:bg-slate-800 rounded-lg transition-colors"
               >
-                Contacto
+                {t('landing.nav.contact')}
               </a>
             </nav>
             
