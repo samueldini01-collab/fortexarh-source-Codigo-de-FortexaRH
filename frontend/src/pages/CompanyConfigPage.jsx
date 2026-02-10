@@ -64,6 +64,7 @@ const INTEGRATIONS = [
 ];
 
 export default function CompanyConfigPage() {
+  const { t } = useTranslation();
   const { getAuthHeaders } = useAuth();
   const [activeTab, setActiveTab] = useState("general");
   const [loading, setLoading] = useState(true);
