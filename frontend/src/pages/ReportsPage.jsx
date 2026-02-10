@@ -273,7 +273,7 @@ export default function ReportsPage() {
                 </div>
               ) : (
                 <div className="h-64 flex items-center justify-center text-slate-500 dark:text-slate-400">
-                  No hay datos para mostrar
+                  {t('reports.charts.noData')}
                 </div>
               )}
             </CardContent>
@@ -285,7 +285,7 @@ export default function ReportsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="w-5 h-5 text-slate-500 dark:text-slate-400" />
-              Asistencia por Empleado
+              {t('reports.attendance.byEmployee')}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -297,12 +297,12 @@ export default function ReportsPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Empleado</TableHead>
-                    <TableHead className="text-center">Presentes</TableHead>
-                    <TableHead className="text-center">Ausentes</TableHead>
-                    <TableHead className="text-center">Tardanzas</TableHead>
-                    <TableHead className="text-center">Horas Totales</TableHead>
-                    <TableHead className="text-center">Detalle</TableHead>
+                    <TableHead>{t('reports.attendance.employee')}</TableHead>
+                    <TableHead className="text-center">{t('reports.attendance.present')}</TableHead>
+                    <TableHead className="text-center">{t('reports.attendance.absent')}</TableHead>
+                    <TableHead className="text-center">{t('reports.attendance.late')}</TableHead>
+                    <TableHead className="text-center">{t('reports.attendance.totalHours')}</TableHead>
+                    <TableHead className="text-center">{t('reports.attendance.detail')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
