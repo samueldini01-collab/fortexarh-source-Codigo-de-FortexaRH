@@ -359,7 +359,7 @@ export default function AttendancePage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">Total Empleados</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{t('attendance.stats.totalEmployees')}</p>
                       <p className="text-2xl font-bold dark:text-white">{todayData?.total_employees || 0}</p>
                     </div>
                     <Users className="w-8 h-8 text-slate-300 dark:text-slate-600" />
@@ -370,7 +370,7 @@ export default function AttendancePage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-emerald-600 dark:text-emerald-400">Presentes</p>
+                      <p className="text-sm text-emerald-600 dark:text-emerald-400">{t('attendance.stats.present')}</p>
                       <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{todayData?.present_count || 0}</p>
                     </div>
                     <UserCheck className="w-8 h-8 text-emerald-500" />
@@ -381,7 +381,7 @@ export default function AttendancePage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-amber-600 dark:text-amber-400">Tarde</p>
+                      <p className="text-sm text-amber-600 dark:text-amber-400">{t('attendance.stats.late')}</p>
                       <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">{todayData?.late_count || 0}</p>
                     </div>
                     <Clock className="w-8 h-8 text-amber-500" />
@@ -392,7 +392,7 @@ export default function AttendancePage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-red-600 dark:text-red-400">Ausentes</p>
+                      <p className="text-sm text-red-600 dark:text-red-400">{t('attendance.stats.absent')}</p>
                       <p className="text-2xl font-bold text-red-700 dark:text-red-400">{todayData?.absent_count || 0}</p>
                     </div>
                     <UserX className="w-8 h-8 text-red-500" />
@@ -403,7 +403,7 @@ export default function AttendancePage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-purple-600 dark:text-purple-400">Sin Salida</p>
+                      <p className="text-sm text-purple-600 dark:text-purple-400">{t('attendance.stats.notCheckedOut')}</p>
                       <p className="text-2xl font-bold text-purple-700 dark:text-purple-400">{todayData?.not_checked_out_count || 0}</p>
                     </div>
                     <Timer className="w-8 h-8 text-purple-500" />
@@ -415,13 +415,13 @@ export default function AttendancePage() {
             {/* Attendance Rate */}
             <Card className="border-slate-200 dark:border-slate-700">
               <CardHeader className="pb-2">
-                <CardTitle className="text-lg dark:text-white">Tasa de Asistencia Hoy</CardTitle>
+                <CardTitle className="text-lg dark:text-white">{t('attendance.todayDashboard.attendanceRate')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-slate-600 dark:text-slate-400">
-                      {todayData?.checked_in_count || 0} de {todayData?.total_employees || 0} empleados presentes
+                      {todayData?.checked_in_count || 0} {t('attendance.todayDashboard.of')} {todayData?.total_employees || 0} {t('attendance.todayDashboard.employeesPresent')}
                     </span>
                     <span className="font-bold dark:text-white">
                       {todayData?.total_employees ? Math.round((todayData.checked_in_count / todayData.total_employees) * 100) : 0}%
