@@ -209,12 +209,12 @@ export default function EvaluationsPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Objetivo creado");
+      toast.success(t('evaluations.messages.objectiveCreated'));
       setIsObjectiveDialogOpen(false);
       setObjectiveFormData({ employee_id: "", title: "", description: "", target_value: "", target_unit: "percentage", weight: 100, due_date: "" });
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al crear objetivo");
+      toast.error(error.response?.data?.detail || t('evaluations.messages.errorCreatingObjective'));
     }
   };
 
