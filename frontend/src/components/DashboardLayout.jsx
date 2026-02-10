@@ -90,6 +90,7 @@ import { API } from "@/App";
 import GlobalSearch from "@/components/GlobalSearch";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import NotificationBell from "@/components/NotificationBell";
+import LanguageSelector from "@/components/LanguageSelector";
 
 // Menu groups with collapsible submenus
 const MENU_GROUPS = [
