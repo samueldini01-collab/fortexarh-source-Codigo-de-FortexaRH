@@ -65,16 +65,31 @@ export default function PricingPage() {
     }
   };
 
+  // Build localized free plan
+  const getFreePlan = () => ({
+    plan_id: "free",
+    name: t('pricing.plans.free.name'),
+    base_price: 0,
+    price_per_employee: 0,
+    max_employees: 5,
+    features: [
+      t('pricing.plans.free.features.employees'),
+      t('pricing.plans.free.features.management'),
+      t('pricing.plans.free.features.attendance'),
+      t('pricing.plans.free.features.support')
+    ]
+  });
+
   const allPlans = [
-    {
-      plan_id: "free",
-      name: "Prueba Gratuita",
-      base_price: 0,
-      price_per_employee: 0,
-      max_employees: 5,
-      features: ["Hasta 5 empleados", "Gestión básica de empleados", "Control de asistencias", "Soporte por email"]
-    },
-    ...plans
+    getFreePlan(),
+    ...plans.map(plan => ({
+      ...plan,
+      // Translate plan names and features if they come from API
+      name: t(`pricing.plans.${plan.plan_id}.name`, plan.name),
+      features: plan.features_key 
+        ? plan.features_key.map(key => t(key))
+        : plan.features
+    }))
   ];
 
   return (
@@ -90,20 +105,42 @@ export default function PricingPage() {
               <span className="text-xl font-bold text-slate-900 heading">FortexaRH</span>
             </Link>
             <div className="flex items-center gap-3">
+              {/* Language Selector */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="gap-2" data-testid="pricing-language-selector">
+                    <Globe className="w-4 h-4" />
+                    <span className="hidden sm:inline">{languages.find(l => l.code === i18n.language)?.name || 'Español'}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {languages.map((lang) => (
+                    <DropdownMenuItem
+                      key={lang.code}
+                      onClick={() => changeLanguage(lang.code)}
+                      className={i18n.language === lang.code ? 'bg-slate-100' : ''}
+                    >
+                      <span className="mr-2">{lang.flag}</span>
+                      {lang.name}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
               {user ? (
                 <Link to="/dashboard">
                   <Button variant="outline" data-testid="go-dashboard-btn">
                     <ArrowLeft className="w-4 h-4 mr-2" />
-                    Ir al Dashboard
+                    {t('pricing.goToDashboard')}
                   </Button>
                 </Link>
               ) : (
                 <>
                   <Link to="/login">
-                    <Button variant="ghost">Iniciar Sesión</Button>
+                    <Button variant="ghost">{t('nav.login')}</Button>
                   </Link>
                   <Link to="/register">
-                    <Button className="bg-slate-900 hover:bg-slate-800">Comenzar Gratis</Button>
+                    <Button className="bg-slate-900 hover:bg-slate-800">{t('nav.getStarted')}</Button>
                   </Link>
                 </>
               )}
@@ -119,14 +156,13 @@ export default function PricingPage() {
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
               <Zap className="w-4 h-4" />
-              Planes flexibles para cada empresa
+              {t('pricing.badge')}
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 heading mb-4">
-              Elige el plan perfecto para tu equipo
+              {t('pricing.title')}
             </h1>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Modelo híbrido: paga una tarifa base más un costo por empleado. 
-              Escala según creces.
+              {t('pricing.subtitle')}
             </p>
           </div>
 
@@ -144,18 +180,18 @@ export default function PricingPage() {
                 >
                   {isPopular && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-emerald-500 text-white text-xs font-semibold rounded-full">
-                      Más Popular
+                      {t('pricing.mostPopular')}
                     </div>
                   )}
                   <CardHeader className="text-center pb-4">
                     <CardTitle className="text-xl heading">{plan.name}</CardTitle>
                     <div className="mt-4">
                       <span className="text-4xl font-bold text-slate-900">${plan.base_price}</span>
-                      <span className="text-slate-500">/mes</span>
+                      <span className="text-slate-500">/{t('pricing.month')}</span>
                     </div>
                     {plan.price_per_employee > 0 && (
                       <p className="text-sm text-slate-500 mt-1">
-                        + ${plan.price_per_employee} por empleado
+                        + ${plan.price_per_employee} {t('pricing.perEmployee')}
                       </p>
                     )}
                   </CardHeader>
@@ -179,7 +215,7 @@ export default function PricingPage() {
                       onClick={() => isFree ? navigate("/register") : handleSelectPlan(plan.plan_id)}
                       data-testid={`select-plan-${plan.plan_id}`}
                     >
-                      {isFree ? "Comenzar Gratis" : "Seleccionar Plan"}
+                      {isFree ? t('pricing.startFree') : t('pricing.selectPlan')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -190,33 +226,49 @@ export default function PricingPage() {
           {/* FAQ Section */}
           <div className="mt-20 text-center">
             <h2 className="text-2xl font-bold text-slate-900 heading mb-8">
-              Preguntas Frecuentes
+              {t('pricing.faq.title')}
             </h2>
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto text-left">
               <div>
-                <h3 className="font-semibold text-slate-900 mb-2">¿Puedo cambiar de plan?</h3>
+                <h3 className="font-semibold text-slate-900 mb-2">{t('pricing.faq.changePlan.question')}</h3>
                 <p className="text-slate-600 text-sm">
-                  Sí, puedes actualizar o degradar tu plan en cualquier momento. 
-                  Los cambios se aplican en tu próximo ciclo de facturación.
+                  {t('pricing.faq.changePlan.answer')}
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold text-slate-900 mb-2">¿Cómo funciona el cobro por empleado?</h3>
+                <h3 className="font-semibold text-slate-900 mb-2">{t('pricing.faq.perEmployee.question')}</h3>
                 <p className="text-slate-600 text-sm">
-                  Pagas la tarifa base del plan más una cantidad fija por cada empleado activo en tu sistema al momento de la facturación.
+                  {t('pricing.faq.perEmployee.answer')}
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold text-slate-900 mb-2">¿Hay periodo de prueba?</h3>
+                <h3 className="font-semibold text-slate-900 mb-2">{t('pricing.faq.trial.question')}</h3>
                 <p className="text-slate-600 text-sm">
-                  El plan gratuito te permite probar el sistema con hasta 5 empleados sin límite de tiempo.
+                  {t('pricing.faq.trial.answer')}
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold text-slate-900 mb-2">¿Qué métodos de pago aceptan?</h3>
+                <h3 className="font-semibold text-slate-900 mb-2">{t('pricing.faq.payment.question')}</h3>
                 <p className="text-slate-600 text-sm">
-                  Aceptamos todas las tarjetas de crédito y débito principales a través de Stripe.
+                  {t('pricing.faq.payment.answer')}
                 </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-slate-900 text-white py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-slate-400">
+            © {new Date().getFullYear()} FortexaRH. {t('footer.allRightsReserved')}
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+}
               </div>
             </div>
           </div>
