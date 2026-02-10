@@ -337,14 +337,14 @@ export default function LandingPage() {
                   onClick={() => setOpenDropdown(openDropdown === 'empresas' ? null : 'empresas')}
                   data-testid="nav-empresas"
                 >
-                  Para empresas
+                  {t('landing.nav.forCompanies')}
                   <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'empresas' ? 'rotate-180' : ''}`} />
                 </button>
                 
                 {openDropdown === 'empresas' && (
                   <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-slate-200 py-3 animate-fade-in z-50">
                     <div className="px-4 pb-2 mb-2 border-b border-slate-100">
-                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Solución para Empresas</p>
+                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">{t('landing.nav.forCompanies')}</p>
                     </div>
                     {empresaFeatures.map((feature, idx) => (
                       <a 
@@ -366,7 +366,7 @@ export default function LandingPage() {
                         className="flex items-center justify-center gap-2 w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
                         onClick={() => setOpenDropdown(null)}
                       >
-                        Comenzar Prueba Gratis
+                        {t('landing.pricing.tryFree')}
                         <ArrowRight className="w-4 h-4" />
                       </Link>
                     </div>
