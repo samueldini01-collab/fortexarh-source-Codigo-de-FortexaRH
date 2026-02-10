@@ -655,5 +655,61 @@
     "serverError": "Server error",
     "networkError": "Connection error",
     "tryAgain": "Try again"
+  },
+  "onboarding": {
+    "step": "Step",
+    "of": "of",
+    "skip": "Skip",
+    "previous": "Previous",
+    "next": "Next",
+    "finish": "Finish",
+    "skipTutorial": "Skip Tutorial",
+    "startTour": "Start Tour",
+    "startUsing": "Start Using!",
+    "continue": "Continue",
+    "repeatTutorial": "Repeat Tutorial",
+    "startTutorial": "Start Tutorial",
+    "steps": {
+      "welcome": {
+        "title": "Welcome to FortexaRH! 🎉",
+        "description": "We'll guide you through the main features of the system so you can start managing your team efficiently."
+      },
+      "dashboard": {
+        "title": "Dashboard",
+        "description": "Here you'll see a quick summary of your management: employees, pending payrolls, attendance and more. Click on any card to go directly to that section."
+      },
+      "sidebar": {
+        "title": "Navigation Menu",
+        "description": "Use the side menu to access all modules. You can collapse it to have more workspace."
+      },
+      "search": {
+        "title": "Global Search",
+        "description": "Quickly search for employees, payrolls, vacations and more. You can also use Ctrl+K as a keyboard shortcut."
+      },
+      "theme": {
+        "title": "Customize Your Experience",
+        "description": "Switch between light, dark or high contrast mode according to your preference. The system can also detect your device settings."
+      },
+      "userMenu": {
+        "title": "Your Profile and Settings",
+        "description": "Access your profile, company settings, billing and more from this menu. You'll also find available keyboard shortcuts."
+      },
+      "employees": {
+        "title": "Employee Management",
+        "description": "The employee module is the heart of the system. Here you register, edit and manage all your team's information."
+      },
+      "payroll": {
+        "title": "Advanced Payroll",
+        "description": "Calculate payrolls with all legal deductions (TSS, ISR) automatically. Generate DGII reports and payment vouchers."
+      },
+      "keyboard": {
+        "title": "Work Faster! ⌨️",
+        "description": "FortexaRH has keyboard shortcuts for quick navigation:\n\n• Press ? to see all shortcuts\n• G + E to go to Employees\n• G + N to go to Payroll\n• Ctrl + K for global search"
+      },
+      "complete": {
+        "title": "Ready to Start! 🚀",
+        "description": "You now know the main features of FortexaRH. If you need help, you can:\n\n• Press ? to see keyboard shortcuts\n• Restart this tutorial from Settings\n• Contact support from the help menu"
+      }
+    }
   }
 }
