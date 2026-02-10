@@ -475,9 +475,9 @@ export default function EvaluationsPage() {
                     {/* Competency Scores */}
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
-                        <Label className="text-base font-semibold">Competencias</Label>
+                        <Label className="text-base font-semibold">{t('evaluations.form.competencies')}</Label>
                         <div className="text-sm">
-                          <span className="text-slate-500 dark:text-slate-400">Puntuación Total: </span>
+                          <span className="text-slate-500 dark:text-slate-400">{t('evaluations.form.totalScore')}: </span>
                           <span className={`font-bold ${getScoreColor(parseFloat(calculateOverallScore()))}`}>
                             {calculateOverallScore()}/5
                           </span>
@@ -488,15 +488,15 @@ export default function EvaluationsPage() {
                         <div key={score.competency} className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg space-y-3">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="font-medium dark:text-white">{score.name}</p>
-                              <p className="text-xs text-slate-500 dark:text-slate-400">Peso: {score.weight}%</p>
+                              <p className="font-medium dark:text-white">{t(`evaluations.competencies.${score.competency}`)}</p>
+                              <p className="text-xs text-slate-500 dark:text-slate-400">{t('evaluations.form.weight')}: {score.weight}%</p>
                             </div>
                             <div className="flex items-center gap-3">
                               <span className={`text-2xl font-bold ${getScoreColor(score.score)}`}>
                                 {score.score}
                               </span>
                               <span className="text-sm text-slate-500 dark:text-slate-400">
-                                {RATING_LABELS[score.score]?.label}
+                                {getRatingLabel(score.score)}
                               </span>
                             </div>
                           </div>
