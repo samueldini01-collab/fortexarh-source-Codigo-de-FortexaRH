@@ -857,6 +857,9 @@ export default function DashboardLayout({ children, title }) {
             
             {/* Right section - Actions */}
             <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+              {/* Language Selector */}
+              <LanguageSelector variant="compact" />
+              
               {/* Theme Toggle */}
               <ThemeToggle />
               
