@@ -42,21 +42,29 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-const leaveTypes = [
-  { value: "vacation", label: "Vacaciones", icon: Sun, color: "text-amber-600" },
-  { value: "sick", label: "Licencia por Enfermedad", icon: Heart, color: "text-red-600" },
-  { value: "maternity", label: "Licencia por Maternidad", icon: Baby, color: "text-pink-600" },
-  { value: "paternity", label: "Licencia por Paternidad", icon: Baby, color: "text-blue-600" },
-  { value: "personal", label: "Permiso Personal", icon: User, color: "text-slate-600" },
-  { value: "bereavement", label: "Licencia por Duelo", icon: Heart, color: "text-slate-700" },
-  { value: "marriage", label: "Licencia por Matrimonio", icon: Heart, color: "text-rose-600" },
-  { value: "study", label: "Permiso de Estudio", icon: BookOpen, color: "text-purple-600" },
-  { value: "medical_appointment", label: "Cita Médica", icon: Briefcase, color: "text-teal-600" },
-  { value: "unpaid", label: "Licencia Sin Sueldo", icon: Clock, color: "text-gray-600" }
+// Base leave types with icons and colors (labels will be translated in component)
+const leaveTypesBase = [
+  { value: "vacation", labelKey: "vacations.leaveTypes.vacation", icon: Sun, color: "text-amber-600" },
+  { value: "sick", labelKey: "vacations.leaveTypes.sick", icon: Heart, color: "text-red-600" },
+  { value: "maternity", labelKey: "vacations.leaveTypes.maternity", icon: Baby, color: "text-pink-600" },
+  { value: "paternity", labelKey: "vacations.leaveTypes.paternity", icon: Baby, color: "text-blue-600" },
+  { value: "personal", labelKey: "vacations.leaveTypes.personal", icon: User, color: "text-slate-600" },
+  { value: "bereavement", labelKey: "vacations.leaveTypes.bereavement", icon: Heart, color: "text-slate-700" },
+  { value: "marriage", labelKey: "vacations.leaveTypes.marriage", icon: Heart, color: "text-rose-600" },
+  { value: "study", labelKey: "vacations.leaveTypes.study", icon: BookOpen, color: "text-purple-600" },
+  { value: "medical_appointment", labelKey: "vacations.leaveTypes.medical_appointment", icon: Briefcase, color: "text-teal-600" },
+  { value: "unpaid", labelKey: "vacations.leaveTypes.unpaid", icon: Clock, color: "text-gray-600" }
 ];
 
 export default function VacationsPage() {
   const { t } = useTranslation();
+  
+  // Generate translated leave types
+  const leaveTypes = leaveTypesBase.map(lt => ({
+    ...lt,
+    label: t(lt.labelKey)
+  }));
+  
   const [vacations, setVacations] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [balances, setBalances] = useState([]);
