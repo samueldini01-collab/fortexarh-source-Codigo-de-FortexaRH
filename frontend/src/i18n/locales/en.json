@@ -405,17 +405,45 @@
   "dashboard": {
     "welcome": "Welcome",
     "summary": "Here's your HR management summary",
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
     "stats": {
       "totalEmployees": "Total Employees",
       "activeEmployees": "Active Employees",
       "onLeave": "On Leave",
       "pendingRequests": "Pending Requests",
       "monthlyPayroll": "Monthly Payroll",
-      "pendingApprovals": "Pending Approvals"
+      "pendingApprovals": "Pending Approvals",
+      "pendingPayrolls": "Pending Payrolls",
+      "presentToday": "Present Today",
+      "pendingVacations": "Pending Vacations",
+      "openJobs": "Open Jobs",
+      "newCandidates": "New Candidates"
     },
     "quickActions": "Quick Actions",
     "recentActivity": "Recent Activity",
-    "upcomingEvents": "Upcoming Events"
+    "upcomingEvents": "Upcoming Events",
+    "proBanner": {
+      "title": "Upgrade to FortexaRH Pro",
+      "subtitle": "Unlock advanced reports, AI search, employee portal and much more",
+      "features": {
+        "reports": "30 advanced reports",
+        "aiSearch": "AI Search",
+        "portal": "Employee portal",
+        "evaluations": "Performance evaluations"
+      },
+      "cta": "View plans and pricing",
+      "ctaSecondary": "Try free"
+    },
+    "drillDown": {
+      "openJobs": "Open Jobs",
+      "newCandidates": "New Candidates",
+      "errorLoading": "Error loading details"
+    },
+    "paymentSuccess": "Payment successful! Your subscription has been activated."
   },
   "employees": {
     "title": "Employee Management",
