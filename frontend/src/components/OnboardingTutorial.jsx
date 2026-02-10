@@ -368,6 +368,7 @@ export default function OnboardingTutorial() {
 
 // Button to start onboarding from anywhere
 export function StartTutorialButton({ variant = "default" }) {
+  const { t } = useTranslation();
   const { startOnboarding, isCompleted } = useOnboarding();
 
   return (
@@ -377,7 +378,7 @@ export function StartTutorialButton({ variant = "default" }) {
       className="gap-2"
     >
       <Sparkles className="w-4 h-4" />
-      {isCompleted ? "Repetir Tutorial" : "Iniciar Tutorial"}
+      {isCompleted ? t('onboarding.repeatTutorial') : t('onboarding.startTutorial')}
     </Button>
   );
 }
