@@ -347,7 +347,7 @@ export default function Dashboard() {
             <button 
               onClick={handleCloseBanner}
               className="absolute top-2 right-2 sm:top-4 sm:right-4 p-1 hover:bg-white/20 rounded-full transition-colors"
-              aria-label="Cerrar banner"
+              aria-label={t('common.close')}
             >
               <X className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
@@ -356,47 +356,47 @@ export default function Dashboard() {
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
                   <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-amber-300" />
-                  <span className="text-xs sm:text-sm font-medium text-purple-200">Actualiza a FortexaRH Pro</span>
+                  <span className="text-xs sm:text-sm font-medium text-purple-200">{t('dashboard.proBanner.title')}</span>
                 </div>
-                <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2">Desbloquea todo el potencial de tu gestión de RRHH</h3>
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2">{t('dashboard.proBanner.subtitle')}</h3>
                 <p className="text-purple-100 text-xs sm:text-sm mb-4 max-w-xl hidden sm:block">
-                  Con el plan Pro obtienes acceso a herramientas avanzadas que transformarán la manera en que gestionas tu equipo.
+                  {t('dashboard.proBanner.subtitle')}
                 </p>
                 
                 {/* Feature highlights */}
                 <div className="grid grid-cols-2 gap-2 sm:gap-3">
                   <div className="flex items-center gap-1.5 sm:gap-2 bg-white/10 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2">
                     <Briefcase className="w-3 h-3 sm:w-4 sm:h-4 text-amber-300" />
-                    <span className="text-xs sm:text-sm truncate">Reclutamiento</span>
+                    <span className="text-xs sm:text-sm truncate">{t('landing.features.recruitment')}</span>
                   </div>
                   <div className="flex items-center gap-1.5 sm:gap-2 bg-white/10 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2">
                     <UserCheck className="w-3 h-3 sm:w-4 sm:h-4 text-amber-300" />
-                    <span className="text-xs sm:text-sm truncate">Portal Empleados</span>
+                    <span className="text-xs sm:text-sm truncate">{t('landing.features.portal')}</span>
                   </div>
                   <div className="flex items-center gap-1.5 sm:gap-2 bg-white/10 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2">
                     <Target className="w-3 h-3 sm:w-4 sm:h-4 text-amber-300" />
-                    <span className="text-xs sm:text-sm truncate">Evaluaciones</span>
+                    <span className="text-xs sm:text-sm truncate">{t('landing.features.evaluations')}</span>
                   </div>
                   <div className="flex items-center gap-1.5 sm:gap-2 bg-white/10 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2">
                     <Network className="w-3 h-3 sm:w-4 sm:h-4 text-amber-300" />
-                    <span className="text-xs sm:text-sm truncate">Organigrama</span>
+                    <span className="text-xs sm:text-sm truncate">{t('landing.features.orgChart')}</span>
                   </div>
                 </div>
               </div>
               
               <div className="flex flex-row lg:flex-col items-center lg:items-end gap-3 sm:gap-2 w-full lg:w-auto">
                 <div className="text-left lg:text-right flex-1 lg:flex-none">
-                  <p className="text-purple-200 text-xs sm:text-sm">Desde solo</p>
-                  <p className="text-2xl sm:text-3xl font-bold">$10<span className="text-base sm:text-lg font-normal">/mes</span></p>
-                  <p className="text-purple-200 text-[10px] sm:text-xs">+ $1.50 por empleado</p>
+                  <p className="text-purple-200 text-xs sm:text-sm">{t('landing.pricing.fromOnly')}</p>
+                  <p className="text-2xl sm:text-3xl font-bold">$10<span className="text-base sm:text-lg font-normal">/{t('landing.pricing.monthly')}</span></p>
+                  <p className="text-purple-200 text-[10px] sm:text-xs">+ $1.50 {t('landing.pricing.perEmployee')}</p>
                 </div>
                 <Button 
                   onClick={() => navigate('/subscriptions')}
                   className="bg-white text-purple-700 hover:bg-purple-50 font-semibold px-4 sm:px-6 text-sm"
                   data-testid="upgrade-pro-btn"
                 >
-                  <span className="hidden sm:inline">Actualizar a Pro</span>
-                  <span className="sm:hidden">Ver Pro</span>
+                  <span className="hidden sm:inline">{t('dashboard.proBanner.cta')}</span>
+                  <span className="sm:hidden">Pro</span>
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
