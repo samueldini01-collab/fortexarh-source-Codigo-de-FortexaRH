@@ -137,6 +137,7 @@ const TEMPLATES = [
 
 // ===================== MAIN COMPONENT =====================
 export default function OrganigramaPage() {
+  const { t } = useTranslation();
   const { getAuthHeaders } = useAuth();
   const [loading, setLoading] = useState(true);
   const [nodes, setNodes] = useState([]);
