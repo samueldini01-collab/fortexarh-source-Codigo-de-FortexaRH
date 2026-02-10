@@ -36,6 +36,7 @@ import { toast } from "sonner";
 import { LoanPaymentsDrillDown } from "@/components/DrillDown";
 
 export default function LoansPage() {
+  const { t } = useTranslation();
   const { getAuthHeaders } = useAuth();
   const [loading, setLoading] = useState(true);
   const [loans, setLoans] = useState([]);
