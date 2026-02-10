@@ -125,20 +125,20 @@ export default function ReportsPage() {
   })) || [];
 
   const attendancePieData = attendanceReport?.summary ? [
-    { name: "Presentes", value: attendanceReport.summary.total_present },
-    { name: "Ausentes", value: attendanceReport.summary.total_absent },
-    { name: "Tardanzas", value: attendanceReport.summary.total_late }
+    { name: t('reports.pieChart.present'), value: attendanceReport.summary.total_present },
+    { name: t('reports.pieChart.absent'), value: attendanceReport.summary.total_absent },
+    { name: t('reports.pieChart.late'), value: attendanceReport.summary.total_late }
   ] : [];
 
   return (
-    <DashboardLayout title="Reportes y Analytics">
+    <DashboardLayout title={t('reports.title')}>
       <div className="space-y-6" data-testid="reports-page">
         {/* Filters */}
         <Card className="border-slate-200 dark:border-slate-700">
           <CardContent className="p-4">
             <div className="flex flex-wrap gap-4 items-center">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-slate-600 dark:text-slate-300">Período:</span>
+                <span className="text-sm text-slate-600 dark:text-slate-300">{t('reports.period')}:</span>
                 <Select value={selectedMonth} onValueChange={setSelectedMonth}>
                   <SelectTrigger className="w-32" data-testid="report-month">
                     <SelectValue />
