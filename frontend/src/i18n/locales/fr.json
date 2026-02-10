@@ -1253,6 +1253,120 @@
       "system": "Système"
     }
   },
+  "settings": {
+    "title": "Configuration de l'Entreprise",
+    "tabs": {
+      "general": "Général",
+      "logo": "Logo",
+      "appearance": "Apparence",
+      "branding": "Marque et Textes",
+      "notifications": "Notifications",
+      "integrations": "Intégrations",
+      "audit": "Audit"
+    },
+    "fontSizes": {
+      "small": "Petit",
+      "medium": "Moyen",
+      "large": "Grand"
+    },
+    "themes": {
+      "light": "Clair",
+      "dark": "Sombre",
+      "auto": "Auto"
+    },
+    "general": {
+      "title": "Informations Générales",
+      "subtitle": "Données de base de l'entreprise",
+      "name": "Nom de l'Entreprise",
+      "slogan": "Slogan",
+      "description": "Description",
+      "rnc": "Numéro Fiscal (RNC)",
+      "address": "Adresse",
+      "phone": "Téléphone",
+      "email": "Email",
+      "website": "Site Web"
+    },
+    "logo": {
+      "title": "Logo de l'Entreprise",
+      "subtitle": "Téléchargez ou mettez à jour le logo de votre entreprise",
+      "currentLogo": "Logo Actuel",
+      "noLogo": "Pas de logo",
+      "uploadNew": "Télécharger un Nouveau Logo",
+      "remove": "Supprimer",
+      "preview": "Aperçu",
+      "formats": "Formats: PNG, JPG, GIF (max. 5Mo)"
+    },
+    "appearance": {
+      "title": "Personnalisation Visuelle",
+      "subtitle": "Configurez les couleurs et la typographie du système",
+      "colors": "Couleurs du Système",
+      "primaryColor": "Couleur Primaire",
+      "secondaryColor": "Couleur Secondaire",
+      "accentColor": "Couleur d'Accent",
+      "typography": "Typographie",
+      "fontFamily": "Famille de Police",
+      "fontSize": "Taille de Texte",
+      "theme": "Thème",
+      "preview": "Aperçu"
+    },
+    "branding": {
+      "title": "Marque et Textes",
+      "subtitle": "Personnalisez les textes qui apparaissent dans le système",
+      "headerText": "Texte d'En-tête",
+      "footerText": "Texte de Pied de Page",
+      "welcomeMessage": "Message de Bienvenue",
+      "socialLinks": "Réseaux Sociaux"
+    },
+    "notifications": {
+      "title": "Préférences de Notifications",
+      "subtitle": "Configurez comment et quand recevoir des notifications",
+      "email": "Notifications par Email",
+      "emailDesc": "Recevoir des alertes et résumés par email",
+      "sms": "Notifications SMS",
+      "smsDesc": "Alertes urgentes par message texte",
+      "push": "Notifications Push",
+      "pushDesc": "Notifications navigateur et appareils mobiles",
+      "selfService": "Portail Employés",
+      "selfServiceDesc": "Permettre aux employés de gérer leurs demandes"
+    },
+    "integrations": {
+      "title": "Intégrations",
+      "subtitle": "Connectez FortexaRH avec d'autres plateformes",
+      "connected": "Connecté",
+      "connect": "Connecter",
+      "disconnect": "Déconnecter",
+      "connectedTo": "Connecté à",
+      "manage": "Gérer",
+      "connecting": "Connexion...",
+      "confirmDisconnect": "Déconnecter de QuickBooks? La synchronisation automatique sera perdue."
+    },
+    "audit": {
+      "title": "Journal d'Audit",
+      "subtitle": "Historique des changements et actions dans le système",
+      "action": "Action",
+      "user": "Utilisateur",
+      "date": "Date",
+      "details": "Détails",
+      "noRecords": "Aucun enregistrement d'audit disponible"
+    },
+    "buttons": {
+      "save": "Enregistrer",
+      "saving": "Enregistrement...",
+      "upload": "Télécharger"
+    },
+    "messages": {
+      "saved": "Configuration enregistrée",
+      "errorSaving": "Erreur d'enregistrement",
+      "qbConnected": "QuickBooks connecté avec succès à",
+      "qbError": "Erreur de connexion à QuickBooks",
+      "qbDisconnected": "QuickBooks déconnecté",
+      "errorDisconnecting": "Erreur de déconnexion",
+      "logoUploaded": "Logo mis à jour",
+      "logoRemoved": "Logo supprimé",
+      "imageTooLarge": "Image trop grande (max. 5Mo)",
+      "invalidFormat": "Format non valide"
+    }
+  },
   "documents": {
     "title": "Documents",
     "header": {
