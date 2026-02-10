@@ -56,6 +56,7 @@ const leaveTypes = [
 ];
 
 export default function VacationsPage() {
+  const { t } = useTranslation();
   const [vacations, setVacations] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [balances, setBalances] = useState([]);
