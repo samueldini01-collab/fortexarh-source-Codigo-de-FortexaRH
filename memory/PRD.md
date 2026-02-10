@@ -7,20 +7,29 @@
 ### 🌐 Sistema Multi-Idioma - Sistema Interno (P0 - EN PROGRESO)
 Continuación de la implementación multi-idioma al sistema interno completo (ES, EN, FR).
 
-#### Páginas del Sistema Interno Traducidas (Esta sesión)
-1. **EmployeesPage.jsx:** Título, búsqueda, stats, tabla, filtros, formularios, acciones
-2. **PayrollV2Page.jsx:** Título, subtítulo, tabs, stats, estados, acciones
-3. **AttendancePage.jsx:** Título, tabs, stats, formularios, filtros, mensajes
-4. **VacationsPage.jsx:** Estructura preparada para traducciones
-5. **Dashboard.jsx:** "Click para ver detalles" traducido
-6. **OnboardingTutorial.jsx:** Modal de bienvenida y pasos del tutorial traducidos
-7. **OnboardingContext.jsx:** Refactorizado para usar claves de traducción
+#### Páginas Traducidas Esta Sesión
+1. **PricingPage.jsx:** Completamente traducida con selector de idioma
+2. **EmployeesPage.jsx:** Título, búsqueda, stats, tabla, filtros, formularios, acciones
+3. **PayrollV2Page.jsx:** Título, subtítulo, tabs, stats, estados, acciones
+4. **AttendancePage.jsx:** Título, tabs, stats, formularios, filtros, mensajes
+5. **VacationsPage.jsx:** Estructura preparada para traducciones
+6. **Dashboard.jsx:** "Click para ver detalles" traducido
+7. **OnboardingTutorial.jsx:** Modal de bienvenida y pasos del tutorial traducidos
+8. **OnboardingContext.jsx:** Refactorizado para usar claves de traducción
+9. **ReportsPage.jsx:** Hook useTranslation añadido
+10. **LoansPage.jsx:** Hook useTranslation añadido
+11. **EvaluationsPage.jsx:** Hook useTranslation añadido
+12. **DocumentsPage.jsx:** Hook useTranslation añadido
+13. **CompanyConfigPage.jsx:** Hook useTranslation añadido
+14. **OrganigramaPage.jsx:** Hook useTranslation añadido
 
 #### Archivos JSON Expandidos
+- Sección `landing.pricing`: FAQ, planes, features completos
 - Sección `employees`: ~150 claves (formularios, acciones, mensajes, pestañas)
 - Sección `payroll`: ~120 claves (tipos, estados, tablas, reportes)
 - Sección `attendance`: ~100 claves (stats, turnos, alertas, filtros)
 - Sección `vacations`: ~80 claves (tipos de licencia, estados, calendario)
+- Sección `reports`: ~60 claves expandidas (stats, charts, columns, messages)
 - Sección `onboarding`: ~40 claves (pasos del tutorial)
 - Sección `common`: Expandida con 15 claves adicionales (of, select, view, etc.)
 
@@ -29,6 +38,7 @@ Continuación de la implementación multi-idioma al sistema interno completo (ES
 2. En el componente: `const { t } = useTranslation();`
 3. Reemplazar textos hardcodeados: `t('section.key')`
 4. Para datos dinámicos: crear funciones que usan `t()` internamente
+5. Para páginas públicas (Landing, Pricing): usar `t('landing.section.key')`
 
 ---
 
