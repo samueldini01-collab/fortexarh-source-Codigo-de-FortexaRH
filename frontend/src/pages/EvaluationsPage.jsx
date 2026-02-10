@@ -342,7 +342,7 @@ export default function EvaluationsPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">Total</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{t('evaluations.stats.total')}</p>
                       <p className="text-2xl font-bold dark:text-white">{stats.total}</p>
                     </div>
                     <Users className="w-8 h-8 text-slate-300 dark:text-slate-600" />
@@ -356,7 +356,7 @@ export default function EvaluationsPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-green-600 dark:text-green-400">Excepcionales (≥4.5)</p>
+                      <p className="text-sm text-green-600 dark:text-green-400">{t('evaluations.stats.excellent')}</p>
                       <p className="text-2xl font-bold text-green-700 dark:text-green-400">{stats.excellent}</p>
                     </div>
                     <Award className="w-8 h-8 text-green-500" />
@@ -370,7 +370,7 @@ export default function EvaluationsPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-emerald-600 dark:text-emerald-400">Buenos (3.5-4.4)</p>
+                      <p className="text-sm text-emerald-600 dark:text-emerald-400">{t('evaluations.stats.good')}</p>
                       <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{stats.good}</p>
                     </div>
                     <Star className="w-8 h-8 text-emerald-500" />
@@ -384,7 +384,7 @@ export default function EvaluationsPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-amber-600 dark:text-amber-400">Necesita Mejorar</p>
+                      <p className="text-sm text-amber-600 dark:text-amber-400">{t('evaluations.stats.needsWork')}</p>
                       <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">{stats.needsWork}</p>
                     </div>
                     <AlertTriangle className="w-8 h-8 text-amber-500" />
@@ -395,7 +395,7 @@ export default function EvaluationsPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-purple-600 dark:text-purple-400">Promedio</p>
+                      <p className="text-sm text-purple-600 dark:text-purple-400">{t('evaluations.stats.average')}</p>
                       <p className="text-2xl font-bold text-purple-700 dark:text-purple-400">{avgScore}/5</p>
                     </div>
                     <BarChart3 className="w-8 h-8 text-purple-500" />
