@@ -595,7 +595,7 @@ export default function EvaluationsPage() {
                             {evaluation.overall_score?.toFixed(1)}
                           </span>
                           <p className={`text-sm ${getScoreColor(evaluation.overall_score)}`}>
-                            {evaluation.rating}
+                            {getOverallRatingLabel(evaluation.overall_score)}
                           </p>
                         </div>
                       </div>
