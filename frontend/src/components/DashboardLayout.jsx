@@ -899,14 +899,14 @@ export default function DashboardLayout({ children, title }) {
                     )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => navigate('/settings')}>
-                      <Settings className="w-4 h-4 mr-2" /> Configuración
+                      <Settings className="w-4 h-4 mr-2" /> {t('common.settings')}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate('/billing')}>
-                      <CreditCard className="w-4 h-4 mr-2" /> Facturación
+                      <CreditCard className="w-4 h-4 mr-2" /> {t('nav.subscriptions')}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout} className="text-red-600">
-                      <LogOut className="w-4 h-4 mr-2" /> Cerrar Sesión
+                      <LogOut className="w-4 h-4 mr-2" /> {t('common.logout')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
