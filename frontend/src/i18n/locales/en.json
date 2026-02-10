@@ -822,24 +822,116 @@
   },
   "attendance": {
     "title": "Attendance Control",
+    "pageTitle": "Time and Attendance Control",
     "clockIn": "Clock In",
     "clockOut": "Clock Out",
+    "registerManual": "Manual Register",
+    "registerAttendance": "Register Attendance",
     "today": "Today",
     "week": "This Week",
     "month": "This Month",
-    "summary": {
+    "tabs": {
+      "today": "Today",
+      "history": "History",
+      "shifts": "Shifts",
+      "alerts": "Alerts"
+    },
+    "stats": {
+      "totalEmployees": "Total Employees",
       "present": "Present",
       "absent": "Absent",
       "late": "Late",
-      "onTime": "On Time"
+      "onTime": "On Time",
+      "notCheckedOut": "Not Checked Out",
+      "overtimeHours": "Overtime Hours",
+      "total": "Total"
     },
     "table": {
       "employee": "Employee",
+      "department": "Department",
       "date": "Date",
       "clockIn": "Clock In",
       "clockOut": "Clock Out",
       "hoursWorked": "Hours Worked",
+      "overtime": "Overtime",
       "status": "Status"
+    },
+    "status": {
+      "present": "Present",
+      "absent": "Absent",
+      "late": "Late"
+    },
+    "form": {
+      "selectEmployee": "Select employee",
+      "date": "Date",
+      "entry": "Entry",
+      "exit": "Exit",
+      "status": "Status",
+      "notes": "Notes (optional)",
+      "notesPlaceholder": "Additional notes...",
+      "register": "Register"
+    },
+    "todayDashboard": {
+      "attendanceRate": "Today's Attendance Rate",
+      "employeesPresent": "employees present",
+      "of": "of",
+      "quickRegister": "Quick Register - Employees Not Checked In Today",
+      "allCheckedIn": "All employees have checked in today",
+      "pendingCheckout": "Pending Checkout",
+      "entry": "Entry"
+    },
+    "shifts": {
+      "title": "Shift Management",
+      "subtitle": "Configure your company's work schedules",
+      "newShift": "New Shift",
+      "createShift": "Create Shift",
+      "noShifts": "No shifts configured",
+      "noShiftsDesc": "Create a shift to assign schedules to employees",
+      "shiftName": "Shift Name",
+      "shiftNamePlaceholder": "E.g: Morning Shift, Night Shift",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "breakMinutes": "Lunch Minutes",
+      "gracePeriod": "Grace Period (min)",
+      "isNightShift": "Is night shift",
+      "created": "Shift created"
+    },
+    "alerts": {
+      "title": "Attendance Alerts",
+      "activeAlerts": "active alerts for today",
+      "noAlerts": "No pending alerts",
+      "allUpToDate": "All team members are up to date with their records",
+      "missingCheckin": "Missing check-in",
+      "lateArrival": "Late arrival",
+      "missingCheckout": "Missing checkout",
+      "register": "Register"
+    },
+    "export": {
+      "csv": "CSV",
+      "excel": "Excel",
+      "exported": "File exported",
+      "error": "Export error"
+    },
+    "filters": {
+      "date": "Date",
+      "department": "Department",
+      "all": "All",
+      "clearFilters": "Clear filters",
+      "status": "Status",
+      "dept": "Dept",
+      "records": "records"
+    },
+    "messages": {
+      "entryRegistered": "Entry registered",
+      "exitRegistered": "Exit registered",
+      "attendanceRegistered": "Attendance registered",
+      "errorRegisterEntry": "Error registering entry",
+      "errorRegisterExit": "Error registering exit",
+      "errorRegister": "Error registering",
+      "errorLoading": "Error loading data",
+      "errorCreateShift": "Error creating shift",
+      "noRecordsDate": "No records for this date",
+      "noRecordsFilter": "No records with these filters"
     }
   },
   "vacations": {
