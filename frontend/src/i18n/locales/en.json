@@ -325,7 +325,10 @@
         "integrations": "SAP/Oracle integration",
         "workflows": "Advanced workflows",
         "branches": "Multiple branches",
-        "support247": "24/7 Support"
+        "support247": "24/7 Support",
+        "allBasic": "Everything in Basic plan",
+        "allPro": "Everything in Pro plan",
+        "unlimitedEmployees": "Unlimited employees"
       }
     },
     "contact": {
