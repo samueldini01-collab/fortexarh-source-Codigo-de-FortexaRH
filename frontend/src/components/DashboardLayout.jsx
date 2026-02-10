@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth, useSubscription } from "@/App";
 import { useKeyboardShortcuts } from "@/context/KeyboardShortcutsContext";
 import { useOnboarding } from "@/context/OnboardingContext";
