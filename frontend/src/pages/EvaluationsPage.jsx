@@ -52,6 +52,7 @@ const RATING_LABELS = {
 };
 
 export default function EvaluationsPage() {
+  const { t } = useTranslation();
   const [evaluations, setEvaluations] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [cycles, setCycles] = useState([]);
