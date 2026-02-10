@@ -333,11 +333,17 @@
       }
     },
     "pricing": {
-      "title": "Plans et Tarifs",
-      "subtitle": "Choisissez le plan qui convient le mieux à votre entreprise",
+      "title": "Choisissez le plan parfait pour votre équipe",
+      "subtitle": "Modèle hybride: payez un tarif de base plus un coût par employé. Évoluez au fur et à mesure de votre croissance.",
+      "badge": "Plans flexibles pour chaque entreprise",
       "monthly": "mois",
+      "month": "mois",
       "perEmployee": "par employé",
       "fromOnly": "À partir de",
+      "mostPopular": "Le Plus Populaire",
+      "selectPlan": "Sélectionner le Plan",
+      "startFree": "Commencer Gratuitement",
+      "goToDashboard": "Aller au Tableau de Bord",
       "basic": "Basique",
       "basicDesc": "Pour les petites entreprises",
       "pro": "Pro",
@@ -347,6 +353,45 @@
       "popular": "Le Plus Populaire",
       "buyPlan": "Acheter le Plan",
       "tryFree": "Essayer 14 jours gratuit",
+      "plans": {
+        "free": {
+          "name": "Essai Gratuit",
+          "features": {
+            "employees": "Jusqu'à 5 employés",
+            "management": "Gestion de base des employés",
+            "attendance": "Contrôle des présences",
+            "support": "Support par email"
+          }
+        },
+        "basic": {
+          "name": "FortexaRH Basique"
+        },
+        "pro": {
+          "name": "FortexaRH Pro"
+        },
+        "enterprise": {
+          "name": "FortexaRH Enterprise"
+        }
+      },
+      "faq": {
+        "title": "Questions Fréquemment Posées",
+        "changePlan": {
+          "question": "Puis-je changer de plan?",
+          "answer": "Oui, vous pouvez passer à un plan supérieur ou inférieur à tout moment. Les changements s'appliquent à votre prochain cycle de facturation."
+        },
+        "perEmployee": {
+          "question": "Comment fonctionne la facturation par employé?",
+          "answer": "Vous payez le tarif de base du plan plus un montant fixe pour chaque employé actif dans votre système au moment de la facturation."
+        },
+        "trial": {
+          "question": "Y a-t-il une période d'essai?",
+          "answer": "Le plan gratuit vous permet de tester le système avec jusqu'à 5 employés sans limite de temps."
+        },
+        "payment": {
+          "question": "Quels modes de paiement acceptez-vous?",
+          "answer": "Nous acceptons toutes les principales cartes de crédit et de débit via Stripe."
+        }
+      },
       "features": {
         "employees": "employés",
         "unlimited": "Illimité",
