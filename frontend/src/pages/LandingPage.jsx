@@ -619,7 +619,7 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <p className="text-lg sm:text-2xl font-bold text-slate-900">+500</p>
-                    <p className="text-xs sm:text-sm text-slate-500">Empresas confían en nosotros</p>
+                    <p className="text-xs sm:text-sm text-slate-500">{t('common.companiesTrust')}</p>
                   </div>
                 </div>
               </div>
@@ -634,7 +634,7 @@ export default function LandingPage() {
                     ))}
                   </div>
                 </div>
-                <p className="text-xs text-slate-500 mt-1">Calificación promedio</p>
+                <p className="text-xs text-slate-500 mt-1">{t('common.avgRating')}</p>
               </div>
             </div>
           </div>
