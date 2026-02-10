@@ -663,14 +663,14 @@ export default function LandingPage() {
               >
                 {feature.isNew && (
                   <span className="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                    NUEVO
+                    {t('common.new')}
                   </span>
                 )}
                 <div className={`w-10 h-10 ${feature.isNew ? 'bg-emerald-100' : 'bg-emerald-50'} rounded-lg flex items-center justify-center mb-3`}>
                   <feature.icon className={`w-5 h-5 ${feature.isNew ? 'text-emerald-700' : 'text-emerald-600'}`} />
                 </div>
-                <h3 className="text-base font-semibold text-slate-900 mb-1 heading">{feature.title}</h3>
-                <p className="text-sm text-slate-600">{feature.description}</p>
+                <h3 className="text-base font-semibold text-slate-900 mb-1 heading">{t(`landing.features.${feature.titleKey}`)}</h3>
+                <p className="text-sm text-slate-600">{t(`landing.features.${feature.descKey}`)}</p>
               </div>
             ))}
           </div>
