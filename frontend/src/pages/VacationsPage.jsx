@@ -400,16 +400,16 @@ export default function VacationsPage() {
                     <Textarea
                       value={formData.reason}
                       onChange={(e) => setFormData({...formData, reason: e.target.value})}
-                      placeholder="Describe el motivo de la solicitud..."
+                      placeholder={t('vacations.form.reasonPlaceholder')}
                       data-testid="vacation-reason"
                     />
                   </div>
                   <div className="flex justify-end gap-3 pt-4">
                     <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                      Cancelar
+                      {t('vacations.form.cancel')}
                     </Button>
                     <Button type="submit" className="bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900" data-testid="save-vacation-btn">
-                      Enviar Solicitud
+                      {t('vacations.form.submit')}
                     </Button>
                   </div>
                 </form>
@@ -428,7 +428,7 @@ export default function VacationsPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">Total Solicitudes</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{t('vacations.stats.pendingRequests')}</p>
                       <p className="text-2xl font-bold dark:text-white">{stats.total}</p>
                     </div>
                     <Calendar className="w-8 h-8 text-slate-300 dark:text-slate-600" />
@@ -442,7 +442,7 @@ export default function VacationsPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-amber-600 dark:text-amber-400">Pendientes</p>
+                      <p className="text-sm text-amber-600 dark:text-amber-400">{t('vacations.pending')}</p>
                       <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">{stats.pending}</p>
                     </div>
                     <Clock className="w-8 h-8 text-amber-500" />
@@ -456,7 +456,7 @@ export default function VacationsPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-emerald-600 dark:text-emerald-400">Aprobadas</p>
+                      <p className="text-sm text-emerald-600 dark:text-emerald-400">{t('vacations.approved')}</p>
                       <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{stats.approved}</p>
                     </div>
                     <Check className="w-8 h-8 text-emerald-500" />
@@ -470,7 +470,7 @@ export default function VacationsPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-red-600 dark:text-red-400">Rechazadas</p>
+                      <p className="text-sm text-red-600 dark:text-red-400">{t('vacations.rejected')}</p>
                       <p className="text-2xl font-bold text-red-700 dark:text-red-400">{stats.rejected}</p>
                     </div>
                     <X className="w-8 h-8 text-red-500" />
