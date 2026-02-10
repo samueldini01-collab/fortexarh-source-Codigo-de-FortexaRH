@@ -312,21 +312,21 @@ export default function EvaluationsPage() {
     : "0.00";
 
   return (
-    <DashboardLayout title="Evaluaciones de Desempeño">
+    <DashboardLayout title={t('evaluations.title')}>
       <div className="space-y-6" data-testid="evaluations-page">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <TabsList className="grid grid-cols-4 w-full sm:w-auto">
-              <TabsTrigger value="evaluations" data-testid="tab-evaluations">Evaluaciones</TabsTrigger>
-              <TabsTrigger value="objectives" data-testid="tab-objectives">Objetivos/KPIs</TabsTrigger>
-              <TabsTrigger value="cycles" data-testid="tab-cycles">Ciclos</TabsTrigger>
-              <TabsTrigger value="plans" data-testid="tab-plans">Planes Mejora</TabsTrigger>
+              <TabsTrigger value="evaluations" data-testid="tab-evaluations">{t('evaluations.tabs.evaluations')}</TabsTrigger>
+              <TabsTrigger value="objectives" data-testid="tab-objectives">{t('evaluations.tabs.objectives')}</TabsTrigger>
+              <TabsTrigger value="cycles" data-testid="tab-cycles">{t('evaluations.tabs.cycles')}</TabsTrigger>
+              <TabsTrigger value="plans" data-testid="tab-plans">{t('evaluations.tabs.plans')}</TabsTrigger>
             </TabsList>
             
             <div className="flex gap-2">
               <Button variant="outline" onClick={() => handleExport('excel')} data-testid="export-btn">
                 <FileSpreadsheet className="w-4 h-4 mr-2" />
-                Exportar
+                {t('evaluations.export')}
               </Button>
             </div>
           </div>
