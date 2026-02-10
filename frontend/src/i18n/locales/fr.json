@@ -53,7 +53,17 @@
     "companiesTrust": "Entreprises nous font confiance",
     "avgRating": "Note moyenne",
     "companiesUse": "entreprises utilisent déjà FortexaRH",
-    "sendEmail": "Envoyer un Email"
+    "sendEmail": "Envoyer un Email",
+    "goTo": "Aller à",
+    "availableIn": "Disponible dans le plan",
+    "view": "Voir",
+    "add": "Ajouter",
+    "update": "Mettre à jour",
+    "remove": "Supprimer",
+    "select": "Sélectionner",
+    "clear": "Effacer",
+    "apply": "Appliquer",
+    "reset": "Réinitialiser"
   },
   "nav": {
     "dashboard": "Tableau de bord",
