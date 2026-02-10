@@ -898,26 +898,26 @@ export default function EvaluationsPage() {
           <TabsContent value="plans" className="space-y-6">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-lg font-semibold dark:text-white">Planes de Mejora</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Gestione planes de desarrollo para empleados</p>
+                <h3 className="text-lg font-semibold dark:text-white">{t('evaluations.plans.title')}</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{t('evaluations.plans.subtitle')}</p>
               </div>
               <Dialog open={isPlanDialogOpen} onOpenChange={setIsPlanDialogOpen}>
                 <DialogTrigger asChild>
                   <Button className="bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900" data-testid="add-plan-btn">
                     <Plus className="w-4 h-4 mr-2" />
-                    Nuevo Plan
+                    {t('evaluations.plans.newPlan')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle className="heading">Crear Plan de Mejora</DialogTitle>
+                    <DialogTitle className="heading">{t('evaluations.plans.createTitle')}</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleCreatePlan} className="space-y-4 mt-4">
                     <div className="space-y-2">
-                      <Label>Empleado</Label>
+                      <Label>{t('evaluations.form.employee')}</Label>
                       <Select value={planFormData.employee_id} onValueChange={(v) => setPlanFormData({...planFormData, employee_id: v})}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Seleccionar empleado" />
+                          <SelectValue placeholder={t('evaluations.form.selectEmployee')} />
                         </SelectTrigger>
                         <SelectContent>
                           {employees.map(emp => (
@@ -929,37 +929,37 @@ export default function EvaluationsPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Título del Plan</Label>
+                      <Label>{t('evaluations.plans.planTitle')}</Label>
                       <Input
                         value={planFormData.title}
                         onChange={(e) => setPlanFormData({...planFormData, title: e.target.value})}
-                        placeholder="Ej: Plan de Desarrollo de Liderazgo"
+                        placeholder={t('evaluations.plans.titlePlaceholder')}
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Áreas a Mejorar (una por línea)</Label>
+                      <Label>{t('evaluations.plans.areas')}</Label>
                       <Textarea
                         value={planFormData.areas}
                         onChange={(e) => setPlanFormData({...planFormData, areas: e.target.value})}
-                        placeholder="Ej: Comunicación efectiva&#10;Gestión del tiempo"
+                        placeholder={t('evaluations.plans.areasPlaceholder')}
                         rows={3}
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Acciones/Tareas (una por línea)</Label>
+                      <Label>{t('evaluations.plans.actions')}</Label>
                       <Textarea
                         value={planFormData.actions}
                         onChange={(e) => setPlanFormData({...planFormData, actions: e.target.value})}
-                        placeholder="Ej: Completar curso de comunicación&#10;Reunión semanal de seguimiento"
+                        placeholder={t('evaluations.plans.actionsPlaceholder')}
                         rows={3}
                         required
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>Fecha Inicio</Label>
+                        <Label>{t('evaluations.plans.startDate')}</Label>
                         <Input
                           type="date"
                           value={planFormData.start_date}
@@ -968,7 +968,7 @@ export default function EvaluationsPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Fecha Fin</Label>
+                        <Label>{t('evaluations.plans.endDate')}</Label>
                         <Input
                           type="date"
                           value={planFormData.end_date}
@@ -979,10 +979,10 @@ export default function EvaluationsPage() {
                     </div>
                     <div className="flex justify-end gap-3 pt-4">
                       <Button type="button" variant="outline" onClick={() => setIsPlanDialogOpen(false)}>
-                        Cancelar
+                        {t('evaluations.plans.cancel')}
                       </Button>
                       <Button type="submit" className="bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900">
-                        Crear Plan
+                        {t('evaluations.plans.create')}
                       </Button>
                     </div>
                   </form>
@@ -994,7 +994,7 @@ export default function EvaluationsPage() {
               <Card className="border-dashed">
                 <CardContent className="text-center py-12">
                   <Lightbulb className="w-12 h-12 mx-auto mb-4 text-slate-300 dark:text-slate-600" />
-                  <p className="text-slate-500 dark:text-slate-400">No hay planes de mejora</p>
+                  <p className="text-slate-500 dark:text-slate-400">{t('evaluations.plans.empty')}</p>
                 </CardContent>
               </Card>
             ) : (
@@ -1008,14 +1008,14 @@ export default function EvaluationsPage() {
                           <CardDescription>{plan.employee_name} • {plan.department}</CardDescription>
                         </div>
                         <Badge variant={plan.status === 'active' ? 'default' : plan.status === 'completed' ? 'secondary' : 'outline'}>
-                          {plan.status === 'active' ? 'Activo' : plan.status === 'completed' ? 'Completado' : 'Cancelado'}
+                          {plan.status === 'active' ? t('evaluations.plans.status.active') : plan.status === 'completed' ? t('evaluations.plans.status.completed') : t('evaluations.plans.status.cancelled')}
                         </Badge>
                       </div>
                     </CardHeader>
                     <CardContent>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Áreas de Mejora:</p>
+                          <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{t('evaluations.plans.areasLabel')}:</p>
                           <div className="flex flex-wrap gap-1">
                             {plan.areas?.map((area, i) => (
                               <Badge key={i} variant="outline" className="text-xs">{area}</Badge>
@@ -1023,7 +1023,7 @@ export default function EvaluationsPage() {
                           </div>
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Período:</p>
+                          <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{t('evaluations.plans.period')}:</p>
                           <p className="text-sm text-slate-600 dark:text-slate-400">
                             {plan.start_date} - {plan.end_date}
                           </p>
@@ -1031,7 +1031,7 @@ export default function EvaluationsPage() {
                       </div>
                       {plan.actions?.length > 0 && (
                         <div className="mt-4">
-                          <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Acciones:</p>
+                          <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{t('evaluations.plans.actionsLabel')}:</p>
                           <ul className="space-y-1">
                             {plan.actions.slice(0, 3).map((action, i) => (
                               <li key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
@@ -1044,7 +1044,7 @@ export default function EvaluationsPage() {
                               </li>
                             ))}
                             {plan.actions.length > 3 && (
-                              <li className="text-sm text-slate-500">+{plan.actions.length - 3} más</li>
+                              <li className="text-sm text-slate-500">+{plan.actions.length - 3} {t('evaluations.plans.more')}</li>
                             )}
                           </ul>
                         </div>
