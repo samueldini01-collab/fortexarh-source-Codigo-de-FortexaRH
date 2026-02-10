@@ -115,7 +115,7 @@ export default function DocumentsPage() {
 
   const handleGenerateDocument = async () => {
     if (!selectedTemplate || !selectedEmployee) {
-      toast.error("Seleccione plantilla y empleado");
+      toast.error(t('documents.messages.selectBoth'));
       return;
     }
     
@@ -132,10 +132,10 @@ export default function DocumentsPage() {
       setPreviewContent(response.data.content);
       setPreviewTitle(response.data.template_name);
       setShowPreview(true);
-      toast.success("Documento generado");
+      toast.success(t('documents.messages.generated'));
       fetchData(); // Refresh history
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al generar documento");
+      toast.error(error.response?.data?.detail || t('documents.messages.errorGenerating'));
     } finally {
       setGenerating(false);
     }
