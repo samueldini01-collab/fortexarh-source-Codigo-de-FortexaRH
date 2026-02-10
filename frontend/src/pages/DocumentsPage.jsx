@@ -168,23 +168,23 @@ export default function DocumentsPage() {
       const temp = document.createElement('div');
       temp.innerHTML = previewContent;
       await navigator.clipboard.writeText(temp.textContent || temp.innerText);
-      toast.success("Contenido copiado");
+      toast.success(t('documents.messages.copied'));
     } catch {
-      toast.error("Error al copiar");
+      toast.error(t('documents.messages.errorCopying'));
     }
   };
 
   const handleDeleteHistory = async (documentId) => {
-    if (!confirm("¿Eliminar este documento del historial?")) return;
+    if (!confirm(t('documents.messages.confirmDeleteDoc'))) return;
     
     try {
       await axios.delete(`${API}/doc-generator/history/${documentId}`, { 
         headers: getAuthHeaders(), withCredentials: true 
       });
-      toast.success("Documento eliminado");
+      toast.success(t('documents.messages.docDeleted'));
       fetchData();
     } catch (error) {
-      toast.error("Error al eliminar");
+      toast.error(t('documents.messages.errorDeleting'));
     }
   };
 
@@ -197,13 +197,13 @@ export default function DocumentsPage() {
       setPreviewTitle(response.data.template_name);
       setShowPreview(true);
     } catch (error) {
-      toast.error("Error al cargar documento");
+      toast.error(t('documents.messages.errorLoadingDoc'));
     }
   };
 
   const handleSaveTemplate = async () => {
     if (!templateForm.name || !templateForm.content) {
-      toast.error("Complete nombre y contenido");
+      toast.error(t('documents.messages.completeFields'));
       return;
     }
     
@@ -212,19 +212,19 @@ export default function DocumentsPage() {
         await axios.put(`${API}/doc-generator/templates/${editingTemplate.template_id}`, templateForm, {
           headers: getAuthHeaders(), withCredentials: true
         });
-        toast.success("Plantilla actualizada");
+        toast.success(t('documents.messages.templateUpdated'));
       } else {
         await axios.post(`${API}/doc-generator/templates`, templateForm, {
           headers: getAuthHeaders(), withCredentials: true
         });
-        toast.success("Plantilla creada");
+        toast.success(t('documents.messages.templateCreated'));
       }
       setShowTemplateEditor(false);
       setEditingTemplate(null);
       setTemplateForm({ name: "", category: "constancia", description: "", content: "", variables: [] });
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al guardar");
+      toast.error(error.response?.data?.detail || t('documents.messages.errorSaving'));
     }
   };
 
