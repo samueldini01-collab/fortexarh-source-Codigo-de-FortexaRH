@@ -486,7 +486,7 @@ export default function AttendancePage() {
                 <CardHeader>
                   <CardTitle className="text-lg dark:text-white flex items-center gap-2">
                     <Square className="w-5 h-5" />
-                    Pendientes de Marcar Salida
+                    {t('attendance.todayDashboard.pendingCheckout')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -499,7 +499,7 @@ export default function AttendancePage() {
                         <div>
                           <p className="font-medium dark:text-white">{emp.name}</p>
                           <p className="text-xs text-slate-500 dark:text-slate-400">
-                            Entrada: {emp.check_in}
+                            {t('attendance.todayDashboard.entry')}: {emp.check_in}
                           </p>
                         </div>
                         <Button 
@@ -510,7 +510,7 @@ export default function AttendancePage() {
                           data-testid={`quick-checkout-${emp.employee_id}`}
                         >
                           <Square className="w-4 h-4 mr-1" />
-                          Salida
+                          {t('attendance.form.exit')}
                         </Button>
                       </div>
                     ))}
@@ -531,7 +531,7 @@ export default function AttendancePage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">Total</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{t('attendance.stats.total')}</p>
                       <p className="text-2xl font-bold dark:text-white">{attendances.length}</p>
                     </div>
                     <Users className="w-8 h-8 text-slate-300 dark:text-slate-600" />
@@ -545,7 +545,7 @@ export default function AttendancePage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-emerald-600 dark:text-emerald-400">Presentes</p>
+                      <p className="text-sm text-emerald-600 dark:text-emerald-400">{t('attendance.stats.present')}</p>
                       <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{presentCount}</p>
                     </div>
                     <UserCheck className="w-8 h-8 text-emerald-500" />
