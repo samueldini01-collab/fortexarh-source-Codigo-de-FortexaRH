@@ -842,167 +842,167 @@ export default function LandingPage() {
           
           {/* Comparison Table */}
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-            <h3 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8 text-slate-900 heading">Comparación de Planes</h3>
+            <h3 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8 text-slate-900 heading">{t('landing.comparison.title')}</h3>
             <table className="w-full border-collapse min-w-[600px] bg-white">
               <thead>
                 <tr className="border-b-2 border-slate-200">
-                  <th className="text-left py-3 sm:py-4 px-2 sm:px-4 font-semibold text-slate-900 text-xs sm:text-sm">Característica</th>
-                  <th className="text-center py-3 sm:py-4 px-2 sm:px-4 font-semibold text-blue-600 text-xs sm:text-sm">Básico</th>
-                  <th className="text-center py-3 sm:py-4 px-2 sm:px-4 font-semibold text-purple-600 text-xs sm:text-sm">Pro</th>
-                  <th className="text-center py-3 sm:py-4 px-2 sm:px-4 font-semibold text-amber-600 text-xs sm:text-sm">Enterprise</th>
+                  <th className="text-left py-3 sm:py-4 px-2 sm:px-4 font-semibold text-slate-900 text-xs sm:text-sm">{t('landing.comparison.feature')}</th>
+                  <th className="text-center py-3 sm:py-4 px-2 sm:px-4 font-semibold text-blue-600 text-xs sm:text-sm">{t('landing.pricing.basic')}</th>
+                  <th className="text-center py-3 sm:py-4 px-2 sm:px-4 font-semibold text-purple-600 text-xs sm:text-sm">{t('landing.pricing.pro')}</th>
+                  <th className="text-center py-3 sm:py-4 px-2 sm:px-4 font-semibold text-amber-600 text-xs sm:text-sm">{t('landing.pricing.enterprise')}</th>
                 </tr>
               </thead>
               <tbody className="text-sm text-slate-700">
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">Precio base mensual</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.basePrice')}</td>
                   <td className="py-3 px-4 text-center text-slate-700">$5</td>
                   <td className="py-3 px-4 text-center text-slate-700">$10</td>
                   <td className="py-3 px-4 text-center text-slate-700">$20</td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">Precio por empleado</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.pricePerEmployee')}</td>
                   <td className="py-3 px-4 text-center text-slate-700">$1.50</td>
                   <td className="py-3 px-4 text-center text-slate-700">$1.50</td>
                   <td className="py-3 px-4 text-center text-slate-700">$1.50</td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">Usuarios incluidos</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.usersIncluded')}</td>
                   <td className="py-3 px-4 text-center text-slate-700">3</td>
                   <td className="py-3 px-4 text-center text-slate-700">5</td>
                   <td className="py-3 px-4 text-center text-slate-700">7</td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">Máximo de empleados</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.maxEmployees')}</td>
                   <td className="py-3 px-4 text-center text-slate-700">50</td>
                   <td className="py-3 px-4 text-center text-slate-700">200</td>
-                  <td className="py-3 px-4 text-center text-slate-700">Ilimitado</td>
+                  <td className="py-3 px-4 text-center text-slate-700">{t('landing.comparison.unlimited')}</td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">Gestión de empleados</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.employeeManagement')}</td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">Nómina (TSS, AFP, ISR)</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.payrollTSS')}</td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">Asistencias y vacaciones</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.attendanceVacations')}</td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">Módulo de préstamos</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.loansModule')}</td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">Contabilidad y catálogos NIIF</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.accountingNIIF')}</td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">Reportes DGII-TSS (ISR, TSS)</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.dgiiReports')}</td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 font-medium text-green-700">QuickBooks Online</td>
+                  <td className="py-3 px-4 font-medium text-green-700">{t('landing.features.quickbooks')}</td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 font-medium text-purple-700">Gastos y viáticos (doble aprobación)</td>
+                  <td className="py-3 px-4 font-medium text-purple-700">{t('landing.comparison.expensesDouble')}</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-purple-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-purple-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">Evaluaciones de desempeño</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.evaluations')}</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">Reclutamiento</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.recruitment')}</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">Portal autoservicio empleados</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.selfServicePortal')}</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">Organigrama interactivo</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.orgChart')}</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">Notificaciones automáticas</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.autoNotifications')}</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 font-medium text-blue-700">Centro de Reportes Avanzados</td>
-                  <td className="py-3 px-4 text-center text-sm text-slate-700">Básicos</td>
-                  <td className="py-3 px-4 text-center text-sm font-medium text-purple-600">30 reportes</td>
-                  <td className="py-3 px-4 text-center text-sm font-medium text-amber-600">58 reportes</td>
+                  <td className="py-3 px-4 font-medium text-blue-700">{t('landing.comparison.advancedReportsCenter')}</td>
+                  <td className="py-3 px-4 text-center text-sm text-slate-700">{t('landing.comparison.basic')}</td>
+                  <td className="py-3 px-4 text-center text-sm font-medium text-purple-600">{t('landing.comparison.reports30')}</td>
+                  <td className="py-3 px-4 text-center text-sm font-medium text-amber-600">{t('landing.comparison.reports58')}</td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">Búsqueda con IA</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.aiSearch')}</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-purple-500 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">Reportes personalizables y guardados</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.customSavedReports')}</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">Roles personalizados</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.customRoles')}</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">API personalizada</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.customAPI')}</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">Integración SAP/Oracle/Dynamics</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.sapOracleDynamics')}</td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">Soporte</td>
-                  <td className="py-3 px-4 text-center text-slate-700">Email</td>
-                  <td className="py-3 px-4 text-center text-slate-700">Prioritario</td>
-                  <td className="py-3 px-4 text-center text-slate-700">24/7 + Gerente dedicado</td>
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.support')}</td>
+                  <td className="py-3 px-4 text-center text-slate-700">{t('landing.comparison.email')}</td>
+                  <td className="py-3 px-4 text-center text-slate-700">{t('landing.comparison.priority')}</td>
+                  <td className="py-3 px-4 text-center text-slate-700">{t('landing.comparison.dedicated247')}</td>
                 </tr>
               </tbody>
             </table>
           </div>
           
           <p className="text-center text-slate-600 mt-8 text-sm">
-            * Usuarios adicionales disponibles a $2.50/mes por usuario
+            {t('landing.comparison.additionalUsers')}
           </p>
         </div>
       </section>
