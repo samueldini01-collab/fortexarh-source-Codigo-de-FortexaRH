@@ -781,28 +781,28 @@ export default function PayrollV2Page() {
   };
 
   return (
-    <DashboardLayout title="Nómina">
+    <DashboardLayout title={t('payroll.title')}>
       <div className="space-y-6" data-testid="payroll-v2-page">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Nómina de Pago</h1>
-            <p className="text-slate-500 dark:text-slate-400">Procesa nóminas por tipo, período o grupos</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{t('payroll.pageTitle')}</h1>
+            <p className="text-slate-500 dark:text-slate-400">{t('payroll.pageSubtitle')}</p>
           </div>
           <div className="flex gap-2">
-            <Button onClick={fetchPeriods} variant="outline" size="sm"><RefreshCw className="w-4 h-4 mr-2" />Actualizar</Button>
-            <Button onClick={() => setShowNewPeriod(true)} size="sm"><Plus className="w-4 h-4 mr-2" />Nueva Nómina</Button>
+            <Button onClick={fetchPeriods} variant="outline" size="sm"><RefreshCw className="w-4 h-4 mr-2" />{t('payroll.refresh')}</Button>
+            <Button onClick={() => setShowNewPeriod(true)} size="sm"><Plus className="w-4 h-4 mr-2" />{t('payroll.newPayroll')}</Button>
           </div>
         </div>
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid grid-cols-5 w-full max-w-2xl">
-            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-            <TabsTrigger value="periodos">Períodos ({periods.length})</TabsTrigger>
-            <TabsTrigger value="nomina">Hoja de Nómina</TabsTrigger>
-            <TabsTrigger value="aprobacion">Aprobación</TabsTrigger>
-            <TabsTrigger value="reportes">Reportes</TabsTrigger>
+            <TabsTrigger value="dashboard">{t('payroll.tabs.dashboard')}</TabsTrigger>
+            <TabsTrigger value="periodos">{t('payroll.tabs.periods')} ({periods.length})</TabsTrigger>
+            <TabsTrigger value="nomina">{t('payroll.tabs.payrollSheet')}</TabsTrigger>
+            <TabsTrigger value="aprobacion">{t('payroll.tabs.approval')}</TabsTrigger>
+            <TabsTrigger value="reportes">{t('payroll.tabs.reports')}</TabsTrigger>
           </TabsList>
 
           {/* Dashboard Tab */}
@@ -813,7 +813,7 @@ export default function PayrollV2Page() {
                 onClick={() => setQuickFilter(quickFilter === 'open' ? null : 'open')}
               >
                 <CardContent className="p-4">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Períodos Abiertos</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('payroll.stats.openPeriods')}</p>
                   <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.openPeriods}</p>
                 </CardContent>
               </Card>
@@ -822,7 +822,7 @@ export default function PayrollV2Page() {
                 onClick={() => setQuickFilter(quickFilter === 'pending' ? null : 'pending')}
               >
                 <CardContent className="p-4">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Nóminas Pendientes</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('payroll.stats.pendingPayrolls')}</p>
                   <p className="text-2xl font-bold text-orange-600">{stats.pendingPayrolls}</p>
                 </CardContent>
               </Card>
@@ -831,13 +831,13 @@ export default function PayrollV2Page() {
                 onClick={() => setQuickFilter(quickFilter === 'paid' ? null : 'paid')}
               >
                 <CardContent className="p-4">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Total Pagado</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('payroll.stats.totalPaid')}</p>
                   <p className="text-xl font-bold text-purple-600 dark:text-purple-400">{formatCurrency(stats.totalPaid)}</p>
                 </CardContent>
               </Card>
               <Card className="border-l-4 border-l-emerald-500">
                 <CardContent className="p-4">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Tipos de Nómina</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('payroll.stats.payrollTypes')}</p>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {payrollTypes.slice(0, 3).map(pt => (
                       <Badge key={pt.value} variant="outline" className="text-[10px]">{pt.label}</Badge>
