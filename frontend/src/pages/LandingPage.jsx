@@ -1144,13 +1144,13 @@ export default function LandingPage() {
           <div className="text-center mb-10 sm:mb-16 scroll-reveal">
             <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
               <Star className="w-4 h-4 fill-current" />
-              Testimonios de Clientes
+              {t('landing.testimonials.badge')}
             </div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 heading mb-3 sm:mb-4">
-              Lo que dicen nuestros clientes
+              {t('landing.testimonials.title')}
             </h2>
             <p className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto px-4">
-              Empresas de toda República Dominicana confían en FortexaRH para gestionar su talento humano
+              {t('landing.testimonials.subtitle')}
             </p>
           </div>
           
@@ -1199,7 +1199,7 @@ export default function LandingPage() {
                 ))}
               </div>
               <p className="text-sm text-slate-600">
-                <span className="font-semibold text-slate-900">+500 empresas</span> ya usan FortexaRH
+                <span className="font-semibold text-slate-900">+500</span> {t('common.companiesUse')}
               </p>
             </div>
           </div>
@@ -1212,13 +1212,13 @@ export default function LandingPage() {
           <div className="text-center mb-10 sm:mb-16 scroll-reveal">
             <div className="inline-flex items-center gap-2 bg-slate-100 text-slate-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
               <HelpCircle className="w-4 h-4" />
-              Preguntas Frecuentes
+              {t('landing.faq.badge')}
             </div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 heading mb-3 sm:mb-4">
-              ¿Tienes preguntas?
+              {t('landing.faq.title')}
             </h2>
             <p className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto px-4">
-              Encuentra respuestas a las preguntas más comunes sobre FortexaRH
+              {t('landing.faq.subtitle')}
             </p>
           </div>
           
@@ -1243,22 +1243,22 @@ export default function LandingPage() {
           
           <div className="text-center mt-10 sm:mt-12 p-6 sm:p-8 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl scroll-reveal-scale scroll-reveal">
             <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
-              ¿No encontraste lo que buscabas?
+              {t('landing.faq.notFound')}
             </h3>
             <p className="text-emerald-100 mb-6">
-              Nuestro equipo de soporte está listo para ayudarte
+              {t('landing.faq.supportReady')}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link to="/soporte">
                 <Button size="lg" className="bg-white text-emerald-600 hover:bg-emerald-50">
                   <HeadphonesIcon className="w-5 h-5 mr-2" />
-                  Contactar Soporte
+                  {t('landing.faq.contactSupport')}
                 </Button>
               </Link>
               <a href="mailto:info@fortexarh.com">
                 <Button size="lg" variant="outline" className="border-white text-white hover:bg-emerald-600">
                   <Mail className="w-5 h-5 mr-2" />
-                  Enviar Email
+                  {t('common.sendEmail')}
                 </Button>
               </a>
             </div>
@@ -1271,15 +1271,15 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8 sm:mb-12 md:mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 heading mb-3 sm:mb-4">
-              Contacto y Soporte
+              {t('landing.contact.title')}
             </h2>
             <p className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto mb-4 sm:mb-6 px-4">
-              Estamos aquí para ayudarte. Contáctanos para cualquier consulta sobre nuestros servicios.
+              {t('landing.contact.subtitle')}
             </p>
             <Link to="/soporte">
               <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700 text-sm sm:text-base">
                 <HeadphonesIcon className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                Centro de Soporte
+                {t('landing.contact.supportCenter')}
               </Button>
             </Link>
           </div>
@@ -1289,7 +1289,7 @@ export default function LandingPage() {
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-emerald-100 flex items-center justify-center mb-3 sm:mb-4">
                 <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
               </div>
-              <h3 className="font-semibold text-slate-900 mb-2 text-sm sm:text-base">Dirección</h3>
+              <h3 className="font-semibold text-slate-900 mb-2 text-sm sm:text-base">{t('landing.contact.address')}</h3>
               <p className="text-slate-600 text-xs sm:text-sm">
                 Av. George Washington #503, Gazcue<br />
                 Santo Domingo, Distrito Nacional
@@ -1300,7 +1300,7 @@ export default function LandingPage() {
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-blue-100 flex items-center justify-center mb-3 sm:mb-4">
                 <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
               </div>
-              <h3 className="font-semibold text-slate-900 mb-2 text-sm sm:text-base">Email</h3>
+              <h3 className="font-semibold text-slate-900 mb-2 text-sm sm:text-base">{t('landing.contact.email')}</h3>
               <a href="mailto:info@fortexarh.com" className="text-blue-600 hover:text-blue-700 text-xs sm:text-sm">
                 info@fortexarh.com
               </a>
@@ -1310,7 +1310,7 @@ export default function LandingPage() {
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-purple-100 flex items-center justify-center mb-3 sm:mb-4">
                 <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
               </div>
-              <h3 className="font-semibold text-slate-900 mb-2 text-sm sm:text-base">Teléfono</h3>
+              <h3 className="font-semibold text-slate-900 mb-2 text-sm sm:text-base">{t('landing.contact.phone')}</h3>
               <a href="tel:+18096859898" className="text-purple-600 hover:text-purple-700 text-xs sm:text-sm">
                 (809) 685-9898
               </a>
@@ -1320,10 +1320,10 @@ export default function LandingPage() {
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-amber-100 flex items-center justify-center mb-3 sm:mb-4">
                 <Clock3 className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600" />
               </div>
-              <h3 className="font-semibold text-slate-900 mb-2 text-sm sm:text-base">Horario de Atención</h3>
+              <h3 className="font-semibold text-slate-900 mb-2 text-sm sm:text-base">{t('landing.contact.hours')}</h3>
               <p className="text-slate-600 text-xs sm:text-sm">
-                Lunes - Viernes: 9:00 AM - 4:00 PM<br />
-                Sábados y Domingos: Cerrado
+                {t('landing.contact.weekdays')}: 9:00 AM - 4:00 PM<br />
+                {t('landing.contact.saturday')}: {t('landing.contact.closed')}
               </p>
             </div>
           </div>
