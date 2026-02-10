@@ -236,12 +236,12 @@ export default function EvaluationsPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Plan de mejora creado");
+      toast.success(t('evaluations.messages.planCreated'));
       setIsPlanDialogOpen(false);
       setPlanFormData({ employee_id: "", title: "", areas: "", actions: "", start_date: "", end_date: "" });
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al crear plan");
+      toast.error(error.response?.data?.detail || t('evaluations.messages.errorCreatingPlan'));
     }
   };
 
