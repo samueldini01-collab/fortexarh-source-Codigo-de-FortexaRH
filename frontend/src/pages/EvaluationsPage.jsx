@@ -137,11 +137,11 @@ export default function EvaluationsPage() {
       setDashboard(dashRes.data);
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Error al cargar datos");
+      toast.error(t('evaluations.messages.errorLoading'));
     } finally {
       setLoading(false);
     }
-  }, [getAuthHeaders]);
+  }, [getAuthHeaders, t]);
 
   useEffect(() => {
     fetchData();
