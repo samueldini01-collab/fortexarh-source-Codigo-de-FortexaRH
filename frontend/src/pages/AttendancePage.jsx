@@ -236,16 +236,16 @@ export default function AttendancePage() {
   const totalOvertimeHours = attendances.reduce((acc, a) => acc + (a.overtime_hours || 0), 0);
 
   return (
-    <DashboardLayout title="Control de Asistencia y Tiempo">
+    <DashboardLayout title={t('attendance.pageTitle')}>
       <div className="space-y-6" data-testid="attendance-page">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <TabsList className="grid grid-cols-4 w-full sm:w-auto">
-              <TabsTrigger value="today" data-testid="tab-today">Hoy</TabsTrigger>
-              <TabsTrigger value="history" data-testid="tab-history">Historial</TabsTrigger>
-              <TabsTrigger value="shifts" data-testid="tab-shifts">Turnos</TabsTrigger>
+              <TabsTrigger value="today" data-testid="tab-today">{t('attendance.tabs.today')}</TabsTrigger>
+              <TabsTrigger value="history" data-testid="tab-history">{t('attendance.tabs.history')}</TabsTrigger>
+              <TabsTrigger value="shifts" data-testid="tab-shifts">{t('attendance.tabs.shifts')}</TabsTrigger>
               <TabsTrigger value="alerts" data-testid="tab-alerts">
-                Alertas
+                {t('attendance.tabs.alerts')}
                 {alerts.total_alerts > 0 && (
                   <Badge variant="destructive" className="ml-2 h-5 w-5 p-0 flex items-center justify-center text-xs">
                     {alerts.total_alerts}
@@ -259,19 +259,19 @@ export default function AttendancePage() {
                 <DialogTrigger asChild>
                   <Button className="bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200" data-testid="add-attendance-btn">
                     <Plus className="w-4 h-4 mr-2" />
-                    Registrar Manual
+                    {t('attendance.registerManual')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle className="heading">Registrar Asistencia</DialogTitle>
+                    <DialogTitle className="heading">{t('attendance.registerAttendance')}</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                     <div className="space-y-2">
-                      <Label>Empleado</Label>
+                      <Label>{t('employees.table.employee')}</Label>
                       <Select value={formData.employee_id} onValueChange={(v) => setFormData({...formData, employee_id: v})}>
                         <SelectTrigger data-testid="attendance-employee">
-                          <SelectValue placeholder="Seleccionar empleado" />
+                          <SelectValue placeholder={t('attendance.form.selectEmployee')} />
                         </SelectTrigger>
                         <SelectContent>
                           {employees.map(emp => (
@@ -283,7 +283,7 @@ export default function AttendancePage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Fecha</Label>
+                      <Label>{t('attendance.form.date')}</Label>
                       <Input
                         type="date"
                         value={formData.date}
@@ -294,7 +294,7 @@ export default function AttendancePage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>Entrada</Label>
+                        <Label>{t('attendance.form.entry')}</Label>
                         <Input
                           type="time"
                           value={formData.check_in}
@@ -303,7 +303,7 @@ export default function AttendancePage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Salida</Label>
+                        <Label>{t('attendance.form.exit')}</Label>
                         <Input
                           type="time"
                           value={formData.check_out}
@@ -313,7 +313,7 @@ export default function AttendancePage() {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label>Estado</Label>
+                      <Label>{t('attendance.form.status')}</Label>
                       <Select value={formData.status} onValueChange={(v) => setFormData({...formData, status: v})}>
                         <SelectTrigger data-testid="attendance-status">
                           <SelectValue />
