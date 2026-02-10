@@ -53,7 +53,9 @@ import {
   Quote,
   HelpCircle,
   CheckCircle,
-  Sparkles
+  Sparkles,
+  Cloud as CloudIcon,
+  Palette
 } from "lucide-react";
 
 // Icons will be used dynamically in the component
