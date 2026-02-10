@@ -190,7 +190,33 @@
     "testimonials": {
       "badge": "Testimonios de Clientes",
       "title": "Lo que dicen nuestros clientes",
-      "subtitle": "Empresas de toda República Dominicana confían en FortexaRH para gestionar su talento humano"
+      "subtitle": "Empresas de toda República Dominicana confían en FortexaRH para gestionar su talento humano",
+      "items": {
+        "1": {
+          "name": "María González",
+          "role": "Gerente de RRHH",
+          "company": "Grupo Comercial del Caribe",
+          "content": "FortexaRH transformó nuestra gestión de nómina. Antes tardábamos 3 días en procesar pagos, ahora lo hacemos en 2 horas. El ahorro de tiempo es increíble."
+        },
+        "2": {
+          "name": "Carlos Pérez",
+          "role": "Director Administrativo",
+          "company": "Constructora Nacional SRL",
+          "content": "El cumplimiento automático con TSS y DGII nos quitó un peso enorme. Ya no tenemos que preocuparnos por las fechas límite ni los cálculos."
+        },
+        "3": {
+          "name": "Ana Martínez",
+          "role": "CEO",
+          "company": "Tech Solutions RD",
+          "content": "El portal de empleados redujo las consultas de RRHH en un 70%. Nuestro equipo ahora puede ver sus recibos y solicitar vacaciones sin intermediarios."
+        },
+        "4": {
+          "name": "Roberto Sánchez",
+          "role": "Contador Principal",
+          "company": "Deloitte RD Partner",
+          "content": "Como firma contable, gestionamos 15 empresas con FortexaRH. La integración con QuickBooks y los reportes automáticos nos ahorran horas cada semana."
+        }
+      }
     },
     "faq": {
       "badge": "Preguntas Frecuentes",
@@ -198,7 +224,41 @@
       "subtitle": "Encuentra respuestas a las preguntas más comunes sobre FortexaRH",
       "notFound": "¿No encontraste lo que buscabas?",
       "supportReady": "Nuestro equipo de soporte está listo para ayudarte",
-      "contactSupport": "Contactar Soporte"
+      "contactSupport": "Contactar Soporte",
+      "items": {
+        "1": {
+          "question": "¿Cuánto tiempo toma implementar FortexaRH?",
+          "answer": "La implementación básica toma entre 1-3 días. Incluye configuración de la empresa, carga de empleados y capacitación inicial. Para empresas con más de 100 empleados, el proceso puede tomar 1-2 semanas."
+        },
+        "2": {
+          "question": "¿FortexaRH cumple con las regulaciones dominicanas (TSS, DGII)?",
+          "answer": "Sí, FortexaRH está 100% adaptado a la legislación laboral dominicana. Calculamos automáticamente ISR, AFP, SFS según las tablas vigentes y generamos los formatos oficiales requeridos."
+        },
+        "3": {
+          "question": "¿Puedo migrar datos desde Excel u otro sistema?",
+          "answer": "Absolutamente. Ofrecemos importación masiva desde Excel y CSV. Nuestro equipo de soporte te asiste en todo el proceso de migración sin costo adicional."
+        },
+        "4": {
+          "question": "¿Qué tan segura es la información de mis empleados?",
+          "answer": "Utilizamos encriptación AES-256 para datos en reposo y TLS 1.3 para datos en tránsito. Nuestros servidores están en AWS con certificación SOC 2."
+        },
+        "5": {
+          "question": "¿Puedo probar el sistema antes de pagar?",
+          "answer": "Sí, ofrecemos 14 días de prueba gratuita con acceso completo. No requiere tarjeta de crédito y puedes cancelar en cualquier momento."
+        },
+        "6": {
+          "question": "¿Qué soporte técnico incluye?",
+          "answer": "Todos los planes incluyen soporte por email y chat. Los planes Pro y Enterprise incluyen soporte telefónico y un gestor de cuenta dedicado."
+        },
+        "7": {
+          "question": "¿Se integra con sistemas de asistencia biométrica?",
+          "answer": "Sí, nos integramos con los principales dispositivos biométricos del mercado. También soportamos marcaje por app móvil con geolocalización."
+        },
+        "8": {
+          "question": "¿Cuántos usuarios pueden acceder al sistema?",
+          "answer": "No limitamos la cantidad de usuarios administradores. El precio se basa en empleados activos, no en usuarios del sistema."
+        }
+      }
     },
     "pricing": {
       "title": "Planes y Precios",
