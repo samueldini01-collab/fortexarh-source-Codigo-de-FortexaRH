@@ -1093,17 +1093,17 @@ export default function LandingPage() {
           
           <div className="scroll-reveal">
             <Accordion type="single" collapsible className="space-y-3" data-testid="faq-accordion">
-              {faqs.map((faq, index) => (
+              {faqIds.map((faqId, index) => (
                 <AccordionItem 
                   key={index} 
                   value={`item-${index}`}
                   className="bg-slate-50 rounded-xl border-none px-6 data-[state=open]:bg-emerald-50 transition-colors"
                 >
                   <AccordionTrigger className="text-left text-base sm:text-lg font-medium text-slate-900 hover:no-underline py-5">
-                    {faq.question}
+                    {t(`landing.faq.items.${faqId}.question`)}
                   </AccordionTrigger>
                   <AccordionContent className="text-slate-600 text-sm sm:text-base leading-relaxed pb-5">
-                    {faq.answer}
+                    {t(`landing.faq.items.${faqId}.answer`)}
                   </AccordionContent>
                 </AccordionItem>
               ))}
