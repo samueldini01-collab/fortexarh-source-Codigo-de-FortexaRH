@@ -652,10 +652,10 @@ export default function DashboardLayout({ children, title }) {
                           }
                         `}
                         onClick={() => setSidebarOpen(false)}
-                        title={sidebarCollapsed ? item.name : undefined}
+                        title={sidebarCollapsed ? t(`nav.${item.nameKey}`) : undefined}
                       >
                         <Icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`} />
-                        {!sidebarCollapsed && <span className="truncate">{item.name}</span>}
+                        {!sidebarCollapsed && <span className="truncate">{t(`nav.${item.nameKey}`)}</span>}
                       </Link>
                     );
                   });
@@ -681,13 +681,13 @@ export default function DashboardLayout({ children, title }) {
                             : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                           }
                         `}
-                        title={sidebarCollapsed ? group.name : undefined}
+                        title={sidebarCollapsed ? t(`nav.${group.nameKey}`) : undefined}
                       >
                         <div className={`flex items-center ${sidebarCollapsed ? '' : 'gap-3'}`}>
                           <GroupIcon className={`w-5 h-5 shrink-0 ${groupActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`} />
                           {!sidebarCollapsed && (
                             <div className="text-left">
-                              <span className="block">{group.name}</span>
+                              <span className="block">{t(`nav.${group.nameKey}`)}</span>
                               {group.subtitle && (
                                 <span className="text-[10px] text-slate-400 dark:text-slate-500 font-normal">{group.subtitle}</span>
                               )}
