@@ -758,7 +758,7 @@ export default function LandingPage() {
             {/* Plan Pro (Popular) */}
             <div className="rounded-xl sm:rounded-2xl border-2 border-purple-500 p-4 sm:p-6 lg:p-8 relative bg-purple-50 order-first md:order-none">
               <div className="absolute -top-3 sm:-top-4 left-1/2 -translate-x-1/2">
-                <span className="bg-purple-500 text-white px-3 sm:px-4 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap">Más Popular</span>
+                <span className="bg-purple-500 text-white px-3 sm:px-4 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap">{t('common.mostPopular')}</span>
               </div>
               
               <div className="text-center mb-4 sm:mb-6 pt-2">
@@ -766,35 +766,35 @@ export default function LandingPage() {
                   <Zap className="w-6 h-6 sm:w-7 sm:h-7" />
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-slate-900 heading">FortexaRH Pro</h3>
-                <p className="text-slate-600 mt-1 text-sm sm:text-base">Para empresas en crecimiento</p>
+                <p className="text-slate-600 mt-1 text-sm sm:text-base">{t('landing.pricing.proDesc')}</p>
                 <div className="mt-3 sm:mt-4">
                   <span className="text-3xl sm:text-4xl font-bold text-slate-900">$10</span>
-                  <span className="text-slate-600">/mes</span>
-                  <p className="text-xs sm:text-sm text-slate-600">+ $1.50 por empleado</p>
+                  <span className="text-slate-600">/{t('landing.pricing.monthly')}</span>
+                  <p className="text-xs sm:text-sm text-slate-600">+ $1.50 {t('landing.pricing.perEmployee')}</p>
                 </div>
               </div>
               
               <ul className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />Hasta 200 empleados</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />5 usuarios incluidos</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700 font-medium"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />Todo lo del plan Básico</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" /><strong>QuickBooks Online</strong></li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" /><strong>30 reportes avanzados</strong></li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" />Búsqueda con IA</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" />Gastos y viáticos (doble aprobación)</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" />Evaluaciones de desempeño</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" />Módulo de reclutamiento</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" />Portal autoservicio empleados</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" />Organigrama interactivo</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />Notificaciones en tiempo real</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />{t('landing.pricing.features.upTo')} 200 {t('landing.pricing.features.employees')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />5 {t('landing.pricing.features.usersIncluded')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700 font-medium"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />{t('landing.pricing.features.allBasic')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" /><strong>{t('landing.pricing.features.quickbooks')}</strong></li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" /><strong>{t('landing.comparison.reports30')}</strong></li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" />{t('landing.pricing.features.aiSearch')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" />{t('landing.pricing.features.expenses')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" />{t('landing.pricing.features.evaluations')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" />{t('landing.pricing.features.recruitment')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" />{t('landing.pricing.features.employeePortal')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-purple-500 flex-shrink-0" />{t('landing.pricing.features.orgChart')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />{t('landing.pricing.features.notifications')}</li>
               </ul>
               
               <div className="space-y-2">
                 <Link to="/checkout?plan=pro">
-                  <Button className="w-full bg-purple-600 hover:bg-purple-700 text-sm sm:text-base" data-testid="buy-pro-btn">Comprar Plan</Button>
+                  <Button className="w-full bg-purple-600 hover:bg-purple-700 text-sm sm:text-base" data-testid="buy-pro-btn">{t('landing.pricing.buyPlan')}</Button>
                 </Link>
                 <Link to="/register">
-                  <Button className="w-full text-sm sm:text-base" variant="outline" data-testid="trial-pro-btn">Probar 14 días gratis</Button>
+                  <Button className="w-full text-sm sm:text-base" variant="outline" data-testid="trial-pro-btn">{t('landing.pricing.tryFree')}</Button>
                 </Link>
               </div>
             </div>
@@ -806,35 +806,35 @@ export default function LandingPage() {
                   <Crown className="w-6 h-6 sm:w-7 sm:h-7" />
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-slate-900 heading">FortexaRH Enterprise</h3>
-                <p className="text-slate-600 mt-1 text-sm sm:text-base">Para grandes corporaciones</p>
+                <p className="text-slate-600 mt-1 text-sm sm:text-base">{t('landing.pricing.enterpriseDesc')}</p>
                 <div className="mt-3 sm:mt-4">
                   <span className="text-3xl sm:text-4xl font-bold text-slate-900">$20</span>
-                  <span className="text-slate-600">/mes</span>
-                  <p className="text-xs sm:text-sm text-slate-600">+ $1.50 por empleado</p>
+                  <span className="text-slate-600">/{t('landing.pricing.monthly')}</span>
+                  <p className="text-xs sm:text-sm text-slate-600">+ $1.50 {t('landing.pricing.perEmployee')}</p>
                 </div>
               </div>
               
               <ul className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />Empleados ilimitados</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />7 usuarios incluidos</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700 font-medium"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />Todo lo del plan Pro</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" /><strong>QuickBooks Online</strong></li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" /><strong>58 reportes avanzados</strong></li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Reportes personalizables y guardados</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Roles personalizados</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />API personalizada</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Integración SAP/Oracle/Dynamics</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Flujos de trabajo avanzados</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />Múltiples sucursales</li>
-                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />Soporte 24/7 y gerente dedicado</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />{t('landing.pricing.features.unlimitedEmployees')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />7 {t('landing.pricing.features.usersIncluded')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700 font-medium"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />{t('landing.pricing.features.allPro')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" /><strong>{t('landing.pricing.features.quickbooks')}</strong></li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" /><strong>{t('landing.comparison.reports58')}</strong></li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />{t('landing.pricing.features.customReports')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />{t('landing.pricing.features.customRoles')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />{t('landing.pricing.features.api')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />{t('landing.pricing.features.integrations')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />{t('landing.pricing.features.workflows')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />{t('landing.pricing.features.branches')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />{t('landing.pricing.features.support247')}</li>
               </ul>
               
               <div className="space-y-2">
                 <Link to="/checkout?plan=enterprise">
-                  <Button className="w-full bg-amber-600 hover:bg-amber-700 text-sm sm:text-base" data-testid="buy-enterprise-btn">Comprar Plan</Button>
+                  <Button className="w-full bg-amber-600 hover:bg-amber-700 text-sm sm:text-base" data-testid="buy-enterprise-btn">{t('landing.pricing.buyPlan')}</Button>
                 </Link>
                 <Link to="/register">
-                  <Button className="w-full text-sm sm:text-base" variant="outline" data-testid="trial-enterprise-btn">Probar 14 días gratis</Button>
+                  <Button className="w-full text-sm sm:text-base" variant="outline" data-testid="trial-enterprise-btn">{t('landing.pricing.tryFree')}</Button>
                 </Link>
               </div>
             </div>
