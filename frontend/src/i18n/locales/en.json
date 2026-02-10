@@ -1146,6 +1146,79 @@
       "noData": "No data for selected period"
     }
   },
+  "loans": {
+    "title": "Employee Loans",
+    "pageTitle": "Employee Loans",
+    "subtitle": "Manage loans and automatic payroll deductions",
+    "newLoan": "New Loan",
+    "export": "Export",
+    "stats": {
+      "activeLoans": "Active Loans",
+      "totalLoaned": "Total Loaned",
+      "totalPaid": "Total Paid",
+      "inDefault": "In Default",
+      "pendingBalance": "Pending Balance"
+    },
+    "status": {
+      "active": "Active",
+      "paid": "Paid",
+      "defaulted": "Defaulted",
+      "cancelled": "Cancelled"
+    },
+    "form": {
+      "employee": "Employee",
+      "selectEmployee": "Select employee",
+      "amount": "Loan Amount",
+      "currency": "Currency",
+      "interestRate": "Interest Rate (%)",
+      "installments": "Number of Installments",
+      "installmentAmount": "Installment Amount",
+      "startDate": "Start Date",
+      "description": "Description",
+      "descriptionPlaceholder": "Loan purpose...",
+      "autoDeduct": "Automatic payroll deduction",
+      "createLoan": "Create Loan"
+    },
+    "table": {
+      "employee": "Employee",
+      "amount": "Amount",
+      "balance": "Balance",
+      "installments": "Installments",
+      "status": "Status",
+      "progress": "Progress",
+      "actions": "Actions"
+    },
+    "payment": {
+      "registerPayment": "Register Payment",
+      "paymentAmount": "Payment Amount",
+      "paymentDate": "Payment Date",
+      "paymentMethod": "Payment Method",
+      "manual": "Manual",
+      "payroll": "Payroll Deduction",
+      "notes": "Notes",
+      "register": "Register"
+    },
+    "detail": {
+      "loanDetails": "Loan Details",
+      "originalAmount": "Original Amount",
+      "remainingBalance": "Remaining Balance",
+      "paidAmount": "Paid Amount",
+      "installmentsPaid": "Installments Paid",
+      "paymentHistory": "Payment History",
+      "noPayments": "No payments recorded"
+    },
+    "messages": {
+      "loanCreated": "Loan created successfully",
+      "paymentRegistered": "Payment registered",
+      "loanDeleted": "Loan deleted",
+      "exportSuccess": "Export successful",
+      "errorCreating": "Error creating loan",
+      "errorPayment": "Error registering payment",
+      "errorDeleting": "Error deleting",
+      "noLoans": "No loans registered",
+      "noLoansFilter": "No loans with these filters"
+    }
+  },
   "portal": {
     "title": "Employee Portal",
     "welcome": "Welcome to the Portal",
