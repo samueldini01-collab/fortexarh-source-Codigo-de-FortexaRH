@@ -484,10 +484,10 @@ export default function VacationsPage() {
               <div className="flex items-center gap-2">
                 <Select value={typeFilter || "all"} onValueChange={(v) => setTypeFilter(v === "all" ? "" : v)}>
                   <SelectTrigger className="w-52">
-                    <SelectValue placeholder="Tipo de permiso" />
+                    <SelectValue placeholder={t('vacations.form.leaveType')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todos los tipos</SelectItem>
+                    <SelectItem value="all">{t('common.all')}</SelectItem>
                     {leaveTypes.map(type => (
                       <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
                     ))}
@@ -495,11 +495,11 @@ export default function VacationsPage() {
                 </Select>
                 {(quickFilter || typeFilter) && (
                   <Button variant="ghost" size="sm" onClick={() => { setQuickFilter(null); setTypeFilter(""); }}>
-                    Limpiar filtros
+                    {t('employees.filters.clearFilters')}
                   </Button>
                 )}
                 <span className="text-sm text-slate-500 dark:text-slate-400">
-                  {filteredVacations.length} de {vacations.length} solicitudes
+                  {filteredVacations.length} {t('common.of')} {vacations.length}
                 </span>
               </div>
               <div className="flex gap-2">
@@ -525,19 +525,19 @@ export default function VacationsPage() {
                   <div className="text-center py-12">
                     <Calendar className="w-12 h-12 mx-auto mb-4 text-slate-300 dark:text-slate-600" />
                     <p className="text-slate-500 dark:text-slate-400">
-                      {quickFilter || typeFilter ? 'No hay solicitudes con estos filtros' : 'No hay solicitudes de permisos'}
+                      {quickFilter || typeFilter ? t('vacations.messages.noRequests') : t('vacations.messages.noRequests')}
                     </p>
                   </div>
                 ) : (
                   <Table>
                     <TableHeader>
                       <TableRow className="dark:border-slate-700">
-                        <TableHead className="dark:text-slate-300">Empleado</TableHead>
-                        <TableHead className="dark:text-slate-300">Tipo</TableHead>
-                        <TableHead className="dark:text-slate-300">Fechas</TableHead>
-                        <TableHead className="dark:text-slate-300">Días</TableHead>
-                        <TableHead className="dark:text-slate-300">Estado</TableHead>
-                        <TableHead className="text-right dark:text-slate-300">Acciones</TableHead>
+                        <TableHead className="dark:text-slate-300">{t('vacations.table.employee')}</TableHead>
+                        <TableHead className="dark:text-slate-300">{t('vacations.table.type')}</TableHead>
+                        <TableHead className="dark:text-slate-300">{t('vacations.table.dates')}</TableHead>
+                        <TableHead className="dark:text-slate-300">{t('vacations.table.days')}</TableHead>
+                        <TableHead className="dark:text-slate-300">{t('vacations.table.status')}</TableHead>
+                        <TableHead className="text-right dark:text-slate-300">{t('vacations.table.actions')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -555,7 +555,7 @@ export default function VacationsPage() {
                           <TableCell className="dark:text-slate-300">
                             {vac.start_date} - {vac.end_date}
                           </TableCell>
-                          <TableCell className="dark:text-slate-300">{vac.days_requested} días</TableCell>
+                          <TableCell className="dark:text-slate-300">{vac.days_requested} {t('vacations.form.days')}</TableCell>
                           <TableCell>{getStatusBadge(vac.status)}</TableCell>
                           <TableCell className="text-right">
                             {vac.status === "pending" && (
