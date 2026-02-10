@@ -625,26 +625,26 @@ export default function EvaluationsPage() {
           <TabsContent value="objectives" className="space-y-6">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-lg font-semibold dark:text-white">Objetivos y KPIs</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Defina y haga seguimiento a los objetivos de cada empleado</p>
+                <h3 className="text-lg font-semibold dark:text-white">{t('evaluations.objectives.title')}</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{t('evaluations.objectives.subtitle')}</p>
               </div>
               <Dialog open={isObjectiveDialogOpen} onOpenChange={setIsObjectiveDialogOpen}>
                 <DialogTrigger asChild>
                   <Button className="bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900" data-testid="add-objective-btn">
                     <Plus className="w-4 h-4 mr-2" />
-                    Nuevo Objetivo
+                    {t('evaluations.objectives.newObjective')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle className="heading">Crear Objetivo/KPI</DialogTitle>
+                    <DialogTitle className="heading">{t('evaluations.objectives.createTitle')}</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleCreateObjective} className="space-y-4 mt-4">
                     <div className="space-y-2">
-                      <Label>Empleado</Label>
+                      <Label>{t('evaluations.form.employee')}</Label>
                       <Select value={objectiveFormData.employee_id} onValueChange={(v) => setObjectiveFormData({...objectiveFormData, employee_id: v})}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Seleccionar empleado" />
+                          <SelectValue placeholder={t('evaluations.form.selectEmployee')} />
                         </SelectTrigger>
                         <SelectContent>
                           {employees.map(emp => (
@@ -656,49 +656,49 @@ export default function EvaluationsPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Título del Objetivo</Label>
+                      <Label>{t('evaluations.objectives.objectiveTitle')}</Label>
                       <Input
                         value={objectiveFormData.title}
                         onChange={(e) => setObjectiveFormData({...objectiveFormData, title: e.target.value})}
-                        placeholder="Ej: Aumentar ventas 20%"
+                        placeholder={t('evaluations.objectives.titlePlaceholder')}
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Descripción</Label>
+                      <Label>{t('evaluations.objectives.description')}</Label>
                       <Textarea
                         value={objectiveFormData.description}
                         onChange={(e) => setObjectiveFormData({...objectiveFormData, description: e.target.value})}
-                        placeholder="Detalles del objetivo..."
+                        placeholder={t('evaluations.objectives.descriptionPlaceholder')}
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>Meta</Label>
+                        <Label>{t('evaluations.objectives.target')}</Label>
                         <Input
                           type="number"
                           value={objectiveFormData.target_value}
                           onChange={(e) => setObjectiveFormData({...objectiveFormData, target_value: e.target.value})}
-                          placeholder="Ej: 100"
+                          placeholder={t('evaluations.objectives.targetPlaceholder')}
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Unidad</Label>
+                        <Label>{t('evaluations.objectives.unit')}</Label>
                         <Select value={objectiveFormData.target_unit} onValueChange={(v) => setObjectiveFormData({...objectiveFormData, target_unit: v})}>
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="percentage">Porcentaje (%)</SelectItem>
-                            <SelectItem value="currency">Moneda (RD$)</SelectItem>
-                            <SelectItem value="quantity">Cantidad</SelectItem>
-                            <SelectItem value="score">Puntuación</SelectItem>
+                            <SelectItem value="percentage">{t('evaluations.objectives.percentage')}</SelectItem>
+                            <SelectItem value="currency">{t('evaluations.objectives.currency')}</SelectItem>
+                            <SelectItem value="quantity">{t('evaluations.objectives.quantity')}</SelectItem>
+                            <SelectItem value="score">{t('evaluations.objectives.score')}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label>Fecha Límite</Label>
+                      <Label>{t('evaluations.objectives.dueDate')}</Label>
                       <Input
                         type="date"
                         value={objectiveFormData.due_date}
@@ -707,10 +707,10 @@ export default function EvaluationsPage() {
                     </div>
                     <div className="flex justify-end gap-3 pt-4">
                       <Button type="button" variant="outline" onClick={() => setIsObjectiveDialogOpen(false)}>
-                        Cancelar
+                        {t('evaluations.objectives.cancel')}
                       </Button>
                       <Button type="submit" className="bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900">
-                        Crear Objetivo
+                        {t('evaluations.objectives.create')}
                       </Button>
                     </div>
                   </form>
@@ -722,7 +722,7 @@ export default function EvaluationsPage() {
               <Card className="border-dashed">
                 <CardContent className="text-center py-12">
                   <Target className="w-12 h-12 mx-auto mb-4 text-slate-300 dark:text-slate-600" />
-                  <p className="text-slate-500 dark:text-slate-400">No hay objetivos definidos</p>
+                  <p className="text-slate-500 dark:text-slate-400">{t('evaluations.objectives.empty')}</p>
                 </CardContent>
               </Card>
             ) : (
@@ -732,7 +732,7 @@ export default function EvaluationsPage() {
                     <CardHeader className="pb-2">
                       <div className="flex items-center justify-between">
                         <Badge variant={obj.status === 'completed' ? 'default' : obj.status === 'in_progress' ? 'secondary' : 'outline'}>
-                          {obj.status === 'completed' ? 'Completado' : obj.status === 'in_progress' ? 'En Progreso' : 'No Iniciado'}
+                          {obj.status === 'completed' ? t('evaluations.objectives.status.completed') : obj.status === 'in_progress' ? t('evaluations.objectives.status.inProgress') : t('evaluations.objectives.status.notStarted')}
                         </Badge>
                         <span className="text-sm text-slate-500 dark:text-slate-400">{obj.due_date}</span>
                       </div>
@@ -742,13 +742,13 @@ export default function EvaluationsPage() {
                     <CardContent>
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
-                          <span className="text-slate-600 dark:text-slate-400">Progreso</span>
+                          <span className="text-slate-600 dark:text-slate-400">{t('evaluations.objectives.progress')}</span>
                           <span className="font-medium dark:text-white">{obj.progress}%</span>
                         </div>
                         <Progress value={obj.progress} className="h-2" />
                         {obj.target_value && (
                           <p className="text-xs text-slate-500 dark:text-slate-400">
-                            Meta: {obj.target_value} {obj.target_unit === 'percentage' ? '%' : obj.target_unit === 'currency' ? 'RD$' : ''}
+                            {t('evaluations.objectives.targetLabel')}: {obj.target_value} {obj.target_unit === 'percentage' ? '%' : obj.target_unit === 'currency' ? 'RD$' : ''}
                           </p>
                         )}
                       </div>
