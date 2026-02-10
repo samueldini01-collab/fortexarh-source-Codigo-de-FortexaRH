@@ -392,14 +392,14 @@ export default function EmployeesPage() {
   };
 
   return (
-    <DashboardLayout title="Empleados">
+    <DashboardLayout title={t('employees.title')}>
       <div className="space-y-6" data-testid="employees-page">
         {/* Header Actions */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="relative w-full sm:w-80">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
             <Input
-              placeholder="Buscar por nombre, email o departamento..."
+              placeholder={t('employees.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -417,7 +417,7 @@ export default function EmployeesPage() {
                 data-testid="bulk-edit-btn"
               >
                 <Edit3 className="w-4 h-4 mr-2" />
-                Editar {selectedEmployees.length} seleccionados
+                {t('employees.actions.bulkEdit')} ({selectedEmployees.length})
               </Button>
             )}
             
@@ -426,13 +426,13 @@ export default function EmployeesPage() {
               <DropdownMenuTrigger asChild>
                 <Button variant="outline">
                   <MoreVertical className="w-4 h-4 mr-2" />
-                  Acciones
+                  {t('employees.actions.actions')}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuItem onClick={() => setShowImportModal(true)}>
                   <Upload className="w-4 h-4 mr-2" />
-                  Importar desde Excel
+                  {t('employees.actions.import')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <ExportEmployeesButton 
@@ -451,7 +451,7 @@ export default function EmployeesPage() {
               data-testid="add-employee-btn"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Nuevo Empleado
+              {t('employees.newEmployee')}
             </Button>
           </div>
         </div>
@@ -465,7 +465,7 @@ export default function EmployeesPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Total Empleados</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('employees.stats.total')}</p>
                   <p className="text-2xl font-bold dark:text-slate-100">{employees.length}</p>
                 </div>
                 <User className="w-8 h-8 text-slate-300 dark:text-slate-600" />
@@ -479,7 +479,7 @@ export default function EmployeesPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Activos</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('employees.stats.active')}</p>
                   <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                     {employees.filter(e => e.status === 'active').length}
                   </p>
@@ -495,7 +495,7 @@ export default function EmployeesPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Inactivos</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('employees.stats.inactive')}</p>
                   <p className="text-2xl font-bold text-slate-600 dark:text-slate-300">
                     {employees.filter(e => e.status === 'inactive').length}
                   </p>
@@ -511,7 +511,7 @@ export default function EmployeesPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">En Licencia</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('employees.stats.onLeave')}</p>
                   <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
                     {employees.filter(e => e.status === 'on_leave').length}
                   </p>
@@ -526,10 +526,10 @@ export default function EmployeesPage() {
         <div className="flex flex-wrap items-center gap-4">
           <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
             <SelectTrigger className="w-52">
-              <SelectValue placeholder="Todos los departamentos" />
+              <SelectValue placeholder={t('employees.filters.allDepartments')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todos los departamentos</SelectItem>
+              <SelectItem value="all">{t('employees.filters.allDepartments')}</SelectItem>
               {uniqueDepartments.map(dept => (
                 <SelectItem key={dept} value={dept}>{dept}</SelectItem>
               ))}
@@ -539,7 +539,7 @@ export default function EmployeesPage() {
           {getFilterLabel() && (
             <>
               <Badge variant="outline" className="px-3 py-1">
-                Filtro: {getFilterLabel()}
+                {t('employees.filters.filter')}: {getFilterLabel()}
                 <button 
                   onClick={() => { setQuickFilter(null); setDepartmentFilter("all"); }} 
                   className="ml-2 hover:text-red-500"
@@ -548,7 +548,7 @@ export default function EmployeesPage() {
                 </button>
               </Badge>
               <span className="text-sm text-slate-500">
-                {filteredEmployees.length} de {employees.length} empleados
+                {filteredEmployees.length} {t('common.of')} {employees.length}
               </span>
             </>
           )}
@@ -572,7 +572,7 @@ export default function EmployeesPage() {
             ) : filteredEmployees.length === 0 ? (
               <div className="text-center py-12">
                 <User className="w-12 h-12 mx-auto mb-4 text-slate-300 dark:text-slate-600" />
-                <p className="text-slate-500 dark:text-slate-400">No hay empleados registrados</p>
+                <p className="text-slate-500 dark:text-slate-400">{t('employees.noEmployees')}</p>
                 <Button 
                   variant="link" 
                   onClick={() => { resetForm(); setIsDialogOpen(true); }}
