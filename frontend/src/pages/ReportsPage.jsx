@@ -207,7 +207,7 @@ export default function ReportsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <DollarSign className="w-5 h-5 text-slate-500 dark:text-slate-400" />
-                Nómina por Empleado
+                {t('reports.charts.payrollByEmployee')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -225,7 +225,7 @@ export default function ReportsPage() {
                 </ResponsiveContainer>
               ) : (
                 <div className="h-64 flex items-center justify-center text-slate-500 dark:text-slate-400">
-                  No hay datos para mostrar
+                  {t('reports.charts.noData')}
                 </div>
               )}
             </CardContent>
@@ -236,7 +236,7 @@ export default function ReportsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Clock className="w-5 h-5 text-slate-500 dark:text-slate-400" />
-                Resumen de Asistencias
+                {t('reports.charts.attendanceSummary')}
               </CardTitle>
             </CardHeader>
             <CardContent>
