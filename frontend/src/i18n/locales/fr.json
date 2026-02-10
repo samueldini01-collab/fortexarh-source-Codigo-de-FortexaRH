@@ -655,5 +655,61 @@
     "serverError": "Erreur du serveur",
     "networkError": "Erreur de connexion",
     "tryAgain": "Réessayer"
+  },
+  "onboarding": {
+    "step": "Étape",
+    "of": "sur",
+    "skip": "Passer",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "finish": "Terminer",
+    "skipTutorial": "Passer le Tutoriel",
+    "startTour": "Commencer la Visite",
+    "startUsing": "Commencer à Utiliser!",
+    "continue": "Continuer",
+    "repeatTutorial": "Répéter le Tutoriel",
+    "startTutorial": "Démarrer le Tutoriel",
+    "steps": {
+      "welcome": {
+        "title": "Bienvenue sur FortexaRH! 🎉",
+        "description": "Nous vous guiderons à travers les principales fonctionnalités du système afin que vous puissiez commencer à gérer votre équipe efficacement."
+      },
+      "dashboard": {
+        "title": "Tableau de Bord",
+        "description": "Ici, vous verrez un résumé rapide de votre gestion: employés, paies en attente, présences et plus. Cliquez sur n'importe quelle carte pour aller directement à cette section."
+      },
+      "sidebar": {
+        "title": "Menu de Navigation",
+        "description": "Utilisez le menu latéral pour accéder à tous les modules. Vous pouvez le réduire pour avoir plus d'espace de travail."
+      },
+      "search": {
+        "title": "Recherche Globale",
+        "description": "Recherchez rapidement des employés, des paies, des vacances et plus. Vous pouvez également utiliser Ctrl+K comme raccourci clavier."
+      },
+      "theme": {
+        "title": "Personnalisez Votre Expérience",
+        "description": "Passez du mode clair, sombre ou contraste élevé selon vos préférences. Le système peut également détecter les paramètres de votre appareil."
+      },
+      "userMenu": {
+        "title": "Votre Profil et Paramètres",
+        "description": "Accédez à votre profil, aux paramètres de l'entreprise, à la facturation et plus depuis ce menu. Vous y trouverez également les raccourcis clavier disponibles."
+      },
+      "employees": {
+        "title": "Gestion des Employés",
+        "description": "Le module employés est le cœur du système. Ici, vous enregistrez, modifiez et gérez toutes les informations de votre équipe."
+      },
+      "payroll": {
+        "title": "Paie Avancée",
+        "description": "Calculez les paies avec toutes les déductions légales (TSS, ISR) automatiquement. Générez des rapports DGII et des reçus de paiement."
+      },
+      "keyboard": {
+        "title": "Travaillez Plus Vite! ⌨️",
+        "description": "FortexaRH dispose de raccourcis clavier pour une navigation rapide:\n\n• Appuyez sur ? pour voir tous les raccourcis\n• G + E pour aller aux Employés\n• G + N pour aller à la Paie\n• Ctrl + K pour la recherche globale"
+      },
+      "complete": {
+        "title": "Prêt à Commencer! 🚀",
+        "description": "Vous connaissez maintenant les principales fonctionnalités de FortexaRH. Si vous avez besoin d'aide, vous pouvez:\n\n• Appuyer sur ? pour voir les raccourcis clavier\n• Redémarrer ce tutoriel depuis Paramètres\n• Contacter le support depuis le menu d'aide"
+      }
+    }
   }
 }
