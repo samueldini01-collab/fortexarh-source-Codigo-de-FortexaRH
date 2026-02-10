@@ -469,11 +469,11 @@ export default function DashboardLayout({ children, title }) {
       console.error("Search error:", error);
       // Fallback: search in navigation items
       const navResults = DEFAULT_NAVIGATION.filter(item => 
-        item.name.toLowerCase().includes(query.toLowerCase())
+        t(`nav.${item.nameKey}`).toLowerCase().includes(query.toLowerCase())
       ).map(item => ({
         type: "navigation",
-        title: item.name,
-        description: `Ir a ${item.name}`,
+        title: t(`nav.${item.nameKey}`),
+        description: `${t('common.goTo')} ${t(`nav.${item.nameKey}`)}`,
         href: item.href,
         icon: item.icon
       }));
