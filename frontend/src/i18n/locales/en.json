@@ -1254,6 +1254,173 @@
       "system": "System"
     }
   },
+  "evaluations": {
+    "title": "Performance Evaluations",
+    "tabs": {
+      "evaluations": "Evaluations",
+      "objectives": "Objectives/KPIs",
+      "cycles": "Cycles",
+      "plans": "Improvement Plans"
+    },
+    "stats": {
+      "total": "Total",
+      "excellent": "Exceptional (≥4.5)",
+      "good": "Good (3.5-4.4)",
+      "needsWork": "Needs Improvement",
+      "average": "Average"
+    },
+    "filters": {
+      "excellent": "Exceptional",
+      "good": "Good",
+      "needsWork": "Needs Improvement",
+      "filter": "Filter",
+      "of": "of",
+      "evaluationsCount": "evaluations"
+    },
+    "form": {
+      "newEvaluation": "New Evaluation",
+      "newEvaluationTitle": "New Performance Evaluation",
+      "employee": "Employee",
+      "selectEmployee": "Select employee",
+      "period": "Period",
+      "periodPlaceholder": "E.g: Q1 2025, January 2025",
+      "evaluationType": "Evaluation Type",
+      "supervisor": "Supervisor Evaluation",
+      "self": "Self-Evaluation",
+      "peer": "Peer Evaluation",
+      "360": "360° Evaluation",
+      "competencies": "Competencies",
+      "totalScore": "Total Score",
+      "strengths": "Strengths (one per line)",
+      "strengthsPlaceholder": "E.g: Excellent team communication\nConsistently meets deadlines",
+      "areasForImprovement": "Areas for Improvement (one per line)",
+      "areasPlaceholder": "E.g: Time management\nProcess documentation",
+      "overallComments": "Overall Comments",
+      "commentsPlaceholder": "Additional observations about performance...",
+      "cancel": "Cancel",
+      "save": "Save Evaluation",
+      "weight": "Weight"
+    },
+    "competencies": {
+      "performance": "Work Performance",
+      "goals": "Goal Achievement",
+      "teamwork": "Teamwork",
+      "communication": "Communication",
+      "initiative": "Initiative",
+      "punctuality": "Punctuality and Attendance"
+    },
+    "ratings": {
+      "1": "Unsatisfactory",
+      "2": "Needs Improvement",
+      "3": "Satisfactory",
+      "4": "Good",
+      "5": "Exceptional"
+    },
+    "card": {
+      "selfEvaluation": "Self-Evaluation",
+      "peerEvaluation": "Peers",
+      "strengths": "Strengths"
+    },
+    "empty": {
+      "noEvaluations": "No evaluations recorded"
+    },
+    "objectives": {
+      "title": "Objectives and KPIs",
+      "subtitle": "Define and track objectives for each employee",
+      "newObjective": "New Objective",
+      "createTitle": "Create Objective/KPI",
+      "objectiveTitle": "Objective Title",
+      "titlePlaceholder": "E.g: Increase sales 20%",
+      "description": "Description",
+      "descriptionPlaceholder": "Objective details...",
+      "target": "Target",
+      "targetPlaceholder": "E.g: 100",
+      "unit": "Unit",
+      "percentage": "Percentage (%)",
+      "currency": "Currency (RD$)",
+      "quantity": "Quantity",
+      "score": "Score",
+      "dueDate": "Due Date",
+      "cancel": "Cancel",
+      "create": "Create Objective",
+      "progress": "Progress",
+      "targetLabel": "Target",
+      "status": {
+        "completed": "Completed",
+        "inProgress": "In Progress",
+        "notStarted": "Not Started"
+      },
+      "empty": "No objectives defined"
+    },
+    "cycles": {
+      "title": "Evaluation Cycles",
+      "subtitle": "Configure your company's evaluation periods",
+      "newCycle": "New Cycle",
+      "createTitle": "Create Evaluation Cycle",
+      "cycleName": "Cycle Name",
+      "namePlaceholder": "E.g: Annual Evaluation 2025",
+      "type": "Type",
+      "annual": "Annual",
+      "semiAnnual": "Semi-Annual",
+      "quarterly": "Quarterly",
+      "monthly": "Monthly",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "includeSelfEvaluation": "Include Self-Evaluation",
+      "includePeerEvaluation": "Include Peer Evaluation (360°)",
+      "cancel": "Cancel",
+      "create": "Create Cycle",
+      "status": {
+        "active": "Active",
+        "closed": "Closed"
+      },
+      "start": "Start",
+      "end": "End",
+      "selfEval": "Self-Evaluation",
+      "peerEval": "360°",
+      "empty": "No cycles configured"
+    },
+    "plans": {
+      "title": "Improvement Plans",
+      "subtitle": "Manage development plans for employees",
+      "newPlan": "New Plan",
+      "createTitle": "Create Improvement Plan",
+      "planTitle": "Plan Title",
+      "titlePlaceholder": "E.g: Leadership Development Plan",
+      "areas": "Areas to Improve (one per line)",
+      "areasPlaceholder": "E.g: Effective communication\nTime management",
+      "actions": "Actions/Tasks (one per line)",
+      "actionsPlaceholder": "E.g: Complete communication course\nWeekly follow-up meeting",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "cancel": "Cancel",
+      "create": "Create Plan",
+      "areasLabel": "Areas for Improvement",
+      "period": "Period",
+      "actionsLabel": "Actions",
+      "more": "more",
+      "status": {
+        "active": "Active",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
+      "empty": "No improvement plans"
+    },
+    "export": "Export",
+    "messages": {
+      "evaluationCreated": "Evaluation created successfully",
+      "cycleCreated": "Evaluation cycle created",
+      "objectiveCreated": "Objective created",
+      "planCreated": "Improvement plan created",
+      "errorLoading": "Error loading data",
+      "errorCreatingEvaluation": "Error creating evaluation",
+      "errorCreatingCycle": "Error creating cycle",
+      "errorCreatingObjective": "Error creating objective",
+      "errorCreatingPlan": "Error creating plan",
+      "exported": "File exported",
+      "exportError": "Export error"
+    }
+  },
   "errors": {
     "generic": "An error occurred",
     "notFound": "Page not found",

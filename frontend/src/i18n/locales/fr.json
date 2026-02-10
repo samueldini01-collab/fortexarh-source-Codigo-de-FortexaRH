@@ -1253,6 +1253,173 @@
       "system": "Système"
     }
   },
+  "evaluations": {
+    "title": "Évaluations de Performance",
+    "tabs": {
+      "evaluations": "Évaluations",
+      "objectives": "Objectifs/KPIs",
+      "cycles": "Cycles",
+      "plans": "Plans d'Amélioration"
+    },
+    "stats": {
+      "total": "Total",
+      "excellent": "Exceptionnels (≥4.5)",
+      "good": "Bons (3.5-4.4)",
+      "needsWork": "À Améliorer",
+      "average": "Moyenne"
+    },
+    "filters": {
+      "excellent": "Exceptionnels",
+      "good": "Bons",
+      "needsWork": "À Améliorer",
+      "filter": "Filtre",
+      "of": "sur",
+      "evaluationsCount": "évaluations"
+    },
+    "form": {
+      "newEvaluation": "Nouvelle Évaluation",
+      "newEvaluationTitle": "Nouvelle Évaluation de Performance",
+      "employee": "Employé",
+      "selectEmployee": "Sélectionner employé",
+      "period": "Période",
+      "periodPlaceholder": "Ex: T1 2025, Janvier 2025",
+      "evaluationType": "Type d'Évaluation",
+      "supervisor": "Évaluation du Superviseur",
+      "self": "Auto-évaluation",
+      "peer": "Évaluation par les Pairs",
+      "360": "Évaluation 360°",
+      "competencies": "Compétences",
+      "totalScore": "Score Total",
+      "strengths": "Points Forts (un par ligne)",
+      "strengthsPlaceholder": "Ex: Excellente communication d'équipe\nRespecte les délais régulièrement",
+      "areasForImprovement": "Axes d'Amélioration (un par ligne)",
+      "areasPlaceholder": "Ex: Gestion du temps\nDocumentation des processus",
+      "overallComments": "Commentaires Généraux",
+      "commentsPlaceholder": "Observations supplémentaires sur la performance...",
+      "cancel": "Annuler",
+      "save": "Enregistrer l'Évaluation",
+      "weight": "Poids"
+    },
+    "competencies": {
+      "performance": "Performance au Travail",
+      "goals": "Atteinte des Objectifs",
+      "teamwork": "Travail d'Équipe",
+      "communication": "Communication",
+      "initiative": "Initiative",
+      "punctuality": "Ponctualité et Assiduité"
+    },
+    "ratings": {
+      "1": "Insatisfaisant",
+      "2": "À Améliorer",
+      "3": "Satisfaisant",
+      "4": "Bon",
+      "5": "Exceptionnel"
+    },
+    "card": {
+      "selfEvaluation": "Auto-évaluation",
+      "peerEvaluation": "Pairs",
+      "strengths": "Points Forts"
+    },
+    "empty": {
+      "noEvaluations": "Aucune évaluation enregistrée"
+    },
+    "objectives": {
+      "title": "Objectifs et KPIs",
+      "subtitle": "Définissez et suivez les objectifs de chaque employé",
+      "newObjective": "Nouvel Objectif",
+      "createTitle": "Créer Objectif/KPI",
+      "objectiveTitle": "Titre de l'Objectif",
+      "titlePlaceholder": "Ex: Augmenter les ventes de 20%",
+      "description": "Description",
+      "descriptionPlaceholder": "Détails de l'objectif...",
+      "target": "Cible",
+      "targetPlaceholder": "Ex: 100",
+      "unit": "Unité",
+      "percentage": "Pourcentage (%)",
+      "currency": "Devise (RD$)",
+      "quantity": "Quantité",
+      "score": "Score",
+      "dueDate": "Date Limite",
+      "cancel": "Annuler",
+      "create": "Créer Objectif",
+      "progress": "Progression",
+      "targetLabel": "Cible",
+      "status": {
+        "completed": "Terminé",
+        "inProgress": "En Cours",
+        "notStarted": "Non Commencé"
+      },
+      "empty": "Aucun objectif défini"
+    },
+    "cycles": {
+      "title": "Cycles d'Évaluation",
+      "subtitle": "Configurez les périodes d'évaluation de votre entreprise",
+      "newCycle": "Nouveau Cycle",
+      "createTitle": "Créer un Cycle d'Évaluation",
+      "cycleName": "Nom du Cycle",
+      "namePlaceholder": "Ex: Évaluation Annuelle 2025",
+      "type": "Type",
+      "annual": "Annuel",
+      "semiAnnual": "Semestriel",
+      "quarterly": "Trimestriel",
+      "monthly": "Mensuel",
+      "startDate": "Date de Début",
+      "endDate": "Date de Fin",
+      "includeSelfEvaluation": "Inclure l'Auto-évaluation",
+      "includePeerEvaluation": "Inclure l'Évaluation par les Pairs (360°)",
+      "cancel": "Annuler",
+      "create": "Créer le Cycle",
+      "status": {
+        "active": "Actif",
+        "closed": "Fermé"
+      },
+      "start": "Début",
+      "end": "Fin",
+      "selfEval": "Auto-évaluation",
+      "peerEval": "360°",
+      "empty": "Aucun cycle configuré"
+    },
+    "plans": {
+      "title": "Plans d'Amélioration",
+      "subtitle": "Gérez les plans de développement des employés",
+      "newPlan": "Nouveau Plan",
+      "createTitle": "Créer un Plan d'Amélioration",
+      "planTitle": "Titre du Plan",
+      "titlePlaceholder": "Ex: Plan de Développement du Leadership",
+      "areas": "Domaines à Améliorer (un par ligne)",
+      "areasPlaceholder": "Ex: Communication efficace\nGestion du temps",
+      "actions": "Actions/Tâches (une par ligne)",
+      "actionsPlaceholder": "Ex: Compléter un cours de communication\nRéunion de suivi hebdomadaire",
+      "startDate": "Date de Début",
+      "endDate": "Date de Fin",
+      "cancel": "Annuler",
+      "create": "Créer le Plan",
+      "areasLabel": "Domaines d'Amélioration",
+      "period": "Période",
+      "actionsLabel": "Actions",
+      "more": "de plus",
+      "status": {
+        "active": "Actif",
+        "completed": "Terminé",
+        "cancelled": "Annulé"
+      },
+      "empty": "Aucun plan d'amélioration"
+    },
+    "export": "Exporter",
+    "messages": {
+      "evaluationCreated": "Évaluation créée avec succès",
+      "cycleCreated": "Cycle d'évaluation créé",
+      "objectiveCreated": "Objectif créé",
+      "planCreated": "Plan d'amélioration créé",
+      "errorLoading": "Erreur de chargement des données",
+      "errorCreatingEvaluation": "Erreur lors de la création de l'évaluation",
+      "errorCreatingCycle": "Erreur lors de la création du cycle",
+      "errorCreatingObjective": "Erreur lors de la création de l'objectif",
+      "errorCreatingPlan": "Erreur lors de la création du plan",
+      "exported": "Fichier exporté",
+      "exportError": "Erreur d'exportation"
+    }
+  },
   "errors": {
     "generic": "Une erreur s'est produite",
     "notFound": "Page non trouvée",

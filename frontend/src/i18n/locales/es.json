@@ -1253,6 +1253,173 @@
       "system": "Sistema"
     }
   },
+  "evaluations": {
+    "title": "Evaluaciones de Desempeño",
+    "tabs": {
+      "evaluations": "Evaluaciones",
+      "objectives": "Objetivos/KPIs",
+      "cycles": "Ciclos",
+      "plans": "Planes Mejora"
+    },
+    "stats": {
+      "total": "Total",
+      "excellent": "Excepcionales (≥4.5)",
+      "good": "Buenos (3.5-4.4)",
+      "needsWork": "Necesita Mejorar",
+      "average": "Promedio"
+    },
+    "filters": {
+      "excellent": "Excepcionales",
+      "good": "Buenos",
+      "needsWork": "Necesita Mejorar",
+      "filter": "Filtro",
+      "of": "de",
+      "evaluationsCount": "evaluaciones"
+    },
+    "form": {
+      "newEvaluation": "Nueva Evaluación",
+      "newEvaluationTitle": "Nueva Evaluación de Desempeño",
+      "employee": "Empleado",
+      "selectEmployee": "Seleccionar empleado",
+      "period": "Período",
+      "periodPlaceholder": "Ej: Q1 2025, Enero 2025",
+      "evaluationType": "Tipo de Evaluación",
+      "supervisor": "Evaluación del Supervisor",
+      "self": "Autoevaluación",
+      "peer": "Evaluación de Pares",
+      "360": "Evaluación 360°",
+      "competencies": "Competencias",
+      "totalScore": "Puntuación Total",
+      "strengths": "Fortalezas (una por línea)",
+      "strengthsPlaceholder": "Ej: Excelente comunicación con el equipo\nCumple deadlines consistentemente",
+      "areasForImprovement": "Áreas de Mejora (una por línea)",
+      "areasPlaceholder": "Ej: Gestión del tiempo\nDocumentación de procesos",
+      "overallComments": "Comentarios Generales",
+      "commentsPlaceholder": "Observaciones adicionales sobre el desempeño...",
+      "cancel": "Cancelar",
+      "save": "Guardar Evaluación",
+      "weight": "Peso"
+    },
+    "competencies": {
+      "performance": "Desempeño Laboral",
+      "goals": "Cumplimiento de Objetivos",
+      "teamwork": "Trabajo en Equipo",
+      "communication": "Comunicación",
+      "initiative": "Iniciativa",
+      "punctuality": "Puntualidad y Asistencia"
+    },
+    "ratings": {
+      "1": "Insatisfactorio",
+      "2": "Necesita Mejora",
+      "3": "Satisfactorio",
+      "4": "Bueno",
+      "5": "Excepcional"
+    },
+    "card": {
+      "selfEvaluation": "Autoevaluación",
+      "peerEvaluation": "Pares",
+      "strengths": "Fortalezas"
+    },
+    "empty": {
+      "noEvaluations": "No hay evaluaciones registradas"
+    },
+    "objectives": {
+      "title": "Objetivos y KPIs",
+      "subtitle": "Defina y haga seguimiento a los objetivos de cada empleado",
+      "newObjective": "Nuevo Objetivo",
+      "createTitle": "Crear Objetivo/KPI",
+      "objectiveTitle": "Título del Objetivo",
+      "titlePlaceholder": "Ej: Aumentar ventas 20%",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Detalles del objetivo...",
+      "target": "Meta",
+      "targetPlaceholder": "Ej: 100",
+      "unit": "Unidad",
+      "percentage": "Porcentaje (%)",
+      "currency": "Moneda (RD$)",
+      "quantity": "Cantidad",
+      "score": "Puntuación",
+      "dueDate": "Fecha Límite",
+      "cancel": "Cancelar",
+      "create": "Crear Objetivo",
+      "progress": "Progreso",
+      "targetLabel": "Meta",
+      "status": {
+        "completed": "Completado",
+        "inProgress": "En Progreso",
+        "notStarted": "No Iniciado"
+      },
+      "empty": "No hay objetivos definidos"
+    },
+    "cycles": {
+      "title": "Ciclos de Evaluación",
+      "subtitle": "Configure los períodos de evaluación de su empresa",
+      "newCycle": "Nuevo Ciclo",
+      "createTitle": "Crear Ciclo de Evaluación",
+      "cycleName": "Nombre del Ciclo",
+      "namePlaceholder": "Ej: Evaluación Anual 2025",
+      "type": "Tipo",
+      "annual": "Anual",
+      "semiAnnual": "Semestral",
+      "quarterly": "Trimestral",
+      "monthly": "Mensual",
+      "startDate": "Fecha Inicio",
+      "endDate": "Fecha Fin",
+      "includeSelfEvaluation": "Incluir Autoevaluación",
+      "includePeerEvaluation": "Incluir Evaluación de Pares (360°)",
+      "cancel": "Cancelar",
+      "create": "Crear Ciclo",
+      "status": {
+        "active": "Activo",
+        "closed": "Cerrado"
+      },
+      "start": "Inicio",
+      "end": "Fin",
+      "selfEval": "Autoevaluación",
+      "peerEval": "360°",
+      "empty": "No hay ciclos configurados"
+    },
+    "plans": {
+      "title": "Planes de Mejora",
+      "subtitle": "Gestione planes de desarrollo para empleados",
+      "newPlan": "Nuevo Plan",
+      "createTitle": "Crear Plan de Mejora",
+      "planTitle": "Título del Plan",
+      "titlePlaceholder": "Ej: Plan de Desarrollo de Liderazgo",
+      "areas": "Áreas a Mejorar (una por línea)",
+      "areasPlaceholder": "Ej: Comunicación efectiva\nGestión del tiempo",
+      "actions": "Acciones/Tareas (una por línea)",
+      "actionsPlaceholder": "Ej: Completar curso de comunicación\nReunión semanal de seguimiento",
+      "startDate": "Fecha Inicio",
+      "endDate": "Fecha Fin",
+      "cancel": "Cancelar",
+      "create": "Crear Plan",
+      "areasLabel": "Áreas de Mejora",
+      "period": "Período",
+      "actionsLabel": "Acciones",
+      "more": "más",
+      "status": {
+        "active": "Activo",
+        "completed": "Completado",
+        "cancelled": "Cancelado"
+      },
+      "empty": "No hay planes de mejora"
+    },
+    "export": "Exportar",
+    "messages": {
+      "evaluationCreated": "Evaluación creada exitosamente",
+      "cycleCreated": "Ciclo de evaluación creado",
+      "objectiveCreated": "Objetivo creado",
+      "planCreated": "Plan de mejora creado",
+      "errorLoading": "Error al cargar datos",
+      "errorCreatingEvaluation": "Error al crear evaluación",
+      "errorCreatingCycle": "Error al crear ciclo",
+      "errorCreatingObjective": "Error al crear objetivo",
+      "errorCreatingPlan": "Error al crear plan",
+      "exported": "Archivo exportado",
+      "exportError": "Error al exportar"
+    }
+  },
   "errors": {
     "generic": "Ha ocurrido un error",
     "notFound": "Página no encontrada",
