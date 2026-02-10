@@ -1498,6 +1498,8 @@
     }
   },
   "reportsPage": {
+    "title": "Centro de Reportes",
+    "period": "Período",
     "months": {
       "january": "Enero",
       "february": "Febrero",

@@ -1499,6 +1499,8 @@
     }
   },
   "reportsPage": {
+    "title": "Reports Center",
+    "period": "Period",
     "months": {
       "january": "January",
       "february": "February",
