@@ -763,47 +763,47 @@ export default function EvaluationsPage() {
           <TabsContent value="cycles" className="space-y-6">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-lg font-semibold dark:text-white">Ciclos de Evaluación</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Configure los períodos de evaluación de su empresa</p>
+                <h3 className="text-lg font-semibold dark:text-white">{t('evaluations.cycles.title')}</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{t('evaluations.cycles.subtitle')}</p>
               </div>
               <Dialog open={isCycleDialogOpen} onOpenChange={setIsCycleDialogOpen}>
                 <DialogTrigger asChild>
                   <Button className="bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900" data-testid="add-cycle-btn">
                     <Plus className="w-4 h-4 mr-2" />
-                    Nuevo Ciclo
+                    {t('evaluations.cycles.newCycle')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle className="heading">Crear Ciclo de Evaluación</DialogTitle>
+                    <DialogTitle className="heading">{t('evaluations.cycles.createTitle')}</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleCreateCycle} className="space-y-4 mt-4">
                     <div className="space-y-2">
-                      <Label>Nombre del Ciclo</Label>
+                      <Label>{t('evaluations.cycles.cycleName')}</Label>
                       <Input
                         value={cycleFormData.name}
                         onChange={(e) => setCycleFormData({...cycleFormData, name: e.target.value})}
-                        placeholder="Ej: Evaluación Anual 2025"
+                        placeholder={t('evaluations.cycles.namePlaceholder')}
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Tipo</Label>
+                      <Label>{t('evaluations.cycles.type')}</Label>
                       <Select value={cycleFormData.type} onValueChange={(v) => setCycleFormData({...cycleFormData, type: v})}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="annual">Anual</SelectItem>
-                          <SelectItem value="semi_annual">Semestral</SelectItem>
-                          <SelectItem value="quarterly">Trimestral</SelectItem>
-                          <SelectItem value="monthly">Mensual</SelectItem>
+                          <SelectItem value="annual">{t('evaluations.cycles.annual')}</SelectItem>
+                          <SelectItem value="semi_annual">{t('evaluations.cycles.semiAnnual')}</SelectItem>
+                          <SelectItem value="quarterly">{t('evaluations.cycles.quarterly')}</SelectItem>
+                          <SelectItem value="monthly">{t('evaluations.cycles.monthly')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>Fecha Inicio</Label>
+                        <Label>{t('evaluations.cycles.startDate')}</Label>
                         <Input
                           type="date"
                           value={cycleFormData.start_date}
@@ -812,7 +812,7 @@ export default function EvaluationsPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Fecha Fin</Label>
+                        <Label>{t('evaluations.cycles.endDate')}</Label>
                         <Input
                           type="date"
                           value={cycleFormData.end_date}
@@ -830,7 +830,7 @@ export default function EvaluationsPage() {
                           onChange={(e) => setCycleFormData({...cycleFormData, include_self_evaluation: e.target.checked})}
                           className="rounded"
                         />
-                        <Label htmlFor="self-eval">Incluir Autoevaluación</Label>
+                        <Label htmlFor="self-eval">{t('evaluations.cycles.includeSelfEvaluation')}</Label>
                       </div>
                       <div className="flex items-center gap-2">
                         <input
@@ -840,15 +840,15 @@ export default function EvaluationsPage() {
                           onChange={(e) => setCycleFormData({...cycleFormData, include_peer_evaluation: e.target.checked})}
                           className="rounded"
                         />
-                        <Label htmlFor="peer-eval">Incluir Evaluación de Pares (360°)</Label>
+                        <Label htmlFor="peer-eval">{t('evaluations.cycles.includePeerEvaluation')}</Label>
                       </div>
                     </div>
                     <div className="flex justify-end gap-3 pt-4">
                       <Button type="button" variant="outline" onClick={() => setIsCycleDialogOpen(false)}>
-                        Cancelar
+                        {t('evaluations.cycles.cancel')}
                       </Button>
                       <Button type="submit" className="bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900">
-                        Crear Ciclo
+                        {t('evaluations.cycles.create')}
                       </Button>
                     </div>
                   </form>
@@ -860,7 +860,7 @@ export default function EvaluationsPage() {
               <Card className="border-dashed">
                 <CardContent className="text-center py-12">
                   <Calendar className="w-12 h-12 mx-auto mb-4 text-slate-300 dark:text-slate-600" />
-                  <p className="text-slate-500 dark:text-slate-400">No hay ciclos configurados</p>
+                  <p className="text-slate-500 dark:text-slate-400">{t('evaluations.cycles.empty')}</p>
                 </CardContent>
               </Card>
             ) : (
@@ -870,21 +870,21 @@ export default function EvaluationsPage() {
                     <CardHeader>
                       <div className="flex items-center justify-between">
                         <Badge variant={cycle.status === 'active' ? 'default' : 'secondary'}>
-                          {cycle.status === 'active' ? 'Activo' : 'Cerrado'}
+                          {cycle.status === 'active' ? t('evaluations.cycles.status.active') : t('evaluations.cycles.status.closed')}
                         </Badge>
                         <Badge variant="outline">
-                          {cycle.type === 'annual' ? 'Anual' : cycle.type === 'semi_annual' ? 'Semestral' : cycle.type === 'quarterly' ? 'Trimestral' : 'Mensual'}
+                          {cycle.type === 'annual' ? t('evaluations.cycles.annual') : cycle.type === 'semi_annual' ? t('evaluations.cycles.semiAnnual') : cycle.type === 'quarterly' ? t('evaluations.cycles.quarterly') : t('evaluations.cycles.monthly')}
                         </Badge>
                       </div>
                       <CardTitle className="text-base dark:text-white mt-2">{cycle.name}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
-                        <p>Inicio: {cycle.start_date}</p>
-                        <p>Fin: {cycle.end_date}</p>
+                        <p>{t('evaluations.cycles.start')}: {cycle.start_date}</p>
+                        <p>{t('evaluations.cycles.end')}: {cycle.end_date}</p>
                         <div className="flex gap-2 mt-3">
-                          {cycle.include_self_evaluation && <Badge variant="outline" className="text-xs">Autoevaluación</Badge>}
-                          {cycle.include_peer_evaluation && <Badge variant="outline" className="text-xs">360°</Badge>}
+                          {cycle.include_self_evaluation && <Badge variant="outline" className="text-xs">{t('evaluations.cycles.selfEval')}</Badge>}
+                          {cycle.include_peer_evaluation && <Badge variant="outline" className="text-xs">{t('evaluations.cycles.peerEval')}</Badge>}
                         </div>
                       </div>
                     </CardContent>
