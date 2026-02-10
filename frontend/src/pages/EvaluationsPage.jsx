@@ -568,7 +568,7 @@ export default function EvaluationsPage() {
               <Card className="border-slate-200 dark:border-slate-700">
                 <CardContent className="text-center py-12">
                   <Target className="w-12 h-12 mx-auto mb-4 text-slate-300 dark:text-slate-600" />
-                  <p className="text-slate-500 dark:text-slate-400">No hay evaluaciones registradas</p>
+                  <p className="text-slate-500 dark:text-slate-400">{t('evaluations.empty.noEvaluations')}</p>
                 </CardContent>
               </Card>
             ) : (
@@ -579,7 +579,7 @@ export default function EvaluationsPage() {
                       <div className="flex items-center justify-between">
                         <div>
                           <CardTitle className="text-lg dark:text-white">{evaluation.employee_name}</CardTitle>
-                          <CardDescription>{evaluation.period} • {evaluation.evaluation_type === 'supervisor' ? 'Supervisor' : evaluation.evaluation_type === 'self' ? 'Autoevaluación' : 'Pares'}</CardDescription>
+                          <CardDescription>{evaluation.period} • {evaluation.evaluation_type === 'supervisor' ? t('evaluations.form.supervisor') : evaluation.evaluation_type === 'self' ? t('evaluations.card.selfEvaluation') : t('evaluations.card.peerEvaluation')}</CardDescription>
                         </div>
                         <div className="text-right">
                           <span className={`text-3xl font-bold ${getScoreColor(evaluation.overall_score)}`}>
@@ -595,7 +595,7 @@ export default function EvaluationsPage() {
                       {evaluation.scores?.slice(0, 4).map((score) => (
                         <div key={score.competency} className="space-y-1">
                           <div className="flex justify-between text-sm">
-                            <span className="text-slate-600 dark:text-slate-300">{score.name || score.competency}</span>
+                            <span className="text-slate-600 dark:text-slate-300">{score.name || t(`evaluations.competencies.${score.competency}`) || score.competency}</span>
                             <span className="font-medium dark:text-white">{score.score}/5</span>
                           </div>
                           <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
@@ -606,7 +606,7 @@ export default function EvaluationsPage() {
                       
                       {evaluation.strengths?.length > 0 && (
                         <div className="pt-2 border-t dark:border-slate-700">
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Fortalezas:</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">{t('evaluations.card.strengths')}:</p>
                           <div className="flex flex-wrap gap-1">
                             {evaluation.strengths.slice(0, 2).map((s, i) => (
                               <Badge key={i} variant="outline" className="text-xs bg-emerald-50 dark:bg-emerald-900/30">{s}</Badge>
