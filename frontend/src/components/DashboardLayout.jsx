@@ -717,16 +717,16 @@ export default function DashboardLayout({ children, title }) {
                               <button
                                 key={item.id}
                                 onClick={() => {
-                                  setBlockedFeature(item.name);
+                                  setBlockedFeature(t(`nav.${item.nameKey}`));
                                   setShowUpgradeModal(true);
                                 }}
                                 className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'gap-3 px-3'} py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-amber-50 hover:text-amber-600 transition-colors group`}
-                                title={sidebarCollapsed ? item.name : `Disponible en plan ${requiredPlan}`}
+                                title={sidebarCollapsed ? t(`nav.${item.nameKey}`) : `${t('common.availableIn')} ${requiredPlan}`}
                               >
                                 <Icon className="w-4 h-4 text-slate-300 group-hover:text-amber-400 shrink-0" />
                                 {!sidebarCollapsed && (
                                   <>
-                                    <span className="flex-1 text-left truncate">{item.name}</span>
+                                    <span className="flex-1 text-left truncate">{t(`nav.${item.nameKey}`)}</span>
                                     <Lock className="w-3 h-3 text-slate-300 group-hover:text-amber-500" />
                                   </>
                                 )}
@@ -747,15 +747,15 @@ export default function DashboardLayout({ children, title }) {
                                 }
                               `}
                               onClick={() => setSidebarOpen(false)}
-                              title={sidebarCollapsed ? item.name : undefined}
+                              title={sidebarCollapsed ? t(`nav.${item.nameKey}`) : undefined}
                             >
                               <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`} />
                               {!sidebarCollapsed && (
                                 <span className="truncate flex items-center gap-2">
-                                  {item.name}
+                                  {t(`nav.${item.nameKey}`)}
                                   {item.isNew && (
                                     <span className="text-[9px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-bold">
-                                      NUEVO
+                                      {t('common.new')}
                                     </span>
                                   )}
                                 </span>
