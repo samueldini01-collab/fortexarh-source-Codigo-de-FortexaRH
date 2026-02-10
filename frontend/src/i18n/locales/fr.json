@@ -405,17 +405,45 @@
   "dashboard": {
     "welcome": "Bienvenue",
     "summary": "Voici le résumé de votre gestion RH",
+    "greeting": {
+      "morning": "Bonjour",
+      "afternoon": "Bon après-midi",
+      "evening": "Bonsoir"
+    },
     "stats": {
       "totalEmployees": "Total Employés",
       "activeEmployees": "Employés Actifs",
       "onLeave": "En Congé",
       "pendingRequests": "Demandes en Attente",
       "monthlyPayroll": "Paie Mensuelle",
-      "pendingApprovals": "Approbations en Attente"
+      "pendingApprovals": "Approbations en Attente",
+      "pendingPayrolls": "Paies en Attente",
+      "presentToday": "Présents Aujourd'hui",
+      "pendingVacations": "Congés en Attente",
+      "openJobs": "Postes Ouverts",
+      "newCandidates": "Nouveaux Candidats"
     },
     "quickActions": "Actions Rapides",
     "recentActivity": "Activité Récente",
-    "upcomingEvents": "Événements à Venir"
+    "upcomingEvents": "Événements à Venir",
+    "proBanner": {
+      "title": "Passez à FortexaRH Pro",
+      "subtitle": "Débloquez les rapports avancés, la recherche IA, le portail employé et bien plus",
+      "features": {
+        "reports": "30 rapports avancés",
+        "aiSearch": "Recherche IA",
+        "portal": "Portail employé",
+        "evaluations": "Évaluations de performance"
+      },
+      "cta": "Voir les plans et tarifs",
+      "ctaSecondary": "Essayer gratuitement"
+    },
+    "drillDown": {
+      "openJobs": "Postes Ouverts",
+      "newCandidates": "Nouveaux Candidats",
+      "errorLoading": "Erreur lors du chargement des détails"
+    },
+    "paymentSuccess": "Paiement réussi! Votre abonnement a été activé."
   },
   "employees": {
     "title": "Gestion des Employés",
