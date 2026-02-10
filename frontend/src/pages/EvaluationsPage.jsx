@@ -262,9 +262,9 @@ export default function EvaluationsPage() {
       document.body.appendChild(link);
       link.click();
       link.remove();
-      toast.success('Archivo exportado');
+      toast.success(t('evaluations.messages.exported'));
     } catch (error) {
-      toast.error('Error al exportar');
+      toast.error(t('evaluations.messages.exportError'));
     }
   };
 
