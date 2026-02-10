@@ -66,6 +66,7 @@ function SpotlightOverlay({ targetRect, onClick }) {
 
 // Tooltip component for highlighted elements
 function OnboardingTooltip({ step, targetRect, onNext, onPrev, onSkip, currentStep, totalSteps }) {
+  const { t } = useTranslation();
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const tooltipRef = useRef(null);
 
