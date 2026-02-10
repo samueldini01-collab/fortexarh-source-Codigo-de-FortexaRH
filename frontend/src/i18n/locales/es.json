@@ -822,24 +822,116 @@
   },
   "attendance": {
     "title": "Control de Asistencias",
+    "pageTitle": "Control de Asistencia y Tiempo",
     "clockIn": "Marcar Entrada",
     "clockOut": "Marcar Salida",
+    "registerManual": "Registrar Manual",
+    "registerAttendance": "Registrar Asistencia",
     "today": "Hoy",
     "week": "Esta Semana",
     "month": "Este Mes",
-    "summary": {
+    "tabs": {
+      "today": "Hoy",
+      "history": "Historial",
+      "shifts": "Turnos",
+      "alerts": "Alertas"
+    },
+    "stats": {
+      "totalEmployees": "Total Empleados",
       "present": "Presentes",
       "absent": "Ausentes",
       "late": "Tardanzas",
-      "onTime": "A Tiempo"
+      "onTime": "A Tiempo",
+      "notCheckedOut": "Sin Salida",
+      "overtimeHours": "Horas Extra",
+      "total": "Total"
     },
     "table": {
       "employee": "Empleado",
+      "department": "Departamento",
       "date": "Fecha",
       "clockIn": "Entrada",
       "clockOut": "Salida",
       "hoursWorked": "Horas Trabajadas",
+      "overtime": "H. Extra",
       "status": "Estado"
+    },
+    "status": {
+      "present": "Presente",
+      "absent": "Ausente",
+      "late": "Tarde"
+    },
+    "form": {
+      "selectEmployee": "Seleccionar empleado",
+      "date": "Fecha",
+      "entry": "Entrada",
+      "exit": "Salida",
+      "status": "Estado",
+      "notes": "Notas (opcional)",
+      "notesPlaceholder": "Notas adicionales...",
+      "register": "Registrar"
+    },
+    "todayDashboard": {
+      "attendanceRate": "Tasa de Asistencia Hoy",
+      "employeesPresent": "empleados presentes",
+      "of": "de",
+      "quickRegister": "Registro Rápido - Empleados Sin Marcar Hoy",
+      "allCheckedIn": "Todos los empleados han marcado entrada hoy",
+      "pendingCheckout": "Pendientes de Marcar Salida",
+      "entry": "Entrada"
+    },
+    "shifts": {
+      "title": "Gestión de Turnos",
+      "subtitle": "Configure los horarios de trabajo de su empresa",
+      "newShift": "Nuevo Turno",
+      "createShift": "Crear Turno",
+      "noShifts": "No hay turnos configurados",
+      "noShiftsDesc": "Cree un turno para asignar horarios a los empleados",
+      "shiftName": "Nombre del Turno",
+      "shiftNamePlaceholder": "Ej: Turno Mañana, Turno Noche",
+      "startTime": "Hora Entrada",
+      "endTime": "Hora Salida",
+      "breakMinutes": "Minutos de Almuerzo",
+      "gracePeriod": "Tolerancia (min)",
+      "isNightShift": "Es turno nocturno",
+      "created": "Turno creado"
+    },
+    "alerts": {
+      "title": "Alertas de Asistencia",
+      "activeAlerts": "alertas activas para hoy",
+      "noAlerts": "Sin alertas pendientes",
+      "allUpToDate": "Todo el equipo está al día con sus registros",
+      "missingCheckin": "Sin marcar entrada",
+      "lateArrival": "Llegada tarde",
+      "missingCheckout": "Sin marcar salida",
+      "register": "Registrar"
+    },
+    "export": {
+      "csv": "CSV",
+      "excel": "Excel",
+      "exported": "Archivo exportado",
+      "error": "Error al exportar"
+    },
+    "filters": {
+      "date": "Fecha",
+      "department": "Departamento",
+      "all": "Todos",
+      "clearFilters": "Limpiar filtros",
+      "status": "Estado",
+      "dept": "Depto",
+      "records": "registros"
+    },
+    "messages": {
+      "entryRegistered": "Entrada registrada",
+      "exitRegistered": "Salida registrada",
+      "attendanceRegistered": "Asistencia registrada",
+      "errorRegisterEntry": "Error al registrar entrada",
+      "errorRegisterExit": "Error al registrar salida",
+      "errorRegister": "Error al registrar",
+      "errorLoading": "Error al cargar datos",
+      "errorCreateShift": "Error al crear turno",
+      "noRecordsDate": "No hay registros para esta fecha",
+      "noRecordsFilter": "No hay registros con estos filtros"
     }
   },
   "vacations": {
