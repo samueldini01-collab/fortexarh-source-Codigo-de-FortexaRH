@@ -954,19 +954,91 @@
   },
   "vacations": {
     "title": "Gestion des Vacances",
+    "pageTitle": "Gestion des Vacances et Congés",
+    "pageSubtitle": "Gérez les demandes de vacances et congés de votre équipe",
     "request": "Demander des Vacances",
+    "newRequest": "Nouvelle Demande",
     "balance": "Solde de Vacances",
     "available": "Disponibles",
     "used": "Utilisés",
     "pending": "En Attente",
     "approved": "Approuvées",
     "rejected": "Rejetées",
+    "tabs": {
+      "requests": "Demandes",
+      "balances": "Soldes",
+      "calendar": "Calendrier",
+      "reports": "Rapports"
+    },
+    "stats": {
+      "pendingRequests": "Demandes en Attente",
+      "approvedThisMonth": "Approuvées ce Mois",
+      "onLeaveToday": "En Congé Aujourd'hui",
+      "avgBalance": "Solde Moyen"
+    },
+    "leaveTypes": {
+      "vacation": "Vacances",
+      "sick": "Congé Maladie",
+      "maternity": "Congé Maternité",
+      "paternity": "Congé Paternité",
+      "personal": "Congé Personnel",
+      "bereavement": "Congé Décès",
+      "marriage": "Congé Mariage",
+      "study": "Congé Études",
+      "medical_appointment": "Rendez-vous Médical",
+      "unpaid": "Congé Sans Solde"
+    },
+    "status": {
+      "pending": "En Attente",
+      "approved": "Approuvée",
+      "rejected": "Rejetée",
+      "cancelled": "Annulée"
+    },
     "form": {
+      "employee": "Employé",
+      "selectEmployee": "Sélectionner employé",
+      "leaveType": "Type de Congé",
+      "selectType": "Sélectionner type",
       "startDate": "Date de Début",
       "endDate": "Date de Fin",
       "days": "Jours",
+      "businessDays": "jours ouvrables",
       "reason": "Motif",
-      "submit": "Envoyer la Demande"
+      "reasonPlaceholder": "Motif de la demande...",
+      "submit": "Envoyer la Demande",
+      "cancel": "Annuler"
+    },
+    "table": {
+      "employee": "Employé",
+      "type": "Type",
+      "dates": "Dates",
+      "days": "Jours",
+      "status": "Statut",
+      "actions": "Actions",
+      "requestedAt": "Demandé"
+    },
+    "actions": {
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "cancel": "Annuler",
+      "view": "Voir",
+      "export": "Exporter"
+    },
+    "messages": {
+      "requestCreated": "Demande créée avec succès",
+      "requestApproved": "Demande approuvée",
+      "requestRejected": "Demande rejetée",
+      "requestCancelled": "Demande annulée",
+      "errorCreating": "Erreur lors de la création",
+      "errorApproving": "Erreur lors de l'approbation",
+      "errorRejecting": "Erreur lors du rejet",
+      "noRequests": "Pas de demandes de vacances",
+      "noBalances": "Pas de soldes enregistrés"
+    },
+    "calendar": {
+      "today": "Aujourd'hui",
+      "month": "Mois",
+      "week": "Semaine"
     }
   },
   "reports": {
