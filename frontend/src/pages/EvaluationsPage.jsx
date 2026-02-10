@@ -165,13 +165,13 @@ export default function EvaluationsPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Evaluación creada exitosamente");
+      toast.success(t('evaluations.messages.evaluationCreated'));
       setIsEvalDialogOpen(false);
       setEvalFormData({
         employee_id: "",
         period: "",
         evaluation_type: "supervisor",
-        scores: COMPETENCIES.map(c => ({ competency: c.code, name: c.name, weight: c.weight, score: 3, comments: "" })),
+        scores: getCompetencies().map(c => ({ competency: c.code, name: c.name, weight: c.weight, score: 3, comments: "" })),
         overall_comments: "",
         strengths: [],
         areas_for_improvement: [],
@@ -179,7 +179,7 @@ export default function EvaluationsPage() {
       });
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al crear evaluación");
+      toast.error(error.response?.data?.detail || t('evaluations.messages.errorCreatingEvaluation'));
     }
   };
 
