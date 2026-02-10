@@ -453,6 +453,7 @@
   "dashboard": {
     "welcome": "Bienvenido",
     "summary": "Aquí está el resumen de tu gestión de RRHH",
+    "clickForDetails": "Click para ver detalles",
     "greeting": {
       "morning": "Buenos días",
       "afternoon": "Buenas tardes",
