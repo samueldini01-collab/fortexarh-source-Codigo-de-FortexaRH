@@ -559,7 +559,7 @@ export default function AttendancePage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-amber-600 dark:text-amber-400">Tarde</p>
+                      <p className="text-sm text-amber-600 dark:text-amber-400">{t('attendance.stats.late')}</p>
                       <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">{lateCount}</p>
                     </div>
                     <Clock className="w-8 h-8 text-amber-500" />
@@ -573,7 +573,7 @@ export default function AttendancePage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-red-600 dark:text-red-400">Ausentes</p>
+                      <p className="text-sm text-red-600 dark:text-red-400">{t('attendance.stats.absent')}</p>
                       <p className="text-2xl font-bold text-red-700 dark:text-red-400">{absentCount}</p>
                     </div>
                     <UserX className="w-8 h-8 text-red-500" />
@@ -584,7 +584,7 @@ export default function AttendancePage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-blue-600 dark:text-blue-400">Horas Extra</p>
+                      <p className="text-sm text-blue-600 dark:text-blue-400">{t('attendance.stats.overtimeHours')}</p>
                       <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">{totalOvertimeHours.toFixed(1)}</p>
                     </div>
                     <TrendingUp className="w-8 h-8 text-blue-500" />
@@ -597,7 +597,7 @@ export default function AttendancePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-between">
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <Label className="text-slate-600 dark:text-slate-300">Fecha:</Label>
+                  <Label className="text-slate-600 dark:text-slate-300">{t('attendance.filters.date')}:</Label>
                   <Input
                     type="date"
                     value={selectedDate}
@@ -609,10 +609,10 @@ export default function AttendancePage() {
                 <Select value={departmentFilter || "all"} onValueChange={(v) => setDepartmentFilter(v === "all" ? "" : v)}>
                   <SelectTrigger className="w-48" data-testid="department-filter">
                     <Building2 className="w-4 h-4 mr-2" />
-                    <SelectValue placeholder="Departamento" />
+                    <SelectValue placeholder={t('attendance.filters.department')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todos</SelectItem>
+                    <SelectItem value="all">{t('attendance.filters.all')}</SelectItem>
                     {departments.map(dept => (
                       <SelectItem key={dept} value={dept}>{dept}</SelectItem>
                     ))}
