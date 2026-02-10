@@ -30,6 +30,7 @@ import { DrillDownModal } from "@/components/DrillDown";
 const COLORS = ["#10B981", "#3B82F6", "#F59E0B", "#EF4444", "#8B5CF6"];
 
 export default function ReportsPage() {
+  const { t } = useTranslation();
   const [payrollReport, setPayrollReport] = useState(null);
   const [attendanceReport, setAttendanceReport] = useState(null);
   const [loading, setLoading] = useState(true);
