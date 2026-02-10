@@ -655,5 +655,61 @@
     "serverError": "Error del servidor",
     "networkError": "Error de conexión",
     "tryAgain": "Intentar de nuevo"
+  },
+  "onboarding": {
+    "step": "Paso",
+    "of": "de",
+    "skip": "Saltar",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "finish": "Finalizar",
+    "skipTutorial": "Saltar Tutorial",
+    "startTour": "Comenzar Tour",
+    "startUsing": "¡Empezar a Usar!",
+    "continue": "Continuar",
+    "repeatTutorial": "Repetir Tutorial",
+    "startTutorial": "Iniciar Tutorial",
+    "steps": {
+      "welcome": {
+        "title": "¡Bienvenido a FortexaRH! 🎉",
+        "description": "Te guiaremos por las funciones principales del sistema para que puedas empezar a gestionar tu equipo de forma eficiente."
+      },
+      "dashboard": {
+        "title": "Panel de Control",
+        "description": "Aquí verás un resumen rápido de tu gestión: empleados, nóminas pendientes, asistencias y más. Haz clic en cualquier tarjeta para ir directamente a esa sección."
+      },
+      "sidebar": {
+        "title": "Menú de Navegación",
+        "description": "Usa el menú lateral para acceder a todos los módulos. Puedes colapsarlo para tener más espacio de trabajo."
+      },
+      "search": {
+        "title": "Búsqueda Global",
+        "description": "Busca rápidamente empleados, nóminas, vacaciones y más. También puedes usar Ctrl+K como atajo de teclado."
+      },
+      "theme": {
+        "title": "Personaliza tu Experiencia",
+        "description": "Cambia entre modo claro, oscuro o alto contraste según tu preferencia. El sistema también puede detectar la configuración de tu dispositivo."
+      },
+      "userMenu": {
+        "title": "Tu Perfil y Configuración",
+        "description": "Accede a tu perfil, configuración de empresa, facturación y más desde este menú. También encontrarás los atajos de teclado disponibles."
+      },
+      "employees": {
+        "title": "Gestión de Empleados",
+        "description": "El módulo de empleados es el corazón del sistema. Aquí registras, editas y gestionas toda la información de tu equipo."
+      },
+      "payroll": {
+        "title": "Nómina Avanzada",
+        "description": "Calcula nóminas con todas las deducciones de ley (TSS, ISR) de forma automática. Genera reportes DGII y comprobantes de pago."
+      },
+      "keyboard": {
+        "title": "¡Trabaja más Rápido! ⌨️",
+        "description": "FortexaRH tiene atajos de teclado para navegar rápidamente:\n\n• Presiona ? para ver todos los atajos\n• G + E para ir a Empleados\n• G + N para ir a Nómina\n• Ctrl + K para búsqueda global"
+      },
+      "complete": {
+        "title": "¡Listo para Empezar! 🚀",
+        "description": "Ya conoces las funciones principales de FortexaRH. Si necesitas ayuda, puedes:\n\n• Presionar ? para ver atajos de teclado\n• Reiniciar este tutorial desde Configuración\n• Contactar soporte desde el menú de ayuda"
+      }
+    }
   }
 }
