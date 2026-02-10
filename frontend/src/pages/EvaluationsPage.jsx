@@ -409,32 +409,32 @@ export default function EvaluationsPage() {
               <div className="flex items-center gap-2">
                 {quickFilter && (
                   <Badge variant="outline" className="px-3 py-1">
-                    Filtro: {quickFilter === 'excellent' ? 'Excepcionales' : quickFilter === 'good' ? 'Buenos' : 'Necesita Mejorar'}
+                    {t('evaluations.filters.filter')}: {quickFilter === 'excellent' ? t('evaluations.filters.excellent') : quickFilter === 'good' ? t('evaluations.filters.good') : t('evaluations.filters.needsWork')}
                     <button onClick={() => setQuickFilter(null)} className="ml-2 hover:text-red-500">×</button>
                   </Badge>
                 )}
                 <span className="text-sm text-slate-500 dark:text-slate-400">
-                  {filteredEvaluations.length} de {evaluations.length} evaluaciones
+                  {filteredEvaluations.length} {t('evaluations.filters.of')} {evaluations.length} {t('evaluations.filters.evaluationsCount')}
                 </span>
               </div>
               <Dialog open={isEvalDialogOpen} onOpenChange={setIsEvalDialogOpen}>
                 <DialogTrigger asChild>
                   <Button className="bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900" data-testid="add-evaluation-btn">
                     <Plus className="w-4 h-4 mr-2" />
-                    Nueva Evaluación
+                    {t('evaluations.form.newEvaluation')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle className="heading">Nueva Evaluación de Desempeño</DialogTitle>
+                    <DialogTitle className="heading">{t('evaluations.form.newEvaluationTitle')}</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleCreateEvaluation} className="space-y-6 mt-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>Empleado</Label>
+                        <Label>{t('evaluations.form.employee')}</Label>
                         <Select value={evalFormData.employee_id} onValueChange={(v) => setEvalFormData({...evalFormData, employee_id: v})}>
                           <SelectTrigger data-testid="eval-employee">
-                            <SelectValue placeholder="Seleccionar empleado" />
+                            <SelectValue placeholder={t('evaluations.form.selectEmployee')} />
                           </SelectTrigger>
                           <SelectContent>
                             {employees.map(emp => (
@@ -446,9 +446,9 @@ export default function EvaluationsPage() {
                         </Select>
                       </div>
                       <div className="space-y-2">
-                        <Label>Período</Label>
+                        <Label>{t('evaluations.form.period')}</Label>
                         <Input
-                          placeholder="Ej: Q1 2025, Enero 2025"
+                          placeholder={t('evaluations.form.periodPlaceholder')}
                           value={evalFormData.period}
                           onChange={(e) => setEvalFormData({...evalFormData, period: e.target.value})}
                           required
@@ -458,16 +458,16 @@ export default function EvaluationsPage() {
                     </div>
                     
                     <div className="space-y-2">
-                      <Label>Tipo de Evaluación</Label>
+                      <Label>{t('evaluations.form.evaluationType')}</Label>
                       <Select value={evalFormData.evaluation_type} onValueChange={(v) => setEvalFormData({...evalFormData, evaluation_type: v})}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="supervisor">Evaluación del Supervisor</SelectItem>
-                          <SelectItem value="self">Autoevaluación</SelectItem>
-                          <SelectItem value="peer">Evaluación de Pares</SelectItem>
-                          <SelectItem value="360">Evaluación 360°</SelectItem>
+                          <SelectItem value="supervisor">{t('evaluations.form.supervisor')}</SelectItem>
+                          <SelectItem value="self">{t('evaluations.form.self')}</SelectItem>
+                          <SelectItem value="peer">{t('evaluations.form.peer')}</SelectItem>
+                          <SelectItem value="360">{t('evaluations.form.360')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
