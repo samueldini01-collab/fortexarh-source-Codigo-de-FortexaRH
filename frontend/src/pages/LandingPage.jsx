@@ -441,12 +441,12 @@ export default function LandingPage() {
             <div className="hidden md:flex items-center gap-2 lg:gap-3">
               <Link to="/login">
                 <Button variant="ghost" size="sm" className="text-sm font-medium text-white hover:bg-slate-800" data-testid="login-btn">
-                  Iniciar Sesión
+                  {t('landing.nav.login')}
                 </Button>
               </Link>
               <Link to="/register">
                 <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600 text-sm" data-testid="register-btn">
-                  Comenzar Gratis
+                  {t('landing.nav.startFree')}
                 </Button>
               </Link>
               
