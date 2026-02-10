@@ -363,7 +363,7 @@ export default function EmployeesPage() {
   const getFilterLabel = () => {
     const labels = [];
     if (quickFilter && quickFilter !== 'all') {
-      labels.push(quickFilter === 'active' ? 'Activos' : quickFilter === 'inactive' ? 'Inactivos' : 'En Licencia');
+      labels.push(quickFilter === 'active' ? t('employees.filters.active') : quickFilter === 'inactive' ? t('employees.filters.inactive') : t('employees.filters.onLeave'));
     }
     if (departmentFilter && departmentFilter !== 'all') {
       labels.push(departmentFilter);
@@ -374,11 +374,11 @@ export default function EmployeesPage() {
   const getStatusBadge = (status) => {
     switch (status) {
       case 'active':
-        return <Badge className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400">Activo</Badge>;
+        return <Badge className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400">{t('employees.status.active')}</Badge>;
       case 'inactive':
-        return <Badge variant="secondary">Inactivo</Badge>;
+        return <Badge variant="secondary">{t('employees.status.inactive')}</Badge>;
       case 'on_leave':
-        return <Badge className="bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-400">Licencia</Badge>;
+        return <Badge className="bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-400">{t('employees.status.onLeave')}</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
