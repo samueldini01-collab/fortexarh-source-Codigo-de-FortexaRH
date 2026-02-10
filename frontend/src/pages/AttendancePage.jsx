@@ -199,9 +199,9 @@ export default function AttendancePage() {
       document.body.appendChild(link);
       link.click();
       link.remove();
-      toast.success('Archivo exportado');
+      toast.success(t('attendance.export.exported'));
     } catch (error) {
-      toast.error('Error al exportar');
+      toast.error(t('attendance.export.error'));
     }
   };
 
@@ -211,7 +211,11 @@ export default function AttendancePage() {
       absent: "bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800",
       late: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800"
     };
-    const labels = { present: "Presente", absent: "Ausente", late: "Tarde" };
+    const labels = { 
+      present: t('attendance.status.present'), 
+      absent: t('attendance.status.absent'), 
+      late: t('attendance.status.late') 
+    };
     return (
       <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border ${styles[status] || styles.present}`}>
         {labels[status] || status}
