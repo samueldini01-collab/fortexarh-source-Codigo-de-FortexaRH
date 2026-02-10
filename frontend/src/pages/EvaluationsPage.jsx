@@ -78,6 +78,15 @@ export default function EvaluationsPage() {
   // Get translated rating label
   const getRatingLabel = (score) => t(`evaluations.ratings.${score}`);
   
+  // Get translated rating label based on overall score
+  const getOverallRatingLabel = (overallScore) => {
+    if (overallScore >= 4.5) return t('evaluations.ratings.5');
+    if (overallScore >= 3.5) return t('evaluations.ratings.4');
+    if (overallScore >= 2.5) return t('evaluations.ratings.3');
+    if (overallScore >= 1.5) return t('evaluations.ratings.2');
+    return t('evaluations.ratings.1');
+  };
+  
   const [evalFormData, setEvalFormData] = useState({
     employee_id: "",
     period: "",
