@@ -437,7 +437,7 @@ export default function Dashboard() {
                       </div>
                     </div>
                     <div className="hidden sm:flex items-center justify-end mt-3 text-xs text-slate-400">
-                      <span>Click para ver detalles</span>
+                      <span>{t('dashboard.clickForDetails')}</span>
                       <ChevronRight className="w-3 h-3 ml-1" />
                     </div>
                   </CardContent>
