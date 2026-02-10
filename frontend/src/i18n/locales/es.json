@@ -954,19 +954,91 @@
   },
   "vacations": {
     "title": "Gestión de Vacaciones",
+    "pageTitle": "Gestión de Vacaciones y Licencias",
+    "pageSubtitle": "Administre las solicitudes de vacaciones y permisos de su equipo",
     "request": "Solicitar Vacaciones",
+    "newRequest": "Nueva Solicitud",
     "balance": "Balance de Vacaciones",
     "available": "Disponibles",
     "used": "Utilizados",
     "pending": "Pendientes",
     "approved": "Aprobadas",
     "rejected": "Rechazadas",
+    "tabs": {
+      "requests": "Solicitudes",
+      "balances": "Balances",
+      "calendar": "Calendario",
+      "reports": "Reportes"
+    },
+    "stats": {
+      "pendingRequests": "Solicitudes Pendientes",
+      "approvedThisMonth": "Aprobadas Este Mes",
+      "onLeaveToday": "Ausentes Hoy",
+      "avgBalance": "Balance Promedio"
+    },
+    "leaveTypes": {
+      "vacation": "Vacaciones",
+      "sick": "Licencia por Enfermedad",
+      "maternity": "Licencia por Maternidad",
+      "paternity": "Licencia por Paternidad",
+      "personal": "Permiso Personal",
+      "bereavement": "Licencia por Duelo",
+      "marriage": "Licencia por Matrimonio",
+      "study": "Permiso de Estudio",
+      "medical_appointment": "Cita Médica",
+      "unpaid": "Licencia Sin Sueldo"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "approved": "Aprobada",
+      "rejected": "Rechazada",
+      "cancelled": "Cancelada"
+    },
     "form": {
+      "employee": "Empleado",
+      "selectEmployee": "Seleccionar empleado",
+      "leaveType": "Tipo de Licencia",
+      "selectType": "Seleccionar tipo",
       "startDate": "Fecha Inicio",
       "endDate": "Fecha Fin",
       "days": "Días",
+      "businessDays": "días hábiles",
       "reason": "Motivo",
-      "submit": "Enviar Solicitud"
+      "reasonPlaceholder": "Motivo de la solicitud...",
+      "submit": "Enviar Solicitud",
+      "cancel": "Cancelar"
+    },
+    "table": {
+      "employee": "Empleado",
+      "type": "Tipo",
+      "dates": "Fechas",
+      "days": "Días",
+      "status": "Estado",
+      "actions": "Acciones",
+      "requestedAt": "Solicitado"
+    },
+    "actions": {
+      "approve": "Aprobar",
+      "reject": "Rechazar",
+      "cancel": "Cancelar",
+      "view": "Ver",
+      "export": "Exportar"
+    },
+    "messages": {
+      "requestCreated": "Solicitud creada correctamente",
+      "requestApproved": "Solicitud aprobada",
+      "requestRejected": "Solicitud rechazada",
+      "requestCancelled": "Solicitud cancelada",
+      "errorCreating": "Error al crear solicitud",
+      "errorApproving": "Error al aprobar",
+      "errorRejecting": "Error al rechazar",
+      "noRequests": "No hay solicitudes de vacaciones",
+      "noBalances": "No hay balances registrados"
+    },
+    "calendar": {
+      "today": "Hoy",
+      "month": "Mes",
+      "week": "Semana"
     }
   },
   "reports": {
