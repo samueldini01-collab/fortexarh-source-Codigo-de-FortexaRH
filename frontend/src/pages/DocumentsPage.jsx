@@ -266,7 +266,7 @@ export default function DocumentsPage() {
     return (
       <Badge className={`bg-${color}-100 text-${color}-700`}>
         <Icon className="w-3 h-3 mr-1" />
-        {category.charAt(0).toUpperCase() + category.slice(1)}
+        {t(`documents.categories.${category}`)}
       </Badge>
     );
   };
@@ -274,29 +274,29 @@ export default function DocumentsPage() {
   const selectedEmployeeData = employees.find(e => e.employee_id === selectedEmployee);
 
   return (
-    <DashboardLayout title="Documentos">
+    <DashboardLayout title={t('documents.title')}>
       <div className="space-y-6" data-testid="documents-page">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Documentos y Cartas</h1>
-            <p className="text-slate-500 dark:text-slate-400">Genera constancias, cartas y certificados</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{t('documents.header.title')}</h1>
+            <p className="text-slate-500 dark:text-slate-400">{t('documents.header.subtitle')}</p>
           </div>
           <div className="flex gap-2">
             <Button onClick={fetchData} variant="outline" size="sm">
-              <RefreshCw className="w-4 h-4 mr-2" />Actualizar
+              <RefreshCw className="w-4 h-4 mr-2" />{t('documents.buttons.refresh')}
             </Button>
             <Button onClick={() => { setEditingTemplate(null); setTemplateForm({ name: "", category: "constancia", description: "", content: "", variables: [] }); setShowTemplateEditor(true); }} size="sm">
-              <Plus className="w-4 h-4 mr-2" />Nueva Plantilla
+              <Plus className="w-4 h-4 mr-2" />{t('documents.buttons.newTemplate')}
             </Button>
           </div>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid grid-cols-3 w-full max-w-md">
-            <TabsTrigger value="generate"><FileText className="w-4 h-4 mr-2" />Generar</TabsTrigger>
-            <TabsTrigger value="templates"><Settings className="w-4 h-4 mr-2" />Plantillas</TabsTrigger>
-            <TabsTrigger value="history"><History className="w-4 h-4 mr-2" />Historial</TabsTrigger>
+            <TabsTrigger value="generate"><FileText className="w-4 h-4 mr-2" />{t('documents.tabs.generate')}</TabsTrigger>
+            <TabsTrigger value="templates"><Settings className="w-4 h-4 mr-2" />{t('documents.tabs.templates')}</TabsTrigger>
+            <TabsTrigger value="history"><History className="w-4 h-4 mr-2" />{t('documents.tabs.history')}</TabsTrigger>
           </TabsList>
 
           {/* Generate Tab */}
@@ -305,8 +305,8 @@ export default function DocumentsPage() {
               {/* Template Selection */}
               <Card className="lg:col-span-2">
                 <CardHeader>
-                  <CardTitle>Seleccionar Plantilla</CardTitle>
-                  <CardDescription>Elija el tipo de documento a generar</CardDescription>
+                  <CardTitle>{t('documents.generate.selectTemplate')}</CardTitle>
+                  <CardDescription>{t('documents.generate.selectTemplateDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex gap-2 mb-4 flex-wrap">
@@ -315,7 +315,7 @@ export default function DocumentsPage() {
                       size="sm"
                       onClick={() => setCategoryFilter("all")}
                     >
-                      Todas
+                      {t('documents.generate.all')}
                     </Button>
                     {categories.map(cat => (
                       <Button
