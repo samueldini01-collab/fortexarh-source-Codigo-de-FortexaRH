@@ -448,6 +448,9 @@ export default function LandingPage() {
                   Comenzar Gratis
                 </Button>
               </Link>
+              
+              {/* Language Selector */}
+              <LanguageSelector variant="landing" />
             </div>
             
             {/* Mobile Menu Button */}
