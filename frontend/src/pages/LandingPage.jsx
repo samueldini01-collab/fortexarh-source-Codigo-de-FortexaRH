@@ -102,6 +102,14 @@ export default function LandingPage() {
   // Generate FAQs array using translations  
   const faqIds = ["1", "2", "3", "4", "5", "6", "7", "8"];
 
+  // Benefits bar
+  const benefits = [
+    { icon: Zap, textKey: "implementation" },
+    { icon: Shield, textKey: "secure" },
+    { icon: Globe, textKey: "anywhere" },
+    { icon: BarChart3, textKey: "realtime" }
+  ];
+
   // Features for dropdowns
   const empresaFeatures = [
     { icon: Users, title: t('landing.features.employees'), desc: t('landing.features.employeesDesc').substring(0, 40) + "..." },
