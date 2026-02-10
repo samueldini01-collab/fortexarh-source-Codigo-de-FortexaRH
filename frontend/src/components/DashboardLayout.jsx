@@ -564,7 +564,7 @@ export default function DashboardLayout({ children, title }) {
               )}
             </div>
             {!sidebarCollapsed && (
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 text-center">Sistema de RRHH y Nómina</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 text-center">{t('landing.footer.tagline')}</p>
             )}
             {/* Close button - Mobile only */}
             <button 
