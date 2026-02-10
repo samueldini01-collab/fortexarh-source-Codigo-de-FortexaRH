@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth, API } from "@/App";
 import axios from "axios";
@@ -40,6 +41,7 @@ import {
 import { toast } from "sonner";
 
 export default function AttendancePage() {
+  const { t } = useTranslation();
   const [attendances, setAttendances] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [shifts, setShifts] = useState([]);
