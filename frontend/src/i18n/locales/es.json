@@ -333,11 +333,17 @@
       }
     },
     "pricing": {
-      "title": "Planes y Precios",
-      "subtitle": "Elige el plan que mejor se adapte a tu empresa",
+      "title": "Elige el plan perfecto para tu equipo",
+      "subtitle": "Modelo híbrido: paga una tarifa base más un costo por empleado. Escala según creces.",
+      "badge": "Planes flexibles para cada empresa",
       "monthly": "mes",
+      "month": "mes",
       "perEmployee": "por empleado",
       "fromOnly": "Desde solo",
+      "mostPopular": "Más Popular",
+      "selectPlan": "Seleccionar Plan",
+      "startFree": "Comenzar Gratis",
+      "goToDashboard": "Ir al Dashboard",
       "basic": "Básico",
       "basicDesc": "Para pequeñas empresas",
       "pro": "Pro",
@@ -347,6 +353,45 @@
       "popular": "Más Popular",
       "buyPlan": "Comprar Plan",
       "tryFree": "Probar 14 días gratis",
+      "plans": {
+        "free": {
+          "name": "Prueba Gratuita",
+          "features": {
+            "employees": "Hasta 5 empleados",
+            "management": "Gestión básica de empleados",
+            "attendance": "Control de asistencias",
+            "support": "Soporte por email"
+          }
+        },
+        "basic": {
+          "name": "FortexaRH Básico"
+        },
+        "pro": {
+          "name": "FortexaRH Pro"
+        },
+        "enterprise": {
+          "name": "FortexaRH Enterprise"
+        }
+      },
+      "faq": {
+        "title": "Preguntas Frecuentes",
+        "changePlan": {
+          "question": "¿Puedo cambiar de plan?",
+          "answer": "Sí, puedes actualizar o degradar tu plan en cualquier momento. Los cambios se aplican en tu próximo ciclo de facturación."
+        },
+        "perEmployee": {
+          "question": "¿Cómo funciona el cobro por empleado?",
+          "answer": "Pagas la tarifa base del plan más una cantidad fija por cada empleado activo en tu sistema al momento de la facturación."
+        },
+        "trial": {
+          "question": "¿Hay periodo de prueba?",
+          "answer": "El plan gratuito te permite probar el sistema con hasta 5 empleados sin límite de tiempo."
+        },
+        "payment": {
+          "question": "¿Qué métodos de pago aceptan?",
+          "answer": "Aceptamos todas las tarjetas de crédito y débito principales a través de Stripe."
+        }
+      },
       "features": {
         "employees": "empleados",
         "unlimited": "Ilimitado",
