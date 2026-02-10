@@ -190,12 +190,12 @@ export default function EvaluationsPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Ciclo de evaluación creado");
+      toast.success(t('evaluations.messages.cycleCreated'));
       setIsCycleDialogOpen(false);
       setCycleFormData({ name: "", type: "annual", start_date: "", end_date: "", include_self_evaluation: true, include_peer_evaluation: false });
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al crear ciclo");
+      toast.error(error.response?.data?.detail || t('evaluations.messages.errorCreatingCycle'));
     }
   };
 
