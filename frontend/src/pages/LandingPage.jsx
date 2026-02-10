@@ -646,10 +646,10 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white heading mb-3 sm:mb-4">
-              Mira FortexaRH en Acción
+              {t('landing.video.title')}
             </h2>
             <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto">
-              Descubre cómo nuestra plataforma puede transformar la gestión de tu equipo en minutos
+              {t('landing.video.subtitle')}
             </p>
           </div>
           <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-slate-800 border border-slate-700">
@@ -660,25 +660,24 @@ export default function LandingPage() {
               data-testid="demo-video-player"
             >
               <source src="/videos/fortexarh_demo.mp4" type="video/mp4" />
-              Tu navegador no soporta el elemento de video.
             </video>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
             <div className="text-center p-4 bg-slate-800/50 rounded-xl">
               <p className="text-2xl sm:text-3xl font-bold text-emerald-400">2 hrs</p>
-              <p className="text-xs sm:text-sm text-slate-400">Tiempo promedio de nómina</p>
+              <p className="text-xs sm:text-sm text-slate-400">{t('landing.video.avgTime')}</p>
             </div>
             <div className="text-center p-4 bg-slate-800/50 rounded-xl">
               <p className="text-2xl sm:text-3xl font-bold text-emerald-400">100%</p>
-              <p className="text-xs sm:text-sm text-slate-400">Cumplimiento DGII</p>
+              <p className="text-xs sm:text-sm text-slate-400">{t('landing.video.compliance')}</p>
             </div>
             <div className="text-center p-4 bg-slate-800/50 rounded-xl">
               <p className="text-2xl sm:text-3xl font-bold text-emerald-400">70%</p>
-              <p className="text-xs sm:text-sm text-slate-400">Menos consultas RRHH</p>
+              <p className="text-xs sm:text-sm text-slate-400">{t('landing.video.lessQueries')}</p>
             </div>
             <div className="text-center p-4 bg-slate-800/50 rounded-xl">
               <p className="text-2xl sm:text-3xl font-bold text-emerald-400">24/7</p>
-              <p className="text-xs sm:text-sm text-slate-400">Acceso a información</p>
+              <p className="text-xs sm:text-sm text-slate-400">{t('landing.video.access')}</p>
             </div>
           </div>
         </div>
@@ -707,16 +706,15 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto relative">
           <div className="flex items-center justify-center gap-2 mb-4">
             <span className="bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">
-              🚀 NUEVO
+              🚀 {t('common.new')}
             </span>
           </div>
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
-              Control de Asistencia con <span className="text-emerald-400">Geolocalización</span>
+              {t('landing.geolocation.title')} <span className="text-emerald-400">{t('landing.geolocation.highlight')}</span>
             </h2>
             <p className="text-slate-300 max-w-2xl mx-auto text-sm sm:text-base">
-              La forma más moderna y segura de controlar la asistencia de tus empleados. 
-              GPS en tiempo real, detección de fraude y alertas automáticas.
+              {t('landing.geolocation.subtitle')}
             </p>
           </div>
           
@@ -725,9 +723,9 @@ export default function LandingPage() {
               <div className="w-12 h-12 bg-emerald-500/20 rounded-lg flex items-center justify-center mb-4">
                 <MapPin className="w-6 h-6 text-emerald-400" />
               </div>
-              <h3 className="font-semibold text-lg mb-2">Marcación GPS + Selfie</h3>
+              <h3 className="font-semibold text-lg mb-2">{t('landing.geolocation.gps')}</h3>
               <p className="text-slate-400 text-sm">
-                Empleados marcan asistencia desde su celular con ubicación GPS y foto de verificación.
+                {t('landing.geolocation.gpsDesc')}
               </p>
             </div>
             
@@ -735,9 +733,9 @@ export default function LandingPage() {
               <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4">
                 <Globe className="w-6 h-6 text-blue-400" />
               </div>
-              <h3 className="font-semibold text-lg mb-2">Mapa en Tiempo Real</h3>
+              <h3 className="font-semibold text-lg mb-2">{t('landing.geolocation.realtime')}</h3>
               <p className="text-slate-400 text-sm">
-                Visualiza en un mapa interactivo dónde están tus empleados con actualización automática.
+                {t('landing.geolocation.realtimeDesc')}
               </p>
             </div>
             
@@ -745,9 +743,9 @@ export default function LandingPage() {
               <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center mb-4">
                 <Shield className="w-6 h-6 text-red-400" />
               </div>
-              <h3 className="font-semibold text-lg mb-2">Detección de Fraude</h3>
+              <h3 className="font-semibold text-lg mb-2">{t('landing.geolocation.fraud')}</h3>
               <p className="text-slate-400 text-sm">
-                Sistema inteligente que detecta velocidad imposible, GPS falso y marcaciones sospechosas.
+                {t('landing.geolocation.fraudDesc')}
               </p>
             </div>
             
@@ -755,20 +753,20 @@ export default function LandingPage() {
               <div className="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center mb-4">
                 <Bell className="w-6 h-6 text-amber-400" />
               </div>
-              <h3 className="font-semibold text-lg mb-2">Alertas por Email</h3>
+              <h3 className="font-semibold text-lg mb-2">{t('landing.geolocation.alerts')}</h3>
               <p className="text-slate-400 text-sm">
-                Recibe notificaciones inmediatas cuando se detecta una anomalía o marcación fuera de zona.
+                {t('landing.geolocation.alertsDesc')}
               </p>
             </div>
           </div>
           
           <div className="mt-10 text-center">
             <p className="text-slate-400 text-sm mb-4">
-              Ideal para empresas con personal de campo, construcción, delivery, ventas y más.
+              {t('landing.geolocation.ideal')}
             </p>
             <Link to="/register">
               <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white">
-                Probar Gratis por 14 Días
+                {t('landing.geolocation.tryFree')}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
@@ -781,10 +779,10 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-10 sm:mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 heading mb-3 sm:mb-4">
-              Todo lo que necesitas para gestionar tu equipo
+              {t('landing.features.title')}
             </h2>
             <p className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto px-4">
-              Desde la contratación hasta la nómina, tenemos todas las herramientas que tu departamento de RRHH necesita.
+              {t('landing.features.subtitle')}
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
@@ -814,21 +812,21 @@ export default function LandingPage() {
       <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-slate-50">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 heading mb-3 sm:mb-4">
-            ¿Listo para transformar tu gestión de RRHH?
+            {t('landing.cta.title')}
           </h2>
           <p className="text-sm sm:text-base md:text-lg text-slate-600 mb-6 sm:mb-8 px-4">
-            Únete a cientos de empresas que ya optimizaron su gestión de recursos humanos con FortexaRH.
+            {t('landing.cta.subtitle')}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
             <Link to="/register" className="w-full sm:w-auto">
               <Button size="lg" className="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-sm sm:text-base px-6 sm:px-8" data-testid="cta-register-btn">
-                Comenzar Prueba Gratuita
+                {t('landing.cta.startTrial')}
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
               </Button>
             </Link>
             <Link to="/pricing" className="w-full sm:w-auto">
               <Button size="lg" variant="outline" className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8">
-                Ver Planes y Precios
+                {t('landing.cta.viewPlans')}
               </Button>
             </Link>
           </div>
