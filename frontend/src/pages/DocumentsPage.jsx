@@ -364,14 +364,14 @@ export default function DocumentsPage() {
               {/* Employee & Options */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Configuración</CardTitle>
+                  <CardTitle>{t('documents.generate.configuration')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label>Empleado</Label>
+                    <Label>{t('documents.generate.employee')}</Label>
                     <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
                       <SelectTrigger data-testid="employee-select">
-                        <SelectValue placeholder="Seleccione empleado" />
+                        <SelectValue placeholder={t('documents.generate.selectEmployee')} />
                       </SelectTrigger>
                       <SelectContent>
                         {employees.map(emp => (
