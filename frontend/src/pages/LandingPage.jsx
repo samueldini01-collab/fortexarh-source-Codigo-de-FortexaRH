@@ -559,7 +559,7 @@ export default function LandingPage() {
             {benefits.map((benefit, index) => (
               <div key={index} className="flex items-center gap-2 sm:gap-3 text-white justify-center lg:justify-start">
                 <benefit.icon className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-100 shrink-0" />
-                <span className="text-xs sm:text-sm font-medium">{benefit.text}</span>
+                <span className="text-xs sm:text-sm font-medium">{t(`landing.benefits.${benefit.textKey}`)}</span>
               </div>
             ))}
           </div>
