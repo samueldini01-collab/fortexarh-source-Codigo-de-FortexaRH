@@ -648,6 +648,8 @@
   },
   "payroll": {
     "title": "Payroll",
+    "pageTitle": "Payroll",
+    "pageSubtitle": "Process payrolls by type, period or groups",
     "process": "Process Payroll",
     "history": "History",
     "currentPeriod": "Current Period",
@@ -655,6 +657,52 @@
     "calculate": "Calculate",
     "approve": "Approve",
     "pay": "Pay",
+    "refresh": "Refresh",
+    "newPayroll": "New Payroll",
+    "createFirst": "Create First Payroll",
+    "selectPeriodMsg": "Select a period",
+    "viewPeriods": "View periods",
+    "noEmployees": "No employees",
+    "addEmployees": "Add employees",
+    "tabs": {
+      "dashboard": "Dashboard",
+      "periods": "Periods",
+      "payrollSheet": "Payroll Sheet",
+      "approval": "Approval",
+      "reports": "Reports"
+    },
+    "stats": {
+      "openPeriods": "Open Periods",
+      "pendingPayrolls": "Pending Payrolls",
+      "totalPaid": "Total Paid",
+      "payrollTypes": "Payroll Types"
+    },
+    "status": {
+      "open": "Open",
+      "draft": "Draft",
+      "pendingApproval": "Pending Approval",
+      "calculated": "Calculated",
+      "approved": "Approved",
+      "paid": "Paid"
+    },
+    "actions": {
+      "add": "Add",
+      "calculate": "Calculate",
+      "sendForApproval": "Send for Approval",
+      "reject": "Reject",
+      "rejectReason": "Reason for rejection:",
+      "excel": "Excel",
+      "preview": "Preview"
+    },
+    "types": {
+      "regular": "Regular",
+      "temporary": "Temporary",
+      "bonus": "Bonus/Extraordinary",
+      "christmas": "Christmas Bonus",
+      "vacation": "Vacation",
+      "liquidation": "Liquidation",
+      "obrerosNG": "Workers NG 07/2007"
+    },
     "summary": {
       "grossSalary": "Gross Salary",
       "deductions": "Deductions",
@@ -662,7 +710,26 @@
       "tss": "Employee TSS",
       "tssEmployer": "Employer TSS",
       "isr": "ISR",
-      "totalCost": "Total Cost"
+      "totalCost": "Total Cost",
+      "totalNet": "Total Net"
+    },
+    "table": {
+      "no": "NO.",
+      "employee": "EMPLOYEE",
+      "cedula": "ID",
+      "salary": "SALARY",
+      "commissions": "COMM.",
+      "bonuses": "BONUS",
+      "overtime": "OVERTIME",
+      "noveltiesIncome": "NOVELTIES+",
+      "gross": "GROSS",
+      "sfs": "SFS",
+      "afp": "AFP",
+      "isr": "ISR",
+      "noveltiesDeduction": "NOVELTIES-",
+      "deductions": "DEDUCTIONS",
+      "net": "NET",
+      "totals": "TOTALS"
     },
     "details": {
       "employee": "Employee",
@@ -674,6 +741,83 @@
       "loans": "Loans",
       "advances": "Advances",
       "netPay": "Net Pay"
+    },
+    "period": {
+      "noPeriods": "No payroll periods",
+      "employees": "employees",
+      "periodType": "Period Type",
+      "payrollType": "Payroll Type",
+      "year": "Year",
+      "month": "Month",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "description": "Description",
+      "departmentFilter": "Filter by Department",
+      "allDepartments": "All Departments",
+      "create": "Create Period"
+    },
+    "approval": {
+      "pendingApproval": "Payrolls Pending Approval",
+      "noPending": "No pending",
+      "readyToPay": "Ready to Pay",
+      "noApproved": "No approved",
+      "view": "View"
+    },
+    "payment": {
+      "payNow": "Pay Now",
+      "confirmPayment": "Confirm Payroll Payment",
+      "paymentDesc": "An automatic journal entry will be generated and all employees will be marked as paid.",
+      "selectBankAccount": "Source Bank Account",
+      "generateBankFile": "Generate Bank Payment File (ACH)",
+      "selectBank": "Select Bank",
+      "confirmAndPay": "Confirm and Pay"
+    },
+    "reports": {
+      "exportPayrolls": "Export Payrolls",
+      "downloadFormat": "Download in Excel or CSV format",
+      "noExport": "No payrolls to export",
+      "tssFiles": "TSS Files",
+      "tssDesc": "Social Security Treasury - SUIR+ Format",
+      "payTssNote": "Pay a payroll to generate TSS files",
+      "autodeterminacion": "Self-Assessment",
+      "novedades": "Changes",
+      "obrerosNote": "Workers NG does not require TSS (only 2% ISR)",
+      "dgiiReports": "DGII-TSS Reports",
+      "dgiiDesc": "IR-3 and IR-17 Forms for Internal Revenue",
+      "payDgiiNote": "Pay a payroll to generate tax reports"
+    },
+    "novelty": {
+      "addNovelty": "Add novelty",
+      "deleteNovelty": "Delete novelty",
+      "type": "Novelty Type",
+      "income": "Income",
+      "deduction": "Deduction",
+      "code": "Code",
+      "name": "Name",
+      "amount": "Amount",
+      "isPercentage": "Is percentage",
+      "add": "Add Novelty"
+    },
+    "messages": {
+      "periodCreated": "Period created successfully",
+      "employeesAdded": "Employees added",
+      "calculated": "Payrolls calculated",
+      "sentForApproval": "Payroll sent for approval",
+      "approved": "Period approved",
+      "rejected": "Payroll rejected and returned to draft",
+      "paid": "Payroll paid",
+      "deleted": "Period deleted",
+      "updated": "Updated",
+      "noveltyAdded": "Novelty added",
+      "noveltyDeleted": "Novelty deleted",
+      "exportSuccess": "Excel exported",
+      "tssDownloaded": "TSS report downloaded",
+      "errorCreate": "Error creating period",
+      "errorCalculate": "Error calculating",
+      "errorApprove": "Error approving",
+      "errorPay": "Error paying",
+      "errorExport": "Error exporting",
+      "rejectReasonRequired": "You must provide a reason for rejection"
     }
   },
   "attendance": {
