@@ -453,6 +453,7 @@
   "dashboard": {
     "welcome": "Welcome",
     "summary": "Here's your HR management summary",
+    "clickForDetails": "Click to view details",
     "greeting": {
       "morning": "Good morning",
       "afternoon": "Good afternoon",
