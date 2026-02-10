@@ -440,7 +440,7 @@ export default function AttendancePage() {
               <CardHeader>
                 <CardTitle className="text-lg dark:text-white flex items-center gap-2">
                   <Play className="w-5 h-5" />
-                  Registro Rápido - Empleados Sin Marcar Hoy
+                  {t('attendance.todayDashboard.quickRegister')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -451,7 +451,7 @@ export default function AttendancePage() {
                 ) : todayData?.absent?.length === 0 ? (
                   <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                     <UserCheck className="w-12 h-12 mx-auto mb-2 text-emerald-500" />
-                    <p>Todos los empleados han marcado entrada hoy</p>
+                    <p>{t('attendance.todayDashboard.allCheckedIn')}</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -471,7 +471,7 @@ export default function AttendancePage() {
                           data-testid={`quick-checkin-${emp.employee_id}`}
                         >
                           <Play className="w-4 h-4 mr-1" />
-                          Entrada
+                          {t('attendance.todayDashboard.entry')}
                         </Button>
                       </div>
                     ))}
