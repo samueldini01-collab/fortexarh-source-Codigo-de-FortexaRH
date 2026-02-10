@@ -288,8 +288,9 @@
     "pricing": {
       "title": "Plans et Tarifs",
       "subtitle": "Choisissez le plan qui convient le mieux à votre entreprise",
-      "monthly": "mensuel",
+      "monthly": "mois",
       "perEmployee": "par employé",
+      "fromOnly": "À partir de",
       "basic": "Basique",
       "basicDesc": "Pour les petites entreprises",
       "pro": "Pro",
