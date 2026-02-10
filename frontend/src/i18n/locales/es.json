@@ -1253,9 +1253,137 @@
       "system": "Sistema"
     }
   },
-  "reports": {
-    "title": "Reportes y Analytics",
-    "period": "Período",
+  "documents": {
+    "title": "Documentos",
+    "header": {
+      "title": "Documentos y Cartas",
+      "subtitle": "Genera constancias, cartas y certificados"
+    },
+    "tabs": {
+      "generate": "Generar",
+      "templates": "Plantillas",
+      "history": "Historial"
+    },
+    "buttons": {
+      "refresh": "Actualizar",
+      "newTemplate": "Nueva Plantilla",
+      "generate": "Generar Documento",
+      "print": "Imprimir",
+      "copy": "Copiar",
+      "download": "Descargar PDF",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "close": "Cerrar"
+    },
+    "generate": {
+      "selectTemplate": "Seleccionar Plantilla",
+      "selectTemplateDesc": "Elija el tipo de documento a generar",
+      "all": "Todas",
+      "configuration": "Configuración",
+      "employee": "Empleado",
+      "selectEmployee": "Seleccione empleado"
+    },
+    "options": {
+      "title": "Opciones de la Constancia",
+      "desc": "Seleccione qué información incluir en el documento",
+      "hireDate": "Fecha de contratación",
+      "position": "Cargo / Posición",
+      "department": "Departamento",
+      "salary": "Salario mensual"
+    },
+    "purpose": {
+      "title": "Propósito",
+      "select": "Seleccione propósito",
+      "bankLoan": "Préstamo bancario",
+      "housingRental": "Alquiler de vivienda",
+      "visaApplication": "Solicitud de visa",
+      "personalProcedures": "Trámites personales"
+    },
+    "recommendation": {
+      "title": "Información Adicional",
+      "endDate": "Fecha de Salida",
+      "additionalComments": "Comentarios Adicionales",
+      "placeholder": "Cualidades destacadas del empleado..."
+    },
+    "raise": {
+      "title": "Detalles del Aumento",
+      "effectiveDate": "Fecha Efectiva",
+      "newSalary": "Nuevo Salario (RD$)",
+      "percentage": "Porcentaje de Aumento"
+    },
+    "termination": {
+      "title": "Detalles de Terminación",
+      "terminationDate": "Fecha de Terminación",
+      "reason": "Motivo",
+      "selectReason": "Seleccione motivo",
+      "voluntaryResignation": "Renuncia voluntaria",
+      "dismissal": "Desahucio",
+      "justifiedDismissal": "Despido justificado",
+      "mutualAgreement": "Mutuo acuerdo",
+      "contractEnd": "Fin de contrato",
+      "notice": "Preaviso",
+      "severance": "Cesantía"
+    },
+    "preview": {
+      "title": "Vista Previa del Documento",
+      "generating": "Generando...",
+      "generatedBy": "Generado por FortexaRH"
+    },
+    "templates": {
+      "title": "Administrar Plantillas",
+      "subtitle": "Cree y edite sus plantillas de documentos",
+      "name": "Nombre",
+      "category": "Categoría",
+      "description": "Descripción",
+      "actions": "Acciones",
+      "noTemplates": "No hay plantillas",
+      "createFirst": "Cree su primera plantilla"
+    },
+    "templateForm": {
+      "createTitle": "Crear Plantilla",
+      "editTitle": "Editar Plantilla",
+      "namePlaceholder": "Nombre de la plantilla",
+      "descPlaceholder": "Descripción breve",
+      "content": "Contenido",
+      "contentPlaceholder": "Escriba el contenido de la plantilla...",
+      "variablesHelp": "Use {{variable}} para campos dinámicos"
+    },
+    "history": {
+      "title": "Historial de Documentos",
+      "subtitle": "Documentos generados anteriormente",
+      "document": "Documento",
+      "employee": "Empleado",
+      "date": "Fecha",
+      "actions": "Acciones",
+      "noHistory": "No hay documentos generados",
+      "generateFirst": "Los documentos generados aparecerán aquí"
+    },
+    "messages": {
+      "errorLoading": "Error al cargar datos",
+      "selectBoth": "Seleccione plantilla y empleado",
+      "generated": "Documento generado",
+      "errorGenerating": "Error al generar documento",
+      "copied": "Contenido copiado",
+      "errorCopying": "Error al copiar",
+      "confirmDeleteDoc": "¿Eliminar este documento del historial?",
+      "docDeleted": "Documento eliminado",
+      "errorDeleting": "Error al eliminar",
+      "errorLoadingDoc": "Error al cargar documento",
+      "completeFields": "Complete nombre y contenido",
+      "templateUpdated": "Plantilla actualizada",
+      "templateCreated": "Plantilla creada",
+      "errorSaving": "Error al guardar",
+      "confirmDeleteTemplate": "¿Eliminar esta plantilla?",
+      "templateDeleted": "Plantilla eliminada"
+    },
+    "categories": {
+      "constancia": "Constancia",
+      "carta": "Carta",
+      "certificado": "Certificado",
+      "notificacion": "Notificación"
+    }
+  },
+  "reportsPage": {
     "months": {
       "january": "Enero",
       "february": "Febrero",
