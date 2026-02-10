@@ -400,11 +400,11 @@ export default function DocumentsPage() {
                   {/* Custom Values based on template */}
                   {selectedTemplate?.template_id === "constancia_trabajo" && (
                     <div className="space-y-3 pt-2 border-t">
-                      <h4 className="text-sm font-medium">Opciones de la Constancia</h4>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">Seleccione qué información incluir en el documento</p>
+                      <h4 className="text-sm font-medium">{t('documents.options.title')}</h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{t('documents.options.desc')}</p>
                       
                       <div className="flex items-center justify-between py-1">
-                        <Label className="text-sm">Fecha de contratación</Label>
+                        <Label className="text-sm">{t('documents.options.hireDate')}</Label>
                         <Switch 
                           checked={customValues.show_hire_date !== false}
                           onCheckedChange={(v) => setCustomValues({...customValues, show_hire_date: v})}
@@ -412,7 +412,7 @@ export default function DocumentsPage() {
                       </div>
                       
                       <div className="flex items-center justify-between py-1">
-                        <Label className="text-sm">Cargo / Posición</Label>
+                        <Label className="text-sm">{t('documents.options.position')}</Label>
                         <Switch 
                           checked={customValues.show_position !== false}
                           onCheckedChange={(v) => setCustomValues({...customValues, show_position: v})}
@@ -420,7 +420,7 @@ export default function DocumentsPage() {
                       </div>
                       
                       <div className="flex items-center justify-between py-1">
-                        <Label className="text-sm">Departamento</Label>
+                        <Label className="text-sm">{t('documents.options.department')}</Label>
                         <Switch 
                           checked={customValues.show_department !== false}
                           onCheckedChange={(v) => setCustomValues({...customValues, show_department: v})}
@@ -428,7 +428,7 @@ export default function DocumentsPage() {
                       </div>
                       
                       <div className="flex items-center justify-between py-1">
-                        <Label className="text-sm">Salario mensual</Label>
+                        <Label className="text-sm">{t('documents.options.salary')}</Label>
                         <Switch 
                           checked={customValues.show_salary || false}
                           onCheckedChange={(v) => setCustomValues({...customValues, show_salary: v})}
@@ -439,19 +439,19 @@ export default function DocumentsPage() {
 
                   {selectedTemplate?.template_id === "certificado_ingresos" && (
                     <div className="space-y-3 pt-2 border-t">
-                      <h4 className="text-sm font-medium">Propósito</h4>
+                      <h4 className="text-sm font-medium">{t('documents.purpose.title')}</h4>
                       <Select 
                         value={customValues.purpose || ""} 
                         onValueChange={(v) => setCustomValues({...customValues, purpose: v})}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Seleccione propósito" />
+                          <SelectValue placeholder={t('documents.purpose.select')} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="préstamo bancario">Préstamo bancario</SelectItem>
-                          <SelectItem value="alquiler de vivienda">Alquiler de vivienda</SelectItem>
-                          <SelectItem value="solicitud de visa">Solicitud de visa</SelectItem>
-                          <SelectItem value="trámites personales">Trámites personales</SelectItem>
+                          <SelectItem value="préstamo bancario">{t('documents.purpose.bankLoan')}</SelectItem>
+                          <SelectItem value="alquiler de vivienda">{t('documents.purpose.housingRental')}</SelectItem>
+                          <SelectItem value="solicitud de visa">{t('documents.purpose.visaApplication')}</SelectItem>
+                          <SelectItem value="trámites personales">{t('documents.purpose.personalProcedures')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -459,9 +459,9 @@ export default function DocumentsPage() {
 
                   {selectedTemplate?.template_id === "carta_recomendacion" && (
                     <div className="space-y-3 pt-2 border-t">
-                      <h4 className="text-sm font-medium">Información Adicional</h4>
+                      <h4 className="text-sm font-medium">{t('documents.recommendation.title')}</h4>
                       <div className="space-y-2">
-                        <Label className="text-sm">Fecha de Salida</Label>
+                        <Label className="text-sm">{t('documents.recommendation.endDate')}</Label>
                         <Input 
                           type="date"
                           value={customValues.end_date || ""}
@@ -469,11 +469,11 @@ export default function DocumentsPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-sm">Comentarios Adicionales</Label>
+                        <Label className="text-sm">{t('documents.recommendation.additionalComments')}</Label>
                         <Textarea 
                           value={customValues.additional_comments || ""}
                           onChange={(e) => setCustomValues({...customValues, additional_comments: e.target.value})}
-                          placeholder="Cualidades destacadas del empleado..."
+                          placeholder={t('documents.recommendation.placeholder')}
                           rows={3}
                         />
                       </div>
@@ -482,9 +482,9 @@ export default function DocumentsPage() {
 
                   {selectedTemplate?.template_id === "notificacion_aumento" && (
                     <div className="space-y-3 pt-2 border-t">
-                      <h4 className="text-sm font-medium">Detalles del Aumento</h4>
+                      <h4 className="text-sm font-medium">{t('documents.raise.title')}</h4>
                       <div className="space-y-2">
-                        <Label className="text-sm">Fecha Efectiva</Label>
+                        <Label className="text-sm">{t('documents.raise.effectiveDate')}</Label>
                         <Input 
                           type="date"
                           value={customValues.effective_date || ""}
@@ -492,7 +492,7 @@ export default function DocumentsPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-sm">Nuevo Salario (RD$)</Label>
+                        <Label className="text-sm">{t('documents.raise.newSalary')}</Label>
                         <Input 
                           type="number"
                           value={customValues.new_salary || ""}
@@ -501,7 +501,7 @@ export default function DocumentsPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-sm">Porcentaje de Aumento</Label>
+                        <Label className="text-sm">{t('documents.raise.percentage')}</Label>
                         <Input 
                           type="number"
                           value={customValues.increase_percentage || ""}
@@ -514,9 +514,9 @@ export default function DocumentsPage() {
 
                   {selectedTemplate?.template_id === "carta_terminacion" && (
                     <div className="space-y-3 pt-2 border-t">
-                      <h4 className="text-sm font-medium">Detalles de Terminación</h4>
+                      <h4 className="text-sm font-medium">{t('documents.termination.title')}</h4>
                       <div className="space-y-2">
-                        <Label className="text-sm">Fecha de Terminación</Label>
+                        <Label className="text-sm">{t('documents.termination.terminationDate')}</Label>
                         <Input 
                           type="date"
                           value={customValues.termination_date || ""}
@@ -524,26 +524,26 @@ export default function DocumentsPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-sm">Motivo</Label>
+                        <Label className="text-sm">{t('documents.termination.reason')}</Label>
                         <Select 
                           value={customValues.termination_reason || ""} 
                           onValueChange={(v) => setCustomValues({...customValues, termination_reason: v})}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Seleccione motivo" />
+                            <SelectValue placeholder={t('documents.termination.selectReason')} />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Renuncia voluntaria">Renuncia voluntaria</SelectItem>
-                            <SelectItem value="Desahucio">Desahucio</SelectItem>
-                            <SelectItem value="Despido justificado">Despido justificado</SelectItem>
-                            <SelectItem value="Mutuo acuerdo">Mutuo acuerdo</SelectItem>
-                            <SelectItem value="Fin de contrato">Fin de contrato</SelectItem>
+                            <SelectItem value="Renuncia voluntaria">{t('documents.termination.voluntaryResignation')}</SelectItem>
+                            <SelectItem value="Desahucio">{t('documents.termination.dismissal')}</SelectItem>
+                            <SelectItem value="Despido justificado">{t('documents.termination.justifiedDismissal')}</SelectItem>
+                            <SelectItem value="Mutuo acuerdo">{t('documents.termination.mutualAgreement')}</SelectItem>
+                            <SelectItem value="Fin de contrato">{t('documents.termination.contractEnd')}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         <div className="space-y-1">
-                          <Label className="text-xs">Preaviso</Label>
+                          <Label className="text-xs">{t('documents.termination.notice')}</Label>
                           <Input 
                             type="number"
                             value={customValues.preaviso || ""}
