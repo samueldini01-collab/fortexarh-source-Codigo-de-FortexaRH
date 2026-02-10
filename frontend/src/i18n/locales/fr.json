@@ -190,7 +190,33 @@
     "testimonials": {
       "badge": "Témoignages Clients",
       "title": "Ce que disent nos clients",
-      "subtitle": "Des entreprises de toute la République Dominicaine font confiance à FortexaRH pour gérer leur talent humain"
+      "subtitle": "Des entreprises de toute la République Dominicaine font confiance à FortexaRH pour gérer leur talent humain",
+      "items": {
+        "1": {
+          "name": "María González",
+          "role": "Responsable RH",
+          "company": "Caribbean Commercial Group",
+          "content": "FortexaRH a transformé notre gestion de la paie. Nous prenions 3 jours pour traiter les paiements, maintenant nous le faisons en 2 heures. Le gain de temps est incroyable."
+        },
+        "2": {
+          "name": "Carlos Pérez",
+          "role": "Directeur Administratif",
+          "company": "National Construction SRL",
+          "content": "La conformité automatique avec TSS et DGII nous a enlevé un poids énorme. Nous n'avons plus à nous soucier des délais ni des calculs."
+        },
+        "3": {
+          "name": "Ana Martínez",
+          "role": "PDG",
+          "company": "Tech Solutions RD",
+          "content": "Le portail employé a réduit les demandes RH de 70%. Notre équipe peut maintenant voir ses fiches de paie et demander des congés sans intermédiaires."
+        },
+        "4": {
+          "name": "Roberto Sánchez",
+          "role": "Comptable Principal",
+          "company": "Deloitte RD Partner",
+          "content": "En tant que cabinet comptable, nous gérons 15 entreprises avec FortexaRH. L'intégration QuickBooks et les rapports automatiques nous font gagner des heures chaque semaine."
+        }
+      }
     },
     "faq": {
       "badge": "Questions Fréquentes",
@@ -198,7 +224,41 @@
       "subtitle": "Trouvez les réponses aux questions les plus courantes sur FortexaRH",
       "notFound": "Vous n'avez pas trouvé ce que vous cherchiez?",
       "supportReady": "Notre équipe de support est prête à vous aider",
-      "contactSupport": "Contacter le Support"
+      "contactSupport": "Contacter le Support",
+      "items": {
+        "1": {
+          "question": "Combien de temps prend l'implémentation de FortexaRH?",
+          "answer": "L'implémentation de base prend 1-3 jours. Elle comprend la configuration de l'entreprise, le chargement des employés et la formation initiale. Pour les entreprises de plus de 100 employés, le processus peut prendre 1-2 semaines."
+        },
+        "2": {
+          "question": "FortexaRH est-il conforme aux réglementations dominicaines (TSS, DGII)?",
+          "answer": "Oui, FortexaRH est 100% adapté à la législation du travail dominicaine. Nous calculons automatiquement ISR, AFP, SFS selon les tableaux en vigueur et générons les formats officiels requis."
+        },
+        "3": {
+          "question": "Puis-je migrer des données depuis Excel ou un autre système?",
+          "answer": "Absolument. Nous offrons l'import en masse depuis Excel et CSV. Notre équipe de support vous assiste tout au long du processus de migration sans frais supplémentaires."
+        },
+        "4": {
+          "question": "Quelle est la sécurité des informations de mes employés?",
+          "answer": "Nous utilisons le chiffrement AES-256 pour les données au repos et TLS 1.3 pour les données en transit. Nos serveurs sont sur AWS avec certification SOC 2."
+        },
+        "5": {
+          "question": "Puis-je essayer le système avant de payer?",
+          "answer": "Oui, nous offrons un essai gratuit de 14 jours avec accès complet. Aucune carte de crédit requise et vous pouvez annuler à tout moment."
+        },
+        "6": {
+          "question": "Quel support technique est inclus?",
+          "answer": "Tous les plans incluent le support par email et chat. Les plans Pro et Enterprise incluent le support téléphonique et un gestionnaire de compte dédié."
+        },
+        "7": {
+          "question": "S'intègre-t-il avec les systèmes de présence biométriques?",
+          "answer": "Oui, nous nous intégrons aux principaux appareils biométriques du marché. Nous supportons aussi le pointage par application mobile avec géolocalisation."
+        },
+        "8": {
+          "question": "Combien d'utilisateurs peuvent accéder au système?",
+          "answer": "Nous ne limitons pas le nombre d'utilisateurs admin. La tarification est basée sur les employés actifs, pas sur les utilisateurs du système."
+        }
+      }
     },
     "pricing": {
       "title": "Plans et Tarifs",
