@@ -1037,18 +1037,18 @@ export default function LandingPage() {
                 </div>
                 <Quote className="w-8 h-8 text-emerald-200 mb-3" />
                 <p className="text-slate-700 text-base sm:text-lg mb-6 leading-relaxed">
-                  &ldquo;{testimonial.content}&rdquo;
+                  &ldquo;{t(`landing.testimonials.items.${testimonial.id}.content`)}&rdquo;
                 </p>
                 <div className="flex items-center gap-4 pt-4 border-t border-slate-100">
                   <img 
                     src={testimonial.image}
-                    alt={testimonial.name}
+                    alt={t(`landing.testimonials.items.${testimonial.id}.name`)}
                     className="w-12 h-12 rounded-full object-cover border-2 border-emerald-100"
                   />
                   <div>
-                    <p className="font-semibold text-slate-900">{testimonial.name}</p>
-                    <p className="text-sm text-slate-500">{testimonial.role}</p>
-                    <p className="text-sm text-emerald-600 font-medium">{testimonial.company}</p>
+                    <p className="font-semibold text-slate-900">{t(`landing.testimonials.items.${testimonial.id}.name`)}</p>
+                    <p className="text-sm text-slate-500">{t(`landing.testimonials.items.${testimonial.id}.role`)}</p>
+                    <p className="text-sm text-emerald-600 font-medium">{t(`landing.testimonials.items.${testimonial.id}.company`)}</p>
                   </div>
                 </div>
               </div>
@@ -1058,10 +1058,10 @@ export default function LandingPage() {
           <div className="text-center mt-10 sm:mt-12 scroll-reveal">
             <div className="inline-flex items-center gap-3 bg-white rounded-full px-6 py-3 shadow-sm border border-slate-100">
               <div className="flex -space-x-3">
-                {testimonials.slice(0, 4).map((t, i) => (
+                {testimonials.slice(0, 4).map((testimonial, i) => (
                   <img 
                     key={i}
-                    src={t.image}
+                    src={testimonial.image}
                     alt=""
                     className="w-8 h-8 rounded-full border-2 border-white object-cover"
                   />
