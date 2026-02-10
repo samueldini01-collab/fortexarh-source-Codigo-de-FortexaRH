@@ -2,7 +2,7 @@
   "common": {
     "loading": "Chargement...",
     "save": "Enregistrer",
-    "cancel": "Annuler",
+    "cancel": "Annuler sans carte",
     "delete": "Supprimer",
     "edit": "Modifier",
     "create": "Créer",
@@ -47,7 +47,13 @@
     "logout": "Déconnexion",
     "login": "Connexion",
     "register": "S'inscrire",
-    "welcome": "Bienvenue"
+    "welcome": "Bienvenue",
+    "new": "NOUVEAU",
+    "mostPopular": "Le Plus Populaire",
+    "companiesTrust": "Entreprises nous font confiance",
+    "avgRating": "Note moyenne",
+    "companiesUse": "entreprises utilisent déjà FortexaRH",
+    "sendEmail": "Envoyer un Email"
   },
   "nav": {
     "dashboard": "Tableau de bord",
@@ -79,7 +85,8 @@
       "title": "Système RH et Paie pour la République Dominicaine",
       "subtitle": "Gérez votre capital humain avec la plateforme la plus complète. Paie, TSS, DGII, et plus.",
       "cta": "Commencer Gratuitement",
-      "demo": "Voir la Démo"
+      "demo": "Voir la Démo",
+      "brochure": "Brochure"
     },
     "nav": {
       "forCompanies": "Pour les entreprises",
@@ -91,7 +98,7 @@
     },
     "features": {
       "title": "Tout ce dont vous avez besoin pour gérer votre équipe",
-      "subtitle": "Simplifiez l'administration RH avec des outils puissants",
+      "subtitle": "De l'embauche à la paie, nous avons tous les outils dont votre département RH a besoin.",
       "payroll": "Paie Automatisée",
       "payrollDesc": "Calculs automatiques pour TSS, ISR, AFP et plus",
       "employees": "Gestion des Employés",
@@ -104,6 +111,64 @@
       "portalDesc": "Libre-service pour votre équipe",
       "accounting": "Comptabilité",
       "accountingDesc": "Intégration QuickBooks"
+    },
+    "video": {
+      "title": "Voir FortexaRH en Action",
+      "subtitle": "Découvrez comment notre plateforme peut transformer la gestion de votre équipe en quelques minutes",
+      "avgTime": "Temps moyen de paie",
+      "compliance": "Conformité DGII",
+      "lessQueries": "Moins de requêtes RH",
+      "access": "Accès à l'information"
+    },
+    "benefits": {
+      "implementation": "Implémentation en minutes",
+      "secure": "Données sécurisées et cryptées",
+      "anywhere": "Accès de n'importe où",
+      "realtime": "Rapports en temps réel"
+    },
+    "geolocation": {
+      "title": "Contrôle des Présences avec",
+      "highlight": "Géolocalisation",
+      "subtitle": "La façon la plus moderne et sécurisée de contrôler la présence de vos employés. GPS en temps réel, détection de fraude et alertes automatiques.",
+      "gps": "Pointage GPS + Selfie",
+      "gpsDesc": "Les employés pointent depuis leur téléphone avec localisation GPS et photo de vérification.",
+      "realtime": "Carte en Temps Réel",
+      "realtimeDesc": "Visualisez où se trouvent vos employés sur une carte interactive avec mise à jour automatique.",
+      "fraud": "Détection de Fraude",
+      "fraudDesc": "Système intelligent qui détecte vitesse impossible, GPS factice et pointages suspects.",
+      "alerts": "Alertes par Email",
+      "alertsDesc": "Recevez des notifications immédiates lorsqu'une anomalie ou un pointage hors zone est détecté.",
+      "ideal": "Idéal pour les entreprises avec du personnel de terrain, construction, livraison, ventes et plus.",
+      "tryFree": "Essayer Gratuitement 14 Jours"
+    },
+    "cta": {
+      "title": "Prêt à transformer votre gestion RH?",
+      "subtitle": "Rejoignez des centaines d'entreprises qui ont déjà optimisé leur gestion des ressources humaines avec FortexaRH.",
+      "startTrial": "Commencer l'Essai Gratuit",
+      "viewPlans": "Voir les Plans et Tarifs"
+    },
+    "comparison": {
+      "title": "Comparaison des Plans",
+      "feature": "Fonctionnalité",
+      "basePrice": "Prix de base mensuel",
+      "pricePerEmployee": "Prix par employé",
+      "usersIncluded": "Utilisateurs inclus",
+      "maxEmployees": "Employés maximum",
+      "unlimited": "Illimité",
+      "basic": "Basique"
+    },
+    "testimonials": {
+      "badge": "Témoignages Clients",
+      "title": "Ce que disent nos clients",
+      "subtitle": "Des entreprises de toute la République Dominicaine font confiance à FortexaRH pour gérer leur talent humain"
+    },
+    "faq": {
+      "badge": "Questions Fréquentes",
+      "title": "Vous avez des questions?",
+      "subtitle": "Trouvez les réponses aux questions les plus courantes sur FortexaRH",
+      "notFound": "Vous n'avez pas trouvé ce que vous cherchiez?",
+      "supportReady": "Notre équipe de support est prête à vous aider",
+      "contactSupport": "Contacter le Support"
     },
     "pricing": {
       "title": "Plans et Tarifs",
@@ -150,12 +215,13 @@
     },
     "contact": {
       "title": "Contact et Support",
-      "subtitle": "Nous sommes là pour vous aider",
+      "subtitle": "Nous sommes là pour vous aider. Contactez-nous pour toute question sur nos services.",
       "address": "Adresse",
       "email": "E-mail",
       "phone": "Téléphone",
       "hours": "Heures d'ouverture",
       "weekdays": "Lundi - Vendredi",
+      "saturday": "Samedi et Dimanche",
       "closed": "Fermé",
       "supportCenter": "Centre de Support"
     },
@@ -172,7 +238,9 @@
       "legal": "Légal",
       "privacy": "Politique de confidentialité",
       "terms": "Conditions d'utilisation",
-      "rights": "Tous droits réservés"
+      "rights": "Tous droits réservés",
+      "tagline": "Système RH et Paie",
+      "description": "Système de gestion des ressources humaines et de la paie pour les entreprises modernes en République Dominicaine."
     }
   },
   "auth": {
