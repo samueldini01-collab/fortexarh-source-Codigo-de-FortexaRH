@@ -325,7 +325,10 @@
         "integrations": "Intégration SAP/Oracle",
         "workflows": "Flux de travail avancés",
         "branches": "Plusieurs succursales",
-        "support247": "Support 24/7"
+        "support247": "Support 24/7",
+        "allBasic": "Tout du plan Basique",
+        "allPro": "Tout du plan Pro",
+        "unlimitedEmployees": "Employés illimités"
       }
     },
     "contact": {
