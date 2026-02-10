@@ -68,12 +68,21 @@ export default function EvaluationsPage() {
   const [isObjectiveDialogOpen, setIsObjectiveDialogOpen] = useState(false);
   const [isPlanDialogOpen, setIsPlanDialogOpen] = useState(false);
   const [quickFilter, setQuickFilter] = useState(null);
+
+  // Build competencies with translated names
+  const getCompetencies = () => COMPETENCY_CODES.map(c => ({
+    ...c,
+    name: t(`evaluations.competencies.${c.code}`)
+  }));
+
+  // Get translated rating label
+  const getRatingLabel = (score) => t(`evaluations.ratings.${score}`);
   
   const [evalFormData, setEvalFormData] = useState({
     employee_id: "",
     period: "",
     evaluation_type: "supervisor",
-    scores: COMPETENCIES.map(c => ({ competency: c.code, name: c.name, weight: c.weight, score: 3, comments: "" })),
+    scores: getCompetencies().map(c => ({ competency: c.code, name: c.name, weight: c.weight, score: 3, comments: "" })),
     overall_comments: "",
     strengths: [],
     areas_for_improvement: [],
