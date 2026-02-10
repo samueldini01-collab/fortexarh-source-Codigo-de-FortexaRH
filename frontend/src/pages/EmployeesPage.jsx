@@ -578,7 +578,7 @@ export default function EmployeesPage() {
                   onClick={() => { resetForm(); setIsDialogOpen(true); }}
                   className="mt-2"
                 >
-                  Agregar primer empleado
+                  {t('employees.addFirst')}
                 </Button>
               </div>
             ) : (
@@ -589,15 +589,15 @@ export default function EmployeesPage() {
                       <Checkbox 
                         checked={selectAll && filteredEmployees.length > 0}
                         onCheckedChange={handleSelectAll}
-                        aria-label="Seleccionar todos"
+                        aria-label={t('employees.actions.selectAll')}
                       />
                     </TableHead>
-                    <TableHead>Empleado</TableHead>
-                    <TableHead>Departamento</TableHead>
-                    <TableHead>Posición</TableHead>
-                    <TableHead>Salario</TableHead>
-                    <TableHead>Estado</TableHead>
-                    <TableHead className="text-right">Acciones</TableHead>
+                    <TableHead>{t('employees.table.employee')}</TableHead>
+                    <TableHead>{t('employees.table.department')}</TableHead>
+                    <TableHead>{t('employees.table.position')}</TableHead>
+                    <TableHead>{t('employees.table.salary')}</TableHead>
+                    <TableHead>{t('employees.table.status')}</TableHead>
+                    <TableHead className="text-right">{t('employees.table.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -611,7 +611,7 @@ export default function EmployeesPage() {
                         <Checkbox 
                           checked={isEmployeeSelected(emp.employee_id)}
                           onCheckedChange={(checked) => handleSelectEmployee(emp, checked)}
-                          aria-label={`Seleccionar ${emp.first_name} ${emp.last_name}`}
+                          aria-label={`${t('common.select')} ${emp.first_name} ${emp.last_name}`}
                         />
                       </TableCell>
                       <TableCell>
@@ -664,7 +664,7 @@ export default function EmployeesPage() {
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-xl">
-                {editingEmployee ? "Editar Empleado" : "Crear Empleado"}
+                {editingEmployee ? t('employees.editEmployee') : t('employees.createEmployee')}
               </DialogTitle>
             </DialogHeader>
 
