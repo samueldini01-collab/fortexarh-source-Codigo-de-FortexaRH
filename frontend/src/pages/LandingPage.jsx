@@ -101,50 +101,28 @@ export default function LandingPage() {
   
   // Generate FAQs array using translations  
   const faqIds = ["1", "2", "3", "4", "5", "6", "7", "8"];
-  {
-    icon: FileText,
-    title: "Reportes DGII-TSS",
-    description: "Genera reportes TSS, IR-17, IR-6 e ISR listos para presentar ante la DGII de República Dominicana."
-  },
-  {
-    icon: Search,
-    title: "Dashboard de Métricas",
-    description: "Métricas en tiempo real de nómina, asistencia, rotación y costos por departamento."
-  }
-];
 
-const benefits = [
-  { icon: Zap, text: "Implementación en minutos" },
-  { icon: Shield, text: "Datos seguros y encriptados" },
-  { icon: Globe, text: "Acceso desde cualquier lugar" },
-  { icon: BarChart3, text: "Reportes en tiempo real" }
-];
+  // Features for dropdowns
+  const empresaFeatures = [
+    { icon: Users, title: t('landing.features.employees'), desc: t('landing.features.employeesDesc').substring(0, 40) + "..." },
+    { icon: DollarSign, title: t('landing.features.payroll'), desc: t('landing.features.payrollDesc') },
+    { icon: Clock, title: t('landing.features.attendance'), desc: t('landing.features.attendanceDesc').substring(0, 40) + "..." },
+    { icon: Calendar, title: t('landing.features.vacations'), desc: t('landing.features.vacationsDesc').substring(0, 40) + "..." },
+    { icon: Target, title: t('landing.features.evaluations'), desc: t('landing.features.evaluationsDesc').substring(0, 40) + "..." },
+    { icon: FileBarChart, title: t('landing.features.advancedReports'), desc: t('landing.features.advancedReportsDesc').substring(0, 40) + "..." },
+    { icon: Brain, title: t('landing.features.aiSearch'), desc: t('landing.features.aiSearchDesc').substring(0, 40) + "..." },
+    { icon: Smartphone, title: t('landing.features.portal'), desc: t('landing.features.portalDesc').substring(0, 40) + "..." }
+  ];
 
-// Features for dropdowns
-const empresaFeatures = [
-  { icon: Users, title: "Gestión de Empleados", desc: "Perfiles, documentos y organigramas" },
-  { icon: DollarSign, title: "Nómina Automatizada", desc: "ISR, TSS, AFP calculados automáticamente" },
-  { icon: Clock, title: "Control de Asistencia", desc: "Marcaje, horas extra, ausencias" },
-  { icon: Calendar, title: "Vacaciones y Permisos", desc: "Solicitudes y aprobaciones" },
-  { icon: Target, title: "Evaluaciones", desc: "Desempeño 360° y objetivos" },
-  { icon: FileBarChart, title: "Reportes Avanzados", desc: "58+ reportes con exportación" },
-  { icon: Brain, title: "Búsqueda con IA", desc: "Asistente inteligente integrado" },
-  { icon: Smartphone, title: "Portal de Empleados", desc: "Autogestión para tu equipo" }
-];
+  const contadoresFeatures = [
+    { icon: DollarSign, title: "$10/mes", desc: t('landing.pricing.perEmployee') },
+    { icon: Percent, title: "30%", desc: "Comisión de por vida" },
+    { icon: Building2, title: "Multi-Cliente", desc: t('landing.pricing.enterpriseDesc') },
+    { icon: TrendingUp, title: "Dashboard", desc: t('landing.video.realtime') },
+    { icon: Calculator, title: t('landing.features.payroll'), desc: "TSS, AFP, ISR" },
+    { icon: FileText, title: t('landing.features.dgii'), desc: "IR-17, TSS" }
+  ];
 
-const contadoresFeatures = [
-  { icon: DollarSign, title: "Solo $10/mes", desc: "Con empleados ilimitados para tu firma" },
-  { icon: Percent, title: "30% Comisión", desc: "De por vida por cada cliente referido" },
-  { icon: Building2, title: "Multi-Cliente", desc: "Gestiona todos tus clientes en un lugar" },
-  { icon: TrendingUp, title: "Dashboard de Ganancias", desc: "Visualiza comisiones en tiempo real" },
-  { icon: Calculator, title: "Nómina RD", desc: "TSS, AFP, ISR automatizados" },
-  { icon: FileText, title: "Reportes DGII-TSS", desc: "IR-17, TSS y formularios oficiales" }
-];
-
-export default function LandingPage() {
-  const { t } = useTranslation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState(null);
   const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
