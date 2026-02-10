@@ -103,11 +103,11 @@ export default function DocumentsPage() {
       setHistory(historyRes.data);
       setCategories(categoriesRes.data);
     } catch (error) {
-      toast.error("Error al cargar datos");
+      toast.error(t('documents.messages.errorLoading'));
     } finally {
       setLoading(false);
     }
-  }, [getAuthHeaders]);
+  }, [getAuthHeaders, t]);
 
   useEffect(() => {
     fetchData();
