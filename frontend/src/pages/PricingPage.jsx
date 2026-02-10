@@ -269,18 +269,3 @@ export default function PricingPage() {
     </div>
   );
 }
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="py-8 px-4 border-t border-slate-200 bg-white">
-        <div className="max-w-7xl mx-auto text-center text-slate-500 text-sm">
-          © {new Date().getFullYear()} FortexaRH. Todos los derechos reservados.
-        </div>
-      </footer>
-    </div>
-  );
-}
