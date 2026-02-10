@@ -475,7 +475,7 @@ export default function LandingPage() {
                   className="flex items-center justify-between w-full text-slate-300 py-2 px-3 rounded-lg"
                   onClick={() => setOpenDropdown(openDropdown === 'empresas-mobile' ? null : 'empresas-mobile')}
                 >
-                  <span className="font-medium">Para Empresas</span>
+                  <span className="font-medium">{t('landing.nav.forCompanies')}</span>
                   <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'empresas-mobile' ? 'rotate-180' : ''}`} />
                 </button>
                 {openDropdown === 'empresas-mobile' && (
@@ -501,7 +501,7 @@ export default function LandingPage() {
                   className="flex items-center justify-between w-full text-slate-300 py-2 px-3 rounded-lg"
                   onClick={() => setOpenDropdown(openDropdown === 'contadores-mobile' ? null : 'contadores-mobile')}
                 >
-                  <span className="font-medium">Para Contadores</span>
+                  <span className="font-medium">{t('landing.nav.accountants')}</span>
                   <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'contadores-mobile' ? 'rotate-180' : ''}`} />
                 </button>
                 {openDropdown === 'contadores-mobile' && (
@@ -526,22 +526,22 @@ export default function LandingPage() {
                 className="text-slate-300 hover:text-white py-2 px-3 rounded-lg hover:bg-slate-700"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Precios
+                {t('landing.nav.pricing')}
               </a>
               <a 
                 href="#contact" 
                 className="text-slate-300 hover:text-white py-2 px-3 rounded-lg hover:bg-slate-700"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Contacto
+                {t('landing.nav.contact')}
               </a>
             </nav>
             <div className="flex flex-col gap-2 pt-3 border-t border-slate-700">
               <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="outline" className="w-full border-slate-600 text-slate-300 hover:bg-slate-700">Iniciar Sesión</Button>
+                <Button variant="outline" className="w-full border-slate-600 text-slate-300 hover:bg-slate-700">{t('landing.nav.login')}</Button>
               </Link>
               <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
-                <Button className="w-full bg-emerald-500 hover:bg-emerald-600">Comenzar Gratis</Button>
+                <Button className="w-full bg-emerald-500 hover:bg-emerald-600">{t('landing.nav.startFree')}</Button>
               </Link>
             </div>
           </div>
