@@ -2,7 +2,7 @@
   "common": {
     "loading": "Cargando...",
     "save": "Guardar",
-    "cancel": "Cancelar",
+    "cancel": "Cancelar sin tarjeta",
     "delete": "Eliminar",
     "edit": "Editar",
     "create": "Crear",
@@ -47,7 +47,13 @@
     "logout": "Cerrar sesión",
     "login": "Iniciar sesión",
     "register": "Registrarse",
-    "welcome": "Bienvenido"
+    "welcome": "Bienvenido",
+    "new": "NUEVO",
+    "mostPopular": "Más Popular",
+    "companiesTrust": "Empresas confían en nosotros",
+    "avgRating": "Calificación promedio",
+    "companiesUse": "empresas ya usan FortexaRH",
+    "sendEmail": "Enviar Email"
   },
   "nav": {
     "dashboard": "Panel Principal",
@@ -79,7 +85,8 @@
       "title": "Sistema de RRHH y Nómina para República Dominicana",
       "subtitle": "Gestiona tu capital humano con la plataforma más completa. Nómina, TSS, DGII, y más.",
       "cta": "Comenzar Gratis",
-      "demo": "Ver Demo"
+      "demo": "Ver Demo",
+      "brochure": "Brochure"
     },
     "nav": {
       "forCompanies": "Para empresas",
@@ -91,7 +98,7 @@
     },
     "features": {
       "title": "Todo lo que necesitas para gestionar tu equipo",
-      "subtitle": "Simplifica la administración de recursos humanos con herramientas poderosas",
+      "subtitle": "Desde la contratación hasta la nómina, tenemos todas las herramientas que tu departamento de RRHH necesita.",
       "payroll": "Nómina Automatizada",
       "payrollDesc": "Cálculos automáticos de TSS, ISR, AFP y más",
       "employees": "Gestión de Empleados",
@@ -104,6 +111,64 @@
       "portalDesc": "Autoservicio para tu equipo",
       "accounting": "Contabilidad",
       "accountingDesc": "Integración con QuickBooks"
+    },
+    "video": {
+      "title": "Mira FortexaRH en Acción",
+      "subtitle": "Descubre cómo nuestra plataforma puede transformar la gestión de tu equipo en minutos",
+      "avgTime": "Tiempo promedio de nómina",
+      "compliance": "Cumplimiento DGII",
+      "lessQueries": "Menos consultas RRHH",
+      "access": "Acceso a información"
+    },
+    "benefits": {
+      "implementation": "Implementación en minutos",
+      "secure": "Datos seguros y encriptados",
+      "anywhere": "Acceso desde cualquier lugar",
+      "realtime": "Reportes en tiempo real"
+    },
+    "geolocation": {
+      "title": "Control de Asistencia con",
+      "highlight": "Geolocalización",
+      "subtitle": "La forma más moderna y segura de controlar la asistencia de tus empleados. GPS en tiempo real, detección de fraude y alertas automáticas.",
+      "gps": "Marcación GPS + Selfie",
+      "gpsDesc": "Empleados marcan asistencia desde su celular con ubicación GPS y foto de verificación.",
+      "realtime": "Mapa en Tiempo Real",
+      "realtimeDesc": "Visualiza en un mapa interactivo dónde están tus empleados con actualización automática.",
+      "fraud": "Detección de Fraude",
+      "fraudDesc": "Sistema inteligente que detecta velocidad imposible, GPS falso y marcaciones sospechosas.",
+      "alerts": "Alertas por Email",
+      "alertsDesc": "Recibe notificaciones inmediatas cuando se detecta una anomalía o marcación fuera de zona.",
+      "ideal": "Ideal para empresas con personal de campo, construcción, delivery, ventas y más.",
+      "tryFree": "Probar Gratis por 14 Días"
+    },
+    "cta": {
+      "title": "¿Listo para transformar tu gestión de RRHH?",
+      "subtitle": "Únete a cientos de empresas que ya optimizaron su gestión de recursos humanos con FortexaRH.",
+      "startTrial": "Comenzar Prueba Gratuita",
+      "viewPlans": "Ver Planes y Precios"
+    },
+    "comparison": {
+      "title": "Comparación de Planes",
+      "feature": "Característica",
+      "basePrice": "Precio base mensual",
+      "pricePerEmployee": "Precio por empleado",
+      "usersIncluded": "Usuarios incluidos",
+      "maxEmployees": "Máximo de empleados",
+      "unlimited": "Ilimitado",
+      "basic": "Básicos"
+    },
+    "testimonials": {
+      "badge": "Testimonios de Clientes",
+      "title": "Lo que dicen nuestros clientes",
+      "subtitle": "Empresas de toda República Dominicana confían en FortexaRH para gestionar su talento humano"
+    },
+    "faq": {
+      "badge": "Preguntas Frecuentes",
+      "title": "¿Tienes preguntas?",
+      "subtitle": "Encuentra respuestas a las preguntas más comunes sobre FortexaRH",
+      "notFound": "¿No encontraste lo que buscabas?",
+      "supportReady": "Nuestro equipo de soporte está listo para ayudarte",
+      "contactSupport": "Contactar Soporte"
     },
     "pricing": {
       "title": "Planes y Precios",
@@ -150,12 +215,13 @@
     },
     "contact": {
       "title": "Contacto y Soporte",
-      "subtitle": "Estamos aquí para ayudarte",
+      "subtitle": "Estamos aquí para ayudarte. Contáctanos para cualquier consulta sobre nuestros servicios.",
       "address": "Dirección",
       "email": "Email",
       "phone": "Teléfono",
       "hours": "Horario de Atención",
       "weekdays": "Lunes - Viernes",
+      "saturday": "Sábados y Domingos",
       "closed": "Cerrado",
       "supportCenter": "Centro de Soporte"
     },
@@ -172,7 +238,9 @@
       "legal": "Legal",
       "privacy": "Política de Privacidad",
       "terms": "Términos de Servicio",
-      "rights": "Todos los derechos reservados"
+      "rights": "Todos los derechos reservados",
+      "tagline": "Sistema de RRHH y Nómina",
+      "description": "Sistema de gestión de recursos humanos y nómina para empresas modernas en República Dominicana."
     }
   },
   "auth": {
