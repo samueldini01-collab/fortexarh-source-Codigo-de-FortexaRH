@@ -2292,7 +2292,23 @@
       "noData": "No data to display",
       "gross": "Gross",
       "net": "Net",
-      "deductions": "Deductions"
+      "deductions": "Deductions",
+      "employeeDistribution": "Employee Distribution"
+    },
+    "loans": {
+      "status": "Loan Status",
+      "totalLoaned": "Total Loaned",
+      "totalCollected": "Total Collected",
+      "pending": "Pending",
+      "employeesWithLoans": "Employees with Loans"
+    },
+    "kpis": {
+      "title": "Key Indicators",
+      "turnover": "Staff Turnover",
+      "avgSeniority": "Avg. Seniority",
+      "years": "years",
+      "avgSalary": "Avg. Salary",
+      "payrollsYear": "Payrolls this Year"
     },
     "drillDown": {
       "employees": "Employees",

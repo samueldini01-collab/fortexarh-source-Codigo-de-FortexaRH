@@ -2291,7 +2291,23 @@
       "noData": "No hay datos para mostrar",
       "gross": "Bruto",
       "net": "Neto",
-      "deductions": "Deducciones"
+      "deductions": "Deducciones",
+      "employeeDistribution": "Distribución de Empleados"
+    },
+    "loans": {
+      "status": "Estado de Préstamos",
+      "totalLoaned": "Total Prestado",
+      "totalCollected": "Total Cobrado",
+      "pending": "Pendiente",
+      "employeesWithLoans": "Empleados con Préstamos"
+    },
+    "kpis": {
+      "title": "Indicadores Clave",
+      "turnover": "Rotación de personal",
+      "avgSeniority": "Antigüedad Prom.",
+      "years": "años",
+      "avgSalary": "Salario Prom.",
+      "payrollsYear": "Nóminas este Año"
     },
     "drillDown": {
       "employees": "Empleados",

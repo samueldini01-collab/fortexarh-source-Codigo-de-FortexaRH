@@ -2291,7 +2291,23 @@
       "noData": "Aucune donnée à afficher",
       "gross": "Brut",
       "net": "Net",
-      "deductions": "Déductions"
+      "deductions": "Déductions",
+      "employeeDistribution": "Distribution des Employés"
+    },
+    "loans": {
+      "status": "Statut des Prêts",
+      "totalLoaned": "Total Prêté",
+      "totalCollected": "Total Collecté",
+      "pending": "En Attente",
+      "employeesWithLoans": "Employés avec Prêts"
+    },
+    "kpis": {
+      "title": "Indicateurs Clés",
+      "turnover": "Rotation du personnel",
+      "avgSeniority": "Ancienneté Moy.",
+      "years": "ans",
+      "avgSalary": "Salaire Moy.",
+      "payrollsYear": "Paies cette Année"
     },
     "drillDown": {
       "employees": "Employés",
