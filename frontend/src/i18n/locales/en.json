@@ -1918,63 +1918,211 @@
   },
   "employeePortal": {
     "title": "Employee Portal",
+    "subtitle": "Access your personal information",
+    "hrSystem": "HR & Payroll System",
     "welcome": "Welcome",
+    "welcomeToPortal": "Welcome to the portal",
+    "goodMorning": "Good morning",
+    "login": {
+      "title": "Employee Portal",
+      "subtitle": "Access your personal information",
+      "documentNumber": "ID Number",
+      "documentPlaceholder": "000-0000000-0",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "firstTimeHint": "First time: use your ID number as password",
+      "loginButton": "Log In",
+      "errorLogin": "Error logging in"
+    },
     "tabs": {
+      "home": "Home",
       "overview": "Overview",
       "payslips": "Payslips",
-      "attendance": "My Attendance",
-      "requests": "My Requests",
-      "profile": "My Profile"
+      "attendance": "Attendance",
+      "vacations": "Vacations",
+      "leaves": "Leaves",
+      "evaluations": "Evaluations",
+      "loans": "Loans",
+      "profile": "My Data",
+      "requests": "My Requests"
+    },
+    "swipe": {
+      "hint": "Swipe to navigate"
     },
     "overview": {
       "nextPayday": "Next Payday",
       "vacationDays": "Vacation Days",
       "available": "Available",
       "used": "Used",
-      "pending": "Pending"
+      "pending": "Pending",
+      "lastSalary": "Last Salary",
+      "vacationsAvailable": "Vacations Available",
+      "days": "days",
+      "pendingLoans": "Pending Loans",
+      "pendingRequests": "Pending Requests"
     },
     "payslips": {
       "title": "Payslips",
+      "subtitle": "Payment history - Download your receipts in PDF",
       "download": "Download",
       "view": "View",
       "period": "Period",
       "grossSalary": "Gross Salary",
+      "gross": "Gross",
       "deductions": "Deductions",
-      "netSalary": "Net Salary"
+      "netSalary": "Net Salary",
+      "noPayslips": "No payslips available",
+      "latestPayslips": "Latest Payslips",
+      "receiptDownloaded": "Receipt downloaded",
+      "errorDownload": "Error downloading receipt"
     },
     "attendance": {
+      "title": "Attendance Record",
+      "today": "Today",
       "clockIn": "Clock In",
       "clockOut": "Clock Out",
+      "registerEntry": "Register Entry",
+      "registerExit": "Register Exit",
+      "entry": "Entry",
+      "exit": "Exit",
       "currentStatus": "Current Status",
       "working": "Working",
       "notWorking": "Not working",
       "todayHours": "Hours Today",
-      "weekHours": "Hours This Week"
+      "weekHours": "Hours This Week",
+      "hours": "Hours",
+      "status": "Status",
+      "onTime": "On Time",
+      "late": "Late",
+      "pendingStatus": "Pending",
+      "yourShift": "Your shift",
+      "monthlySummary": "Monthly Summary",
+      "daysWorked": "Days worked",
+      "onTimeCount": "On time",
+      "lateCount": "Late",
+      "totalHours": "Total hours",
+      "overtime": "Overtime"
+    },
+    "vacations": {
+      "title": "Vacation Requests",
+      "newRequest": "New Request",
+      "balance": "Balance",
+      "daysAvailable": "Days Available",
+      "accrued": "Accrued",
+      "used": "Used",
+      "available": "Available",
+      "noRequests": "No requests",
+      "requestSent": "Request sent",
+      "errorRequest": "Error sending request"
+    },
+    "leaves": {
+      "title": "My Leaves and Permits",
+      "newRequest": "New Request",
+      "leaveTypes": "Leave Types",
+      "noLeaves": "No leave requests",
+      "requestSent": "Leave request sent",
+      "errorRequest": "Error sending request"
+    },
+    "evaluations": {
+      "title": "My Performance Evaluations",
+      "myPerformance": "My Performance",
+      "overallAvg": "Overall Average",
+      "totalEvaluations": "Total evaluations",
+      "completed": "Completed",
+      "pending": "Pending",
+      "noEvaluations": "No evaluations recorded",
+      "score": "Score"
+    },
+    "loans": {
+      "title": "My Loans",
+      "summary": "Summary",
+      "totalBalance": "Total Balance",
+      "activeLoans": "Active loans",
+      "monthlyPayment": "Monthly payment",
+      "amount": "Amount",
+      "balance": "Balance",
+      "payment": "Payment",
+      "active": "Active",
+      "paidOff": "Paid Off",
+      "noLoans": "No active loans",
+      "paid": "paid"
+    },
+    "profile": {
+      "title": "My Data",
+      "subtitle": "Update your contact information",
+      "personalInfo": "Personal Information",
+      "contactInfo": "Contact Information",
+      "employmentInfo": "Employment Information",
+      "changePassword": "Change Password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmNewPassword": "Confirm New Password",
+      "fullName": "Full Name",
+      "idNumber": "ID Number",
+      "birthDate": "Date of Birth",
+      "gender": "Gender",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "department": "Department",
+      "position": "Position",
+      "hireDate": "Hire Date",
+      "supervisor": "Supervisor",
+      "updateData": "Update Data",
+      "dataUpdated": "Data updated",
+      "errorUpdate": "Error updating"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "markAllRead": "Mark all as read",
+      "noNotifications": "No notifications",
+      "recentNotifications": "Recent Notifications",
+      "viewAll": "View all",
+      "allMarkedRead": "All notifications marked as read",
+      "markedAsRead": "Marked as read",
+      "deleted": "Notification deleted",
+      "errorMark": "Error marking as read",
+      "errorDelete": "Error deleting",
+      "new": "new",
+      "categories": {
+        "payroll": "Payroll",
+        "vacation": "Vacations",
+        "attendance": "Attendance",
+        "announcement": "Announcement",
+        "document": "Document",
+        "general": "General"
+      }
+    },
+    "announcements": {
+      "title": "Important Announcements"
     },
     "requests": {
       "newRequest": "New Request",
       "vacationRequest": "Vacation Request",
       "leaveRequest": "Leave Request",
       "loanRequest": "Loan Request",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "reason": "Reason",
+      "reasonPlaceholder": "Describe the reason for your request",
+      "selectType": "Select type",
+      "submit": "Submit Request",
+      "cancel": "Cancel",
       "status": {
         "pending": "Pending",
         "approved": "Approved",
         "rejected": "Rejected"
       }
     },
-    "profile": {
-      "personalInfo": "Personal Information",
-      "changePassword": "Change Password",
-      "currentPassword": "Current Password",
-      "newPassword": "New Password",
-      "confirmNewPassword": "Confirm New Password"
-    },
     "messages": {
       "clockedIn": "Clocked in",
       "clockedOut": "Clocked out",
       "requestSubmitted": "Request submitted",
       "passwordChanged": "Password updated",
-      "errorClockin": "Error clocking in"
+      "errorClockin": "Error clocking in",
+      "errorClockout": "Error clocking out",
+      "errorLoadingData": "Error loading data",
+      "logout": "Log out"
     }
   },
   "geoAttendance": {
