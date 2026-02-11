@@ -15,87 +15,64 @@ import axios from "axios";
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api";
 
-const PLANS = {
+// Plan configuration (non-translatable data)
+const PLANS_CONFIG = {
   basic: {
     id: "basic",
-    name: "FortexaRH Básico",
     basePrice: 5,
     pricePerEmployee: 1.5,
     maxEmployees: 50,
     icon: Rocket,
     color: "blue",
-    features: [
-      "Hasta 50 empleados",
-      "3 usuarios incluidos",
-      "Gestión de empleados",
-      "Nómina básica",
-      "Asistencias y vacaciones",
-      "Calculadora de nómina",
-      "Reportes básicos",
-      "Exportación Excel/CSV",
-      "Soporte por email"
-    ]
+    featureKeys: ["employees", "users", "management", "payroll", "attendance", "calculator", "reports", "export", "support"]
   },
   pro: {
     id: "pro",
-    name: "FortexaRH Pro",
     basePrice: 10,
     pricePerEmployee: 1.5,
     maxEmployees: 200,
     icon: Zap,
     color: "purple",
     popular: true,
-    features: [
-      "Hasta 200 empleados",
-      "5 usuarios incluidos",
-      "Todo lo del plan Básico",
-      "Evaluaciones de desempeño",
-      "Módulo de reclutamiento",
-      "Organigrama intuitivo",
-      "Reportes avanzados",
-      "Integración QuickBooks",
-      "Soporte prioritario"
-    ]
+    featureKeys: ["employees", "users", "allBasic", "evaluations", "recruitment", "orgChart", "reports", "quickbooks", "support"]
   },
   enterprise: {
     id: "enterprise",
-    name: "FortexaRH Enterprise",
     basePrice: 20,
     pricePerEmployee: 1.5,
     maxEmployees: 9999,
     icon: Crown,
     color: "amber",
-    features: [
-      "Empleados ilimitados",
-      "7 usuarios incluidos",
-      "Todo lo del plan Pro",
-      "Roles personalizados",
-      "Múltiples administradores",
-      "API personalizada",
-      "Integración SAP/Oracle",
-      "Soporte 24/7",
-      "Gerente de cuenta dedicado"
-    ]
+    featureKeys: ["employees", "users", "allPro", "customRoles", "multiAdmin", "api", "integrations", "support247", "manager"]
   }
 };
 
 export default function CheckoutPage() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const planId = searchParams.get("plan") || "basic";
-  const plan = PLANS[planId] || PLANS.basic;
-  const Icon = plan.icon;
+  const planConfig = PLANS_CONFIG[planId] || PLANS_CONFIG.basic;
+  const Icon = planConfig.icon;
   
   const [employeeCount, setEmployeeCount] = useState(5);
   const [loading, setLoading] = useState(false);
 
-  const totalMonthly = plan.basePrice + (employeeCount * plan.pricePerEmployee);
+  const totalMonthly = planConfig.basePrice + (employeeCount * planConfig.pricePerEmployee);
+
+  // Get translated plan name
+  const planName = t(`checkout.plans.${planId}.name`);
+
+  // Get translated features for the plan
+  const getFeatures = () => {
+    return planConfig.featureKeys.map(key => t(`checkout.plans.${planId}.features.${key}`));
+  };
 
   const handleCheckout = async () => {
     setLoading(true);
     try {
       const response = await axios.post(`${API}/public/checkout`, {
-        plan_id: plan.id,
+        plan_id: planConfig.id,
         employee_count: employeeCount,
         origin_url: window.location.origin
       });
@@ -103,11 +80,11 @@ export default function CheckoutPage() {
       if (response.data.checkout_url) {
         window.location.href = response.data.checkout_url;
       } else {
-        toast.error("Error al iniciar el proceso de pago");
+        toast.error(t("checkout.errors.paymentError"));
       }
     } catch (error) {
       console.error("Checkout error:", error);
-      toast.error(error.response?.data?.detail || "Error al procesar el pago");
+      toast.error(error.response?.data?.detail || t("checkout.errors.processError"));
     } finally {
       setLoading(false);
     }
@@ -129,7 +106,7 @@ export default function CheckoutPage() {
           <Link to="/#pricing">
             <Button variant="ghost" size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Volver a planes
+              {t("checkout.header.backToPlans")}
             </Button>
           </Link>
         </div>
@@ -137,8 +114,8 @@ export default function CheckoutPage() {
 
       <main className="max-w-4xl mx-auto px-4 py-12">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Completa tu Compra</h1>
-          <p className="text-slate-600">Configura tu plan y procede al pago seguro</p>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">{t("checkout.title")}</h1>
+          <p className="text-slate-600">{t("checkout.subtitle")}</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
@@ -147,21 +124,21 @@ export default function CheckoutPage() {
             <CardHeader>
               <div className="flex items-center gap-3">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br ${
-                  plan.color === 'blue' ? 'from-blue-500 to-blue-600' :
-                  plan.color === 'purple' ? 'from-purple-500 to-purple-600' :
+                  planConfig.color === 'blue' ? 'from-blue-500 to-blue-600' :
+                  planConfig.color === 'purple' ? 'from-purple-500 to-purple-600' :
                   'from-amber-500 to-amber-600'
                 } text-white`}>
                   <Icon className="w-6 h-6" />
                 </div>
                 <div>
-                  <CardTitle>{plan.name}</CardTitle>
-                  {plan.popular && <Badge className="bg-purple-500 mt-1">Más Popular</Badge>}
+                  <CardTitle>{planName}</CardTitle>
+                  {planConfig.popular && <Badge className="bg-purple-500 mt-1">{t("checkout.mostPopular")}</Badge>}
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-3 mb-6">
-                {plan.features.map((feature, idx) => (
+                {getFeatures().map((feature, idx) => (
                   <div key={idx} className="flex items-start gap-2 text-sm">
                     <Check className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
                     <span className="text-slate-600">{feature}</span>
@@ -171,12 +148,12 @@ export default function CheckoutPage() {
 
               <div className="border-t pt-4">
                 <div className="flex justify-between text-sm text-slate-500 mb-1">
-                  <span>Base mensual</span>
-                  <span>{formatCurrency(plan.basePrice)}</span>
+                  <span>{t("checkout.pricing.baseMonthly")}</span>
+                  <span>{formatCurrency(planConfig.basePrice)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-slate-500">
-                  <span>Por empleado</span>
-                  <span>{formatCurrency(plan.pricePerEmployee)}</span>
+                  <span>{t("checkout.pricing.perEmployee")}</span>
+                  <span>{formatCurrency(planConfig.pricePerEmployee)}</span>
                 </div>
               </div>
             </CardContent>
@@ -188,10 +165,10 @@ export default function CheckoutPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Users className="w-5 h-5" />
-                  Cantidad de Empleados
+                  {t("checkout.employeeCount.title")}
                 </CardTitle>
                 <CardDescription>
-                  ¿Cuántos empleados tendrá en su empresa?
+                  {t("checkout.employeeCount.description")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -200,22 +177,24 @@ export default function CheckoutPage() {
                     <Input 
                       type="number" 
                       value={employeeCount}
-                      onChange={(e) => setEmployeeCount(Math.max(1, Math.min(plan.maxEmployees === 9999 ? 1000 : plan.maxEmployees, parseInt(e.target.value) || 1)))}
+                      onChange={(e) => setEmployeeCount(Math.max(1, Math.min(planConfig.maxEmployees === 9999 ? 1000 : planConfig.maxEmployees, parseInt(e.target.value) || 1)))}
                       min={1}
-                      max={plan.maxEmployees === 9999 ? 1000 : plan.maxEmployees}
+                      max={planConfig.maxEmployees === 9999 ? 1000 : planConfig.maxEmployees}
                       className="w-24 text-center text-lg font-bold"
                     />
                     <Slider
                       value={[employeeCount]}
                       onValueChange={(v) => setEmployeeCount(v[0])}
                       min={1}
-                      max={plan.maxEmployees === 9999 ? 100 : plan.maxEmployees}
+                      max={planConfig.maxEmployees === 9999 ? 100 : planConfig.maxEmployees}
                       step={1}
                       className="flex-1"
                     />
                   </div>
                   <p className="text-sm text-slate-500">
-                    {plan.maxEmployees === 9999 ? 'Sin límite de empleados' : `Máximo ${plan.maxEmployees} empleados en este plan`}
+                    {planConfig.maxEmployees === 9999 
+                      ? t("checkout.employeeCount.noLimit")
+                      : t("checkout.employeeCount.maxInPlan", { max: planConfig.maxEmployees })}
                   </p>
                 </div>
               </CardContent>
@@ -223,21 +202,21 @@ export default function CheckoutPage() {
 
             <Card className="bg-gradient-to-br from-emerald-50 to-white border-emerald-200">
               <CardHeader>
-                <CardTitle className="text-emerald-800">Resumen del Pago</CardTitle>
+                <CardTitle className="text-emerald-800">{t("checkout.paymentSummary.title")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-slate-600">Plan {plan.name}</span>
-                    <span className="font-medium">{formatCurrency(plan.basePrice)}</span>
+                    <span className="text-slate-600">{t("checkout.paymentSummary.plan", { name: planName })}</span>
+                    <span className="font-medium">{formatCurrency(planConfig.basePrice)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-600">{employeeCount} empleados × {formatCurrency(plan.pricePerEmployee)}</span>
-                    <span className="font-medium">{formatCurrency(employeeCount * plan.pricePerEmployee)}</span>
+                    <span className="text-slate-600">{t("checkout.paymentSummary.employees", { count: employeeCount, price: formatCurrency(planConfig.pricePerEmployee) })}</span>
+                    <span className="font-medium">{formatCurrency(employeeCount * planConfig.pricePerEmployee)}</span>
                   </div>
                   <div className="border-t border-emerald-200 pt-3 mt-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-lg font-semibold text-slate-800">Total mensual</span>
+                      <span className="text-lg font-semibold text-slate-800">{t("checkout.paymentSummary.totalMonthly")}</span>
                       <span className="text-2xl font-bold text-emerald-600">{formatCurrency(totalMonthly)}</span>
                     </div>
                   </div>
@@ -252,19 +231,19 @@ export default function CheckoutPage() {
                   {loading ? (
                     <>
                       <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      Procesando...
+                      {t("checkout.buttons.processing")}
                     </>
                   ) : (
                     <>
                       <CreditCard className="w-5 h-5 mr-2" />
-                      Proceder al Pago
+                      {t("checkout.buttons.proceedToPayment")}
                     </>
                   )}
                 </Button>
 
                 <div className="mt-4 text-center">
                   <p className="text-xs text-slate-500">
-                    Pago seguro procesado por Stripe. Después del pago podrás crear tu cuenta.
+                    {t("checkout.footer.securePayment")}
                   </p>
                 </div>
               </CardContent>
@@ -272,9 +251,9 @@ export default function CheckoutPage() {
 
             <div className="text-center">
               <p className="text-sm text-slate-500">
-                ¿Prefieres probar primero?{" "}
+                {t("checkout.footer.tryFirst")}{" "}
                 <Link to="/register" className="text-blue-600 hover:underline">
-                  Prueba gratis por 5 días
+                  {t("checkout.footer.freeTrial")}
                 </Link>
               </p>
             </div>
