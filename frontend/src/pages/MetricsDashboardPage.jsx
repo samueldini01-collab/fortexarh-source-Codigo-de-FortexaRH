@@ -331,7 +331,7 @@ export default function MetricsDashboardPage() {
                 </div>
               </div>
               <p className="text-xs text-slate-400 mt-2 flex items-center">
-                <ChevronRight className="w-3 h-3" /> Click para ver desglose
+                <ChevronRight className="w-3 h-3" /> {t('metrics.cards.clickDetail')}
               </p>
             </CardContent>
           </Card>
@@ -340,11 +340,11 @@ export default function MetricsDashboardPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Costo por Empleado</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('metrics.cards.costPerEmployee')}</p>
                   <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">
                     {formatCurrency(currentMonthData.gross / (employeeMetrics.total_employees || 1))}
                   </p>
-                  <p className="text-sm text-slate-500 mt-1">Promedio mensual</p>
+                  <p className="text-sm text-slate-500 mt-1">{t('metrics.cards.monthlyAvg')}</p>
                 </div>
                 <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
                   <Percent className="w-6 h-6 text-purple-600" />
@@ -361,9 +361,9 @@ export default function MetricsDashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-blue-500" />
-                Tendencia de Nómina {selectedYear}
+                {t('metrics.charts.payrollTrend')} {selectedYear}
               </CardTitle>
-              <CardDescription>Evolución mensual de costos de nómina (click en barra para ver desglose)</CardDescription>
+              <CardDescription>{t('metrics.charts.payrollTrendDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -380,8 +380,8 @@ export default function MetricsDashboardPage() {
                     contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }}
                   />
                   <Legend />
-                  <Area type="monotone" dataKey="gross" name="Bruto" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.2} />
-                  <Area type="monotone" dataKey="net" name="Neto" stroke="#10b981" fill="#10b981" fillOpacity={0.2} />
+                  <Area type="monotone" dataKey="gross" name={t('metrics.charts.gross')} stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.2} />
+                  <Area type="monotone" dataKey="net" name={t('metrics.charts.net')} stroke="#10b981" fill="#10b981" fillOpacity={0.2} />
                 </AreaChart>
               </ResponsiveContainer>
             </CardContent>
@@ -392,9 +392,9 @@ export default function MetricsDashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-purple-500" />
-                Costos por Departamento
+                {t('metrics.charts.departmentCosts')}
               </CardTitle>
-              <CardDescription>Distribución del gasto de nómina (click en barra para ver empleados)</CardDescription>
+              <CardDescription>{t('metrics.charts.departmentCostsDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               {departmentCosts.length > 0 ? (
@@ -411,7 +411,7 @@ export default function MetricsDashboardPage() {
                       formatter={(value) => formatCurrency(value)}
                       contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }}
                     />
-                    <Bar dataKey="cost" name="Costo" radius={[0, 4, 4, 0]}>
+                    <Bar dataKey="cost" name={t('metrics.charts.cost')} radius={[0, 4, 4, 0]}>
                       {departmentCosts.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
