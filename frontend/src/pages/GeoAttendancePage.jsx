@@ -435,14 +435,14 @@ export default function GeoAttendancePage() {
                 <div className="flex-1">
                   <p className="text-emerald-400 flex items-center gap-2">
                     <CheckCircle className="w-4 h-4" />
-                    Foto capturada
+                    {t("geoAttendance.mobile.photoCaptured")}
                   </p>
                   <Button 
                     variant="link" 
                     className="text-slate-400 p-0 h-auto"
                     onClick={() => setSelfieData(null)}
                   >
-                    Tomar otra foto
+                    {t("geoAttendance.mobile.takeAnother")}
                   </Button>
                 </div>
               </div>
