@@ -273,12 +273,12 @@ export default function GeoAttendancePage() {
             {isOnline ? (
               <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/50">
                 <Wifi className="w-3 h-3 mr-1" />
-                Online
+                {t("geoAttendance.mobile.online")}
               </Badge>
             ) : (
               <Badge className="bg-red-500/20 text-red-300 border-red-500/50">
                 <WifiOff className="w-3 h-3 mr-1" />
-                Offline
+                {t("geoAttendance.mobile.offline")}
               </Badge>
             )}
           </div>
