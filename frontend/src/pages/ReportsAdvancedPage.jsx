@@ -103,7 +103,7 @@ export default function ReportsAdvancedPage() {
           break;
           
         default:
-          toast.error("Tipo de reporte no válido");
+          toast.error(t('reportsAdvanced.invalidReportType'));
           return;
       }
       
@@ -124,10 +124,10 @@ export default function ReportsAdvancedPage() {
       link.remove();
       window.URL.revokeObjectURL(downloadUrl);
       
-      toast.success(`Reporte ${filename} descargado`);
+      toast.success(`${t('reportsAdvanced.downloadSuccess')}: ${filename}`);
     } catch (error) {
       console.error("Error generating report:", error);
-      const message = error.response?.data?.detail || "Error al generar el reporte";
+      const message = error.response?.data?.detail || t('reportsAdvanced.downloadError');
       toast.error(message);
     } finally {
       setGenerating(null);
