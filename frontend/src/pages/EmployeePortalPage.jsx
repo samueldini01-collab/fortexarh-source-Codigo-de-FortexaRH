@@ -956,27 +956,27 @@ function EmployeeDashboard() {
               {/* Monthly Summary */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Resumen del Mes</CardTitle>
+                  <CardTitle className="text-lg">{t('employeePortal.attendance.monthlySummary')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
-                    <span className="text-sm text-slate-600">Días trabajados</span>
+                    <span className="text-sm text-slate-600">{t('employeePortal.attendance.daysWorked')}</span>
                     <span className="font-bold">{attendanceHistory.summary?.days_worked || 0}</span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-emerald-50 rounded-lg">
-                    <span className="text-sm text-emerald-700">A tiempo</span>
+                    <span className="text-sm text-emerald-700">{t('employeePortal.attendance.onTimeCount')}</span>
                     <span className="font-bold text-emerald-600">{attendanceHistory.summary?.on_time || 0}</span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-amber-50 rounded-lg">
-                    <span className="text-sm text-amber-700">Tardanzas</span>
+                    <span className="text-sm text-amber-700">{t('employeePortal.attendance.lateCount')}</span>
                     <span className="font-bold text-amber-600">{attendanceHistory.summary?.late || 0}</span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                    <span className="text-sm text-blue-700">Horas totales</span>
+                    <span className="text-sm text-blue-700">{t('employeePortal.attendance.totalHours')}</span>
                     <span className="font-bold text-blue-600">{attendanceHistory.summary?.total_hours || 0}h</span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
-                    <span className="text-sm text-purple-700">Horas extra</span>
+                    <span className="text-sm text-purple-700">{t('employeePortal.attendance.overtime')}</span>
                     <span className="font-bold text-purple-600">{attendanceHistory.summary?.total_overtime || 0}h</span>
                   </div>
                 </CardContent>
@@ -988,8 +988,8 @@ function EmployeeDashboard() {
           <TabsContent value="payslips">
             <Card>
               <CardHeader>
-                <CardTitle>Recibos de Pago</CardTitle>
-                <CardDescription>Historial de pagos recibidos - Descarga tus recibos en PDF</CardDescription>
+                <CardTitle>{t('employeePortal.payslips.title')}</CardTitle>
+                <CardDescription>{t('employeePortal.payslips.subtitle')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -1007,7 +1007,7 @@ function EmployeeDashboard() {
                       <div className="flex items-center gap-4">
                         <div className="text-right">
                           <p className="font-bold text-emerald-600">{formatCurrency(slip.net_salary)}</p>
-                          <p className="text-xs text-slate-500">Bruto: {formatCurrency(slip.gross_salary)}</p>
+                          <p className="text-xs text-slate-500">{t('employeePortal.payslips.gross')}: {formatCurrency(slip.gross_salary)}</p>
                         </div>
                         <Button variant="outline" size="sm" onClick={() => setShowPayslipDetail(slip)}>
                           <Eye className="w-4 h-4" />
@@ -1029,7 +1029,7 @@ function EmployeeDashboard() {
                     </div>
                   ))}
                   {payslips.length === 0 && (
-                    <p className="text-center text-slate-500 py-8">No hay recibos disponibles</p>
+                    <p className="text-center text-slate-500 py-8">{t('employeePortal.payslips.noPayslips')}</p>
                   )}
                 </div>
               </CardContent>
@@ -1042,9 +1042,9 @@ function EmployeeDashboard() {
               <Card className="lg:col-span-2">
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle>Solicitudes de Vacaciones</CardTitle>
+                    <CardTitle>{t('employeePortal.vacations.title')}</CardTitle>
                     <Button onClick={() => setShowVacationRequest(true)}>
-                      <Send className="w-4 h-4 mr-2" />Nueva Solicitud
+                      <Send className="w-4 h-4 mr-2" />{t('employeePortal.vacations.newRequest')}
                     </Button>
                   </div>
                 </CardHeader>
