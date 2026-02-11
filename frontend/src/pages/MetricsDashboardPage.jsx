@@ -422,7 +422,7 @@ export default function MetricsDashboardPage() {
                 <div className="h-64 flex items-center justify-center text-slate-500">
                   <div className="text-center">
                     <Building2 className="w-12 h-12 mx-auto mb-2 opacity-30" />
-                    <p>Sin datos de departamentos</p>
+                    <p>{t('metrics.charts.noData')}</p>
                   </div>
                 </div>
               )}
@@ -437,8 +437,8 @@ export default function MetricsDashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-emerald-500" />
-                Distribución de Empleados
-                <span className="text-xs text-slate-400 font-normal ml-2">(click para ver)</span>
+                {t('metrics.charts.employeeDistribution')}
+                <span className="text-xs text-slate-400 font-normal ml-2">({t('metrics.cards.clickDetail')})</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -462,12 +462,12 @@ export default function MetricsDashboardPage() {
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value) => `${value} empleados`} />
+                    <Tooltip formatter={(value) => `${value} ${t('metrics.charts.employees')}`} />
                   </PieChart>
                 </ResponsiveContainer>
               ) : (
                 <div className="h-64 flex items-center justify-center text-slate-500">
-                  <p>Sin datos</p>
+                  <p>{t('metrics.charts.noData')}</p>
                 </div>
               )}
             </CardContent>
@@ -478,25 +478,25 @@ export default function MetricsDashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Wallet className="w-5 h-5 text-amber-500" />
-                Estado de Préstamos
+                {t('metrics.loans.status')}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                  <span className="text-sm text-blue-700 dark:text-blue-400">Total Prestado</span>
+                  <span className="text-sm text-blue-700 dark:text-blue-400">{t('metrics.loans.totalLoaned')}</span>
                   <span className="font-bold text-blue-800 dark:text-blue-300">{formatCurrency(loanMetrics.total_loaned || 0)}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
-                  <span className="text-sm text-emerald-700 dark:text-emerald-400">Total Cobrado</span>
+                  <span className="text-sm text-emerald-700 dark:text-emerald-400">{t('metrics.loans.totalCollected')}</span>
                   <span className="font-bold text-emerald-800 dark:text-emerald-300">{formatCurrency(loanMetrics.total_paid || 0)}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-                  <span className="text-sm text-amber-700 dark:text-amber-400">Pendiente</span>
+                  <span className="text-sm text-amber-700 dark:text-amber-400">{t('metrics.loans.pending')}</span>
                   <span className="font-bold text-amber-800 dark:text-amber-300">{formatCurrency(loanMetrics.total_pending || 0)}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
-                  <span className="text-sm text-slate-700 dark:text-slate-300">Empleados con Préstamos</span>
+                  <span className="text-sm text-slate-700 dark:text-slate-300">{t('metrics.loans.employeesWithLoans')}</span>
                   <span className="font-bold text-slate-800 dark:text-slate-200">{loanMetrics.employees_with_loans || 0}</span>
                 </div>
               </div>
@@ -508,13 +508,13 @@ export default function MetricsDashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-blue-500" />
-                Indicadores Clave
+                {t('metrics.kpis.title')}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600 dark:text-slate-300">Rotación de personal</span>
+                  <span className="text-sm text-slate-600 dark:text-slate-300">{t('metrics.kpis.turnover')}</span>
                   <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
                     {employeeMetrics.turnover_rate || 0}%
                   </Badge>
