@@ -547,10 +547,10 @@ export default function ExpensesPage() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Receipt className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                Nueva Solicitud de Gastos
+                {t("expenses.newRequest")}
               </DialogTitle>
               <DialogDescription>
-                Complete el formulario para crear una nueva solicitud de gastos o viáticos
+                {t("expenses.pageSubtitle")}
               </DialogDescription>
             </DialogHeader>
 
@@ -559,9 +559,9 @@ export default function ExpensesPage() {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
-                    <Label>Título de la Solicitud *</Label>
+                    <Label>{t("expenses.form.title")} *</Label>
                     <Input
-                      placeholder="Ej: Viaje de negocios a Santiago"
+                      placeholder={t("expenses.form.titlePlaceholder")}
                       value={formData.title}
                       onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
                       data-testid="expense-title"
@@ -569,7 +569,7 @@ export default function ExpensesPage() {
                   </div>
                   
                   <div>
-                    <Label>Tipo de Gasto *</Label>
+                    <Label>{t("expenses.form.expenseType")} *</Label>
                     <Select 
                       value={formData.expense_type} 
                       onValueChange={(v) => setFormData(prev => ({ ...prev, expense_type: v }))}
@@ -578,20 +578,20 @@ export default function ExpensesPage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="travel">Viaje de Negocios</SelectItem>
-                        <SelectItem value="administrative">Gastos Administrativos</SelectItem>
-                        <SelectItem value="accommodation">Alojamiento</SelectItem>
-                        <SelectItem value="meals">Alimentación</SelectItem>
-                        <SelectItem value="transportation">Transporte</SelectItem>
-                        <SelectItem value="other">Otros</SelectItem>
+                        <SelectItem value="travel">{t("expenses.types.travel")}</SelectItem>
+                        <SelectItem value="administrative">{t("expenses.types.administrative")}</SelectItem>
+                        <SelectItem value="accommodation">{t("expenses.types.accommodation")}</SelectItem>
+                        <SelectItem value="meals">{t("expenses.types.meals")}</SelectItem>
+                        <SelectItem value="transportation">{t("expenses.types.transportation")}</SelectItem>
+                        <SelectItem value="other">{t("expenses.types.other")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   
                   <div>
-                    <Label>Destino</Label>
+                    <Label>{t("expenses.form.destination")}</Label>
                     <Input
-                      placeholder="Ciudad o lugar"
+                      placeholder={t("expenses.form.destinationPlaceholder")}
                       value={formData.destination}
                       onChange={(e) => setFormData(prev => ({ ...prev, destination: e.target.value }))}
                       data-testid="expense-destination"
