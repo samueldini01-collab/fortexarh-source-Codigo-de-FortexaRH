@@ -473,7 +473,7 @@ export default function GeoAttendancePage() {
           >
             <LogIn className="w-8 h-8" />
             <span className="font-semibold">
-              {hasMarkedEntry ? "Entrada Marcada" : (selfieData ? "Confirmar Entrada" : "Marcar Entrada")}
+              {hasMarkedEntry ? t("geoAttendance.mobile.entryMarked") : (selfieData ? t("geoAttendance.mobile.confirmEntry") : t("geoAttendance.mobile.markEntry"))}
             </span>
           </Button>
           
@@ -495,7 +495,7 @@ export default function GeoAttendancePage() {
           >
             <LogOut className="w-8 h-8" />
             <span className="font-semibold">
-              {hasMarkedExit ? "Salida Marcada" : (selfieData ? "Confirmar Salida" : "Marcar Salida")}
+              {hasMarkedExit ? t("geoAttendance.mobile.exitMarked") : (selfieData ? t("geoAttendance.mobile.confirmExit") : t("geoAttendance.mobile.markExit"))}
             </span>
           </Button>
         </div>
