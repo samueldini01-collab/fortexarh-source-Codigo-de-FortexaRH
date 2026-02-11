@@ -44,6 +44,7 @@ const ROLE_COLORS = [
 ];
 
 export default function RolesPage() {
+  const { t } = useTranslation();
   const { getAuthHeaders } = useAuth();
   const [loading, setLoading] = useState(true);
   const [isEnterprise, setIsEnterprise] = useState(false);
@@ -82,11 +83,11 @@ export default function RolesPage() {
       setPermissionLabels(response.data.permission_labels || {});
     } catch (error) {
       console.error("Error fetching roles:", error);
-      toast.error("Error al cargar roles");
+      toast.error(t('roles.messages.loadError'));
     } finally {
       setLoading(false);
     }
-  }, [getAuthHeaders]);
+  }, [getAuthHeaders, t]);
 
   useEffect(() => {
     fetchRoles();
@@ -94,7 +95,7 @@ export default function RolesPage() {
 
   const handleCreateRole = async () => {
     if (!formData.name.trim()) {
-      toast.error("El nombre del rol es requerido");
+      toast.error(t('roles.messages.nameRequired'));
       return;
     }
 
@@ -104,18 +105,18 @@ export default function RolesPage() {
         withCredentials: true
       });
       
-      toast.success("Rol creado correctamente");
+      toast.success(t('roles.messages.created'));
       setShowCreateModal(false);
       resetForm();
       fetchRoles();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al crear rol");
+      toast.error(error.response?.data?.detail || t('roles.messages.createError'));
     }
   };
 
   const handleUpdateRole = async () => {
     if (!editingRole || !formData.name.trim()) {
-      toast.error("El nombre del rol es requerido");
+      toast.error(t('roles.messages.nameRequired'));
       return;
     }
 
@@ -125,18 +126,18 @@ export default function RolesPage() {
         withCredentials: true
       });
       
-      toast.success("Rol actualizado correctamente");
+      toast.success(t('roles.messages.updated'));
       setShowEditModal(false);
       setEditingRole(null);
       resetForm();
       fetchRoles();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al actualizar rol");
+      toast.error(error.response?.data?.detail || t('roles.messages.updateError'));
     }
   };
 
   const handleDeleteRole = async (roleId) => {
-    if (!window.confirm("¿Está seguro de eliminar este rol?")) return;
+    if (!window.confirm(t('roles.messages.confirmDelete'))) return;
 
     try {
       await axios.delete(`${API}/roles/${roleId}`, {
@@ -144,10 +145,10 @@ export default function RolesPage() {
         withCredentials: true
       });
       
-      toast.success("Rol eliminado correctamente");
+      toast.success(t('roles.messages.deleted'));
       fetchRoles();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al eliminar rol");
+      toast.error(error.response?.data?.detail || t('roles.messages.deleteError'));
     }
   };
 
@@ -158,10 +159,10 @@ export default function RolesPage() {
         withCredentials: true
       });
       
-      toast.success("Rol duplicado correctamente");
+      toast.success(t('roles.messages.duplicated'));
       fetchRoles();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al duplicar rol");
+      toast.error(error.response?.data?.detail || t('roles.messages.duplicateError'));
     }
   };
 
