@@ -2376,7 +2376,52 @@
       "clockedIn": "Entrada registrada exitosamente",
       "clockedOut": "Salida registrada exitosamente",
       "outsideZone": "Estás fuera de la zona permitida",
-      "errorLocation": "Error al obtener ubicación"
+      "errorLocation": "Error al obtener ubicación",
+      "noMarksToday": "Sin marcajes hoy",
+      "waitingForGps": "Esperando ubicación GPS...",
+      "noInternet": "Sin conexión a internet",
+      "markOutsideZone": "Marcaje fuera de zona - pendiente aprobación",
+      "errorMarkAttendance": "Error al marcar asistencia",
+      "cameraAccessDenied": "No se pudo acceder a la cámara"
+    },
+    "mobile": {
+      "greeting": {
+        "morning": "Buenos días",
+        "afternoon": "Buenas tardes",
+        "evening": "Buenas noches"
+      },
+      "online": "En línea",
+      "offline": "Sin conexión",
+      "currentLocation": "Ubicación Actual",
+      "gpsActive": "GPS Activo",
+      "accuracy": "Precisión",
+      "retry": "Reintentar",
+      "gettingLocation": "Obteniendo ubicación...",
+      "inside": "Dentro de",
+      "selfieVerification": "Selfie de Verificación",
+      "takePhoto": "Tomar Foto",
+      "cancel": "Cancelar",
+      "photoCaptured": "Foto capturada",
+      "takeAnother": "Tomar otra foto",
+      "markEntry": "Marcar Entrada",
+      "markExit": "Marcar Salida",
+      "entryMarked": "Entrada Marcada",
+      "exitMarked": "Salida Marcada",
+      "confirmEntry": "Confirmar Entrada",
+      "confirmExit": "Confirmar Salida",
+      "registeringMark": "Registrando marcaje...",
+      "todayMarks": "Marcajes de Hoy",
+      "entry": "Entrada",
+      "exit": "Salida",
+      "authorizedLocations": "Ubicaciones Autorizadas",
+      "radius": "Radio",
+      "locationErrors": {
+        "notSupported": "Geolocalización no soportada en este navegador",
+        "permissionDenied": "Permiso de ubicación denegado. Por favor habilítelo en configuración.",
+        "positionUnavailable": "Información de ubicación no disponible.",
+        "timeout": "Tiempo de espera agotado. Intente de nuevo.",
+        "unknown": "Error desconocido al obtener ubicación."
+      }
     }
   },
   "metrics": {
