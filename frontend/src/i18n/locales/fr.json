@@ -2149,6 +2149,58 @@
       "withdrawRequested": "Retrait demandé",
       "errorAddingClient": "Erreur lors de l'ajout du client",
       "noClients": "Vous n'avez pas de clients enregistrés"
+    },
+    "register": {
+      "title": "Inscription Partenaire",
+      "subtitle": "Rejoignez notre programme de partenaires comptables",
+      "step1": "Informations de l'entreprise",
+      "step2": "Contact et Sécurité",
+      "benefits": {
+        "title": "Avantages Partenaire",
+        "price": "Seulement 10$/mois avec employés illimités",
+        "commission": "30% de commission récurrente par client",
+        "panel": "Panneau de gestion des clients",
+        "referral": "Lien de parrainage unique",
+        "trial": "14 jours d'essai gratuit"
+      },
+      "form": {
+        "firmName": "Nom du Cabinet Comptable",
+        "firmPlaceholder": "Cabinet Comptable XYZ",
+        "rnc": "RNC (ID Fiscal)",
+        "rncPlaceholder": "000-00000-0",
+        "contactName": "Nom du Contact",
+        "namePlaceholder": "Jean Dupont",
+        "email": "E-mail",
+        "emailPlaceholder": "vous@cabinet.com",
+        "phone": "Téléphone",
+        "phonePlaceholder": "(809) 000-0000",
+        "password": "Mot de passe",
+        "confirmPassword": "Confirmer le mot de passe",
+        "address": "Adresse",
+        "addressPlaceholder": "Votre adresse",
+        "city": "Ville",
+        "cityPlaceholder": "Saint-Domingue",
+        "website": "Site Web (optionnel)",
+        "websitePlaceholder": "www.votrecabinet.com"
+      },
+      "buttons": {
+        "continue": "Continuer",
+        "back": "Retour",
+        "submit": "Terminer l'inscription",
+        "submitting": "Inscription..."
+      },
+      "validation": {
+        "passwordMismatch": "Les mots de passe ne correspondent pas",
+        "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères"
+      },
+      "messages": {
+        "success": "Inscription réussie! Redirection vers la connexion...",
+        "error": "Erreur lors de la création du compte partenaire"
+      },
+      "footer": {
+        "hasAccount": "Déjà un compte?",
+        "login": "Connexion"
+      }
     }
   },
   "employeePortal": {
