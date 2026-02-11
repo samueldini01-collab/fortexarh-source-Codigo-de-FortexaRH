@@ -851,13 +851,13 @@ function EmployeeDashboard() {
                 <div className="flex flex-col md:flex-row items-center gap-4">
                   <div className="flex-1 grid grid-cols-2 gap-4">
                     <div className="text-center p-4 bg-emerald-50 rounded-lg">
-                      <p className="text-sm text-emerald-700">Entrada</p>
+                      <p className="text-sm text-emerald-700">{t('employeePortal.attendance.entry')}</p>
                       <p className="text-2xl font-bold text-emerald-600">
                         {todayAttendance?.attendance?.check_in || "--:--"}
                       </p>
                     </div>
                     <div className="text-center p-4 bg-amber-50 rounded-lg">
-                      <p className="text-sm text-amber-700">Salida</p>
+                      <p className="text-sm text-amber-700">{t('employeePortal.attendance.exit')}</p>
                       <p className="text-2xl font-bold text-amber-600">
                         {todayAttendance?.attendance?.check_out || "--:--"}
                       </p>
@@ -870,7 +870,7 @@ function EmployeeDashboard() {
                       className="bg-emerald-600 hover:bg-emerald-700"
                     >
                       {checkingIn ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <PlayCircle className="w-4 h-4 mr-2" />}
-                      Entrada
+                      {t('employeePortal.attendance.entry')}
                     </Button>
                     <Button
                       onClick={handleCheckOut}
@@ -879,7 +879,7 @@ function EmployeeDashboard() {
                       className="border-amber-500 text-amber-600 hover:bg-amber-50"
                     >
                       {checkingOut ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <StopCircle className="w-4 h-4 mr-2" />}
-                      Salida
+                      {t('employeePortal.attendance.exit')}
                     </Button>
                   </div>
                 </div>
@@ -895,28 +895,28 @@ function EmployeeDashboard() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Clock className="w-5 h-5" />
-                    Registro de Hoy - {new Date().toLocaleDateString('es-DO', { weekday: 'long', day: 'numeric', month: 'long' })}
+                    {t('employeePortal.attendance.title')} - {t('employeePortal.attendance.today')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     <div className="text-center p-4 bg-emerald-50 rounded-lg">
-                      <p className="text-sm text-emerald-700">Entrada</p>
+                      <p className="text-sm text-emerald-700">{t('employeePortal.attendance.entry')}</p>
                       <p className="text-2xl font-bold text-emerald-600">{todayAttendance?.attendance?.check_in || "--:--"}</p>
                     </div>
                     <div className="text-center p-4 bg-amber-50 rounded-lg">
-                      <p className="text-sm text-amber-700">Salida</p>
+                      <p className="text-sm text-amber-700">{t('employeePortal.attendance.exit')}</p>
                       <p className="text-2xl font-bold text-amber-600">{todayAttendance?.attendance?.check_out || "--:--"}</p>
                     </div>
                     <div className="text-center p-4 bg-blue-50 rounded-lg">
-                      <p className="text-sm text-blue-700">Horas</p>
+                      <p className="text-sm text-blue-700">{t('employeePortal.attendance.hours')}</p>
                       <p className="text-2xl font-bold text-blue-600">{todayAttendance?.attendance?.hours_worked?.toFixed(1) || "0.0"}h</p>
                     </div>
                     <div className="text-center p-4 bg-purple-50 rounded-lg">
-                      <p className="text-sm text-purple-700">Estado</p>
+                      <p className="text-sm text-purple-700">{t('employeePortal.attendance.status')}</p>
                       <p className="text-lg font-bold text-purple-600">
-                        {todayAttendance?.attendance?.status === "on_time" ? "A Tiempo" : 
-                         todayAttendance?.attendance?.status === "late" ? "Tardanza" : "Pendiente"}
+                        {todayAttendance?.attendance?.status === "on_time" ? t('employeePortal.attendance.onTime') : 
+                         todayAttendance?.attendance?.status === "late" ? t('employeePortal.attendance.late') : t('employeePortal.attendance.pendingStatus')}
                       </p>
                     </div>
                   </div>
@@ -929,7 +929,7 @@ function EmployeeDashboard() {
                       className="bg-emerald-600 hover:bg-emerald-700"
                     >
                       {checkingIn ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <PlayCircle className="w-5 h-5 mr-2" />}
-                      Registrar Entrada
+                      {t('employeePortal.attendance.registerEntry')}
                     </Button>
                     <Button
                       onClick={handleCheckOut}
@@ -939,14 +939,14 @@ function EmployeeDashboard() {
                       className="border-amber-500 text-amber-600 hover:bg-amber-50"
                     >
                       {checkingOut ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <StopCircle className="w-5 h-5 mr-2" />}
-                      Registrar Salida
+                      {t('employeePortal.attendance.registerExit')}
                     </Button>
                   </div>
 
                   {todayAttendance?.shift && (
                     <div className="mt-4 p-3 bg-slate-50 rounded-lg text-center">
                       <p className="text-sm text-slate-600">
-                        Tu turno: <span className="font-medium">{todayAttendance.shift.name}</span> ({todayAttendance.shift.start_time} - {todayAttendance.shift.end_time})
+                        {t('employeePortal.attendance.yourShift')}: <span className="font-medium">{todayAttendance.shift.name}</span> ({todayAttendance.shift.start_time} - {todayAttendance.shift.end_time})
                       </p>
                     </div>
                   )}
