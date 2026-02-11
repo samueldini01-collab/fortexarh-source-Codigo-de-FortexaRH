@@ -923,7 +923,7 @@
   },
   "payroll": {
     "title": "Paie",
-    "pageTitle": "Paie",
+    "pageTitle": "Gestion de la Paie",
     "pageSubtitle": "Traitez les paies par type, période ou groupes",
     "process": "Traiter la Paie",
     "history": "Historique",
@@ -935,10 +935,24 @@
     "refresh": "Actualiser",
     "newPayroll": "Nouvelle Paie",
     "createFirst": "Créer Première Paie",
+    "createPayroll": "Créer Paie",
     "selectPeriodMsg": "Sélectionnez une période",
     "viewPeriods": "Voir périodes",
     "noEmployees": "Pas d'employés",
+    "noPayrolls": "Aucune paie enregistrée",
     "addEmployees": "Ajouter employés",
+    "selectEmployee": "Sélectionner employé",
+    "periodStart": "Début de Période",
+    "periodEnd": "Fin de Période",
+    "baseSalaryCurrency": "Salaire de Base ($)",
+    "bonusesCurrency": "Primes ($)",
+    "deductionsCurrency": "Déductions ($)",
+    "cancel": "Annuler",
+    "cards": {
+      "pending": "En Attente",
+      "approved": "Approuvées",
+      "paid": "Payées"
+    },
     "tabs": {
       "dashboard": "Tableau de Bord",
       "periods": "Périodes",
