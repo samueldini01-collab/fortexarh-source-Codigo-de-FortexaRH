@@ -339,22 +339,22 @@ export default function RolesPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="w-5 h-5" />
-              Roles Personalizados
+              {t('roles.customRoles')}
             </CardTitle>
-            <CardDescription>Roles creados por tu organización</CardDescription>
+            <CardDescription>{t('roles.subtitle')}</CardDescription>
           </CardHeader>
           <CardContent>
             {roles.length === 0 ? (
               <div className="text-center py-12 text-slate-500 dark:text-slate-400">
                 <Shield className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-                <p className="font-medium">No hay roles personalizados</p>
-                <p className="text-sm">Crea tu primer rol personalizado para asignar permisos específicos</p>
+                <p className="font-medium">{t('roles.noCustomRoles')}</p>
+                <p className="text-sm">{t('roles.createFirst')}</p>
                 <Button 
                   className="mt-4"
                   onClick={() => { resetForm(); setShowCreateModal(true); }}
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Crear Primer Rol
+                  {t('roles.createRole')}
                 </Button>
               </div>
             ) : (
@@ -377,10 +377,10 @@ export default function RolesPage() {
                         </div>
                         <div>
                           <h3 className="font-semibold text-slate-800 dark:text-slate-100">{role.name}</h3>
-                          <p className="text-sm text-slate-500 dark:text-slate-400">{role.description || 'Sin descripción'}</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400">{role.description || t('common.noDescription')}</p>
                         </div>
                         <Badge className={role.is_active !== false ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}>
-                          {role.is_active !== false ? 'Activo' : 'Inactivo'}
+                          {role.is_active !== false ? t('common.active') : t('common.inactive')}
                         </Badge>
                       </div>
                       <div className="flex items-center gap-2">
