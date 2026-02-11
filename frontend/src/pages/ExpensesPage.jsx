@@ -203,7 +203,7 @@ export default function ExpensesPage() {
 
   const handleCreateRequest = async () => {
     if (!formData.title || !formData.description || !formData.start_date || !formData.end_date || !formData.estimated_budget) {
-      toast.error("Complete todos los campos obligatorios");
+      toast.error(t("expenses.messages.fillRequired"));
       return;
     }
     
@@ -219,13 +219,13 @@ export default function ExpensesPage() {
         withCredentials: true
       });
       
-      toast.success("Solicitud creada exitosamente");
+      toast.success(t("expenses.messages.created"));
       setShowNewRequest(false);
       resetForm();
       fetchData();
     } catch (error) {
       console.error("Error creating request:", error);
-      toast.error(error.response?.data?.detail || "Error al crear la solicitud");
+      toast.error(error.response?.data?.detail || t("expenses.messages.errorCreate"));
     }
   };
 
