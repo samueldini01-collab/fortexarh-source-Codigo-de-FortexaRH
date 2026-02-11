@@ -30,6 +30,8 @@
     "amount": "Monto",
     "total": "Total",
     "subtotal": "Subtotal",
+    "bank": "Banco",
+    "accountNumber": "Número de Cuenta",
     "noData": "No hay datos disponibles",
     "error": "Error",
     "success": "Éxito",
