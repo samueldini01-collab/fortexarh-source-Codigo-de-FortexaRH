@@ -150,7 +150,7 @@ export default function ReportsAdvancedPage() {
 
   if (loading) {
     return (
-      <DashboardLayout title="Reportes Avanzados">
+      <DashboardLayout title={t('reportsAdvanced.title')}>
         <div className="flex items-center justify-center h-64">
           <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
         </div>
@@ -159,19 +159,19 @@ export default function ReportsAdvancedPage() {
   }
 
   return (
-    <DashboardLayout title="Reportes Avanzados">
+    <DashboardLayout title={t('reportsAdvanced.title')}>
       <div className="space-y-6" data-testid="reports-advanced-page">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Reportes Avanzados</h1>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{t('reportsAdvanced.title')}</h1>
             <p className="text-slate-600 dark:text-slate-400 mt-1">
-              Genera reportes PDF profesionales de nómina, asistencia y evaluaciones
+              {t('reportsAdvanced.subtitle')}
             </p>
           </div>
           <Button variant="outline" onClick={fetchReportOptions}>
             <RefreshCw className="w-4 h-4 mr-2" />
-            Actualizar
+            {t('reportsAdvanced.refresh')}
           </Button>
         </div>
 
@@ -180,15 +180,15 @@ export default function ReportsAdvancedPage() {
           <TabsList className="grid grid-cols-3 w-full max-w-lg">
             <TabsTrigger value="payroll" className="flex items-center gap-2">
               <DollarSign className="w-4 h-4" />
-              Nómina
+              {t('reportsAdvanced.payroll')}
             </TabsTrigger>
             <TabsTrigger value="attendance" className="flex items-center gap-2">
               <Clock className="w-4 h-4" />
-              Asistencia
+              {t('reportsAdvanced.attendance')}
             </TabsTrigger>
             <TabsTrigger value="evaluations" className="flex items-center gap-2">
               <Target className="w-4 h-4" />
-              Evaluaciones
+              {t('reportsAdvanced.evaluations')}
             </TabsTrigger>
           </TabsList>
 
@@ -198,18 +198,18 @@ export default function ReportsAdvancedPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <DollarSign className="w-5 h-5 text-emerald-500" />
-                  Reporte de Nómina Detallado
+                  {t('reportsAdvanced.payrollReport.title')}
                 </CardTitle>
                 <CardDescription>
-                  PDF con desglose completo por empleado, deducciones (SFS, AFP, ISR), bonificaciones y totales
+                  {t('reportsAdvanced.payrollReport.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Período de Nómina</Label>
+                  <Label>{t('reportsAdvanced.payrollReport.periodLabel')}</Label>
                   <Select value={payrollPeriod} onValueChange={setPayrollPeriod}>
                     <SelectTrigger data-testid="payroll-period-select">
-                      <SelectValue placeholder="Selecciona un período" />
+                      <SelectValue placeholder={t('reportsAdvanced.payrollReport.selectPeriod')} />
                     </SelectTrigger>
                     <SelectContent>
                       {reportOptions?.filters?.payroll_periods?.map((period) => (
@@ -227,13 +227,13 @@ export default function ReportsAdvancedPage() {
                 {payrollPeriod && (
                   <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
                     <p className="text-sm text-slate-600 dark:text-slate-400">
-                      El reporte incluirá:
+                      {t('reportsAdvanced.payrollReport.includes')}
                     </p>
                     <ul className="mt-2 text-sm text-slate-500 space-y-1">
-                      <li>• Resumen de totales (bruto, deducciones, neto)</li>
-                      <li>• Detalle por empleado con todas las deducciones</li>
-                      <li>• Horas extras, bonificaciones y comisiones</li>
-                      <li>• Descuentos de préstamos activos</li>
+                      <li>• {t('reportsAdvanced.payrollReport.item1')}</li>
+                      <li>• {t('reportsAdvanced.payrollReport.item2')}</li>
+                      <li>• {t('reportsAdvanced.payrollReport.item3')}</li>
+                      <li>• {t('reportsAdvanced.payrollReport.item4')}</li>
                     </ul>
                   </div>
                 )}
