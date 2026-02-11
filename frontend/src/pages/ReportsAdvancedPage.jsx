@@ -79,7 +79,7 @@ export default function ReportsAdvancedPage() {
       switch (reportType) {
         case "payroll":
           if (!payrollPeriod) {
-            toast.error("Selecciona un período de nómina");
+            toast.error(t('reportsAdvanced.payrollReport.selectPeriodError'));
             return;
           }
           url = `${API}/reports-advanced/payroll/${payrollPeriod}/pdf`;
