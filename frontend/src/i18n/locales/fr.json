@@ -132,6 +132,88 @@
       "administration": "Administration"
     }
   },
+  "checkout": {
+    "header": {
+      "backToPlans": "Retour aux plans"
+    },
+    "title": "Complétez votre Achat",
+    "subtitle": "Configurez votre plan et procédez au paiement sécurisé",
+    "planSummary": "Résumé du Plan",
+    "mostPopular": "Le Plus Populaire",
+    "employeeCount": {
+      "title": "Nombre d'Employés",
+      "description": "Combien d'employés aurez-vous dans votre entreprise?",
+      "noLimit": "Pas de limite d'employés",
+      "maxInPlan": "Maximum {{max}} employés dans ce plan"
+    },
+    "pricing": {
+      "baseMonthly": "Base mensuelle",
+      "perEmployee": "Par employé"
+    },
+    "paymentSummary": {
+      "title": "Résumé du Paiement",
+      "plan": "Plan {{name}}",
+      "employees": "{{count}} employés × {{price}}",
+      "totalMonthly": "Total mensuel"
+    },
+    "buttons": {
+      "proceedToPayment": "Procéder au Paiement",
+      "processing": "Traitement..."
+    },
+    "footer": {
+      "securePayment": "Paiement sécurisé traité par Stripe. Après le paiement, vous pourrez créer votre compte.",
+      "tryFirst": "Préférez-vous essayer d'abord?",
+      "freeTrial": "Essai gratuit pendant 5 jours"
+    },
+    "errors": {
+      "paymentError": "Erreur lors du démarrage du processus de paiement",
+      "processError": "Erreur lors du traitement du paiement"
+    },
+    "plans": {
+      "basic": {
+        "name": "FortexaRH Basique",
+        "features": {
+          "employees": "Jusqu'à 50 employés",
+          "users": "3 utilisateurs inclus",
+          "management": "Gestion des employés",
+          "payroll": "Paie de base",
+          "attendance": "Présences et vacances",
+          "calculator": "Calculateur de paie",
+          "reports": "Rapports de base",
+          "export": "Export Excel/CSV",
+          "support": "Support par email"
+        }
+      },
+      "pro": {
+        "name": "FortexaRH Pro",
+        "features": {
+          "employees": "Jusqu'à 200 employés",
+          "users": "5 utilisateurs inclus",
+          "allBasic": "Tout du plan Basique",
+          "evaluations": "Évaluations de performance",
+          "recruitment": "Module de recrutement",
+          "orgChart": "Organigramme intuitif",
+          "reports": "Rapports avancés",
+          "quickbooks": "Intégration QuickBooks",
+          "support": "Support prioritaire"
+        }
+      },
+      "enterprise": {
+        "name": "FortexaRH Enterprise",
+        "features": {
+          "employees": "Employés illimités",
+          "users": "7 utilisateurs inclus",
+          "allPro": "Tout du plan Pro",
+          "customRoles": "Rôles personnalisés",
+          "multiAdmin": "Plusieurs administrateurs",
+          "api": "API personnalisée",
+          "integrations": "Intégration SAP/Oracle",
+          "support247": "Support 24/7",
+          "manager": "Gestionnaire de compte dédié"
+        }
+      }
+    }
+  },
   "landing": {
     "hero": {
       "title": "Système RH et Paie pour la République Dominicaine",
