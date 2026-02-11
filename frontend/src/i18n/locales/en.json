@@ -2328,7 +2328,52 @@
       "clockedIn": "Clocked in successfully",
       "clockedOut": "Clocked out successfully",
       "outsideZone": "You are outside the allowed zone",
-      "errorLocation": "Error getting location"
+      "errorLocation": "Error getting location",
+      "noMarksToday": "No clock-ins today",
+      "waitingForGps": "Waiting for GPS location...",
+      "noInternet": "No internet connection",
+      "markOutsideZone": "Clock-in outside zone - pending approval",
+      "errorMarkAttendance": "Error clocking attendance",
+      "cameraAccessDenied": "Could not access camera"
+    },
+    "mobile": {
+      "greeting": {
+        "morning": "Good morning",
+        "afternoon": "Good afternoon",
+        "evening": "Good evening"
+      },
+      "online": "Online",
+      "offline": "Offline",
+      "currentLocation": "Current Location",
+      "gpsActive": "GPS Active",
+      "accuracy": "Accuracy",
+      "retry": "Retry",
+      "gettingLocation": "Getting location...",
+      "inside": "Inside",
+      "selfieVerification": "Verification Selfie",
+      "takePhoto": "Take Photo",
+      "cancel": "Cancel",
+      "photoCaptured": "Photo captured",
+      "takeAnother": "Take another photo",
+      "markEntry": "Clock In",
+      "markExit": "Clock Out",
+      "entryMarked": "Entry Clocked",
+      "exitMarked": "Exit Clocked",
+      "confirmEntry": "Confirm Entry",
+      "confirmExit": "Confirm Exit",
+      "registeringMark": "Registering clock-in...",
+      "todayMarks": "Today's Clock-ins",
+      "entry": "Entry",
+      "exit": "Exit",
+      "authorizedLocations": "Authorized Locations",
+      "radius": "Radius",
+      "locationErrors": {
+        "notSupported": "Geolocation not supported in this browser",
+        "permissionDenied": "Location permission denied. Please enable it in settings.",
+        "positionUnavailable": "Location information unavailable.",
+        "timeout": "Timeout reached. Try again.",
+        "unknown": "Unknown error getting location."
+      }
     }
   },
   "metrics": {
