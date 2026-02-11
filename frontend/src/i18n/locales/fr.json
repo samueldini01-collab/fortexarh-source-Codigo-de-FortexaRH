@@ -1723,6 +1723,313 @@
       "exportError": "Erreur d'exportation"
     }
   },
+  "support": {
+    "title": "Support",
+    "subtitle": "Comment pouvons-nous vous aider?",
+    "newTicket": "Nouveau Ticket",
+    "myTickets": "Mes Tickets",
+    "faq": "FAQ",
+    "form": {
+      "subject": "Sujet",
+      "subjectPlaceholder": "Décrivez brièvement votre problème",
+      "category": "Catégorie",
+      "selectCategory": "Sélectionner catégorie",
+      "categories": {
+        "technical": "Problème technique",
+        "billing": "Facturation",
+        "feature": "Demande de fonctionnalité",
+        "other": "Autre"
+      },
+      "priority": "Priorité",
+      "priorities": {
+        "low": "Basse",
+        "medium": "Moyenne",
+        "high": "Haute",
+        "urgent": "Urgente"
+      },
+      "description": "Description",
+      "descPlaceholder": "Décrivez votre problème en détail...",
+      "attachments": "Pièces Jointes",
+      "submit": "Envoyer Ticket",
+      "cancel": "Annuler"
+    },
+    "ticket": {
+      "number": "Ticket #",
+      "status": "Statut",
+      "created": "Créé",
+      "updated": "Mis à jour",
+      "statuses": {
+        "open": "Ouvert",
+        "inProgress": "En Cours",
+        "resolved": "Résolu",
+        "closed": "Fermé"
+      }
+    },
+    "messages": {
+      "ticketCreated": "Ticket créé avec succès",
+      "errorCreating": "Erreur lors de la création du ticket",
+      "noTickets": "Vous n'avez pas de tickets de support"
+    }
+  },
+  "users": {
+    "title": "Gestion des Utilisateurs",
+    "subtitle": "Gérer les utilisateurs du système",
+    "addUser": "Nouvel Utilisateur",
+    "table": {
+      "name": "Nom",
+      "email": "Email",
+      "role": "Rôle",
+      "status": "Statut",
+      "lastLogin": "Dernière Connexion",
+      "actions": "Actions"
+    },
+    "form": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Email",
+      "password": "Mot de Passe",
+      "confirmPassword": "Confirmer Mot de Passe",
+      "role": "Rôle",
+      "selectRole": "Sélectionner rôle",
+      "status": "Statut",
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "roles": {
+      "admin": "Administrateur",
+      "manager": "Gestionnaire",
+      "hr": "Ressources Humaines",
+      "accountant": "Comptable",
+      "employee": "Employé",
+      "viewer": "Lecture Seule"
+    },
+    "messages": {
+      "userCreated": "Utilisateur créé avec succès",
+      "userUpdated": "Utilisateur mis à jour",
+      "userDeleted": "Utilisateur supprimé",
+      "errorCreating": "Erreur lors de la création",
+      "errorUpdating": "Erreur de mise à jour",
+      "errorDeleting": "Erreur de suppression",
+      "confirmDelete": "Supprimer cet utilisateur?",
+      "noUsers": "Aucun utilisateur enregistré"
+    }
+  },
+  "roles": {
+    "title": "Rôles et Permissions",
+    "subtitle": "Configurer les niveaux d'accès du système",
+    "newRole": "Nouveau Rôle",
+    "table": {
+      "name": "Nom du Rôle",
+      "description": "Description",
+      "users": "Utilisateurs",
+      "permissions": "Permissions",
+      "actions": "Actions"
+    },
+    "form": {
+      "name": "Nom du Rôle",
+      "namePlaceholder": "Ex: Superviseur de Paie",
+      "description": "Description",
+      "descPlaceholder": "Décrivez les responsabilités de ce rôle...",
+      "permissions": "Permissions",
+      "selectAll": "Tout sélectionner",
+      "deselectAll": "Tout désélectionner"
+    },
+    "permissions": {
+      "view": "Voir",
+      "create": "Créer",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "export": "Exporter",
+      "approve": "Approuver"
+    },
+    "modules": {
+      "employees": "Employés",
+      "payroll": "Paie",
+      "attendance": "Présence",
+      "vacations": "Congés",
+      "reports": "Rapports",
+      "accounting": "Comptabilité",
+      "settings": "Paramètres"
+    },
+    "messages": {
+      "roleCreated": "Rôle créé avec succès",
+      "roleUpdated": "Rôle mis à jour",
+      "roleDeleted": "Rôle supprimé",
+      "errorCreating": "Erreur lors de la création",
+      "noRoles": "Aucun rôle configuré"
+    }
+  },
+  "partner": {
+    "title": "Tableau de Bord Partner",
+    "welcome": "Bienvenue, Partner",
+    "stats": {
+      "activeClients": "Clients Actifs",
+      "pendingClients": "En Attente",
+      "totalCommissions": "Commissions Totales",
+      "availableBalance": "Solde Disponible"
+    },
+    "clients": {
+      "title": "Mes Clients",
+      "addClient": "Ajouter Client",
+      "table": {
+        "company": "Entreprise",
+        "email": "Email",
+        "plan": "Plan",
+        "status": "Statut",
+        "since": "Client Depuis",
+        "actions": "Actions"
+      },
+      "statuses": {
+        "active": "Actif",
+        "pending": "En Attente",
+        "invited": "Invité",
+        "trial": "Essai"
+      }
+    },
+    "commissions": {
+      "title": "Commissions",
+      "withdraw": "Retirer Fonds",
+      "history": "Historique",
+      "table": {
+        "client": "Client",
+        "amount": "Montant",
+        "type": "Type",
+        "date": "Date",
+        "status": "Statut"
+      }
+    },
+    "form": {
+      "companyName": "Nom de l'Entreprise",
+      "contactEmail": "Email de Contact",
+      "plan": "Plan Suggéré",
+      "notes": "Notes",
+      "sendInvite": "Envoyer Invitation",
+      "resendInvite": "Renvoyer Invitation"
+    },
+    "messages": {
+      "clientAdded": "Client ajouté avec succès",
+      "inviteSent": "Invitation envoyée",
+      "inviteResent": "Invitation renvoyée",
+      "withdrawRequested": "Retrait demandé",
+      "errorAddingClient": "Erreur lors de l'ajout du client",
+      "noClients": "Vous n'avez pas de clients enregistrés"
+    }
+  },
+  "employeePortal": {
+    "title": "Portail Employé",
+    "welcome": "Bienvenue",
+    "tabs": {
+      "overview": "Aperçu",
+      "payslips": "Bulletins de Paie",
+      "attendance": "Ma Présence",
+      "requests": "Mes Demandes",
+      "profile": "Mon Profil"
+    },
+    "overview": {
+      "nextPayday": "Prochain Jour de Paie",
+      "vacationDays": "Jours de Congés",
+      "available": "Disponibles",
+      "used": "Utilisés",
+      "pending": "En Attente"
+    },
+    "payslips": {
+      "title": "Bulletins de Paie",
+      "download": "Télécharger",
+      "view": "Voir",
+      "period": "Période",
+      "grossSalary": "Salaire Brut",
+      "deductions": "Déductions",
+      "netSalary": "Salaire Net"
+    },
+    "attendance": {
+      "clockIn": "Pointer Entrée",
+      "clockOut": "Pointer Sortie",
+      "currentStatus": "Statut Actuel",
+      "working": "En Travail",
+      "notWorking": "Pas en travail",
+      "todayHours": "Heures Aujourd'hui",
+      "weekHours": "Heures Cette Semaine"
+    },
+    "requests": {
+      "newRequest": "Nouvelle Demande",
+      "vacationRequest": "Demande de Congés",
+      "leaveRequest": "Demande d'Absence",
+      "loanRequest": "Demande de Prêt",
+      "status": {
+        "pending": "En Attente",
+        "approved": "Approuvée",
+        "rejected": "Rejetée"
+      }
+    },
+    "profile": {
+      "personalInfo": "Informations Personnelles",
+      "changePassword": "Changer Mot de Passe",
+      "currentPassword": "Mot de Passe Actuel",
+      "newPassword": "Nouveau Mot de Passe",
+      "confirmNewPassword": "Confirmer Nouveau Mot de Passe"
+    },
+    "messages": {
+      "clockedIn": "Entrée enregistrée",
+      "clockedOut": "Sortie enregistrée",
+      "requestSubmitted": "Demande soumise",
+      "passwordChanged": "Mot de passe mis à jour",
+      "errorClockin": "Erreur d'enregistrement d'entrée"
+    }
+  },
+  "geoAttendance": {
+    "title": "Présence Géolocalisée",
+    "subtitle": "Contrôle de présence par GPS",
+    "tabs": {
+      "live": "En Direct",
+      "records": "Enregistrements",
+      "locations": "Emplacements",
+      "reports": "Rapports"
+    },
+    "live": {
+      "title": "Employés en Temps Réel",
+      "online": "En Ligne",
+      "offline": "Hors Ligne",
+      "total": "Total"
+    },
+    "clockIn": {
+      "title": "Pointer Présence",
+      "detectingLocation": "Détection de l'emplacement...",
+      "locationDetected": "Emplacement détecté",
+      "takePhoto": "Prendre Photo",
+      "clockIn": "Pointer Entrée",
+      "clockOut": "Pointer Sortie",
+      "outsideZone": "Hors zone autorisée",
+      "insideZone": "Dans zone autorisée"
+    },
+    "records": {
+      "employee": "Employé",
+      "date": "Date",
+      "clockIn": "Entrée",
+      "clockOut": "Sortie",
+      "location": "Emplacement",
+      "photo": "Photo",
+      "status": "Statut",
+      "verified": "Vérifié",
+      "unverified": "Non vérifié",
+      "suspicious": "Suspect"
+    },
+    "locations": {
+      "title": "Emplacements Autorisés",
+      "addLocation": "Nouvel Emplacement",
+      "name": "Nom",
+      "address": "Adresse",
+      "radius": "Rayon (mètres)",
+      "employees": "Employés Assignés"
+    },
+    "messages": {
+      "locationRequired": "Accès à l'emplacement requis",
+      "photoRequired": "Photo de vérification requise",
+      "clockedIn": "Entrée enregistrée avec succès",
+      "clockedOut": "Sortie enregistrée avec succès",
+      "outsideZone": "Vous êtes hors de la zone autorisée",
+      "errorLocation": "Erreur d'obtention de l'emplacement"
+    }
+  },
   "metrics": {
     "title": "Métriques et KPIs",
     "refresh": "Actualiser",
