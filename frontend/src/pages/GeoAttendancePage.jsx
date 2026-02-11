@@ -175,7 +175,7 @@ export default function GeoAttendancePage() {
       }
       setShowCamera(true);
     } catch (error) {
-      toast.error("No se pudo acceder a la cámara");
+      toast.error(t("geoAttendance.messages.cameraAccessDenied"));
     }
   };
 
