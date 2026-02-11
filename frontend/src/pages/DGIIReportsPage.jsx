@@ -404,19 +404,19 @@ export default function DGIIReportsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="text-sm font-medium text-slate-700 mb-2 block">
-                    Período de Nómina
+                    {t('dgiiReports.payrollPeriod')}
                   </label>
                   <Select 
                     value={selectedPeriod || ""} 
                     onValueChange={setSelectedPeriod}
                   >
                     <SelectTrigger data-testid="period-selector">
-                      <SelectValue placeholder="Seleccione un período" />
+                      <SelectValue placeholder={t('dgiiReports.selectPeriodPlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
                       {periods.map(period => (
                         <SelectItem key={period.period_id} value={period.period_id}>
-                          {getMonthName(period.month)} {period.year} - {period.name || 'Sin nombre'}
+                          {getMonthName(period.month)} {period.year} - {period.name || t('dgiiReports.noName')}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -425,24 +425,24 @@ export default function DGIIReportsPage() {
 
                 {periodDetails && (
                   <div className="bg-slate-50 rounded-xl p-4">
-                    <h4 className="font-medium text-slate-800 mb-3">Resumen del Período</h4>
+                    <h4 className="font-medium text-slate-800 mb-3">{t('dgiiReports.periodSummary')}</h4>
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
-                        <span className="text-slate-500 dark:text-slate-400">Estado:</span>
+                        <span className="text-slate-500 dark:text-slate-400">{t('dgiiReports.status')}:</span>
                         <span className="ml-2">{getStatusBadge(periodDetails.status)}</span>
                       </div>
                       <div>
-                        <span className="text-slate-500 dark:text-slate-400">Empleados:</span>
+                        <span className="text-slate-500 dark:text-slate-400">{t('dgiiReports.employees')}:</span>
                         <span className="ml-2 font-medium">{periodDetails.employee_count || 0}</span>
                       </div>
                       <div>
-                        <span className="text-slate-500 dark:text-slate-400">Total Bruto:</span>
+                        <span className="text-slate-500 dark:text-slate-400">{t('dgiiReports.totalGross')}:</span>
                         <span className="ml-2 font-medium text-emerald-600 dark:text-emerald-400">
                           ${(periodDetails.total_gross || 0).toLocaleString('es-DO', { minimumFractionDigits: 2 })}
                         </span>
                       </div>
                       <div>
-                        <span className="text-slate-500 dark:text-slate-400">ISR Total:</span>
+                        <span className="text-slate-500 dark:text-slate-400">{t('dgiiReports.totalISR')}:</span>
                         <span className="ml-2 font-medium text-blue-600 dark:text-blue-400">
                           ${(periodDetails.total_isr || 0).toLocaleString('es-DO', { minimumFractionDigits: 2 })}
                         </span>
