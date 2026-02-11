@@ -658,39 +658,39 @@ export default function DGIIReportsPage() {
         {/* Instructions */}
         <Card>
           <CardHeader>
-            <CardTitle>Instrucciones de Uso</CardTitle>
+            <CardTitle>{t('dgiiReports.instructions')}</CardTitle>
           </CardHeader>
           <CardContent className="prose prose-sm max-w-none">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <h4 className="font-semibold text-slate-800 mb-2">Formularios DGII (IR-3, IR-4)</h4>
+                <h4 className="font-semibold text-slate-800 mb-2">{t('dgiiReports.dgiiFormularies')}</h4>
                 <ol className="list-decimal list-inside text-sm text-slate-600 space-y-2">
-                  <li>Seleccione el período de nómina cerrado</li>
-                  <li>Descargue primero el <strong>IR-4</strong> para revisar el detalle</li>
-                  <li>Verifique que los datos sean correctos</li>
-                  <li>Descargue el <strong>IR-3</strong> con el resumen</li>
-                  <li>Ingrese a la Oficina Virtual DGII (dgii.gov.do)</li>
-                  <li>Complete la declaración con los datos del reporte</li>
+                  <li>{t('dgiiReports.dgiiStep1')}</li>
+                  <li>{t('dgiiReports.dgiiStep2')}</li>
+                  <li>{t('dgiiReports.dgiiStep3')}</li>
+                  <li>{t('dgiiReports.dgiiStep4')}</li>
+                  <li>{t('dgiiReports.dgiiStep5')}</li>
+                  <li>{t('dgiiReports.dgiiStep6')}</li>
                 </ol>
               </div>
               <div>
-                <h4 className="font-semibold text-slate-800 mb-2">Archivos TSS</h4>
+                <h4 className="font-semibold text-slate-800 mb-2">{t('dgiiReports.tssFiles')}</h4>
                 <ol className="list-decimal list-inside text-sm text-slate-600 space-y-2">
-                  <li>Descargue el archivo de <strong>Autodeterminación</strong></li>
-                  <li>Si hubo cambios de personal, descargue <strong>Novedades</strong></li>
-                  <li>Valide los archivos en el portal TSS (tss.gob.do)</li>
-                  <li>Corrija cualquier error indicado</li>
-                  <li>Envíe los archivos antes del día 3 de cada mes</li>
+                  <li>{t('dgiiReports.tssStep1')}</li>
+                  <li>{t('dgiiReports.tssStep2')}</li>
+                  <li>{t('dgiiReports.tssStep3')}</li>
+                  <li>{t('dgiiReports.tssStep4')}</li>
+                  <li>{t('dgiiReports.tssStep5')}</li>
                 </ol>
               </div>
               <div>
-                <h4 className="font-semibold text-slate-800 mb-2">Declaración Anual IR-13</h4>
+                <h4 className="font-semibold text-slate-800 mb-2">{t('dgiiReports.annualIR13')}</h4>
                 <ol className="list-decimal list-inside text-sm text-slate-600 space-y-2">
-                  <li>Seleccione el año fiscal en la pestaña Reporte Anual</li>
-                  <li>Descargue el <strong>IR-13</strong></li>
-                  <li>Revise el detalle por empleado y resumen mensual</li>
-                  <li>Complete la declaración en la Oficina Virtual</li>
-                  <li>Presente antes del 28 de febrero del año siguiente</li>
+                  <li>{t('dgiiReports.ir13Step1')}</li>
+                  <li>{t('dgiiReports.ir13Step2')}</li>
+                  <li>{t('dgiiReports.ir13Step3')}</li>
+                  <li>{t('dgiiReports.ir13Step4')}</li>
+                  <li>{t('dgiiReports.ir13Step5')}</li>
                 </ol>
               </div>
             </div>
