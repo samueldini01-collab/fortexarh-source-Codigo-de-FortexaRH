@@ -450,9 +450,9 @@ export default function RolesPage() {
         <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Crear Nuevo Rol</DialogTitle>
+              <DialogTitle>{t('roles.createRole')}</DialogTitle>
               <DialogDescription>
-                Define un rol personalizado con permisos específicos para cada módulo
+                {t('roles.subtitle')}
               </DialogDescription>
             </DialogHeader>
             
@@ -460,16 +460,16 @@ export default function RolesPage() {
               {/* Basic Info */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2 md:col-span-1">
-                  <Label>Nombre del Rol *</Label>
+                  <Label>{t('roles.form.name')} *</Label>
                   <Input 
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Ej: Supervisor de Nómina"
+                    placeholder={t('roles.form.namePlaceholder')}
                     data-testid="role-name-input"
                   />
                 </div>
                 <div className="col-span-2 md:col-span-1">
-                  <Label>Color</Label>
+                  <Label>{t('roles.colors')}</Label>
                   <div className="flex gap-2 mt-2">
                     {ROLE_COLORS.map(color => (
                       <button
@@ -487,19 +487,19 @@ export default function RolesPage() {
               </div>
               
               <div>
-                <Label>Descripción</Label>
+                <Label>{t('roles.form.description')}</Label>
                 <Textarea 
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Describe las responsabilidades de este rol..."
+                  placeholder={t('roles.form.descPlaceholder')}
                   rows={2}
                 />
               </div>
 
               {/* Modules & Permissions */}
               <div>
-                <Label className="text-base font-semibold">Módulos y Permisos</Label>
-                <p className="text-sm text-slate-500 mb-4">Selecciona los módulos y permisos específicos que tendrá este rol</p>
+                <Label className="text-base font-semibold">{t('roles.modulePermissions')}</Label>
+                <p className="text-sm text-slate-500 mb-4">{t('roles.accessModules')}</p>
                 
                 <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
                   {modules.map(mod => {
@@ -524,7 +524,7 @@ export default function RolesPage() {
                           </div>
                           {formData.modules.includes(mod.id) && (
                             <Badge variant="outline" className="text-xs">
-                              {(formData.permissions[mod.id] || []).length} de {modulePermissions.length} permisos
+                              {(formData.permissions[mod.id] || []).length}/{modulePermissions.length}
                             </Badge>
                           )}
                         </div>
@@ -532,7 +532,7 @@ export default function RolesPage() {
                         {formData.modules.includes(mod.id) && (
                           <div className="mt-3 pt-3 border-t">
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-xs text-slate-500">Permisos disponibles para este módulo:</span>
+                              <span className="text-xs text-slate-500">{t('roles.form.permissions')}:</span>
                               <button 
                                 type="button"
                                 className="text-xs text-blue-600 hover:text-blue-800"
@@ -546,7 +546,7 @@ export default function RolesPage() {
                                   }));
                                 }}
                               >
-                                Seleccionar todos
+                                {t('roles.form.selectAll')}
                               </button>
                             </div>
                             <div className="flex flex-wrap gap-2">
