@@ -33,6 +33,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Briefcase, Users, MapPin, Clock, ChevronRight, Search, Download, UserPlus, UserCheck, UserX, Filter } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 const stages = [
@@ -45,6 +46,7 @@ const stages = [
 ];
 
 export default function RecruitmentPage() {
+  const { t } = useTranslation();
   const [jobs, setJobs] = useState([]);
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
