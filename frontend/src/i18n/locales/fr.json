@@ -544,6 +544,46 @@
     },
     "paymentSuccess": "Paiement réussi! Votre abonnement a été activé."
   },
+  "pricing": {
+    "planNames": {
+      "basic": "FortexaRH Basic",
+      "pro": "FortexaRH Pro",
+      "enterprise": "FortexaRH Enterprise"
+    },
+    "features": {
+      "upTo50": "Jusqu'à 50 employés",
+      "upTo200": "Jusqu'à 200 employés",
+      "users3": "3 utilisateurs inclus",
+      "users5": "5 utilisateurs inclus",
+      "users7": "7 utilisateurs inclus",
+      "employeeManagement": "Gestion des employés",
+      "basicPayroll": "Paie de base",
+      "attendanceVacations": "Présences et congés",
+      "payrollCalculator": "Calculateur de paie",
+      "loansModule": "Module de prêts",
+      "basicReports": "Rapports de base",
+      "excelExport": "Export Excel/CSV",
+      "emailSupport": "Support par email",
+      "erpIntegration": "Intégration FortexaERP",
+      "allBasic": "Tout du plan Basic",
+      "allPro": "Tout du plan Pro",
+      "evaluations": "Évaluations de performance",
+      "recruitment": "Module de recrutement",
+      "employeePortal": "Portail employé self-service",
+      "orgChart": "Organigramme intuitif",
+      "advancedReports": "Rapports avancés",
+      "quickbooks": "Intégration QuickBooks",
+      "prioritySupport": "Support prioritaire",
+      "unlimitedEmployees": "Employés illimités",
+      "customRoles": "Rôles personnalisés",
+      "multiAdmin": "Administrateurs multiples",
+      "customAPI": "API personnalisée",
+      "advancedWorkflows": "Flux de travail avancés",
+      "sapOracleIntegration": "Intégration SAP/Oracle/Dynamics",
+      "support247": "Support 24/7",
+      "dedicatedManager": "Gestionnaire de compte dédié"
+    }
+  },
   "employees": {
     "title": "Gestion des Employés",
     "addEmployee": "Ajouter un Employé",
