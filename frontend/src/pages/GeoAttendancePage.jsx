@@ -566,7 +566,7 @@ export default function GeoAttendancePage() {
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2 text-white">
                 <MapPin className="w-5 h-5 text-blue-400" />
-                Ubicaciones Autorizadas
+                {t("geoAttendance.mobile.authorizedLocations")}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -582,7 +582,7 @@ export default function GeoAttendancePage() {
                       </div>
                       <div>
                         <p className="font-medium text-white text-sm">{loc.name}</p>
-                        <p className="text-xs text-slate-400">Radio: {loc.radius}m</p>
+                        <p className="text-xs text-slate-400">{t("geoAttendance.mobile.radius")}: {loc.radius}m</p>
                       </div>
                     </div>
                     <ChevronRight className="w-5 h-5 text-slate-500" />
