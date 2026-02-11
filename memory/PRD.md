@@ -4,6 +4,13 @@
 
 ## ✅ Completado Hoy (Sesión Actual - Continuación)
 
+### 🐛 Bug Fix Crítico: Navegación a Suscripción (P0 - CORREGIDO)
+- **Problema:** Al hacer clic en "Suscripción" en el menú del usuario, este era desconectado y redirigido a la landing page
+- **Causa raíz:** El enlace navegaba a `/billing` que no existe como ruta. La ruta correcta es `/subscriptions`
+- **Solución:** Corregidas 2 instancias en `DashboardLayout.jsx` (líneas 821 y 910) cambiando `/billing` a `/subscriptions`
+- **Archivo modificado:** `/app/frontend/src/components/DashboardLayout.jsx`
+- **Verificado:** Screenshots confirman navegación correcta a página de suscripción sin logout
+
 ### 🌐 ExpensesPage.jsx (COMPLETADO)
 - Página de gastos y viáticos completamente traducida
 - Cards: Total Solicitado, Pendiente de Aprobación, Total Aprobado, Pendiente de Pago
