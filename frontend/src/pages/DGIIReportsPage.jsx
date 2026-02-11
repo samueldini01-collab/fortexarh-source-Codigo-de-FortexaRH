@@ -216,7 +216,7 @@ export default function DGIIReportsPage() {
       setDrillDown({ open: true, title, data, columns });
     } catch (error) {
       console.error("Error fetching report breakdown:", error);
-      toast.error("Error al cargar desglose");
+      toast.error(t('dgiiReports.errorLoadingBreakdown'));
       setDrillDown({ open: false, title: "", data: [], columns: [] });
     } finally {
       setDrillDownLoading(false);
