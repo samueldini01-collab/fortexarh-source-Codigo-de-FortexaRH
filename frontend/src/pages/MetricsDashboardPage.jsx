@@ -520,25 +520,25 @@ export default function MetricsDashboardPage() {
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600 dark:text-slate-300">Vacaciones pendientes</span>
+                  <span className="text-sm text-slate-600 dark:text-slate-300">{t('metrics.kpis.pendingVacations')}</span>
                   <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-                    {quickStats.pending_vacations || 0} solicitudes
+                    {quickStats.pending_vacations || 0} {t('metrics.kpis.requests')}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600 dark:text-slate-300">Evaluaciones este mes</span>
+                  <span className="text-sm text-slate-600 dark:text-slate-300">{t('metrics.kpis.evaluationsMonth')}</span>
                   <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
                     {quickStats.evaluations_this_month || 0}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600 dark:text-slate-300">Asistencia hoy</span>
+                  <span className="text-sm text-slate-600 dark:text-slate-300">{t('metrics.kpis.attendanceToday')}</span>
                   <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
                     {quickStats.attendance_rate || 0}%
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600 dark:text-slate-300">Nóminas pendientes</span>
+                  <span className="text-sm text-slate-600 dark:text-slate-300">{t('metrics.kpis.pendingPayrolls')}</span>
                   <Badge className={`${quickStats.pending_payrolls > 0 ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'}`}>
                     {quickStats.pending_payrolls || 0}
                   </Badge>
@@ -551,20 +551,20 @@ export default function MetricsDashboardPage() {
         {/* Monthly Comparison Table */}
         <Card data-testid="monthly-comparison-table">
           <CardHeader>
-            <CardTitle>Comparativa Mensual</CardTitle>
-            <CardDescription>Detalle de nómina por mes - {selectedYear} (click en fila para ver desglose)</CardDescription>
+            <CardTitle>{t('metrics.table.title')}</CardTitle>
+            <CardDescription>{t('metrics.table.description', { year: selectedYear })}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left py-3 px-4 font-medium text-slate-600 dark:text-slate-300">Mes</th>
-                    <th className="text-right py-3 px-4 font-medium text-slate-600 dark:text-slate-300">Bruto</th>
-                    <th className="text-right py-3 px-4 font-medium text-slate-600 dark:text-slate-300">Deducciones</th>
-                    <th className="text-right py-3 px-4 font-medium text-slate-600 dark:text-slate-300">Neto</th>
-                    <th className="text-right py-3 px-4 font-medium text-slate-600 dark:text-slate-300">Empleados</th>
-                    <th className="text-right py-3 px-4 font-medium text-slate-600 dark:text-slate-300">Costo/Emp</th>
+                    <th className="text-left py-3 px-4 font-medium text-slate-600 dark:text-slate-300">{t('metrics.table.month')}</th>
+                    <th className="text-right py-3 px-4 font-medium text-slate-600 dark:text-slate-300">{t('metrics.table.gross')}</th>
+                    <th className="text-right py-3 px-4 font-medium text-slate-600 dark:text-slate-300">{t('metrics.table.deductions')}</th>
+                    <th className="text-right py-3 px-4 font-medium text-slate-600 dark:text-slate-300">{t('metrics.table.net')}</th>
+                    <th className="text-right py-3 px-4 font-medium text-slate-600 dark:text-slate-300">{t('metrics.table.employees')}</th>
+                    <th className="text-right py-3 px-4 font-medium text-slate-600 dark:text-slate-300">{t('metrics.table.costPerEmp')}</th>
                     <th className="w-10"></th>
                   </tr>
                 </thead>
@@ -591,7 +591,7 @@ export default function MetricsDashboardPage() {
                 </tbody>
                 <tfoot>
                   <tr className="bg-slate-100 dark:bg-slate-800 font-semibold">
-                    <td className="py-3 px-4">TOTAL {selectedYear}</td>
+                    <td className="py-3 px-4">{t('common.total')} {selectedYear}</td>
                     <td className="py-3 px-4 text-right">{formatCurrency(payrollTrend.reduce((s, r) => s + r.gross, 0))}</td>
                     <td className="py-3 px-4 text-right text-red-600 dark:text-red-400">{formatCurrency(payrollTrend.reduce((s, r) => s + r.deductions, 0))}</td>
                     <td className="py-3 px-4 text-right text-emerald-600 dark:text-emerald-400">{formatCurrency(totalPaidThisYear)}</td>
