@@ -2270,14 +2270,19 @@
       "activeLoans": "Prêts Actifs",
       "pending": "en attente",
       "totalPaidYear": "Total Payé Cette Année",
-      "payrollsProcessed": "paies traitées"
+      "payrollsProcessed": "paies traitées",
+      "costPerEmployee": "Coût par Employé",
+      "monthlyAvg": "Moyenne mensuelle"
     },
     "charts": {
       "payrollEvolution": "Évolution de la Paie",
+      "payrollTrend": "Tendance de la Paie",
+      "payrollTrendDesc": "Évolution mensuelle des coûts (cliquez sur une barre pour voir le détail)",
       "employeesByDept": "Employés par Département",
       "hiresVsDepartures": "Embauches vs Départs",
       "salaryDistribution": "Distribution Salariale",
-      "departmentCosts": "Coût par Département",
+      "departmentCosts": "Coûts par Département",
+      "departmentCostsDesc": "Distribution des dépenses de paie (cliquez pour voir les employés)",
       "turnoverAnalysis": "Analyse de la Rotation",
       "hires": "Embauches",
       "departures": "Départs",

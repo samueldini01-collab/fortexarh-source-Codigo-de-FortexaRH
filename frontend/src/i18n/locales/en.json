@@ -2271,14 +2271,19 @@
       "activeLoans": "Active Loans",
       "pending": "pending",
       "totalPaidYear": "Total Paid This Year",
-      "payrollsProcessed": "payrolls processed"
+      "payrollsProcessed": "payrolls processed",
+      "costPerEmployee": "Cost per Employee",
+      "monthlyAvg": "Monthly average"
     },
     "charts": {
       "payrollEvolution": "Payroll Evolution",
+      "payrollTrend": "Payroll Trend",
+      "payrollTrendDesc": "Monthly payroll cost evolution (click bar for breakdown)",
       "employeesByDept": "Employees by Department",
       "hiresVsDepartures": "Hires vs Departures",
       "salaryDistribution": "Salary Distribution",
       "departmentCosts": "Cost by Department",
+      "departmentCostsDesc": "Payroll expense distribution (click bar to see employees)",
       "turnoverAnalysis": "Turnover Analysis",
       "hires": "Hires",
       "departures": "Departures",

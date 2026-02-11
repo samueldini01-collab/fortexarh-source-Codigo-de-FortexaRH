@@ -2270,14 +2270,19 @@
       "activeLoans": "Préstamos Activos",
       "pending": "pendiente",
       "totalPaidYear": "Total Pagado Este Año",
-      "payrollsProcessed": "nóminas procesadas"
+      "payrollsProcessed": "nóminas procesadas",
+      "costPerEmployee": "Costo por Empleado",
+      "monthlyAvg": "Promedio mensual"
     },
     "charts": {
       "payrollEvolution": "Evolución de Nómina",
+      "payrollTrend": "Tendencia de Nómina",
+      "payrollTrendDesc": "Evolución mensual de costos de nómina (click en barra para ver desglose)",
       "employeesByDept": "Empleados por Departamento",
       "hiresVsDepartures": "Contrataciones vs Salidas",
       "salaryDistribution": "Distribución Salarial",
-      "departmentCosts": "Costo por Departamento",
+      "departmentCosts": "Costos por Departamento",
+      "departmentCostsDesc": "Distribución del gasto de nómina (click en barra para ver empleados)",
       "turnoverAnalysis": "Análisis de Rotación",
       "hires": "Contrataciones",
       "departures": "Salidas",
