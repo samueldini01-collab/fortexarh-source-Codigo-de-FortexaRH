@@ -2376,7 +2376,52 @@
       "clockedIn": "Entrée enregistrée avec succès",
       "clockedOut": "Sortie enregistrée avec succès",
       "outsideZone": "Vous êtes hors de la zone autorisée",
-      "errorLocation": "Erreur d'obtention de l'emplacement"
+      "errorLocation": "Erreur d'obtention de l'emplacement",
+      "noMarksToday": "Aucun pointage aujourd'hui",
+      "waitingForGps": "En attente de la position GPS...",
+      "noInternet": "Pas de connexion internet",
+      "markOutsideZone": "Pointage hors zone - en attente d'approbation",
+      "errorMarkAttendance": "Erreur lors du pointage",
+      "cameraAccessDenied": "Impossible d'accéder à la caméra"
+    },
+    "mobile": {
+      "greeting": {
+        "morning": "Bonjour",
+        "afternoon": "Bon après-midi",
+        "evening": "Bonsoir"
+      },
+      "online": "En ligne",
+      "offline": "Hors ligne",
+      "currentLocation": "Position Actuelle",
+      "gpsActive": "GPS Actif",
+      "accuracy": "Précision",
+      "retry": "Réessayer",
+      "gettingLocation": "Obtention de la position...",
+      "inside": "À l'intérieur de",
+      "selfieVerification": "Selfie de Vérification",
+      "takePhoto": "Prendre une Photo",
+      "cancel": "Annuler",
+      "photoCaptured": "Photo capturée",
+      "takeAnother": "Prendre une autre photo",
+      "markEntry": "Pointer l'Entrée",
+      "markExit": "Pointer la Sortie",
+      "entryMarked": "Entrée Pointée",
+      "exitMarked": "Sortie Pointée",
+      "confirmEntry": "Confirmer l'Entrée",
+      "confirmExit": "Confirmer la Sortie",
+      "registeringMark": "Enregistrement du pointage...",
+      "todayMarks": "Pointages d'Aujourd'hui",
+      "entry": "Entrée",
+      "exit": "Sortie",
+      "authorizedLocations": "Emplacements Autorisés",
+      "radius": "Rayon",
+      "locationErrors": {
+        "notSupported": "Géolocalisation non supportée dans ce navigateur",
+        "permissionDenied": "Permission de localisation refusée. Veuillez l'activer dans les paramètres.",
+        "positionUnavailable": "Information de localisation non disponible.",
+        "timeout": "Délai d'attente dépassé. Réessayez.",
+        "unknown": "Erreur inconnue lors de l'obtention de la position."
+      }
     }
   },
   "metrics": {
