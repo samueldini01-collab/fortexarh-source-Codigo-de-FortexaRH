@@ -4,6 +4,14 @@
 
 ## ✅ Completado Hoy (Sesión Actual - Continuación)
 
+### 🌐 ExpensesPage.jsx (COMPLETADO)
+- Página de gastos y viáticos completamente traducida
+- Cards: Total Solicitado, Pendiente de Aprobación, Total Aprobado, Pendiente de Pago
+- Tabs: Mis Solicitudes, Aprobaciones, Todos
+- Formulario de nueva solicitud con todos los campos
+- Estados y tipos de gasto traducidos
+- **Verificado:** Screenshot confirma traducción correcta
+
 ### 🌐 PayrollPage.jsx (COMPLETADO)
 - Página de nómina completamente traducida
 - Cards: Pendientes, Aprobadas, Pagadas
@@ -11,10 +19,15 @@
 - Estados y acciones traducidas
 - **Verificado:** Screenshot confirma traducción correcta
 
+### 🌐 PayrollCalculatorPage.jsx (PARCIAL)
+- Título y descripciones principales traducidos
+- Mensajes de toast traducidos
+- Faltan algunos labels de formulario
+
 ### 🌐 Sección de Gastos (expenses) AGREGADA
 - ~100 claves de traducción en EN/ES/FR
 - Categorías, estados, formularios, mensajes
-- Lista para usar en ExpensesPage.jsx
+- **Aplicadas a ExpensesPage.jsx**
 
 ### 🌐 Páginas de Checkout /checkout (COMPLETADO - BUG FIX)
 - **Bug reportado:** Las páginas de checkout no se traducían
@@ -25,12 +38,9 @@
 ### 🌐 GeoAttendancePage.jsx (COMPLETADO)
 - Página móvil de marcaje geolocalizado completamente traducida
 - ~50 claves nuevas agregadas: errores de ubicación, mensajes de estado, botones, etc.
-- Saludos según hora del día traducidos (Buenos días/tardes/noches)
 
 ### 🌐 PartnerRegisterPage.jsx (COMPLETADO)
 - Registro de partners contables completamente traducido
-- Flujo de 2 pasos con validaciones
-- Beneficios y formularios traducidos
 
 ### 🌐 Páginas de Autenticación (COMPLETADO)
 1. **RegisterPage.jsx** - Completamente traducida
@@ -38,7 +48,7 @@
 3. **ResetPasswordPage.jsx** - Completamente traducida
 
 ### 🌐 Traducciones de Infraestructura (COMPLETADO)
-- Sección `common` agregada (40+ claves)
+- Sección `common` expandida (45+ claves incluyendo `status`)
 - Sección `partner.register` agregada (~50 claves)
 - Sección `geoAttendance.mobile` agregada (~50 claves)
 - Sección `payroll.calculator` agregada (~50 claves)
