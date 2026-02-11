@@ -575,7 +575,8 @@
     "clear": "Clear",
     "selectOption": "Select an option",
     "noData": "No data available",
-    "lastUpdated": "Last updated"
+    "lastUpdated": "Last updated",
+    "status": "Status"
   },
   "auth": {
     "login": {
