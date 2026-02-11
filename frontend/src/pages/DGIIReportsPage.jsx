@@ -553,30 +553,30 @@ export default function DGIIReportsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <CalendarDays className="w-5 h-5" />
-                  Seleccionar Año Fiscal
+                  {t('dgiiReports.selectFiscalYear')}
                 </CardTitle>
                 <CardDescription>
-                  Elija el año para generar la declaración anual IR-13
+                  {t('dgiiReports.selectFiscalYearDesc')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 {availableYears.length === 0 ? (
                   <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                     <AlertCircle className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-                    <p className="font-medium">No hay años disponibles</p>
-                    <p className="text-sm">Procese nóminas para generar reportes anuales</p>
+                    <p className="font-medium">{t('dgiiReports.noYearsAvailable')}</p>
+                    <p className="text-sm">{t('dgiiReports.processPayrollFirst')}</p>
                   </div>
                 ) : (
                   <div className="max-w-xs">
                     <label className="text-sm font-medium text-slate-700 mb-2 block">
-                      Año Fiscal
+                      {t('dgiiReports.fiscalYear')}
                     </label>
                     <Select 
                       value={selectedYear?.toString() || ""} 
                       onValueChange={(val) => setSelectedYear(parseInt(val))}
                     >
                       <SelectTrigger data-testid="year-selector">
-                        <SelectValue placeholder="Seleccione un año" />
+                        <SelectValue placeholder={t('dgiiReports.selectYearPlaceholder')} />
                       </SelectTrigger>
                       <SelectContent>
                         {availableYears.map(year => (
@@ -607,20 +607,20 @@ export default function DGIIReportsPage() {
                         </div>
                         <div>
                           <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-bold text-xl text-slate-800 dark:text-slate-100">{report.name}</h3>
+                            <h3 className="font-bold text-xl text-slate-800 dark:text-slate-100">{t(report.nameKey)}</h3>
                             <Badge variant="outline" className="text-xs">Excel</Badge>
-                            <Badge className="bg-rose-100 text-rose-700 text-xs">Anual</Badge>
+                            <Badge className="bg-rose-100 text-rose-700 text-xs">{t('dgiiReports.annual')}</Badge>
                           </div>
-                          <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{report.title}</p>
-                          <p className="text-sm text-slate-500 mt-1 max-w-lg">{report.description}</p>
+                          <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{t(report.titleKey)}</p>
+                          <p className="text-sm text-slate-500 mt-1 max-w-lg">{t(report.descriptionKey)}</p>
                           
                           {selectedYear && (
                             <div className="mt-3 bg-slate-50 rounded-lg p-3">
                               <p className="text-sm text-slate-600 dark:text-slate-300">
-                                <strong>Año seleccionado:</strong> {selectedYear}
+                                <strong>{t('dgiiReports.selectedYear')}:</strong> {selectedYear}
                               </p>
                               <p className="text-xs text-slate-500 mt-1">
-                                Este reporte incluirá: Detalle anual por empleado, Resumen mensual, y Declaración para firma
+                                {t('dgiiReports.annualReportIncludes')}
                               </p>
                             </div>
                           )}
@@ -638,12 +638,12 @@ export default function DGIIReportsPage() {
                         {downloading === report.id ? (
                           <>
                             <RefreshCw className="w-4 h-4 animate-spin" />
-                            Generando...
+                            {t('dgiiReports.generating')}
                           </>
                         ) : (
                           <>
                             <Download className="w-4 h-4" />
-                            Descargar {report.name} - {selectedYear || 'Seleccione año'}
+                            {t('dgiiReports.download')} {t(report.nameKey)} - {selectedYear || t('dgiiReports.selectYear')}
                           </>
                         )}
                       </Button>
