@@ -1724,6 +1724,313 @@
       "exportError": "Export error"
     }
   },
+  "support": {
+    "title": "Support",
+    "subtitle": "How can we help you?",
+    "newTicket": "New Ticket",
+    "myTickets": "My Tickets",
+    "faq": "FAQ",
+    "form": {
+      "subject": "Subject",
+      "subjectPlaceholder": "Briefly describe your issue",
+      "category": "Category",
+      "selectCategory": "Select category",
+      "categories": {
+        "technical": "Technical issue",
+        "billing": "Billing",
+        "feature": "Feature request",
+        "other": "Other"
+      },
+      "priority": "Priority",
+      "priorities": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "urgent": "Urgent"
+      },
+      "description": "Description",
+      "descPlaceholder": "Describe your issue in detail...",
+      "attachments": "Attachments",
+      "submit": "Submit Ticket",
+      "cancel": "Cancel"
+    },
+    "ticket": {
+      "number": "Ticket #",
+      "status": "Status",
+      "created": "Created",
+      "updated": "Updated",
+      "statuses": {
+        "open": "Open",
+        "inProgress": "In Progress",
+        "resolved": "Resolved",
+        "closed": "Closed"
+      }
+    },
+    "messages": {
+      "ticketCreated": "Ticket created successfully",
+      "errorCreating": "Error creating ticket",
+      "noTickets": "You have no support tickets"
+    }
+  },
+  "users": {
+    "title": "User Management",
+    "subtitle": "Manage system users",
+    "addUser": "New User",
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "lastLogin": "Last Login",
+      "actions": "Actions"
+    },
+    "form": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "role": "Role",
+      "selectRole": "Select role",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "roles": {
+      "admin": "Administrator",
+      "manager": "Manager",
+      "hr": "Human Resources",
+      "accountant": "Accountant",
+      "employee": "Employee",
+      "viewer": "Read Only"
+    },
+    "messages": {
+      "userCreated": "User created successfully",
+      "userUpdated": "User updated",
+      "userDeleted": "User deleted",
+      "errorCreating": "Error creating user",
+      "errorUpdating": "Error updating",
+      "errorDeleting": "Error deleting",
+      "confirmDelete": "Delete this user?",
+      "noUsers": "No users registered"
+    }
+  },
+  "roles": {
+    "title": "Roles and Permissions",
+    "subtitle": "Configure system access levels",
+    "newRole": "New Role",
+    "table": {
+      "name": "Role Name",
+      "description": "Description",
+      "users": "Users",
+      "permissions": "Permissions",
+      "actions": "Actions"
+    },
+    "form": {
+      "name": "Role Name",
+      "namePlaceholder": "E.g: Payroll Supervisor",
+      "description": "Description",
+      "descPlaceholder": "Describe the responsibilities of this role...",
+      "permissions": "Permissions",
+      "selectAll": "Select all",
+      "deselectAll": "Deselect all"
+    },
+    "permissions": {
+      "view": "View",
+      "create": "Create",
+      "edit": "Edit",
+      "delete": "Delete",
+      "export": "Export",
+      "approve": "Approve"
+    },
+    "modules": {
+      "employees": "Employees",
+      "payroll": "Payroll",
+      "attendance": "Attendance",
+      "vacations": "Vacations",
+      "reports": "Reports",
+      "accounting": "Accounting",
+      "settings": "Settings"
+    },
+    "messages": {
+      "roleCreated": "Role created successfully",
+      "roleUpdated": "Role updated",
+      "roleDeleted": "Role deleted",
+      "errorCreating": "Error creating role",
+      "noRoles": "No roles configured"
+    }
+  },
+  "partner": {
+    "title": "Partner Dashboard",
+    "welcome": "Welcome, Partner",
+    "stats": {
+      "activeClients": "Active Clients",
+      "pendingClients": "Pending",
+      "totalCommissions": "Total Commissions",
+      "availableBalance": "Available Balance"
+    },
+    "clients": {
+      "title": "My Clients",
+      "addClient": "Add Client",
+      "table": {
+        "company": "Company",
+        "email": "Email",
+        "plan": "Plan",
+        "status": "Status",
+        "since": "Client Since",
+        "actions": "Actions"
+      },
+      "statuses": {
+        "active": "Active",
+        "pending": "Pending",
+        "invited": "Invited",
+        "trial": "Trial"
+      }
+    },
+    "commissions": {
+      "title": "Commissions",
+      "withdraw": "Withdraw Funds",
+      "history": "History",
+      "table": {
+        "client": "Client",
+        "amount": "Amount",
+        "type": "Type",
+        "date": "Date",
+        "status": "Status"
+      }
+    },
+    "form": {
+      "companyName": "Company Name",
+      "contactEmail": "Contact Email",
+      "plan": "Suggested Plan",
+      "notes": "Notes",
+      "sendInvite": "Send Invitation",
+      "resendInvite": "Resend Invitation"
+    },
+    "messages": {
+      "clientAdded": "Client added successfully",
+      "inviteSent": "Invitation sent",
+      "inviteResent": "Invitation resent",
+      "withdrawRequested": "Withdrawal requested",
+      "errorAddingClient": "Error adding client",
+      "noClients": "You have no registered clients"
+    }
+  },
+  "employeePortal": {
+    "title": "Employee Portal",
+    "welcome": "Welcome",
+    "tabs": {
+      "overview": "Overview",
+      "payslips": "Payslips",
+      "attendance": "My Attendance",
+      "requests": "My Requests",
+      "profile": "My Profile"
+    },
+    "overview": {
+      "nextPayday": "Next Payday",
+      "vacationDays": "Vacation Days",
+      "available": "Available",
+      "used": "Used",
+      "pending": "Pending"
+    },
+    "payslips": {
+      "title": "Payslips",
+      "download": "Download",
+      "view": "View",
+      "period": "Period",
+      "grossSalary": "Gross Salary",
+      "deductions": "Deductions",
+      "netSalary": "Net Salary"
+    },
+    "attendance": {
+      "clockIn": "Clock In",
+      "clockOut": "Clock Out",
+      "currentStatus": "Current Status",
+      "working": "Working",
+      "notWorking": "Not working",
+      "todayHours": "Hours Today",
+      "weekHours": "Hours This Week"
+    },
+    "requests": {
+      "newRequest": "New Request",
+      "vacationRequest": "Vacation Request",
+      "leaveRequest": "Leave Request",
+      "loanRequest": "Loan Request",
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      }
+    },
+    "profile": {
+      "personalInfo": "Personal Information",
+      "changePassword": "Change Password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmNewPassword": "Confirm New Password"
+    },
+    "messages": {
+      "clockedIn": "Clocked in",
+      "clockedOut": "Clocked out",
+      "requestSubmitted": "Request submitted",
+      "passwordChanged": "Password updated",
+      "errorClockin": "Error clocking in"
+    }
+  },
+  "geoAttendance": {
+    "title": "Geo Attendance",
+    "subtitle": "GPS-based attendance control",
+    "tabs": {
+      "live": "Live",
+      "records": "Records",
+      "locations": "Locations",
+      "reports": "Reports"
+    },
+    "live": {
+      "title": "Real-Time Employees",
+      "online": "Online",
+      "offline": "Offline",
+      "total": "Total"
+    },
+    "clockIn": {
+      "title": "Clock Attendance",
+      "detectingLocation": "Detecting location...",
+      "locationDetected": "Location detected",
+      "takePhoto": "Take Photo",
+      "clockIn": "Clock In",
+      "clockOut": "Clock Out",
+      "outsideZone": "Outside allowed zone",
+      "insideZone": "Inside allowed zone"
+    },
+    "records": {
+      "employee": "Employee",
+      "date": "Date",
+      "clockIn": "Clock In",
+      "clockOut": "Clock Out",
+      "location": "Location",
+      "photo": "Photo",
+      "status": "Status",
+      "verified": "Verified",
+      "unverified": "Unverified",
+      "suspicious": "Suspicious"
+    },
+    "locations": {
+      "title": "Allowed Locations",
+      "addLocation": "New Location",
+      "name": "Name",
+      "address": "Address",
+      "radius": "Radius (meters)",
+      "employees": "Assigned Employees"
+    },
+    "messages": {
+      "locationRequired": "Location access required",
+      "photoRequired": "Verification photo required",
+      "clockedIn": "Clocked in successfully",
+      "clockedOut": "Clocked out successfully",
+      "outsideZone": "You are outside the allowed zone",
+      "errorLocation": "Error getting location"
+    }
+  },
   "metrics": {
     "title": "Metrics and KPIs",
     "refresh": "Refresh",
