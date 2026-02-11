@@ -1054,19 +1054,19 @@ function EmployeeDashboard() {
                       <div key={vac.vacation_id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
                         <div>
                           <p className="font-medium">{vac.start_date} - {vac.end_date}</p>
-                          <p className="text-sm text-slate-500">{vac.days} días</p>
+                          <p className="text-sm text-slate-500">{vac.days} {t('employeePortal.overview.days')}</p>
                         </div>
                         <Badge className={
                           vac.status === 'approved' ? 'bg-emerald-100 text-emerald-700' :
                           vac.status === 'rejected' ? 'bg-red-100 text-red-700' :
                           'bg-amber-100 text-amber-700'
                         }>
-                          {vac.status === 'approved' ? 'Aprobado' : vac.status === 'rejected' ? 'Rechazado' : 'Pendiente'}
+                          {vac.status === 'approved' ? t('employeePortal.requests.status.approved') : vac.status === 'rejected' ? t('employeePortal.requests.status.rejected') : t('employeePortal.requests.status.pending')}
                         </Badge>
                       </div>
                     ))}
                     {vacations.length === 0 && (
-                      <p className="text-center text-slate-500 py-8">No hay solicitudes</p>
+                      <p className="text-center text-slate-500 py-8">{t('employeePortal.vacations.noRequests')}</p>
                     )}
                   </div>
                 </CardContent>
@@ -1074,16 +1074,16 @@ function EmployeeDashboard() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Balance</CardTitle>
+                  <CardTitle>{t('employeePortal.vacations.balance')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="p-4 bg-blue-50 rounded-lg text-center">
                     <p className="text-3xl font-bold text-blue-600">{vacationBalance.available}</p>
-                    <p className="text-sm text-blue-700">Días Disponibles</p>
+                    <p className="text-sm text-blue-700">{t('employeePortal.vacations.daysAvailable')}</p>
                   </div>
                   <div className="space-y-2 text-sm">
-                    <div className="flex justify-between"><span>Acumulados:</span><span className="font-medium">{vacationBalance.accrued} días</span></div>
-                    <div className="flex justify-between"><span>Usados:</span><span className="font-medium">{vacationBalance.used} días</span></div>
+                    <div className="flex justify-between"><span>{t('employeePortal.vacations.accrued')}:</span><span className="font-medium">{vacationBalance.accrued} {t('employeePortal.overview.days')}</span></div>
+                    <div className="flex justify-between"><span>{t('employeePortal.vacations.used')}:</span><span className="font-medium">{vacationBalance.used} {t('employeePortal.overview.days')}</span></div>
                   </div>
                 </CardContent>
               </Card>
@@ -1098,10 +1098,10 @@ function EmployeeDashboard() {
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2">
                       <ClipboardList className="w-5 h-5" />
-                      Mis Permisos y Licencias
+                      {t('employeePortal.leaves.title')}
                     </CardTitle>
                     <Button onClick={() => setShowLeaveRequest(true)}>
-                      <Send className="w-4 h-4 mr-2" />Nueva Solicitud
+                      <Send className="w-4 h-4 mr-2" />{t('employeePortal.leaves.newRequest')}
                     </Button>
                   </div>
                 </CardHeader>
@@ -1121,20 +1121,20 @@ function EmployeeDashboard() {
                           </div>
                           <div>
                             <p className="font-medium">{leave.leave_type_name}</p>
-                            <p className="text-sm text-slate-500">{leave.start_date} - {leave.end_date} ({leave.days} días)</p>
+                            <p className="text-sm text-slate-500">{leave.start_date} - {leave.end_date} ({leave.days} {t('employeePortal.overview.days')})</p>
                           </div>
                         </div>
                         <Badge className={
                           leave.status === 'approved' ? 'bg-emerald-100 text-emerald-700' :
                           leave.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
                         }>
-                          {leave.status === 'approved' ? 'Aprobado' :
-                           leave.status === 'rejected' ? 'Rechazado' : 'Pendiente'}
+                          {leave.status === 'approved' ? t('employeePortal.requests.status.approved') :
+                           leave.status === 'rejected' ? t('employeePortal.requests.status.rejected') : t('employeePortal.requests.status.pending')}
                         </Badge>
                       </div>
                     ))}
                     {(!leaves.leaves || leaves.leaves.length === 0) && (
-                      <p className="text-center text-slate-500 py-8">No hay solicitudes de permisos</p>
+                      <p className="text-center text-slate-500 py-8">{t('employeePortal.leaves.noLeaves')}</p>
                     )}
                   </div>
                 </CardContent>
@@ -1142,13 +1142,13 @@ function EmployeeDashboard() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Tipos de Permisos</CardTitle>
+                  <CardTitle className="text-lg">{t('employeePortal.leaves.leaveTypes')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   {Object.entries(leaves.leave_types || {}).map(([key, value]) => (
                     <div key={key} className="flex justify-between items-center p-2 bg-slate-50 rounded text-sm">
                       <span>{value.name}</span>
-                      <Badge variant="outline">{value.max_days} días</Badge>
+                      <Badge variant="outline">{value.max_days} {t('employeePortal.overview.days')}</Badge>
                     </div>
                   ))}
                 </CardContent>
