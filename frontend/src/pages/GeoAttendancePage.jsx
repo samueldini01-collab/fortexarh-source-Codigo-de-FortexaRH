@@ -306,7 +306,7 @@ export default function GeoAttendancePage() {
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2 text-white">
               <MapPin className="w-5 h-5 text-emerald-400" />
-              Ubicación Actual
+              {t("geoAttendance.mobile.currentLocation")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -320,7 +320,7 @@ export default function GeoAttendancePage() {
                     className="text-red-400 p-0 h-auto"
                     onClick={getCurrentLocation}
                   >
-                    Reintentar
+                    {t("geoAttendance.mobile.retry")}
                   </Button>
                 </div>
               </div>
@@ -332,8 +332,8 @@ export default function GeoAttendancePage() {
                       <Navigation className="w-5 h-5 text-emerald-400" />
                     </div>
                     <div>
-                      <p className="text-sm text-slate-400">GPS Activo</p>
-                      <p className="text-xs text-slate-500">Precisión: {Math.round(location.accuracy)}m</p>
+                      <p className="text-sm text-slate-400">{t("geoAttendance.mobile.gpsActive")}</p>
+                      <p className="text-xs text-slate-500">{t("geoAttendance.mobile.accuracy")}: {Math.round(location.accuracy)}m</p>
                     </div>
                   </div>
                   <Button 
