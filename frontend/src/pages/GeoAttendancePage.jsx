@@ -203,13 +203,13 @@ export default function GeoAttendancePage() {
   // Mark attendance
   const markAttendance = async (markType) => {
     if (!location) {
-      toast.error("Esperando ubicación GPS...");
+      toast.error(t("geoAttendance.messages.waitingForGps"));
       getCurrentLocation();
       return;
     }
     
     if (!isOnline) {
-      toast.error("Sin conexión a internet");
+      toast.error(t("geoAttendance.messages.noInternet"));
       return;
     }
     
