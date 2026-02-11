@@ -2250,7 +2250,8 @@
     }
   },
   "metrics": {
-    "title": "Metrics and KPIs",
+    "title": "Metrics Dashboard",
+    "subtitle": "Real-time analysis of payroll, employees and loans",
     "refresh": "Refresh",
     "year": "Year",
     "errorLoading": "Error loading metrics",
@@ -2259,23 +2260,38 @@
       "activeEmployees": "Active Employees",
       "avgSalary": "Average Salary",
       "totalPayroll": "Total Payroll",
+      "monthlyPayroll": "Monthly Payroll",
       "turnoverRate": "Turnover",
       "avgSeniority": "Avg. Seniority",
       "years": "years",
-      "vsLastYear": "vs last year"
+      "vsLastYear": "vs last year",
+      "vsPrevMonth": "vs previous month",
+      "clickDetail": "Click to see breakdown",
+      "newThisMonth": "new this month",
+      "activeLoans": "Active Loans",
+      "pending": "pending",
+      "totalPaidYear": "Total Paid This Year",
+      "payrollsProcessed": "payrolls processed"
     },
     "charts": {
       "payrollEvolution": "Payroll Evolution",
       "employeesByDept": "Employees by Department",
       "hiresVsDepartures": "Hires vs Departures",
       "salaryDistribution": "Salary Distribution",
+      "departmentCosts": "Cost by Department",
+      "turnoverAnalysis": "Turnover Analysis",
       "hires": "Hires",
       "departures": "Departures",
       "employees": "Employees",
-      "noData": "No data to display"
+      "cost": "Cost",
+      "noData": "No data to display",
+      "gross": "Gross",
+      "net": "Net",
+      "deductions": "Deductions"
     },
     "drillDown": {
       "employees": "Employees",
+      "employee": "Employee",
       "name": "Name",
       "department": "Department",
       "position": "Position",
@@ -2289,7 +2305,17 @@
       "date": "Date",
       "type": "Type",
       "hire": "Hire",
-      "departure": "Departure"
+      "departure": "Departure",
+      "gross": "Gross",
+      "deductions": "Deductions",
+      "net": "Net",
+      "activeLoans": "Active Loans",
+      "amount": "Amount",
+      "paid": "Paid",
+      "pending": "Pending",
+      "installments": "Installments",
+      "costs": "Costs",
+      "errorLoading": "Error loading details"
     }
   },
   "orgChart": {
