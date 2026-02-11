@@ -145,17 +145,7 @@ export default function ReportsAdvancedPage() {
       completed: "bg-purple-100 text-purple-700"
     };
     
-    const labels = {
-      paid: "Pagado",
-      approved: "Aprobado",
-      pending_approval: "Pendiente",
-      open: "Abierto",
-      draft: "Borrador",
-      active: "Activo",
-      completed: "Completado"
-    };
-    
-    return <Badge className={styles[status] || "bg-slate-100"}>{labels[status] || status}</Badge>;
+    return <Badge className={styles[status] || "bg-slate-100"}>{t(`reportsAdvanced.statuses.${status}`) || status}</Badge>;
   };
 
   if (loading) {
