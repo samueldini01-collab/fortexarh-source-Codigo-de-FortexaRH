@@ -574,7 +574,8 @@
     "clear": "Limpiar",
     "selectOption": "Seleccionar una opción",
     "noData": "Sin datos disponibles",
-    "lastUpdated": "Última actualización"
+    "lastUpdated": "Última actualización",
+    "status": "Estado"
   },
   "auth": {
     "login": {
