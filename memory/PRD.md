@@ -11,6 +11,26 @@
 - **Archivo modificado:** `/app/frontend/src/components/DashboardLayout.jsx`
 - **Verificado:** Screenshots confirman navegación correcta a página de suscripción sin logout
 
+### 🌐 DGIIReportsPage.jsx (COMPLETADO)
+- Página de reportes DGII-TSS completamente traducida a ES/EN/FR
+- ~120 claves de traducción agregadas:
+  - Título, subtítulo, secciones
+  - Nombres y descripciones de reportes (IR-3, IR-4, IR-6, IR-17, TSS)
+  - Estados, meses, mensajes de error/éxito
+  - Instrucciones de uso completas
+  - Drill-down modal headers
+- **Verificado:** Screenshots confirman traducción correcta en ES y EN
+
+### 🌐 ReportsAdvancedPage.jsx (COMPLETADO)
+- Página de reportes avanzados PDF completamente traducida
+- ~80 claves de traducción agregadas:
+  - Sección de Nómina (período, descripción, items incluidos)
+  - Sección de Asistencia (fechas, departamentos)
+  - Sección de Evaluaciones (ciclos, estados)
+  - Mensajes de error/éxito
+  - Card informativa de reportes profesionales
+- **Verificado:** Screenshots confirman traducción correcta
+
 ### 🌐 ExpensesPage.jsx (COMPLETADO)
 - Página de gastos y viáticos completamente traducida
 - Cards: Total Solicitado, Pendiente de Aprobación, Total Aprobado, Pendiente de Pago
