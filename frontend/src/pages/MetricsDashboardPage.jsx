@@ -234,13 +234,13 @@ export default function MetricsDashboardPage() {
   const totalPaidThisYear = payrollTrend.reduce((sum, m) => sum + (m.net || 0), 0);
 
   return (
-    <DashboardLayout title="Dashboard de Métricas">
+    <DashboardLayout title={t('metrics.title')}>
       <div className="space-y-6" data-testid="metrics-dashboard">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Dashboard de Métricas</h1>
-            <p className="text-slate-500 dark:text-slate-400">Análisis en tiempo real de nómina, empleados y préstamos</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{t('metrics.title')}</h1>
+            <p className="text-slate-500 dark:text-slate-400">{t('metrics.subtitle')}</p>
           </div>
           <div className="flex items-center gap-4">
             <Select value={selectedYear.toString()} onValueChange={(v) => setSelectedYear(parseInt(v))}>
@@ -255,7 +255,7 @@ export default function MetricsDashboardPage() {
             </Select>
             <Button variant="outline" onClick={fetchMetrics}>
               <RefreshCw className="w-4 h-4 mr-2" />
-              Actualizar
+              {t('common.refresh')}
             </Button>
           </div>
         </div>
@@ -270,11 +270,11 @@ export default function MetricsDashboardPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Nómina del Mes</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('metrics.cards.monthlyPayroll')}</p>
                   <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{formatCurrency(currentMonthData.gross)}</p>
                   <div className={`flex items-center text-sm mt-1 ${grossChange >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
                     {grossChange >= 0 ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
-                    <span>{formatPercent(Math.abs(grossChange))} vs mes anterior</span>
+                    <span>{formatPercent(Math.abs(grossChange))} {t('metrics.cards.vsPrevMonth')}</span>
                   </div>
                 </div>
                 <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
@@ -282,7 +282,7 @@ export default function MetricsDashboardPage() {
                 </div>
               </div>
               <p className="text-xs text-slate-400 mt-2 flex items-center">
-                <ChevronRight className="w-3 h-3" /> Click para ver desglose
+                <ChevronRight className="w-3 h-3" /> {t('metrics.cards.clickDetail')}
               </p>
             </CardContent>
           </Card>
@@ -295,11 +295,11 @@ export default function MetricsDashboardPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Total Empleados</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('metrics.cards.totalEmployees')}</p>
                   <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{employeeMetrics.total_employees || 0}</p>
                   <div className="flex items-center text-sm mt-1 text-emerald-600 dark:text-emerald-400">
                     <UserPlus className="w-4 h-4 mr-1" />
-                    <span>{employeeMetrics.new_this_month || 0} nuevos este mes</span>
+                    <span>{employeeMetrics.new_this_month || 0} {t('metrics.cards.newThisMonth')}</span>
                   </div>
                 </div>
                 <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
@@ -307,7 +307,7 @@ export default function MetricsDashboardPage() {
                 </div>
               </div>
               <p className="text-xs text-slate-400 mt-2 flex items-center">
-                <ChevronRight className="w-3 h-3" /> Click para ver desglose
+                <ChevronRight className="w-3 h-3" /> {t('metrics.cards.clickDetail')}
               </p>
             </CardContent>
           </Card>
@@ -320,10 +320,10 @@ export default function MetricsDashboardPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Préstamos Activos</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('metrics.cards.activeLoans')}</p>
                   <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{loanMetrics.total_active_loans || 0}</p>
                   <p className="text-sm text-amber-600 mt-1">
-                    {formatCurrency(loanMetrics.total_pending || 0)} pendiente
+                    {formatCurrency(loanMetrics.total_pending || 0)} {t('metrics.cards.pending')}
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
