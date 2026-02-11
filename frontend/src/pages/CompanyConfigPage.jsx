@@ -335,13 +335,13 @@ export default function CompanyConfigPage() {
   const renderGeneralTab = () => (
     <Card className="border-l-4 border-l-blue-500">
       <CardHeader>
-        <CardTitle>Información General</CardTitle>
-        <CardDescription>Detalles básicos de tu organización visibles en el sistema.</CardDescription>
+        <CardTitle>{t('settings.general.title')}</CardTitle>
+        <CardDescription>{t('settings.general.subtitle')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label>Nombre de la Empresa</Label>
+            <Label>{t('settings.general.name')}</Label>
             <Input 
               placeholder="Ej. Fortexa Corp"
               value={company.name}
@@ -349,7 +349,7 @@ export default function CompanyConfigPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label>RNC</Label>
+            <Label>{t('settings.general.rnc')}</Label>
             <Input 
               placeholder="Ej. 101-12345-6"
               value={company.rnc}
@@ -359,7 +359,7 @@ export default function CompanyConfigPage() {
         </div>
         
         <div className="space-y-2">
-          <Label>Eslogan (Tagline)</Label>
+          <Label>{t('settings.general.slogan')}</Label>
           <Input 
             placeholder="Ej. Innovación y Futuro"
             value={company.slogan}
@@ -368,7 +368,7 @@ export default function CompanyConfigPage() {
         </div>
         
         <div className="space-y-2">
-          <Label>Descripción</Label>
+          <Label>{t('settings.general.description')}</Label>
           <Textarea 
             placeholder="Breve descripción de la empresa..."
             value={company.description}
@@ -379,7 +379,7 @@ export default function CompanyConfigPage() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label>Teléfono</Label>
+            <Label>{t('settings.general.phone')}</Label>
             <Input 
               placeholder="Ej. 809-555-1234"
               value={company.phone}
@@ -387,7 +387,7 @@ export default function CompanyConfigPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label>Email</Label>
+            <Label>{t('settings.general.email')}</Label>
             <Input 
               type="email"
               placeholder="Ej. info@empresa.com"
