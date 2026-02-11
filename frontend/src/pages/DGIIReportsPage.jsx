@@ -276,7 +276,7 @@ export default function DGIIReportsPage() {
           filename = "TSS_Novedades.xls";
           break;
         default:
-          throw new Error("Tipo de reporte no válido");
+          throw new Error(t('dgiiReports.invalidReportType'));
       }
 
       const response = await axios.get(`${API}${endpoint}`, {
@@ -296,10 +296,10 @@ export default function DGIIReportsPage() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      toast.success(`${reportType.toUpperCase()} descargado correctamente`);
+      toast.success(`${reportType.toUpperCase()} ${t('dgiiReports.downloadedSuccess')}`);
     } catch (error) {
       console.error("Error downloading report:", error);
-      toast.error(error.response?.data?.detail || "Error al descargar el reporte");
+      toast.error(error.response?.data?.detail || t('dgiiReports.downloadError'));
     } finally {
       setDownloading(null);
     }
