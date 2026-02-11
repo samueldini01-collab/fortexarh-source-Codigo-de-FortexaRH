@@ -1723,6 +1723,250 @@
       "exportError": "Error al exportar"
     }
   },
+  "metrics": {
+    "title": "Métricas y KPIs",
+    "refresh": "Actualizar",
+    "year": "Año",
+    "errorLoading": "Error al cargar métricas",
+    "cards": {
+      "totalEmployees": "Total Empleados",
+      "activeEmployees": "Empleados Activos",
+      "avgSalary": "Salario Promedio",
+      "totalPayroll": "Nómina Total",
+      "turnoverRate": "Rotación",
+      "avgSeniority": "Antigüedad Prom.",
+      "years": "años",
+      "vsLastYear": "vs año anterior"
+    },
+    "charts": {
+      "payrollEvolution": "Evolución de Nómina",
+      "employeesByDept": "Empleados por Departamento",
+      "hiresVsDepartures": "Contrataciones vs Salidas",
+      "salaryDistribution": "Distribución Salarial",
+      "hires": "Contrataciones",
+      "departures": "Salidas",
+      "employees": "Empleados",
+      "noData": "No hay datos para mostrar"
+    },
+    "drillDown": {
+      "employees": "Empleados",
+      "name": "Nombre",
+      "department": "Departamento",
+      "position": "Cargo",
+      "hireDate": "Ingreso",
+      "salary": "Salario",
+      "status": "Estado",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "departmentDetail": "Empleados de",
+      "monthDetail": "Detalle del Mes",
+      "date": "Fecha",
+      "type": "Tipo",
+      "hire": "Contratación",
+      "departure": "Salida"
+    }
+  },
+  "orgChart": {
+    "title": "Organigrama",
+    "subtitle": "Estructura organizacional de la empresa",
+    "search": "Buscar unidad...",
+    "refresh": "Actualizar",
+    "addUnit": "Nueva Unidad",
+    "exportPDF": "Exportar PDF",
+    "zoom": {
+      "in": "Acercar",
+      "out": "Alejar",
+      "reset": "Restablecer"
+    },
+    "wizard": {
+      "title": "Crear Organigrama",
+      "subtitle": "Seleccione una plantilla para comenzar",
+      "step1": "Seleccionar Plantilla",
+      "step2": "Personalizar",
+      "step3": "Confirmar",
+      "employees": "empleados",
+      "selectTemplate": "Seleccionar",
+      "customize": "Personalizar estructura antes de crear",
+      "create": "Crear Organigrama",
+      "creating": "Creando...",
+      "back": "Volver",
+      "next": "Siguiente",
+      "cancel": "Cancelar"
+    },
+    "templates": {
+      "startup": "Startup Ágil",
+      "startupDesc": "Estructura plana ideal para empresas en crecimiento rápido con enfoque en producto y ventas.",
+      "small": "Pequeña Empresa",
+      "smallDesc": "Estructura funcional básica con departamentos esenciales definidos claramente.",
+      "medium": "Mediana Empresa",
+      "mediumDesc": "Estructura jerárquica completa con departamentos especializados y mandos medios.",
+      "enterprise": "Gran Empresa",
+      "enterpriseDesc": "Estructura corporativa completa con múltiples divisiones y niveles de gestión."
+    },
+    "unit": {
+      "positions": "posiciones",
+      "employees": "empleados",
+      "vacant": "vacantes",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "addChild": "Agregar subordinado"
+    },
+    "form": {
+      "createUnit": "Crear Unidad",
+      "editUnit": "Editar Unidad",
+      "name": "Nombre de la Unidad",
+      "namePlaceholder": "Ej: Recursos Humanos",
+      "code": "Código",
+      "codePlaceholder": "Ej: RRHH",
+      "description": "Descripción",
+      "descPlaceholder": "Descripción de funciones...",
+      "parentUnit": "Unidad Superior",
+      "selectParent": "Seleccionar unidad padre",
+      "noParent": "Sin padre (Raíz)",
+      "manager": "Responsable",
+      "selectManager": "Seleccionar responsable",
+      "noManager": "Sin asignar",
+      "positions": "Posiciones Planificadas",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "create": "Crear Unidad"
+    },
+    "messages": {
+      "created": "Unidad creada exitosamente",
+      "updated": "Unidad actualizada",
+      "deleted": "Unidad eliminada",
+      "errorLoading": "Error al cargar organigrama",
+      "errorCreating": "Error al crear unidad",
+      "errorUpdating": "Error al actualizar",
+      "errorDeleting": "Error al eliminar",
+      "confirmDelete": "¿Eliminar esta unidad?",
+      "templateApplied": "Plantilla aplicada exitosamente",
+      "errorTemplate": "Error al aplicar plantilla"
+    },
+    "empty": {
+      "title": "Sin organigrama",
+      "subtitle": "Use el asistente para crear su estructura organizacional"
+    }
+  },
+  "accounting": {
+    "title": "Contabilidad",
+    "tabs": {
+      "entries": "Asientos",
+      "accounts": "Cuentas",
+      "reports": "Reportes"
+    },
+    "filters": {
+      "search": "Buscar por número...",
+      "startDate": "Fecha inicio",
+      "endDate": "Fecha fin",
+      "status": "Estado",
+      "all": "Todos",
+      "pending": "Pendiente",
+      "posted": "Contabilizado",
+      "voided": "Anulado"
+    },
+    "buttons": {
+      "refresh": "Actualizar",
+      "newEntry": "Nuevo Asiento",
+      "newAccount": "Nueva Cuenta",
+      "loadCatalog": "Cargar Catálogo",
+      "export": "Exportar",
+      "preview": "Vista Previa",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "post": "Contabilizar",
+      "void": "Anular"
+    },
+    "entry": {
+      "number": "Número",
+      "date": "Fecha",
+      "reference": "Referencia",
+      "description": "Descripción",
+      "debit": "Débito",
+      "credit": "Crédito",
+      "status": "Estado",
+      "actions": "Acciones",
+      "type": "Tipo",
+      "period": "Período",
+      "notes": "Notas",
+      "manual": "Manual",
+      "payroll": "Nómina",
+      "adjustment": "Ajuste"
+    },
+    "account": {
+      "code": "Código",
+      "name": "Nombre",
+      "type": "Tipo",
+      "nature": "Naturaleza",
+      "balance": "Saldo",
+      "status": "Estado",
+      "active": "Activa",
+      "inactive": "Inactiva",
+      "debit": "Deudora",
+      "credit": "Acreedora",
+      "asset": "Activo",
+      "liability": "Pasivo",
+      "equity": "Patrimonio",
+      "income": "Ingreso",
+      "expense": "Gasto"
+    },
+    "form": {
+      "createEntry": "Crear Asiento Contable",
+      "editEntry": "Editar Asiento",
+      "createAccount": "Crear Cuenta",
+      "editAccount": "Editar Cuenta",
+      "entryDate": "Fecha del Asiento",
+      "referencePlaceholder": "Ej: FAC-001",
+      "descPlaceholder": "Descripción del asiento...",
+      "notesPlaceholder": "Notas adicionales...",
+      "accountCode": "Código de Cuenta",
+      "codePlaceholder": "Ej: 1.1.1.01",
+      "accountName": "Nombre de la Cuenta",
+      "namePlaceholder": "Ej: Caja General",
+      "parentAccount": "Cuenta Padre",
+      "selectParent": "Seleccionar cuenta padre",
+      "noParent": "Sin cuenta padre (nivel 1)"
+    },
+    "preview": {
+      "title": "Vista Previa de Exportación",
+      "format": "Formato",
+      "summary": "Resumen",
+      "detailed": "Detallado",
+      "download": "Descargar CSV"
+    },
+    "catalog": {
+      "title": "Seleccionar Catálogo de Cuentas",
+      "subtitle": "Elija un catálogo predefinido para cargar",
+      "apply": "Aplicar Catálogo",
+      "niif": "Catálogo NIIF",
+      "niifDesc": "Plan de cuentas basado en Normas Internacionales",
+      "dr": "Catálogo RD",
+      "drDesc": "Plan de cuentas estándar de República Dominicana"
+    },
+    "messages": {
+      "entryCreated": "Asiento creado exitosamente",
+      "entryUpdated": "Asiento actualizado",
+      "entryPosted": "Asiento contabilizado",
+      "entryVoided": "Asiento anulado",
+      "entryDeleted": "Asiento eliminado",
+      "accountCreated": "Cuenta creada exitosamente",
+      "accountUpdated": "Cuenta actualizada",
+      "accountDeleted": "Cuenta eliminada",
+      "catalogLoaded": "Catálogo cargado exitosamente",
+      "errorLoading": "Error al cargar datos",
+      "errorCreating": "Error al crear",
+      "errorUpdating": "Error al actualizar",
+      "errorDeleting": "Error al eliminar",
+      "confirmDelete": "¿Eliminar este registro?",
+      "unbalanced": "El asiento no está balanceado",
+      "exported": "Archivo exportado"
+    },
+    "empty": {
+      "entries": "No hay asientos contables",
+      "accounts": "No hay cuentas configuradas",
+      "loadCatalog": "Cargue un catálogo para comenzar"
+    }
+  },
   "pwa": {
     "title": "Instalar FortexaRH",
     "subtitle": "Accede más rápido desde tu pantalla de inicio",
