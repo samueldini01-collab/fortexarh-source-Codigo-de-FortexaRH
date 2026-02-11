@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth, API } from "@/App";
 import axios from "axios";
@@ -12,6 +13,7 @@ import { Building2, CreditCard, User, Check, Crown, Lock, Eye, EyeOff, AlertCirc
 import { toast } from "sonner";
 
 export default function SettingsPage() {
+  const { t } = useTranslation();
   const [company, setCompany] = useState(null);
   const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
