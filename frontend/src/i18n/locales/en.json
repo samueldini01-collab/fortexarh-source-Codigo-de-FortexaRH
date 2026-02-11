@@ -2150,6 +2150,58 @@
       "withdrawRequested": "Withdrawal requested",
       "errorAddingClient": "Error adding client",
       "noClients": "You have no registered clients"
+    },
+    "register": {
+      "title": "Partner Registration",
+      "subtitle": "Join our accounting partner program",
+      "step1": "Company Information",
+      "step2": "Contact & Security",
+      "benefits": {
+        "title": "Partner Benefits",
+        "price": "Only $10/month with unlimited employees",
+        "commission": "30% recurring commission per client",
+        "panel": "Client management panel",
+        "referral": "Unique referral link",
+        "trial": "14-day free trial"
+      },
+      "form": {
+        "firmName": "Accounting Firm Name",
+        "firmPlaceholder": "Accounting Firm XYZ",
+        "rnc": "RNC (Tax ID)",
+        "rncPlaceholder": "000-00000-0",
+        "contactName": "Contact Name",
+        "namePlaceholder": "John Smith",
+        "email": "Email",
+        "emailPlaceholder": "you@firm.com",
+        "phone": "Phone",
+        "phonePlaceholder": "(809) 000-0000",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "address": "Address",
+        "addressPlaceholder": "Your address",
+        "city": "City",
+        "cityPlaceholder": "Santo Domingo",
+        "website": "Website (optional)",
+        "websitePlaceholder": "www.yourfirm.com"
+      },
+      "buttons": {
+        "continue": "Continue",
+        "back": "Back",
+        "submit": "Complete Registration",
+        "submitting": "Registering..."
+      },
+      "validation": {
+        "passwordMismatch": "Passwords do not match",
+        "passwordTooShort": "Password must be at least 6 characters"
+      },
+      "messages": {
+        "success": "Registration successful! Redirecting to login...",
+        "error": "Error creating partner account"
+      },
+      "footer": {
+        "hasAccount": "Already have an account?",
+        "login": "Log in"
+      }
     }
   },
   "employeePortal": {
