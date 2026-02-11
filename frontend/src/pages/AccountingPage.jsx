@@ -65,6 +65,7 @@ import {
 import { toast } from "sonner";
 
 export default function AccountingPage() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("asientos");
   const [entries, setEntries] = useState([]);
   const [accounts, setAccounts] = useState([]);
