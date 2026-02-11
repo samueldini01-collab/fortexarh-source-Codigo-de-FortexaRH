@@ -1273,6 +1273,118 @@
       "noRecordsFilter": "Pas d'enregistrements avec ces filtres"
     }
   },
+  "expenses": {
+    "title": "Dépenses et Per Diem",
+    "pageTitle": "Gestion des Dépenses",
+    "pageSubtitle": "Gérez les dépenses de voyage, per diem et remboursements",
+    "myRequests": "Mes Demandes",
+    "approvals": "Approbations",
+    "summary": "Résumé",
+    "newRequest": "Nouvelle Demande",
+    "search": "Rechercher dépenses...",
+    "filterStatus": "Filtrer par statut",
+    "allStatuses": "Tous les statuts",
+    "noRequests": "Pas de demandes de dépenses",
+    "noRequestsDesc": "Créez votre première demande de dépenses",
+    "noPending": "Pas d'approbations en attente",
+    "status": {
+      "pending": "En Attente",
+      "approved_manager": "Approuvé (Manager)",
+      "approved_admin": "Approuvé",
+      "rejected": "Rejeté",
+      "in_progress": "En Cours",
+      "pending_verification": "En Attente de Vérification",
+      "completed": "Complété",
+      "cancelled": "Annulé"
+    },
+    "types": {
+      "travel": "Voyage d'Affaires",
+      "administrative": "Dépenses Administratives",
+      "accommodation": "Hébergement",
+      "meals": "Repas",
+      "transportation": "Transport",
+      "other": "Autres"
+    },
+    "categories": {
+      "transporte": "Transport",
+      "alojamiento": "Hébergement",
+      "alimentacion": "Repas",
+      "materiales": "Matériaux",
+      "viajes": "Voyages",
+      "administrativos": "Administratifs",
+      "educacion": "Éducation",
+      "uniformes": "Uniformes",
+      "otros": "Autres"
+    },
+    "form": {
+      "title": "Titre de la Demande",
+      "titlePlaceholder": "Ex: Voyage chez client à Santiago",
+      "expenseType": "Type de Dépense",
+      "description": "Description",
+      "descPlaceholder": "Décrivez le but de la dépense",
+      "destination": "Destination",
+      "destinationPlaceholder": "Ville ou lieu",
+      "startDate": "Date de Début",
+      "endDate": "Date de Fin",
+      "estimatedBudget": "Budget Estimé ($)",
+      "requiresAdvance": "Avance Requise",
+      "advanceAmount": "Montant de l'Avance",
+      "advanceDate": "Date Nécessaire de l'Avance",
+      "notes": "Notes Supplémentaires",
+      "notesPlaceholder": "Toute information supplémentaire",
+      "budgetBreakdown": "Répartition du Budget",
+      "addItem": "Ajouter Item",
+      "category": "Catégorie",
+      "amount": "Montant ($)",
+      "itemDesc": "Description"
+    },
+    "actions": {
+      "create": "Créer Demande",
+      "creating": "Création...",
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "cancel": "Annuler",
+      "viewDetails": "Voir Détails",
+      "approveRequest": "Approuver Demande",
+      "rejectRequest": "Rejeter Demande"
+    },
+    "details": {
+      "requestedBy": "Demandé par",
+      "requestDate": "Date de Demande",
+      "period": "Période",
+      "budget": "Budget",
+      "advance": "Avance",
+      "advanceRequested": "Avance Demandée",
+      "noAdvance": "Pas d'avance demandée",
+      "breakdown": "Répartition du Budget",
+      "approvalHistory": "Historique d'Approbation",
+      "comments": "Commentaires"
+    },
+    "approval": {
+      "title": "Traiter Demande",
+      "action": "Action",
+      "selectAction": "Sélectionner action",
+      "comments": "Commentaires (optionnel)",
+      "commentsRequired": "Commentaires (requis pour rejet)",
+      "commentsPlaceholder": "Ajoutez des commentaires sur votre décision"
+    },
+    "cards": {
+      "totalRequested": "Total Demandé",
+      "totalApproved": "Total Approuvé",
+      "pendingApproval": "En Attente d'Approbation",
+      "pendingPayment": "En Attente de Paiement"
+    },
+    "messages": {
+      "created": "Demande créée avec succès",
+      "approved": "Demande approuvée",
+      "rejected": "Demande rejetée",
+      "errorCreate": "Erreur création demande",
+      "errorApprove": "Erreur traitement demande",
+      "errorLoad": "Erreur chargement données",
+      "fillRequired": "Veuillez remplir tous les champs requis",
+      "selectAction": "Veuillez sélectionner une action"
+    }
+  },
   "vacations": {
     "title": "Gestion des Vacances",
     "pageTitle": "Gestion des Vacances et Congés",
