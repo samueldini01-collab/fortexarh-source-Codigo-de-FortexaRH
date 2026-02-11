@@ -1,51 +1,23 @@
 # FortexaRH - Sistema SaaS de RRHH y Nómina
 
-## Última Actualización: 2026-02-10
+## Última Actualización: 2026-02-11
 
 ## ✅ Completado Hoy (Sesión Actual)
 
-### 🌐 Sistema Multi-Idioma - Páginas Completamente Traducidas (P0 - EN PROGRESO)
-Continuación de la implementación multi-idioma al sistema interno completo (ES, EN, FR).
+### 🌐 Sistema Multi-Idioma - Continuación Traducciones (P0 - EN PROGRESO)
 
-#### Páginas Completamente Traducidas Esta Sesión
-1. **EvaluationsPage.jsx:** Completamente traducida - título, pestañas, estadísticas, formularios, competencias, ratings, planes de mejora, ciclos, objetivos
-2. **ReportsPage.jsx:** Completamente traducida - período, meses, resumen, gráficos, tabla de asistencia
-3. **DocumentsPage.jsx:** Parcialmente traducida - mensajes, botones, formularios principales
-4. **CompanyConfigPage.jsx:** Claves de traducción añadidas - todas las pestañas y secciones
+#### Páginas Traducidas Esta Sesión
+1. **EmployeePortalPage.jsx:** Completamente traducida - login, tabs, dashboard, asistencia, recibos, vacaciones, permisos, evaluaciones, préstamos, perfil, notificaciones, modales de solicitud
+2. **RolesPage.jsx:** Completamente traducida - mensajes toast, modales create/edit, secciones de roles personalizados y predeterminados, permisos, badges de estado
 
-#### Correcciones de Bugs de Traducción
-1. **ReportsPage namespace fix:** Corregido `t('reports.*')` a `t('reportsPage.*')` para coincidir con el archivo JSON
-2. **Ratings dinámicos:** EvaluationsPage ahora traduce los ratings dinámicamente según el idioma seleccionado (en lugar de usar valor de BD)
-3. **PWAInstallPrompt:** Traducido completamente el popup de instalación PWA a ES/EN/FR
+#### Claves de Traducción Agregadas Esta Sesión
+- `employeePortal`: ~180 claves nuevas expandidas (login, tabs, overview, payslips, attendance, vacations, leaves, evaluations, loans, profile, notifications, requests, messages)
+- `roles`: ~20 claves nuevas (messages completos, enterpriseOnly, customRoles, noCustomRoles, etc.)
+- `common`: 3 claves nuevas (viewPlan, upgrade, noDescription)
 
-#### Archivos JSON Expandidos Esta Sesión
-- Sección `evaluations`: ~180 claves nuevas (competencias, ratings, objetivos, ciclos, planes)
-- Sección `reportsPage`: ~70 claves expandidas (meses, resumen, gráficos, drill-down)
-- Sección `documents`: ~120 claves nuevas (formularios, mensajes, categorías)
-- Sección `settings`: ~100 claves nuevas (tabs, general, logo, apariencia, notificaciones, integraciones, auditoría)
-- Sección `pwa`: ~15 claves nuevas (popup instalación PWA, instrucciones iOS)
-- Sección `metrics`: ~50 claves nuevas (cards, charts, drill-down)
-- Sección `orgChart`: ~80 claves nuevas (wizard, templates, forms, messages)
-- Sección `accounting`: ~100 claves nuevas (tabs, entries, accounts, forms, messages)
-- Sección `support`: ~40 claves nuevas (tickets, forms, statuses)
-- Sección `users`: ~50 claves nuevas (table, forms, roles, messages)
-- Sección `roles`: ~60 claves nuevas (permissions, modules, forms)
-- Sección `partner`: ~70 claves nuevas (stats, clients, commissions, forms)
-- Sección `employeePortal`: ~80 claves nuevas (tabs, payslips, attendance, requests, profile)
-- Sección `geoAttendance`: ~60 claves nuevas (live, clockIn, records, locations)
-
-#### Páginas con useTranslation Hook Agregado Esta Sesión
-1. MetricsDashboardPage.jsx
-2. AccountingPage.jsx
-3. PartnerDashboardPage.jsx
-4. EmployeePortalPage.jsx
-5. SupportPage.jsx
-6. UsersManagementPage.jsx
-7. RolesPage.jsx
-8. GeoAttendancePage.jsx
-
-#### Test Report: `/app/test_reports/iteration_35.json`
-- Frontend: 100% - Traducciones funcionando en ES/EN/FR
+#### Test Report: `/app/test_reports/iteration_36.json`
+- EmployeePortalPage: 100% traducido - todas las pruebas pasaron en ES/EN/FR
+- RolesPage: 100% traducido - modales y mensajes corregidos
 
 ---
 
@@ -56,17 +28,21 @@ Continuación de la implementación multi-idioma al sistema interno completo (ES
 4. **OnboardingTutorial.jsx** - Completa
 5. **VacationsPage.jsx** - Completa
 6. **LoansPage.jsx** - Completa
-7. **Dashboard.jsx** - Parcial
-8. **EmployeesPage.jsx** - Parcial
-9. **PayrollV2Page.jsx** - Parcial
-10. **AttendancePage.jsx** - Parcial
+7. **EvaluationsPage.jsx** - Completa
+8. **ReportsPage.jsx** - Completa
+9. **DocumentsPage.jsx** - Parcial
+10. **CompanyConfigPage.jsx** - Parcial
+11. **SupportPage.jsx** - Hooks agregados
+12. **UsersManagementPage.jsx** - Hooks agregados
+13. **PartnerDashboardPage.jsx** - Hooks agregados
 
-#### Patrón de Traducción Establecido
-1. Añadir `import { useTranslation } from "react-i18next";`
-2. En el componente: `const { t } = useTranslation();`
-3. Reemplazar textos hardcodeados: `t('section.key')`
-4. Para datos dinámicos: crear funciones que usan `t()` internamente
-5. Para páginas públicas (Landing, Pricing): usar `t('landing.section.key')`
+#### Páginas Pendientes de Actualizar JSX
+- MetricsDashboardPage.jsx (hooks agregados, JSX pendiente)
+- OrganigramaPage.jsx (hooks agregados, JSX pendiente)
+- AccountingPage.jsx (hooks agregados, JSX pendiente)
+- GeoAttendancePage.jsx (hooks agregados, JSX pendiente)
+- ReportsAdvancedPage.jsx (hooks agregados, JSX pendiente)
+- DGIIReportsPage.jsx (hooks agregados, JSX pendiente)
 
 ---
 
