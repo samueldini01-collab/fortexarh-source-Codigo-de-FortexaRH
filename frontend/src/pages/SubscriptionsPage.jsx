@@ -50,6 +50,7 @@ const PLAN_COLORS = {
 };
 
 export default function SubscriptionsPage() {
+  const { t } = useTranslation();
   const { getAuthHeaders } = useAuth();
   const { refreshSubscription } = useSubscription();
   const [searchParams, setSearchParams] = useSearchParams();

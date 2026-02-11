@@ -45,6 +45,7 @@ const defaultVariables = [
 ];
 
 export default function TemplatesPage() {
+  const { t } = useTranslation();
   const [templates, setTemplates] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [documents, setDocuments] = useState([]);

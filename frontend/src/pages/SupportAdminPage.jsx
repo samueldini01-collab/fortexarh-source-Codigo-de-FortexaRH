@@ -176,6 +176,7 @@ const KPICard = ({ title, value, subtitle, icon: Icon, color = "emerald" }) => (
 );
 
 export default function SupportAdminPage() {
+  const { t } = useTranslation();
   const { token } = useAuth();
   const [loading, setLoading] = useState(true);
   const [tickets, setTickets] = useState([]);

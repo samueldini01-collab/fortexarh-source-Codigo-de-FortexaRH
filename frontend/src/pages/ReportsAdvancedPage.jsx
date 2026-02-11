@@ -25,6 +25,7 @@ import {
 import { toast } from "sonner";
 
 export default function ReportsAdvancedPage() {
+  const { t } = useTranslation();
   const { getAuthHeaders } = useAuth();
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(null);

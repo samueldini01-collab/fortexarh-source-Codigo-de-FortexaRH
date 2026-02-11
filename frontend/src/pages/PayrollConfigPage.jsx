@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/tooltip";
 
 export default function PayrollConfigPage() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isrExpanded, setIsrExpanded] = useState(false);

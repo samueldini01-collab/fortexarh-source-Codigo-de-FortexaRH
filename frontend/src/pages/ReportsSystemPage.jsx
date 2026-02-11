@@ -44,6 +44,7 @@ const categoryColors = {
 };
 
 export default function ReportsSystemPage() {
+  const { t } = useTranslation();
   const { getAuthHeaders } = useAuth();
   const [loading, setLoading] = useState(true);
   const [catalog, setCatalog] = useState(null);

@@ -51,6 +51,7 @@ const OPERATION_ICONS = {
 };
 
 export default function CDCAuditPage() {
+  const { t } = useTranslation();
   const { getAuthHeaders } = useAuth();
   const [loading, setLoading] = useState(true);
   const [cdcStatus, setCdcStatus] = useState(null);

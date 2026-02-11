@@ -78,6 +78,7 @@ const ANNUAL_REPORTS = [
 ];
 
 export default function DGIIReportsPage() {
+  const { t } = useTranslation();
   const { getAuthHeaders } = useAuth();
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(null);

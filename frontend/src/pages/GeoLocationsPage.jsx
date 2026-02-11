@@ -47,6 +47,7 @@ const locationTypes = [
 ];
 
 export default function GeoLocationsPage() {
+  const { t } = useTranslation();
   const { getAuthHeaders } = useAuth();
   const [loading, setLoading] = useState(true);
   const [locations, setLocations] = useState([]);
