@@ -307,7 +307,7 @@ export default function DGIIReportsPage() {
 
   const handleDownloadAnnual = async (reportType) => {
     if (!selectedYear) {
-      toast.error("Seleccione un año primero");
+      toast.error(t('dgiiReports.selectYearFirst'));
       return;
     }
 
@@ -333,10 +333,10 @@ export default function DGIIReportsPage() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      toast.success(`IR-13 Año ${selectedYear} descargado correctamente`);
+      toast.success(`IR-13 ${selectedYear} ${t('dgiiReports.downloadedSuccess')}`);
     } catch (error) {
       console.error("Error downloading annual report:", error);
-      toast.error(error.response?.data?.detail || "Error al descargar el reporte anual");
+      toast.error(error.response?.data?.detail || t('dgiiReports.downloadError'));
     } finally {
       setDownloading(null);
     }
