@@ -671,7 +671,7 @@ function EmployeeDashboard() {
                       <DollarSign className="w-6 h-6 text-emerald-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-slate-500">Último Salario</p>
+                      <p className="text-sm text-slate-500">{t('employeePortal.overview.lastSalary')}</p>
                       <p className="text-xl font-bold text-slate-800">{formatCurrency(dashboardData?.salary?.latest_net)}</p>
                     </div>
                   </div>
@@ -685,8 +685,8 @@ function EmployeeDashboard() {
                       <Calendar className="w-6 h-6 text-blue-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-slate-500">Vacaciones Disponibles</p>
-                      <p className="text-xl font-bold text-slate-800">{vacationBalance.available} días</p>
+                      <p className="text-sm text-slate-500">{t('employeePortal.overview.vacationsAvailable')}</p>
+                      <p className="text-xl font-bold text-slate-800">{vacationBalance.available} {t('employeePortal.overview.days')}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -699,7 +699,7 @@ function EmployeeDashboard() {
                       <Wallet className="w-6 h-6 text-amber-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-slate-500">Préstamos Pendientes</p>
+                      <p className="text-sm text-slate-500">{t('employeePortal.overview.pendingLoans')}</p>
                       <p className="text-xl font-bold text-slate-800">{formatCurrency(dashboardData?.loans?.total_balance)}</p>
                     </div>
                   </div>
@@ -713,7 +713,7 @@ function EmployeeDashboard() {
                       <Clock className="w-6 h-6 text-purple-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-slate-500">Solicitudes Pendientes</p>
+                      <p className="text-sm text-slate-500">{t('employeePortal.overview.pendingRequests')}</p>
                       <p className="text-xl font-bold text-slate-800">{dashboardData?.pending_requests || 0}</p>
                     </div>
                   </div>
@@ -727,7 +727,7 @@ function EmployeeDashboard() {
                 <CardHeader className="pb-2">
                   <CardTitle className="flex items-center gap-2 text-amber-800">
                     <Megaphone className="w-5 h-5" />
-                    Anuncios Importantes
+                    {t('employeePortal.announcements.title')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
