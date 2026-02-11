@@ -79,7 +79,7 @@ export default function PayrollCalculatorPage() {
 
   const handleCalculate = async () => {
     if (!formData.base_salary || parseFloat(formData.base_salary) <= 0) {
-      toast.error("Por favor ingrese un salario base válido");
+      toast.error(t("payroll.calculator.messages.enterValidSalary"));
       return;
     }
 
@@ -101,10 +101,10 @@ export default function PayrollCalculatorPage() {
         withCredentials: true
       });
       setResult(response.data);
-      toast.success("Cálculo realizado correctamente");
+      toast.success(t("payroll.calculator.messages.calculationSuccess"));
     } catch (error) {
       console.error("Error calculating:", error);
-      toast.error(error.response?.data?.detail || "Error al calcular nómina");
+      toast.error(error.response?.data?.detail || t("payroll.calculator.messages.calculationError"));
     } finally {
       setCalculating(false);
     }
