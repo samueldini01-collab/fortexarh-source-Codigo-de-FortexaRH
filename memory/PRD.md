@@ -4,6 +4,18 @@
 
 ## ✅ Completado Hoy (Sesión Actual - Continuación)
 
+### 🌐 PayrollPage.jsx (COMPLETADO)
+- Página de nómina completamente traducida
+- Cards: Pendientes, Aprobadas, Pagadas
+- Formulario de creación de nómina
+- Estados y acciones traducidas
+- **Verificado:** Screenshot confirma traducción correcta
+
+### 🌐 Sección de Gastos (expenses) AGREGADA
+- ~100 claves de traducción en EN/ES/FR
+- Categorías, estados, formularios, mensajes
+- Lista para usar en ExpensesPage.jsx
+
 ### 🌐 Páginas de Checkout /checkout (COMPLETADO - BUG FIX)
 - **Bug reportado:** Las páginas de checkout no se traducían
 - **Solución:** Se agregó el hook `useTranslation` a CheckoutPage.jsx
@@ -15,21 +27,22 @@
 - ~50 claves nuevas agregadas: errores de ubicación, mensajes de estado, botones, etc.
 - Saludos según hora del día traducidos (Buenos días/tardes/noches)
 
+### 🌐 PartnerRegisterPage.jsx (COMPLETADO)
+- Registro de partners contables completamente traducido
+- Flujo de 2 pasos con validaciones
+- Beneficios y formularios traducidos
+
 ### 🌐 Páginas de Autenticación (COMPLETADO)
 1. **RegisterPage.jsx** - Completamente traducida
-   - Flujo normal y flujo con pago verificado
-   - Mensajes de error y validación
-   - Benefits y placeholders
 2. **ForgotPasswordPage.jsx** - Completamente traducida
-   - Estados: formulario, enviando, enviado
 3. **ResetPasswordPage.jsx** - Completamente traducida
-   - Estados: formulario, actualizando, éxito
 
 ### 🌐 Traducciones de Infraestructura (COMPLETADO)
-- Sección `common` agregada (40+ claves): back, save, cancel, delete, edit, etc.
-- Sección `partner.register` agregada (~50 claves): formulario de registro de partners
-- Sección `geoAttendance.mobile` agregada (~50 claves): interfaz móvil de marcaje
-- Sección `auth.resetPassword` agregada (~20 claves)
+- Sección `common` agregada (40+ claves)
+- Sección `partner.register` agregada (~50 claves)
+- Sección `geoAttendance.mobile` agregada (~50 claves)
+- Sección `payroll.calculator` agregada (~50 claves)
+- Sección `expenses` agregada (~100 claves)
 
 ---
 
