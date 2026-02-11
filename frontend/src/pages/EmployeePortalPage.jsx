@@ -399,12 +399,12 @@ function EmployeeDashboard() {
   const handleLeaveRequest = async () => {
     try {
       await axios.post(`${API}/employee-portal/leaves/request`, leaveForm, { headers: getAuthHeaders() });
-      toast.success("Solicitud de permiso enviada");
+      toast.success(t('employeePortal.leaves.requestSent'));
       setShowLeaveRequest(false);
       setLeaveForm({ leave_type: "", start_date: "", end_date: "", reason: "" });
       fetchDashboard();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al enviar solicitud");
+      toast.error(error.response?.data?.detail || t('employeePortal.leaves.errorRequest'));
     }
   };
 
@@ -413,10 +413,10 @@ function EmployeeDashboard() {
     setCheckingIn(true);
     try {
       const response = await axios.post(`${API}/employee-portal/attendance/check-in`, {}, { headers: getAuthHeaders() });
-      toast.success(response.data.message);
+      toast.success(response.data.message || t('employeePortal.messages.clockedIn'));
       setTodayAttendance(prev => ({ ...prev, attendance: { ...prev?.attendance, check_in: response.data.check_in }, can_check_in: false, can_check_out: true }));
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al registrar entrada");
+      toast.error(error.response?.data?.detail || t('employeePortal.messages.errorClockin'));
     } finally {
       setCheckingIn(false);
     }
@@ -427,10 +427,10 @@ function EmployeeDashboard() {
     setCheckingOut(true);
     try {
       const response = await axios.post(`${API}/employee-portal/attendance/check-out`, {}, { headers: getAuthHeaders() });
-      toast.success(response.data.message);
+      toast.success(response.data.message || t('employeePortal.messages.clockedOut'));
       setTodayAttendance(prev => ({ ...prev, attendance: { ...prev?.attendance, check_out: response.data.check_out, hours_worked: response.data.hours_worked }, can_check_out: false }));
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al registrar salida");
+      toast.error(error.response?.data?.detail || t('employeePortal.messages.errorClockout'));
     } finally {
       setCheckingOut(false);
     }
