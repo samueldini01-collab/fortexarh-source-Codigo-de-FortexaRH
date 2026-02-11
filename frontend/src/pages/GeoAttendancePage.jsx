@@ -239,7 +239,7 @@ export default function GeoAttendancePage() {
       setSelfieData(null);
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al marcar asistencia");
+      toast.error(error.response?.data?.detail || t("geoAttendance.messages.errorMarkAttendance"));
     } finally {
       setMarking(false);
     }
