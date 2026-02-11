@@ -2,62 +2,88 @@
 
 ## Última Actualización: 2026-02-11
 
-## ✅ Completado Hoy (Sesión Actual)
+## ✅ Completado Hoy (Sesión Actual - Continuación)
 
-### 🌐 Página de Checkout /checkout (COMPLETADO - BUG FIX)
+### 🌐 Páginas de Checkout /checkout (COMPLETADO - BUG FIX)
 - **Bug reportado:** Las páginas de checkout no se traducían
 - **Solución:** Se agregó el hook `useTranslation` a CheckoutPage.jsx
-- **Cambios realizados:**
-  - Creación de sección `checkout` en los 3 archivos de traducción (en.json, es.json, fr.json)
-  - ~80 claves de traducción agregadas para checkout
-  - Traducciones de los 3 planes (Basic, Pro, Enterprise) con todas sus características
-  - Textos de UI traducidos: título, subtítulo, resumen de pago, botones, footer
+- ~80 claves de traducción agregadas para checkout
 - **Verificado:** Screenshots confirman traducción correcta en ES, EN y FR
 
-### 🌐 Detección Automática de Idioma del Navegador (COMPLETADO)
-- Detección inteligente del idioma preferido del navegador
-- Mapeo de variantes (en-US → en, fr-CA → fr, es-MX → es)
-- Persistencia en localStorage
+### 🌐 GeoAttendancePage.jsx (COMPLETADO)
+- Página móvil de marcaje geolocalizado completamente traducida
+- ~50 claves nuevas agregadas: errores de ubicación, mensajes de estado, botones, etc.
+- Saludos según hora del día traducidos (Buenos días/tardes/noches)
 
-### 🌐 Página de Precios /pricing (COMPLETADO)
-- Features de planes traducidas (30+ features)
-- Mapeo de features del backend a claves de traducción
-- Nombres de planes traducidos
+### 🌐 Páginas de Autenticación (COMPLETADO)
+1. **RegisterPage.jsx** - Completamente traducida
+   - Flujo normal y flujo con pago verificado
+   - Mensajes de error y validación
+   - Benefits y placeholders
+2. **ForgotPasswordPage.jsx** - Completamente traducida
+   - Estados: formulario, enviando, enviado
+3. **ResetPasswordPage.jsx** - Completamente traducida
+   - Estados: formulario, actualizando, éxito
 
-### 🌐 Traducciones Completadas Esta Sesión
-
-#### Páginas 100% Traducidas:
-1. **EmployeePortalPage.jsx** (~180 claves) - login, tabs, dashboard, asistencia, recibos, vacaciones, permisos, evaluaciones, préstamos, perfil, notificaciones
-2. **RolesPage.jsx** (~40 claves) - modales create/edit, mensajes toast, secciones de roles
-3. **PricingPage.jsx** (~40 claves) - features de planes, nombres de planes
-4. **MetricsDashboardPage.jsx** (~100 claves) - cards KPI, gráficos, drill-down, tabla comparativa, indicadores
-
-#### Claves Agregadas en JSON:
-- `employeePortal`: ~180 claves expandidas
-- `roles`: ~40 claves con mensajes y formularios
-- `pricing.features`: ~35 claves nuevas
-- `metrics`: ~100 claves (cards, charts, kpis, loans, table, drillDown)
+### 🌐 Traducciones de Infraestructura (COMPLETADO)
+- Sección `common` agregada (40+ claves): back, save, cancel, delete, edit, etc.
+- Sección `partner.register` agregada (~50 claves): formulario de registro de partners
+- Sección `geoAttendance.mobile` agregada (~50 claves): interfaz móvil de marcaje
+- Sección `auth.resetPassword` agregada (~20 claves)
 
 ---
 
-#### Páginas Traducidas Esta Sesión
-1. **EmployeePortalPage.jsx:** Completamente traducida - login, tabs, dashboard, asistencia, recibos, vacaciones, permisos, evaluaciones, préstamos, perfil, notificaciones, modales de solicitud
-2. **RolesPage.jsx:** Completamente traducida - mensajes toast, modales create/edit, secciones de roles personalizados y predeterminados, permisos, badges de estado
+### 🌐 Páginas Con useTranslation Implementado: 26/48
+1. AccountingPage.jsx
+2. AttendancePage.jsx
+3. **CheckoutPage.jsx** ✅ (esta sesión)
+4. CompanyConfigPage.jsx
+5. Dashboard.jsx
+6. DocumentsPage.jsx
+7. EmployeePortalPage.jsx
+8. EmployeesPage.jsx
+9. EvaluationsPage.jsx
+10. **ForgotPasswordPage.jsx** ✅ (esta sesión)
+11. **GeoAttendancePage.jsx** ✅ (esta sesión)
+12. LandingPage.jsx
+13. LoansPage.jsx
+14. LoginPage.jsx
+15. MetricsDashboardPage.jsx
+16. OrganigramaPage.jsx
+17. PartnerDashboardPage.jsx
+18. PayrollV2Page.jsx
+19. PricingPage.jsx
+20. **RegisterPage.jsx** ✅ (esta sesión)
+21. ReportsPage.jsx
+22. **ResetPasswordPage.jsx** ✅ (esta sesión)
+23. RolesPage.jsx
+24. SupportPage.jsx
+25. UsersManagementPage.jsx
+26. VacationsPage.jsx
 
-#### Claves de Traducción Agregadas Esta Sesión
-- `employeePortal`: ~180 claves nuevas expandidas (login, tabs, overview, payslips, attendance, vacations, leaves, evaluations, loans, profile, notifications, requests, messages)
-- `roles`: ~20 claves nuevas (messages completos, enterpriseOnly, customRoles, noCustomRoles, etc.)
-- `common`: 3 claves nuevas (viewPlan, upgrade, noDescription)
-
-#### Test Report: `/app/test_reports/iteration_36.json`
-- EmployeePortalPage: 100% traducido - todas las pruebas pasaron en ES/EN/FR
-- RolesPage: 100% traducido - modales y mensajes corregidos
-
----
-
-### 🌐 Páginas Ya Traducidas (Sesiones Anteriores)
-1. **LandingPage.jsx** - Completa
-2. **LoginPage.jsx** - Completa
+### ❌ Páginas Pendientes de Traducción: 22/48
+- AccountantsSoftwarePage.jsx
+- BrochurePage.jsx
+- CDCAuditPage.jsx
+- CostsByDepartmentPage.jsx
+- DGIIReportsPage.jsx
+- ExpensesPage.jsx
+- GeoLocationsPage.jsx
+- NotificationsPage.jsx
+- PartnerRegisterPage.jsx (traducciones listas, falta actualizar componente)
+- PayrollCalculatorPage.jsx
+- PayrollConfigPage.jsx
+- PayrollDashboardPage.jsx
+- PayrollPage.jsx
+- PrivacyPage.jsx
+- RecruitmentPage.jsx
+- ReportsAdvancedPage.jsx
+- ReportsSystemPage.jsx
+- SettingsPage.jsx
+- SubscriptionsPage.jsx
+- SupportAdminPage.jsx
+- TemplatesPage.jsx
+- TermsPage.jsx
 3. **PricingPage.jsx** - Completa
 4. **CheckoutPage.jsx** - Completa (Bug fix - sesión actual)
 5. **OnboardingTutorial.jsx** - Completa
