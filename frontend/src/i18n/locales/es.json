@@ -1723,6 +1723,20 @@
       "exportError": "Error al exportar"
     }
   },
+  "pwa": {
+    "title": "Instalar FortexaRH",
+    "subtitle": "Accede más rápido desde tu pantalla de inicio",
+    "notNow": "Ahora no",
+    "install": "Instalar",
+    "understood": "Entendido",
+    "iosInstructions": {
+      "intro": "Para instalar FortexaRH en tu iPhone o iPad:",
+      "step1": "Toca el botón <strong>Compartir</strong> (el cuadrado con flecha hacia arriba) en la barra inferior de Safari",
+      "step2": "Desplázate hacia abajo y toca <strong>\"Agregar a pantalla de inicio\"</strong>",
+      "step3": "Toca <strong>\"Agregar\"</strong> en la esquina superior derecha",
+      "done": "¡Listo! FortexaRH aparecerá en tu pantalla de inicio como una app."
+    }
+  },
   "errors": {
     "generic": "Ha ocurrido un error",
     "notFound": "Página no encontrada",
