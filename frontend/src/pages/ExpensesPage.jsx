@@ -240,13 +240,13 @@ export default function ExpensesPage() {
       setShowDetails(true);
     } catch (error) {
       console.error("Error fetching details:", error);
-      toast.error("Error al cargar los detalles");
+      toast.error(t("expenses.messages.errorLoad"));
     }
   };
 
   const handleApprovalAction = async () => {
     if (!approvalData.action) {
-      toast.error("Seleccione una acción");
+      toast.error(t("expenses.messages.selectAction"));
       return;
     }
     
@@ -260,13 +260,13 @@ export default function ExpensesPage() {
         }
       );
       
-      toast.success(approvalData.action === "approve" ? "Solicitud aprobada" : "Solicitud rechazada");
+      toast.success(approvalData.action === "approve" ? t("expenses.messages.approved") : t("expenses.messages.rejected"));
       setShowApproval(false);
       setApprovalData({ action: "", comments: "" });
       fetchData();
     } catch (error) {
       console.error("Error processing approval:", error);
-      toast.error(error.response?.data?.detail || "Error al procesar la aprobación");
+      toast.error(error.response?.data?.detail || t("expenses.messages.errorApprove"));
     }
   };
 
