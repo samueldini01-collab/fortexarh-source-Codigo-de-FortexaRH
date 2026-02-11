@@ -669,7 +669,7 @@ export default function RolesPage() {
                           </div>
                           {formData.modules.includes(mod.id) && (
                             <Badge variant="outline" className="text-xs">
-                              {(formData.permissions[mod.id] || []).length} de {modulePermissions.length} permisos
+                              {(formData.permissions[mod.id] || []).length}/{modulePermissions.length}
                             </Badge>
                           )}
                         </div>
@@ -677,7 +677,7 @@ export default function RolesPage() {
                         {formData.modules.includes(mod.id) && (
                           <div className="mt-3 pt-3 border-t">
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-xs text-slate-500">Permisos disponibles para este módulo:</span>
+                              <span className="text-xs text-slate-500">{t('roles.form.permissions')}:</span>
                               <button 
                                 type="button"
                                 className="text-xs text-blue-600 hover:text-blue-800"
@@ -691,7 +691,7 @@ export default function RolesPage() {
                                   }));
                                 }}
                               >
-                                Seleccionar todos
+                                {t('roles.form.selectAll')}
                               </button>
                             </div>
                             <div className="flex flex-wrap gap-2">
@@ -728,10 +728,10 @@ export default function RolesPage() {
             
             <DialogFooter>
               <Button variant="outline" onClick={() => { setShowEditModal(false); setEditingRole(null); }}>
-                Cancelar
+                {t('common.cancel')}
               </Button>
               <Button onClick={handleUpdateRole} data-testid="update-role-btn">
-                Guardar Cambios
+                {t('common.save')}
               </Button>
             </DialogFooter>
           </DialogContent>
