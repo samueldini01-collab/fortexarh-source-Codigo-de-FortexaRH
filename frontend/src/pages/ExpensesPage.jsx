@@ -70,6 +70,7 @@ import {
   Building2
 } from "lucide-react";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 import { API, useAuth } from "@/App";
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
