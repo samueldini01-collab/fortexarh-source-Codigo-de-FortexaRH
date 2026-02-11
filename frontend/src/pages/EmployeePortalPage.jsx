@@ -502,12 +502,12 @@ function EmployeeDashboard() {
               {showNotifications && (
                 <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-96 max-w-[400px] bg-white rounded-xl shadow-2xl border border-slate-200 z-50" data-testid="notification-panel">
                   <div className="p-3 sm:p-4 border-b border-slate-100 flex items-center justify-between">
-                    <h3 className="font-semibold text-slate-800 text-sm sm:text-base">Notificaciones</h3>
+                    <h3 className="font-semibold text-slate-800 text-sm sm:text-base">{t('employeePortal.notifications.title')}</h3>
                     <div className="flex items-center gap-1 sm:gap-2">
                       {unreadCount > 0 && (
                         <Button variant="ghost" size="sm" onClick={handleMarkAllAsRead} className="text-xs h-7 px-2">
                           <CheckCircle className="w-3 h-3 mr-1" />
-                          <span className="hidden sm:inline">Marcar todas</span>
+                          <span className="hidden sm:inline">{t('employeePortal.notifications.markAllRead')}</span>
                         </Button>
                       )}
                       <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setShowNotifications(false)}>
@@ -524,7 +524,7 @@ function EmployeeDashboard() {
                     ) : notifications.length === 0 ? (
                       <div className="p-8 text-center">
                         <BellOff className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-                        <p className="text-slate-500 text-sm">No tienes notificaciones</p>
+                        <p className="text-slate-500 text-sm">{t('employeePortal.notifications.noNotifications')}</p>
                       </div>
                     ) : (
                       <div className="divide-y divide-slate-100">
@@ -573,7 +573,7 @@ function EmployeeDashboard() {
                   {notifications.length > 10 && (
                     <div className="p-3 border-t border-slate-100 text-center">
                       <Button variant="link" size="sm" className="text-blue-600">
-                        Ver todas las notificaciones
+                        {t('employeePortal.notifications.viewAll')}
                       </Button>
                     </div>
                   )}
@@ -583,7 +583,7 @@ function EmployeeDashboard() {
             
             <Button variant="ghost" size="sm" onClick={logout} className="h-8 px-2 sm:px-3">
               <LogOut className="w-4 h-4 sm:mr-2" />
-              <span className="hidden sm:inline">Salir</span>
+              <span className="hidden sm:inline">{t('employeePortal.messages.logout')}</span>
             </Button>
           </div>
         </div>
@@ -611,7 +611,7 @@ function EmployeeDashboard() {
                   })()}
                   <span className="text-sm">{tabs[currentTabIndex]?.label}</span>
                 </div>
-                <p className="text-[10px] text-slate-400 mt-0.5">Desliza para navegar</p>
+                <p className="text-[10px] text-slate-400 mt-0.5">{t('employeePortal.swipe.hint')}</p>
               </div>
               
               <button 
