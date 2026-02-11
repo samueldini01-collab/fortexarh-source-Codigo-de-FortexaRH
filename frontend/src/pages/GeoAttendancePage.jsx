@@ -290,7 +290,7 @@ export default function GeoAttendancePage() {
         <Card className="bg-slate-800/50 border-slate-700">
           <CardContent className="p-6">
             <div className="text-center">
-              <p className="text-slate-400 text-sm">Buenos días</p>
+              <p className="text-slate-400 text-sm">{t("geoAttendance.mobile.greeting.morning")}</p>
               <h1 className="text-2xl font-bold text-white mt-1">
                 {user?.name || user?.email?.split('@')[0] || "Usuario"}
               </h1>
