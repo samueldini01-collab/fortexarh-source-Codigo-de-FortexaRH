@@ -360,7 +360,7 @@ export default function GeoAttendancePage() {
                       {nearestLocation.distance <= nearestLocation.radius ? (
                         <Badge className="bg-emerald-500/20 text-emerald-300">
                           <CheckCircle className="w-3 h-3 mr-1" />
-                          Dentro
+                          {t("geoAttendance.mobile.inside")}
                         </Badge>
                       ) : (
                         <Badge className="bg-amber-500/20 text-amber-300">
