@@ -323,7 +323,7 @@ export default function PayrollPage() {
                     <TableHead>{t("payroll.details.deductions")}</TableHead>
                     <TableHead>{t("payroll.summary.isr")}</TableHead>
                     <TableHead>{t("payroll.table.net")}</TableHead>
-                    <TableHead>{t("common.status") || "Estado"}</TableHead>
+                    <TableHead>{t("common.status")}</TableHead>
                     <TableHead className="text-right">{t("common.actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
