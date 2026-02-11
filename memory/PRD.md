@@ -5,19 +5,30 @@
 ## ✅ Completado Hoy (Sesión Actual)
 
 ### 🌐 Detección Automática de Idioma del Navegador (COMPLETADO)
-Implementada funcionalidad de detección automática del idioma preferido del navegador:
+- Detección inteligente del idioma preferido del navegador
+- Mapeo de variantes (en-US → en, fr-CA → fr, es-MX → es)
+- Persistencia en localStorage
 
-#### Características:
-- **Detección inteligente:** Mapea variantes de idioma (en-US, en-GB, fr-CA, etc.) a idiomas soportados (es, en, fr)
-- **Persistencia:** Guarda preferencia del usuario en localStorage
-- **Idiomas similares:** Mapea portugués e italiano a español, alemán y holandés a inglés
-- **Primera visita:** Si no hay preferencia guardada, detecta automáticamente el idioma del navegador
-- **Soporte querystring:** Permite ?lang=en para cambiar idioma via URL
+### 🌐 Página de Precios /pricing (COMPLETADO)
+- Features de planes traducidas (30+ features)
+- Mapeo de features del backend a claves de traducción
+- Nombres de planes traducidos
 
-#### Archivos Modificados:
-- `/app/frontend/src/i18n/index.js` - Configuración mejorada con mapeo de idiomas
+### 🌐 Traducciones Completadas Esta Sesión
 
-### 🌐 Sistema Multi-Idioma - Continuación Traducciones (P0 - EN PROGRESO)
+#### Páginas 100% Traducidas:
+1. **EmployeePortalPage.jsx** (~180 claves) - login, tabs, dashboard, asistencia, recibos, vacaciones, permisos, evaluaciones, préstamos, perfil, notificaciones
+2. **RolesPage.jsx** (~40 claves) - modales create/edit, mensajes toast, secciones de roles
+3. **PricingPage.jsx** (~40 claves) - features de planes, nombres de planes
+4. **MetricsDashboardPage.jsx** (~100 claves) - cards KPI, gráficos, drill-down, tabla comparativa, indicadores
+
+#### Claves Agregadas en JSON:
+- `employeePortal`: ~180 claves expandidas
+- `roles`: ~40 claves con mensajes y formularios
+- `pricing.features`: ~35 claves nuevas
+- `metrics`: ~100 claves (cards, charts, kpis, loans, table, drillDown)
+
+---
 
 #### Páginas Traducidas Esta Sesión
 1. **EmployeePortalPage.jsx:** Completamente traducida - login, tabs, dashboard, asistencia, recibos, vacaciones, permisos, evaluaciones, préstamos, perfil, notificaciones, modales de solicitud
