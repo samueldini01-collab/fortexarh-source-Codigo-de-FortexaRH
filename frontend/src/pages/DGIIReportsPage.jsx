@@ -183,21 +183,21 @@ export default function DGIIReportsPage() {
       switch (reportType) {
         case "ir3":
         case "ir4":
-          title = `Desglose ISR - ${period.description || `${period.month}/${period.year}`}`;
+          title = `${t('dgiiReports.drillDown.isrBreakdown')} - ${period.description || `${period.month}/${period.year}`}`;
           columns = [
-            { header: "Empleado", accessor: "employee_name" },
-            { header: "Cédula", accessor: "cedula" },
-            { header: "Salario Bruto", accessor: "gross_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
-            { header: "ISR Retenido", accessor: "isr", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-red-600" }
+            { header: t('dgiiReports.drillDown.employee'), accessor: "employee_name" },
+            { header: t('dgiiReports.drillDown.cedula'), accessor: "cedula" },
+            { header: t('dgiiReports.drillDown.grossSalary'), accessor: "gross_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+            { header: t('dgiiReports.drillDown.isrRetained'), accessor: "isr", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-red-600" }
           ];
           break;
           
         case "tss-autodeterminacion":
-          title = `Desglose TSS - ${period.description || `${period.month}/${period.year}`}`;
+          title = `${t('dgiiReports.drillDown.tssBreakdown')} - ${period.description || `${period.month}/${period.year}`}`;
           columns = [
-            { header: "Empleado", accessor: "employee_name" },
-            { header: "Cédula", accessor: "cedula" },
-            { header: "Salario", accessor: "gross_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+            { header: t('dgiiReports.drillDown.employee'), accessor: "employee_name" },
+            { header: t('dgiiReports.drillDown.cedula'), accessor: "cedula" },
+            { header: t('dgiiReports.drillDown.salary'), accessor: "gross_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
             { header: "SFS", accessor: "sfs_employee", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
             { header: "AFP", accessor: "afp_employee", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
             { header: "ISR", accessor: "isr", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-amber-600" }
@@ -205,11 +205,11 @@ export default function DGIIReportsPage() {
           break;
           
         default:
-          title = `Desglose ${reportType.toUpperCase()} - ${period.description}`;
+          title = `${t('dgiiReports.drillDown.breakdown')} ${reportType.toUpperCase()} - ${period.description}`;
           columns = [
-            { header: "Empleado", accessor: "employee_name" },
-            { header: "Cédula", accessor: "cedula" },
-            { header: "Neto", accessor: "net_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" }
+            { header: t('dgiiReports.drillDown.employee'), accessor: "employee_name" },
+            { header: t('dgiiReports.drillDown.cedula'), accessor: "cedula" },
+            { header: t('dgiiReports.drillDown.netSalary'), accessor: "net_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" }
           ];
       }
       
