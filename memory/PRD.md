@@ -33,33 +33,55 @@
 
 ---
 
-### 🌐 Páginas Con useTranslation Implementado: 26/48
-1. AccountingPage.jsx
-2. AttendancePage.jsx
-3. **CheckoutPage.jsx** ✅ (esta sesión)
-4. CompanyConfigPage.jsx
-5. Dashboard.jsx
-6. DocumentsPage.jsx
-7. EmployeePortalPage.jsx
-8. EmployeesPage.jsx
-9. EvaluationsPage.jsx
-10. **ForgotPasswordPage.jsx** ✅ (esta sesión)
-11. **GeoAttendancePage.jsx** ✅ (esta sesión)
-12. LandingPage.jsx
-13. LoansPage.jsx
-14. LoginPage.jsx
-15. MetricsDashboardPage.jsx
-16. OrganigramaPage.jsx
-17. PartnerDashboardPage.jsx
-18. PayrollV2Page.jsx
-19. PricingPage.jsx
-20. **RegisterPage.jsx** ✅ (esta sesión)
-21. ReportsPage.jsx
-22. **ResetPasswordPage.jsx** ✅ (esta sesión)
-23. RolesPage.jsx
-24. SupportPage.jsx
-25. UsersManagementPage.jsx
-26. VacationsPage.jsx
+### 🌐 Páginas Con useTranslation Implementado: 48/48 ✅ COMPLETADO
+1. AccountantsSoftwarePage.jsx ✅
+2. AccountingPage.jsx
+3. AttendancePage.jsx
+4. BrochurePage.jsx ✅
+5. CDCAuditPage.jsx ✅
+6. **CheckoutPage.jsx** ✅
+7. CompanyConfigPage.jsx
+8. CostsByDepartmentPage.jsx ✅
+9. DGIIReportsPage.jsx ✅
+10. Dashboard.jsx
+11. DocumentsPage.jsx
+12. EmployeePortalPage.jsx
+13. EmployeesPage.jsx
+14. EvaluationsPage.jsx
+15. ExpensesPage.jsx ✅
+16. **ForgotPasswordPage.jsx** ✅
+17. **GeoAttendancePage.jsx** ✅
+18. GeoLocationsPage.jsx ✅
+19. LandingPage.jsx
+20. LoansPage.jsx
+21. LoginPage.jsx
+22. MetricsDashboardPage.jsx
+23. NotificationsPage.jsx ✅
+24. OrganigramaPage.jsx
+25. PartnerDashboardPage.jsx
+26. **PartnerRegisterPage.jsx** ✅
+27. PayrollCalculatorPage.jsx ✅
+28. PayrollConfigPage.jsx ✅
+29. PayrollDashboardPage.jsx ✅
+30. PayrollPage.jsx ✅
+31. PayrollV2Page.jsx
+32. PricingPage.jsx
+33. PrivacyPage.jsx ✅
+34. RecruitmentPage.jsx ✅
+35. **RegisterPage.jsx** ✅
+36. ReportsAdvancedPage.jsx ✅
+37. ReportsPage.jsx
+38. ReportsSystemPage.jsx ✅
+39. **ResetPasswordPage.jsx** ✅
+40. RolesPage.jsx
+41. SettingsPage.jsx ✅
+42. SubscriptionsPage.jsx ✅
+43. SupportAdminPage.jsx ✅
+44. SupportPage.jsx
+45. TemplatesPage.jsx ✅
+46. TermsPage.jsx ✅
+47. UsersManagementPage.jsx
+48. VacationsPage.jsx
 
 ### ❌ Páginas Pendientes de Traducción: 22/48
 - AccountantsSoftwarePage.jsx
