@@ -1724,6 +1724,250 @@
       "exportError": "Export error"
     }
   },
+  "metrics": {
+    "title": "Metrics and KPIs",
+    "refresh": "Refresh",
+    "year": "Year",
+    "errorLoading": "Error loading metrics",
+    "cards": {
+      "totalEmployees": "Total Employees",
+      "activeEmployees": "Active Employees",
+      "avgSalary": "Average Salary",
+      "totalPayroll": "Total Payroll",
+      "turnoverRate": "Turnover",
+      "avgSeniority": "Avg. Seniority",
+      "years": "years",
+      "vsLastYear": "vs last year"
+    },
+    "charts": {
+      "payrollEvolution": "Payroll Evolution",
+      "employeesByDept": "Employees by Department",
+      "hiresVsDepartures": "Hires vs Departures",
+      "salaryDistribution": "Salary Distribution",
+      "hires": "Hires",
+      "departures": "Departures",
+      "employees": "Employees",
+      "noData": "No data to display"
+    },
+    "drillDown": {
+      "employees": "Employees",
+      "name": "Name",
+      "department": "Department",
+      "position": "Position",
+      "hireDate": "Hire Date",
+      "salary": "Salary",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "departmentDetail": "Employees in",
+      "monthDetail": "Month Detail",
+      "date": "Date",
+      "type": "Type",
+      "hire": "Hire",
+      "departure": "Departure"
+    }
+  },
+  "orgChart": {
+    "title": "Organization Chart",
+    "subtitle": "Company organizational structure",
+    "search": "Search unit...",
+    "refresh": "Refresh",
+    "addUnit": "New Unit",
+    "exportPDF": "Export PDF",
+    "zoom": {
+      "in": "Zoom In",
+      "out": "Zoom Out",
+      "reset": "Reset"
+    },
+    "wizard": {
+      "title": "Create Organization Chart",
+      "subtitle": "Select a template to get started",
+      "step1": "Select Template",
+      "step2": "Customize",
+      "step3": "Confirm",
+      "employees": "employees",
+      "selectTemplate": "Select",
+      "customize": "Customize structure before creating",
+      "create": "Create Org Chart",
+      "creating": "Creating...",
+      "back": "Back",
+      "next": "Next",
+      "cancel": "Cancel"
+    },
+    "templates": {
+      "startup": "Agile Startup",
+      "startupDesc": "Flat structure ideal for fast-growing companies focused on product and sales.",
+      "small": "Small Business",
+      "smallDesc": "Basic functional structure with clearly defined essential departments.",
+      "medium": "Medium Business",
+      "mediumDesc": "Complete hierarchical structure with specialized departments and middle management.",
+      "enterprise": "Enterprise",
+      "enterpriseDesc": "Complete corporate structure with multiple divisions and management levels."
+    },
+    "unit": {
+      "positions": "positions",
+      "employees": "employees",
+      "vacant": "vacant",
+      "edit": "Edit",
+      "delete": "Delete",
+      "addChild": "Add subordinate"
+    },
+    "form": {
+      "createUnit": "Create Unit",
+      "editUnit": "Edit Unit",
+      "name": "Unit Name",
+      "namePlaceholder": "E.g: Human Resources",
+      "code": "Code",
+      "codePlaceholder": "E.g: HR",
+      "description": "Description",
+      "descPlaceholder": "Function description...",
+      "parentUnit": "Parent Unit",
+      "selectParent": "Select parent unit",
+      "noParent": "No parent (Root)",
+      "manager": "Manager",
+      "selectManager": "Select manager",
+      "noManager": "Unassigned",
+      "positions": "Planned Positions",
+      "cancel": "Cancel",
+      "save": "Save",
+      "create": "Create Unit"
+    },
+    "messages": {
+      "created": "Unit created successfully",
+      "updated": "Unit updated",
+      "deleted": "Unit deleted",
+      "errorLoading": "Error loading org chart",
+      "errorCreating": "Error creating unit",
+      "errorUpdating": "Error updating",
+      "errorDeleting": "Error deleting",
+      "confirmDelete": "Delete this unit?",
+      "templateApplied": "Template applied successfully",
+      "errorTemplate": "Error applying template"
+    },
+    "empty": {
+      "title": "No organization chart",
+      "subtitle": "Use the wizard to create your organizational structure"
+    }
+  },
+  "accounting": {
+    "title": "Accounting",
+    "tabs": {
+      "entries": "Journal Entries",
+      "accounts": "Accounts",
+      "reports": "Reports"
+    },
+    "filters": {
+      "search": "Search by number...",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "status": "Status",
+      "all": "All",
+      "pending": "Pending",
+      "posted": "Posted",
+      "voided": "Voided"
+    },
+    "buttons": {
+      "refresh": "Refresh",
+      "newEntry": "New Entry",
+      "newAccount": "New Account",
+      "loadCatalog": "Load Catalog",
+      "export": "Export",
+      "preview": "Preview",
+      "save": "Save",
+      "cancel": "Cancel",
+      "post": "Post",
+      "void": "Void"
+    },
+    "entry": {
+      "number": "Number",
+      "date": "Date",
+      "reference": "Reference",
+      "description": "Description",
+      "debit": "Debit",
+      "credit": "Credit",
+      "status": "Status",
+      "actions": "Actions",
+      "type": "Type",
+      "period": "Period",
+      "notes": "Notes",
+      "manual": "Manual",
+      "payroll": "Payroll",
+      "adjustment": "Adjustment"
+    },
+    "account": {
+      "code": "Code",
+      "name": "Name",
+      "type": "Type",
+      "nature": "Nature",
+      "balance": "Balance",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "debit": "Debit",
+      "credit": "Credit",
+      "asset": "Asset",
+      "liability": "Liability",
+      "equity": "Equity",
+      "income": "Income",
+      "expense": "Expense"
+    },
+    "form": {
+      "createEntry": "Create Journal Entry",
+      "editEntry": "Edit Entry",
+      "createAccount": "Create Account",
+      "editAccount": "Edit Account",
+      "entryDate": "Entry Date",
+      "referencePlaceholder": "E.g: INV-001",
+      "descPlaceholder": "Entry description...",
+      "notesPlaceholder": "Additional notes...",
+      "accountCode": "Account Code",
+      "codePlaceholder": "E.g: 1.1.1.01",
+      "accountName": "Account Name",
+      "namePlaceholder": "E.g: Cash",
+      "parentAccount": "Parent Account",
+      "selectParent": "Select parent account",
+      "noParent": "No parent (level 1)"
+    },
+    "preview": {
+      "title": "Export Preview",
+      "format": "Format",
+      "summary": "Summary",
+      "detailed": "Detailed",
+      "download": "Download CSV"
+    },
+    "catalog": {
+      "title": "Select Chart of Accounts",
+      "subtitle": "Choose a predefined catalog to load",
+      "apply": "Apply Catalog",
+      "niif": "IFRS Catalog",
+      "niifDesc": "Chart of accounts based on International Standards",
+      "dr": "DR Catalog",
+      "drDesc": "Standard Dominican Republic chart of accounts"
+    },
+    "messages": {
+      "entryCreated": "Entry created successfully",
+      "entryUpdated": "Entry updated",
+      "entryPosted": "Entry posted",
+      "entryVoided": "Entry voided",
+      "entryDeleted": "Entry deleted",
+      "accountCreated": "Account created successfully",
+      "accountUpdated": "Account updated",
+      "accountDeleted": "Account deleted",
+      "catalogLoaded": "Catalog loaded successfully",
+      "errorLoading": "Error loading data",
+      "errorCreating": "Error creating",
+      "errorUpdating": "Error updating",
+      "errorDeleting": "Error deleting",
+      "confirmDelete": "Delete this record?",
+      "unbalanced": "Entry is not balanced",
+      "exported": "File exported"
+    },
+    "empty": {
+      "entries": "No journal entries",
+      "accounts": "No accounts configured",
+      "loadCatalog": "Load a catalog to get started"
+    }
+  },
   "pwa": {
     "title": "Install FortexaRH",
     "subtitle": "Access faster from your home screen",
