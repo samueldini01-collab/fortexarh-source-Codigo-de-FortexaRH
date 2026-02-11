@@ -1273,6 +1273,118 @@
       "noRecordsFilter": "No hay registros con estos filtros"
     }
   },
+  "expenses": {
+    "title": "Gastos y Viáticos",
+    "pageTitle": "Gestión de Gastos",
+    "pageSubtitle": "Administra gastos de viaje, viáticos y reembolsos",
+    "myRequests": "Mis Solicitudes",
+    "approvals": "Aprobaciones",
+    "summary": "Resumen",
+    "newRequest": "Nueva Solicitud",
+    "search": "Buscar gastos...",
+    "filterStatus": "Filtrar por estado",
+    "allStatuses": "Todos los estados",
+    "noRequests": "No hay solicitudes de gastos",
+    "noRequestsDesc": "Crea tu primera solicitud de gasto",
+    "noPending": "No hay aprobaciones pendientes",
+    "status": {
+      "pending": "Pendiente",
+      "approved_manager": "Aprobado (Gerente)",
+      "approved_admin": "Aprobado",
+      "rejected": "Rechazado",
+      "in_progress": "En Progreso",
+      "pending_verification": "Pendiente Verificación",
+      "completed": "Completado",
+      "cancelled": "Cancelado"
+    },
+    "types": {
+      "travel": "Viaje de Negocios",
+      "administrative": "Gastos Administrativos",
+      "accommodation": "Alojamiento",
+      "meals": "Alimentación",
+      "transportation": "Transporte",
+      "other": "Otros"
+    },
+    "categories": {
+      "transporte": "Transporte",
+      "alojamiento": "Alojamiento",
+      "alimentacion": "Alimentación",
+      "materiales": "Materiales",
+      "viajes": "Viajes",
+      "administrativos": "Administrativos",
+      "educacion": "Educación",
+      "uniformes": "Uniformes",
+      "otros": "Otros"
+    },
+    "form": {
+      "title": "Título de la Solicitud",
+      "titlePlaceholder": "Ej: Viaje a cliente en Santiago",
+      "expenseType": "Tipo de Gasto",
+      "description": "Descripción",
+      "descPlaceholder": "Describe el propósito del gasto",
+      "destination": "Destino",
+      "destinationPlaceholder": "Ciudad o lugar",
+      "startDate": "Fecha de Inicio",
+      "endDate": "Fecha de Fin",
+      "estimatedBudget": "Presupuesto Estimado ($)",
+      "requiresAdvance": "Requiere Anticipo",
+      "advanceAmount": "Monto del Anticipo",
+      "advanceDate": "Fecha Necesaria del Anticipo",
+      "notes": "Notas Adicionales",
+      "notesPlaceholder": "Cualquier información adicional",
+      "budgetBreakdown": "Desglose del Presupuesto",
+      "addItem": "Agregar Item",
+      "category": "Categoría",
+      "amount": "Monto ($)",
+      "itemDesc": "Descripción"
+    },
+    "actions": {
+      "create": "Crear Solicitud",
+      "creating": "Creando...",
+      "approve": "Aprobar",
+      "reject": "Rechazar",
+      "cancel": "Cancelar",
+      "viewDetails": "Ver Detalles",
+      "approveRequest": "Aprobar Solicitud",
+      "rejectRequest": "Rechazar Solicitud"
+    },
+    "details": {
+      "requestedBy": "Solicitado por",
+      "requestDate": "Fecha de Solicitud",
+      "period": "Período",
+      "budget": "Presupuesto",
+      "advance": "Anticipo",
+      "advanceRequested": "Anticipo Solicitado",
+      "noAdvance": "Sin anticipo solicitado",
+      "breakdown": "Desglose del Presupuesto",
+      "approvalHistory": "Historial de Aprobación",
+      "comments": "Comentarios"
+    },
+    "approval": {
+      "title": "Procesar Solicitud",
+      "action": "Acción",
+      "selectAction": "Seleccionar acción",
+      "comments": "Comentarios (opcional)",
+      "commentsRequired": "Comentarios (requerido para rechazo)",
+      "commentsPlaceholder": "Agrega comentarios sobre tu decisión"
+    },
+    "cards": {
+      "totalRequested": "Total Solicitado",
+      "totalApproved": "Total Aprobado",
+      "pendingApproval": "Pendiente de Aprobación",
+      "pendingPayment": "Pendiente de Pago"
+    },
+    "messages": {
+      "created": "Solicitud creada exitosamente",
+      "approved": "Solicitud aprobada",
+      "rejected": "Solicitud rechazada",
+      "errorCreate": "Error al crear solicitud",
+      "errorApprove": "Error al procesar solicitud",
+      "errorLoad": "Error al cargar los datos",
+      "fillRequired": "Por favor complete todos los campos requeridos",
+      "selectAction": "Por favor seleccione una acción"
+    }
+  },
   "vacations": {
     "title": "Gestión de Vacaciones",
     "pageTitle": "Gestión de Vacaciones y Licencias",
