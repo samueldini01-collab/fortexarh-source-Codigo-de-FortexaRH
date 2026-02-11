@@ -353,7 +353,7 @@ export default function ExpensesPage() {
   };
 
   return (
-    <DashboardLayout title="Gastos y Viáticos">
+    <DashboardLayout title={t("expenses.pageTitle")}>
       <div className="space-y-6">
         {/* Header Stats */}
         {isManager && summary && (
@@ -362,7 +362,7 @@ export default function ExpensesPage() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Total Solicitudes</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{t("expenses.cards.totalRequested")}</p>
                     <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{summary.total_requests}</p>
                   </div>
                   <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
@@ -376,7 +376,7 @@ export default function ExpensesPage() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Anticipos Pendientes</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{t("expenses.cards.pendingApproval")}</p>
                     <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{summary.pending_advances?.count || 0}</p>
                   </div>
                   <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
@@ -390,7 +390,7 @@ export default function ExpensesPage() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Total Estimado</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{t("expenses.cards.totalApproved")}</p>
                     <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{formatCurrency(summary.total_estimated)}</p>
                   </div>
                   <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
@@ -404,7 +404,7 @@ export default function ExpensesPage() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Ahorro</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{t("expenses.cards.pendingPayment")}</p>
                     <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{formatCurrency(summary.savings)}</p>
                   </div>
                   <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
@@ -423,13 +423,13 @@ export default function ExpensesPage() {
               <div>
                 <CardTitle className="flex items-center gap-2">
                   <Receipt className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                  Solicitudes de Gastos y Viáticos
+                  {t("expenses.title")}
                 </CardTitle>
-                <CardDescription>Gestiona solicitudes de gastos, anticipos y reembolsos</CardDescription>
+                <CardDescription>{t("expenses.pageSubtitle")}</CardDescription>
               </div>
               <Button onClick={() => setShowNewRequest(true)} className="bg-emerald-600 hover:bg-emerald-700" data-testid="new-expense-btn">
                 <Plus className="w-4 h-4 mr-2" />
-                Nueva Solicitud
+                {t("expenses.newRequest")}
               </Button>
             </div>
           </CardHeader>
@@ -442,14 +442,14 @@ export default function ExpensesPage() {
                     value="my-requests" 
                     className="data-[state=active]:border-b-2 data-[state=active]:border-emerald-600 data-[state=active]:text-emerald-600 rounded-none bg-transparent px-1 pb-3"
                   >
-                    Mis Solicitudes
+                    {t("expenses.myRequests")}
                   </TabsTrigger>
                   {isManager && (
                     <TabsTrigger 
                       value="approvals" 
                       className="data-[state=active]:border-b-2 data-[state=active]:border-emerald-600 data-[state=active]:text-emerald-600 rounded-none bg-transparent px-1 pb-3"
                     >
-                      Por Aprobar
+                      {t("expenses.approvals")}
                       {pendingApprovals.length > 0 && (
                         <Badge className="ml-2 bg-amber-100 text-amber-700 hover:bg-amber-100 dark:bg-amber-900/50">
                           {pendingApprovals.length}
@@ -462,7 +462,7 @@ export default function ExpensesPage() {
                       value="all" 
                       className="data-[state=active]:border-b-2 data-[state=active]:border-emerald-600 data-[state=active]:text-emerald-600 rounded-none bg-transparent px-1 pb-3"
                     >
-                      Todas
+                      {t("common.all")}
                     </TabsTrigger>
                   )}
                 </TabsList>
@@ -473,7 +473,7 @@ export default function ExpensesPage() {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <Input
-                    placeholder="Buscar por título o empleado..."
+                    placeholder={t("expenses.search")}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10"
@@ -483,16 +483,16 @@ export default function ExpensesPage() {
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-full md:w-48" data-testid="status-filter">
                     <Filter className="w-4 h-4 mr-2" />
-                    <SelectValue placeholder="Estado" />
+                    <SelectValue placeholder={t("expenses.filterStatus")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todos los estados</SelectItem>
-                    <SelectItem value="pending">Pendiente</SelectItem>
-                    <SelectItem value="approved_manager">Aprobado (Gerente)</SelectItem>
-                    <SelectItem value="approved_admin">Aprobado</SelectItem>
-                    <SelectItem value="in_progress">En Progreso</SelectItem>
-                    <SelectItem value="completed">Completado</SelectItem>
-                    <SelectItem value="rejected">Rechazado</SelectItem>
+                    <SelectItem value="all">{t("expenses.allStatuses")}</SelectItem>
+                    <SelectItem value="pending">{t("expenses.status.pending")}</SelectItem>
+                    <SelectItem value="approved_manager">{t("expenses.status.approved_manager")}</SelectItem>
+                    <SelectItem value="approved_admin">{t("expenses.status.approved_admin")}</SelectItem>
+                    <SelectItem value="in_progress">{t("expenses.status.in_progress")}</SelectItem>
+                    <SelectItem value="completed">{t("expenses.status.completed")}</SelectItem>
+                    <SelectItem value="rejected">{t("expenses.status.rejected")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
