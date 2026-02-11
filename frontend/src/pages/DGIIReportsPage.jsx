@@ -343,22 +343,22 @@ export default function DGIIReportsPage() {
   };
 
   const getMonthName = (month) => {
-    const months = [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    const monthKeys = [
+      'january', 'february', 'march', 'april', 'may', 'june',
+      'july', 'august', 'september', 'october', 'november', 'december'
     ];
-    return months[month - 1] || '';
+    return t(`dgiiReports.months.${monthKeys[month - 1]}`) || '';
   };
 
   const getStatusBadge = (status) => {
     const styles = {
-      draft: { bg: 'bg-slate-100', text: 'text-slate-600', label: 'Borrador' },
-      open: { bg: 'bg-blue-100', text: 'text-blue-700', label: 'Abierto' },
-      processing: { bg: 'bg-amber-100', text: 'text-amber-700', label: 'Procesando' },
-      closed: { bg: 'bg-emerald-100', text: 'text-emerald-700', label: 'Cerrado' }
+      draft: { bg: 'bg-slate-100', text: 'text-slate-600' },
+      open: { bg: 'bg-blue-100', text: 'text-blue-700' },
+      processing: { bg: 'bg-amber-100', text: 'text-amber-700' },
+      closed: { bg: 'bg-emerald-100', text: 'text-emerald-700' }
     };
     const style = styles[status] || styles.draft;
-    return <Badge className={`${style.bg} ${style.text}`}>{style.label}</Badge>;
+    return <Badge className={`${style.bg} ${style.text}`}>{t(`dgiiReports.statuses.${status}`)}</Badge>;
   };
 
   if (loading) {
