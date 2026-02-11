@@ -61,6 +61,7 @@ const ROLES = [
 ];
 
 export default function UsersManagementPage() {
+  const { t } = useTranslation();
   const { getAuthHeaders, user: currentUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
@@ -69,6 +70,28 @@ export default function UsersManagementPage() {
   const [subscription, setSubscription] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("users");
+  
+  // Dynamic modules with translations
+  const getModules = () => [
+    { id: "dashboard", name: t('common.dashboard'), icon: "📊" },
+    { id: "employees", name: t('roles.modules.employees'), icon: "👥" },
+    { id: "payroll", name: t('roles.modules.payroll'), icon: "💰" },
+    { id: "attendance", name: t('roles.modules.attendance'), icon: "⏰" },
+    { id: "vacations", name: t('roles.modules.vacations'), icon: "📅" },
+    { id: "evaluations", name: t('evaluations.title'), icon: "🎯" },
+    { id: "recruitment", name: t('common.recruitment'), icon: "💼" },
+    { id: "accounting", name: t('roles.modules.accounting'), icon: "📒" },
+    { id: "organigrama", name: t('orgChart.title'), icon: "🌳" },
+    { id: "reports", name: t('roles.modules.reports'), icon: "📈" },
+    { id: "settings", name: t('roles.modules.settings'), icon: "⚙️" },
+  ];
+
+  // Dynamic roles with translations
+  const getRoles = () => [
+    { id: "admin", name: t('users.roles.admin'), description: t('common.fullAccess') },
+    { id: "manager", name: t('users.roles.manager'), description: t('common.editAccess') },
+    { id: "user", name: t('users.roles.employee'), description: t('common.readOnlyAccess') },
+  ];
   
   // Dialogs
   const [showNewUser, setShowNewUser] = useState(false);
