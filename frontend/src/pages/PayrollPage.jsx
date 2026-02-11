@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth, API } from "@/App";
 import axios from "axios";
@@ -33,6 +34,7 @@ import { Plus, DollarSign, Check, X, FileText } from "lucide-react";
 import { toast } from "sonner";
 
 export default function PayrollPage() {
+  const { t } = useTranslation();
   const [payrolls, setPayrolls] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
