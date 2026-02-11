@@ -4,6 +4,19 @@
 
 ## ✅ Completado Hoy (Sesión Actual)
 
+### 🌐 Detección Automática de Idioma del Navegador (COMPLETADO)
+Implementada funcionalidad de detección automática del idioma preferido del navegador:
+
+#### Características:
+- **Detección inteligente:** Mapea variantes de idioma (en-US, en-GB, fr-CA, etc.) a idiomas soportados (es, en, fr)
+- **Persistencia:** Guarda preferencia del usuario en localStorage
+- **Idiomas similares:** Mapea portugués e italiano a español, alemán y holandés a inglés
+- **Primera visita:** Si no hay preferencia guardada, detecta automáticamente el idioma del navegador
+- **Soporte querystring:** Permite ?lang=en para cambiar idioma via URL
+
+#### Archivos Modificados:
+- `/app/frontend/src/i18n/index.js` - Configuración mejorada con mapeo de idiomas
+
 ### 🌐 Sistema Multi-Idioma - Continuación Traducciones (P0 - EN PROGRESO)
 
 #### Páginas Traducidas Esta Sesión
