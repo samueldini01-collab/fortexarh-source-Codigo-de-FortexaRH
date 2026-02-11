@@ -110,6 +110,7 @@ const expenseTypeLabels = {
 };
 
 export default function ExpensesPage() {
+  const { t } = useTranslation();
   const { getAuthHeaders, user } = useAuth();
   const [activeTab, setActiveTab] = useState("my-requests");
   const [loading, setLoading] = useState(true);
