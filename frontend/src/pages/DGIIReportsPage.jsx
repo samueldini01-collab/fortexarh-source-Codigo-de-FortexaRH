@@ -459,12 +459,12 @@ export default function DGIIReportsPage() {
         <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
           <Info className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
           <div className="text-sm text-blue-800">
-            <p className="font-medium mb-1">Importante sobre los formularios DGII</p>
+            <p className="font-medium mb-1">{t('dgiiReports.importantDGII')}</p>
             <ul className="list-disc list-inside space-y-1 text-blue-700 dark:text-blue-400">
-              <li><strong>IR-4</strong>: Detalle de empleados que alimenta la declaración IR-3</li>
-              <li><strong>IR-3</strong>: Declaración mensual de retenciones de ISR a asalariados</li>
-              <li><strong>IR-13</strong>: Declaración anual que consolida todos los IR-4 del año</li>
-              <li>Recuerde presentar el IR-3 antes del día 10 de cada mes</li>
+              <li><strong>IR-4</strong>: {t('dgiiReports.ir4Detail')}</li>
+              <li><strong>IR-3</strong>: {t('dgiiReports.ir3Declaration')}</li>
+              <li><strong>IR-13</strong>: {t('dgiiReports.ir13Annual')}</li>
+              <li>{t('dgiiReports.ir3Deadline')}</li>
             </ul>
           </div>
         </div>
@@ -472,8 +472,8 @@ export default function DGIIReportsPage() {
         {/* Tabs for Monthly and Annual Reports */}
         <Tabs defaultValue="monthly" className="w-full">
           <TabsList className="grid w-full grid-cols-2 max-w-md">
-            <TabsTrigger value="monthly">Reportes Mensuales</TabsTrigger>
-            <TabsTrigger value="annual">Reporte Anual</TabsTrigger>
+            <TabsTrigger value="monthly">{t('dgiiReports.monthlyReports')}</TabsTrigger>
+            <TabsTrigger value="annual">{t('dgiiReports.annualReport')}</TabsTrigger>
           </TabsList>
           
           <TabsContent value="monthly" className="mt-4">
