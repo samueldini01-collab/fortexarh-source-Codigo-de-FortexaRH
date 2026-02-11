@@ -924,7 +924,7 @@
   },
   "payroll": {
     "title": "Payroll",
-    "pageTitle": "Payroll",
+    "pageTitle": "Payroll Management",
     "pageSubtitle": "Process payrolls by type, period or groups",
     "process": "Process Payroll",
     "history": "History",
@@ -936,10 +936,24 @@
     "refresh": "Refresh",
     "newPayroll": "New Payroll",
     "createFirst": "Create First Payroll",
+    "createPayroll": "Create Payroll",
     "selectPeriodMsg": "Select a period",
     "viewPeriods": "View periods",
     "noEmployees": "No employees",
+    "noPayrolls": "No payrolls registered",
     "addEmployees": "Add employees",
+    "selectEmployee": "Select employee",
+    "periodStart": "Period Start",
+    "periodEnd": "Period End",
+    "baseSalaryCurrency": "Base Salary ($)",
+    "bonusesCurrency": "Bonuses ($)",
+    "deductionsCurrency": "Deductions ($)",
+    "cancel": "Cancel",
+    "cards": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "paid": "Paid"
+    },
     "tabs": {
       "dashboard": "Dashboard",
       "periods": "Periods",
