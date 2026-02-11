@@ -238,7 +238,7 @@ export default function RolesPage() {
 
   if (loading) {
     return (
-      <DashboardLayout title="Roles Personalizados">
+      <DashboardLayout title={t('roles.title')}>
         <div className="flex items-center justify-center h-64">
           <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
         </div>
@@ -249,21 +249,20 @@ export default function RolesPage() {
   // Not Enterprise - Show upgrade prompt
   if (!isEnterprise) {
     return (
-      <DashboardLayout title="Roles Personalizados">
+      <DashboardLayout title={t('roles.title')}>
         <div className="flex flex-col items-center justify-center h-[60vh]" data-testid="roles-enterprise-prompt">
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-8 max-w-md text-center">
             <Crown className="w-16 h-16 text-amber-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-slate-800 mb-2">Función Enterprise</h2>
+            <h2 className="text-2xl font-bold text-slate-800 mb-2">{t('roles.enterpriseOnly')}</h2>
             <p className="text-slate-600 mb-6">
-              Los roles personalizados solo están disponibles en el plan Enterprise. 
-              Actualiza tu plan para crear roles con permisos específicos para tu equipo.
+              {t('roles.subtitle')}
             </p>
             <Button 
               className="bg-amber-500 hover:bg-amber-600"
               onClick={() => window.location.href = '/subscriptions'}
             >
               <Crown className="w-4 h-4 mr-2" />
-              Ver Plan Enterprise
+              {t('common.viewPlan')}
             </Button>
           </div>
         </div>
@@ -272,17 +271,17 @@ export default function RolesPage() {
   }
 
   return (
-    <DashboardLayout title="Roles Personalizados">
+    <DashboardLayout title={t('roles.title')}>
       <div className="space-y-6" data-testid="roles-page">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Gestión de Roles</h1>
-            <p className="text-slate-500 dark:text-slate-400">Crea y administra roles personalizados con permisos específicos</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{t('roles.title')}</h1>
+            <p className="text-slate-500 dark:text-slate-400">{t('roles.subtitle')}</p>
           </div>
           <Button onClick={() => { resetForm(); setShowCreateModal(true); }} data-testid="create-role-btn">
             <Plus className="w-4 h-4 mr-2" />
-            Crear Rol
+            {t('roles.createRole')}
           </Button>
         </div>
 
@@ -291,9 +290,9 @@ export default function RolesPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="w-5 h-5" />
-              Roles Predeterminados
+              {t('roles.defaultRoles')}
             </CardTitle>
-            <CardDescription>Estos roles vienen incluidos y no pueden ser modificados</CardDescription>
+            <CardDescription>{t('roles.subtitle')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -315,7 +314,7 @@ export default function RolesPage() {
                     </div>
                   </div>
                   <div className="mt-3 pt-3 border-t">
-                    <p className="text-xs text-slate-400 mb-2">Módulos con acceso:</p>
+                    <p className="text-xs text-slate-400 mb-2">{t('roles.accessModules')}:</p>
                     <div className="flex flex-wrap gap-1">
                       {(role.modules || []).slice(0, 5).map(mod => (
                         <Badge key={mod} variant="secondary" className="text-xs">
