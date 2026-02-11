@@ -282,22 +282,22 @@ function EmployeeDashboard() {
   const handleVacationRequest = async () => {
     try {
       await axios.post(`${API}/employee-portal/vacations/request`, vacationForm, { headers: getAuthHeaders() });
-      toast.success("Solicitud enviada");
+      toast.success(t('employeePortal.vacations.requestSent'));
       setShowVacationRequest(false);
       setVacationForm({ start_date: "", end_date: "", reason: "" });
       fetchDashboard();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al enviar solicitud");
+      toast.error(error.response?.data?.detail || t('employeePortal.vacations.errorRequest'));
     }
   };
 
   const handleUpdateProfile = async (updates) => {
     try {
       await axios.put(`${API}/employee-portal/profile`, updates, { headers: getAuthHeaders() });
-      toast.success("Datos actualizados");
+      toast.success(t('employeePortal.profile.dataUpdated'));
       fetchDashboard();
     } catch (error) {
-      toast.error("Error al actualizar");
+      toast.error(t('employeePortal.profile.errorUpdate'));
     }
   };
 
@@ -323,7 +323,7 @@ function EmployeeDashboard() {
       ));
       setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (error) {
-      toast.error("Error al marcar como leída");
+      toast.error(t('employeePortal.notifications.errorMark'));
     }
   };
 
@@ -332,9 +332,9 @@ function EmployeeDashboard() {
       await axios.post(`${API}/employee-portal/notifications/read-all`, {}, { headers: getAuthHeaders() });
       setNotifications(prev => prev.map(n => ({ ...n, read: true })));
       setUnreadCount(0);
-      toast.success("Todas las notificaciones marcadas como leídas");
+      toast.success(t('employeePortal.notifications.allMarkedRead'));
     } catch (error) {
-      toast.error("Error al marcar notificaciones");
+      toast.error(t('employeePortal.notifications.errorMark'));
     }
   };
 
@@ -342,9 +342,9 @@ function EmployeeDashboard() {
     try {
       await axios.delete(`${API}/employee-portal/notifications/${notificationId}`, { headers: getAuthHeaders() });
       setNotifications(prev => prev.filter(n => n.notification_id !== notificationId));
-      toast.success("Notificación eliminada");
+      toast.success(t('employeePortal.notifications.deleted'));
     } catch (error) {
-      toast.error("Error al eliminar");
+      toast.error(t('employeePortal.notifications.errorDelete'));
     }
   };
 
@@ -359,12 +359,12 @@ function EmployeeDashboard() {
 
   const getCategoryBadge = (category) => {
     const badges = {
-      payroll: { label: "Nómina", color: "bg-emerald-100 text-emerald-700" },
-      vacation: { label: "Vacaciones", color: "bg-blue-100 text-blue-700" },
-      attendance: { label: "Asistencia", color: "bg-purple-100 text-purple-700" },
-      announcement: { label: "Anuncio", color: "bg-amber-100 text-amber-700" },
-      document: { label: "Documento", color: "bg-slate-100 text-slate-700" },
-      general: { label: "General", color: "bg-gray-100 text-gray-700" }
+      payroll: { label: t('employeePortal.notifications.categories.payroll'), color: "bg-emerald-100 text-emerald-700" },
+      vacation: { label: t('employeePortal.notifications.categories.vacation'), color: "bg-blue-100 text-blue-700" },
+      attendance: { label: t('employeePortal.notifications.categories.attendance'), color: "bg-purple-100 text-purple-700" },
+      announcement: { label: t('employeePortal.notifications.categories.announcement'), color: "bg-amber-100 text-amber-700" },
+      document: { label: t('employeePortal.notifications.categories.document'), color: "bg-slate-100 text-slate-700" },
+      general: { label: t('employeePortal.notifications.categories.general'), color: "bg-gray-100 text-gray-700" }
     };
     const badge = badges[category] || badges.general;
     return <span className={`text-xs px-2 py-0.5 rounded-full ${badge.color}`}>{badge.label}</span>;
@@ -387,9 +387,9 @@ function EmployeeDashboard() {
       a.click();
       window.URL.revokeObjectURL(url);
       a.remove();
-      toast.success("Recibo descargado");
+      toast.success(t('employeePortal.payslips.receiptDownloaded'));
     } catch (error) {
-      toast.error("Error al descargar recibo");
+      toast.error(t('employeePortal.payslips.errorDownload'));
     } finally {
       setDownloadingPdf(null);
     }
