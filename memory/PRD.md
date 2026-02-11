@@ -59,16 +59,19 @@
 1. **LandingPage.jsx** - Completa
 2. **LoginPage.jsx** - Completa
 3. **PricingPage.jsx** - Completa
-4. **OnboardingTutorial.jsx** - Completa
-5. **VacationsPage.jsx** - Completa
-6. **LoansPage.jsx** - Completa
-7. **EvaluationsPage.jsx** - Completa
-8. **ReportsPage.jsx** - Completa
-9. **DocumentsPage.jsx** - Parcial
-10. **CompanyConfigPage.jsx** - Parcial
-11. **SupportPage.jsx** - Hooks agregados
-12. **UsersManagementPage.jsx** - Hooks agregados
-13. **PartnerDashboardPage.jsx** - Hooks agregados
+4. **CheckoutPage.jsx** - Completa (Bug fix - sesión actual)
+5. **OnboardingTutorial.jsx** - Completa
+6. **VacationsPage.jsx** - Completa
+7. **LoansPage.jsx** - Completa
+8. **EvaluationsPage.jsx** - Completa
+9. **ReportsPage.jsx** - Completa
+10. **DocumentsPage.jsx** - Parcial
+11. **CompanyConfigPage.jsx** - Parcial
+12. **SupportPage.jsx** - Hooks agregados
+13. **UsersManagementPage.jsx** - Hooks agregados
+14. **PartnerDashboardPage.jsx** - Hooks agregados
+15. **EmployeePortalPage.jsx** - Completa
+16. **RolesPage.jsx** - Completa
 
 #### Páginas Pendientes de Actualizar JSX
 - MetricsDashboardPage.jsx (hooks agregados, JSX pendiente)
