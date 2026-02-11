@@ -505,6 +505,9 @@ export default function ExpensesPage() {
                   onCancel={handleCancelRequest}
                   formatCurrency={formatCurrency}
                   formatDate={formatDate}
+                  statusStyles={statusStyles}
+                  expenseTypeLabels={expenseTypeLabels}
+                  t={t}
                 />
               </TabsContent>
 
@@ -520,6 +523,9 @@ export default function ExpensesPage() {
                   isApprovalView
                   formatCurrency={formatCurrency}
                   formatDate={formatDate}
+                  statusStyles={statusStyles}
+                  expenseTypeLabels={expenseTypeLabels}
+                  t={t}
                 />
               </TabsContent>
 
