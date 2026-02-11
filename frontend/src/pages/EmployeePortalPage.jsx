@@ -169,6 +169,7 @@ function EmployeeLogin() {
 
 // Dashboard Component
 function EmployeeDashboard() {
+  const { t } = useTranslation();
   const { employee, logout, getAuthHeaders } = useEmployeeAuth();
   const [activeTab, setActiveTab] = useState("home");
   const [dashboardData, setDashboardData] = useState(null);
@@ -202,15 +203,15 @@ function EmployeeDashboard() {
 
   // Tab navigation with swipe support
   const tabs = useMemo(() => [
-    { id: "home", label: "Inicio", icon: Home },
-    { id: "attendance", label: "Asistencia", icon: Clock },
-    { id: "payslips", label: "Recibos", icon: FileText },
-    { id: "vacations", label: "Vacaciones", icon: Calendar },
-    { id: "leaves", label: "Permisos", icon: ClipboardList },
-    { id: "evaluations", label: "Evaluaciones", icon: Target },
-    { id: "loans", label: "Préstamos", icon: Wallet },
-    { id: "profile", label: "Mis Datos", icon: User }
-  ], []);
+    { id: "home", label: t('employeePortal.tabs.home'), icon: Home },
+    { id: "attendance", label: t('employeePortal.tabs.attendance'), icon: Clock },
+    { id: "payslips", label: t('employeePortal.tabs.payslips'), icon: FileText },
+    { id: "vacations", label: t('employeePortal.tabs.vacations'), icon: Calendar },
+    { id: "leaves", label: t('employeePortal.tabs.leaves'), icon: ClipboardList },
+    { id: "evaluations", label: t('employeePortal.tabs.evaluations'), icon: Target },
+    { id: "loans", label: t('employeePortal.tabs.loans'), icon: Wallet },
+    { id: "profile", label: t('employeePortal.tabs.profile'), icon: User }
+  ], [t]);
 
   const currentTabIndex = tabs.findIndex(t => t.id === activeTab);
   
@@ -268,11 +269,11 @@ function EmployeeDashboard() {
       setUnreadCount(notifRes.data.unread_count || 0);
       setAnnouncements(announceRes.data.announcements || []);
     } catch (error) {
-      toast.error("Error al cargar datos");
+      toast.error(t('employeePortal.messages.errorLoadingData'));
     } finally {
       setLoading(false);
     }
-  }, [getAuthHeaders]);
+  }, [getAuthHeaders, t]);
 
   useEffect(() => {
     fetchDashboard();
