@@ -129,9 +129,9 @@ export default function PayrollCalculatorPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Cálculo guardado correctamente");
+      toast.success(t("payroll.calculator.messages.saveSuccess"));
     } catch (error) {
-      toast.error("Error al guardar el cálculo");
+      toast.error(t("payroll.calculator.messages.saveError"));
     }
   };
 
