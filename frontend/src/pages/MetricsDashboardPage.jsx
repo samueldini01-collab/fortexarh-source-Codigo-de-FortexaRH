@@ -80,17 +80,17 @@ export default function MetricsDashboardPage() {
             headers: getAuthHeaders(),
             withCredentials: true
           });
-          title = "Empleados";
+          title = t('metrics.drillDown.employees');
           data = response.data || [];
           columns = [
-            { header: "Nombre", accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
-            { header: "Departamento", accessor: "department" },
-            { header: "Cargo", accessor: "position" },
-            { header: "Ingreso", accessor: "hire_date" },
-            { header: "Salario", accessor: "salary", render: (val) => val ? formatCurrency(val) : "-", className: "text-right", cellClassName: "text-right" },
-            { header: "Estado", accessor: "status", render: (val) => (
+            { header: t('metrics.drillDown.name'), accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
+            { header: t('metrics.drillDown.department'), accessor: "department" },
+            { header: t('metrics.drillDown.position'), accessor: "position" },
+            { header: t('metrics.drillDown.hireDate'), accessor: "hire_date" },
+            { header: t('metrics.drillDown.salary'), accessor: "salary", render: (val) => val ? formatCurrency(val) : "-", className: "text-right", cellClassName: "text-right" },
+            { header: t('metrics.drillDown.status'), accessor: "status", render: (val) => (
               <Badge className={val === "active" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"}>
-                {val === "active" ? "Activo" : "Inactivo"}
+                {val === "active" ? t('metrics.drillDown.active') : t('metrics.drillDown.inactive')}
               </Badge>
             )}
           ];
@@ -102,13 +102,13 @@ export default function MetricsDashboardPage() {
             headers: getAuthHeaders(),
             withCredentials: true
           });
-          title = `Empleados - ${deptName}`;
+          title = `${t('metrics.drillDown.departmentDetail')} ${deptName}`;
           data = response.data || [];
           columns = [
-            { header: "Nombre", accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
-            { header: "Cargo", accessor: "position" },
+            { header: t('metrics.drillDown.name'), accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
+            { header: t('metrics.drillDown.position'), accessor: "position" },
             { header: "Email", accessor: "email" },
-            { header: "Salario", accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" }
+            { header: t('metrics.drillDown.salary'), accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" }
           ];
           break;
           
