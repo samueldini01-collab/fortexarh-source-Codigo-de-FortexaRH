@@ -1274,6 +1274,118 @@
       "noRecordsFilter": "No records with these filters"
     }
   },
+  "expenses": {
+    "title": "Expenses & Per Diem",
+    "pageTitle": "Expense Management",
+    "pageSubtitle": "Manage travel expenses, per diem and reimbursements",
+    "myRequests": "My Requests",
+    "approvals": "Approvals",
+    "summary": "Summary",
+    "newRequest": "New Request",
+    "search": "Search expenses...",
+    "filterStatus": "Filter by status",
+    "allStatuses": "All statuses",
+    "noRequests": "No expense requests",
+    "noRequestsDesc": "Create your first expense request",
+    "noPending": "No pending approvals",
+    "status": {
+      "pending": "Pending",
+      "approved_manager": "Approved (Manager)",
+      "approved_admin": "Approved",
+      "rejected": "Rejected",
+      "in_progress": "In Progress",
+      "pending_verification": "Pending Verification",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "types": {
+      "travel": "Business Travel",
+      "administrative": "Administrative Expenses",
+      "accommodation": "Accommodation",
+      "meals": "Meals",
+      "transportation": "Transportation",
+      "other": "Other"
+    },
+    "categories": {
+      "transporte": "Transportation",
+      "alojamiento": "Accommodation",
+      "alimentacion": "Meals",
+      "materiales": "Materials",
+      "viajes": "Travel",
+      "administrativos": "Administrative",
+      "educacion": "Education",
+      "uniformes": "Uniforms",
+      "otros": "Others"
+    },
+    "form": {
+      "title": "Request Title",
+      "titlePlaceholder": "E.g.: Trip to client in Santiago",
+      "expenseType": "Expense Type",
+      "description": "Description",
+      "descPlaceholder": "Describe the purpose of the expense",
+      "destination": "Destination",
+      "destinationPlaceholder": "City or place",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "estimatedBudget": "Estimated Budget ($)",
+      "requiresAdvance": "Requires Advance",
+      "advanceAmount": "Advance Amount",
+      "advanceDate": "Advance Date Needed",
+      "notes": "Additional Notes",
+      "notesPlaceholder": "Any additional information",
+      "budgetBreakdown": "Budget Breakdown",
+      "addItem": "Add Item",
+      "category": "Category",
+      "amount": "Amount ($)",
+      "itemDesc": "Description"
+    },
+    "actions": {
+      "create": "Create Request",
+      "creating": "Creating...",
+      "approve": "Approve",
+      "reject": "Reject",
+      "cancel": "Cancel",
+      "viewDetails": "View Details",
+      "approveRequest": "Approve Request",
+      "rejectRequest": "Reject Request"
+    },
+    "details": {
+      "requestedBy": "Requested by",
+      "requestDate": "Request Date",
+      "period": "Period",
+      "budget": "Budget",
+      "advance": "Advance",
+      "advanceRequested": "Advance Requested",
+      "noAdvance": "No advance requested",
+      "breakdown": "Budget Breakdown",
+      "approvalHistory": "Approval History",
+      "comments": "Comments"
+    },
+    "approval": {
+      "title": "Process Request",
+      "action": "Action",
+      "selectAction": "Select action",
+      "comments": "Comments (optional)",
+      "commentsRequired": "Comments (required for rejection)",
+      "commentsPlaceholder": "Add comments about your decision"
+    },
+    "cards": {
+      "totalRequested": "Total Requested",
+      "totalApproved": "Total Approved",
+      "pendingApproval": "Pending Approval",
+      "pendingPayment": "Pending Payment"
+    },
+    "messages": {
+      "created": "Request created successfully",
+      "approved": "Request approved",
+      "rejected": "Request rejected",
+      "errorCreate": "Error creating request",
+      "errorApprove": "Error processing request",
+      "errorLoad": "Error loading data",
+      "fillRequired": "Please fill all required fields",
+      "selectAction": "Please select an action"
+    }
+  },
   "vacations": {
     "title": "Vacation Management",
     "pageTitle": "Vacation and Leave Management",
