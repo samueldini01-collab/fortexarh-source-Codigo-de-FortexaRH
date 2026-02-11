@@ -1276,14 +1276,14 @@ function EmployeeDashboard() {
                               />
                             </div>
                             <p className="text-xs text-slate-500 mt-1">
-                              {Math.round(((loan.amount - loan.remaining_balance) / loan.amount) * 100)}% pagado
+                              {Math.round(((loan.amount - loan.remaining_balance) / loan.amount) * 100)}% {t('employeePortal.loans.paid')}
                             </p>
                           </div>
                         )}
                       </div>
                     ))}
                     {loans.loans.length === 0 && (
-                      <p className="text-center text-slate-500 py-8">No tiene préstamos activos</p>
+                      <p className="text-center text-slate-500 py-8">{t('employeePortal.loans.noLoans')}</p>
                     )}
                   </div>
                 </CardContent>
@@ -1291,20 +1291,20 @@ function EmployeeDashboard() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Resumen</CardTitle>
+                  <CardTitle>{t('employeePortal.loans.summary')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="p-4 bg-amber-50 rounded-lg text-center">
                     <p className="text-2xl font-bold text-amber-600">{formatCurrency(loans.summary.total_balance)}</p>
-                    <p className="text-sm text-amber-700">Saldo Total</p>
+                    <p className="text-sm text-amber-700">{t('employeePortal.loans.totalBalance')}</p>
                   </div>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span>Préstamos activos:</span>
+                      <span>{t('employeePortal.loans.activeLoans')}:</span>
                       <span className="font-medium">{loans.summary.active_count}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Cuota mensual:</span>
+                      <span>{t('employeePortal.loans.monthlyPayment')}:</span>
                       <span className="font-medium">{formatCurrency(loans.summary.monthly_payment)}</span>
                     </div>
                   </div>
@@ -1317,53 +1317,53 @@ function EmployeeDashboard() {
           <TabsContent value="profile">
             <Card>
               <CardHeader>
-                <CardTitle>Mis Datos</CardTitle>
-                <CardDescription>Actualiza tu información de contacto</CardDescription>
+                <CardTitle>{t('employeePortal.profile.title')}</CardTitle>
+                <CardDescription>{t('employeePortal.profile.subtitle')}</CardDescription>
               </CardHeader>
               <CardContent>
                 {profile && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
-                      <h3 className="font-semibold text-slate-700">Información Personal</h3>
+                      <h3 className="font-semibold text-slate-700">{t('employeePortal.profile.personalInfo')}</h3>
                       <div className="space-y-3">
                         <div className="p-3 bg-slate-50 rounded-lg">
-                          <p className="text-xs text-slate-500">Nombre Completo</p>
+                          <p className="text-xs text-slate-500">{t('employeePortal.profile.fullName')}</p>
                           <p className="font-medium">{profile.first_name} {profile.last_name}</p>
                         </div>
                         <div className="p-3 bg-slate-50 rounded-lg">
-                          <p className="text-xs text-slate-500">Cédula</p>
+                          <p className="text-xs text-slate-500">{t('employeePortal.profile.idNumber')}</p>
                           <p className="font-medium">{profile.document_number}</p>
                         </div>
                         <div className="p-3 bg-slate-50 rounded-lg">
-                          <p className="text-xs text-slate-500">Puesto</p>
+                          <p className="text-xs text-slate-500">{t('employeePortal.profile.position')}</p>
                           <p className="font-medium">{profile.position}</p>
                         </div>
                         <div className="p-3 bg-slate-50 rounded-lg">
-                          <p className="text-xs text-slate-500">Departamento</p>
+                          <p className="text-xs text-slate-500">{t('employeePortal.profile.department')}</p>
                           <p className="font-medium">{profile.department}</p>
                         </div>
                       </div>
                     </div>
 
                     <div className="space-y-4">
-                      <h3 className="font-semibold text-slate-700">Información de Contacto</h3>
+                      <h3 className="font-semibold text-slate-700">{t('employeePortal.profile.contactInfo')}</h3>
                       <div className="space-y-3">
                         <div>
-                          <Label>Teléfono</Label>
+                          <Label>{t('employeePortal.profile.phone')}</Label>
                           <Input 
                             defaultValue={profile.phone || ""}
                             onBlur={(e) => handleUpdateProfile({ phone: e.target.value })}
                           />
                         </div>
                         <div>
-                          <Label>Dirección</Label>
+                          <Label>{t('employeePortal.profile.address')}</Label>
                           <Input 
                             defaultValue={profile.address || ""}
                             onBlur={(e) => handleUpdateProfile({ address: e.target.value })}
                           />
                         </div>
                         <div>
-                          <Label>Email Personal</Label>
+                          <Label>{t('employeePortal.profile.email')}</Label>
                           <Input 
                             type="email"
                             defaultValue={profile.personal_email || ""}
@@ -1372,10 +1372,10 @@ function EmployeeDashboard() {
                         </div>
                       </div>
 
-                      <h3 className="font-semibold text-slate-700 pt-4">Información Bancaria</h3>
+                      <h3 className="font-semibold text-slate-700 pt-4">{t('employeePortal.profile.employmentInfo')}</h3>
                       <div className="space-y-3">
                         <div>
-                          <Label>Banco</Label>
+                          <Label>{t('common.bank')}</Label>
                           <Input 
                             defaultValue={profile.bank_name || ""}
                             onBlur={(e) => handleUpdateProfile({ bank_name: e.target.value })}
