@@ -164,7 +164,7 @@ export default function DGIIReportsPage() {
       // Fetch period data which includes employee records
       const period = periods.find(p => p.period_id === selectedPeriod);
       if (!period) {
-        toast.error("Seleccione un período válido");
+        toast.error(t('dgiiReports.selectValidPeriod'));
         setDrillDown({ open: false, title: "", data: [], columns: [] });
         return;
       }
