@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth, API } from "@/App";
 import axios from "axios";
@@ -22,6 +23,7 @@ import { DrillDownModal } from "@/components/DrillDown";
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16'];
 
 export default function MetricsDashboardPage() {
+  const { t } = useTranslation();
   const { getAuthHeaders } = useAuth();
   const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -42,11 +44,11 @@ export default function MetricsDashboardPage() {
       setDashboardData(response.data);
     } catch (error) {
       console.error("Error fetching metrics:", error);
-      toast.error("Error al cargar métricas");
+      toast.error(t('metrics.errorLoading'));
     } finally {
       setLoading(false);
     }
-  }, [getAuthHeaders, selectedYear]);
+  }, [getAuthHeaders, selectedYear, t]);
 
   useEffect(() => {
     fetchMetrics();
