@@ -85,7 +85,7 @@ export default function PWAInstallPrompt() {
         <div className="bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-md p-6 shadow-2xl animate-in slide-in-from-bottom duration-300">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-              Instalar FortexaRH
+              {t('pwa.title')}
             </h3>
             <button onClick={handleDismiss} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full">
               <X className="w-5 h-5 text-slate-500" />
@@ -93,30 +93,30 @@ export default function PWAInstallPrompt() {
           </div>
           
           <div className="space-y-4 text-sm text-slate-600 dark:text-slate-300">
-            <p>Para instalar FortexaRH en tu iPhone o iPad:</p>
+            <p>{t('pwa.iosInstructions.intro')}</p>
             
             <ol className="space-y-3">
               <li className="flex items-start gap-3">
                 <span className="flex-shrink-0 w-6 h-6 bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center text-xs font-bold">1</span>
-                <span>Toca el botón <strong>Compartir</strong> (el cuadrado con flecha hacia arriba) en la barra inferior de Safari</span>
+                <span>{t('pwa.iosInstructions.step1')}</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="flex-shrink-0 w-6 h-6 bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center text-xs font-bold">2</span>
-                <span>Desplázate hacia abajo y toca <strong>"Agregar a pantalla de inicio"</strong></span>
+                <span>{t('pwa.iosInstructions.step2')}</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="flex-shrink-0 w-6 h-6 bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center text-xs font-bold">3</span>
-                <span>Toca <strong>"Agregar"</strong> en la esquina superior derecha</span>
+                <span>{t('pwa.iosInstructions.step3')}</span>
               </li>
             </ol>
             
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-4">
-              ¡Listo! FortexaRH aparecerá en tu pantalla de inicio como una app.
+              {t('pwa.iosInstructions.done')}
             </p>
           </div>
           
           <Button onClick={handleDismiss} className="w-full mt-6 bg-emerald-600 hover:bg-emerald-700">
-            Entendido
+            {t('pwa.understood')}
           </Button>
         </div>
       </div>
@@ -134,10 +134,10 @@ export default function PWAInstallPrompt() {
           
           <div className="flex-1 min-w-0">
             <h4 className="font-semibold text-slate-900 dark:text-white text-sm">
-              Instalar FortexaRH
+              {t('pwa.title')}
             </h4>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Accede más rápido desde tu pantalla de inicio
+              {t('pwa.subtitle')}
             </p>
           </div>
           
@@ -156,7 +156,7 @@ export default function PWAInstallPrompt() {
             onClick={handleDismiss}
             className="flex-1 text-xs"
           >
-            Ahora no
+            {t('pwa.notNow')}
           </Button>
           <Button 
             size="sm" 
@@ -164,7 +164,7 @@ export default function PWAInstallPrompt() {
             className="flex-1 text-xs bg-emerald-600 hover:bg-emerald-700"
           >
             <Download className="w-3 h-3 mr-1" />
-            Instalar
+            {t('pwa.install')}
           </Button>
         </div>
       </div>
