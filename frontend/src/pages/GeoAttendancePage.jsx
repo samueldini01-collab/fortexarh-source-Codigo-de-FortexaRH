@@ -98,16 +98,16 @@ export default function GeoAttendancePage() {
       (error) => {
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            setLocationError("Permiso de ubicación denegado. Por favor habilítelo en la configuración.");
+            setLocationError(t("geoAttendance.mobile.locationErrors.permissionDenied"));
             break;
           case error.POSITION_UNAVAILABLE:
-            setLocationError("Información de ubicación no disponible.");
+            setLocationError(t("geoAttendance.mobile.locationErrors.positionUnavailable"));
             break;
           case error.TIMEOUT:
-            setLocationError("Tiempo de espera agotado. Intente de nuevo.");
+            setLocationError(t("geoAttendance.mobile.locationErrors.timeout"));
             break;
           default:
-            setLocationError("Error desconocido al obtener ubicación.");
+            setLocationError(t("geoAttendance.mobile.locationErrors.unknown"));
         }
       },
       {
