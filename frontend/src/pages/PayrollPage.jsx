@@ -59,11 +59,11 @@ export default function PayrollPage() {
       setEmployees(employeeRes.data);
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error al cargar datos");
+      toast.error(t("payroll.messages.errorCreate"));
     } finally {
       setLoading(false);
     }
-  }, [getAuthHeaders]);
+  }, [getAuthHeaders, t]);
 
   useEffect(() => {
     fetchData();
@@ -90,7 +90,7 @@ export default function PayrollPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Nómina creada correctamente");
+      toast.success(t("payroll.messages.periodCreated"));
       setIsDialogOpen(false);
       setFormData({
         employee_id: "",
@@ -103,7 +103,7 @@ export default function PayrollPage() {
       fetchData();
     } catch (error) {
       console.error("Error creating payroll:", error);
-      toast.error(error.response?.data?.detail || "Error al crear nómina");
+      toast.error(error.response?.data?.detail || t("payroll.messages.errorCreate"));
     }
   };
 
@@ -113,10 +113,10 @@ export default function PayrollPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Nómina aprobada");
+      toast.success(t("payroll.messages.approved"));
       fetchData();
     } catch (error) {
-      toast.error("Error al aprobar nómina");
+      toast.error(t("payroll.messages.errorApprove"));
     }
   };
 
@@ -126,10 +126,10 @@ export default function PayrollPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Nómina pagada");
+      toast.success(t("payroll.messages.paid"));
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al pagar nómina");
+      toast.error(error.response?.data?.detail || t("payroll.messages.errorPay"));
     }
   };
 
@@ -140,9 +140,9 @@ export default function PayrollPage() {
       paid: "bg-emerald-50 text-emerald-700 border-emerald-200"
     };
     const labels = {
-      pending: "Pendiente",
-      approved: "Aprobada",
-      paid: "Pagada"
+      pending: t("payroll.status.pendingApproval"),
+      approved: t("payroll.status.approved"),
+      paid: t("payroll.status.paid")
     };
     return (
       <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border ${styles[status]}`}>
@@ -156,7 +156,7 @@ export default function PayrollPage() {
   const totalPaid = payrolls.filter(p => p.status === "paid").reduce((acc, p) => acc + p.net_salary, 0);
 
   return (
-    <DashboardLayout title="Gestión de Nómina">
+    <DashboardLayout title={t("payroll.pageTitle")}>
       <div className="space-y-6" data-testid="payroll-page">
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -164,7 +164,7 @@ export default function PayrollPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-amber-600 dark:text-amber-400">Pendientes</p>
+                  <p className="text-sm text-amber-600 dark:text-amber-400">{t("payroll.cards.pending")}</p>
                   <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">${totalPending.toLocaleString('es-MX')}</p>
                 </div>
                 <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
@@ -177,7 +177,7 @@ export default function PayrollPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-blue-600 dark:text-blue-400">Aprobadas</p>
+                  <p className="text-sm text-blue-600 dark:text-blue-400">{t("payroll.cards.approved")}</p>
                   <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">${totalApproved.toLocaleString('es-MX')}</p>
                 </div>
                 <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -190,7 +190,7 @@ export default function PayrollPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-emerald-600 dark:text-emerald-400">Pagadas</p>
+                  <p className="text-sm text-emerald-600 dark:text-emerald-400">{t("payroll.cards.paid")}</p>
                   <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">${totalPaid.toLocaleString('es-MX')}</p>
                 </div>
                 <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
@@ -207,19 +207,19 @@ export default function PayrollPage() {
             <DialogTrigger asChild>
               <Button className="bg-slate-900 hover:bg-slate-800" data-testid="create-payroll-btn">
                 <Plus className="w-4 h-4 mr-2" />
-                Crear Nómina
+                {t("payroll.createPayroll")}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle className="heading">Nueva Nómina</DialogTitle>
+                <DialogTitle className="heading">{t("payroll.newPayroll")}</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                 <div className="space-y-2">
-                  <Label>Empleado</Label>
+                  <Label>{t("payroll.table.employee")}</Label>
                   <Select value={formData.employee_id} onValueChange={handleEmployeeSelect}>
                     <SelectTrigger data-testid="payroll-employee">
-                      <SelectValue placeholder="Seleccionar empleado" />
+                      <SelectValue placeholder={t("payroll.selectEmployee")} />
                     </SelectTrigger>
                     <SelectContent>
                       {employees.map(emp => (
@@ -232,7 +232,7 @@ export default function PayrollPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Inicio del Período</Label>
+                    <Label>{t("payroll.periodStart")}</Label>
                     <Input
                       type="date"
                       value={formData.period_start}
@@ -242,7 +242,7 @@ export default function PayrollPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Fin del Período</Label>
+                    <Label>{t("payroll.periodEnd")}</Label>
                     <Input
                       type="date"
                       value={formData.period_end}
@@ -253,7 +253,7 @@ export default function PayrollPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>Salario Base ($)</Label>
+                  <Label>{t("payroll.baseSalaryCurrency")}</Label>
                   <Input
                     type="number"
                     step="0.01"
@@ -265,7 +265,7 @@ export default function PayrollPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Bonos ($)</Label>
+                    <Label>{t("payroll.bonusesCurrency")}</Label>
                     <Input
                       type="number"
                       step="0.01"
@@ -275,7 +275,7 @@ export default function PayrollPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Deducciones ($)</Label>
+                    <Label>{t("payroll.deductionsCurrency")}</Label>
                     <Input
                       type="number"
                       step="0.01"
@@ -287,10 +287,10 @@ export default function PayrollPage() {
                 </div>
                 <div className="flex justify-end gap-3 pt-4">
                   <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                    Cancelar
+                    {t("payroll.cancel")}
                   </Button>
                   <Button type="submit" className="bg-slate-900 hover:bg-slate-800" data-testid="save-payroll-btn">
-                    Crear Nómina
+                    {t("payroll.createPayroll")}
                   </Button>
                 </div>
               </form>
@@ -310,21 +310,21 @@ export default function PayrollPage() {
             ) : payrolls.length === 0 ? (
               <div className="text-center py-12">
                 <DollarSign className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                <p className="text-slate-500 dark:text-slate-400">No hay nóminas registradas</p>
+                <p className="text-slate-500 dark:text-slate-400">{t("payroll.noPayrolls")}</p>
               </div>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Empleado</TableHead>
-                    <TableHead>Período</TableHead>
-                    <TableHead>Salario Base</TableHead>
-                    <TableHead>Bonos</TableHead>
-                    <TableHead>Deducciones</TableHead>
-                    <TableHead>Impuestos</TableHead>
-                    <TableHead>Neto</TableHead>
-                    <TableHead>Estado</TableHead>
-                    <TableHead className="text-right">Acciones</TableHead>
+                    <TableHead>{t("payroll.table.employee")}</TableHead>
+                    <TableHead>{t("payroll.period.periodType")}</TableHead>
+                    <TableHead>{t("payroll.details.baseSalary")}</TableHead>
+                    <TableHead>{t("payroll.details.bonuses")}</TableHead>
+                    <TableHead>{t("payroll.details.deductions")}</TableHead>
+                    <TableHead>{t("payroll.summary.isr")}</TableHead>
+                    <TableHead>{t("payroll.table.net")}</TableHead>
+                    <TableHead>{t("common.status") || "Estado"}</TableHead>
+                    <TableHead className="text-right">{t("common.actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -348,7 +348,7 @@ export default function PayrollPage() {
                               data-testid={`approve-payroll-${payroll.payroll_id}`}
                             >
                               <Check className="w-4 h-4 mr-1" />
-                              Aprobar
+                              {t("payroll.approve")}
                             </Button>
                           )}
                           {payroll.status === "approved" && (
@@ -359,7 +359,7 @@ export default function PayrollPage() {
                               data-testid={`pay-payroll-${payroll.payroll_id}`}
                             >
                               <DollarSign className="w-4 h-4 mr-1" />
-                              Pagar
+                              {t("payroll.pay")}
                             </Button>
                           )}
                         </div>
