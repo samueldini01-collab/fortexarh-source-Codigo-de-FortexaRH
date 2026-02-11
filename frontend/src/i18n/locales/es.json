@@ -2307,7 +2307,22 @@
       "avgSeniority": "Antigüedad Prom.",
       "years": "años",
       "avgSalary": "Salario Prom.",
-      "payrollsYear": "Nóminas este Año"
+      "payrollsYear": "Nóminas este Año",
+      "pendingVacations": "Vacaciones pendientes",
+      "requests": "solicitudes",
+      "evaluationsMonth": "Evaluaciones este mes",
+      "attendanceToday": "Asistencia hoy",
+      "pendingPayrolls": "Nóminas pendientes"
+    },
+    "table": {
+      "title": "Comparativa Mensual",
+      "description": "Detalle de nómina por mes - {{year}} (click en fila para ver desglose)",
+      "month": "Mes",
+      "gross": "Bruto",
+      "deductions": "Deducciones",
+      "net": "Neto",
+      "employees": "Empleados",
+      "costPerEmp": "Costo/Emp"
     },
     "drillDown": {
       "employees": "Empleados",

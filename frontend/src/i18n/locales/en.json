@@ -2308,7 +2308,22 @@
       "avgSeniority": "Avg. Seniority",
       "years": "years",
       "avgSalary": "Avg. Salary",
-      "payrollsYear": "Payrolls this Year"
+      "payrollsYear": "Payrolls this Year",
+      "pendingVacations": "Pending Vacations",
+      "requests": "requests",
+      "evaluationsMonth": "Evaluations this Month",
+      "attendanceToday": "Attendance Today",
+      "pendingPayrolls": "Pending Payrolls"
+    },
+    "table": {
+      "title": "Monthly Comparison",
+      "description": "Payroll detail by month - {{year}} (click row for breakdown)",
+      "month": "Month",
+      "gross": "Gross",
+      "deductions": "Deductions",
+      "net": "Net",
+      "employees": "Employees",
+      "costPerEmp": "Cost/Emp"
     },
     "drillDown": {
       "employees": "Employees",

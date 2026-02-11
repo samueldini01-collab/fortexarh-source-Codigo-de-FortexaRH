@@ -2307,7 +2307,22 @@
       "avgSeniority": "Ancienneté Moy.",
       "years": "ans",
       "avgSalary": "Salaire Moy.",
-      "payrollsYear": "Paies cette Année"
+      "payrollsYear": "Paies cette Année",
+      "pendingVacations": "Congés en attente",
+      "requests": "demandes",
+      "evaluationsMonth": "Évaluations ce mois",
+      "attendanceToday": "Présence aujourd'hui",
+      "pendingPayrolls": "Paies en attente"
+    },
+    "table": {
+      "title": "Comparaison Mensuelle",
+      "description": "Détail de paie par mois - {{year}} (cliquez pour voir le détail)",
+      "month": "Mois",
+      "gross": "Brut",
+      "deductions": "Déductions",
+      "net": "Net",
+      "employees": "Employés",
+      "costPerEmp": "Coût/Emp"
     },
     "drillDown": {
       "employees": "Employés",
