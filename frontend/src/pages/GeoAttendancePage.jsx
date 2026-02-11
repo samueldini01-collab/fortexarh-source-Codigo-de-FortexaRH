@@ -63,7 +63,7 @@ export default function GeoAttendancePage() {
     setLocationError(null);
     
     if (!navigator.geolocation) {
-      setLocationError("Geolocalización no soportada en este navegador");
+      setLocationError(t("geoAttendance.mobile.locationErrors.notSupported"));
       return;
     }
     
