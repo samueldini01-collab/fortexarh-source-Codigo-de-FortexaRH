@@ -1088,13 +1088,16 @@ function RequestsTable({
   onApprove, 
   isApprovalView = false,
   formatCurrency,
-  formatDate 
+  formatDate,
+  statusStyles,
+  expenseTypeLabels,
+  t
 }) {
   if (loading) {
     return (
       <div className="p-8 text-center">
         <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-slate-500 dark:text-slate-400">Cargando solicitudes...</p>
+        <p className="text-slate-500 dark:text-slate-400">{t("common.loading")}</p>
       </div>
     );
   }
@@ -1103,11 +1106,11 @@ function RequestsTable({
     return (
       <div className="p-12 text-center">
         <Receipt className="w-12 h-12 mx-auto text-slate-300 mb-4" />
-        <h3 className="text-lg font-medium text-slate-700 mb-2">No hay solicitudes</h3>
+        <h3 className="text-lg font-medium text-slate-700 mb-2">{t("expenses.noRequests")}</h3>
         <p className="text-slate-500 dark:text-slate-400">
           {isApprovalView 
-            ? "No hay solicitudes pendientes de aprobación" 
-            : "Cree una nueva solicitud para comenzar"
+            ? t("expenses.noPending")
+            : t("expenses.noRequestsDesc")
           }
         </p>
       </div>
@@ -1119,12 +1122,12 @@ function RequestsTable({
       <Table>
         <TableHeader>
           <TableRow className="bg-slate-50 dark:bg-slate-800">
-            <TableHead>Solicitud</TableHead>
-            <TableHead>Solicitante</TableHead>
-            <TableHead>Tipo</TableHead>
-            <TableHead>Período</TableHead>
-            <TableHead className="text-right">Monto</TableHead>
-            <TableHead>Estado</TableHead>
+            <TableHead>{t("expenses.form.title")}</TableHead>
+            <TableHead>{t("expenses.details.requestedBy")}</TableHead>
+            <TableHead>{t("expenses.form.expenseType")}</TableHead>
+            <TableHead>{t("expenses.details.period")}</TableHead>
+            <TableHead className="text-right">{t("expenses.form.amount")}</TableHead>
+            <TableHead>{t("common.status") || "Estado"}</TableHead>
             <TableHead className="w-12"></TableHead>
           </TableRow>
         </TableHeader>
