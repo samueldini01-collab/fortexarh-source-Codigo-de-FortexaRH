@@ -545,6 +545,46 @@
     },
     "paymentSuccess": "Payment successful! Your subscription has been activated."
   },
+  "pricing": {
+    "planNames": {
+      "basic": "FortexaRH Basic",
+      "pro": "FortexaRH Pro",
+      "enterprise": "FortexaRH Enterprise"
+    },
+    "features": {
+      "upTo50": "Up to 50 employees",
+      "upTo200": "Up to 200 employees",
+      "users3": "3 users included",
+      "users5": "5 users included",
+      "users7": "7 users included",
+      "employeeManagement": "Employee management",
+      "basicPayroll": "Basic payroll",
+      "attendanceVacations": "Attendance and vacations",
+      "payrollCalculator": "Payroll calculator",
+      "loansModule": "Loans module",
+      "basicReports": "Basic reports",
+      "excelExport": "Excel/CSV export",
+      "emailSupport": "Email support",
+      "erpIntegration": "FortexaERP integration",
+      "allBasic": "Everything in Basic plan",
+      "allPro": "Everything in Pro plan",
+      "evaluations": "Performance evaluations",
+      "recruitment": "Recruitment module",
+      "employeePortal": "Employee self-service portal",
+      "orgChart": "Intuitive org chart",
+      "advancedReports": "Advanced reports",
+      "quickbooks": "QuickBooks integration",
+      "prioritySupport": "Priority support",
+      "unlimitedEmployees": "Unlimited employees",
+      "customRoles": "Custom roles",
+      "multiAdmin": "Multiple administrators",
+      "customAPI": "Custom API",
+      "advancedWorkflows": "Advanced workflows",
+      "sapOracleIntegration": "SAP/Oracle/Dynamics integration",
+      "support247": "24/7 Support",
+      "dedicatedManager": "Dedicated account manager"
+    }
+  },
   "employees": {
     "title": "Employee Management",
     "addEmployee": "Add Employee",
