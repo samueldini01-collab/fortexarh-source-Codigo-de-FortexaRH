@@ -1917,63 +1917,211 @@
   },
   "employeePortal": {
     "title": "Portail Employé",
+    "subtitle": "Accédez à vos informations personnelles",
+    "hrSystem": "Système RH et Paie",
     "welcome": "Bienvenue",
+    "welcomeToPortal": "Bienvenue sur le portail",
+    "goodMorning": "Bonjour",
+    "login": {
+      "title": "Portail Employé",
+      "subtitle": "Accédez à vos informations personnelles",
+      "documentNumber": "Numéro d'Identification",
+      "documentPlaceholder": "000-0000000-0",
+      "password": "Mot de Passe",
+      "passwordPlaceholder": "••••••••",
+      "firstTimeHint": "Première connexion: utilisez votre numéro d'identification comme mot de passe",
+      "loginButton": "Se Connecter",
+      "errorLogin": "Erreur de connexion"
+    },
     "tabs": {
+      "home": "Accueil",
       "overview": "Aperçu",
-      "payslips": "Bulletins de Paie",
-      "attendance": "Ma Présence",
-      "requests": "Mes Demandes",
-      "profile": "Mon Profil"
+      "payslips": "Bulletins",
+      "attendance": "Présence",
+      "vacations": "Congés",
+      "leaves": "Absences",
+      "evaluations": "Évaluations",
+      "loans": "Prêts",
+      "profile": "Mes Données",
+      "requests": "Mes Demandes"
+    },
+    "swipe": {
+      "hint": "Glissez pour naviguer"
     },
     "overview": {
       "nextPayday": "Prochain Jour de Paie",
       "vacationDays": "Jours de Congés",
       "available": "Disponibles",
       "used": "Utilisés",
-      "pending": "En Attente"
+      "pending": "En Attente",
+      "lastSalary": "Dernier Salaire",
+      "vacationsAvailable": "Congés Disponibles",
+      "days": "jours",
+      "pendingLoans": "Prêts en Cours",
+      "pendingRequests": "Demandes en Attente"
     },
     "payslips": {
       "title": "Bulletins de Paie",
+      "subtitle": "Historique des paiements - Téléchargez vos bulletins en PDF",
       "download": "Télécharger",
       "view": "Voir",
       "period": "Période",
       "grossSalary": "Salaire Brut",
+      "gross": "Brut",
       "deductions": "Déductions",
-      "netSalary": "Salaire Net"
+      "netSalary": "Salaire Net",
+      "noPayslips": "Aucun bulletin disponible",
+      "latestPayslips": "Derniers Bulletins",
+      "receiptDownloaded": "Bulletin téléchargé",
+      "errorDownload": "Erreur de téléchargement"
     },
     "attendance": {
+      "title": "Registre de Présence",
+      "today": "Aujourd'hui",
       "clockIn": "Pointer Entrée",
       "clockOut": "Pointer Sortie",
+      "registerEntry": "Enregistrer Entrée",
+      "registerExit": "Enregistrer Sortie",
+      "entry": "Entrée",
+      "exit": "Sortie",
       "currentStatus": "Statut Actuel",
       "working": "En Travail",
       "notWorking": "Pas en travail",
       "todayHours": "Heures Aujourd'hui",
-      "weekHours": "Heures Cette Semaine"
+      "weekHours": "Heures Cette Semaine",
+      "hours": "Heures",
+      "status": "Statut",
+      "onTime": "À l'heure",
+      "late": "En Retard",
+      "pendingStatus": "En attente",
+      "yourShift": "Votre horaire",
+      "monthlySummary": "Résumé du Mois",
+      "daysWorked": "Jours travaillés",
+      "onTimeCount": "À l'heure",
+      "lateCount": "Retards",
+      "totalHours": "Heures totales",
+      "overtime": "Heures supplémentaires"
+    },
+    "vacations": {
+      "title": "Demandes de Congés",
+      "newRequest": "Nouvelle Demande",
+      "balance": "Solde",
+      "daysAvailable": "Jours Disponibles",
+      "accrued": "Accumulés",
+      "used": "Utilisés",
+      "available": "Disponibles",
+      "noRequests": "Pas de demandes",
+      "requestSent": "Demande envoyée",
+      "errorRequest": "Erreur d'envoi de la demande"
+    },
+    "leaves": {
+      "title": "Mes Absences et Permissions",
+      "newRequest": "Nouvelle Demande",
+      "leaveTypes": "Types d'Absences",
+      "noLeaves": "Pas de demandes d'absences",
+      "requestSent": "Demande d'absence envoyée",
+      "errorRequest": "Erreur d'envoi de la demande"
+    },
+    "evaluations": {
+      "title": "Mes Évaluations de Performance",
+      "myPerformance": "Ma Performance",
+      "overallAvg": "Moyenne Générale",
+      "totalEvaluations": "Total évaluations",
+      "completed": "Terminées",
+      "pending": "En attente",
+      "noEvaluations": "Aucune évaluation enregistrée",
+      "score": "Score"
+    },
+    "loans": {
+      "title": "Mes Prêts",
+      "summary": "Résumé",
+      "totalBalance": "Solde Total",
+      "activeLoans": "Prêts actifs",
+      "monthlyPayment": "Mensualité",
+      "amount": "Montant",
+      "balance": "Solde",
+      "payment": "Mensualité",
+      "active": "Actif",
+      "paidOff": "Remboursé",
+      "noLoans": "Pas de prêts actifs",
+      "paid": "payé"
+    },
+    "profile": {
+      "title": "Mes Données",
+      "subtitle": "Mettez à jour vos coordonnées",
+      "personalInfo": "Informations Personnelles",
+      "contactInfo": "Informations de Contact",
+      "employmentInfo": "Informations Professionnelles",
+      "changePassword": "Changer Mot de Passe",
+      "currentPassword": "Mot de Passe Actuel",
+      "newPassword": "Nouveau Mot de Passe",
+      "confirmNewPassword": "Confirmer Nouveau Mot de Passe",
+      "fullName": "Nom Complet",
+      "idNumber": "Numéro d'Identification",
+      "birthDate": "Date de Naissance",
+      "gender": "Genre",
+      "phone": "Téléphone",
+      "email": "E-mail",
+      "address": "Adresse",
+      "department": "Département",
+      "position": "Poste",
+      "hireDate": "Date d'Embauche",
+      "supervisor": "Superviseur",
+      "updateData": "Mettre à Jour",
+      "dataUpdated": "Données mises à jour",
+      "errorUpdate": "Erreur de mise à jour"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "markAllRead": "Tout marquer",
+      "noNotifications": "Pas de notifications",
+      "recentNotifications": "Notifications Récentes",
+      "viewAll": "Voir tout",
+      "allMarkedRead": "Toutes les notifications marquées comme lues",
+      "markedAsRead": "Marquée comme lue",
+      "deleted": "Notification supprimée",
+      "errorMark": "Erreur de marquage",
+      "errorDelete": "Erreur de suppression",
+      "new": "nouvelles",
+      "categories": {
+        "payroll": "Paie",
+        "vacation": "Congés",
+        "attendance": "Présence",
+        "announcement": "Annonce",
+        "document": "Document",
+        "general": "Général"
+      }
+    },
+    "announcements": {
+      "title": "Annonces Importantes"
     },
     "requests": {
       "newRequest": "Nouvelle Demande",
       "vacationRequest": "Demande de Congés",
       "leaveRequest": "Demande d'Absence",
       "loanRequest": "Demande de Prêt",
+      "startDate": "Date de Début",
+      "endDate": "Date de Fin",
+      "reason": "Motif",
+      "reasonPlaceholder": "Décrivez le motif de votre demande",
+      "selectType": "Sélectionnez le type",
+      "submit": "Envoyer la Demande",
+      "cancel": "Annuler",
       "status": {
         "pending": "En Attente",
         "approved": "Approuvée",
         "rejected": "Rejetée"
       }
     },
-    "profile": {
-      "personalInfo": "Informations Personnelles",
-      "changePassword": "Changer Mot de Passe",
-      "currentPassword": "Mot de Passe Actuel",
-      "newPassword": "Nouveau Mot de Passe",
-      "confirmNewPassword": "Confirmer Nouveau Mot de Passe"
-    },
     "messages": {
       "clockedIn": "Entrée enregistrée",
       "clockedOut": "Sortie enregistrée",
       "requestSubmitted": "Demande soumise",
       "passwordChanged": "Mot de passe mis à jour",
-      "errorClockin": "Erreur d'enregistrement d'entrée"
+      "errorClockin": "Erreur d'enregistrement d'entrée",
+      "errorClockout": "Erreur d'enregistrement de sortie",
+      "errorLoadingData": "Erreur de chargement des données",
+      "logout": "Déconnexion"
     }
   },
   "geoAttendance": {
