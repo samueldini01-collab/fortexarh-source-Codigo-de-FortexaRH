@@ -249,7 +249,7 @@ export default function ReportsAdvancedPage() {
                   ) : (
                     <Download className="w-4 h-4 mr-2" />
                   )}
-                  Descargar PDF de Nómina
+                  {t('reportsAdvanced.payrollReport.downloadBtn')}
                 </Button>
               </CardContent>
             </Card>
@@ -261,16 +261,16 @@ export default function ReportsAdvancedPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Clock className="w-5 h-5 text-blue-500" />
-                  Reporte de Asistencia
+                  {t('reportsAdvanced.attendanceReport.title')}
                 </CardTitle>
                 <CardDescription>
-                  PDF con horas trabajadas, tardanzas, ausencias y horas extras por período
+                  {t('reportsAdvanced.attendanceReport.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Fecha Inicio</Label>
+                    <Label>{t('reportsAdvanced.attendanceReport.startDate')}</Label>
                     <Input 
                       type="date" 
                       value={attendanceStartDate}
@@ -279,7 +279,7 @@ export default function ReportsAdvancedPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Fecha Fin</Label>
+                    <Label>{t('reportsAdvanced.attendanceReport.endDate')}</Label>
                     <Input 
                       type="date" 
                       value={attendanceEndDate}
@@ -290,13 +290,13 @@ export default function ReportsAdvancedPage() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>Departamento (opcional)</Label>
+                  <Label>{t('reportsAdvanced.attendanceReport.departmentLabel')}</Label>
                   <Select value={attendanceDepartment} onValueChange={setAttendanceDepartment}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Todos los departamentos" />
+                      <SelectValue placeholder={t('reportsAdvanced.attendanceReport.allDepartments')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">Todos los departamentos</SelectItem>
+                      <SelectItem value="all">{t('reportsAdvanced.attendanceReport.allDepartments')}</SelectItem>
                       {reportOptions?.filters?.departments?.map((dept) => (
                         <SelectItem key={dept} value={dept}>{dept}</SelectItem>
                       ))}
@@ -306,13 +306,13 @@ export default function ReportsAdvancedPage() {
                 
                 <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
                   <p className="text-sm text-slate-600 dark:text-slate-400">
-                    El reporte incluirá:
+                    {t('reportsAdvanced.attendanceReport.includes')}
                   </p>
                   <ul className="mt-2 text-sm text-slate-500 space-y-1">
-                    <li>• Resumen de registros (a tiempo, tardanzas, ausencias)</li>
-                    <li>• Total de horas trabajadas y horas extra</li>
-                    <li>• Detalle diario por empleado</li>
-                    <li>• Horarios de entrada y salida</li>
+                    <li>• {t('reportsAdvanced.attendanceReport.item1')}</li>
+                    <li>• {t('reportsAdvanced.attendanceReport.item2')}</li>
+                    <li>• {t('reportsAdvanced.attendanceReport.item3')}</li>
+                    <li>• {t('reportsAdvanced.attendanceReport.item4')}</li>
                   </ul>
                 </div>
                 
@@ -327,7 +327,7 @@ export default function ReportsAdvancedPage() {
                   ) : (
                     <Download className="w-4 h-4 mr-2" />
                   )}
-                  Descargar PDF de Asistencia
+                  {t('reportsAdvanced.attendanceReport.downloadBtn')}
                 </Button>
               </CardContent>
             </Card>
@@ -339,21 +339,21 @@ export default function ReportsAdvancedPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Target className="w-5 h-5 text-purple-500" />
-                  Reporte de Evaluaciones de Desempeño
+                  {t('reportsAdvanced.evaluationsReport.title')}
                 </CardTitle>
                 <CardDescription>
-                  PDF con puntuaciones, competencias evaluadas y planes de mejora
+                  {t('reportsAdvanced.evaluationsReport.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Ciclo de Evaluación (opcional)</Label>
+                  <Label>{t('reportsAdvanced.evaluationsReport.cycleLabel')}</Label>
                   <Select value={evaluationCycle} onValueChange={setEvaluationCycle}>
                     <SelectTrigger data-testid="evaluation-cycle-select">
-                      <SelectValue placeholder="Todas las evaluaciones" />
+                      <SelectValue placeholder={t('reportsAdvanced.evaluationsReport.allEvaluations')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">Todas las evaluaciones</SelectItem>
+                      <SelectItem value="all">{t('reportsAdvanced.evaluationsReport.allEvaluations')}</SelectItem>
                       {reportOptions?.filters?.evaluation_cycles?.map((cycle) => (
                         <SelectItem key={cycle.cycle_id} value={cycle.cycle_id}>
                           <div className="flex items-center gap-2">
@@ -368,13 +368,13 @@ export default function ReportsAdvancedPage() {
                 
                 <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
                   <p className="text-sm text-slate-600 dark:text-slate-400">
-                    El reporte incluirá:
+                    {t('reportsAdvanced.evaluationsReport.includes')}
                   </p>
                   <ul className="mt-2 text-sm text-slate-500 space-y-1">
-                    <li>• Resumen general (total, completadas, promedio)</li>
-                    <li>• Detalle por empleado con puntuación</li>
-                    <li>• Promedio por competencia evaluada</li>
-                    <li>• Estado de evaluaciones (completadas/pendientes)</li>
+                    <li>• {t('reportsAdvanced.evaluationsReport.item1')}</li>
+                    <li>• {t('reportsAdvanced.evaluationsReport.item2')}</li>
+                    <li>• {t('reportsAdvanced.evaluationsReport.item3')}</li>
+                    <li>• {t('reportsAdvanced.evaluationsReport.item4')}</li>
                   </ul>
                 </div>
                 
@@ -389,7 +389,7 @@ export default function ReportsAdvancedPage() {
                   ) : (
                     <Download className="w-4 h-4 mr-2" />
                   )}
-                  Descargar PDF de Evaluaciones
+                  {t('reportsAdvanced.evaluationsReport.downloadBtn')}
                 </Button>
               </CardContent>
             </Card>
@@ -404,10 +404,9 @@ export default function ReportsAdvancedPage() {
                 <FileBarChart className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-blue-900 dark:text-blue-100">Reportes Profesionales</h3>
+                <h3 className="font-semibold text-blue-900 dark:text-blue-100">{t('reportsAdvanced.professionalReports.title')}</h3>
                 <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                  Todos los reportes se generan en formato PDF profesional con el logo y datos de tu empresa. 
-                  Incluyen tablas detalladas, resúmenes y están listos para imprimir o enviar por correo.
+                  {t('reportsAdvanced.professionalReports.description')}
                 </p>
               </div>
             </div>
