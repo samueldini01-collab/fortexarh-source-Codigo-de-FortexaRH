@@ -504,7 +504,7 @@ export default function GeoAttendancePage() {
         {marking && (
           <div className="flex items-center justify-center gap-3 p-4 bg-slate-700/50 rounded-lg">
             <RefreshCw className="w-5 h-5 text-emerald-400 animate-spin" />
-            <p className="text-slate-300">Registrando marcación...</p>
+            <p className="text-slate-300">{t("geoAttendance.mobile.registeringMark")}</p>
           </div>
         )}
 
@@ -513,13 +513,13 @@ export default function GeoAttendancePage() {
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2 text-white">
               <History className="w-5 h-5 text-purple-400" />
-              Marcaciones de Hoy
+              {t("geoAttendance.mobile.todayMarks")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             {todayMarks.length === 0 ? (
               <p className="text-slate-400 text-center py-6">
-                No hay marcaciones hoy
+                {t("geoAttendance.messages.noMarksToday")}
               </p>
             ) : (
               <div className="space-y-3">
@@ -540,7 +540,7 @@ export default function GeoAttendancePage() {
                       </div>
                       <div>
                         <p className="font-medium text-white">
-                          {mark.mark_type === 'entry' ? 'Entrada' : 'Salida'}
+                          {mark.mark_type === 'entry' ? t("geoAttendance.mobile.entry") : t("geoAttendance.mobile.exit")}
                         </p>
                         <p className="text-sm text-slate-400">
                           {mark.location_name}
