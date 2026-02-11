@@ -818,7 +818,7 @@ export default function DashboardLayout({ children, title }) {
                 <DropdownMenuItem onClick={() => navigate('/settings')}>
                   <Settings className="w-4 h-4 mr-2" /> {t('common.settings')}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/billing')}>
+                <DropdownMenuItem onClick={() => navigate('/subscriptions')}>
                   <CreditCard className="w-4 h-4 mr-2" /> {t('nav.subscriptions')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -907,7 +907,7 @@ export default function DashboardLayout({ children, title }) {
                     <DropdownMenuItem onClick={() => navigate('/settings')}>
                       <Settings className="w-4 h-4 mr-2" /> {t('common.settings')}
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/billing')}>
+                    <DropdownMenuItem onClick={() => navigate('/subscriptions')}>
                       <CreditCard className="w-4 h-4 mr-2" /> {t('nav.subscriptions')}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
