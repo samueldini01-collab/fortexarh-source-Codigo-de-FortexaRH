@@ -276,11 +276,11 @@ export default function ExpensesPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Solicitud cancelada");
+      toast.success(t("expenses.status.cancelled"));
       fetchData();
     } catch (error) {
       console.error("Error cancelling request:", error);
-      toast.error(error.response?.data?.detail || "Error al cancelar la solicitud");
+      toast.error(error.response?.data?.detail || t("expenses.messages.errorApprove"));
     }
   };
 
