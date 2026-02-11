@@ -1382,7 +1382,7 @@ function EmployeeDashboard() {
                           />
                         </div>
                         <div>
-                          <Label>Número de Cuenta</Label>
+                          <Label>{t('common.accountNumber')}</Label>
                           <Input 
                             defaultValue={profile.bank_account || ""}
                             onBlur={(e) => handleUpdateProfile({ bank_account: e.target.value })}
@@ -1403,13 +1403,13 @@ function EmployeeDashboard() {
       <Dialog open={showVacationRequest} onOpenChange={setShowVacationRequest}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Solicitar Vacaciones</DialogTitle>
-            <DialogDescription>Disponibles: {vacationBalance.available} días</DialogDescription>
+            <DialogTitle>{t('employeePortal.requests.vacationRequest')}</DialogTitle>
+            <DialogDescription>{t('employeePortal.vacations.available')}: {vacationBalance.available} {t('employeePortal.overview.days')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Fecha Inicio</Label>
+                <Label>{t('employeePortal.requests.startDate')}</Label>
                 <Input 
                   type="date"
                   value={vacationForm.start_date}
@@ -1417,7 +1417,7 @@ function EmployeeDashboard() {
                 />
               </div>
               <div>
-                <Label>Fecha Fin</Label>
+                <Label>{t('employeePortal.requests.endDate')}</Label>
                 <Input 
                   type="date"
                   value={vacationForm.end_date}
@@ -1426,18 +1426,18 @@ function EmployeeDashboard() {
               </div>
             </div>
             <div>
-              <Label>Motivo (opcional)</Label>
+              <Label>{t('employeePortal.requests.reason')}</Label>
               <Textarea 
                 value={vacationForm.reason}
                 onChange={(e) => setVacationForm({...vacationForm, reason: e.target.value})}
-                placeholder="Descripción de la solicitud"
+                placeholder={t('employeePortal.requests.reasonPlaceholder')}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowVacationRequest(false)}>Cancelar</Button>
+            <Button variant="outline" onClick={() => setShowVacationRequest(false)}>{t('employeePortal.requests.cancel')}</Button>
             <Button onClick={handleVacationRequest}>
-              <Send className="w-4 h-4 mr-2" />Enviar Solicitud
+              <Send className="w-4 h-4 mr-2" />{t('employeePortal.requests.submit')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1447,33 +1447,33 @@ function EmployeeDashboard() {
       <Dialog open={!!showPayslipDetail} onOpenChange={() => setShowPayslipDetail(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Detalle del Recibo</DialogTitle>
+            <DialogTitle>{t('employeePortal.payslips.title')}</DialogTitle>
             <DialogDescription>{showPayslipDetail?.period_name}</DialogDescription>
           </DialogHeader>
           {showPayslipDetail && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-3 bg-slate-50 rounded-lg">
-                  <p className="text-xs text-slate-500">Salario Bruto</p>
+                  <p className="text-xs text-slate-500">{t('employeePortal.payslips.grossSalary')}</p>
                   <p className="font-bold text-lg">{formatCurrency(showPayslipDetail.gross_salary)}</p>
                 </div>
                 <div className="p-3 bg-emerald-50 rounded-lg">
-                  <p className="text-xs text-emerald-600">Salario Neto</p>
+                  <p className="text-xs text-emerald-600">{t('employeePortal.payslips.netSalary')}</p>
                   <p className="font-bold text-lg text-emerald-700">{formatCurrency(showPayslipDetail.net_salary)}</p>
                 </div>
               </div>
               
               <div className="border-t pt-4">
-                <h4 className="font-medium mb-2">Deducciones</h4>
+                <h4 className="font-medium mb-2">{t('employeePortal.payslips.deductions')}</h4>
                 <div className="space-y-2 text-sm">
-                  <div className="flex justify-between"><span>AFP Empleado:</span><span>{formatCurrency(showPayslipDetail.afp_employee)}</span></div>
-                  <div className="flex justify-between"><span>SFS Empleado:</span><span>{formatCurrency(showPayslipDetail.sfs_employee)}</span></div>
+                  <div className="flex justify-between"><span>AFP:</span><span>{formatCurrency(showPayslipDetail.afp_employee)}</span></div>
+                  <div className="flex justify-between"><span>SFS:</span><span>{formatCurrency(showPayslipDetail.sfs_employee)}</span></div>
                   <div className="flex justify-between"><span>ISR:</span><span>{formatCurrency(showPayslipDetail.isr)}</span></div>
                   {showPayslipDetail.loan_deduction > 0 && (
-                    <div className="flex justify-between"><span>Préstamo:</span><span>{formatCurrency(showPayslipDetail.loan_deduction)}</span></div>
+                    <div className="flex justify-between"><span>{t('employeePortal.tabs.loans')}:</span><span>{formatCurrency(showPayslipDetail.loan_deduction)}</span></div>
                   )}
                   <div className="flex justify-between font-medium border-t pt-2">
-                    <span>Total Deducciones:</span>
+                    <span>{t('common.total')} {t('employeePortal.payslips.deductions')}:</span>
                     <span className="text-red-600">{formatCurrency(showPayslipDetail.total_deductions)}</span>
                   </div>
                 </div>
