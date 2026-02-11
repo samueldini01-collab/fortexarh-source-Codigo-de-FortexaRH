@@ -113,6 +113,11 @@ const getExpenseTypeLabels = (t) => ({
 export default function ExpensesPage() {
   const { t } = useTranslation();
   const { getAuthHeaders, user } = useAuth();
+  
+  // Initialize status styles and labels with translations
+  const statusStyles = getStatusConfig(t);
+  const expenseTypeLabels = getExpenseTypeLabels(t);
+  
   const [activeTab, setActiveTab] = useState("my-requests");
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState([]);
