@@ -240,7 +240,7 @@ export default function DGIIReportsPage() {
 
   const handleDownload = async (reportType) => {
     if (!selectedPeriod) {
-      toast.error("Seleccione un período primero");
+      toast.error(t('dgiiReports.selectPeriodFirst'));
       return;
     }
 
