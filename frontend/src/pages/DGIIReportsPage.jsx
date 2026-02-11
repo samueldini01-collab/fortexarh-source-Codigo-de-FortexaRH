@@ -505,15 +505,15 @@ export default function DGIIReportsPage() {
                           </div>
                           <div>
                             <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-bold text-lg text-slate-800 dark:text-slate-100">{report.name}</h3>
+                              <h3 className="font-bold text-lg text-slate-800 dark:text-slate-100">{t(report.nameKey)}</h3>
                               <Badge variant="outline" className="text-xs">Excel</Badge>
                             </div>
-                            <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{report.title}</p>
-                            <p className="text-sm text-slate-500 mt-1">{report.description}</p>
+                            <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{t(report.titleKey)}</p>
+                            <p className="text-sm text-slate-500 mt-1">{t(report.descriptionKey)}</p>
                             {selectedPeriod && (
                               <p className="text-xs text-slate-400 mt-2 flex items-center">
                                 <ChevronRight className="w-3 h-3 mr-1" />
-                                Click para ver desglose por empleado
+                                {t('dgiiReports.clickToViewBreakdown')}
                               </p>
                             )}
                           </div>
@@ -530,12 +530,12 @@ export default function DGIIReportsPage() {
                       {downloading === report.id ? (
                         <>
                           <RefreshCw className="w-4 h-4 animate-spin" />
-                          Generando...
+                          {t('dgiiReports.generating')}
                         </>
                       ) : (
                         <>
                           <Download className="w-4 h-4" />
-                          Descargar {report.name}
+                          {t('dgiiReports.download')} {t(report.nameKey)}
                         </>
                       )}
                     </Button>
