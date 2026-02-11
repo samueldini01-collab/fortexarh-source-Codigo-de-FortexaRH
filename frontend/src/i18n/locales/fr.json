@@ -2249,7 +2249,8 @@
     }
   },
   "metrics": {
-    "title": "Métriques et KPIs",
+    "title": "Tableau de Bord des Métriques",
+    "subtitle": "Analyse en temps réel de la paie, des employés et des prêts",
     "refresh": "Actualiser",
     "year": "Année",
     "errorLoading": "Erreur de chargement des métriques",
@@ -2258,23 +2259,38 @@
       "activeEmployees": "Employés Actifs",
       "avgSalary": "Salaire Moyen",
       "totalPayroll": "Paie Totale",
+      "monthlyPayroll": "Paie du Mois",
       "turnoverRate": "Rotation",
       "avgSeniority": "Ancienneté Moy.",
       "years": "ans",
-      "vsLastYear": "vs année précédente"
+      "vsLastYear": "vs année précédente",
+      "vsPrevMonth": "vs mois précédent",
+      "clickDetail": "Cliquez pour voir le détail",
+      "newThisMonth": "nouveaux ce mois",
+      "activeLoans": "Prêts Actifs",
+      "pending": "en attente",
+      "totalPaidYear": "Total Payé Cette Année",
+      "payrollsProcessed": "paies traitées"
     },
     "charts": {
       "payrollEvolution": "Évolution de la Paie",
       "employeesByDept": "Employés par Département",
       "hiresVsDepartures": "Embauches vs Départs",
       "salaryDistribution": "Distribution Salariale",
+      "departmentCosts": "Coût par Département",
+      "turnoverAnalysis": "Analyse de la Rotation",
       "hires": "Embauches",
       "departures": "Départs",
       "employees": "Employés",
-      "noData": "Aucune donnée à afficher"
+      "cost": "Coût",
+      "noData": "Aucune donnée à afficher",
+      "gross": "Brut",
+      "net": "Net",
+      "deductions": "Déductions"
     },
     "drillDown": {
       "employees": "Employés",
+      "employee": "Employé",
       "name": "Nom",
       "department": "Département",
       "position": "Poste",
@@ -2288,7 +2304,17 @@
       "date": "Date",
       "type": "Type",
       "hire": "Embauche",
-      "departure": "Départ"
+      "departure": "Départ",
+      "gross": "Brut",
+      "deductions": "Déductions",
+      "net": "Net",
+      "activeLoans": "Prêts Actifs",
+      "amount": "Montant",
+      "paid": "Payé",
+      "pending": "En Attente",
+      "installments": "Mensualités",
+      "costs": "Coûts",
+      "errorLoading": "Erreur lors du chargement des détails"
     }
   },
   "orgChart": {
