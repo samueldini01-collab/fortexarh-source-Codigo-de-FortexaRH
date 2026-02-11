@@ -705,8 +705,8 @@ export default function ExpensesPage() {
               <div className="border rounded-lg p-4">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <Label className="text-base font-medium">Solicitar Anticipo</Label>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">¿Necesita un anticipo antes del viaje/gasto?</p>
+                    <Label className="text-base font-medium">{t("expenses.form.requiresAdvance")}</Label>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{t("expenses.details.advanceRequested")}</p>
                   </div>
                   <Switch
                     checked={formData.requires_advance}
@@ -718,7 +718,7 @@ export default function ExpensesPage() {
                 {formData.requires_advance && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t">
                     <div>
-                      <Label>Monto del Anticipo (RD$)</Label>
+                      <Label>{t("expenses.form.advanceAmount")}</Label>
                       <Input
                         type="number"
                         placeholder="0.00"
@@ -728,7 +728,7 @@ export default function ExpensesPage() {
                       />
                     </div>
                     <div>
-                      <Label>Fecha Necesaria</Label>
+                      <Label>{t("expenses.form.advanceDate")}</Label>
                       <Input
                         type="date"
                         value={formData.advance_date}
@@ -742,9 +742,9 @@ export default function ExpensesPage() {
 
               {/* Notes */}
               <div>
-                <Label>Notas Adicionales</Label>
+                <Label>{t("expenses.form.notes")}</Label>
                 <Textarea
-                  placeholder="Información adicional relevante..."
+                  placeholder={t("expenses.form.notesPlaceholder")}
                   value={formData.notes}
                   onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                   rows={2}
@@ -755,11 +755,11 @@ export default function ExpensesPage() {
 
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowNewRequest(false)}>
-                Cancelar
+                {t("expenses.actions.cancel")}
               </Button>
               <Button onClick={handleCreateRequest} className="bg-emerald-600 hover:bg-emerald-700" data-testid="submit-expense">
                 <Send className="w-4 h-4 mr-2" />
-                Enviar Solicitud
+                {t("expenses.actions.create")}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -771,7 +771,7 @@ export default function ExpensesPage() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Eye className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                Detalles de la Solicitud
+                {t("expenses.actions.viewDetails")}
               </DialogTitle>
             </DialogHeader>
 
