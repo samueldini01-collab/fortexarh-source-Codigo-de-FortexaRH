@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ import { toast } from "sonner";
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 export default function NotificationsPage() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("settings");
   
   // Notifications state
