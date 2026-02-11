@@ -24,6 +24,25 @@ Continuación de la implementación multi-idioma al sistema interno completo (ES
 - Sección `documents`: ~120 claves nuevas (formularios, mensajes, categorías)
 - Sección `settings`: ~100 claves nuevas (tabs, general, logo, apariencia, notificaciones, integraciones, auditoría)
 - Sección `pwa`: ~15 claves nuevas (popup instalación PWA, instrucciones iOS)
+- Sección `metrics`: ~50 claves nuevas (cards, charts, drill-down)
+- Sección `orgChart`: ~80 claves nuevas (wizard, templates, forms, messages)
+- Sección `accounting`: ~100 claves nuevas (tabs, entries, accounts, forms, messages)
+- Sección `support`: ~40 claves nuevas (tickets, forms, statuses)
+- Sección `users`: ~50 claves nuevas (table, forms, roles, messages)
+- Sección `roles`: ~60 claves nuevas (permissions, modules, forms)
+- Sección `partner`: ~70 claves nuevas (stats, clients, commissions, forms)
+- Sección `employeePortal`: ~80 claves nuevas (tabs, payslips, attendance, requests, profile)
+- Sección `geoAttendance`: ~60 claves nuevas (live, clockIn, records, locations)
+
+#### Páginas con useTranslation Hook Agregado Esta Sesión
+1. MetricsDashboardPage.jsx
+2. AccountingPage.jsx
+3. PartnerDashboardPage.jsx
+4. EmployeePortalPage.jsx
+5. SupportPage.jsx
+6. UsersManagementPage.jsx
+7. RolesPage.jsx
+8. GeoAttendancePage.jsx
 
 #### Test Report: `/app/test_reports/iteration_35.json`
 - Frontend: 100% - Traducciones funcionando en ES/EN/FR
