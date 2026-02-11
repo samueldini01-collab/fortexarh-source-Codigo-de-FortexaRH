@@ -118,7 +118,7 @@ export default function DGIIReportsPage() {
       }
     } catch (error) {
       console.error("Error fetching periods:", error);
-      toast.error("Error al cargar períodos");
+      toast.error(t('dgiiReports.errorLoadingPeriods'));
     } finally {
       setLoading(false);
     }
