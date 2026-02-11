@@ -363,7 +363,7 @@ export default function DGIIReportsPage() {
 
   if (loading) {
     return (
-      <DashboardLayout title="Reportes DGII-TSS">
+      <DashboardLayout title={t('dgiiReports.title')}>
         <div className="flex items-center justify-center h-64">
           <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
         </div>
@@ -372,13 +372,13 @@ export default function DGIIReportsPage() {
   }
 
   return (
-    <DashboardLayout title="Reportes DGII-TSS">
+    <DashboardLayout title={t('dgiiReports.title')}>
       <div className="space-y-6" data-testid="dgii-reports-page">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Reportes DGII-TSS</h1>
-            <p className="text-slate-500 dark:text-slate-400">Genera los formularios fiscales requeridos por la DGII y TSS</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{t('dgiiReports.title')}</h1>
+            <p className="text-slate-500 dark:text-slate-400">{t('dgiiReports.subtitle')}</p>
           </div>
         </div>
 
@@ -387,18 +387,18 @@ export default function DGIIReportsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calendar className="w-5 h-5" />
-              Seleccionar Período
+              {t('dgiiReports.selectPeriod')}
             </CardTitle>
             <CardDescription>
-              Elija el período de nómina para generar los reportes
+              {t('dgiiReports.selectPeriodDesc')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             {periods.length === 0 ? (
               <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                 <AlertCircle className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-                <p className="font-medium">No hay períodos de nómina</p>
-                <p className="text-sm">Cree un período en el módulo de Nómina primero</p>
+                <p className="font-medium">{t('dgiiReports.noPayrollPeriods')}</p>
+                <p className="text-sm">{t('dgiiReports.createPeriodFirst')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
