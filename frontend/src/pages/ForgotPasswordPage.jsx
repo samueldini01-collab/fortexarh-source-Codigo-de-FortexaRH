@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { API } from "@/App";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
+import { Mail, ArrowLeft, CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import axios from "axios";
-import { API } from "@/App";
 
 export default function ForgotPasswordPage() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -21,9 +23,11 @@ export default function ForgotPasswordPage() {
     try {
       await axios.post(`${API}/auth/forgot-password`, { email });
       setSent(true);
-      toast.success("Revisa tu correo electrónico");
+      toast.success(t("auth.forgotPassword.successToast"));
     } catch (err) {
-      toast.error("Error al procesar la solicitud");
+      console.error("Error:", err);
+      // Still show success to prevent email enumeration
+      setSent(true);
     } finally {
       setLoading(false);
     }
@@ -33,34 +37,61 @@ export default function ForgotPasswordPage() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-block mb-4">
+          <Link to="/" className="inline-block mb-2">
             <img 
-              src="/fortexarh-logo.png" 
+              src="https://customer-assets.emergentagent.com/job_hrpulse-26/artifacts/ohljcqui_FortexaRH%20Logo.png" 
               alt="FortexaRH" 
-              className="h-16 w-auto mx-auto"
+              className="h-24 w-auto mx-auto"
             />
           </Link>
+          <p className="text-sm text-slate-500">Sistema de RRHH y Nómina</p>
         </div>
 
         <Card className="shadow-lg border-slate-200">
-          {!sent ? (
+          {sent ? (
             <>
               <CardHeader className="text-center">
-                <CardTitle className="text-2xl heading">Recuperar Contraseña</CardTitle>
+                <div className="w-16 h-16 rounded-full bg-emerald-100 mx-auto mb-4 flex items-center justify-center">
+                  <CheckCircle2 className="w-8 h-8 text-emerald-600" />
+                </div>
+                <CardTitle className="text-2xl heading">{t("auth.forgotPassword.sentTitle")}</CardTitle>
                 <CardDescription>
-                  Ingresa tu correo electrónico y te enviaremos instrucciones para restablecer tu contraseña
+                  {t("auth.forgotPassword.sentMessage")}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="text-center">
+                <p className="text-sm text-slate-600 mb-6">
+                  {t("auth.forgotPassword.checkInbox")}
+                </p>
+                <p className="text-sm text-slate-500">
+                  {t("auth.forgotPassword.notReceived")}{" "}
+                  <button 
+                    onClick={() => setSent(false)}
+                    className="text-emerald-600 hover:text-emerald-700 font-medium"
+                  >
+                    {t("auth.forgotPassword.tryAgain")}
+                  </button>
+                </p>
+              </CardContent>
+            </>
+          ) : (
+            <>
+              <CardHeader className="text-center">
+                <CardTitle className="text-2xl heading">{t("auth.forgotPassword.title")}</CardTitle>
+                <CardDescription>
+                  {t("auth.forgotPassword.subtitle")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="email">Correo Electrónico</Label>
+                    <Label htmlFor="email">{t("auth.forgotPassword.email")}</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                       <Input
                         id="email"
                         type="email"
-                        placeholder="tu@email.com"
+                        placeholder={t("auth.forgotPassword.emailPlaceholder")}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="pl-10"
@@ -72,49 +103,30 @@ export default function ForgotPasswordPage() {
 
                   <Button 
                     type="submit" 
-                    className="w-full bg-emerald-600 hover:bg-emerald-700" 
+                    className="w-full bg-slate-900 hover:bg-slate-800" 
                     disabled={loading}
                     data-testid="forgot-submit-btn"
                   >
-                    {loading ? "Enviando..." : "Enviar Instrucciones"}
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        {t("auth.forgotPassword.sending")}
+                      </>
+                    ) : (
+                      t("auth.forgotPassword.submit")
+                    )}
                   </Button>
                 </form>
-              </CardContent>
-            </>
-          ) : (
-            <>
-              <CardHeader className="text-center">
-                <div className="mx-auto w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
-                  <CheckCircle className="w-8 h-8 text-emerald-600" />
-                </div>
-                <CardTitle className="text-2xl heading">Correo Enviado</CardTitle>
-                <CardDescription>
-                  Si el correo está registrado, recibirás un enlace para restablecer tu contraseña
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="text-center space-y-4">
-                <p className="text-sm text-slate-600">
-                  Revisa tu bandeja de entrada y sigue las instrucciones del correo.
-                </p>
-                <p className="text-sm text-slate-500">
-                  ¿No recibiste el correo? Revisa tu carpeta de spam o{" "}
-                  <button 
-                    onClick={() => setSent(false)}
-                    className="text-emerald-600 hover:text-emerald-700 font-medium"
-                  >
-                    intenta de nuevo
-                  </button>
-                </p>
               </CardContent>
             </>
           )}
           <CardFooter className="justify-center">
             <Link 
               to="/login" 
-              className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800"
+              className="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900"
             >
               <ArrowLeft className="w-4 h-4" />
-              Volver al inicio de sesión
+              {t("auth.forgotPassword.backToLogin")}
             </Link>
           </CardFooter>
         </Card>
