@@ -387,7 +387,7 @@ export default function GeoAttendancePage() {
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2 text-white">
                 <Camera className="w-5 h-5 text-blue-400" />
-                Selfie de Verificación
+                {t("geoAttendance.mobile.selfieVerification")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -407,14 +407,14 @@ export default function GeoAttendancePage() {
                   className="flex-1 bg-blue-600 hover:bg-blue-700"
                 >
                   <Camera className="w-4 h-4 mr-2" />
-                  Tomar Foto
+                  {t("geoAttendance.mobile.takePhoto")}
                 </Button>
                 <Button 
                   onClick={stopCamera} 
                   variant="outline"
                   className="border-slate-600 text-slate-300"
                 >
-                  Cancelar
+                  {t("geoAttendance.mobile.cancel")}
                 </Button>
               </div>
             </CardContent>
