@@ -454,9 +454,9 @@ export default function PayrollCalculatorPage() {
                 <Building2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-blue-900">Cálculo según Tabla de Retención DGII 2023</h3>
+                <h3 className="font-semibold text-blue-900">{t("payroll.calculator.subtitle")}</h3>
                 <p className="text-sm text-blue-700 mt-1">
-                  <strong>TSS:</strong> SFS 3.04% + AFP 2.87% | <strong>ISR:</strong> Según tabla oficial de retención mensual DGII
+                  <strong>TSS:</strong> SFS 3.04% + AFP 2.87% | <strong>ISR:</strong> DGII
                 </p>
               </div>
             </div>
@@ -469,23 +469,23 @@ export default function PayrollCalculatorPage() {
             <CardHeader>
               <CardTitle className="heading flex items-center gap-2">
                 <Calculator className="w-5 h-5" />
-                Datos de Nómina
+                {t("payroll.calculator.title")}
               </CardTitle>
-              <CardDescription>Ingrese los datos para calcular la nómina</CardDescription>
+              <CardDescription>{t("payroll.calculator.subtitle")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Employee Selection */}
               <div className="space-y-2">
-                <Label>Empleado</Label>
+                <Label>{t("payroll.calculator.selectEmployee")}</Label>
                 <Select 
                   value={formData.employee_id || "manual"} 
                   onValueChange={handleEmployeeSelect}
                 >
                   <SelectTrigger data-testid="calc-employee">
-                    <SelectValue placeholder="Seleccionar empleado o ingresar manual" />
+                    <SelectValue placeholder={t("payroll.selectEmployee")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="manual">Ingreso Manual</SelectItem>
+                    <SelectItem value="manual">{t("payroll.calculator.manualEntry")}</SelectItem>
                     {employees.map(emp => (
                       <SelectItem key={emp.employee_id} value={emp.employee_id}>
                         {emp.first_name} {emp.last_name} - {emp.position}
@@ -497,11 +497,11 @@ export default function PayrollCalculatorPage() {
 
               {!formData.employee_id && (
                 <div className="space-y-2">
-                  <Label>Nombre del Empleado</Label>
+                  <Label>{t("payroll.calculator.name")}</Label>
                   <Input
                     value={formData.employee_name}
                     onChange={(e) => setFormData({...formData, employee_name: e.target.value})}
-                    placeholder="Nombre completo"
+                    placeholder={t("payroll.calculator.name")}
                     data-testid="calc-name"
                   />
                 </div>
@@ -512,7 +512,7 @@ export default function PayrollCalculatorPage() {
               {/* Salary Inputs */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Salario Base (RD$)</Label>
+                  <Label>{t("payroll.calculator.baseSalary")}</Label>
                   <Input
                     type="number"
                     step="0.01"
@@ -524,7 +524,7 @@ export default function PayrollCalculatorPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Días Trabajados</Label>
+                  <Label>{t("payroll.calculator.daysWorked")}</Label>
                   <Input
                     type="number"
                     min="1"
