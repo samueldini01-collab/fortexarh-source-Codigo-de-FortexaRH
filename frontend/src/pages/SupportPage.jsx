@@ -42,6 +42,7 @@ const PRIORITY_OPTIONS = [
 ];
 
 export default function SupportPage() {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -56,6 +57,25 @@ export default function SupportPage() {
   const [submitted, setSubmitted] = useState(false);
   const [ticketId, setTicketId] = useState("");
 
+  // Dynamic categories with translations
+  const getSupportCategories = () => [
+    { value: "general", label: t('support.form.categories.other'), icon: MessageSquare },
+    { value: "technical", label: t('support.form.categories.technical'), icon: Settings },
+    { value: "bug", label: t('support.form.categories.technical'), icon: Bug },
+    { value: "billing", label: t('support.form.categories.billing'), icon: CreditCard },
+    { value: "account", label: t('support.form.categories.other'), icon: Users },
+    { value: "demo", label: t('support.form.categories.feature'), icon: FileQuestion },
+    { value: "enterprise", label: t('support.form.categories.other'), icon: Building2 },
+  ];
+
+  // Dynamic priorities with translations
+  const getPriorityOptions = () => [
+    { value: "low", label: t('support.form.priorities.low') },
+    { value: "medium", label: t('support.form.priorities.medium') },
+    { value: "high", label: t('support.form.priorities.high') },
+    { value: "critical", label: t('support.form.priorities.urgent') },
+  ];
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -69,7 +89,7 @@ export default function SupportPage() {
     e.preventDefault();
     
     if (!formData.name || !formData.email || !formData.category || !formData.subject || !formData.message) {
-      toast.error("Por favor complete todos los campos requeridos");
+      toast.error(t('common.fillRequired'));
       return;
     }
 
@@ -78,9 +98,9 @@ export default function SupportPage() {
       const response = await axios.post(`${API}/support/ticket`, formData);
       setTicketId(response.data.ticket_id);
       setSubmitted(true);
-      toast.success("¡Solicitud enviada exitosamente!");
+      toast.success(t('support.messages.ticketCreated'));
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al enviar la solicitud");
+      toast.error(error.response?.data?.detail || t('support.messages.errorCreating'));
     } finally {
       setLoading(false);
     }
