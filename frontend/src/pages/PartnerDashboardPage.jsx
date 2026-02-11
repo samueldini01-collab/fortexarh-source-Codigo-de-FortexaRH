@@ -125,6 +125,7 @@ const KPICard = ({ title, value, subtitle, icon: Icon, trend, trendValue, color 
 );
 
 export default function PartnerDashboardPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, token, logout } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -166,11 +167,11 @@ export default function PartnerDashboardPage() {
     } catch (error) {
       console.error("Error fetching dashboard:", error);
       if (error.response?.status === 403) {
-        toast.error("No tienes acceso al portal de partners");
+        toast.error(t('common.accessDenied'));
         navigate("/dashboard");
       }
     }
-  }, [token, navigate]);
+  }, [token, navigate, t]);
 
   // Fetch clients
   const fetchClients = useCallback(async () => {
