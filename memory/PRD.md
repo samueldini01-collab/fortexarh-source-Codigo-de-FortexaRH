@@ -16,12 +16,14 @@ Continuación de la implementación multi-idioma al sistema interno completo (ES
 #### Correcciones de Bugs de Traducción
 1. **ReportsPage namespace fix:** Corregido `t('reports.*')` a `t('reportsPage.*')` para coincidir con el archivo JSON
 2. **Ratings dinámicos:** EvaluationsPage ahora traduce los ratings dinámicamente según el idioma seleccionado (en lugar de usar valor de BD)
+3. **PWAInstallPrompt:** Traducido completamente el popup de instalación PWA a ES/EN/FR
 
 #### Archivos JSON Expandidos Esta Sesión
 - Sección `evaluations`: ~180 claves nuevas (competencias, ratings, objetivos, ciclos, planes)
 - Sección `reportsPage`: ~70 claves expandidas (meses, resumen, gráficos, drill-down)
 - Sección `documents`: ~120 claves nuevas (formularios, mensajes, categorías)
 - Sección `settings`: ~100 claves nuevas (tabs, general, logo, apariencia, notificaciones, integraciones, auditoría)
+- Sección `pwa`: ~15 claves nuevas (popup instalación PWA, instrucciones iOS)
 
 #### Test Report: `/app/test_reports/iteration_35.json`
 - Frontend: 100% - Traducciones funcionando en ES/EN/FR
