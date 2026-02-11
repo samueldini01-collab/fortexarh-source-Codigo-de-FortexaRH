@@ -3122,7 +3122,8 @@
       "draft": "Brouillon",
       "open": "Ouvert",
       "processing": "En traitement",
-      "closed": "Clôturé"
+      "closed": "Clôturé",
+      "paid": "Payé"
     },
     "months": {
       "january": "Janvier",

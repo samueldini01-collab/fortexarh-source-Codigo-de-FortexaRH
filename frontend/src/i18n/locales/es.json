@@ -3122,7 +3122,8 @@
       "draft": "Borrador",
       "open": "Abierto",
       "processing": "Procesando",
-      "closed": "Cerrado"
+      "closed": "Cerrado",
+      "paid": "Pagado"
     },
     "months": {
       "january": "Enero",

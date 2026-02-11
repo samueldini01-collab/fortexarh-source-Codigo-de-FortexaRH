@@ -3123,7 +3123,8 @@
       "draft": "Draft",
       "open": "Open",
       "processing": "Processing",
-      "closed": "Closed"
+      "closed": "Closed",
+      "paid": "Paid"
     },
     "months": {
       "january": "January",
