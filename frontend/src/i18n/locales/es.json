@@ -2249,7 +2249,8 @@
     }
   },
   "metrics": {
-    "title": "Métricas y KPIs",
+    "title": "Dashboard de Métricas",
+    "subtitle": "Análisis en tiempo real de nómina, empleados y préstamos",
     "refresh": "Actualizar",
     "year": "Año",
     "errorLoading": "Error al cargar métricas",
@@ -2258,23 +2259,38 @@
       "activeEmployees": "Empleados Activos",
       "avgSalary": "Salario Promedio",
       "totalPayroll": "Nómina Total",
+      "monthlyPayroll": "Nómina del Mes",
       "turnoverRate": "Rotación",
       "avgSeniority": "Antigüedad Prom.",
       "years": "años",
-      "vsLastYear": "vs año anterior"
+      "vsLastYear": "vs año anterior",
+      "vsPrevMonth": "vs mes anterior",
+      "clickDetail": "Click para ver desglose",
+      "newThisMonth": "nuevos este mes",
+      "activeLoans": "Préstamos Activos",
+      "pending": "pendiente",
+      "totalPaidYear": "Total Pagado Este Año",
+      "payrollsProcessed": "nóminas procesadas"
     },
     "charts": {
       "payrollEvolution": "Evolución de Nómina",
       "employeesByDept": "Empleados por Departamento",
       "hiresVsDepartures": "Contrataciones vs Salidas",
       "salaryDistribution": "Distribución Salarial",
+      "departmentCosts": "Costo por Departamento",
+      "turnoverAnalysis": "Análisis de Rotación",
       "hires": "Contrataciones",
       "departures": "Salidas",
       "employees": "Empleados",
-      "noData": "No hay datos para mostrar"
+      "cost": "Costo",
+      "noData": "No hay datos para mostrar",
+      "gross": "Bruto",
+      "net": "Neto",
+      "deductions": "Deducciones"
     },
     "drillDown": {
       "employees": "Empleados",
+      "employee": "Empleado",
       "name": "Nombre",
       "department": "Departamento",
       "position": "Cargo",
@@ -2288,7 +2304,17 @@
       "date": "Fecha",
       "type": "Tipo",
       "hire": "Contratación",
-      "departure": "Salida"
+      "departure": "Salida",
+      "gross": "Bruto",
+      "deductions": "Deducciones",
+      "net": "Neto",
+      "activeLoans": "Préstamos Activos",
+      "amount": "Monto",
+      "paid": "Pagado",
+      "pending": "Pendiente",
+      "installments": "Cuotas",
+      "costs": "Costos",
+      "errorLoading": "Error al cargar detalles"
     }
   },
   "orgChart": {
