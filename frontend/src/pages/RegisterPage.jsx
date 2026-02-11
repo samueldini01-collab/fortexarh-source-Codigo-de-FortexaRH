@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth, API } from "@/App";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 
 export default function RegisterPage() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const paymentStatus = searchParams.get("payment");
@@ -41,17 +43,17 @@ export default function RegisterPage() {
       if (response.data.valid && response.data.payment_status === "paid") {
         setPaymentVerified(true);
         setPaymentInfo(response.data);
-        toast.success("¡Pago verificado! Complete su registro para activar su cuenta.");
+        toast.success(t("auth.register.paymentVerifiedMsg"));
       } else {
-        toast.error("El pago aún no ha sido confirmado. Intente nuevamente.");
+        toast.error(t("auth.register.paymentNotConfirmed"));
       }
     } catch (err) {
       console.error("Error verifying payment:", err);
-      toast.error(err.response?.data?.detail || "Error al verificar el pago");
+      toast.error(err.response?.data?.detail || t("auth.register.errorVerifyingPayment"));
     } finally {
       setVerifyingPayment(false);
     }
-  }, [sessionId]);
+  }, [sessionId, t]);
 
   // Verify payment on mount if session_id is present
   useEffect(() => {
@@ -69,12 +71,12 @@ export default function RegisterPage() {
     setError("");
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Las contraseñas no coinciden");
+      setError(t("auth.register.passwordsNotMatch"));
       return;
     }
 
     if (formData.password.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres");
+      setError(t("auth.register.passwordTooShort"));
       return;
     }
 
@@ -102,14 +104,14 @@ export default function RegisterPage() {
       );
       
       if (paymentVerified) {
-        toast.success("¡Cuenta creada y plan activado exitosamente!");
+        toast.success(t("auth.register.accountCreatedPaid"));
       } else {
-        toast.success("¡Cuenta creada exitosamente!");
+        toast.success(t("auth.register.accountCreated"));
       }
       navigate("/dashboard");
     } catch (err) {
-      setError(err.response?.data?.detail || "Error al crear la cuenta");
-      toast.error("Error al registrarse");
+      setError(err.response?.data?.detail || t("auth.register.errorCreating"));
+      toast.error(t("auth.register.errorCreating"));
     } finally {
       setLoading(false);
     }
@@ -140,7 +142,7 @@ export default function RegisterPage() {
           <Card className="shadow-lg border-blue-200 bg-blue-50 mb-4">
             <CardContent className="py-6 text-center">
               <Loader2 className="w-8 h-8 animate-spin text-blue-500 mx-auto mb-3" />
-              <p className="text-blue-700 font-medium">Verificando su pago...</p>
+              <p className="text-blue-700 font-medium">{t("auth.register.paymentVerifying")}</p>
             </CardContent>
           </Card>
         )}
@@ -154,7 +156,7 @@ export default function RegisterPage() {
                   <CheckCircle2 className="w-6 h-6 text-emerald-600" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-emerald-800">¡Pago Verificado!</p>
+                  <p className="font-semibold text-emerald-800">{t("auth.register.paymentVerified")}</p>
                   <p className="text-sm text-emerald-600">
                     Plan: {paymentInfo.plan_name} • {paymentInfo.employee_count} empleados • ${paymentInfo.amount}/mes
                   </p>
@@ -167,12 +169,12 @@ export default function RegisterPage() {
         <Card className="shadow-lg border-slate-200">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl heading">
-              {paymentVerified ? "Complete su Registro" : "Crear Cuenta"}
+              {paymentVerified ? t("auth.register.completeTitle") : t("auth.register.title")}
             </CardTitle>
             <CardDescription>
               {paymentVerified 
-                ? "Ingrese sus datos para activar su cuenta" 
-                : "Comienza tu prueba gratuita de 5 días"
+                ? t("auth.register.subtitlePaid") 
+                : t("auth.register.subtitle")
               }
             </CardDescription>
           </CardHeader>
@@ -186,14 +188,14 @@ export default function RegisterPage() {
               )}
               
               <div className="space-y-2">
-                <Label htmlFor="name">Nombre Completo</Label>
+                <Label htmlFor="name">{t("auth.register.fullName")}</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Input
                     id="name"
                     name="name"
                     type="text"
-                    placeholder="Juan Pérez"
+                    placeholder={t("auth.register.fullNamePlaceholder")}
                     value={formData.name}
                     onChange={handleChange}
                     className="pl-10"
@@ -204,14 +206,14 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Correo Electrónico</Label>
+                <Label htmlFor="email">{t("auth.register.email")}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Input
                     id="email"
                     name="email"
                     type="email"
-                    placeholder="tu@email.com"
+                    placeholder={t("auth.register.emailPlaceholder")}
                     value={formData.email}
                     onChange={handleChange}
                     className="pl-10"
@@ -222,14 +224,14 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="company_name">Nombre de tu Empresa</Label>
+                <Label htmlFor="company_name">{t("auth.register.companyName")}</Label>
                 <div className="relative">
                   <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Input
                     id="company_name"
                     name="company_name"
                     type="text"
-                    placeholder="Mi Empresa S.A."
+                    placeholder={t("auth.register.companyPlaceholder")}
                     value={formData.company_name}
                     onChange={handleChange}
                     className="pl-10"
@@ -240,7 +242,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Contraseña</Label>
+                <Label htmlFor="password">{t("auth.register.password")}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Input
@@ -265,7 +267,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirmar Contraseña</Label>
+                <Label htmlFor="confirmPassword">{t("auth.register.confirmPassword")}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Input
@@ -295,7 +297,7 @@ export default function RegisterPage() {
                 disabled={loading}
                 data-testid="register-submit-btn"
               >
-                {loading ? "Creando cuenta..." : "Crear Cuenta Gratis"}
+                {loading ? t("auth.register.creating") : t("auth.register.submit")}
               </Button>
             </form>
 
@@ -304,7 +306,7 @@ export default function RegisterPage() {
                 <div className="w-full border-t border-slate-200"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-slate-500">O continúa con</span>
+                <span className="px-2 bg-white text-slate-500">{t("auth.login.orContinueWith")}</span>
               </div>
             </div>
 
@@ -321,29 +323,29 @@ export default function RegisterPage() {
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              Registrarse con Google
+              {t("auth.register.googleSignup")}
             </Button>
 
             <div className="mt-6 space-y-2">
               <div className="flex items-center gap-2 text-sm text-slate-600">
                 <Check className="w-4 h-4 text-emerald-500" />
-                5 días de prueba gratuita
+                {t("auth.register.benefits.freeTrial")}
               </div>
               <div className="flex items-center gap-2 text-sm text-slate-600">
                 <Check className="w-4 h-4 text-emerald-500" />
-                Sin tarjeta de crédito
+                {t("auth.register.benefits.noCard")}
               </div>
               <div className="flex items-center gap-2 text-sm text-slate-600">
                 <Check className="w-4 h-4 text-emerald-500" />
-                Hasta 5 empleados gratis
+                {t("auth.register.benefits.freeEmployees")}
               </div>
             </div>
           </CardContent>
           <CardFooter className="justify-center">
             <p className="text-sm text-slate-600">
-              ¿Ya tienes cuenta?{" "}
+              {t("auth.register.hasAccount")}{" "}
               <Link to="/login" className="text-emerald-600 hover:text-emerald-700 font-medium">
-                Inicia sesión
+                {t("auth.register.login")}
               </Link>
             </p>
           </CardFooter>
