@@ -600,9 +600,9 @@ export default function ExpensesPage() {
                 </div>
                 
                 <div>
-                  <Label>Descripción / Justificación *</Label>
+                  <Label>{t("expenses.form.description")} *</Label>
                   <Textarea
-                    placeholder="Describa el propósito y justificación del gasto..."
+                    placeholder={t("expenses.form.descPlaceholder")}
                     value={formData.description}
                     onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                     rows={3}
@@ -612,7 +612,7 @@ export default function ExpensesPage() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <Label>Fecha Inicio *</Label>
+                    <Label>{t("expenses.form.startDate")} *</Label>
                     <Input
                       type="date"
                       value={formData.start_date}
@@ -622,7 +622,7 @@ export default function ExpensesPage() {
                   </div>
                   
                   <div>
-                    <Label>Fecha Fin *</Label>
+                    <Label>{t("expenses.form.endDate")} *</Label>
                     <Input
                       type="date"
                       value={formData.end_date}
@@ -632,7 +632,7 @@ export default function ExpensesPage() {
                   </div>
                   
                   <div>
-                    <Label>Presupuesto Estimado (RD$) *</Label>
+                    <Label>{t("expenses.form.estimatedBudget")} *</Label>
                     <Input
                       type="number"
                       placeholder="0.00"
@@ -647,15 +647,15 @@ export default function ExpensesPage() {
               {/* Budget Breakdown */}
               <div className="border rounded-lg p-4">
                 <div className="flex items-center justify-between mb-4">
-                  <Label className="text-base font-medium">Desglose del Presupuesto</Label>
+                  <Label className="text-base font-medium">{t("expenses.form.budgetBreakdown")}</Label>
                   <Button variant="outline" size="sm" onClick={addBudgetItem} data-testid="add-budget-item">
-                    <Plus className="w-4 h-4 mr-1" /> Agregar
+                    <Plus className="w-4 h-4 mr-1" /> {t("expenses.form.addItem")}
                   </Button>
                 </div>
                 
                 {formData.budget_breakdown.length === 0 ? (
                   <p className="text-sm text-slate-500 text-center py-4">
-                    No hay items en el desglose. Haga clic en "Agregar" para incluir categorías.
+                    {t("expenses.noRequestsDesc")}
                   </p>
                 ) : (
                   <div className="space-y-3">
@@ -675,14 +675,14 @@ export default function ExpensesPage() {
                           </SelectContent>
                         </Select>
                         <Input
-                          placeholder="Monto"
+                          placeholder={t("expenses.form.amount")}
                           type="number"
                           value={item.amount}
                           onChange={(e) => updateBudgetItem(index, 'amount', e.target.value)}
                           className="w-32"
                         />
                         <Input
-                          placeholder="Descripción"
+                          placeholder={t("expenses.form.itemDesc")}
                           value={item.description}
                           onChange={(e) => updateBudgetItem(index, 'description', e.target.value)}
                           className="flex-1"
