@@ -27,6 +27,7 @@ import {
 const API = process.env.REACT_APP_BACKEND_URL + "/api";
 
 export default function GeoAttendancePage() {
+  const { t } = useTranslation();
   const { getAuthHeaders, user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [marking, setMarking] = useState(false);
