@@ -87,6 +87,7 @@ function EmployeeAuthProvider({ children }) {
 
 // Login Component
 function EmployeeLogin() {
+  const { t } = useTranslation();
   const { login } = useEmployeeAuth();
   const [documentNumber, setDocumentNumber] = useState("");
   const [password, setPassword] = useState("");
@@ -98,9 +99,9 @@ function EmployeeLogin() {
     setLoading(true);
     try {
       await login(documentNumber, password);
-      toast.success("Bienvenido al portal");
+      toast.success(t('employeePortal.welcomeToPortal'));
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al iniciar sesión");
+      toast.error(error.response?.data?.detail || t('employeePortal.login.errorLogin'));
     } finally {
       setLoading(false);
     }
@@ -118,30 +119,30 @@ function EmployeeLogin() {
               alt="FortexaRH Logo" 
               className="h-20 w-auto object-contain"
             />
-            <p className="text-sm text-slate-500 mt-2">Sistema de RRHH y Nómina</p>
+            <p className="text-sm text-slate-500 mt-2">{t('employeePortal.hrSystem')}</p>
           </div>
-          <CardTitle className="text-2xl">Portal del Empleado</CardTitle>
-          <CardDescription>Accede a tu información personal</CardDescription>
+          <CardTitle className="text-2xl">{t('employeePortal.login.title')}</CardTitle>
+          <CardDescription>{t('employeePortal.login.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label>Número de Cédula</Label>
+              <Label>{t('employeePortal.login.documentNumber')}</Label>
               <Input
                 value={documentNumber}
                 onChange={(e) => setDocumentNumber(e.target.value)}
-                placeholder="000-0000000-0"
+                placeholder={t('employeePortal.login.documentPlaceholder')}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label>Contraseña</Label>
+              <Label>{t('employeePortal.login.password')}</Label>
               <div className="relative">
                 <Input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder={t('employeePortal.login.passwordPlaceholder')}
                   className="pr-10"
                   required
                 />
@@ -153,11 +154,11 @@ function EmployeeLogin() {
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
-              <p className="text-xs text-slate-500">Primera vez: usa tu número de cédula como contraseña</p>
+              <p className="text-xs text-slate-500">{t('employeePortal.login.firstTimeHint')}</p>
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Lock className="w-4 h-4 mr-2" />}
-              Iniciar Sesión
+              {t('employeePortal.login.loginButton')}
             </Button>
           </form>
         </CardContent>
