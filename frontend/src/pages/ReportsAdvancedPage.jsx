@@ -59,7 +59,7 @@ export default function ReportsAdvancedPage() {
       }
     } catch (error) {
       console.error("Error fetching report options:", error);
-      toast.error("Error al cargar opciones de reportes");
+      toast.error(t('reportsAdvanced.loadOptionsError'));
     } finally {
       setLoading(false);
     }
