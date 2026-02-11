@@ -923,7 +923,7 @@
   },
   "payroll": {
     "title": "Nómina",
-    "pageTitle": "Nómina de Pago",
+    "pageTitle": "Gestión de Nómina",
     "pageSubtitle": "Procesa nóminas por tipo, período o grupos",
     "process": "Procesar Nómina",
     "history": "Historial",
@@ -935,10 +935,24 @@
     "refresh": "Actualizar",
     "newPayroll": "Nueva Nómina",
     "createFirst": "Crear Primera Nómina",
+    "createPayroll": "Crear Nómina",
     "selectPeriodMsg": "Seleccione un período",
     "viewPeriods": "Ver períodos",
     "noEmployees": "No hay empleados",
+    "noPayrolls": "No hay nóminas registradas",
     "addEmployees": "Agregar empleados",
+    "selectEmployee": "Seleccionar empleado",
+    "periodStart": "Inicio del Período",
+    "periodEnd": "Fin del Período",
+    "baseSalaryCurrency": "Salario Base ($)",
+    "bonusesCurrency": "Bonos ($)",
+    "deductionsCurrency": "Deducciones ($)",
+    "cancel": "Cancelar",
+    "cards": {
+      "pending": "Pendientes",
+      "approved": "Aprobadas",
+      "paid": "Pagadas"
+    },
     "tabs": {
       "dashboard": "Dashboard",
       "periods": "Períodos",
