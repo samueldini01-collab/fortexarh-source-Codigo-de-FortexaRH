@@ -2149,6 +2149,58 @@
       "withdrawRequested": "Retiro solicitado",
       "errorAddingClient": "Error al agregar cliente",
       "noClients": "No tienes clientes registrados"
+    },
+    "register": {
+      "title": "Registro de Partner",
+      "subtitle": "Únete a nuestro programa de socios contables",
+      "step1": "Información de la Empresa",
+      "step2": "Contacto y Seguridad",
+      "benefits": {
+        "title": "Beneficios del Partner",
+        "price": "Solo $10/mes con empleados ilimitados",
+        "commission": "30% comisión recurrente por cliente",
+        "panel": "Panel de gestión de clientes",
+        "referral": "Link de referido único",
+        "trial": "14 días de prueba gratis"
+      },
+      "form": {
+        "firmName": "Nombre de la Firma Contable",
+        "firmPlaceholder": "Contadores Asociados XYZ",
+        "rnc": "RNC",
+        "rncPlaceholder": "000-00000-0",
+        "contactName": "Nombre de Contacto",
+        "namePlaceholder": "Juan Pérez",
+        "email": "Correo Electrónico",
+        "emailPlaceholder": "tu@firma.com",
+        "phone": "Teléfono",
+        "phonePlaceholder": "(809) 000-0000",
+        "password": "Contraseña",
+        "confirmPassword": "Confirmar Contraseña",
+        "address": "Dirección",
+        "addressPlaceholder": "Tu dirección",
+        "city": "Ciudad",
+        "cityPlaceholder": "Santo Domingo",
+        "website": "Sitio Web (opcional)",
+        "websitePlaceholder": "www.tufirma.com"
+      },
+      "buttons": {
+        "continue": "Continuar",
+        "back": "Atrás",
+        "submit": "Completar Registro",
+        "submitting": "Registrando..."
+      },
+      "validation": {
+        "passwordMismatch": "Las contraseñas no coinciden",
+        "passwordTooShort": "La contraseña debe tener al menos 6 caracteres"
+      },
+      "messages": {
+        "success": "¡Registro exitoso! Redirigiendo al login...",
+        "error": "Error al crear cuenta de partner"
+      },
+      "footer": {
+        "hasAccount": "¿Ya tienes cuenta?",
+        "login": "Iniciar sesión"
+      }
     }
   },
   "employeePortal": {
