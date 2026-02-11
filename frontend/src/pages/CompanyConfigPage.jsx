@@ -296,9 +296,9 @@ export default function CompanyConfigPage() {
           setIntegrations(prev => 
             prev.map(i => i.id === "quickbooks" ? {...i, connected: false, companyName: null, connectedAt: null} : i)
           );
-          toast.success("QuickBooks desconectado exitosamente");
+          toast.success(t('settings.messages.qbDisconnected'));
         } catch (error) {
-          toast.error(error.response?.data?.detail || "Error al desconectar QuickBooks");
+          toast.error(error.response?.data?.detail || t('settings.messages.errorDisconnecting'));
         } finally {
           setQuickbooksLoading(false);
         }
@@ -313,11 +313,11 @@ export default function CompanyConfigPage() {
           
           // Redirect to QuickBooks authorization page
           if (response.data.authorization_url) {
-            toast.info("Redirigiendo a QuickBooks para autorización...");
+            toast.info(t('settings.integrations.connecting'));
             window.location.href = response.data.authorization_url;
           }
         } catch (error) {
-          toast.error(error.response?.data?.detail || "Error al conectar con QuickBooks");
+          toast.error(error.response?.data?.detail || t('settings.messages.qbError'));
           setQuickbooksLoading(false);
         }
       }
@@ -328,7 +328,7 @@ export default function CompanyConfigPage() {
     setIntegrations(prev => 
       prev.map(i => i.id === integrationId ? {...i, connected: !i.connected} : i)
     );
-    toast.success("Integración actualizada (Simulada)");
+    toast.success(t('settings.messages.saved'));
   };
 
   // ===================== RENDER TABS =====================
