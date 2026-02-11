@@ -249,9 +249,9 @@ export default function CompanyConfigPage() {
         withCredentials: true
       });
       
-      toast.success("Cambios guardados correctamente");
+      toast.success(t('settings.messages.saved'));
     } catch (error) {
-      toast.error("Error al guardar cambios");
+      toast.error(t('settings.messages.errorSaving'));
     } finally {
       setSaving(false);
     }
@@ -262,7 +262,7 @@ export default function CompanyConfigPage() {
     if (!file) return;
     
     if (file.size > 2 * 1024 * 1024) {
-      toast.error("El archivo es muy grande. Máximo 2MB.");
+      toast.error(t('settings.messages.imageTooLarge'));
       return;
     }
     
@@ -272,13 +272,13 @@ export default function CompanyConfigPage() {
     };
     reader.readAsDataURL(file);
     setLogo(file);
-    toast.success("Logo cargado. Guarde los cambios.");
+    toast.success(t('settings.messages.logoUploaded'));
   };
 
   const handleLogoDelete = () => {
     setLogo(null);
     setLogoPreview(null);
-    toast.info("Logo eliminado");
+    toast.info(t('settings.messages.logoRemoved'));
   };
 
   const connectIntegration = async (integrationId) => {
