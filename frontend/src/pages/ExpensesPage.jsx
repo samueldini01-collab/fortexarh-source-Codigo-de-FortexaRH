@@ -1127,7 +1127,7 @@ function RequestsTable({
             <TableHead>{t("expenses.form.expenseType")}</TableHead>
             <TableHead>{t("expenses.details.period")}</TableHead>
             <TableHead className="text-right">{t("expenses.form.amount")}</TableHead>
-            <TableHead>{t("common.status") || "Estado"}</TableHead>
+            <TableHead>{t("common.status")}</TableHead>
             <TableHead className="w-12"></TableHead>
           </TableRow>
         </TableHeader>
