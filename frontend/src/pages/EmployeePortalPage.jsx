@@ -762,11 +762,11 @@ function EmployeeDashboard() {
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2 text-blue-800">
                       <Bell className="w-5 h-5" />
-                      Notificaciones Recientes
-                      <Badge variant="secondary" className="bg-blue-100 text-blue-700">{unreadCount} nuevas</Badge>
+                      {t('employeePortal.notifications.recentNotifications')}
+                      <Badge variant="secondary" className="bg-blue-100 text-blue-700">{unreadCount} {t('employeePortal.notifications.new')}</Badge>
                     </CardTitle>
                     <Button variant="ghost" size="sm" onClick={() => setShowNotifications(true)}>
-                      Ver todas
+                      {t('employeePortal.notifications.viewAll')}
                     </Button>
                   </div>
                 </CardHeader>
@@ -794,7 +794,7 @@ function EmployeeDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Últimos Recibos</CardTitle>
+                  <CardTitle>{t('employeePortal.payslips.latestPayslips')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {payslips.slice(0, 3).map(slip => (
@@ -814,9 +814,9 @@ function EmployeeDashboard() {
               <Card>
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle>Vacaciones</CardTitle>
+                    <CardTitle>{t('employeePortal.tabs.vacations')}</CardTitle>
                     <Button size="sm" onClick={() => setShowVacationRequest(true)}>
-                      <Send className="w-4 h-4 mr-2" />Solicitar
+                      <Send className="w-4 h-4 mr-2" />{t('employeePortal.requests.newRequest')}
                     </Button>
                   </div>
                 </CardHeader>
@@ -824,15 +824,15 @@ function EmployeeDashboard() {
                   <div className="grid grid-cols-3 gap-4 mb-4">
                     <div className="text-center p-3 bg-blue-50 rounded-lg">
                       <p className="text-2xl font-bold text-blue-600">{vacationBalance.accrued}</p>
-                      <p className="text-xs text-blue-700">Acumulados</p>
+                      <p className="text-xs text-blue-700">{t('employeePortal.vacations.accrued')}</p>
                     </div>
                     <div className="text-center p-3 bg-amber-50 rounded-lg">
                       <p className="text-2xl font-bold text-amber-600">{vacationBalance.used}</p>
-                      <p className="text-xs text-amber-700">Usados</p>
+                      <p className="text-xs text-amber-700">{t('employeePortal.vacations.used')}</p>
                     </div>
                     <div className="text-center p-3 bg-emerald-50 rounded-lg">
                       <p className="text-2xl font-bold text-emerald-600">{vacationBalance.available}</p>
-                      <p className="text-xs text-emerald-700">Disponibles</p>
+                      <p className="text-xs text-emerald-700">{t('employeePortal.vacations.available')}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -844,7 +844,7 @@ function EmployeeDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Clock className="w-5 h-5 text-blue-500" />
-                  Registro de Asistencia - Hoy
+                  {t('employeePortal.attendance.title')} - {t('employeePortal.attendance.today')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
