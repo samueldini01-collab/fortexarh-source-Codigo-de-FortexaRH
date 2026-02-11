@@ -4,6 +4,16 @@
 
 ## ✅ Completado Hoy (Sesión Actual)
 
+### 🌐 Página de Checkout /checkout (COMPLETADO - BUG FIX)
+- **Bug reportado:** Las páginas de checkout no se traducían
+- **Solución:** Se agregó el hook `useTranslation` a CheckoutPage.jsx
+- **Cambios realizados:**
+  - Creación de sección `checkout` en los 3 archivos de traducción (en.json, es.json, fr.json)
+  - ~80 claves de traducción agregadas para checkout
+  - Traducciones de los 3 planes (Basic, Pro, Enterprise) con todas sus características
+  - Textos de UI traducidos: título, subtítulo, resumen de pago, botones, footer
+- **Verificado:** Screenshots confirman traducción correcta en ES, EN y FR
+
 ### 🌐 Detección Automática de Idioma del Navegador (COMPLETADO)
 - Detección inteligente del idioma preferido del navegador
 - Mapeo de variantes (en-US → en, fr-CA → fr, es-MX → es)
