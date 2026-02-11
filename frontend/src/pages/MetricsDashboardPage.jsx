@@ -138,11 +138,11 @@ export default function MetricsDashboardPage() {
             data = [];
           }
           columns = [
-            { header: "Empleado", accessor: "employee_name" },
-            { header: "Departamento", accessor: "department" },
-            { header: "Bruto", accessor: "gross_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
-            { header: "Deducciones", accessor: "total_deductions", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right text-red-600" },
-            { header: "Neto", accessor: "net_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-emerald-600" }
+            { header: t('metrics.drillDown.employee'), accessor: "employee_name" },
+            { header: t('metrics.drillDown.department'), accessor: "department" },
+            { header: t('metrics.drillDown.gross'), accessor: "gross_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+            { header: t('metrics.drillDown.deductions'), accessor: "total_deductions", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right text-red-600" },
+            { header: t('metrics.drillDown.net'), accessor: "net_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-emerald-600" }
           ];
           break;
 
@@ -151,17 +151,17 @@ export default function MetricsDashboardPage() {
             headers: getAuthHeaders(),
             withCredentials: true
           });
-          title = "Préstamos Activos";
+          title = t('metrics.drillDown.activeLoans');
           data = (response.data || []).filter(l => l.status === 'active');
           columns = [
-            { header: "Empleado", accessor: "employee_name" },
-            { header: "Monto", accessor: "amount", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
-            { header: "Pagado", accessor: "total_paid", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right text-emerald-600" },
-            { header: "Pendiente", accessor: "balance", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right text-amber-600" },
-            { header: "Cuotas", accessor: "term_months" },
-            { header: "Estado", accessor: "status", render: (val) => (
+            { header: t('metrics.drillDown.employee'), accessor: "employee_name" },
+            { header: t('metrics.drillDown.amount'), accessor: "amount", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+            { header: t('metrics.drillDown.paid'), accessor: "total_paid", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right text-emerald-600" },
+            { header: t('metrics.drillDown.pending'), accessor: "balance", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right text-amber-600" },
+            { header: t('metrics.drillDown.installments'), accessor: "term_months" },
+            { header: t('metrics.drillDown.status'), accessor: "status", render: (val) => (
               <Badge className={val === "active" ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-700"}>
-                {val === "active" ? "Activo" : val}
+                {val === "active" ? t('metrics.drillDown.active') : val}
               </Badge>
             )}
           ];
@@ -173,15 +173,15 @@ export default function MetricsDashboardPage() {
             headers: getAuthHeaders(),
             withCredentials: true
           });
-          title = `Costos - ${dept?.name || 'Departamento'}`;
+          title = `${t('metrics.drillDown.costs')} - ${dept?.name || t('metrics.drillDown.department')}`;
           data = response.data || [];
           columns = [
-            { header: "Empleado", accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
-            { header: "Cargo", accessor: "position" },
-            { header: "Salario", accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" },
-            { header: "Estado", accessor: "status", render: (val) => (
+            { header: t('metrics.drillDown.employee'), accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
+            { header: t('metrics.drillDown.position'), accessor: "position" },
+            { header: t('metrics.drillDown.salary'), accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" },
+            { header: t('metrics.drillDown.status'), accessor: "status", render: (val) => (
               <Badge className={val === "active" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"}>
-                {val === "active" ? "Activo" : "Inactivo"}
+                {val === "active" ? t('metrics.drillDown.active') : t('metrics.drillDown.inactive')}
               </Badge>
             )}
           ];
@@ -194,7 +194,7 @@ export default function MetricsDashboardPage() {
       setDrillDown({ open: true, title, data, columns });
     } catch (error) {
       console.error("Error fetching drill-down data:", error);
-      toast.error("Error al cargar detalles");
+      toast.error(t('metrics.drillDown.errorLoading'));
       setDrillDown({ open: false, title: "", data: [], columns: [] });
     } finally {
       setDrillDownLoading(false);
@@ -207,7 +207,7 @@ export default function MetricsDashboardPage() {
 
   if (loading) {
     return (
-      <DashboardLayout title="Dashboard de Métricas">
+      <DashboardLayout title={t('metrics.title')}>
         <div className="flex items-center justify-center h-64">
           <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
         </div>
