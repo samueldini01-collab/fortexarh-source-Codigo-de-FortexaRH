@@ -574,7 +574,8 @@
     "clear": "Effacer",
     "selectOption": "Sélectionner une option",
     "noData": "Aucune donnée disponible",
-    "lastUpdated": "Dernière mise à jour"
+    "lastUpdated": "Dernière mise à jour",
+    "status": "Statut"
   },
   "auth": {
     "login": {
