@@ -1163,7 +1163,7 @@ function EmployeeDashboard() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Target className="w-5 h-5" />
-                    Mis Evaluaciones de Desempeño
+                    {t('employeePortal.evaluations.title')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -1181,7 +1181,7 @@ function EmployeeDashboard() {
                             }`} />
                           </div>
                           <div>
-                            <p className="font-medium">{ev.cycle_name || ev.evaluation_type || 'Evaluación'}</p>
+                            <p className="font-medium">{ev.cycle_name || ev.evaluation_type || t('employeePortal.tabs.evaluations')}</p>
                             <p className="text-sm text-slate-500">{ev.evaluation_date?.split('T')[0] || ev.created_at?.split('T')[0]}</p>
                           </div>
                         </div>
@@ -1193,18 +1193,18 @@ function EmployeeDashboard() {
                             }`}>
                               {ev.overall_score?.toFixed(1) || 'N/A'}/5
                             </p>
-                            <p className="text-xs text-slate-500">Puntuación</p>
+                            <p className="text-xs text-slate-500">{t('employeePortal.evaluations.score')}</p>
                           </div>
                           <Badge className={
                             ev.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
                           }>
-                            {ev.status === 'completed' ? 'Completada' : 'Pendiente'}
+                            {ev.status === 'completed' ? t('employeePortal.evaluations.completed') : t('employeePortal.evaluations.pending')}
                           </Badge>
                         </div>
                       </div>
                     ))}
                     {(!evaluations.evaluations || evaluations.evaluations.length === 0) && (
-                      <p className="text-center text-slate-500 py-8">No hay evaluaciones registradas</p>
+                      <p className="text-center text-slate-500 py-8">{t('employeePortal.evaluations.noEvaluations')}</p>
                     )}
                   </div>
                 </CardContent>
@@ -1212,23 +1212,23 @@ function EmployeeDashboard() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Mi Rendimiento</CardTitle>
+                  <CardTitle className="text-lg">{t('employeePortal.evaluations.myPerformance')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="text-center p-4 bg-blue-50 rounded-lg">
                     <p className="text-3xl font-bold text-blue-600">{evaluations.summary?.average_score?.toFixed(1) || '0.0'}</p>
-                    <p className="text-sm text-blue-700">Promedio General</p>
+                    <p className="text-sm text-blue-700">{t('employeePortal.evaluations.overallAvg')}</p>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
-                    <span className="text-sm text-slate-600">Total evaluaciones</span>
+                    <span className="text-sm text-slate-600">{t('employeePortal.evaluations.totalEvaluations')}</span>
                     <span className="font-bold">{evaluations.summary?.total || 0}</span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-emerald-50 rounded-lg">
-                    <span className="text-sm text-emerald-700">Completadas</span>
+                    <span className="text-sm text-emerald-700">{t('employeePortal.evaluations.completed')}</span>
                     <span className="font-bold text-emerald-600">{evaluations.summary?.completed || 0}</span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-amber-50 rounded-lg">
-                    <span className="text-sm text-amber-700">Pendientes</span>
+                    <span className="text-sm text-amber-700">{t('employeePortal.evaluations.pending')}</span>
                     <span className="font-bold text-amber-600">{evaluations.summary?.pending || 0}</span>
                   </div>
                 </CardContent>
@@ -1241,7 +1241,7 @@ function EmployeeDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <Card className="lg:col-span-2">
                 <CardHeader>
-                  <CardTitle>Mis Préstamos</CardTitle>
+                  <CardTitle>{t('employeePortal.loans.title')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
@@ -1249,21 +1249,21 @@ function EmployeeDashboard() {
                       <div key={loan.loan_id} className="p-4 border rounded-lg">
                         <div className="flex items-center justify-between mb-3">
                           <Badge className={loan.status === 'active' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'}>
-                            {loan.status === 'active' ? 'Activo' : 'Pagado'}
+                            {loan.status === 'active' ? t('employeePortal.loans.active') : t('employeePortal.loans.paidOff')}
                           </Badge>
                           <p className="text-sm text-slate-500">{loan.start_date}</p>
                         </div>
                         <div className="grid grid-cols-3 gap-4 text-sm">
                           <div>
-                            <p className="text-slate-500">Monto</p>
+                            <p className="text-slate-500">{t('employeePortal.loans.amount')}</p>
                             <p className="font-bold">{formatCurrency(loan.amount)}</p>
                           </div>
                           <div>
-                            <p className="text-slate-500">Saldo</p>
+                            <p className="text-slate-500">{t('employeePortal.loans.balance')}</p>
                             <p className="font-bold text-amber-600">{formatCurrency(loan.remaining_balance)}</p>
                           </div>
                           <div>
-                            <p className="text-slate-500">Cuota</p>
+                            <p className="text-slate-500">{t('employeePortal.loans.payment')}</p>
                             <p className="font-bold">{formatCurrency(loan.monthly_payment)}</p>
                           </div>
                         </div>
