@@ -232,7 +232,7 @@ export default function GeoAttendancePage() {
       toast.success(response.data.message);
       
       if (!response.data.is_within_zone) {
-        toast.warning("Marcación fuera de zona - pendiente de aprobación");
+        toast.warning(t("geoAttendance.messages.markOutsideZone"));
       }
       
       // Refresh data
