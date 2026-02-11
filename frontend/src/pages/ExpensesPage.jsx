@@ -191,7 +191,7 @@ export default function ExpensesPage() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error al cargar los datos");
+      toast.error(t("expenses.messages.errorLoad"));
     } finally {
       setLoading(false);
     }
