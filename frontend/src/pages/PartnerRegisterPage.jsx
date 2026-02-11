@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,15 +24,8 @@ import axios from "axios";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
-const BENEFITS = [
-  "Solo $10/mes con empleados ilimitados",
-  "30% comisión recurrente por cliente",
-  "Panel de gestión de clientes",
-  "Link de referido único",
-  "14 días de prueba gratis"
-];
-
 export default function PartnerRegisterPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
@@ -48,6 +42,14 @@ export default function PartnerRegisterPage() {
     website: ""
   });
 
+  const benefits = [
+    t("partner.register.benefits.price"),
+    t("partner.register.benefits.commission"),
+    t("partner.register.benefits.panel"),
+    t("partner.register.benefits.referral"),
+    t("partner.register.benefits.trial")
+  ];
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -55,11 +57,11 @@ export default function PartnerRegisterPage() {
 
   const validateStep1 = () => {
     if (!formData.firm_name || !formData.contact_name || !formData.email) {
-      toast.error("Complete todos los campos requeridos");
+      toast.error(t("common.fillRequiredFields") || "Complete todos los campos requeridos");
       return false;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      toast.error("Ingrese un correo electrónico válido");
+      toast.error(t("common.invalidEmail") || "Ingrese un correo electrónico válido");
       return false;
     }
     return true;
@@ -67,15 +69,15 @@ export default function PartnerRegisterPage() {
 
   const validateStep2 = () => {
     if (!formData.phone || !formData.password || !formData.confirm_password) {
-      toast.error("Complete todos los campos requeridos");
+      toast.error(t("common.fillRequiredFields") || "Complete todos los campos requeridos");
       return false;
     }
     if (formData.password.length < 6) {
-      toast.error("La contraseña debe tener al menos 6 caracteres");
+      toast.error(t("partner.register.validation.passwordTooShort"));
       return false;
     }
     if (formData.password !== formData.confirm_password) {
-      toast.error("Las contraseñas no coinciden");
+      toast.error(t("partner.register.validation.passwordMismatch"));
       return false;
     }
     return true;
@@ -106,7 +108,7 @@ export default function PartnerRegisterPage() {
         website: formData.website || null
       });
 
-      toast.success("¡Firma registrada exitosamente!");
+      toast.success(t("partner.register.messages.success"));
       
       // Show success modal with referral info
       setStep(3);
@@ -117,7 +119,7 @@ export default function PartnerRegisterPage() {
       }));
 
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al registrar la firma");
+      toast.error(error.response?.data?.detail || t("partner.register.messages.error"));
     } finally {
       setLoading(false);
     }
@@ -125,7 +127,7 @@ export default function PartnerRegisterPage() {
 
   const copyReferralLink = () => {
     navigator.clipboard.writeText(formData.referral_link);
-    toast.success("Link copiado al portapapeles");
+    toast.success(t("common.copied") || "Link copiado al portapapeles");
   };
 
   return (
@@ -135,13 +137,13 @@ export default function PartnerRegisterPage() {
         <div className="text-center mb-8">
           <Link to="/accountants-software" className="inline-flex items-center gap-2 text-slate-400 hover:text-white mb-6">
             <ArrowLeft className="w-4 h-4" />
-            Volver
+            {t("common.back")}
           </Link>
           <div className="flex items-center justify-center gap-3 mb-4">
             <img src="/fortexarh-logo.png" alt="FortexaRH" className="h-12 w-auto" />
             <div className="text-left">
               <h1 className="text-2xl font-bold text-white">FortexaRH</h1>
-              <p className="text-emerald-400 text-sm">Programa de Partners</p>
+              <p className="text-emerald-400 text-sm">{t("partner.register.subtitle")}</p>
             </div>
           </div>
         </div>
@@ -154,14 +156,14 @@ export default function PartnerRegisterPage() {
                 <div className="w-12 h-12 bg-emerald-500/20 rounded-lg flex items-center justify-center mb-4">
                   <Award className="w-6 h-6 text-emerald-400" />
                 </div>
-                <CardTitle className="text-white">Beneficios de Partner</CardTitle>
+                <CardTitle className="text-white">{t("partner.register.benefits.title")}</CardTitle>
                 <CardDescription className="text-slate-400">
-                  Al registrarte como firma de contadores obtienes:
+                  {t("partner.register.subtitle")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-3">
-                  {BENEFITS.map((benefit, index) => (
+                  {benefits.map((benefit, index) => (
                     <li key={index} className="flex items-center gap-3 text-slate-300">
                       <div className="w-5 h-5 bg-emerald-500/20 rounded-full flex items-center justify-center flex-shrink-0">
                         <Check className="w-3 h-3 text-emerald-400" />
@@ -186,12 +188,12 @@ export default function PartnerRegisterPage() {
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Briefcase className="w-5 h-5 text-emerald-400" />
-                  {step === 3 ? "¡Registro Exitoso!" : "Registrar Firma de Contadores"}
+                  {step === 3 ? t("partner.register.messages.success") : t("partner.register.title")}
                 </CardTitle>
                 <CardDescription className="text-slate-400">
-                  {step === 1 && "Paso 1 de 2: Información de la firma"}
-                  {step === 2 && "Paso 2 de 2: Datos de contacto y acceso"}
-                  {step === 3 && "Tu firma ha sido registrada correctamente"}
+                  {step === 1 && t("partner.register.step1")}
+                  {step === 2 && t("partner.register.step2")}
+                  {step === 3 && t("partner.register.messages.success")}
                 </CardDescription>
                 
                 {step < 3 && (
@@ -206,7 +208,7 @@ export default function PartnerRegisterPage() {
                 {step === 1 && (
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="firm_name" className="text-slate-300">Nombre de la Firma *</Label>
+                      <Label htmlFor="firm_name" className="text-slate-300">{t("partner.register.form.firmName")} *</Label>
                       <div className="relative">
                         <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                         <Input
@@ -214,7 +216,7 @@ export default function PartnerRegisterPage() {
                           name="firm_name"
                           value={formData.firm_name}
                           onChange={handleChange}
-                          placeholder="Contadores Asociados SRL"
+                          placeholder={t("partner.register.form.firmPlaceholder")}
                           className="pl-10 bg-slate-700 border-slate-600 text-white"
                           data-testid="partner-firm-name"
                         />
@@ -222,20 +224,20 @@ export default function PartnerRegisterPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="rnc" className="text-slate-300">RNC (Opcional)</Label>
+                      <Label htmlFor="rnc" className="text-slate-300">{t("partner.register.form.rnc")}</Label>
                       <Input
                         id="rnc"
                         name="rnc"
                         value={formData.rnc}
                         onChange={handleChange}
-                        placeholder="123456789"
+                        placeholder={t("partner.register.form.rncPlaceholder")}
                         className="bg-slate-700 border-slate-600 text-white"
                         data-testid="partner-rnc"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="contact_name" className="text-slate-300">Nombre del Contacto Principal *</Label>
+                      <Label htmlFor="contact_name" className="text-slate-300">{t("partner.register.form.contactName")} *</Label>
                       <div className="relative">
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                         <Input
@@ -243,7 +245,7 @@ export default function PartnerRegisterPage() {
                           name="contact_name"
                           value={formData.contact_name}
                           onChange={handleChange}
-                          placeholder="Juan Pérez"
+                          placeholder={t("partner.register.form.namePlaceholder")}
                           className="pl-10 bg-slate-700 border-slate-600 text-white"
                           data-testid="partner-contact-name"
                         />
@@ -251,7 +253,7 @@ export default function PartnerRegisterPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-slate-300">Correo Electrónico *</Label>
+                      <Label htmlFor="email" className="text-slate-300">{t("partner.register.form.email")} *</Label>
                       <div className="relative">
                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                         <Input
@@ -260,7 +262,7 @@ export default function PartnerRegisterPage() {
                           type="email"
                           value={formData.email}
                           onChange={handleChange}
-                          placeholder="contacto@firma.com"
+                          placeholder={t("partner.register.form.emailPlaceholder")}
                           className="pl-10 bg-slate-700 border-slate-600 text-white"
                           data-testid="partner-email"
                         />
@@ -269,7 +271,7 @@ export default function PartnerRegisterPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="city" className="text-slate-300">Ciudad</Label>
+                        <Label htmlFor="city" className="text-slate-300">{t("partner.register.form.city")}</Label>
                         <div className="relative">
                           <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                           <Input
@@ -277,13 +279,13 @@ export default function PartnerRegisterPage() {
                             name="city"
                             value={formData.city}
                             onChange={handleChange}
-                            placeholder="Santo Domingo"
+                            placeholder={t("partner.register.form.cityPlaceholder")}
                             className="pl-10 bg-slate-700 border-slate-600 text-white"
                           />
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="website" className="text-slate-300">Sitio Web</Label>
+                        <Label htmlFor="website" className="text-slate-300">{t("partner.register.form.website")}</Label>
                         <div className="relative">
                           <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                           <Input
@@ -291,7 +293,7 @@ export default function PartnerRegisterPage() {
                             name="website"
                             value={formData.website}
                             onChange={handleChange}
-                            placeholder="www.firma.com"
+                            placeholder={t("partner.register.form.websitePlaceholder")}
                             className="pl-10 bg-slate-700 border-slate-600 text-white"
                           />
                         </div>
@@ -299,13 +301,13 @@ export default function PartnerRegisterPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="address" className="text-slate-300">Dirección</Label>
+                      <Label htmlFor="address" className="text-slate-300">{t("partner.register.form.address")}</Label>
                       <Input
                         id="address"
                         name="address"
                         value={formData.address}
                         onChange={handleChange}
-                        placeholder="Av. Winston Churchill #123, Torre Empresarial"
+                        placeholder={t("partner.register.form.addressPlaceholder")}
                         className="bg-slate-700 border-slate-600 text-white"
                       />
                     </div>
@@ -314,7 +316,7 @@ export default function PartnerRegisterPage() {
                       onClick={handleNextStep}
                       className="w-full bg-emerald-500 hover:bg-emerald-600 mt-4"
                     >
-                      Continuar
+                      {t("partner.register.buttons.continue")}
                     </Button>
                   </div>
                 )}
@@ -322,7 +324,7 @@ export default function PartnerRegisterPage() {
                 {step === 2 && (
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="phone" className="text-slate-300">Teléfono *</Label>
+                      <Label htmlFor="phone" className="text-slate-300">{t("partner.register.form.phone")} *</Label>
                       <div className="relative">
                         <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                         <Input
@@ -331,7 +333,7 @@ export default function PartnerRegisterPage() {
                           type="tel"
                           value={formData.phone}
                           onChange={handleChange}
-                          placeholder="+1 (809) 555-1234"
+                          placeholder={t("partner.register.form.phonePlaceholder")}
                           className="pl-10 bg-slate-700 border-slate-600 text-white"
                           data-testid="partner-phone"
                         />
@@ -339,7 +341,7 @@ export default function PartnerRegisterPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="password" className="text-slate-300">Contraseña *</Label>
+                      <Label htmlFor="password" className="text-slate-300">{t("partner.register.form.password")} *</Label>
                       <div className="relative">
                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                         <Input
@@ -348,7 +350,7 @@ export default function PartnerRegisterPage() {
                           type="password"
                           value={formData.password}
                           onChange={handleChange}
-                          placeholder="Mínimo 6 caracteres"
+                          placeholder={t("auth.resetPassword.newPasswordPlaceholder")}
                           className="pl-10 bg-slate-700 border-slate-600 text-white"
                           data-testid="partner-password"
                         />
@@ -356,7 +358,7 @@ export default function PartnerRegisterPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="confirm_password" className="text-slate-300">Confirmar Contraseña *</Label>
+                      <Label htmlFor="confirm_password" className="text-slate-300">{t("partner.register.form.confirmPassword")} *</Label>
                       <div className="relative">
                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                         <Input
@@ -365,7 +367,7 @@ export default function PartnerRegisterPage() {
                           type="password"
                           value={formData.confirm_password}
                           onChange={handleChange}
-                          placeholder="Repita la contraseña"
+                          placeholder={t("auth.resetPassword.confirmPlaceholder")}
                           className="pl-10 bg-slate-700 border-slate-600 text-white"
                           data-testid="partner-confirm-password"
                         />
@@ -373,7 +375,7 @@ export default function PartnerRegisterPage() {
                     </div>
 
                     <div className="p-4 bg-slate-700/50 rounded-lg text-sm text-slate-400">
-                      <p>Al registrarte aceptas nuestros <Link to="/terms" className="text-emerald-400 hover:underline">Términos de Servicio</Link> y <Link to="/privacy" className="text-emerald-400 hover:underline">Política de Privacidad</Link>.</p>
+                      <p>{t("auth.register.terms")} <Link to="/terms" className="text-emerald-400 hover:underline">{t("auth.register.termsLink")}</Link> {t("auth.register.and")} <Link to="/privacy" className="text-emerald-400 hover:underline">{t("auth.register.privacyLink")}</Link>.</p>
                     </div>
 
                     <div className="flex gap-3">
@@ -383,7 +385,7 @@ export default function PartnerRegisterPage() {
                         onClick={() => setStep(1)}
                         className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-700"
                       >
-                        Atrás
+                        {t("partner.register.buttons.back")}
                       </Button>
                       <Button 
                         type="submit"
@@ -394,10 +396,10 @@ export default function PartnerRegisterPage() {
                         {loading ? (
                           <>
                             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Registrando...
+                            {t("partner.register.buttons.submitting")}
                           </>
                         ) : (
-                          "Completar Registro"
+                          t("partner.register.buttons.submit")
                         )}
                       </Button>
                     </div>
@@ -430,7 +432,7 @@ export default function PartnerRegisterPage() {
                           variant="outline"
                           className="border-slate-600 text-slate-300 hover:bg-slate-700"
                         >
-                          Copiar
+                          {t("common.copy") || "Copiar"}
                         </Button>
                       </div>
                       <p className="text-xs text-slate-500 mt-2">
@@ -449,11 +451,11 @@ export default function PartnerRegisterPage() {
                         onClick={() => navigate('/login')}
                         className="flex-1 bg-emerald-500 hover:bg-emerald-600"
                       >
-                        Iniciar Sesión
+                        {t("partner.register.footer.login")}
                       </Button>
                       <Link to="/accountants-software" className="flex-1">
                         <Button variant="outline" className="w-full border-slate-600 text-slate-300 hover:bg-slate-700">
-                          Volver al Inicio
+                          {t("common.backToHome")}
                         </Button>
                       </Link>
                     </div>
