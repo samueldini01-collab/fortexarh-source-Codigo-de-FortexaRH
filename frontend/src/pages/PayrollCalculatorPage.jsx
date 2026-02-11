@@ -444,7 +444,7 @@ export default function PayrollCalculatorPage() {
   };
 
   return (
-    <DashboardLayout title="Calculadora de Nómina">
+    <DashboardLayout title={t("payroll.calculator.title")}>
       <div className="space-y-6" data-testid="payroll-calculator-page">
         {/* Info Banner */}
         <Card className="border-blue-200 bg-blue-50/50">
