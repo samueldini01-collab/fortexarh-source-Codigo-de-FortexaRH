@@ -41,6 +41,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 export default function BrochurePage() {
+  const { t } = useTranslation();
   const brochureRef = useRef(null);
   const [downloading, setDownloading] = useState(false);
   const navigate = useNavigate();

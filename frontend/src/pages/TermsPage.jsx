@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { FileText, ArrowLeft } from "lucide-react";
 
 export default function TermsPage() {
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}

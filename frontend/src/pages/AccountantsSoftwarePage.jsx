@@ -188,6 +188,7 @@ const themes = {
 };
 
 export default function AccountantsSoftwarePage() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("benefits");
   
   // Initialize theme from localStorage or default to light
