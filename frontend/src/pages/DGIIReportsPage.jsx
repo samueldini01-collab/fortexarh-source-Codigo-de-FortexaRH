@@ -18,49 +18,49 @@ import { DrillDownModal } from "@/components/DrillDown";
 const MONTHLY_REPORTS = [
   {
     id: "ir3",
-    name: "IR-3",
-    title: "Declaración de Retenciones de Asalariados",
-    description: "Declaración jurada y pago mensual de las retenciones de ISR a asalariados",
+    nameKey: "dgiiReports.reports.ir3.name",
+    titleKey: "dgiiReports.reports.ir3.title",
+    descriptionKey: "dgiiReports.reports.ir3.description",
     icon: FileText,
     color: "blue"
   },
   {
     id: "ir4",
-    name: "IR-4",
-    title: "Detalle Mensual de Retenciones",
-    description: "Detalle de empleados con sus retenciones de ISR que alimenta el IR-3",
+    nameKey: "dgiiReports.reports.ir4.name",
+    titleKey: "dgiiReports.reports.ir4.title",
+    descriptionKey: "dgiiReports.reports.ir4.description",
     icon: FileSpreadsheet,
     color: "emerald"
   },
   {
     id: "ir17",
-    name: "IR-17",
-    title: "Otras Retenciones y Retrib. Complementarias",
-    description: "Retenciones por servicios, alquileres, intereses, dividendos y retribuciones complementarias (27%)",
+    nameKey: "dgiiReports.reports.ir17.name",
+    titleKey: "dgiiReports.reports.ir17.title",
+    descriptionKey: "dgiiReports.reports.ir17.description",
     icon: FileText,
     color: "rose"
   },
   {
     id: "ir6",
-    name: "IR-6 (Anexo)",
-    title: "Anexo Detalle de Otras Retenciones",
-    description: "Detalle de retenciones a terceros: honorarios, alquileres, intereses, dividendos",
+    nameKey: "dgiiReports.reports.ir6.name",
+    titleKey: "dgiiReports.reports.ir6.title",
+    descriptionKey: "dgiiReports.reports.ir6.description",
     icon: FileSpreadsheet,
     color: "orange"
   },
   {
     id: "tss-autodeterminacion",
-    name: "TSS Autodeterminación",
-    title: "Archivo de Autodeterminación TSS",
-    description: "Archivo Excel para la Tesorería de Seguridad Social (v5.3)",
+    nameKey: "dgiiReports.reports.tssAutodeterminacion.name",
+    titleKey: "dgiiReports.reports.tssAutodeterminacion.title",
+    descriptionKey: "dgiiReports.reports.tssAutodeterminacion.description",
     icon: FileSpreadsheet,
     color: "purple"
   },
   {
     id: "tss-novedades",
-    name: "TSS Novedades",
-    title: "Archivo de Novedades TSS",
-    description: "Archivo Excel de novedades para la TSS (ingresos, salidas, etc.)",
+    nameKey: "dgiiReports.reports.tssNovedades.name",
+    titleKey: "dgiiReports.reports.tssNovedades.title",
+    descriptionKey: "dgiiReports.reports.tssNovedades.description",
     icon: FileSpreadsheet,
     color: "amber"
   }
@@ -69,9 +69,9 @@ const MONTHLY_REPORTS = [
 const ANNUAL_REPORTS = [
   {
     id: "ir13",
-    name: "IR-13",
-    title: "Declaración Anual de Retenciones",
-    description: "Consolida todos los IR-4 mensuales del año fiscal. Incluye detalle por empleado y resumen mensual.",
+    nameKey: "dgiiReports.reports.ir13.name",
+    titleKey: "dgiiReports.reports.ir13.title",
+    descriptionKey: "dgiiReports.reports.ir13.description",
     icon: CalendarDays,
     color: "rose"
   }
