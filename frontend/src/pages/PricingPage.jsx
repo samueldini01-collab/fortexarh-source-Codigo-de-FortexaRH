@@ -29,7 +29,7 @@ export default function PricingPage() {
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
-    localStorage.setItem('i18nextLng', lng);
+    localStorage.setItem('fortexarh-language', lng);
   };
 
   useEffect(() => {
@@ -61,8 +61,55 @@ export default function PricingPage() {
       
       window.location.href = response.data.url;
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al procesar");
+      toast.error(error.response?.data?.detail || t('common.error'));
     }
+  };
+
+  // Feature translation mapping (Spanish source -> translation key)
+  const featureKeyMap = {
+    // Basic plan features
+    "Hasta 50 empleados": "pricing.features.upTo50",
+    "3 usuarios incluidos": "pricing.features.users3",
+    "Gestión de empleados": "pricing.features.employeeManagement",
+    "Nómina básica": "pricing.features.basicPayroll",
+    "Asistencias y vacaciones": "pricing.features.attendanceVacations",
+    "Calculadora de nómina": "pricing.features.payrollCalculator",
+    "Módulo de préstamos": "pricing.features.loansModule",
+    "Reportes básicos": "pricing.features.basicReports",
+    "Exportación Excel/CSV": "pricing.features.excelExport",
+    "Soporte por email": "pricing.features.emailSupport",
+    "Integración FortexaERP": "pricing.features.erpIntegration",
+    // Pro plan features
+    "Hasta 200 empleados": "pricing.features.upTo200",
+    "5 usuarios incluidos": "pricing.features.users5",
+    "Todo lo del plan Básico": "pricing.features.allBasic",
+    "Evaluaciones de desempeño": "pricing.features.evaluations",
+    "Módulo de reclutamiento": "pricing.features.recruitment",
+    "Portal autoservicio empleados": "pricing.features.employeePortal",
+    "Organigrama intuitivo": "pricing.features.orgChart",
+    "Reportes avanzados": "pricing.features.advancedReports",
+    "Integración QuickBooks": "pricing.features.quickbooks",
+    "Soporte prioritario": "pricing.features.prioritySupport",
+    // Enterprise plan features
+    "Empleados ilimitados": "pricing.features.unlimitedEmployees",
+    "7 usuarios incluidos": "pricing.features.users7",
+    "Todo lo del plan Pro": "pricing.features.allPro",
+    "Roles personalizados": "pricing.features.customRoles",
+    "Múltiples administradores": "pricing.features.multiAdmin",
+    "API personalizada": "pricing.features.customAPI",
+    "Flujos de trabajo avanzados": "pricing.features.advancedWorkflows",
+    "Integración SAP/Oracle/Dynamics": "pricing.features.sapOracleIntegration",
+    "Soporte 24/7": "pricing.features.support247",
+    "Gerente de cuenta dedicado": "pricing.features.dedicatedManager"
+  };
+
+  // Translate feature from Spanish to current language
+  const translateFeature = (feature) => {
+    const key = featureKeyMap[feature];
+    if (key) {
+      return t(key, feature); // fallback to original if key not found
+    }
+    return feature;
   };
 
   // Build localized free plan
@@ -80,15 +127,22 @@ export default function PricingPage() {
     ]
   });
 
+  // Translate plan name based on plan_id
+  const getPlanName = (plan) => {
+    const nameMap = {
+      'basic': t('pricing.planNames.basic', 'FortexaRH Basic'),
+      'pro': t('pricing.planNames.pro', 'FortexaRH Pro'),
+      'enterprise': t('pricing.planNames.enterprise', 'FortexaRH Enterprise')
+    };
+    return nameMap[plan.plan_id] || plan.name;
+  };
+
   const allPlans = [
     getFreePlan(),
     ...plans.map(plan => ({
       ...plan,
-      // Translate plan names and features if they come from API
-      name: t(`landing.pricing.plans.${plan.plan_id}.name`, plan.name),
-      features: plan.features_key 
-        ? plan.features_key.map(key => t(key))
-        : plan.features
+      name: getPlanName(plan),
+      features: plan.features.map(f => translateFeature(f))
     }))
   ];
 
