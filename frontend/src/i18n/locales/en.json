@@ -30,6 +30,8 @@
     "amount": "Amount",
     "total": "Total",
     "subtotal": "Subtotal",
+    "bank": "Bank",
+    "accountNumber": "Account Number",
     "noData": "No data available",
     "error": "Error",
     "success": "Success",
