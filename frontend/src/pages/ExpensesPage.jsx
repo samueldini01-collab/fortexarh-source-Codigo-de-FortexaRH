@@ -541,6 +541,9 @@ export default function ExpensesPage() {
                   isApprovalView
                   formatCurrency={formatCurrency}
                   formatDate={formatDate}
+                  statusStyles={statusStyles}
+                  expenseTypeLabels={expenseTypeLabels}
+                  t={t}
                 />
               </TabsContent>
             </Tabs>
