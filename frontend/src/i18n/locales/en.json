@@ -132,6 +132,88 @@
       "administration": "Administration"
     }
   },
+  "checkout": {
+    "header": {
+      "backToPlans": "Back to plans"
+    },
+    "title": "Complete your Purchase",
+    "subtitle": "Configure your plan and proceed to secure payment",
+    "planSummary": "Plan Summary",
+    "mostPopular": "Most Popular",
+    "employeeCount": {
+      "title": "Number of Employees",
+      "description": "How many employees will be in your company?",
+      "noLimit": "No employee limit",
+      "maxInPlan": "Maximum {{max}} employees in this plan"
+    },
+    "pricing": {
+      "baseMonthly": "Monthly base",
+      "perEmployee": "Per employee"
+    },
+    "paymentSummary": {
+      "title": "Payment Summary",
+      "plan": "Plan {{name}}",
+      "employees": "{{count}} employees × {{price}}",
+      "totalMonthly": "Total monthly"
+    },
+    "buttons": {
+      "proceedToPayment": "Proceed to Payment",
+      "processing": "Processing..."
+    },
+    "footer": {
+      "securePayment": "Secure payment processed by Stripe. After payment you can create your account.",
+      "tryFirst": "Prefer to try first?",
+      "freeTrial": "Free trial for 5 days"
+    },
+    "errors": {
+      "paymentError": "Error starting payment process",
+      "processError": "Error processing payment"
+    },
+    "plans": {
+      "basic": {
+        "name": "FortexaRH Basic",
+        "features": {
+          "employees": "Up to 50 employees",
+          "users": "3 users included",
+          "management": "Employee management",
+          "payroll": "Basic payroll",
+          "attendance": "Attendance and vacations",
+          "calculator": "Payroll calculator",
+          "reports": "Basic reports",
+          "export": "Excel/CSV export",
+          "support": "Email support"
+        }
+      },
+      "pro": {
+        "name": "FortexaRH Pro",
+        "features": {
+          "employees": "Up to 200 employees",
+          "users": "5 users included",
+          "allBasic": "Everything in Basic plan",
+          "evaluations": "Performance evaluations",
+          "recruitment": "Recruitment module",
+          "orgChart": "Intuitive org chart",
+          "reports": "Advanced reports",
+          "quickbooks": "QuickBooks integration",
+          "support": "Priority support"
+        }
+      },
+      "enterprise": {
+        "name": "FortexaRH Enterprise",
+        "features": {
+          "employees": "Unlimited employees",
+          "users": "7 users included",
+          "allPro": "Everything in Pro plan",
+          "customRoles": "Custom roles",
+          "multiAdmin": "Multiple administrators",
+          "api": "Custom API",
+          "integrations": "SAP/Oracle integration",
+          "support247": "24/7 Support",
+          "manager": "Dedicated account manager"
+        }
+      }
+    }
+  },
   "landing": {
     "hero": {
       "title": "HR & Payroll System for the Dominican Republic",
