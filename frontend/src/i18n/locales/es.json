@@ -33,6 +33,7 @@
     "bank": "Banco",
     "accountNumber": "Número de Cuenta",
     "noData": "No hay datos disponibles",
+    "noDescription": "Sin descripción",
     "error": "Error",
     "success": "Éxito",
     "warning": "Advertencia",

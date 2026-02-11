@@ -33,6 +33,7 @@
     "bank": "Bank",
     "accountNumber": "Account Number",
     "noData": "No data available",
+    "noDescription": "No description",
     "error": "Error",
     "success": "Success",
     "warning": "Warning",
