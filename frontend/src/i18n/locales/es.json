@@ -2890,7 +2890,8 @@
       "all": "Todos",
       "pending": "Pendiente",
       "posted": "Contabilizado",
-      "voided": "Anulado"
+      "voided": "Anulado",
+      "draft": "Borrador"
     },
     "buttons": {
       "refresh": "Actualizar",
