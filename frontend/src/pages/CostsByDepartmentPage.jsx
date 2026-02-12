@@ -57,11 +57,11 @@ export default function CostsByDepartmentPage() {
       setCostReport(response.data);
     } catch (error) {
       console.error("Error fetching cost report:", error);
-      toast.error("Error al cargar el reporte");
+      toast.error(t('costsByDepartment.messages.errorLoading'));
     } finally {
       setLoading(false);
     }
-  }, [getAuthHeaders, selectedPeriod]);
+  }, [getAuthHeaders, selectedPeriod, t]);
 
   const fetchDepartmentComparison = useCallback(async () => {
     try {
@@ -93,25 +93,25 @@ export default function CostsByDepartmentPage() {
       
       const employees = response.data || [];
       const columns = [
-        { header: "Nombre", accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
-        { header: "Cargo", accessor: "position" },
-        { header: "Salario", accessor: "salary", render: (val) => formatCurrency(val || 0), className: "text-right", cellClassName: "text-right font-medium" },
-        { header: "Estado", accessor: "status", render: (val) => (
+        { header: t('common.name'), accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
+        { header: t('employees.position'), accessor: "position" },
+        { header: t('employees.salary'), accessor: "salary", render: (val) => formatCurrency(val || 0), className: "text-right", cellClassName: "text-right font-medium" },
+        { header: t('common.status'), accessor: "status", render: (val) => (
           <Badge className={val === "active" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"}>
-            {val === "active" ? "Activo" : "Inactivo"}
+            {val === "active" ? t('common.active') : t('common.inactive')}
           </Badge>
         )}
       ];
       
       setDrillDown({
         open: true,
-        title: `Empleados - ${department}`,
+        title: `${t('costsByDepartment.employees')} - ${department}`,
         data: employees,
         columns
       });
     } catch (error) {
       console.error("Error fetching department employees:", error);
-      toast.error("Error al cargar empleados del departamento");
+      toast.error(t('costsByDepartment.messages.errorLoadingEmployees'));
       setDrillDown({ open: false, title: "", data: [], columns: [] });
     } finally {
       setDrillDownLoading(false);
