@@ -102,7 +102,7 @@ export default function LoansPage() {
       setEmployees(employeesRes.data || []);
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error al cargar datos");
+      toast.error(t('loans.messages.errorLoading'));
     } finally {
       setLoading(false);
     }
@@ -136,12 +136,12 @@ export default function LoansPage() {
     a.download = `prestamos_${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success('Datos exportados');
+    toast.success(t('loans.messages.exportSuccess'));
   };
 
   const handleCreateLoan = async () => {
     if (!formData.employee_id || !formData.amount || !formData.term_months) {
-      toast.error("Complete todos los campos requeridos");
+      toast.error(t('loans.messages.fillRequired'));
       return;
     }
 
@@ -156,12 +156,12 @@ export default function LoansPage() {
         withCredentials: true
       });
       
-      toast.success(`Préstamo creado. Cuota mensual: $${response.data.monthly_payment}`);
+      toast.success(`${t('loans.messages.loanCreated')}. ${t('loans.form.installmentAmount')}: $${response.data.monthly_payment}`);
       setShowCreateModal(false);
       resetForm();
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al crear préstamo");
+      toast.error(error.response?.data?.detail || t('loans.messages.errorCreating'));
     }
   };
 
