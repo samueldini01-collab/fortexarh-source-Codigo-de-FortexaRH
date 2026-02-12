@@ -1458,6 +1458,7 @@
       "cancel": "Annuler"
     },
     "table": {
+      "title": "demandes",
       "employee": "Employé",
       "type": "Type",
       "dates": "Dates",
