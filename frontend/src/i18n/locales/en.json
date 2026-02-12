@@ -1646,6 +1646,7 @@
   },
   "notifications": {
     "title": "Notifications",
+    "subtitle": "Configure payroll reminders and birthday alerts",
     "markAllRead": "Mark all as read",
     "noNotifications": "You have no notifications",
     "types": {
@@ -1654,6 +1655,12 @@
       "vacation": "Vacation request",
       "leave": "Leave request",
       "system": "System"
+    },
+    "messages": {
+      "settingsSaved": "Settings saved",
+      "errorSaving": "Error saving settings",
+      "errorSendingReminder": "Error sending reminder",
+      "errorSendingNotifications": "Error sending notifications"
     }
   },
   "settings": {
