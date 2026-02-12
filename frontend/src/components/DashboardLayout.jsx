@@ -151,7 +151,7 @@ const getMenuGroups = (t) => [
   {
     id: "gestion-humana",
     nameKey: "groups.humanResources",
-    subtitle: "Core RRHH",
+    subtitleKey: "groups.coreHR",
     icon: UserCircle,
     isGroup: true,
     defaultOpen: true,
@@ -780,7 +780,7 @@ export default function DashboardLayout({ children, title }) {
                 data-testid="customize-menu-btn"
               >
                 <Sliders className="w-5 h-5" />
-                Personalizar Menú
+                {t('nav.customizeMenu')}
               </button>
           </div>
           )}
@@ -933,10 +933,10 @@ export default function DashboardLayout({ children, title }) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Sliders className="w-5 h-5 text-emerald-600" />
-              Personalizar Menú
+              {t('nav.customizeMenu')}
             </DialogTitle>
             <DialogDescription>
-              Organiza y oculta los módulos según tus preferencias. Los cambios se guardan localmente.
+              {t('nav.customizeMenuDesc')}
             </DialogDescription>
           </DialogHeader>
           
