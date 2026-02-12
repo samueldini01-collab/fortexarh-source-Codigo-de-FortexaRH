@@ -213,14 +213,14 @@ export default function SupportPage() {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Phone className="w-5 h-5 text-emerald-600" />
-                  Contáctenos
+                  {t('supportPage.contact.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-start gap-3">
                   <Mail className="w-5 h-5 text-slate-400 mt-0.5" />
                   <div>
-                    <p className="text-sm text-slate-500">Email</p>
+                    <p className="text-sm text-slate-500">{t('supportPage.contact.email')}</p>
                     <a href="mailto:info@fortexarh.com" className="text-emerald-600 hover:underline">
                       info@fortexarh.com
                     </a>
@@ -229,7 +229,7 @@ export default function SupportPage() {
                 <div className="flex items-start gap-3">
                   <Phone className="w-5 h-5 text-slate-400 mt-0.5" />
                   <div>
-                    <p className="text-sm text-slate-500">Teléfono</p>
+                    <p className="text-sm text-slate-500">{t('supportPage.contact.phone')}</p>
                     <a href="tel:+18096859898" className="text-emerald-600 hover:underline">
                       (809) 685-9898
                     </a>
@@ -238,10 +238,10 @@ export default function SupportPage() {
                 <div className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-slate-400 mt-0.5" />
                   <div>
-                    <p className="text-sm text-slate-500">Ubicación</p>
+                    <p className="text-sm text-slate-500">{t('supportPage.contact.location')}</p>
                     <p className="text-slate-700">
                       Av. George Washington #503, Gazcue<br />
-                      Santo Domingo, Distrito Nacional
+                      {t('supportPage.contact.locationAddress')}
                     </p>
                   </div>
                 </div>
@@ -262,26 +262,26 @@ export default function SupportPage() {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Clock className="w-5 h-5 text-emerald-600" />
-                  Horario de Atención
+                  {t('supportPage.hours.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-slate-600">Lunes - Viernes</span>
-                  <span className="font-medium">9:00 AM - 4:00 PM</span>
+                  <span className="text-slate-600">{t('supportPage.hours.weekdays')}</span>
+                  <span className="font-medium">{t('supportPage.hours.weekdaysTime')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-600">Sábados</span>
-                  <span className="text-slate-400">Cerrado</span>
+                  <span className="text-slate-600">{t('supportPage.hours.saturday')}</span>
+                  <span className="text-slate-400">{t('supportPage.hours.saturdayTime')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-600">Domingos</span>
-                  <span className="text-slate-400">Cerrado</span>
+                  <span className="text-slate-600">{t('supportPage.hours.sunday')}</span>
+                  <span className="text-slate-400">{t('supportPage.hours.sundayTime')}</span>
                 </div>
                 <div className="pt-3 mt-3 border-t">
                   <p className="text-sm text-emerald-600 flex items-center gap-2">
                     <Shield className="w-4 h-4" />
-                    Soporte crítico 24/7 para Plan Enterprise
+                    {t('supportPage.response.critical')} 24/7 Enterprise
                   </p>
                 </div>
               </CardContent>
@@ -290,23 +290,23 @@ export default function SupportPage() {
             {/* Response Times */}
             <Card className="bg-emerald-50 border-emerald-200">
               <CardContent className="pt-6">
-                <h3 className="font-semibold text-emerald-800 mb-3">Tiempos de Respuesta</h3>
+                <h3 className="font-semibold text-emerald-800 mb-3">{t('supportPage.response.title')}</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-slate-600">Prioridad Crítica</span>
-                    <span className="font-medium text-red-600">1-2 horas</span>
+                    <span className="text-slate-600">{t('supportPage.response.critical')}</span>
+                    <span className="font-medium text-red-600">{t('supportPage.response.criticalTime')}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-600">Prioridad Alta</span>
-                    <span className="font-medium text-amber-600">4-8 horas</span>
+                    <span className="text-slate-600">{t('supportPage.response.high')}</span>
+                    <span className="font-medium text-amber-600">{t('supportPage.response.highTime')}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-600">Prioridad Media</span>
-                    <span className="font-medium text-blue-600">24 horas</span>
+                    <span className="text-slate-600">{t('supportPage.response.medium')}</span>
+                    <span className="font-medium text-blue-600">{t('supportPage.response.mediumTime')}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-600">Prioridad Baja</span>
-                    <span className="font-medium text-slate-600">48 horas</span>
+                    <span className="text-slate-600">{t('supportPage.response.low')}</span>
+                    <span className="font-medium text-slate-600">{t('supportPage.response.lowTime')}</span>
                   </div>
                 </div>
               </CardContent>
@@ -317,9 +317,9 @@ export default function SupportPage() {
           <div className="lg:col-span-2">
             <Card className="bg-white/90 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle>Enviar Solicitud de Soporte</CardTitle>
+                <CardTitle>{t('supportPage.form.title')}</CardTitle>
                 <CardDescription>
-                  Complete el formulario con los detalles de su consulta. Los campos marcados con * son obligatorios.
+                  {t('supportPage.form.subtitle')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -327,7 +327,7 @@ export default function SupportPage() {
                   {/* Personal Info */}
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Nombre Completo *</Label>
+                      <Label htmlFor="name">{t('supportPage.form.name')}</Label>
                       <Input
                         id="name"
                         name="name"
