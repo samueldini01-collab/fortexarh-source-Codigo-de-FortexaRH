@@ -144,16 +144,16 @@ export default function PayrollDashboardPage() {
   const { summary, monthly_trend, department_distribution, employer_costs, top_salaries, alerts } = stats || {};
 
   return (
-    <DashboardLayout title="Dashboard Nómina">
+    <DashboardLayout title={t('payrollDashboard.title')}>
       <div className="space-y-6" data-testid="payroll-dashboard">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Dashboard de Nómina</h1>
-            <p className="text-slate-500 dark:text-slate-400">Métricas y análisis de tu fuerza laboral</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{t('payrollDashboard.title')}</h1>
+            <p className="text-slate-500 dark:text-slate-400">{t('payrollDashboard.subtitle')}</p>
           </div>
           <Button onClick={fetchStats} variant="outline" size="sm">
-            <RefreshCw className="w-4 h-4 mr-2" />Actualizar
+            <RefreshCw className="w-4 h-4 mr-2" />{t('common.refresh')}
           </Button>
         </div>
 
@@ -179,13 +179,13 @@ export default function PayrollDashboardPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-blue-100 text-sm">Empleados Activos</p>
+                    <p className="text-blue-100 text-sm">{t('payrollDashboard.stats.activeEmployees')}</p>
                     <p className="text-3xl font-bold">{summary?.total_employees || 0}</p>
                   </div>
                   <Users className="w-12 h-12 text-blue-200" />
                 </div>
                 <div className="flex items-center mt-2 text-xs text-blue-100">
-                  <span>Click para ver detalle</span>
+                  <span>{t('dashboard.clickForDetails')}</span>
                   <ChevronRight className="w-3 h-3 ml-1" />
                 </div>
               </CardContent>
@@ -196,7 +196,7 @@ export default function PayrollDashboardPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-emerald-100 text-sm">Pagado Este Año</p>
+                  <p className="text-emerald-100 text-sm">{t('payrollDashboard.stats.paidThisYear')}</p>
                   <p className="text-2xl font-bold">{formatCurrency(summary?.total_paid_ytd)}</p>
                 </div>
                 <DollarSign className="w-12 h-12 text-emerald-200" />
@@ -208,7 +208,7 @@ export default function PayrollDashboardPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-purple-100 text-sm">Salario Promedio</p>
+                  <p className="text-purple-100 text-sm">{t('payrollDashboard.stats.avgSalary')}</p>
                   <p className="text-2xl font-bold">{formatCurrency(summary?.avg_salary)}</p>
                 </div>
                 <TrendingUp className="w-12 h-12 text-purple-200" />
@@ -220,7 +220,7 @@ export default function PayrollDashboardPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-orange-100 text-sm">Nóminas Pagadas</p>
+                  <p className="text-orange-100 text-sm">{t('payrollDashboard.stats.paidPayrolls')}</p>
                   <p className="text-3xl font-bold">{summary?.paid_periods || 0}</p>
                 </div>
                 <Building2 className="w-12 h-12 text-orange-200" />
