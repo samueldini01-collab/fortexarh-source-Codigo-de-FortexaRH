@@ -782,6 +782,31 @@
       "dedicatedManager": "Dedicated account manager"
     }
   },
+  "globalSearch": {
+    "placeholder": "Search or run AI actions...",
+    "inputPlaceholder": "Search or type a command... (e.g., Create vacation for Juan)",
+    "ai": "AI",
+    "analyzing": "Analyzing...",
+    "actionDetected": "Action detected",
+    "confidence": "confidence",
+    "executing": "Executing...",
+    "executeAction": "Execute Action",
+    "keyboardHint": "Press Enter to execute • Shift+Enter to search without executing",
+    "actionCompleted": "Action completed!",
+    "actionFailed": "Could not complete",
+    "aiSuggestion": "AI Suggestion",
+    "suggestions": "Suggestions",
+    "commandsAndExamples": "Commands and examples",
+    "categories": {
+      "employees": "Employees",
+      "vacations": "Vacations",
+      "payroll": "Payroll",
+      "attendance": "Attendance",
+      "loans": "Loans",
+      "evaluations": "Evaluations",
+      "navigation": "Navigation"
+    }
+  },
   "employees": {
     "title": "Employee Management",
     "addEmployee": "Add Employee",
