@@ -3116,11 +3116,20 @@
     }
   },
   "accounting": {
-    "title": "Contabilidad",
+    "title": "Módulo Contable",
+    "subtitle": "Asientos de diario y plan de cuentas",
     "tabs": {
       "entries": "Asientos",
       "accounts": "Cuentas",
-      "reports": "Reportes"
+      "reports": "Reportes",
+      "journalEntries": "Asientos de Diario",
+      "chartOfAccounts": "Catálogo de Cuentas"
+    },
+    "stats": {
+      "totalEntries": "Total Asientos",
+      "totalDebits": "Total Débitos",
+      "totalCredits": "Total Créditos",
+      "fromPayroll": "De Nómina"
     },
     "filters": {
       "search": "Buscar por número...",
