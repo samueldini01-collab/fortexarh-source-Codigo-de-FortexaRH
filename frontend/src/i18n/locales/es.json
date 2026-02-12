@@ -3180,10 +3180,12 @@
       "expense": "Gasto"
     },
     "form": {
-      "createEntry": "Crear Asiento Contable",
+      "createEntry": "Crear Asiento",
       "editEntry": "Editar Asiento",
       "createAccount": "Crear Cuenta",
       "editAccount": "Editar Cuenta",
+      "editAccountDesc": "Modifique los datos de la cuenta",
+      "createAccountDesc": "Complete los datos para crear una nueva cuenta",
       "entryDate": "Fecha del Asiento",
       "referencePlaceholder": "Ej: FAC-001",
       "descPlaceholder": "Descripción del asiento...",
@@ -3193,19 +3195,23 @@
       "accountName": "Nombre de la Cuenta",
       "namePlaceholder": "Ej: Caja General",
       "parentAccount": "Cuenta Padre",
+      "parentCode": "Código Padre (Opcional)",
+      "parentCodePlaceholder": "Ej: 51",
       "selectParent": "Seleccionar cuenta padre",
       "noParent": "Sin cuenta padre (nivel 1)"
     },
     "preview": {
       "title": "Vista Previa de Exportación",
       "format": "Formato",
-      "summary": "Resumen",
-      "detailed": "Detallado",
-      "download": "Descargar CSV"
+      "summary": "Resumido (por cuenta)",
+      "detailed": "Detallado (por empleado)",
+      "download": "Descargar CSV",
+      "exportAs": "Exportar como"
     },
     "catalog": {
       "title": "Seleccionar Catálogo de Cuentas",
       "subtitle": "Elija un catálogo predefinido para cargar",
+      "chartOfAccounts": "Catálogo de Cuentas",
       "apply": "Aplicar Catálogo",
       "niif": "Catálogo NIIF",
       "niifDesc": "Plan de cuentas basado en Normas Internacionales",
