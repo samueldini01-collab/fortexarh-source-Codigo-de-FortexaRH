@@ -40,6 +40,31 @@
 ### 🌐 MetricsDashboardPage.jsx (YA TRADUCIDO)
 - Verificado que ya tenía todas las traducciones implementadas en sesiones anteriores
 - Funciona correctamente con las claves existentes en `metrics.*`
+
+### 🌐 LoansPage.jsx (COMPLETADO - SESIÓN ACTUAL)
+- Mensajes CRUD traducidos (crear, eliminar préstamos, registrar pagos)
+- Estados de badges traducidos (Activo, Pagado, En Mora, Cancelado)
+- Mensajes de confirmación y error
+- ~6 nuevas claves de mensajes añadidas
+- **Verificado:** Screenshot confirma traducción correcta
+
+### 🌐 VacationsPage.jsx (COMPLETADO - SESIÓN ACTUAL)
+- Mensajes CRUD traducidos (crear, aprobar, rechazar solicitudes)
+- Estados de badges traducidos (Pendiente, Aprobado, Rechazado, Cancelado)
+- Nombres de meses añadidos a `common.months`
+- ~4 nuevas claves de mensajes añadidas
+- **Verificado:** Screenshot confirma traducción correcta
+
+### 🌐 AttendancePage.jsx (COMPLETADO - SESIÓN ACTUAL)
+- Mensajes de check-in/check-out traducidos
+- Creación de turnos traducida
+- ~7 nuevas claves de mensajes añadidas
+- **Verificado:** Ya tenía traducciones previas completas
+
+### 🌐 EvaluationsPage.jsx (YA TRADUCIDO)
+- Verificado que ya tenía todas las traducciones implementadas
+- Mensajes CRUD, competencias, estados funcionando correctamente
+- **Verificado:** Screenshot confirma traducción correcta
 - Mensajes de toast traducidos
 - Faltan algunos labels de formulario
 
