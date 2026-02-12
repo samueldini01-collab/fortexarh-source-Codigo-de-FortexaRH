@@ -503,7 +503,7 @@ export default function VacationsPage() {
                   </Button>
                 )}
                 <span className="text-sm text-slate-500 dark:text-slate-400">
-                  {filteredVacations.length} {t('common.of')} {vacations.length}
+                  {filteredVacations.length} {t('common.of')} {vacations.length} {t('vacations.table.title').toLowerCase()}
                 </span>
               </div>
               <div className="flex gap-2">
