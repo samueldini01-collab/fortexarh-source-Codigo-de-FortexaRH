@@ -39,15 +39,16 @@ import {
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api";
 
-const locationTypes = [
-  { value: "office", label: "Oficina", icon: Building2 },
-  { value: "project", label: "Proyecto/Obra", icon: Target },
-  { value: "branch", label: "Sucursal", icon: Building2 },
-  { value: "client", label: "Cliente", icon: Users },
-];
-
 export default function GeoLocationsPage() {
   const { t } = useTranslation();
+  
+  // Dynamic location types with translations
+  const locationTypes = [
+    { value: "office", label: t('geoLocationsPage.locationTypes.office'), icon: Building2 },
+    { value: "project", label: t('geoLocationsPage.locationTypes.project'), icon: Target },
+    { value: "branch", label: t('geoLocationsPage.locationTypes.branch'), icon: Building2 },
+    { value: "client", label: t('geoLocationsPage.locationTypes.client'), icon: Users },
+  ];
   const { getAuthHeaders } = useAuth();
   const [loading, setLoading] = useState(true);
   const [locations, setLocations] = useState([]);
