@@ -600,26 +600,26 @@ export default function GeoLocationsPage() {
           <TabsList>
             <TabsTrigger value="locations">
               <MapPin className="w-4 h-4 mr-2" />
-              Ubicaciones
+              {t('geoLocationsPage.tabs.locations')}
             </TabsTrigger>
             <TabsTrigger value="live-map">
               <Globe className="w-4 h-4 mr-2" />
-              Mapa en Vivo
+              {t('geoLocationsPage.tabs.liveMap')}
             </TabsTrigger>
             <TabsTrigger value="today">
               <Clock className="w-4 h-4 mr-2" />
-              Asistencia Hoy
+              {t('geoLocationsPage.tabs.todayAttendance')}
             </TabsTrigger>
             <TabsTrigger value="fraud">
               <AlertTriangle className="w-4 h-4 mr-2 text-red-500" />
-              Fraude
+              {t('geoLocationsPage.tabs.fraud')}
               {fraudAlerts.summary?.by_level?.critical > 0 && (
                 <Badge className="ml-2 bg-red-500 text-white text-xs">{fraudAlerts.summary.by_level.critical}</Badge>
               )}
             </TabsTrigger>
             <TabsTrigger value="alerts">
               <AlertTriangle className="w-4 h-4 mr-2" />
-              Alertas
+              {t('geoLocationsPage.tabs.alerts')}
             </TabsTrigger>
           </TabsList>
 
@@ -630,20 +630,20 @@ export default function GeoLocationsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Ubicación</TableHead>
-                      <TableHead>Tipo</TableHead>
-                      <TableHead>Coordenadas</TableHead>
-                      <TableHead>Radio</TableHead>
-                      <TableHead>Empleados</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
+                      <TableHead>{t('geoLocationsPage.table.location')}</TableHead>
+                      <TableHead>{t('geoLocationsPage.table.type')}</TableHead>
+                      <TableHead>{t('geoLocationsPage.table.coordinates')}</TableHead>
+                      <TableHead>{t('geoLocationsPage.table.radius')}</TableHead>
+                      <TableHead>{t('geoLocationsPage.table.employees')}</TableHead>
+                      <TableHead>{t('geoLocationsPage.table.status')}</TableHead>
+                      <TableHead className="text-right">{t('geoLocationsPage.table.actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {locations.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={7} className="text-center py-12 text-slate-500">
-                          No hay ubicaciones configuradas
+                          {t('geoLocationsPage.table.noLocations')}
                         </TableCell>
                       </TableRow>
                     ) : (
