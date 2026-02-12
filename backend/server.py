@@ -2245,7 +2245,7 @@ async def get_payroll_dashboard_stats(current_user: dict = Depends(get_current_u
     if unpaid_approved:
         alerts.append({
             "type": "warning",
-            "message": f"{len(unpaid_approved)} nóminas aprobadas pendientes de pago",
+            "key": "unpaidApproved",
             "count": len(unpaid_approved)
         })
     
@@ -2254,7 +2254,7 @@ async def get_payroll_dashboard_stats(current_user: dict = Depends(get_current_u
     if incomplete_employees:
         alerts.append({
             "type": "info",
-            "message": f"{len(incomplete_employees)} empleados con datos incompletos",
+            "key": "incompleteEmployees",
             "count": len(incomplete_employees)
         })
     
