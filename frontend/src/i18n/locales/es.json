@@ -694,7 +694,13 @@
       "newCandidates": "Nuevos Candidatos",
       "errorLoading": "Error al cargar detalles"
     },
-    "paymentSuccess": "¡Pago exitoso! Tu suscripción ha sido activada."
+    "paymentSuccess": "¡Pago exitoso! Tu suscripción ha sido activada.",
+    "recentEmployees": "Empleados Recientes",
+    "noEmployeesRegistered": "No hay empleados registrados",
+    "upcomingVacations": "Próximas Vacaciones",
+    "noVacationsScheduled": "No hay vacaciones programadas",
+    "payrollSummary": "Resumen de Nómina del Mes",
+    "totalPayrollThisMonth": "Total Nómina Este Mes"
   },
   "pricing": {
     "planNames": {
