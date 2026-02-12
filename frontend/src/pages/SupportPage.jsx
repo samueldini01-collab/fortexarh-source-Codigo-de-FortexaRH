@@ -179,12 +179,12 @@ export default function SupportPage() {
             </Link>
             <div className="flex items-center gap-4">
               <Link to="/login">
-                <Button variant="ghost" size="sm">Iniciar Sesión</Button>
+                <Button variant="ghost" size="sm">{t('supportPage.header.login')}</Button>
               </Link>
               <Link to="/">
                 <Button variant="outline" size="sm">
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  Volver
+                  {t('supportPage.header.back')}
                 </Button>
               </Link>
             </div>
@@ -196,9 +196,9 @@ export default function SupportPage() {
       <section className="py-12 bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <HeadphonesIcon className="w-16 h-16 mx-auto mb-4 opacity-90" />
-          <h1 className="text-3xl sm:text-4xl font-bold mb-3">Centro de Soporte</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-3">{t('supportPage.hero.title')}</h1>
           <p className="text-lg text-emerald-100 max-w-2xl mx-auto">
-            Estamos aquí para ayudarle. Complete el formulario y nuestro equipo se pondrá en contacto con usted lo antes posible.
+            {t('supportPage.hero.subtitle')}
           </p>
         </div>
       </section>
