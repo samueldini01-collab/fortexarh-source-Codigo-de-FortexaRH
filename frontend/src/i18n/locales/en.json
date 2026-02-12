@@ -2194,6 +2194,14 @@
       "ticketCreated": "Ticket created successfully",
       "errorCreating": "Error creating ticket",
       "noTickets": "You have no support tickets"
+    },
+    "success": {
+      "title": "Request Received!",
+      "subtitle": "We have received your support request. Our team will contact you soon.",
+      "ticketNumber": "Ticket Number",
+      "confirmationSent": "A confirmation has been sent to",
+      "newRequest": "New Request",
+      "backToHome": "Back to Home"
     }
   },
   "users": {
