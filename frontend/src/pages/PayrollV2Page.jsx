@@ -89,6 +89,9 @@ const PAYROLL_TYPE_KEYS = [
   { value: "OBREROS_NG", key: "construction", icon: Briefcase, color: "amber" },
 ];
 
+// Static department list (these come from user data, not translations)
+const departments = ["Administración", "Ventas", "Marketing", "TI", "Recursos Humanos", "Finanzas", "Operaciones", "Legal", "Producción", "Logística"];
+
 export default function PayrollV2Page() {
   const { t } = useTranslation();
   
