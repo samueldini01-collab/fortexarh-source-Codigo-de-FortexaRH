@@ -1783,7 +1783,12 @@
       "logoUploaded": "Logo mis à jour",
       "logoRemoved": "Logo supprimé",
       "imageTooLarge": "Image trop grande (max. 5Mo)",
-      "invalidFormat": "Format non valide"
+      "invalidFormat": "Format non valide",
+      "infoUpdated": "Informations mises à jour",
+      "errorUpdating": "Erreur de mise à jour",
+      "errorPayment": "Erreur de traitement du paiement",
+      "passwordChanged": "Mot de passe changé avec succès",
+      "errorPassword": "Erreur de changement de mot de passe"
     }
   },
   "documents": {
