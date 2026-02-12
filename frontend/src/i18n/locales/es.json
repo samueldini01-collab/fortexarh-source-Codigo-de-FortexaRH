@@ -785,6 +785,41 @@
       "dedicatedManager": "Gerente de cuenta dedicado"
     }
   },
+  "payrollV2": {
+    "periodTypes": {
+      "biweekly1": "Quincenal (1-15)",
+      "biweekly2": "Quincenal (16-30/31)",
+      "monthly": "Mensual"
+    },
+    "payrollTypes": {
+      "regular": "Regular",
+      "temporary": "Temporal",
+      "bonus": "Bono/Extraordinaria",
+      "christmas": "Regalía Pascual",
+      "vacation": "Vacaciones",
+      "severance": "Liquidación",
+      "construction": "Obreros NG 07/2007"
+    },
+    "messages": {
+      "errorLoadingPeriods": "Error al cargar períodos",
+      "errorLoadingTss": "Error al cargar vista previa TSS",
+      "tssDownloaded": "Reporte TSS descargado",
+      "errorDownloadingTss": "Error al descargar reporte TSS",
+      "periodCreated": "Período creado correctamente",
+      "errorCreatingPeriod": "Error al crear período",
+      "payrollsCalculated": "Nóminas calculadas",
+      "sentForApproval": "Nómina enviada para aprobación",
+      "errorSendingForApproval": "Error al enviar para aprobación",
+      "periodApproved": "Período aprobado",
+      "errorApproving": "Error al aprobar",
+      "rejectReasonRequired": "Debe proporcionar un motivo para el rechazo",
+      "periodRejected": "Nómina rechazada y devuelta a borrador",
+      "errorRejecting": "Error al rechazar",
+      "payrollPaid": "Nómina pagada. Asiento #{{entryNumber}} generado.",
+      "bankFileDownloaded": "Archivo bancario {{bankName}} descargado",
+      "errorGeneratingBankFile": "Error al generar archivo bancario"
+    }
+  },
   "globalSearch": {
     "placeholder": "Buscar o ejecutar acciones con IA...",
     "inputPlaceholder": "Buscar o escribe un comando... (ej: Crear vacaciones para Juan)",
