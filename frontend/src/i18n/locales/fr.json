@@ -706,6 +706,41 @@
     "payrollSummary": "Résumé de la Paie du Mois",
     "totalPayrollThisMonth": "Total Paie Ce Mois"
   },
+  "payrollDashboard": {
+    "title": "Tableau de bord Paie",
+    "subtitle": "Métriques et analyses de votre main-d'œuvre",
+    "stats": {
+      "activeEmployees": "Employés Actifs",
+      "paidThisYear": "Payé Cette Année",
+      "avgSalary": "Salaire Moyen",
+      "paidPayrolls": "Paies Payées"
+    },
+    "charts": {
+      "monthlyTrend": "Tendance Mensuelle de la Paie",
+      "netPaidByMonth": "Net payé par mois",
+      "period": "Période",
+      "netPaid": "Net Payé",
+      "gross": "Brut",
+      "deptDistribution": "Distribution par Département",
+      "deptDistributionDesc": "Employés et salaires par zone (cliquez pour détails)",
+      "employerCost": "Coût Total Employeur vs Net",
+      "employerCostDesc": "Détail des cotisations patronales (6 dernières périodes)",
+      "grossSalary": "Salaire Brut",
+      "sfsEmployer": "SFS Employeur",
+      "afpEmployer": "AFP Employeur",
+      "netPaidToEmployees": "Net Payé aux Employés",
+      "totalEmployerCost": "Coût Total Employeur",
+      "topSalaries": "Top 10 Salaires",
+      "topSalariesDesc": "Employés avec le salaire de base le plus élevé"
+    },
+    "drillDown": {
+      "activeEmployees": "Employés Actifs"
+    },
+    "noTrendData": "Pas de données de tendance",
+    "noDeptData": "Pas de données par département",
+    "noCostData": "Pas de données de coûts",
+    "noSalaryData": "Pas de données de salaires"
+  },
   "pricing": {
     "planNames": {
       "basic": "FortexaRH Basic",
