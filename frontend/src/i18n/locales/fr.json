@@ -1251,7 +1251,24 @@
         "saveSuccess": "Calcul enregistré avec succès",
         "saveError": "Erreur lors de l'enregistrement du calcul"
       },
-      "pdfTitle": "Calcul de Paie RD"
+      "pdfTitle": "Calcul de Paie RD",
+      "clear": "Effacer",
+      "employee": "Employé",
+      "unassigned": "Non assigné",
+      "completeFormAndCalculate": "Complétez le formulaire et appuyez sur Calculer",
+      "earnings": "Revenus",
+      "proportionalSalary": "Salaire Proportionnel",
+      "extraHours": "Heures Supplémentaires",
+      "totalEarnings": "Total des Revenus",
+      "employeeDeductions": "Retenues de l'Employé",
+      "socialSecurity": "Sécurité Sociale (TSS)",
+      "subtotalTss": "Sous-total TSS",
+      "incomeTax": "Impôt sur le Revenu (ISR)",
+      "monthlyIsr": "ISR Mensuel",
+      "calculatedOnGross": "Calculé sur le salaire brut",
+      "otherDeductionsSection": "Autres Retenues",
+      "others": "Autres",
+      "enterDataAndCalculate": "Entrez les données et appuyez sur \"Calculer\" pour voir le résultat"
     }
   },
   "attendance": {
