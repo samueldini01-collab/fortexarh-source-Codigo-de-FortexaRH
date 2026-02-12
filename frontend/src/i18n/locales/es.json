@@ -1672,7 +1672,7 @@
     }
   },
   "settings": {
-    "title": "Configuración de Empresa",
+    "title": "Configuración",
     "tabs": {
       "general": "General",
       "logo": "Logo",
@@ -1680,7 +1680,24 @@
       "branding": "Marca y Textos",
       "notifications": "Notificaciones",
       "integrations": "Integraciones",
-      "audit": "Auditoría"
+      "audit": "Auditoría",
+      "company": "Empresa",
+      "subscription": "Suscripción",
+      "account": "Mi Cuenta"
+    },
+    "company": {
+      "title": "Información de la Empresa",
+      "subtitle": "Actualiza los datos de tu empresa"
+    },
+    "password": {
+      "title": "Cambiar Contraseña",
+      "current": "Contraseña Actual",
+      "new": "Nueva Contraseña",
+      "confirm": "Confirmar Contraseña",
+      "change": "Cambiar Contraseña",
+      "changing": "Cambiando...",
+      "minLength": "La nueva contraseña debe tener al menos 6 caracteres",
+      "noMatch": "Las contraseñas no coinciden"
     },
     "fontSizes": {
       "small": "Pequeño",
