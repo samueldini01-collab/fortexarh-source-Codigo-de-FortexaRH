@@ -3109,8 +3109,9 @@
     },
     "filters": {
       "search": "Search by number...",
-      "startDate": "Start date",
-      "endDate": "End date",
+      "searchByNumber": "Search by Number",
+      "startDate": "Start Date",
+      "endDate": "End Date",
       "status": "Status",
       "all": "All",
       "pending": "Pending",
