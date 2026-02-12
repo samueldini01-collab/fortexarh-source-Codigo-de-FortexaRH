@@ -80,7 +80,7 @@ export default function TemplatesPage() {
       setEmployees(employeesRes.data);
       setDocuments(docsRes.data);
     } catch (error) {
-      toast.error("Error al cargar datos");
+      toast.error(t('templates.messages.errorLoading'));
     } finally {
       setLoading(false);
     }
@@ -102,20 +102,20 @@ export default function TemplatesPage() {
           headers: getAuthHeaders(),
           withCredentials: true
         });
-        toast.success("Plantilla actualizada");
+        toast.success(t('templates.messages.templateUpdated'));
       } else {
         await axios.post(`${API}/templates`, data, {
           headers: getAuthHeaders(),
           withCredentials: true
         });
-        toast.success("Plantilla creada");
+        toast.success(t('templates.messages.templateCreated'));
       }
       
       setIsDialogOpen(false);
       resetForm();
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al guardar");
+      toast.error(error.response?.data?.detail || t('templates.messages.errorSaving'));
     }
   };
 

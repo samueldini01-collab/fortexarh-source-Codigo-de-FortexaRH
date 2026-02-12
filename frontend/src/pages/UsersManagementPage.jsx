@@ -152,7 +152,7 @@ export default function UsersManagementPage() {
 
   const handleCreateUser = async () => {
     if (!newUser.email || !newUser.name || !newUser.password) {
-      toast.error("Complete todos los campos requeridos");
+      toast.error(t('users.messages.fillRequired'));
       return;
     }
     
@@ -161,12 +161,12 @@ export default function UsersManagementPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Usuario creado correctamente");
+      toast.success(t('users.messages.userCreated'));
       setShowNewUser(false);
       setNewUser({ email: "", name: "", password: "", role: "user", modules: [], is_active: true });
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al crear usuario");
+      toast.error(error.response?.data?.detail || t('users.messages.errorCreating'));
     }
   };
 
@@ -180,24 +180,24 @@ export default function UsersManagementPage() {
         modules: editingUser.modules,
         is_active: editingUser.is_active
       }, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Usuario actualizado");
+      toast.success(t('users.messages.userUpdated'));
       setShowEditUser(false);
       setEditingUser(null);
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al actualizar");
+      toast.error(error.response?.data?.detail || t('users.messages.errorUpdating'));
     }
   };
 
   const handleDeleteUser = async (userId) => {
-    if (!window.confirm("¿Está seguro de eliminar este usuario?")) return;
+    if (!window.confirm(t('users.messages.confirmDelete'))) return;
     
     try {
       await axios.delete(`${API}/system-users/${userId}`, {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Usuario eliminado");
+      toast.success(t('users.messages.userDeleted'));
       fetchData();
     } catch (error) {
       toast.error(error.response?.data?.detail || "Error al eliminar");
