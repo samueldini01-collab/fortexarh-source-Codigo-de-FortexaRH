@@ -101,7 +101,13 @@
       "october": "Octubre",
       "november": "Noviembre",
       "december": "Diciembre"
-    }
+    },
+    "backToHome": "Volver al inicio",
+    "noResults": "No se encontraron resultados",
+    "preview": "Vista previa",
+    "submit": "Enviar",
+    "selectOption": "Seleccionar una opción",
+    "lastUpdated": "Última actualización"
   },
   "nav": {
     "dashboard": "Panel Principal",
