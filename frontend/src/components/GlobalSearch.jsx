@@ -279,10 +279,10 @@ export default function GlobalSearch() {
         data-testid="global-search-trigger"
       >
         <Search className="w-4 h-4 text-slate-400 flex-shrink-0" />
-        <span className="flex-1 text-left truncate text-xs sm:text-sm hidden sm:inline">Buscar o ejecutar acciones con IA...</span>
+        <span className="flex-1 text-left truncate text-xs sm:text-sm hidden sm:inline">{t('globalSearch.placeholder')}</span>
         <div className="hidden sm:flex items-center gap-1">
           <Sparkles className="w-3.5 h-3.5 text-purple-500" />
-          <span className="text-xs text-purple-500 font-medium">IA</span>
+          <span className="text-xs text-purple-500 font-medium">{t('globalSearch.ai')}</span>
         </div>
         <kbd className="hidden md:inline-flex h-6 items-center gap-1 rounded-md border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-2 font-mono text-[11px] font-medium text-slate-500 dark:text-slate-400 ml-2">
           <Command className="w-3 h-3" /><span>K</span>
@@ -298,7 +298,7 @@ export default function GlobalSearch() {
             <input
               ref={inputRef}
               type="text"
-              placeholder="Buscar o escribe un comando... (ej: Crear vacaciones para Juan)"
+              placeholder={t('globalSearch.inputPlaceholder')}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -309,7 +309,7 @@ export default function GlobalSearch() {
             {aiLoading && (
               <div className="flex items-center gap-1 px-2 py-1 bg-purple-50 dark:bg-purple-900/30 rounded-full">
                 <Sparkles className="w-3.5 h-3.5 text-purple-500 animate-pulse" />
-                <span className="text-xs text-purple-600 dark:text-purple-400">Analizando...</span>
+                <span className="text-xs text-purple-600 dark:text-purple-400">{t('globalSearch.analyzing')}</span>
               </div>
             )}
             {query && (
