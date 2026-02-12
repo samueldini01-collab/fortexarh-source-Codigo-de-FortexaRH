@@ -707,6 +707,41 @@
     "payrollSummary": "Monthly Payroll Summary",
     "totalPayrollThisMonth": "Total Payroll This Month"
   },
+  "payrollDashboard": {
+    "title": "Payroll Dashboard",
+    "subtitle": "Metrics and analysis of your workforce",
+    "stats": {
+      "activeEmployees": "Active Employees",
+      "paidThisYear": "Paid This Year",
+      "avgSalary": "Average Salary",
+      "paidPayrolls": "Paid Payrolls"
+    },
+    "charts": {
+      "monthlyTrend": "Monthly Payroll Trend",
+      "netPaidByMonth": "Net paid by month",
+      "period": "Period",
+      "netPaid": "Net Paid",
+      "gross": "Gross",
+      "deptDistribution": "Distribution by Department",
+      "deptDistributionDesc": "Employees and salaries by area (click for details)",
+      "employerCost": "Total Employer Cost vs Net",
+      "employerCostDesc": "Breakdown of employer contributions (last 6 periods)",
+      "grossSalary": "Gross Salary",
+      "sfsEmployer": "SFS Employer",
+      "afpEmployer": "AFP Employer",
+      "netPaidToEmployees": "Net Paid to Employees",
+      "totalEmployerCost": "Total Employer Cost",
+      "topSalaries": "Top 10 Salaries",
+      "topSalariesDesc": "Employees with highest base salary"
+    },
+    "drillDown": {
+      "activeEmployees": "Active Employees"
+    },
+    "noTrendData": "No trend data available",
+    "noDeptData": "No department data available",
+    "noCostData": "No cost data available",
+    "noSalaryData": "No salary data available"
+  },
   "pricing": {
     "planNames": {
       "basic": "FortexaRH Basic",
