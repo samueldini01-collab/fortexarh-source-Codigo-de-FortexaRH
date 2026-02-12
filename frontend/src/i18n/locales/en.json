@@ -2251,7 +2251,14 @@
       "errorUpdating": "Error updating",
       "errorDeleting": "Error deleting",
       "confirmDelete": "Delete this user?",
-      "noUsers": "No users registered"
+      "noUsers": "No users registered",
+      "fillRequired": "Fill in all required fields",
+      "roleNameRequired": "Role name is required",
+      "roleCreated": "Role created successfully",
+      "errorCreatingRole": "Error creating role",
+      "passwordRequired": "Password is required",
+      "passwordUpdated": "Password updated successfully",
+      "errorPassword": "Error updating password"
     }
   },
   "roles": {
