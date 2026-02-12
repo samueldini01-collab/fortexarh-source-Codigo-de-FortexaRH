@@ -524,12 +524,12 @@ export default function AccountingPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Módulo Contable</h1>
-            <p className="text-slate-500 dark:text-slate-400">Asientos de diario y plan de cuentas</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{t('accounting.title')}</h1>
+            <p className="text-slate-500 dark:text-slate-400">{t('accounting.subtitle')}</p>
           </div>
           <Button onClick={fetchData} variant="outline" size="sm">
             <RefreshCw className="w-4 h-4 mr-2" />
-            Actualizar
+            {t('common.refresh')}
           </Button>
         </div>
 
@@ -539,7 +539,7 @@ export default function AccountingPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Total Asientos</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('accounting.stats.totalEntries')}</p>
                   <p className="text-2xl font-bold">{stats.totalEntries}</p>
                 </div>
                 <FileText className="w-8 h-8 text-blue-300" />
@@ -550,7 +550,7 @@ export default function AccountingPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Total Débitos</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('accounting.stats.totalDebits')}</p>
                   <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(stats.totalDebits)}</p>
                 </div>
                 <ArrowUpRight className="w-8 h-8 text-emerald-300" />
@@ -561,7 +561,7 @@ export default function AccountingPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Total Créditos</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('accounting.stats.totalCredits')}</p>
                   <p className="text-xl font-bold text-red-600 dark:text-red-400">{formatCurrency(stats.totalCredits)}</p>
                 </div>
                 <ArrowDownRight className="w-8 h-8 text-red-300" />
@@ -572,7 +572,7 @@ export default function AccountingPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">De Nómina</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('accounting.stats.fromPayroll')}</p>
                   <p className="text-2xl font-bold text-purple-600">{stats.payrollEntries}</p>
                 </div>
                 <Link2 className="w-8 h-8 text-purple-300" />
@@ -584,8 +584,8 @@ export default function AccountingPage() {
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid grid-cols-2 w-full max-w-md">
-            <TabsTrigger value="asientos">Asientos de Diario</TabsTrigger>
-            <TabsTrigger value="cuentas">Catálogo de Cuentas</TabsTrigger>
+            <TabsTrigger value="asientos">{t('accounting.tabs.journalEntries')}</TabsTrigger>
+            <TabsTrigger value="cuentas">{t('accounting.tabs.chartOfAccounts')}</TabsTrigger>
           </TabsList>
 
           {/* Asientos Tab */}
