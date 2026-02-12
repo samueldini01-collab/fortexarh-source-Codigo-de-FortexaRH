@@ -1465,6 +1465,7 @@
       "cancel": "Cancelar"
     },
     "table": {
+      "title": "solicitudes",
       "employee": "Empleado",
       "type": "Tipo",
       "dates": "Fechas",
