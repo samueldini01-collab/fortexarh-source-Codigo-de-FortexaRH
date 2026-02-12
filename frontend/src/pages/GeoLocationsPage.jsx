@@ -123,7 +123,7 @@ export default function GeoLocationsPage() {
       });
       setLocations(response.data);
     } catch (error) {
-      toast.error("Error al cargar ubicaciones");
+      toast.error(t('geoLocationsPage.messages.errorLoading'));
     }
   }, [getAuthHeaders]);
 
@@ -242,9 +242,9 @@ export default function GeoLocationsPage() {
         downloadReport(response.data, reportFilters.format);
       }
       
-      toast.success("Reporte generado correctamente");
+      toast.success(t('geoLocationsPage.messages.reportGenerated'));
     } catch (error) {
-      toast.error("Error al generar el reporte");
+      toast.error(t('geoLocationsPage.messages.errorGeneratingReport'));
     } finally {
       setLoadingReport(false);
     }
@@ -283,10 +283,10 @@ export default function GeoLocationsPage() {
         {},
         { headers: getAuthHeaders(), withCredentials: true }
       );
-      toast.success("Alerta actualizada");
+      toast.success(t('geoLocationsPage.messages.alertUpdated'));
       fetchFraudAlerts();
     } catch (error) {
-      toast.error("Error al actualizar alerta");
+      toast.error(t('geoLocationsPage.messages.errorUpdatingAlert'));
     }
   };
 
@@ -309,11 +309,11 @@ export default function GeoLocationsPage() {
         },
         { headers: getAuthHeaders(), withCredentials: true }
       );
-      toast.success("Configuración guardada");
+      toast.success(t('geoLocationsPage.messages.settingsSaved'));
       setShowSettingsDialog(false);
       fetchAlertSettings();
     } catch (error) {
-      toast.error("Error al guardar configuración");
+      toast.error(t('geoLocationsPage.messages.errorSavingSettings'));
     }
   };
 
@@ -324,9 +324,9 @@ export default function GeoLocationsPage() {
         {},
         { headers: getAuthHeaders(), withCredentials: true }
       );
-      toast.success("Resumen enviado correctamente");
+      toast.success(t('geoLocationsPage.messages.summarySet'));
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al enviar resumen");
+      toast.error(error.response?.data?.detail || t('geoLocationsPage.messages.errorSendingSummary'));
     }
   };
 
