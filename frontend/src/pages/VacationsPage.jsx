@@ -99,7 +99,7 @@ export default function VacationsPage() {
       setEmployees(empRes.data.filter(e => e.status === 'active'));
       setBalances(balRes.data);
     } catch (error) {
-      toast.error("Error al cargar datos");
+      toast.error(t('vacations.messages.errorLoading'));
     } finally {
       setLoading(false);
     }
@@ -136,7 +136,7 @@ export default function VacationsPage() {
       setSelectedBalance(res.data);
       setIsBalanceDialogOpen(true);
     } catch (error) {
-      toast.error("Error al cargar balance");
+      toast.error(t('vacations.messages.errorLoadingBalance'));
     }
   };
 
@@ -192,9 +192,9 @@ export default function VacationsPage() {
       document.body.appendChild(link);
       link.click();
       link.remove();
-      toast.success('Archivo exportado');
+      toast.success(t('vacations.messages.exported'));
     } catch (error) {
-      toast.error('Error al exportar');
+      toast.error(t('vacations.messages.errorExporting'));
     }
   };
 
@@ -205,32 +205,32 @@ export default function VacationsPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Solicitud creada exitosamente");
+      toast.success(t('vacations.messages.requestCreated'));
       setIsDialogOpen(false);
       setFormData({ employee_id: "", start_date: "", end_date: "", leave_type: "vacation", reason: "" });
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al crear solicitud");
+      toast.error(error.response?.data?.detail || t('vacations.messages.errorCreating'));
     }
   };
 
   const handleApprove = async (id) => {
     try {
       await axios.put(`${API}/vacations/${id}/approve`, {}, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Solicitud aprobada");
+      toast.success(t('vacations.messages.requestApproved'));
       fetchData();
     } catch (error) {
-      toast.error("Error al aprobar");
+      toast.error(t('vacations.messages.errorApproving'));
     }
   };
 
   const handleReject = async (id, reason = "") => {
     try {
       await axios.put(`${API}/vacations/${id}/reject`, { approver_comments: reason }, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Solicitud rechazada");
+      toast.success(t('vacations.messages.requestRejected'));
       fetchData();
     } catch (error) {
-      toast.error("Error al rechazar");
+      toast.error(t('vacations.messages.errorRejecting'));
     }
   };
 
@@ -241,10 +241,9 @@ export default function VacationsPage() {
       rejected: "bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800",
       cancelled: "bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700"
     };
-    const labels = { pending: "Pendiente", approved: "Aprobado", rejected: "Rechazado", cancelled: "Cancelado" };
     return (
       <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border ${styles[status] || styles.pending}`}>
-        {labels[status] || status}
+        {t(`vacations.status.${status}`)}
       </span>
     );
   };
