@@ -467,12 +467,12 @@ export default function AccountingPage() {
       const blob = new Blob([response.data], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      const formatSuffix = format === "summary" ? "resumido" : "detallado";
+      const formatSuffix = format === "summary" ? t('accounting.preview.summary').toLowerCase() : t('accounting.preview.detailed').toLowerCase();
       link.download = `asiento_${entry.entry_number || entry.entry_id}_${formatSuffix}.csv`;
       link.click();
-      toast.success(`CSV ${format === "summary" ? "resumido" : "detallado"} descargado`);
+      toast.success(`CSV ${format === "summary" ? t('accounting.preview.summary').toLowerCase() : t('accounting.preview.detailed').toLowerCase()} ${t('common.downloaded')}`);
     } catch (error) {
-      toast.error("Error al exportar");
+      toast.error(t('accounting.messages.errorExport'));
     }
   };
 
