@@ -261,7 +261,7 @@ export default function LoansPage() {
       });
     } catch (error) {
       console.error("Error fetching payment history:", error);
-      toast.error("Error al cargar historial de pagos");
+      toast.error(t('loans.messages.errorLoadHistory'));
       setPaymentsDrillDown({ open: false, loan: null, payments: [] });
     } finally {
       setDrillDownLoading(false);
