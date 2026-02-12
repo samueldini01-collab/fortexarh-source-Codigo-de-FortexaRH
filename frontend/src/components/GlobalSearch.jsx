@@ -411,7 +411,7 @@ export default function GlobalSearch() {
                 )}
                 <div>
                   <p className={`font-medium ${executionResult.success ? 'text-emerald-800 dark:text-emerald-200' : 'text-red-800 dark:text-red-200'}`}>
-                    {executionResult.success ? '¡Acción completada!' : 'No se pudo completar'}
+                    {executionResult.success ? t('globalSearch.actionCompleted') : t('globalSearch.actionFailed')}
                   </p>
                   <p className={`text-sm ${executionResult.success ? 'text-emerald-700 dark:text-emerald-300' : 'text-red-700 dark:text-red-300'}`}>
                     {executionResult.message}
@@ -429,7 +429,7 @@ export default function GlobalSearch() {
                   <Sparkles className="w-4 h-4 text-purple-500" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-purple-900 dark:text-purple-200">Sugerencia de IA</p>
+                  <p className="text-sm font-medium text-purple-900 dark:text-purple-200">{t('globalSearch.aiSuggestion')}</p>
                   <p className="text-sm text-purple-700 dark:text-purple-300 mt-0.5">{aiSuggestion}</p>
                 </div>
               </div>
@@ -442,7 +442,7 @@ export default function GlobalSearch() {
             {(!query || query.length < 2) && suggestions.length > 0 && !executionResult && (
               <div className="p-3">
                 <p className="text-xs font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2">
-                  {query ? "Sugerencias" : "Comandos y ejemplos"}
+                  {query ? t('globalSearch.suggestions') : t('globalSearch.commandsAndExamples')}
                 </p>
                 <div className="space-y-1">
                   {suggestions.map((suggestion, idx) => {
