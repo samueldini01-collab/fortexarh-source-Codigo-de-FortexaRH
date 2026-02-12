@@ -329,10 +329,10 @@ export default function GlobalSearch() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-sm font-semibold text-emerald-800 dark:text-emerald-200">
-                      Acción detectada
+                      {t('globalSearch.actionDetected')}
                     </span>
                     <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400 text-[10px]">
-                      {Math.round(detectedAction.confidence * 100)}% confianza
+                      {Math.round(detectedAction.confidence * 100)}% {t('globalSearch.confidence')}
                     </Badge>
                   </div>
                   <p className="text-sm text-emerald-700 dark:text-emerald-300 mb-3">
@@ -369,12 +369,12 @@ export default function GlobalSearch() {
                       {executing ? (
                         <>
                           <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
-                          Ejecutando...
+                          {t('globalSearch.executing')}
                         </>
                       ) : (
                         <>
                           <Play className="w-4 h-4 mr-1.5" />
-                          Ejecutar Acción
+                          {t('globalSearch.executeAction')}
                         </>
                       )}
                     </Button>
@@ -384,14 +384,14 @@ export default function GlobalSearch() {
                       onClick={() => setDetectedAction(null)}
                       className="text-slate-600 dark:text-slate-400"
                     >
-                      Cancelar
+                      {t('common.cancel')}
                     </Button>
                   </div>
                 </div>
               </div>
               <p className="text-[11px] text-emerald-600 dark:text-emerald-500 mt-3 flex items-center gap-1">
                 <Sparkles className="w-3 h-3" />
-                Presiona Enter para ejecutar • Shift+Enter para buscar sin ejecutar
+                {t('globalSearch.keyboardHint')}
               </p>
             </div>
           )}
