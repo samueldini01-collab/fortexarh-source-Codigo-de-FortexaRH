@@ -694,7 +694,13 @@
       "newCandidates": "Nouveaux Candidats",
       "errorLoading": "Erreur lors du chargement des détails"
     },
-    "paymentSuccess": "Paiement réussi! Votre abonnement a été activé."
+    "paymentSuccess": "Paiement réussi! Votre abonnement a été activé.",
+    "recentEmployees": "Employés Récents",
+    "noEmployeesRegistered": "Aucun employé enregistré",
+    "upcomingVacations": "Vacances à Venir",
+    "noVacationsScheduled": "Aucune vacance programmée",
+    "payrollSummary": "Résumé de la Paie du Mois",
+    "totalPayrollThisMonth": "Total Paie Ce Mois"
   },
   "pricing": {
     "planNames": {
