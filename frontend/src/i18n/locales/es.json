@@ -1271,7 +1271,14 @@
       "errorLoading": "Error al cargar datos",
       "errorCreateShift": "Error al crear turno",
       "noRecordsDate": "No hay registros para esta fecha",
-      "noRecordsFilter": "No hay registros con estos filtros"
+      "noRecordsFilter": "No hay registros con estos filtros",
+      "registered": "Asistencia registrada",
+      "errorRegistering": "Error al registrar",
+      "checkInSuccess": "Entrada registrada",
+      "checkOutSuccess": "Salida registrada",
+      "errorCheckIn": "Error al registrar entrada",
+      "errorCheckOut": "Error al registrar salida",
+      "errorCreatingShift": "Error al crear turno"
     }
   },
   "expenses": {
