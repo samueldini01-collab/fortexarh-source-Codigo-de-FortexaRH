@@ -2209,6 +2209,14 @@
       "ticketCreated": "Ticket creado exitosamente",
       "errorCreating": "Error al crear ticket",
       "noTickets": "No tienes tickets de soporte"
+    },
+    "success": {
+      "title": "¡Solicitud Recibida!",
+      "subtitle": "Hemos recibido su solicitud de soporte. Nuestro equipo se pondrá en contacto con usted pronto.",
+      "ticketNumber": "Número de Ticket",
+      "confirmationSent": "Se ha enviado una confirmación a",
+      "newRequest": "Nueva Solicitud",
+      "backToHome": "Volver al Inicio"
     }
   },
   "users": {
