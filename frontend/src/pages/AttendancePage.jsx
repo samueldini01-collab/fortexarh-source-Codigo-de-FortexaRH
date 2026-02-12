@@ -93,11 +93,11 @@ export default function AttendancePage() {
       setAlerts(alertsRes.data);
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Error al cargar datos");
+      toast.error(t('attendance.messages.errorLoading'));
     } finally {
       setLoading(false);
     }
-  }, [selectedDate, getAuthHeaders]);
+  }, [selectedDate, getAuthHeaders, t]);
 
   useEffect(() => {
     fetchData();
