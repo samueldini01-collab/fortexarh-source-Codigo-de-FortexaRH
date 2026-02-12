@@ -167,13 +167,13 @@ export default function NotificationsPage() {
   };
 
   return (
-    <DashboardLayout title="Notificaciones">
+    <DashboardLayout title={t('notifications.title')}>
       <div className="space-y-6" data-testid="notifications-page">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">Notificaciones</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">{t('notifications.title')}</h1>
             <p className="text-sm sm:text-base text-slate-600 mt-1">
-              Configura recordatorios de nómina y alertas de cumpleaños
+              {t('notifications.subtitle')}
             </p>
           </div>
         </div>
