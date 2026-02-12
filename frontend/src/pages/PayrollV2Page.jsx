@@ -192,9 +192,9 @@ export default function PayrollV2Page() {
       const response = await axios.get(`${API}/payroll-v2/periods`, { headers: getAuthHeaders(), withCredentials: true });
       setPeriods(response.data);
     } catch (_error) {
-      toast.error("Error al cargar períodos");
+      toast.error(t('payrollV2.messages.errorLoadingPeriods'));
     }
-  }, [getAuthHeaders]);
+  }, [getAuthHeaders, t]);
 
   const fetchPeriodDetails = useCallback(async (periodId) => {
     try {
