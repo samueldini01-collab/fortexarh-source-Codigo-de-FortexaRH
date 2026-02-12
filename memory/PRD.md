@@ -65,6 +65,29 @@
 - Verificado que ya tenía todas las traducciones implementadas
 - Mensajes CRUD, competencias, estados funcionando correctamente
 - **Verificado:** Screenshot confirma traducción correcta
+
+### 🌐 SupportPage.jsx (COMPLETADO - SESIÓN ACTUAL)
+- Pantalla de éxito traducida (título, subtítulo, número de ticket)
+- Botones de navegación traducidos
+- ~6 nuevas claves de traducción añadidas
+- **Verificado:** Build exitoso
+
+### 🌐 SettingsPage.jsx (COMPLETADO - SESIÓN ACTUAL)
+- Tabs traducidos (Empresa, Suscripción, Mi Cuenta)
+- Sección de información de empresa traducida
+- Mensajes de cambio de contraseña traducidos
+- ~10 nuevas claves de traducción añadidas
+- **Verificado:** Screenshot confirma traducción correcta
+
+### 🌐 NotificationsPage.jsx (COMPLETADO - SESIÓN ACTUAL)
+- Título y subtítulo traducidos
+- Mensajes de configuración y envío traducidos
+- ~4 nuevas claves de traducción añadidas
+- **Verificado:** Build exitoso
+
+### 🌐 RolesPage.jsx (YA TRADUCIDO)
+- Verificado que ya tenía traducciones implementadas
+- Funciona correctamente con las claves existentes en `roles.*`
 - Mensajes de toast traducidos
 - Faltan algunos labels de formulario
 
