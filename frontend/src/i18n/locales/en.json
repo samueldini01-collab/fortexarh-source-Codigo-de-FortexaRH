@@ -1443,7 +1443,14 @@
       "errorLoading": "Error loading data",
       "errorCreateShift": "Error creating shift",
       "noRecordsDate": "No records for this date",
-      "noRecordsFilter": "No records with these filters"
+      "noRecordsFilter": "No records with these filters",
+      "registered": "Attendance registered",
+      "errorRegistering": "Error registering",
+      "checkInSuccess": "Entry registered",
+      "checkOutSuccess": "Exit registered",
+      "errorCheckIn": "Error registering entry",
+      "errorCheckOut": "Error registering exit",
+      "errorCreatingShift": "Error creating shift"
     }
   },
   "expenses": {
