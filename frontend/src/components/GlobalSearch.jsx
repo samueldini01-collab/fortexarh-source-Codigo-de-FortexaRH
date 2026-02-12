@@ -500,7 +500,7 @@ export default function GlobalSearch() {
 
             {/* Search Results */}
             {!executionResult && Object.entries(groupedResults).map(([type, items]) => {
-              const config = CATEGORY_CONFIG[type] || CATEGORY_CONFIG.navigation;
+              const config = CATEGORY_KEYS[type] || CATEGORY_KEYS.navigation;
               const IconComponent = config.icon;
               
               return (
@@ -508,7 +508,7 @@ export default function GlobalSearch() {
                   <div className="flex items-center gap-2 px-2 mb-2">
                     <IconComponent className="w-4 h-4 text-slate-400" />
                     <span className="text-xs font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                      {config.label}
+                      {t(config.labelKey)}
                     </span>
                     <Badge variant="secondary" className="ml-auto text-[10px]">{items.length}</Badge>
                   </div>
