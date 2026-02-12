@@ -3246,6 +3246,41 @@
       "loadCatalog": "Load a catalog to get started"
     }
   },
+  "costsByDepartment": {
+    "title": "Costs by Department",
+    "subtitle": "Analysis of labor costs distributed by department",
+    "employees": "Employees",
+    "readyToExport": "Ready to export? Download the report in your preferred format.",
+    "exportCSV": "Export CSV",
+    "exportExcel": "Export Excel",
+    "tabs": {
+      "preview": "Preview",
+      "charts": "Charts"
+    },
+    "cards": {
+      "totalCost": "Total Cost",
+      "totalEmployees": "Total Employees",
+      "avgCostPerEmployee": "Avg. Cost per Employee",
+      "departments": "Departments"
+    },
+    "charts": {
+      "distribution": "Cost Distribution",
+      "distributionDesc": "Percentage of total cost by department",
+      "comparison": "Monthly Comparison",
+      "comparisonDesc": "Cost evolution by department"
+    },
+    "empty": {
+      "title": "No department data",
+      "description": "No employees registered or they have no department assigned for this period."
+    },
+    "messages": {
+      "errorLoading": "Error loading report",
+      "errorLoadingEmployees": "Error loading department employees",
+      "errorExporting": "Error exporting",
+      "exportedCSV": "Report exported to CSV",
+      "exportedExcel": "Report exported to Excel"
+    }
+  },
   "pwa": {
     "title": "Install FortexaRH",
     "subtitle": "Access faster from your home screen",
