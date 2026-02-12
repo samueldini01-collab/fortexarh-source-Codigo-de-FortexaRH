@@ -85,7 +85,7 @@ export default function SettingsPage() {
       
       window.location.href = response.data.url;
     } catch (error) {
-      toast.error("Error al procesar el pago");
+      toast.error(t('settings.messages.errorPayment'));
     }
   };
 
@@ -95,12 +95,12 @@ export default function SettingsPage() {
     
     // Validations
     if (passwordForm.newPassword.length < 6) {
-      setPasswordError("La nueva contraseña debe tener al menos 6 caracteres");
+      setPasswordError(t('settings.password.minLength'));
       return;
     }
     
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      setPasswordError("Las contraseñas no coinciden");
+      setPasswordError(t('settings.password.noMatch'));
       return;
     }
     
@@ -111,10 +111,10 @@ export default function SettingsPage() {
         new_password: passwordForm.newPassword
       }, { headers: getAuthHeaders(), withCredentials: true });
       
-      toast.success("Contraseña actualizada correctamente");
+      toast.success(t('settings.messages.passwordChanged'));
       setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
     } catch (error) {
-      const message = error.response?.data?.detail || "Error al cambiar contraseña";
+      const message = error.response?.data?.detail || t('settings.messages.errorPassword');
       setPasswordError(message);
       toast.error(message);
     } finally {
