@@ -3511,5 +3511,327 @@
         "description": "Vous connaissez maintenant les principales fonctionnalités de FortexaRH. Si vous avez besoin d'aide, vous pouvez:\n\n• Appuyer sur ? pour voir les raccourcis clavier\n• Redémarrer ce tutoriel depuis Paramètres\n• Contacter le support depuis le menu d'aide"
       }
     }
+  },
+  "geoLocationsPage": {
+    "title": "Pointage par Géolocalisation",
+    "subtitle": "Gestion des emplacements et contrôle de présence GPS",
+    "newLocation": "Nouvel Emplacement",
+    "cards": {
+      "locations": "Emplacements",
+      "markedToday": "Pointé Aujourd'hui",
+      "pending": "En Attente",
+      "outsideZone": "Hors Zone"
+    },
+    "tabs": {
+      "locations": "Emplacements",
+      "liveMap": "Carte en Direct",
+      "todayAttendance": "Présence du Jour",
+      "fraud": "Fraude",
+      "alerts": "Alertes"
+    },
+    "table": {
+      "location": "Emplacement",
+      "type": "Type",
+      "coordinates": "Coordonnées",
+      "radius": "Rayon",
+      "employees": "Employés",
+      "status": "Statut",
+      "actions": "Actions",
+      "employee": "Employé",
+      "time": "Heure",
+      "distance": "Distance",
+      "level": "Niveau",
+      "message": "Message",
+      "date": "Date",
+      "noLocations": "Aucun emplacement configuré",
+      "noMarksToday": "Aucun pointage aujourd'hui",
+      "noAlerts": "Aucune alerte d'emplacement aujourd'hui",
+      "noFraudAlerts": "Aucune alerte de fraude détectée"
+    },
+    "locationTypes": {
+      "office": "Bureau",
+      "project": "Projet/Chantier",
+      "branch": "Succursale",
+      "client": "Client"
+    },
+    "markTypes": {
+      "entry": "Entrée",
+      "exit": "Sortie"
+    },
+    "statuses": {
+      "active": "Actif",
+      "inactive": "Inactif",
+      "approved": "Approuvé",
+      "pending": "En attente",
+      "rejected": "Rejeté"
+    },
+    "liveMap": {
+      "title": "Carte en Direct",
+      "autoRefresh": "Actualisation auto",
+      "lastUpdate": "Dernière mise à jour",
+      "filters": {
+        "department": "Département",
+        "allDepartments": "Tous les départements",
+        "location": "Emplacement",
+        "allLocations": "Tous les emplacements",
+        "status": "Statut",
+        "allStatuses": "Tous les statuts",
+        "withinZone": "Dans la zone",
+        "outsideZone": "Hors zone",
+        "pendingReview": "En attente de révision"
+      },
+      "employeesOnMap": "employés sur la carte",
+      "noData": "Aucune donnée de carte en direct disponible"
+    },
+    "fraud": {
+      "title": "Alertes de Fraude Détectées",
+      "refresh": "Actualiser",
+      "configureAlerts": "Configurer les Alertes",
+      "levels": {
+        "critical": "Critique",
+        "high": "Haute",
+        "medium": "Moyenne",
+        "low": "Basse"
+      },
+      "status": {
+        "new": "Nouvelle",
+        "reviewed": "Examinée",
+        "resolved": "Résolue",
+        "dismissed": "Rejetée"
+      },
+      "topEmployees": "Employés avec le Plus d'Alertes (30 derniers jours)",
+      "criticalAlerts": "critiques",
+      "highAlerts": "hautes",
+      "mediumAlerts": "moyennes",
+      "totalAlerts": "Total",
+      "noAlertsMessage": "Le système surveille automatiquement les pointages",
+      "thresholds": {
+        "title": "Seuils de Détection",
+        "maxSpeed": "Vitesse maximale",
+        "duplicateWindow": "Fenêtre de doublons",
+        "minGpsAccuracy": "Précision GPS minimale",
+        "normalHours": "Heures normales"
+      }
+    },
+    "alerts": {
+      "title": "Pointages Hors Zone",
+      "subtitle": "Pointages nécessitant une révision",
+      "outsideAuthorized": "hors de la zone autorisée"
+    },
+    "dialogs": {
+      "newLocation": {
+        "title": "Nouvel Emplacement",
+        "editTitle": "Modifier l'Emplacement",
+        "description": "Configurez une géobarrière pour le contrôle de présence",
+        "name": "Nom de l'Emplacement",
+        "namePlaceholder": "Ex: Bureau Principal",
+        "address": "Adresse",
+        "addressPlaceholder": "Ex: Av. Winston Churchill #123",
+        "latitude": "Latitude",
+        "longitude": "Longitude",
+        "radius": "Rayon (mètres)",
+        "locationType": "Type d'Emplacement",
+        "tip": "Astuce: Vous pouvez obtenir les coordonnées depuis Google Maps en cliquant droit sur un point.",
+        "create": "Créer",
+        "update": "Mettre à jour"
+      },
+      "assignEmployees": {
+        "title": "Assigner des Employés",
+        "description": "Sélectionnez les employés autorisés à pointer à cet emplacement"
+      },
+      "report": {
+        "title": "Exporter le Rapport de Présence",
+        "description": "Générez un rapport de pointages par plage de dates",
+        "startDate": "Date de Début",
+        "endDate": "Date de Fin",
+        "location": "Emplacement",
+        "allLocations": "Tous les emplacements",
+        "format": "Format",
+        "excel": "Excel/CSV",
+        "preview": "Aperçu uniquement",
+        "generate": "Générer le Rapport",
+        "generating": "Génération..."
+      },
+      "alertSettings": {
+        "title": "Configuration des Alertes",
+        "description": "Configurez les notifications automatiques pour les problèmes d'emplacement",
+        "enableAlerts": "Activer les Alertes",
+        "enableAlertsDesc": "Activer le système d'alertes automatiques",
+        "alertTypes": "Types d'Alertes",
+        "outsideZone": "Pointages hors zone",
+        "fraudDetection": "Détection de fraude",
+        "dailySummary": "Résumé quotidien",
+        "recipients": "Destinataires",
+        "recipientsPlaceholder": "admin@entreprise.com, rh@entreprise.com",
+        "recipientsHelp": "Séparez les emails par des virgules",
+        "distanceThreshold": "Seuil de Distance (mètres)",
+        "distanceHelp": "Distance depuis l'emplacement pour déclencher une alerte",
+        "sendSummary": "Envoyer le Résumé Maintenant",
+        "sendingSummary": "Envoi..."
+      }
+    },
+    "actions": {
+      "assignEmployees": "Assigner des employés",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "approve": "Approuver",
+      "exportReport": "Exporter le Rapport"
+    },
+    "messages": {
+      "locationCreated": "Emplacement créé",
+      "locationUpdated": "Emplacement mis à jour",
+      "locationDeleted": "Emplacement supprimé",
+      "employeesAssigned": "Employés assignés avec succès",
+      "markApproved": "Pointage approuvé",
+      "alertUpdated": "Alerte mise à jour",
+      "settingsSaved": "Configuration enregistrée",
+      "summarySet": "Résumé envoyé avec succès",
+      "reportGenerated": "Rapport généré avec succès",
+      "errorLoading": "Erreur lors du chargement des emplacements",
+      "errorSaving": "Erreur lors de l'enregistrement de l'emplacement",
+      "errorDeleting": "Erreur lors de la suppression de l'emplacement",
+      "errorAssigning": "Erreur lors de l'assignation des employés",
+      "errorApproving": "Erreur lors de l'approbation du pointage",
+      "errorUpdatingAlert": "Erreur lors de la mise à jour de l'alerte",
+      "errorSavingSettings": "Erreur lors de l'enregistrement de la configuration",
+      "errorSendingSummary": "Erreur lors de l'envoi du résumé",
+      "errorGeneratingReport": "Erreur lors de la génération du rapport",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet emplacement?"
+    }
+  },
+  "settingsPage": {
+    "companyInfo": {
+      "name": "Nom de l'Entreprise",
+      "industry": "Secteur d'Activité",
+      "industryPlaceholder": "Ex: Technologie, Fabrication, Services...",
+      "address": "Adresse",
+      "phone": "Téléphone"
+    },
+    "subscription": {
+      "currentPlan": "Plan Actuel",
+      "employees": "employés",
+      "perMonth": "/mois",
+      "mostPopular": "Le Plus Populaire",
+      "currentPlanBtn": "Plan Actuel",
+      "upgrade": "Mettre à niveau"
+    },
+    "account": {
+      "title": "Mon Compte",
+      "subtitle": "Informations de votre compte personnel",
+      "role": "Rôle",
+      "userId": "ID Utilisateur"
+    },
+    "passwordSection": {
+      "title": "Changer le Mot de Passe",
+      "subtitle": "Mettez à jour votre mot de passe pour sécuriser votre compte",
+      "currentPassword": "Mot de Passe Actuel",
+      "currentPlaceholder": "Votre mot de passe actuel",
+      "newPassword": "Nouveau Mot de Passe",
+      "newPlaceholder": "Minimum 6 caractères",
+      "confirmPassword": "Confirmer le Nouveau Mot de Passe",
+      "confirmPlaceholder": "Répétez le nouveau mot de passe"
+    },
+    "buttons": {
+      "saving": "Enregistrement...",
+      "saveChanges": "Enregistrer les Modifications",
+      "changePassword": "Changer le Mot de Passe"
+    },
+    "plans": {
+      "basic": {
+        "name": "FortexaRH Basique",
+        "price": "$10/mois + $1.5/employé",
+        "features": ["Jusqu'à 50 employés", "Gestion des employés", "Paie de base", "Présences", "Congés", "Support par email"]
+      },
+      "pro": {
+        "name": "FortexaRH Pro",
+        "price": "$20/mois + $1.5/employé",
+        "features": ["Jusqu'à 200 employés", "Toutes les fonctions de base", "Évaluations de performance", "Recrutement", "Rapports avancés", "Support prioritaire"]
+      },
+      "enterprise": {
+        "name": "FortexaRH Enterprise",
+        "price": "$76/mois + $1.5/employé",
+        "features": ["Employés illimités", "Toutes les fonctions", "API personnalisée", "Support 24/7", "Gestionnaire de compte dédié", "Formation incluse"]
+      }
+    }
+  },
+  "supportPage": {
+    "header": {
+      "login": "Se Connecter",
+      "back": "Retour"
+    },
+    "hero": {
+      "title": "Centre de Support",
+      "subtitle": "Nous sommes là pour vous aider. Remplissez le formulaire et notre équipe vous contactera dans les plus brefs délais."
+    },
+    "contact": {
+      "title": "Informations de Contact",
+      "phone": "Téléphone",
+      "phoneTimes": "Lun-Ven 9h - 18h",
+      "email": "Email",
+      "emailResponse": "Réponse sous 24h",
+      "location": "Emplacement",
+      "locationAddress": "Santo Domingo, RD"
+    },
+    "hours": {
+      "title": "Heures d'Ouverture",
+      "weekdays": "Lundi au Vendredi",
+      "weekdaysTime": "9h00 - 18h00",
+      "saturday": "Samedi",
+      "saturdayTime": "9h00 - 13h00",
+      "sunday": "Dimanche",
+      "sundayTime": "Fermé"
+    },
+    "response": {
+      "title": "Temps de Réponse",
+      "critical": "Priorité Critique",
+      "criticalTime": "1-2 heures",
+      "high": "Priorité Haute",
+      "highTime": "4-8 heures",
+      "medium": "Priorité Moyenne",
+      "mediumTime": "24 heures",
+      "low": "Priorité Basse",
+      "lowTime": "48 heures"
+    },
+    "form": {
+      "title": "Soumettre une Demande de Support",
+      "subtitle": "Remplissez le formulaire avec les détails de votre demande. Les champs marqués d'un * sont obligatoires.",
+      "name": "Nom Complet *",
+      "namePlaceholder": "Jean Dupont",
+      "email": "Adresse Email *",
+      "emailPlaceholder": "jean@entreprise.com",
+      "company": "Entreprise",
+      "companyPlaceholder": "Mon Entreprise SRL",
+      "phone": "Téléphone",
+      "phonePlaceholder": "+1 (809) 555-1234",
+      "category": "Catégorie *",
+      "categoryPlaceholder": "Sélectionnez une catégorie",
+      "priority": "Priorité",
+      "priorityPlaceholder": "Sélectionnez la priorité",
+      "subject": "Objet *",
+      "subjectPlaceholder": "Brève description de votre demande",
+      "message": "Message *",
+      "messagePlaceholder": "Décrivez votre demande ou problème en détail. Incluez toute information pertinente comme les messages d'erreur, les étapes pour reproduire le problème, etc.",
+      "submit": "Soumettre la Demande",
+      "submitting": "Envoi...",
+      "categories": {
+        "general": "Demande Générale",
+        "technical": "Support Technique",
+        "bug": "Signaler un Bug",
+        "billing": "Facturation et Paiements",
+        "account": "Mon Compte",
+        "demo": "Demander une Démo",
+        "enterprise": "Plan Enterprise"
+      },
+      "priorities": {
+        "low": "Basse - Demande générale",
+        "medium": "Moyenne - Besoin d'aide bientôt",
+        "high": "Haute - Problème urgent",
+        "critical": "Critique - Système en panne"
+      }
+    },
+    "footer": {
+      "tagline": "Système RH et Paie",
+      "copyright": "Tous droits réservés."
+    }
   }
 }
