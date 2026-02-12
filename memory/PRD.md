@@ -88,6 +88,23 @@
 ### 🌐 RolesPage.jsx (YA TRADUCIDO)
 - Verificado que ya tenía traducciones implementadas
 - Funciona correctamente con las claves existentes en `roles.*`
+
+### 🌐 UsersManagementPage.jsx (COMPLETADO - SESIÓN ACTUAL)
+- Mensajes CRUD traducidos (crear, editar, eliminar usuarios y roles)
+- Validaciones de contraseña traducidas
+- Mensajes de confirmación traducidos
+- ~10 nuevas claves de traducción añadidas
+- **Verificado:** Screenshot confirma traducción correcta
+
+### 🌐 TemplatesPage.jsx (COMPLETADO - SESIÓN ACTUAL)
+- Mensajes CRUD traducidos (crear, editar, eliminar, duplicar plantillas)
+- Mensaje de selección de empleado traducido
+- ~4 nuevas claves de traducción añadidas
+- **Verificado:** Screenshot confirma traducción correcta
+
+### 🌐 DocumentsPage.jsx (YA TRADUCIDO)
+- Verificado que ya tenía traducciones implementadas
+- Funciona correctamente con las claves existentes en `documents.*`
 - Mensajes de toast traducidos
 - Faltan algunos labels de formulario
 
