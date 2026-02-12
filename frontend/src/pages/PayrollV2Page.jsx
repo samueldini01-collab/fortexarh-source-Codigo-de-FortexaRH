@@ -362,30 +362,30 @@ export default function PayrollV2Page() {
   const handleApprovePeriod = async (periodId) => {
     try {
       await axios.post(`${API}/payroll-v2/periods/${periodId}/approve`, {}, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Período aprobado");
+      toast.success(t('payrollV2.messages.periodApproved'));
       fetchPeriods();
       if (selectedPeriod?.period_id === periodId) {
         setSelectedPeriod(prev => ({ ...prev, status: 'approved' }));
       }
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al aprobar");
+      toast.error(error.response?.data?.detail || t('payrollV2.messages.errorApproving'));
     }
   };
 
   const handleRejectPeriod = async (periodId, reason) => {
     if (!reason) {
-      toast.error("Debe proporcionar un motivo para el rechazo");
+      toast.error(t('payrollV2.messages.rejectReasonRequired'));
       return;
     }
     try {
       await axios.post(`${API}/payroll-v2/periods/${periodId}/reject`, { comments: reason }, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Nómina rechazada y devuelta a borrador");
+      toast.success(t('payrollV2.messages.periodRejected'));
       fetchPeriods();
       if (selectedPeriod?.period_id === periodId) {
         setSelectedPeriod(prev => ({ ...prev, status: 'draft' }));
       }
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al rechazar");
+      toast.error(error.response?.data?.detail || t('payrollV2.messages.errorRejecting'));
     }
   };
 
@@ -398,7 +398,7 @@ export default function PayrollV2Page() {
         { bank_account_code: selectedBankAccount },
         { headers: getAuthHeaders(), withCredentials: true }
       );
-      toast.success(`Nómina pagada. Asiento #${response.data.entry_number} generado.`);
+      toast.success(t('payrollV2.messages.payrollPaid', { entryNumber: response.data.entry_number }));
       
       // Generate and download bank file if selected
       if (generateBankFile && selectedPaymentBank) {
@@ -419,9 +419,9 @@ export default function PayrollV2Page() {
           link.click();
           document.body.removeChild(link);
           
-          toast.success(`Archivo bancario ${bank?.name} descargado`);
+          toast.success(t('payrollV2.messages.bankFileDownloaded', { bankName: bank?.name }));
         } catch (bankError) {
-          toast.error("Error al generar archivo bancario");
+          toast.error(t('payrollV2.messages.errorGeneratingBankFile'));
         }
       }
       
