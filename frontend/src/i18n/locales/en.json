@@ -740,7 +740,11 @@
     "noTrendData": "No trend data available",
     "noDeptData": "No department data available",
     "noCostData": "No cost data available",
-    "noSalaryData": "No salary data available"
+    "noSalaryData": "No salary data available",
+    "alerts": {
+      "unpaidApproved": "{{count}} approved payrolls pending payment",
+      "incompleteEmployees": "{{count}} employees with incomplete data"
+    }
   },
   "pricing": {
     "planNames": {

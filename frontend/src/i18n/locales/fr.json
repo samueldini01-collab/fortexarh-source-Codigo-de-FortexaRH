@@ -739,7 +739,11 @@
     "noTrendData": "Pas de données de tendance",
     "noDeptData": "Pas de données par département",
     "noCostData": "Pas de données de coûts",
-    "noSalaryData": "Pas de données de salaires"
+    "noSalaryData": "Pas de données de salaires",
+    "alerts": {
+      "unpaidApproved": "{{count}} paies approuvées en attente de paiement",
+      "incompleteEmployees": "{{count}} employés avec données incomplètes"
+    }
   },
   "pricing": {
     "planNames": {
