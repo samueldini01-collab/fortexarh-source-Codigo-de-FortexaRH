@@ -3287,6 +3287,47 @@
       "done": "C'est fait! FortexaRH apparaîtra sur votre écran d'accueil comme une app."
     }
   },
+  "companyConfig": {
+    "title": "Configuration de l'Entreprise",
+    "subtitle": "Personnalisez les paramètres de votre entreprise",
+    "tabs": {
+      "general": "Général",
+      "logo": "Logo",
+      "appearance": "Apparence",
+      "branding": "Marque et Textes",
+      "notifications": "Notifications",
+      "integrations": "Intégrations",
+      "audit": "Audit"
+    },
+    "fontSizes": {
+      "small": "Petit",
+      "medium": "Moyen",
+      "large": "Grand"
+    },
+    "themes": {
+      "light": "Clair",
+      "dark": "Sombre",
+      "auto": "Automatique"
+    },
+    "integrations": {
+      "fortexaerp": {
+        "desc": "Synchronisation native complète avec l'écosystème Fortexa."
+      },
+      "quickbooks": {
+        "desc": "Exportez automatiquement la paie et les écritures comptables vers QBO."
+      },
+      "sap": {
+        "desc": "Intégration d'entreprise pour les grandes organisations."
+      },
+      "oracle": {
+        "desc": "Connectivité cloud pour la gestion financière avancée."
+      }
+    },
+    "messages": {
+      "quickbooksConnected": "QuickBooks connecté avec succès à {{company}}!",
+      "quickbooksError": "Erreur de connexion à QuickBooks: {{error}}"
+    }
+  },
   "errors": {
     "generic": "Une erreur s'est produite",
     "notFound": "Page non trouvée",
