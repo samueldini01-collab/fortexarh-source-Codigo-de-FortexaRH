@@ -661,19 +661,19 @@ export default function PayrollCalculatorPage() {
                       )}
                       {result.bonuses > 0 && (
                         <div className="flex justify-between">
-                          <span className="text-slate-600 dark:text-slate-300">Bonificaciones</span>
+                          <span className="text-slate-600 dark:text-slate-300">{t('calculator.bonuses')}</span>
                           <span className="font-medium">{formatCurrency(result.bonuses)}</span>
                         </div>
                       )}
                       {result.commissions > 0 && (
                         <div className="flex justify-between">
-                          <span className="text-slate-600 dark:text-slate-300">Comisiones</span>
+                          <span className="text-slate-600 dark:text-slate-300">{t('calculator.commissions')}</span>
                           <span className="font-medium">{formatCurrency(result.commissions)}</span>
                         </div>
                       )}
                       <Separator className="my-2" />
                       <div className="flex justify-between font-semibold text-emerald-700 dark:text-emerald-400">
-                        <span>Total Ingresos</span>
+                        <span>{t('calculator.totalEarnings')}</span>
                         <span>{formatCurrency(result.total_earnings)}</span>
                       </div>
                     </div>
@@ -681,10 +681,10 @@ export default function PayrollCalculatorPage() {
 
                   {/* Employee Deductions */}
                   <div className="bg-red-50 rounded-lg p-4 space-y-2">
-                    <h4 className="font-semibold text-red-800">Deducciones del Empleado</h4>
+                    <h4 className="font-semibold text-red-800">{t('calculator.employeeDeductions')}</h4>
                     <div className="space-y-1 text-sm">
                       {/* TSS Section */}
-                      <p className="text-xs text-red-600 font-medium mb-1">Seguridad Social (TSS)</p>
+                      <p className="text-xs text-red-600 font-medium mb-1">{t('calculator.socialSecurity')}</p>
                       <div className="flex justify-between">
                         <span className="text-slate-600 dark:text-slate-300">SFS (3.07%)</span>
                         <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.sfs_employee)}</span>
@@ -694,20 +694,20 @@ export default function PayrollCalculatorPage() {
                         <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.afp_employee)}</span>
                       </div>
                       <div className="flex justify-between text-xs">
-                        <span className="text-slate-500 dark:text-slate-400">Subtotal TSS</span>
+                        <span className="text-slate-500 dark:text-slate-400">{t('calculator.subtotalTss')}</span>
                         <span className="font-medium text-red-500">-{formatCurrency(result.total_tss_employee)}</span>
                       </div>
                       
                       {/* ISR Section */}
                       <Separator className="my-2" />
-                      <p className="text-xs text-red-600 font-medium mb-1">Impuesto Sobre la Renta (ISR)</p>
+                      <p className="text-xs text-red-600 font-medium mb-1">{t('calculator.incomeTax')}</p>
                       <div className="flex justify-between">
-                        <span className="text-slate-600 dark:text-slate-300">ISR Mensual ({result.isr_bracket})</span>
+                        <span className="text-slate-600 dark:text-slate-300">{t('calculator.monthlyIsr')} ({result.isr_bracket})</span>
                         <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.isr_monthly)}</span>
                       </div>
                       {result.isr_monthly > 0 && (
                         <div className="text-xs text-slate-500 mt-1">
-                          Calculado sobre salario bruto: {formatCurrency(result.isr_taxable_base)}
+                          {t('calculator.calculatedOnGross')}: {formatCurrency(result.isr_taxable_base)}
                         </div>
                       )}
                       
@@ -715,16 +715,16 @@ export default function PayrollCalculatorPage() {
                       {(result.loan_deduction > 0 || result.other_deductions > 0) && (
                         <>
                           <Separator className="my-2" />
-                          <p className="text-xs text-red-600 font-medium mb-1">Otras Deducciones</p>
+                          <p className="text-xs text-red-600 font-medium mb-1">{t('calculator.otherDeductions')}</p>
                           {result.loan_deduction > 0 && (
                             <div className="flex justify-between">
-                              <span className="text-slate-600 dark:text-slate-300">Préstamos</span>
+                              <span className="text-slate-600 dark:text-slate-300">{t('calculator.loans')}</span>
                               <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.loan_deduction)}</span>
                             </div>
                           )}
                           {result.other_deductions > 0 && (
                             <div className="flex justify-between">
-                              <span className="text-slate-600 dark:text-slate-300">Otras</span>
+                              <span className="text-slate-600 dark:text-slate-300">{t('calculator.others')}</span>
                               <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.other_deductions)}</span>
                             </div>
                           )}
@@ -732,7 +732,7 @@ export default function PayrollCalculatorPage() {
                       )}
                       <Separator className="my-2" />
                       <div className="flex justify-between font-semibold text-red-700">
-                        <span>Total Deducciones</span>
+                        <span>{t('calculator.totalDeductions')}</span>
                         <span>-{formatCurrency(result.total_deductions)}</span>
                       </div>
                     </div>
@@ -741,7 +741,7 @@ export default function PayrollCalculatorPage() {
                   {/* Net Salary */}
                   <div className="bg-slate-900 rounded-lg p-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-white font-semibold text-lg">Salario Neto</span>
+                      <span className="text-white font-semibold text-lg">{t('calculator.netSalary')}</span>
                       <span className="text-white font-bold text-2xl" data-testid="net-salary">
                         {formatCurrency(result.net_salary)}
                       </span>
