@@ -59,21 +59,21 @@ export default function SupportPage() {
 
   // Dynamic categories with translations
   const getSupportCategories = () => [
-    { value: "general", label: t('support.form.categories.other'), icon: MessageSquare },
-    { value: "technical", label: t('support.form.categories.technical'), icon: Settings },
-    { value: "bug", label: t('support.form.categories.technical'), icon: Bug },
-    { value: "billing", label: t('support.form.categories.billing'), icon: CreditCard },
-    { value: "account", label: t('support.form.categories.other'), icon: Users },
-    { value: "demo", label: t('support.form.categories.feature'), icon: FileQuestion },
-    { value: "enterprise", label: t('support.form.categories.other'), icon: Building2 },
+    { value: "general", label: t('supportPage.form.categories.general'), icon: MessageSquare },
+    { value: "technical", label: t('supportPage.form.categories.technical'), icon: Settings },
+    { value: "bug", label: t('supportPage.form.categories.bug'), icon: Bug },
+    { value: "billing", label: t('supportPage.form.categories.billing'), icon: CreditCard },
+    { value: "account", label: t('supportPage.form.categories.account'), icon: Users },
+    { value: "demo", label: t('supportPage.form.categories.demo'), icon: FileQuestion },
+    { value: "enterprise", label: t('supportPage.form.categories.enterprise'), icon: Building2 },
   ];
 
   // Dynamic priorities with translations
   const getPriorityOptions = () => [
-    { value: "low", label: t('support.form.priorities.low') },
-    { value: "medium", label: t('support.form.priorities.medium') },
-    { value: "high", label: t('support.form.priorities.high') },
-    { value: "critical", label: t('support.form.priorities.urgent') },
+    { value: "low", label: t('supportPage.form.priorities.low') },
+    { value: "medium", label: t('supportPage.form.priorities.medium') },
+    { value: "high", label: t('supportPage.form.priorities.high') },
+    { value: "critical", label: t('supportPage.form.priorities.critical') },
   ];
 
   const handleChange = (e) => {
