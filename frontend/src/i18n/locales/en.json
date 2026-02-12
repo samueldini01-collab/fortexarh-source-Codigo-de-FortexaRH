@@ -3165,10 +3165,12 @@
       "expense": "Expense"
     },
     "form": {
-      "createEntry": "Create Journal Entry",
+      "createEntry": "Create Entry",
       "editEntry": "Edit Entry",
       "createAccount": "Create Account",
       "editAccount": "Edit Account",
+      "editAccountDesc": "Modify account data",
+      "createAccountDesc": "Fill in the data to create a new account",
       "entryDate": "Entry Date",
       "referencePlaceholder": "E.g: INV-001",
       "descPlaceholder": "Entry description...",
@@ -3178,6 +3180,8 @@
       "accountName": "Account Name",
       "namePlaceholder": "E.g: Cash",
       "parentAccount": "Parent Account",
+      "parentCode": "Parent Code (Optional)",
+      "parentCodePlaceholder": "E.g: 51",
       "selectParent": "Select parent account",
       "noParent": "No parent (level 1)"
     },
