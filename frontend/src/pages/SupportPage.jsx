@@ -418,13 +418,13 @@ export default function SupportPage() {
 
                   {/* Subject */}
                   <div className="space-y-2">
-                    <Label htmlFor="subject">Asunto *</Label>
+                    <Label htmlFor="subject">{t('supportPage.form.subject')}</Label>
                     <Input
                       id="subject"
                       name="subject"
                       value={formData.subject}
                       onChange={handleChange}
-                      placeholder="Breve descripción de su consulta"
+                      placeholder={t('supportPage.form.subjectPlaceholder')}
                       required
                       data-testid="support-subject-input"
                     />
@@ -432,13 +432,13 @@ export default function SupportPage() {
 
                   {/* Message */}
                   <div className="space-y-2">
-                    <Label htmlFor="message">Mensaje *</Label>
+                    <Label htmlFor="message">{t('supportPage.form.message')}</Label>
                     <Textarea
                       id="message"
                       name="message"
                       value={formData.message}
                       onChange={handleChange}
-                      placeholder="Describa detalladamente su consulta o problema. Incluya cualquier información relevante como mensajes de error, pasos para reproducir el problema, etc."
+                      placeholder={t('supportPage.form.messagePlaceholder')}
                       rows={6}
                       required
                       data-testid="support-message-textarea"
@@ -457,12 +457,12 @@ export default function SupportPage() {
                       {loading ? (
                         <>
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Enviando...
+                          {t('supportPage.form.submitting')}
                         </>
                       ) : (
                         <>
                           <Send className="w-4 h-4 mr-2" />
-                          Enviar Solicitud
+                          {t('supportPage.form.submit')}
                         </>
                       )}
                     </Button>
@@ -481,10 +481,10 @@ export default function SupportPage() {
             <div className="flex items-center gap-2">
               <img src="/fortexarh-logo.png" alt="FortexaRH" className="h-8 w-auto brightness-0 invert" />
               <span className="font-bold">FortexaRH</span>
-              <span className="text-slate-400 text-sm">| Sistema de RRHH y Nómina</span>
+              <span className="text-slate-400 text-sm">| {t('supportPage.footer.tagline')}</span>
             </div>
             <p className="text-slate-400 text-sm">
-              © {new Date().getFullYear()} FortexaRH. Todos los derechos reservados.
+              © {new Date().getFullYear()} FortexaRH. {t('supportPage.footer.copyright')}
             </p>
           </div>
         </div>
