@@ -234,8 +234,8 @@ export default function PayrollDashboardPage() {
           {/* Monthly Trend */}
           <Card>
             <CardHeader>
-              <CardTitle>Tendencia Mensual de Nómina</CardTitle>
-              <CardDescription>Neto pagado por mes</CardDescription>
+              <CardTitle>{t('payrollDashboard.charts.monthlyTrend')}</CardTitle>
+              <CardDescription>{t('payrollDashboard.charts.netPaidByMonth')}</CardDescription>
             </CardHeader>
             <CardContent>
               {monthly_trend && monthly_trend.length > 0 ? (
@@ -246,16 +246,16 @@ export default function PayrollDashboardPage() {
                     <YAxis tickFormatter={(v) => `${(v/1000).toFixed(0)}K`} tick={{ fontSize: 12 }} />
                     <Tooltip 
                       formatter={(value) => formatCurrency(value)}
-                      labelFormatter={(label) => `Período: ${label}`}
+                      labelFormatter={(label) => `${t('payrollDashboard.charts.period')}: ${label}`}
                     />
                     <Legend />
-                    <Line type="monotone" dataKey="total_net" name="Neto Pagado" stroke="#3b82f6" strokeWidth={3} dot={{ fill: '#3b82f6' }} />
-                    <Line type="monotone" dataKey="total_gross" name="Bruto" stroke="#10b981" strokeWidth={2} strokeDasharray="5 5" />
+                    <Line type="monotone" dataKey="total_net" name={t('payrollDashboard.charts.netPaid')} stroke="#3b82f6" strokeWidth={3} dot={{ fill: '#3b82f6' }} />
+                    <Line type="monotone" dataKey="total_gross" name={t('payrollDashboard.charts.gross')} stroke="#10b981" strokeWidth={2} strokeDasharray="5 5" />
                   </LineChart>
                 </ResponsiveContainer>
               ) : (
                 <div className="h-[300px] flex items-center justify-center text-slate-400">
-                  No hay datos de tendencia
+                  {t('payrollDashboard.noTrendData')}
                 </div>
               )}
             </CardContent>
@@ -264,8 +264,8 @@ export default function PayrollDashboardPage() {
           {/* Department Distribution */}
           <Card>
             <CardHeader>
-              <CardTitle>Distribución por Departamento</CardTitle>
-              <CardDescription>Empleados y salarios por área (click para ver detalle)</CardDescription>
+              <CardTitle>{t('payrollDashboard.charts.deptDistribution')}</CardTitle>
+              <CardDescription>{t('payrollDashboard.charts.deptDistributionDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               {department_distribution && department_distribution.length > 0 ? (
@@ -291,7 +291,7 @@ export default function PayrollDashboardPage() {
                 </ResponsiveContainer>
               ) : (
                 <div className="h-[300px] flex items-center justify-center text-slate-400">
-                  No hay datos por departamento
+                  {t('payrollDashboard.noDeptData')}
                 </div>
               )}
             </CardContent>
@@ -303,17 +303,17 @@ export default function PayrollDashboardPage() {
           {/* Employer Cost Breakdown */}
           <Card className="lg:col-span-2">
             <CardHeader>
-              <CardTitle>Costo Total Empleador vs Neto</CardTitle>
-              <CardDescription>Desglose de aportes patronales (últimos 6 períodos)</CardDescription>
+              <CardTitle>{t('payrollDashboard.charts.employerCost')}</CardTitle>
+              <CardDescription>{t('payrollDashboard.charts.employerCostDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               {employer_costs ? (
                 <div className="space-y-4">
                   <ResponsiveContainer width="100%" height={200}>
                     <BarChart data={[
-                      { name: 'Salario Bruto', value: employer_costs.total_gross_salary, fill: '#3b82f6' },
-                      { name: 'SFS Patronal', value: employer_costs.total_sfs_employer, fill: '#10b981' },
-                      { name: 'AFP Patronal', value: employer_costs.total_afp_employer, fill: '#f59e0b' },
+                      { name: t('payrollDashboard.charts.grossSalary'), value: employer_costs.total_gross_salary, fill: '#3b82f6' },
+                      { name: t('payrollDashboard.charts.sfsEmployer'), value: employer_costs.total_sfs_employer, fill: '#10b981' },
+                      { name: t('payrollDashboard.charts.afpEmployer'), value: employer_costs.total_afp_employer, fill: '#f59e0b' },
                       { name: 'SRL', value: employer_costs.total_srl, fill: '#ef4444' },
                       { name: 'INFOTEP', value: employer_costs.total_infotep, fill: '#8b5cf6' },
                     ]}>
