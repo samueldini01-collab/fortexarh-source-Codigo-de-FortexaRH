@@ -977,13 +977,13 @@ export default function AccountingPage() {
 
             <DialogFooter>
               <Button variant="outline" onClick={() => { setShowNewEntry(false); setShowEditEntry(false); }}>
-                Cancelar
+                {t('common.cancel')}
               </Button>
               <Button 
                 onClick={showEditEntry ? handleUpdateEntry : handleCreateEntry}
                 disabled={!isBalanced()}
               >
-                {showEditEntry ? "Guardar Cambios" : "Crear Asiento"}
+                {showEditEntry ? t('common.save') : t('accounting.form.createEntry')}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -993,63 +993,63 @@ export default function AccountingPage() {
         <Dialog open={showNewAccount || showEditAccount} onOpenChange={(open) => { if (!open) { setShowNewAccount(false); setShowEditAccount(false); setSelectedAccount(null); } }}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>{showEditAccount ? "Editar Cuenta" : "Nueva Cuenta Contable"}</DialogTitle>
+              <DialogTitle>{showEditAccount ? t('accounting.form.editAccount') : t('accounting.form.createAccount')}</DialogTitle>
               <DialogDescription>
-                {showEditAccount ? "Modifique los datos de la cuenta" : "Complete los datos para crear una nueva cuenta"}
+                {showEditAccount ? t('accounting.form.editAccountDesc') : t('accounting.form.createAccountDesc')}
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Código</Label>
+                  <Label>{t('accounting.account.code')}</Label>
                   <Input 
                     value={accountForm.code}
                     onChange={(e) => setAccountForm({...accountForm, code: e.target.value})}
-                    placeholder="Ej: 5101"
+                    placeholder={t('accounting.form.codePlaceholder')}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Tipo de Cuenta</Label>
+                  <Label>{t('accounting.account.type')}</Label>
                   <Select value={accountForm.account_type} onValueChange={(v) => setAccountForm({...accountForm, account_type: v})}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="asset">Activo</SelectItem>
-                      <SelectItem value="liability">Pasivo</SelectItem>
-                      <SelectItem value="equity">Capital</SelectItem>
-                      <SelectItem value="income">Ingreso</SelectItem>
-                      <SelectItem value="expense">Gasto</SelectItem>
+                      <SelectItem value="asset">{t('accounting.account.asset')}</SelectItem>
+                      <SelectItem value="liability">{t('accounting.account.liability')}</SelectItem>
+                      <SelectItem value="equity">{t('accounting.account.equity')}</SelectItem>
+                      <SelectItem value="income">{t('accounting.account.income')}</SelectItem>
+                      <SelectItem value="expense">{t('accounting.account.expense')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label>Nombre de la Cuenta</Label>
+                <Label>{t('accounting.form.accountName')}</Label>
                 <Input 
                   value={accountForm.name}
                   onChange={(e) => setAccountForm({...accountForm, name: e.target.value})}
-                  placeholder="Ej: Gastos de Sueldos y Salarios"
+                  placeholder={t('accounting.form.namePlaceholder')}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>Código Padre (Opcional)</Label>
+                <Label>{t('accounting.form.parentCode')}</Label>
                 <Input 
                   value={accountForm.parent_code}
                   onChange={(e) => setAccountForm({...accountForm, parent_code: e.target.value})}
-                  placeholder="Ej: 51"
+                  placeholder={t('accounting.form.parentCodePlaceholder')}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>Descripción (Opcional)</Label>
+                <Label>{t('common.description')} ({t('common.optional')})</Label>
                 <Textarea 
                   value={accountForm.description}
                   onChange={(e) => setAccountForm({...accountForm, description: e.target.value})}
-                  placeholder="Descripción de la cuenta..."
+                  placeholder={t('accounting.form.descPlaceholder')}
                   rows={2}
                 />
               </div>
@@ -1057,10 +1057,10 @@ export default function AccountingPage() {
 
             <DialogFooter>
               <Button variant="outline" onClick={() => { setShowNewAccount(false); setShowEditAccount(false); }}>
-                Cancelar
+                {t('common.cancel')}
               </Button>
               <Button onClick={showEditAccount ? handleUpdateAccount : handleCreateAccount}>
-                {showEditAccount ? "Guardar Cambios" : "Crear Cuenta"}
+                {showEditAccount ? t('common.save') : t('accounting.form.createAccount')}
               </Button>
             </DialogFooter>
           </DialogContent>
