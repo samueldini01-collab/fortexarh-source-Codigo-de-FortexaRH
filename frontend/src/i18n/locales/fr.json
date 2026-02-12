@@ -144,9 +144,12 @@
     "dgiiReports": "Rapports DGII-TSS",
     "geolocation": "Géolocalisation",
     "cdcAudit": "CDC et Audit",
+    "customizeMenu": "Personnaliser le Menu",
+    "customizeMenuDesc": "Organisez et masquez les modules selon vos préférences. Les modifications sont enregistrées localement.",
     "groups": {
       "dashboards": "Tableaux de bord",
       "humanResources": "Gestion RH",
+      "coreHR": "RH Core",
       "payrollFinance": "Paie et Finance",
       "timeAttendance": "Temps et Présences",
       "reports": "Rapports",
