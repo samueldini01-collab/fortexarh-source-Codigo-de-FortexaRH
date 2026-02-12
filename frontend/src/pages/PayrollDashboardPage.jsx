@@ -72,13 +72,13 @@ export default function PayrollDashboardPage() {
             headers: getAuthHeaders(),
             withCredentials: true
           });
-          title = "Empleados Activos";
+          title = t('payrollDashboard.drillDown.activeEmployees');
           data = response.data || [];
           columns = [
-            { header: "Nombre", accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
-            { header: "Departamento", accessor: "department" },
-            { header: "Cargo", accessor: "position" },
-            { header: "Salario", accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" }
+            { header: t('common.name'), accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
+            { header: t('employees.fields.department'), accessor: "department" },
+            { header: t('employees.fields.position'), accessor: "position" },
+            { header: t('employees.fields.salary'), accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" }
           ];
           break;
           
@@ -88,15 +88,15 @@ export default function PayrollDashboardPage() {
             headers: getAuthHeaders(),
             withCredentials: true
           });
-          title = `Empleados - ${deptName || 'Departamento'}`;
+          title = `${t('employees.title')} - ${deptName || t('employees.fields.department')}`;
           data = response.data || [];
           columns = [
-            { header: "Nombre", accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
-            { header: "Cargo", accessor: "position" },
-            { header: "Salario", accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" },
-            { header: "Estado", accessor: "status", render: (val) => (
+            { header: t('common.name'), accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
+            { header: t('employees.fields.position'), accessor: "position" },
+            { header: t('employees.fields.salary'), accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" },
+            { header: t('common.status'), accessor: "status", render: (val) => (
               <Badge className={val === "active" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"}>
-                {val === "active" ? "Activo" : "Inactivo"}
+                {val === "active" ? t('common.active') : t('common.inactive')}
               </Badge>
             )}
           ];
