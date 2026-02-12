@@ -225,7 +225,7 @@ export default function OrganigramaPage() {
   // Create new unit
   const handleCreateUnit = async () => {
     if (!newUnit.name) {
-      toast.error("El nombre es requerido");
+      toast.error(t('orgChart.messages.nameRequired'));
       return;
     }
     try {
@@ -237,7 +237,7 @@ export default function OrganigramaPage() {
         description: newUnit.description || ""
       }, { headers: getAuthHeaders(), withCredentials: true });
       
-      toast.success("Unidad creada correctamente");
+      toast.success(t('orgChart.messages.created'));
       setShowNewUnit(false);
       setNewUnit({ name: "", code: "", parent_id: null, description: "" });
       fetchData();
@@ -245,7 +245,7 @@ export default function OrganigramaPage() {
       const detail = error.response?.data?.detail;
       const errorMsg = typeof detail === 'string' ? detail : 
                        Array.isArray(detail) ? detail.map(d => d.msg).join(', ') :
-                       detail?.msg || "Error al crear unidad";
+                       detail?.msg || t('orgChart.messages.errorCreating');
       toast.error(errorMsg);
     }
   };
@@ -253,7 +253,7 @@ export default function OrganigramaPage() {
   // Create new position
   const handleCreatePosition = async () => {
     if (!newPosition.title) {
-      toast.error("El título es requerido");
+      toast.error(t('orgChart.messages.titleRequired'));
       return;
     }
     try {
@@ -266,7 +266,7 @@ export default function OrganigramaPage() {
         description: newPosition.description || ""
       }, { headers: getAuthHeaders(), withCredentials: true });
       
-      toast.success("Posición creada correctamente");
+      toast.success(t('orgChart.messages.positionCreated'));
       setShowNewPosition(false);
       setNewPosition({ title: "", unit_id: null, employee_id: null, description: "" });
       fetchData();
@@ -274,20 +274,20 @@ export default function OrganigramaPage() {
       const detail = error.response?.data?.detail;
       const errorMsg = typeof detail === 'string' ? detail : 
                        Array.isArray(detail) ? detail.map(d => d.msg).join(', ') :
-                       detail?.msg || "Error al crear posición";
+                       detail?.msg || t('orgChart.messages.errorCreatingPosition');
       toast.error(errorMsg);
     }
   };
 
   // Delete node
   const handleDeleteNode = async (nodeId) => {
-    if (!window.confirm("¿Está seguro de eliminar este elemento?")) return;
+    if (!window.confirm(t('orgChart.messages.confirmDelete'))) return;
     try {
       await axios.delete(`${API}/organigrama/${nodeId}`, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Elemento eliminado");
+      toast.success(t('orgChart.messages.deleted'));
       fetchData();
     } catch (error) {
-      toast.error("Error al eliminar");
+      toast.error(t('orgChart.messages.errorDeleting'));
     }
   };
 
@@ -305,12 +305,12 @@ export default function OrganigramaPage() {
         employee_id: editingNode.employee_id
       }, { headers: getAuthHeaders(), withCredentials: true });
       
-      toast.success("Elemento actualizado correctamente");
+      toast.success(t('orgChart.messages.updated'));
       setEditingNode(null);
       fetchData();
     } catch (error) {
       const detail = error.response?.data?.detail;
-      const errorMsg = typeof detail === 'string' ? detail : "Error al actualizar";
+      const errorMsg = typeof detail === 'string' ? detail : t('orgChart.messages.errorUpdating');
       toast.error(errorMsg);
     }
   };
