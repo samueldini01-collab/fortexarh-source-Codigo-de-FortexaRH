@@ -1661,6 +1661,7 @@
   },
   "notifications": {
     "title": "Notificaciones",
+    "subtitle": "Configura recordatorios de nómina y alertas de cumpleaños",
     "markAllRead": "Marcar todas como leídas",
     "noNotifications": "No tienes notificaciones",
     "types": {
@@ -1669,6 +1670,12 @@
       "vacation": "Solicitud de vacaciones",
       "leave": "Solicitud de permiso",
       "system": "Sistema"
+    },
+    "messages": {
+      "settingsSaved": "Configuración guardada",
+      "errorSaving": "Error al guardar configuración",
+      "errorSendingReminder": "Error al enviar recordatorio",
+      "errorSendingNotifications": "Error al enviar notificaciones"
     }
   },
   "settings": {
