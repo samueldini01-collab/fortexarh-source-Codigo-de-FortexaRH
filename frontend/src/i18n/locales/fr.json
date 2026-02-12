@@ -1656,7 +1656,7 @@
     }
   },
   "settings": {
-    "title": "Configuration de l'Entreprise",
+    "title": "Paramètres",
     "tabs": {
       "general": "Général",
       "logo": "Logo",
@@ -1664,7 +1664,24 @@
       "branding": "Marque et Textes",
       "notifications": "Notifications",
       "integrations": "Intégrations",
-      "audit": "Audit"
+      "audit": "Audit",
+      "company": "Entreprise",
+      "subscription": "Abonnement",
+      "account": "Mon Compte"
+    },
+    "company": {
+      "title": "Informations de l'Entreprise",
+      "subtitle": "Mettez à jour les données de votre entreprise"
+    },
+    "password": {
+      "title": "Changer le Mot de Passe",
+      "current": "Mot de passe actuel",
+      "new": "Nouveau mot de passe",
+      "confirm": "Confirmer le mot de passe",
+      "change": "Changer le mot de passe",
+      "changing": "Changement en cours...",
+      "minLength": "Le nouveau mot de passe doit avoir au moins 6 caractères",
+      "noMatch": "Les mots de passe ne correspondent pas"
     },
     "fontSizes": {
       "small": "Petit",
