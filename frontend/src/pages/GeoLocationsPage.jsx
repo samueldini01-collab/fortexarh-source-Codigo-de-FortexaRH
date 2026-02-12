@@ -677,9 +677,9 @@ export default function GeoLocationsPage() {
                             </TableCell>
                             <TableCell>
                               {location.is_active ? (
-                                <Badge className="bg-emerald-100 text-emerald-700">Activa</Badge>
+                                <Badge className="bg-emerald-100 text-emerald-700">{t('geoLocationsPage.statuses.active')}</Badge>
                               ) : (
-                                <Badge variant="secondary">Inactiva</Badge>
+                                <Badge variant="secondary">{t('geoLocationsPage.statuses.inactive')}</Badge>
                               )}
                             </TableCell>
                             <TableCell>
@@ -691,7 +691,7 @@ export default function GeoLocationsPage() {
                                     setSelectedLocation(location);
                                     setShowAssignDialog(true);
                                   }}
-                                  title="Asignar empleados"
+                                  title={t('geoLocationsPage.actions.assignEmployees')}
                                 >
                                   <Users className="w-4 h-4" />
                                 </Button>
@@ -699,7 +699,7 @@ export default function GeoLocationsPage() {
                                   size="icon" 
                                   variant="ghost"
                                   onClick={() => openEditLocation(location)}
-                                  title="Editar"
+                                  title={t('geoLocationsPage.actions.edit')}
                                 >
                                   <Edit className="w-4 h-4" />
                                 </Button>
@@ -708,7 +708,7 @@ export default function GeoLocationsPage() {
                                   variant="ghost"
                                   className="text-red-500"
                                   onClick={() => handleDeleteLocation(location.location_id)}
-                                  title="Eliminar"
+                                  title={t('geoLocationsPage.actions.delete')}
                                 >
                                   <Trash2 className="w-4 h-4" />
                                 </Button>
@@ -732,15 +732,15 @@ export default function GeoLocationsPage() {
                   <div>
                     <CardTitle className="flex items-center gap-2">
                       <Globe className="w-5 h-5 text-blue-600" />
-                      Mapa en Tiempo Real
+                      {t('geoLocationsPage.liveMap.title')}
                     </CardTitle>
                     <CardDescription>
-                      Ubicación de empleados que han marcado asistencia hoy
+                      {t('geoLocationsPage.liveMap.noData')}
                     </CardDescription>
                   </div>
                   <div className="flex items-center gap-3 flex-wrap">
                     <div className="flex items-center gap-2">
-                      <label className="text-sm text-slate-500">Auto-actualizar</label>
+                      <label className="text-sm text-slate-500">{t('geoLocationsPage.liveMap.autoRefresh')}</label>
                       <input
                         type="checkbox"
                         checked={autoRefresh}
