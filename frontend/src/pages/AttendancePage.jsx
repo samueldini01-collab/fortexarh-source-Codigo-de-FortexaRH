@@ -110,7 +110,7 @@ export default function AttendancePage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success(t('attendance.messages.registered'));
+      toast.success(t('attendance.messages.attendanceRegistered'));
       setIsDialogOpen(false);
       setFormData({
         employee_id: "",
@@ -122,7 +122,7 @@ export default function AttendancePage() {
       });
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || t('attendance.messages.errorRegistering'));
+      toast.error(error.response?.data?.detail || t('attendance.messages.errorRegister'));
     }
   };
 
@@ -135,10 +135,10 @@ export default function AttendancePage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success(t('attendance.messages.checkInSuccess'));
+      toast.success(t('attendance.messages.entryRegistered'));
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || t('attendance.messages.errorCheckIn'));
+      toast.error(error.response?.data?.detail || t('attendance.messages.errorRegisterEntry'));
     }
   };
 
