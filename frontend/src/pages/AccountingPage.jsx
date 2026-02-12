@@ -483,11 +483,11 @@ export default function AccountingPage() {
   const getStatusBadge = (status) => {
     switch (status) {
       case 'draft':
-        return <Badge variant="outline" className="border-slate-400">Borrador</Badge>;
+        return <Badge variant="outline" className="border-slate-400">{t('accounting.filters.draft')}</Badge>;
       case 'posted':
-        return <Badge className="bg-emerald-100 text-emerald-700 dark:text-emerald-400">Contabilizado</Badge>;
+        return <Badge className="bg-emerald-100 text-emerald-700 dark:text-emerald-400">{t('accounting.filters.posted')}</Badge>;
       case 'voided':
-        return <Badge className="bg-red-100 text-red-700">Anulado</Badge>;
+        return <Badge className="bg-red-100 text-red-700">{t('accounting.filters.voided')}</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -496,15 +496,15 @@ export default function AccountingPage() {
   const getAccountTypeBadge = (type) => {
     switch (type) {
       case 'expense':
-        return <Badge className="bg-red-100 text-red-700">Gasto</Badge>;
+        return <Badge className="bg-red-100 text-red-700">{t('accounting.account.expense')}</Badge>;
       case 'asset':
-        return <Badge className="bg-blue-100 text-blue-700 dark:text-blue-400">Activo</Badge>;
+        return <Badge className="bg-blue-100 text-blue-700 dark:text-blue-400">{t('accounting.account.asset')}</Badge>;
       case 'liability':
-        return <Badge className="bg-amber-100 text-amber-700 dark:text-amber-400">Pasivo</Badge>;
+        return <Badge className="bg-amber-100 text-amber-700 dark:text-amber-400">{t('accounting.account.liability')}</Badge>;
       case 'income':
-        return <Badge className="bg-emerald-100 text-emerald-700 dark:text-emerald-400">Ingreso</Badge>;
+        return <Badge className="bg-emerald-100 text-emerald-700 dark:text-emerald-400">{t('accounting.account.income')}</Badge>;
       case 'equity':
-        return <Badge className="bg-purple-100 text-purple-700">Capital</Badge>;
+        return <Badge className="bg-purple-100 text-purple-700">{t('accounting.account.equity')}</Badge>;
       default:
         return <Badge variant="secondary">{type}</Badge>;
     }
