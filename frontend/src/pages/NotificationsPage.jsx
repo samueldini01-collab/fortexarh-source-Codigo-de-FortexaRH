@@ -103,12 +103,12 @@ export default function NotificationsPage() {
       });
       if (response.ok) {
         setNotificationSettings(newSettings);
-        toast.success("Configuración guardada");
+        toast.success(t('notifications.messages.settingsSaved'));
       } else {
-        toast.error("Error al guardar configuración");
+        toast.error(t('notifications.messages.errorSaving'));
       }
     } catch (error) {
-      toast.error("Error al guardar configuración");
+      toast.error(t('notifications.messages.errorSaving'));
     }
   };
 
@@ -124,10 +124,10 @@ export default function NotificationsPage() {
         toast.success(data.message);
         fetchNotificationLogs();
       } else {
-        toast.error("Error al enviar recordatorio");
+        toast.error(t('notifications.messages.errorSendingReminder'));
       }
     } catch (error) {
-      toast.error("Error al enviar recordatorio");
+      toast.error(t('notifications.messages.errorSendingReminder'));
     } finally {
       setSendingNotification(false);
     }
@@ -145,10 +145,10 @@ export default function NotificationsPage() {
         toast.success(data.message);
         fetchNotificationLogs();
       } else {
-        toast.error("Error al enviar notificaciones");
+        toast.error(t('notifications.messages.errorSendingNotifications'));
       }
     } catch (error) {
-      toast.error("Error al enviar notificaciones");
+      toast.error(t('notifications.messages.errorSendingNotifications'));
     } finally {
       setSendingNotification(false);
     }
