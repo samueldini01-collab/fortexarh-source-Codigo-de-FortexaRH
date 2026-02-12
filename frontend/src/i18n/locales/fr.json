@@ -948,8 +948,8 @@
       "contract": "Contrat",
       "deductions": "Retenues",
       "documents": "Documents",
-      "payment": "Paiement",
-      "emergency": "Contact d'Urgence"
+      "paymentMethod": "Mode de Paiement",
+      "emergencyContact": "Contact d'Urgence"
     }
   },
   "payroll": {
