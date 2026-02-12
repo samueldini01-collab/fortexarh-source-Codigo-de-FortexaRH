@@ -17,9 +17,23 @@
   - `/app/frontend/src/i18n/locales/fr.json`
   - `/app/frontend/src/pages/VacationsPage.jsx` (template literal para mejor renderizado)
 - **Verificado:** Screenshots confirman "2 de 2 solicitudes" en español y "2 of 2 requests" en inglés
-- **Bugs resueltos simultáneamente:**
-  - ✅ Bug `common.of` en VacationsPage
-  - ✅ Bug de claves de traducción en LandingPage (`common.avgRating`, `common.companiesTrust`)
+
+### 🐛 Bug Fix P1: Secciones del Dashboard no Traducidas (CORREGIDO)
+- **Problema:** Al cambiar idioma, las secciones "Empleados Recientes", "Próximas Vacaciones", "Resumen de Nómina del Mes", "Personalizar Menú" y "Core RRHH" permanecían en español
+- **Causa raíz:** Textos hardcodeados en español en Dashboard.jsx y DashboardLayout.jsx
+- **Solución:**
+  1. Reemplazados textos hardcodeados con claves de traducción t()
+  2. Agregadas nuevas claves a los 3 archivos de idioma:
+     - `dashboard.recentEmployees`, `dashboard.noEmployeesRegistered`
+     - `dashboard.upcomingVacations`, `dashboard.noVacationsScheduled`
+     - `dashboard.payrollSummary`, `dashboard.totalPayrollThisMonth`
+     - `nav.customizeMenu`, `nav.customizeMenuDesc`
+     - `nav.groups.coreHR`, `common.days`
+- **Archivos modificados:**
+  - `/app/frontend/src/pages/Dashboard.jsx`
+  - `/app/frontend/src/components/DashboardLayout.jsx`
+  - `/app/frontend/src/i18n/locales/{en,es,fr}.json`
+- **Verificado:** Screenshots confirman traducción correcta EN ↔ ES ↔ FR
 
 ---
 
