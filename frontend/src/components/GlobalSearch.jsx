@@ -16,14 +16,14 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-const CATEGORY_CONFIG = {
-  employees: { icon: User, label: "Empleados", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400" },
-  vacations: { icon: Calendar, label: "Vacaciones", color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400" },
-  payroll: { icon: DollarSign, label: "Nómina", color: "bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-400" },
-  attendance: { icon: Clock, label: "Asistencia", color: "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400" },
-  loans: { icon: Wallet, label: "Préstamos", color: "bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-400" },
-  evaluations: { icon: Target, label: "Evaluaciones", color: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-400" },
-  navigation: { icon: ArrowRight, label: "Navegación", color: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400" }
+const CATEGORY_KEYS = {
+  employees: { icon: User, labelKey: "globalSearch.categories.employees", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400" },
+  vacations: { icon: Calendar, labelKey: "globalSearch.categories.vacations", color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400" },
+  payroll: { icon: DollarSign, labelKey: "globalSearch.categories.payroll", color: "bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-400" },
+  attendance: { icon: Clock, labelKey: "globalSearch.categories.attendance", color: "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400" },
+  loans: { icon: Wallet, labelKey: "globalSearch.categories.loans", color: "bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-400" },
+  evaluations: { icon: Target, labelKey: "globalSearch.categories.evaluations", color: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-400" },
+  navigation: { icon: ArrowRight, labelKey: "globalSearch.categories.navigation", color: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400" }
 };
 
 const ACTION_ICONS = {
