@@ -781,6 +781,31 @@
       "dedicatedManager": "Gerente de cuenta dedicado"
     }
   },
+  "globalSearch": {
+    "placeholder": "Buscar o ejecutar acciones con IA...",
+    "inputPlaceholder": "Buscar o escribe un comando... (ej: Crear vacaciones para Juan)",
+    "ai": "IA",
+    "analyzing": "Analizando...",
+    "actionDetected": "Acción detectada",
+    "confidence": "confianza",
+    "executing": "Ejecutando...",
+    "executeAction": "Ejecutar Acción",
+    "keyboardHint": "Presiona Enter para ejecutar • Shift+Enter para buscar sin ejecutar",
+    "actionCompleted": "¡Acción completada!",
+    "actionFailed": "No se pudo completar",
+    "aiSuggestion": "Sugerencia de IA",
+    "suggestions": "Sugerencias",
+    "commandsAndExamples": "Comandos y ejemplos",
+    "categories": {
+      "employees": "Empleados",
+      "vacations": "Vacaciones",
+      "payroll": "Nómina",
+      "attendance": "Asistencia",
+      "loans": "Préstamos",
+      "evaluations": "Evaluaciones",
+      "navigation": "Navegación"
+    }
+  },
   "employees": {
     "title": "Gestión de Empleados",
     "addEmployee": "Agregar Empleado",
