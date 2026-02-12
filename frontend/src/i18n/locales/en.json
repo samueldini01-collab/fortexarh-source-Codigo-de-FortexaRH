@@ -1920,7 +1920,11 @@
       "templateCreated": "Template created",
       "errorSaving": "Error saving",
       "confirmDeleteTemplate": "Delete this template?",
-      "templateDeleted": "Template deleted"
+      "templateDeleted": "Template deleted",
+      "confirmDelete": "Delete this template?",
+      "templateDuplicated": "Template duplicated",
+      "errorDuplicating": "Error duplicating",
+      "selectEmployee": "Select an employee"
     },
     "categories": {
       "constancia": "Certificate",
