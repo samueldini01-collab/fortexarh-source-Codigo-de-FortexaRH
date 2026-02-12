@@ -454,7 +454,7 @@ export default function Dashboard() {
             <CardHeader className="pb-3">
               <CardTitle className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-100">
                 <Users className="w-5 h-5 text-slate-500 dark:text-slate-400" />
-                Empleados Recientes
+                {t('dashboard.recentEmployees')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -487,7 +487,7 @@ export default function Dashboard() {
               ) : (
                 <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                   <Users className="w-12 h-12 mx-auto mb-2 text-slate-300 dark:text-slate-600" />
-                  <p>No hay empleados registrados</p>
+                  <p>{t('dashboard.noEmployeesRegistered')}</p>
                 </div>
               )}
             </CardContent>
@@ -498,7 +498,7 @@ export default function Dashboard() {
             <CardHeader className="pb-3">
               <CardTitle className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-100">
                 <Calendar className="w-5 h-5 text-slate-500 dark:text-slate-400" />
-                Próximas Vacaciones
+                {t('dashboard.upcomingVacations')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -531,7 +531,7 @@ export default function Dashboard() {
               ) : (
                 <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                   <Calendar className="w-12 h-12 mx-auto mb-2 text-slate-300 dark:text-slate-600" />
-                  <p>No hay vacaciones programadas</p>
+                  <p>{t('dashboard.noVacationsScheduled')}</p>
                 </div>
               )}
             </CardContent>
