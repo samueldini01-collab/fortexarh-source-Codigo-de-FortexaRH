@@ -48,6 +48,8 @@
     "settings": "Configuración",
     "profile": "Perfil",
     "logout": "Cerrar sesión",
+    "refresh": "Actualizar",
+    "clearFilters": "Limpiar filtros",
     "login": "Iniciar sesión",
     "register": "Registrarse",
     "welcome": "Bienvenido",
