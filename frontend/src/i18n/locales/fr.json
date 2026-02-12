@@ -781,6 +781,31 @@
       "dedicatedManager": "Gestionnaire de compte dédié"
     }
   },
+  "globalSearch": {
+    "placeholder": "Rechercher ou exécuter des actions IA...",
+    "inputPlaceholder": "Rechercher ou tapez une commande... (ex: Créer vacances pour Juan)",
+    "ai": "IA",
+    "analyzing": "Analyse en cours...",
+    "actionDetected": "Action détectée",
+    "confidence": "confiance",
+    "executing": "Exécution...",
+    "executeAction": "Exécuter l'Action",
+    "keyboardHint": "Appuyez sur Entrée pour exécuter • Maj+Entrée pour rechercher sans exécuter",
+    "actionCompleted": "Action terminée!",
+    "actionFailed": "Impossible de terminer",
+    "aiSuggestion": "Suggestion IA",
+    "suggestions": "Suggestions",
+    "commandsAndExamples": "Commandes et exemples",
+    "categories": {
+      "employees": "Employés",
+      "vacations": "Vacances",
+      "payroll": "Paie",
+      "attendance": "Présence",
+      "loans": "Prêts",
+      "evaluations": "Évaluations",
+      "navigation": "Navigation"
+    }
+  },
   "employees": {
     "title": "Gestion des Employés",
     "addEmployee": "Ajouter un Employé",
