@@ -240,7 +240,7 @@ export default function PayrollV2Page() {
       );
       setTssPreviewData(response.data);
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al cargar vista previa TSS");
+      toast.error(error.response?.data?.detail || t('payrollV2.messages.errorLoadingTss'));
       setShowTssPreview(false);
     } finally {
       setTssLoading(false);
@@ -263,9 +263,9 @@ export default function PayrollV2Page() {
       const filename = tssPreviewData?.filename || `TSS_Report_${periodId}.txt`;
       link.download = filename;
       link.click();
-      toast.success("Reporte TSS descargado");
+      toast.success(t('payrollV2.messages.tssDownloaded'));
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al descargar reporte TSS");
+      toast.error(error.response?.data?.detail || t('payrollV2.messages.errorDownloadingTss'));
     }
   };
 
