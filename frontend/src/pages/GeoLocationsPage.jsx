@@ -511,7 +511,7 @@ export default function GeoLocationsPage() {
 
   if (loading) {
     return (
-      <DashboardLayout title="Ubicaciones GPS">
+      <DashboardLayout title={t('geoLocationsPage.title')}>
         <div className="flex items-center justify-center h-64">
           <RefreshCw className="w-8 h-8 animate-spin text-slate-400" />
         </div>
@@ -520,19 +520,19 @@ export default function GeoLocationsPage() {
   }
 
   return (
-    <DashboardLayout title="Marcación con Geolocalización">
+    <DashboardLayout title={t('geoLocationsPage.title')}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
-              Marcación con Geolocalización
+              {t('geoLocationsPage.title')}
             </h1>
-            <p className="text-slate-500">Gestión de ubicaciones y control de asistencia GPS</p>
+            <p className="text-slate-500">{t('geoLocationsPage.subtitle')}</p>
           </div>
           <Button onClick={() => { resetLocationForm(); setShowLocationDialog(true); }}>
             <Plus className="w-4 h-4 mr-2" />
-            Nueva Ubicación
+            {t('geoLocationsPage.newLocation')}
           </Button>
         </div>
 
@@ -546,7 +546,7 @@ export default function GeoLocationsPage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{locations.length}</p>
-                  <p className="text-sm text-slate-500">Ubicaciones</p>
+                  <p className="text-sm text-slate-500">{t('geoLocationsPage.cards.locations')}</p>
                 </div>
               </div>
             </CardContent>
@@ -560,7 +560,7 @@ export default function GeoLocationsPage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{todayAttendance?.summary?.marked_today || 0}</p>
-                  <p className="text-sm text-slate-500">Marcaron Hoy</p>
+                  <p className="text-sm text-slate-500">{t('geoLocationsPage.cards.markedToday')}</p>
                 </div>
               </div>
             </CardContent>
@@ -574,7 +574,7 @@ export default function GeoLocationsPage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{todayAttendance?.summary?.pending || 0}</p>
-                  <p className="text-sm text-slate-500">Pendientes</p>
+                  <p className="text-sm text-slate-500">{t('geoLocationsPage.cards.pending')}</p>
                 </div>
               </div>
             </CardContent>
@@ -588,7 +588,7 @@ export default function GeoLocationsPage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{todayAttendance?.summary?.outside_zone_alerts || 0}</p>
-                  <p className="text-sm text-slate-500">Fuera de Zona</p>
+                  <p className="text-sm text-slate-500">{t('geoLocationsPage.cards.outsideZone')}</p>
                 </div>
               </div>
             </CardContent>
