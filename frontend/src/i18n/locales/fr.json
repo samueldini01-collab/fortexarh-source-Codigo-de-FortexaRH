@@ -3100,16 +3100,26 @@
     }
   },
   "accounting": {
-    "title": "Comptabilité",
+    "title": "Module Comptabilité",
+    "subtitle": "Écritures de journal et plan comptable",
     "tabs": {
       "entries": "Écritures",
       "accounts": "Comptes",
-      "reports": "Rapports"
+      "reports": "Rapports",
+      "journalEntries": "Écritures de Journal",
+      "chartOfAccounts": "Plan Comptable"
+    },
+    "stats": {
+      "totalEntries": "Total Écritures",
+      "totalDebits": "Total Débits",
+      "totalCredits": "Total Crédits",
+      "fromPayroll": "De la Paie"
     },
     "filters": {
       "search": "Rechercher par numéro...",
-      "startDate": "Date début",
-      "endDate": "Date fin",
+      "searchByNumber": "Rechercher par Numéro",
+      "startDate": "Date Début",
+      "endDate": "Date Fin",
       "status": "Statut",
       "all": "Tous",
       "pending": "En Attente",
