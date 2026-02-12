@@ -2250,7 +2250,14 @@
       "errorUpdating": "Erreur de mise à jour",
       "errorDeleting": "Erreur de suppression",
       "confirmDelete": "Supprimer cet utilisateur?",
-      "noUsers": "Aucun utilisateur enregistré"
+      "noUsers": "Aucun utilisateur enregistré",
+      "fillRequired": "Remplissez tous les champs requis",
+      "roleNameRequired": "Le nom du rôle est requis",
+      "roleCreated": "Rôle créé avec succès",
+      "errorCreatingRole": "Erreur lors de la création du rôle",
+      "passwordRequired": "Le mot de passe est requis",
+      "passwordUpdated": "Mot de passe mis à jour avec succès",
+      "errorPassword": "Erreur de mise à jour du mot de passe"
     }
   },
   "roles": {
