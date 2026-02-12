@@ -323,10 +323,10 @@ export default function SettingsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Lock className="w-5 h-5" />
-                  Cambiar Contraseña
+                  {t('settingsPage.passwordSection.title')}
                 </CardTitle>
                 <CardDescription>
-                  Actualiza tu contraseña para mantener tu cuenta segura
+                  {t('settingsPage.passwordSection.subtitle')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -339,7 +339,7 @@ export default function SettingsPage() {
                   )}
                   
                   <div className="space-y-2">
-                    <Label htmlFor="currentPassword">Contraseña Actual</Label>
+                    <Label htmlFor="currentPassword">{t('settingsPage.passwordSection.currentPassword')}</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <Input
@@ -348,7 +348,7 @@ export default function SettingsPage() {
                         value={passwordForm.currentPassword}
                         onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
                         className="pl-9 pr-10"
-                        placeholder="Tu contraseña actual"
+                        placeholder={t('settingsPage.passwordSection.currentPlaceholder')}
                         required
                         data-testid="current-password-input"
                       />
@@ -363,7 +363,7 @@ export default function SettingsPage() {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="newPassword">Nueva Contraseña</Label>
+                    <Label htmlFor="newPassword">{t('settingsPage.passwordSection.newPassword')}</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <Input
@@ -372,7 +372,7 @@ export default function SettingsPage() {
                         value={passwordForm.newPassword}
                         onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
                         className="pl-9"
-                        placeholder="Mínimo 6 caracteres"
+                        placeholder={t('settingsPage.passwordSection.newPlaceholder')}
                         required
                         minLength={6}
                         data-testid="new-password-input"
@@ -381,7 +381,7 @@ export default function SettingsPage() {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirmar Nueva Contraseña</Label>
+                    <Label htmlFor="confirmPassword">{t('settingsPage.passwordSection.confirmPassword')}</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <Input
@@ -390,7 +390,7 @@ export default function SettingsPage() {
                         value={passwordForm.confirmPassword}
                         onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
                         className="pl-9"
-                        placeholder="Repite la nueva contraseña"
+                        placeholder={t('settingsPage.passwordSection.confirmPlaceholder')}
                         required
                         data-testid="confirm-new-password-input"
                       />
@@ -403,7 +403,7 @@ export default function SettingsPage() {
                     className="bg-emerald-600 hover:bg-emerald-700"
                     data-testid="change-password-btn"
                   >
-                    {savingPassword ? "Guardando..." : "Cambiar Contraseña"}
+                    {savingPassword ? t('settingsPage.buttons.saving') : t('settingsPage.buttons.changePassword')}
                   </Button>
                 </form>
               </CardContent>
