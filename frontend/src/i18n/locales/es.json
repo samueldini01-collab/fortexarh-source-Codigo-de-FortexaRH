@@ -706,6 +706,41 @@
     "payrollSummary": "Resumen de Nómina del Mes",
     "totalPayrollThisMonth": "Total Nómina Este Mes"
   },
+  "payrollDashboard": {
+    "title": "Dashboard de Nómina",
+    "subtitle": "Métricas y análisis de tu fuerza laboral",
+    "stats": {
+      "activeEmployees": "Empleados Activos",
+      "paidThisYear": "Pagado Este Año",
+      "avgSalary": "Salario Promedio",
+      "paidPayrolls": "Nóminas Pagadas"
+    },
+    "charts": {
+      "monthlyTrend": "Tendencia Mensual de Nómina",
+      "netPaidByMonth": "Neto pagado por mes",
+      "period": "Período",
+      "netPaid": "Neto Pagado",
+      "gross": "Bruto",
+      "deptDistribution": "Distribución por Departamento",
+      "deptDistributionDesc": "Empleados y salarios por área (click para ver detalle)",
+      "employerCost": "Costo Total Empleador vs Neto",
+      "employerCostDesc": "Desglose de aportes patronales (últimos 6 períodos)",
+      "grossSalary": "Salario Bruto",
+      "sfsEmployer": "SFS Patronal",
+      "afpEmployer": "AFP Patronal",
+      "netPaidToEmployees": "Neto Pagado a Empleados",
+      "totalEmployerCost": "Costo Total Empleador",
+      "topSalaries": "Top 10 Salarios",
+      "topSalariesDesc": "Empleados con mayor salario base"
+    },
+    "drillDown": {
+      "activeEmployees": "Empleados Activos"
+    },
+    "noTrendData": "No hay datos de tendencia",
+    "noDeptData": "No hay datos por departamento",
+    "noCostData": "No hay datos de costos",
+    "noSalaryData": "No hay datos de salarios"
+  },
   "pricing": {
     "planNames": {
       "basic": "FortexaRH Básico",
