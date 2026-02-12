@@ -3101,11 +3101,20 @@
     }
   },
   "accounting": {
-    "title": "Accounting",
+    "title": "Accounting Module",
+    "subtitle": "Journal entries and chart of accounts",
     "tabs": {
       "entries": "Journal Entries",
       "accounts": "Accounts",
-      "reports": "Reports"
+      "reports": "Reports",
+      "journalEntries": "Journal Entries",
+      "chartOfAccounts": "Chart of Accounts"
+    },
+    "stats": {
+      "totalEntries": "Total Entries",
+      "totalDebits": "Total Debits",
+      "totalCredits": "Total Credits",
+      "fromPayroll": "From Payroll"
     },
     "filters": {
       "search": "Search by number...",
