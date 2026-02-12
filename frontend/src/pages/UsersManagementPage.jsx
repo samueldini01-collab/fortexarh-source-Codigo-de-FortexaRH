@@ -288,7 +288,7 @@ export default function UsersManagementPage() {
 
   if (loading) {
     return (
-      <DashboardLayout title="Gestión de Usuarios">
+      <DashboardLayout title={t('users.title')}>
         <div className="flex items-center justify-center h-64">
           <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
         </div>
@@ -297,7 +297,7 @@ export default function UsersManagementPage() {
   }
 
   return (
-    <DashboardLayout title="Gestión de Usuarios">
+    <DashboardLayout title={t('users.title')}>
       <div className="space-y-6" data-testid="users-management-page">
         {/* Header */}
         <div className="flex items-center justify-between">
