@@ -1459,6 +1459,7 @@
       "cancel": "Cancel"
     },
     "table": {
+      "title": "requests",
       "employee": "Employee",
       "type": "Type",
       "dates": "Dates",
