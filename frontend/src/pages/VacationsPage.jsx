@@ -256,7 +256,12 @@ export default function VacationsPage() {
   // Calendar helpers
   const getDaysInMonth = (month, year) => new Date(year, month, 0).getDate();
   const getFirstDayOfMonth = (month, year) => new Date(year, month - 1, 1).getDay();
-  const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+  const monthNames = [
+    t('common.months.january'), t('common.months.february'), t('common.months.march'),
+    t('common.months.april'), t('common.months.may'), t('common.months.june'),
+    t('common.months.july'), t('common.months.august'), t('common.months.september'),
+    t('common.months.october'), t('common.months.november'), t('common.months.december')
+  ];
 
   const renderCalendar = () => {
     const daysInMonth = getDaysInMonth(calendarMonth, calendarYear);
