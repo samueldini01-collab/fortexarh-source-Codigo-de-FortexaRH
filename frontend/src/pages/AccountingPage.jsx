@@ -595,7 +595,7 @@ export default function AccountingPage() {
               <CardContent className="p-4">
                 <div className="flex flex-wrap gap-4 items-end">
                   <div className="space-y-1">
-                    <Label className="text-xs text-slate-500 dark:text-slate-400">Buscar por Número</Label>
+                    <Label className="text-xs text-slate-500 dark:text-slate-400">{t('accounting.filters.searchByNumber')}</Label>
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <Input 
@@ -607,7 +607,7 @@ export default function AccountingPage() {
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs text-slate-500 dark:text-slate-400">Fecha Inicio</Label>
+                    <Label className="text-xs text-slate-500 dark:text-slate-400">{t('accounting.filters.startDate')}</Label>
                     <Input 
                       type="date" 
                       className="w-40"
@@ -616,7 +616,7 @@ export default function AccountingPage() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs text-slate-500 dark:text-slate-400">Fecha Fin</Label>
+                    <Label className="text-xs text-slate-500 dark:text-slate-400">{t('accounting.filters.endDate')}</Label>
                     <Input 
                       type="date" 
                       className="w-40"
@@ -626,15 +626,15 @@ export default function AccountingPage() {
                   </div>
                   <Button onClick={handleSearch}>
                     <Search className="w-4 h-4 mr-2" />
-                    Buscar
+                    {t('common.search')}
                   </Button>
                   <Button variant="outline" onClick={clearSearch}>
-                    Limpiar
+                    {t('common.clearFilters')}
                   </Button>
                   <div className="flex-1" />
                   <Button onClick={() => { resetEntryForm(); setShowNewEntry(true); }}>
                     <Plus className="w-4 h-4 mr-2" />
-                    Nuevo Asiento
+                    {t('accounting.buttons.newEntry')}
                   </Button>
                 </div>
               </CardContent>
