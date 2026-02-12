@@ -110,7 +110,7 @@ export default function AttendancePage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Asistencia registrada");
+      toast.success(t('attendance.messages.registered'));
       setIsDialogOpen(false);
       setFormData({
         employee_id: "",
@@ -122,7 +122,7 @@ export default function AttendancePage() {
       });
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al registrar");
+      toast.error(error.response?.data?.detail || t('attendance.messages.errorRegistering'));
     }
   };
 
@@ -135,10 +135,10 @@ export default function AttendancePage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Entrada registrada");
+      toast.success(t('attendance.messages.checkInSuccess'));
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al registrar entrada");
+      toast.error(error.response?.data?.detail || t('attendance.messages.errorCheckIn'));
     }
   };
 
@@ -151,10 +151,10 @@ export default function AttendancePage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Salida registrada");
+      toast.success(t('attendance.messages.checkOutSuccess'));
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al registrar salida");
+      toast.error(error.response?.data?.detail || t('attendance.messages.errorCheckOut'));
     }
   };
 
@@ -165,7 +165,7 @@ export default function AttendancePage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Turno creado");
+      toast.success(t('attendance.shifts.created'));
       setIsShiftDialogOpen(false);
       setShiftFormData({
         name: "",
@@ -178,7 +178,7 @@ export default function AttendancePage() {
       });
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al crear turno");
+      toast.error(error.response?.data?.detail || t('attendance.messages.errorCreatingShift'));
     }
   };
 
