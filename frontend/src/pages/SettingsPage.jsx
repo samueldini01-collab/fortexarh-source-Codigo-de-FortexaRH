@@ -122,25 +122,26 @@ export default function SettingsPage() {
     }
   };
 
-  const plans = [
+  // Dynamic plans with translations
+  const getPlans = () => [
     {
       id: "basic",
-      name: "FortexaRH Básico",
-      price: "$10/mes + $1.5/empleado",
-      features: ["Hasta 50 empleados", "Gestión de empleados", "Nómina básica", "Asistencias", "Vacaciones", "Soporte por email"]
+      name: t('settingsPage.plans.basic.name'),
+      price: t('settingsPage.plans.basic.price'),
+      features: t('settingsPage.plans.basic.features', { returnObjects: true })
     },
     {
       id: "pro",
-      name: "FortexaRH Pro",
-      price: "$20/mes + $1.5/empleado",
+      name: t('settingsPage.plans.pro.name'),
+      price: t('settingsPage.plans.pro.price'),
       popular: true,
-      features: ["Hasta 200 empleados", "Todas las funciones básicas", "Evaluaciones de desempeño", "Reclutamiento", "Reportes avanzados", "Soporte prioritario"]
+      features: t('settingsPage.plans.pro.features', { returnObjects: true })
     },
     {
       id: "enterprise",
-      name: "FortexaRH Enterprise",
-      price: "$76/mes + $1.5/empleado",
-      features: ["Empleados ilimitados", "Todas las funciones", "API personalizada", "Soporte 24/7", "Gerente de cuenta dedicado", "Capacitación incluida"]
+      name: t('settingsPage.plans.enterprise.name'),
+      price: t('settingsPage.plans.enterprise.price'),
+      features: t('settingsPage.plans.enterprise.features', { returnObjects: true })
     }
   ];
 
@@ -178,7 +179,7 @@ export default function SettingsPage() {
                 ) : (
                   <form onSubmit={handleSaveCompany} className="space-y-4 max-w-lg">
                     <div className="space-y-2">
-                      <Label>Nombre de la Empresa</Label>
+                      <Label>{t('settingsPage.companyInfo.name')}</Label>
                       <Input
                         value={companyForm.name}
                         onChange={(e) => setCompanyForm({...companyForm, name: e.target.value})}
@@ -187,16 +188,16 @@ export default function SettingsPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Industria</Label>
+                      <Label>{t('settingsPage.companyInfo.industry')}</Label>
                       <Input
                         value={companyForm.industry}
                         onChange={(e) => setCompanyForm({...companyForm, industry: e.target.value})}
-                        placeholder="Ej: Tecnología, Manufactura, Servicios..."
+                        placeholder={t('settingsPage.companyInfo.industryPlaceholder')}
                         data-testid="company-industry"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Dirección</Label>
+                      <Label>{t('settingsPage.companyInfo.address')}</Label>
                       <Input
                         value={companyForm.address}
                         onChange={(e) => setCompanyForm({...companyForm, address: e.target.value})}
@@ -204,7 +205,7 @@ export default function SettingsPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Teléfono</Label>
+                      <Label>{t('settingsPage.companyInfo.phone')}</Label>
                       <Input
                         value={companyForm.phone}
                         onChange={(e) => setCompanyForm({...companyForm, phone: e.target.value})}
@@ -212,7 +213,7 @@ export default function SettingsPage() {
                       />
                     </div>
                     <Button type="submit" className="bg-slate-900 hover:bg-slate-800" disabled={saving} data-testid="save-company-btn">
-                      {saving ? "Guardando..." : "Guardar Cambios"}
+                      {saving ? t('settingsPage.buttons.saving') : t('settingsPage.buttons.saveChanges')}
                     </Button>
                   </form>
                 )}
