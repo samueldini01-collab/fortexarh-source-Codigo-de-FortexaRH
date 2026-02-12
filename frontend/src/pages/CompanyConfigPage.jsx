@@ -52,17 +52,19 @@ const getFontSizes = (t) => [
   { value: "large", label: t('companyConfig.fontSizes.large') },
 ];
 
-const THEMES = [
-  { value: "light", label: "Claro", icon: Sun },
-  { value: "dark", label: "Oscuro", icon: Moon },
-  { value: "auto", label: "Automático", icon: Monitor },
+// Dynamic themes - will be called inside component
+const getThemes = (t) => [
+  { value: "light", label: t('companyConfig.themes.light'), icon: Sun },
+  { value: "dark", label: t('companyConfig.themes.dark'), icon: Moon },
+  { value: "auto", label: t('companyConfig.themes.auto'), icon: Monitor },
 ];
 
+// Integration descriptions will use translations inside component
 const INTEGRATIONS = [
-  { id: "fortexaerp", name: "FortexaERP", description: "Sincronización nativa completa con el ecosistema Fortexa.", icon: "🏢", logo: null, connected: false, type: "mock" },
-  { id: "quickbooks", name: "QuickBooks Online", description: "Exporta nómina y asientos contables automáticamente a QBO.", icon: null, logo: "/quickbooks-logo.jpg", connected: false, type: "oauth" },
-  { id: "sap", name: "SAP Business One", description: "Integración empresarial para grandes organizaciones.", icon: "🔷", logo: null, connected: false, type: "mock" },
-  { id: "oracle", name: "Oracle NetSuite", description: "Conectividad en la nube para gestión financiera avanzada.", icon: "🌐", logo: null, connected: false, type: "mock" },
+  { id: "fortexaerp", name: "FortexaERP", descKey: "companyConfig.integrations.fortexaerp.desc", icon: "🏢", logo: null, connected: false, type: "mock" },
+  { id: "quickbooks", name: "QuickBooks Online", descKey: "companyConfig.integrations.quickbooks.desc", icon: null, logo: "/quickbooks-logo.jpg", connected: false, type: "oauth" },
+  { id: "sap", name: "SAP Business One", descKey: "companyConfig.integrations.sap.desc", icon: "🔷", logo: null, connected: false, type: "mock" },
+  { id: "oracle", name: "Oracle NetSuite", descKey: "companyConfig.integrations.oracle.desc", icon: "🌐", logo: null, connected: false, type: "mock" },
 ];
 
 export default function CompanyConfigPage() {
@@ -71,6 +73,11 @@ export default function CompanyConfigPage() {
   const [activeTab, setActiveTab] = useState("general");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  
+  // Get translated tabs and options
+  const TABS = getCompanyConfigTabs(t);
+  const FONT_SIZES = getFontSizes(t);
+  const THEMES = getThemes(t);
   
   // Company data
   const [company, setCompany] = useState({
