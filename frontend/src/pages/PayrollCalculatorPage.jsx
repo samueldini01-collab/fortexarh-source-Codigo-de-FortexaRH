@@ -619,10 +619,10 @@ export default function PayrollCalculatorPage() {
                   data-testid="calculate-btn"
                 >
                   <Calculator className="w-4 h-4 mr-2" />
-                  {calculating ? "Calculando..." : "Calcular"}
+                  {calculating ? t('calculator.calculating') : t('calculator.calculate')}
                 </Button>
                 <Button variant="outline" onClick={resetForm} data-testid="reset-btn">
-                  Limpiar
+                  {t('calculator.clear')}
                 </Button>
               </div>
             </CardContent>
@@ -633,10 +633,10 @@ export default function PayrollCalculatorPage() {
             <CardHeader>
               <CardTitle className="heading flex items-center gap-2">
                 <FileText className="w-5 h-5" />
-                Resultado del Cálculo
+                {t('calculator.result')}
               </CardTitle>
               <CardDescription>
-                {result ? `Empleado: ${result.employee_name || "Sin asignar"}` : "Complete el formulario y presione Calcular"}
+                {result ? `${t('calculator.employee')}: ${result.employee_name || t('calculator.unassigned')}` : t('calculator.completeFormAndCalculate')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -646,16 +646,16 @@ export default function PayrollCalculatorPage() {
                   <div className="bg-emerald-50 rounded-lg p-4 space-y-2">
                     <h4 className="font-semibold text-emerald-800 flex items-center gap-2">
                       <DollarSign className="w-4 h-4" />
-                      Ingresos
+                      {t('calculator.earnings')}
                     </h4>
                     <div className="space-y-1 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-slate-600 dark:text-slate-300">Salario Proporcional ({result.days_worked} días)</span>
+                        <span className="text-slate-600 dark:text-slate-300">{t('calculator.proportionalSalary')} ({result.days_worked} {t('common.days')})</span>
                         <span className="font-medium">{formatCurrency(result.proportional_salary)}</span>
                       </div>
                       {result.extra_hours_pay > 0 && (
                         <div className="flex justify-between">
-                          <span className="text-slate-600 dark:text-slate-300">Horas Extra ({result.hours_extra}h)</span>
+                          <span className="text-slate-600 dark:text-slate-300">{t('calculator.extraHours')} ({result.hours_extra}h)</span>
                           <span className="font-medium">{formatCurrency(result.extra_hours_pay)}</span>
                         </div>
                       )}
