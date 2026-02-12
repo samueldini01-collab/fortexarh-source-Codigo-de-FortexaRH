@@ -408,36 +408,36 @@ export default function GeoLocationsPage() {
           data,
           { headers: getAuthHeaders(), withCredentials: true }
         );
-        toast.success("Ubicación actualizada");
+        toast.success(t('geoLocationsPage.messages.locationUpdated'));
       } else {
         await axios.post(
           `${API}/geolocation-attendance/locations`,
           data,
           { headers: getAuthHeaders(), withCredentials: true }
         );
-        toast.success("Ubicación creada");
+        toast.success(t('geoLocationsPage.messages.locationCreated'));
       }
       
       setShowLocationDialog(false);
       resetLocationForm();
       fetchLocations();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al guardar ubicación");
+      toast.error(error.response?.data?.detail || t('geoLocationsPage.messages.errorSaving'));
     }
   };
 
   const handleDeleteLocation = async (locationId) => {
-    if (!window.confirm("¿Está seguro de eliminar esta ubicación?")) return;
+    if (!window.confirm(t('geoLocationsPage.messages.confirmDelete'))) return;
     
     try {
       await axios.delete(
         `${API}/geolocation-attendance/locations/${locationId}`,
         { headers: getAuthHeaders(), withCredentials: true }
       );
-      toast.success("Ubicación eliminada");
+      toast.success(t('geoLocationsPage.messages.locationDeleted'));
       fetchLocations();
     } catch (error) {
-      toast.error("Error al eliminar ubicación");
+      toast.error(t('geoLocationsPage.messages.errorDeleting'));
     }
   };
 
@@ -450,12 +450,12 @@ export default function GeoLocationsPage() {
         { employee_ids: selectedEmployees, location_id: selectedLocation.location_id },
         { headers: getAuthHeaders(), withCredentials: true }
       );
-      toast.success("Empleados asignados correctamente");
+      toast.success(t('geoLocationsPage.messages.employeesAssigned'));
       setShowAssignDialog(false);
       setSelectedEmployees([]);
       fetchLocations();
     } catch (error) {
-      toast.error("Error al asignar empleados");
+      toast.error(t('geoLocationsPage.messages.errorAssigning'));
     }
   };
 
@@ -466,10 +466,10 @@ export default function GeoLocationsPage() {
         {},
         { headers: getAuthHeaders(), withCredentials: true }
       );
-      toast.success("Marcación aprobada");
+      toast.success(t('geoLocationsPage.messages.markApproved'));
       fetchTodayAttendance();
     } catch (error) {
-      toast.error("Error al aprobar marcación");
+      toast.error(t('geoLocationsPage.messages.errorApproving'));
     }
   };
 
