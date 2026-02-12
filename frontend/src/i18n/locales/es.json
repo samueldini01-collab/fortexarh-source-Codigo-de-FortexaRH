@@ -948,8 +948,8 @@
       "contract": "Contrato",
       "deductions": "Descuentos",
       "documents": "Documentos",
-      "payment": "Forma de Pago",
-      "emergency": "Contacto de Emergencia"
+      "paymentMethod": "Forma de Pago",
+      "emergencyContact": "Contacto de Emergencia"
     }
   },
   "payroll": {
