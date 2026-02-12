@@ -145,21 +145,21 @@ export default function SettingsPage() {
   ];
 
   return (
-    <DashboardLayout title="Configuración">
+    <DashboardLayout title={t('settings.title')}>
       <div className="space-y-6" data-testid="settings-page">
         <Tabs defaultValue="company" className="space-y-6">
           <TabsList>
             <TabsTrigger value="company" data-testid="tab-company">
               <Building2 className="w-4 h-4 mr-2" />
-              Empresa
+              {t('settings.tabs.company')}
             </TabsTrigger>
             <TabsTrigger value="subscription" data-testid="tab-subscription">
               <CreditCard className="w-4 h-4 mr-2" />
-              Suscripción
+              {t('settings.tabs.subscription')}
             </TabsTrigger>
             <TabsTrigger value="account" data-testid="tab-account">
               <User className="w-4 h-4 mr-2" />
-              Mi Cuenta
+              {t('settings.tabs.account')}
             </TabsTrigger>
           </TabsList>
 
@@ -167,8 +167,8 @@ export default function SettingsPage() {
           <TabsContent value="company">
             <Card className="border-slate-200 dark:border-slate-700">
               <CardHeader>
-                <CardTitle>Información de la Empresa</CardTitle>
-                <CardDescription>Actualiza los datos de tu empresa</CardDescription>
+                <CardTitle>{t('settings.company.title')}</CardTitle>
+                <CardDescription>{t('settings.company.subtitle')}</CardDescription>
               </CardHeader>
               <CardContent>
                 {loading ? (
