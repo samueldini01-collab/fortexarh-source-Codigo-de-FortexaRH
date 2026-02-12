@@ -120,7 +120,7 @@ export default function SupportPage() {
               <Link to="/">
                 <Button variant="outline" size="sm">
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  Volver al Inicio
+                  {t('support.success.backToHome')}
                 </Button>
               </Link>
             </div>
@@ -135,28 +135,28 @@ export default function SupportPage() {
                 <CheckCircle className="w-10 h-10 text-emerald-600" />
               </div>
               <h1 className="text-2xl font-bold text-slate-800 mb-2">
-                ¡Solicitud Recibida!
+                {t('support.success.title')}
               </h1>
               <p className="text-slate-600 mb-6">
-                Hemos recibido su solicitud de soporte. Nuestro equipo se pondrá en contacto con usted pronto.
+                {t('support.success.subtitle')}
               </p>
               
               <div className="bg-slate-50 rounded-lg p-4 mb-6">
-                <p className="text-sm text-slate-500 mb-1">Número de Ticket</p>
+                <p className="text-sm text-slate-500 mb-1">{t('support.success.ticketNumber')}</p>
                 <p className="text-xl font-mono font-bold text-emerald-600">{ticketId}</p>
               </div>
 
               <p className="text-sm text-slate-500 mb-6">
-                Se ha enviado una confirmación a <strong>{formData.email}</strong>
+                {t('support.success.confirmationSent')} <strong>{formData.email}</strong>
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button onClick={() => { setSubmitted(false); setFormData({ name: "", email: "", company: "", phone: "", category: "", priority: "medium", subject: "", message: "" }); }}>
-                  Nueva Solicitud
+                  {t('support.success.newRequest')}
                 </Button>
                 <Link to="/">
                   <Button variant="outline">
-                    Volver al Inicio
+                    {t('support.success.backToHome')}
                   </Button>
                 </Link>
               </div>
