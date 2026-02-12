@@ -3261,6 +3261,41 @@
       "loadCatalog": "Cargue un catálogo para comenzar"
     }
   },
+  "costsByDepartment": {
+    "title": "Costos por Departamento",
+    "subtitle": "Análisis de costos laborales distribuidos por departamento",
+    "employees": "Empleados",
+    "readyToExport": "¿Listo para exportar? Descarga el reporte en tu formato preferido.",
+    "exportCSV": "Exportar CSV",
+    "exportExcel": "Exportar Excel",
+    "tabs": {
+      "preview": "Vista Previa",
+      "charts": "Gráficos"
+    },
+    "cards": {
+      "totalCost": "Costo Total",
+      "totalEmployees": "Total Empleados",
+      "avgCostPerEmployee": "Costo Prom. por Empleado",
+      "departments": "Departamentos"
+    },
+    "charts": {
+      "distribution": "Distribución de Costos",
+      "distributionDesc": "Porcentaje del costo total por departamento",
+      "comparison": "Comparación Mensual",
+      "comparisonDesc": "Evolución de costos por departamento"
+    },
+    "empty": {
+      "title": "Sin datos de departamentos",
+      "description": "No hay empleados registrados o no tienen departamento asignado para este período."
+    },
+    "messages": {
+      "errorLoading": "Error al cargar el reporte",
+      "errorLoadingEmployees": "Error al cargar empleados del departamento",
+      "errorExporting": "Error al exportar",
+      "exportedCSV": "Reporte exportado a CSV",
+      "exportedExcel": "Reporte exportado a Excel"
+    }
+  },
   "pwa": {
     "title": "Instalar FortexaRH",
     "subtitle": "Accede más rápido desde tu pantalla de inicio",
