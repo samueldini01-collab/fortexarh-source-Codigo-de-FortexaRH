@@ -792,14 +792,14 @@ export default function PayrollCalculatorPage() {
                       data-testid="save-calc-btn"
                     >
                       <Save className="w-4 h-4 mr-2" />
-                      Guardar
+                      {t('common.save')}
                     </Button>
                   </div>
                 </>
               ) : (
                 <div className="text-center py-12">
                   <Calculator className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                  <p className="text-slate-500 dark:text-slate-400">Ingrese los datos y presione "Calcular" para ver el resultado</p>
+                  <p className="text-slate-500 dark:text-slate-400">{t('calculator.enterDataAndCalculate')}</p>
                 </div>
               )}
             </CardContent>
