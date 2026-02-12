@@ -2891,7 +2891,8 @@
       "all": "All",
       "pending": "Pending",
       "posted": "Posted",
-      "voided": "Voided"
+      "voided": "Voided",
+      "draft": "Draft"
     },
     "buttons": {
       "refresh": "Refresh",
