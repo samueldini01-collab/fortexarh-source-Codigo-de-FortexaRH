@@ -107,7 +107,8 @@
     "preview": "Vista previa",
     "submit": "Enviar",
     "selectOption": "Seleccionar una opción",
-    "lastUpdated": "Última actualización"
+    "lastUpdated": "Última actualización",
+    "days": "días"
   },
   "nav": {
     "dashboard": "Panel Principal",
