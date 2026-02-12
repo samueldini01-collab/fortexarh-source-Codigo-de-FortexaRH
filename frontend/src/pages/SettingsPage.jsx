@@ -228,10 +228,10 @@ export default function SettingsPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-emerald-600 font-medium">Plan Actual</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{subscription?.current_plan?.name || "Cargando..."}</p>
+                    <p className="text-sm text-emerald-600 font-medium">{t('settingsPage.subscription.currentPlan')}</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{subscription?.current_plan?.name || t('common.loading')}</p>
                     <p className="text-sm text-slate-500 mt-1">
-                      {subscription?.employee_count} empleados • ${subscription?.monthly_cost?.toFixed(2)}/mes
+                      {subscription?.employee_count} {t('settingsPage.subscription.employees')} • ${subscription?.monthly_cost?.toFixed(2)}{t('settingsPage.subscription.perMonth')}
                     </p>
                   </div>
                   <div className="w-16 h-16 bg-emerald-100 rounded-xl flex items-center justify-center">
@@ -243,7 +243,7 @@ export default function SettingsPage() {
 
             {/* Available Plans */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {plans.map((plan) => {
+              {getPlans().map((plan) => {
                 const isCurrentPlan = subscription?.current_plan?.plan_id === plan.id;
                 return (
                   <Card 
@@ -253,7 +253,7 @@ export default function SettingsPage() {
                   >
                     {plan.popular && (
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-emerald-500 text-white text-xs font-medium rounded-full">
-                        Más Popular
+                        {t('settingsPage.subscription.mostPopular')}
                       </div>
                     )}
                     <CardHeader className="text-center pb-2">
@@ -262,7 +262,7 @@ export default function SettingsPage() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <ul className="space-y-2">
-                        {plan.features.map((feature, index) => (
+                        {(Array.isArray(plan.features) ? plan.features : []).map((feature, index) => (
                           <li key={index} className="flex items-center gap-2 text-sm">
                             <Check className="w-4 h-4 text-emerald-500" />
                             {feature}
@@ -275,7 +275,7 @@ export default function SettingsPage() {
                         onClick={() => handleUpgrade(plan.id)}
                         data-testid={`upgrade-${plan.id}`}
                       >
-                        {isCurrentPlan ? "Plan Actual" : "Actualizar"}
+                        {isCurrentPlan ? t('settingsPage.subscription.currentPlanBtn') : t('settingsPage.subscription.upgrade')}
                       </Button>
                     </CardContent>
                   </Card>
@@ -288,8 +288,8 @@ export default function SettingsPage() {
           <TabsContent value="account" className="space-y-6">
             <Card className="border-slate-200 dark:border-slate-700">
               <CardHeader>
-                <CardTitle>Mi Cuenta</CardTitle>
-                <CardDescription>Información de tu cuenta personal</CardDescription>
+                <CardTitle>{t('settingsPage.account.title')}</CardTitle>
+                <CardDescription>{t('settingsPage.account.subtitle')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4 max-w-lg">
@@ -305,11 +305,11 @@ export default function SettingsPage() {
                   <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <p className="text-slate-500 dark:text-slate-400">Rol</p>
+                        <p className="text-slate-500 dark:text-slate-400">{t('settingsPage.account.role')}</p>
                         <p className="font-medium capitalize">{user?.role || "Admin"}</p>
                       </div>
                       <div>
-                        <p className="text-slate-500 dark:text-slate-400">ID de Usuario</p>
+                        <p className="text-slate-500 dark:text-slate-400">{t('settingsPage.account.userId')}</p>
                         <p className="font-mono text-xs">{user?.user_id}</p>
                       </div>
                     </div>
