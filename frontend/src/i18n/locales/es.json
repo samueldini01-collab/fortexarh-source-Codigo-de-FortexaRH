@@ -1603,7 +1603,12 @@
       "errorPayment": "Error al registrar pago",
       "errorDeleting": "Error al eliminar",
       "noLoans": "No hay préstamos registrados",
-      "noLoansFilter": "No hay préstamos con estos filtros"
+      "noLoansFilter": "No hay préstamos con estos filtros",
+      "errorLoading": "Error al cargar datos",
+      "fillRequired": "Complete todos los campos requeridos",
+      "confirmDelete": "¿Está seguro de eliminar este préstamo?",
+      "errorLoadDetails": "Error al cargar detalles",
+      "errorLoadHistory": "Error al cargar historial de pagos"
     }
   },
   "portal": {
