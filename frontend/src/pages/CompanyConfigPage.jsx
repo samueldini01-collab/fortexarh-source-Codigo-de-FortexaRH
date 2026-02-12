@@ -25,14 +25,15 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-const TABS = [
-  { id: "general", label: "General", icon: Building2 },
-  { id: "logo", label: "Logo", icon: Image },
-  { id: "apariencia", label: "Apariencia", icon: Palette },
-  { id: "marca", label: "Marca y Textos", icon: Type },
-  { id: "notificaciones", label: "Notificaciones", icon: Bell },
-  { id: "integraciones", label: "Integraciones", icon: Link2 },
-  { id: "auditoria", label: "Auditoría", icon: History },
+// Dynamic tabs - will be replaced inside component to use translations
+const getCompanyConfigTabs = (t) => [
+  { id: "general", label: t('companyConfig.tabs.general'), icon: Building2 },
+  { id: "logo", label: t('companyConfig.tabs.logo'), icon: Image },
+  { id: "apariencia", label: t('companyConfig.tabs.appearance'), icon: Palette },
+  { id: "marca", label: t('companyConfig.tabs.branding'), icon: Type },
+  { id: "notificaciones", label: t('companyConfig.tabs.notifications'), icon: Bell },
+  { id: "integraciones", label: t('companyConfig.tabs.integrations'), icon: Link2 },
+  { id: "auditoria", label: t('companyConfig.tabs.audit'), icon: History },
 ];
 
 const FONT_FAMILIES = [
@@ -44,10 +45,11 @@ const FONT_FAMILIES = [
   { value: "montserrat", label: "Montserrat" },
 ];
 
-const FONT_SIZES = [
-  { value: "small", label: "Pequeño" },
-  { value: "medium", label: "Mediano" },
-  { value: "large", label: "Grande" },
+// Dynamic font sizes - will be replaced inside component
+const getFontSizes = (t) => [
+  { value: "small", label: t('companyConfig.fontSizes.small') },
+  { value: "medium", label: t('companyConfig.fontSizes.medium') },
+  { value: "large", label: t('companyConfig.fontSizes.large') },
 ];
 
 const THEMES = [
