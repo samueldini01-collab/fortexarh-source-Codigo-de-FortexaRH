@@ -786,6 +786,41 @@
       "dedicatedManager": "Dedicated account manager"
     }
   },
+  "payrollV2": {
+    "periodTypes": {
+      "biweekly1": "Biweekly (1-15)",
+      "biweekly2": "Biweekly (16-30/31)",
+      "monthly": "Monthly"
+    },
+    "payrollTypes": {
+      "regular": "Regular",
+      "temporary": "Temporary",
+      "bonus": "Bonus/Extraordinary",
+      "christmas": "Christmas Bonus",
+      "vacation": "Vacation",
+      "severance": "Severance",
+      "construction": "Construction NG 07/2007"
+    },
+    "messages": {
+      "errorLoadingPeriods": "Error loading periods",
+      "errorLoadingTss": "Error loading TSS preview",
+      "tssDownloaded": "TSS report downloaded",
+      "errorDownloadingTss": "Error downloading TSS report",
+      "periodCreated": "Period created successfully",
+      "errorCreatingPeriod": "Error creating period",
+      "payrollsCalculated": "Payrolls calculated",
+      "sentForApproval": "Payroll sent for approval",
+      "errorSendingForApproval": "Error sending for approval",
+      "periodApproved": "Period approved",
+      "errorApproving": "Error approving",
+      "rejectReasonRequired": "You must provide a reason for rejection",
+      "periodRejected": "Payroll rejected and returned to draft",
+      "errorRejecting": "Error rejecting",
+      "payrollPaid": "Payroll paid. Entry #{{entryNumber}} generated.",
+      "bankFileDownloaded": "Bank file {{bankName}} downloaded",
+      "errorGeneratingBankFile": "Error generating bank file"
+    }
+  },
   "globalSearch": {
     "placeholder": "Search or run AI actions...",
     "inputPlaceholder": "Search or type a command... (e.g., Create vacation for Juan)",
