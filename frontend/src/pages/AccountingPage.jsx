@@ -127,11 +127,11 @@ export default function AccountingPage() {
       setAccounts(accountsRes.data);
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Error al cargar datos");
+      toast.error(t('accounting.messages.errorLoading'));
     } finally {
       setLoading(false);
     }
-  }, [getAuthHeaders]);
+  }, [getAuthHeaders, t]);
 
   const fetchCatalogTemplates = useCallback(async () => {
     try {
