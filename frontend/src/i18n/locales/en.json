@@ -949,8 +949,8 @@
       "contract": "Contract",
       "deductions": "Deductions",
       "documents": "Documents",
-      "payment": "Payment",
-      "emergency": "Emergency Contact"
+      "paymentMethod": "Payment Method",
+      "emergencyContact": "Emergency Contact"
     }
   },
   "payroll": {
