@@ -101,7 +101,13 @@
       "october": "October",
       "november": "November",
       "december": "December"
-    }
+    },
+    "backToHome": "Back to Home",
+    "noResults": "No results found",
+    "preview": "Preview",
+    "submit": "Submit",
+    "selectOption": "Select an option",
+    "lastUpdated": "Last updated"
   },
   "nav": {
     "dashboard": "Dashboard",
