@@ -689,27 +689,27 @@ export default function EmployeesPage() {
                 <TabsList className="grid grid-cols-6 w-full mb-6">
                   <TabsTrigger value="datos" className="text-xs" data-testid="tab-datos">
                     <User className="w-3 h-3 mr-1" />
-                    Datos Principales
+                    {t('employees.tabs.mainData')}
                   </TabsTrigger>
                   <TabsTrigger value="contrato" className="text-xs" data-testid="tab-contrato">
                     <FileText className="w-3 h-3 mr-1" />
-                    Contrato
+                    {t('employees.tabs.contract')}
                   </TabsTrigger>
                   <TabsTrigger value="descuentos" className="text-xs" data-testid="tab-descuentos">
                     <Percent className="w-3 h-3 mr-1" />
-                    Descuentos
+                    {t('employees.tabs.deductions')}
                   </TabsTrigger>
                   <TabsTrigger value="documentos" className="text-xs" data-testid="tab-documentos">
                     <FileText className="w-3 h-3 mr-1" />
-                    Documentos
+                    {t('employees.tabs.documents')}
                   </TabsTrigger>
                   <TabsTrigger value="pago" className="text-xs" data-testid="tab-pago">
                     <CreditCard className="w-3 h-3 mr-1" />
-                    Forma de Pago
+                    {t('employees.tabs.paymentMethod')}
                   </TabsTrigger>
                   <TabsTrigger value="emergencia" className="text-xs" data-testid="tab-emergencia">
                     <Phone className="w-3 h-3 mr-1" />
-                    Contacto de Emergencia
+                    {t('employees.tabs.emergencyContact')}
                   </TabsTrigger>
                 </TabsList>
 
