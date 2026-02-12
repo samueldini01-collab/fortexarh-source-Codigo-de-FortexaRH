@@ -3124,8 +3124,9 @@
     },
     "filters": {
       "search": "Buscar por número...",
-      "startDate": "Fecha inicio",
-      "endDate": "Fecha fin",
+      "searchByNumber": "Buscar por Número",
+      "startDate": "Fecha Inicio",
+      "endDate": "Fecha Fin",
       "status": "Estado",
       "all": "Todos",
       "pending": "Pendiente",
