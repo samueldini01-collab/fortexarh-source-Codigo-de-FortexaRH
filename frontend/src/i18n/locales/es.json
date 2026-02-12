@@ -1935,7 +1935,11 @@
       "templateCreated": "Plantilla creada",
       "errorSaving": "Error al guardar",
       "confirmDeleteTemplate": "¿Eliminar esta plantilla?",
-      "templateDeleted": "Plantilla eliminada"
+      "templateDeleted": "Plantilla eliminada",
+      "confirmDelete": "¿Eliminar esta plantilla?",
+      "templateDuplicated": "Plantilla duplicada",
+      "errorDuplicating": "Error al duplicar",
+      "selectEmployee": "Selecciona un empleado"
     },
     "categories": {
       "constancia": "Constancia",
