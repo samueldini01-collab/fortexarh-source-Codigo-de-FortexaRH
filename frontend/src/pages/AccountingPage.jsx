@@ -421,7 +421,7 @@ export default function AccountingPage() {
       );
       setPreviewData(response.data);
     } catch (error) {
-      toast.error("Error al cargar vista previa");
+      toast.error(t('accounting.messages.errorPreview'));
       setShowPreview(false);
     } finally {
       setPreviewLoading(false);
@@ -440,7 +440,7 @@ export default function AccountingPage() {
       );
       setPreviewData(response.data);
     } catch (error) {
-      toast.error("Error al cambiar formato");
+      toast.error(t('accounting.messages.errorChangeFormat'));
     } finally {
       setPreviewLoading(false);
     }
