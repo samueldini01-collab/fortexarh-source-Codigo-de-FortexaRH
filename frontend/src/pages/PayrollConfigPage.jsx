@@ -260,22 +260,22 @@ export default function PayrollConfigPage() {
               <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
                 <DollarSign className="w-4 h-4 text-red-600 dark:text-red-400" />
               </div>
-              <CardTitle className="text-lg">Deducciones del Empleado</CardTitle>
+              <CardTitle className="text-lg">{t('payrollConfig.employeeDeductions')}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <InputWithTooltip
-                label="AFP - Empleado (%)"
+                label={t('payrollConfig.afpEmployee')}
                 field="afp_employee"
                 value={config.afp_employee}
-                tooltip="Aporte del empleado al fondo de pensiones (Administradora de Fondos de Pensiones)"
+                tooltip={t('payrollConfig.afpEmployeeTooltip')}
               />
               <InputWithTooltip
-                label="SFS - Empleado (%)"
+                label={t('payrollConfig.sfsEmployee')}
                 field="sfs_employee"
                 value={config.sfs_employee}
-                tooltip="Aporte del empleado al Seguro Familiar de Salud"
+                tooltip={t('payrollConfig.sfsEmployeeTooltip')}
               />
             </div>
           </CardContent>
@@ -288,34 +288,34 @@ export default function PayrollConfigPage() {
               <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
                 <Building2 className="w-4 h-4 text-purple-600" />
               </div>
-              <CardTitle className="text-lg">Aportes del Empleador</CardTitle>
+              <CardTitle className="text-lg">{t('payrollConfig.employerContributions')}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <InputWithTooltip
-                label="AFP - Empleador (%)"
+                label={t('payrollConfig.afpEmployer')}
                 field="afp_employer"
                 value={config.afp_employer}
-                tooltip="Aporte del empleador al fondo de pensiones"
+                tooltip={t('payrollConfig.afpEmployerTooltip')}
               />
               <InputWithTooltip
-                label="SFS - Empleador (%)"
+                label={t('payrollConfig.sfsEmployer')}
                 field="sfs_employer"
                 value={config.sfs_employer}
-                tooltip="Aporte del empleador al Seguro Familiar de Salud"
+                tooltip={t('payrollConfig.sfsEmployerTooltip')}
               />
               <InputWithTooltip
-                label="Seguro de Riesgo Laboral SRL (%)"
+                label={t('payrollConfig.srl')}
                 field="srl_employer"
                 value={config.srl_employer}
-                tooltip="Aporte del empleador al Seguro de Riesgos Laborales"
+                tooltip={t('payrollConfig.srlTooltip')}
               />
               <InputWithTooltip
-                label="INFOTEP (%)"
+                label={t('payrollConfig.infotep')}
                 field="infotep_employer"
                 value={config.infotep_employer}
-                tooltip="Aporte del empleador al Instituto Nacional de Formación Técnico Profesional"
+                tooltip={t('payrollConfig.infotepTooltip')}
               />
             </div>
           </CardContent>
@@ -328,7 +328,7 @@ export default function PayrollConfigPage() {
               <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
                 <FileText className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               </div>
-              <CardTitle className="text-lg">Configuración del ISR (Impuesto Sobre la Renta)</CardTitle>
+              <CardTitle className="text-lg">{t('payrollConfig.isrConfig')}</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -336,7 +336,7 @@ export default function PayrollConfigPage() {
             <Collapsible open={isrExpanded} onOpenChange={setIsrExpanded}>
               <CollapsibleTrigger className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400">
                 <ChevronDown className={`w-4 h-4 transition-transform ${isrExpanded ? 'rotate-180' : ''}`} />
-                Ver explicación de los rangos de ISR
+                {t('payrollConfig.isrExplanation')}
               </CollapsibleTrigger>
               <CollapsibleContent className="mt-3">
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
