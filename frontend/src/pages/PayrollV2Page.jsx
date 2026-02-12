@@ -65,33 +65,43 @@ import {
 import { toast } from "sonner";
 import { DrillDownModal } from "@/components/DrillDown";
 
-const months = [
-  { value: 1, label: "Enero" }, { value: 2, label: "Febrero" }, { value: 3, label: "Marzo" },
-  { value: 4, label: "Abril" }, { value: 5, label: "Mayo" }, { value: 6, label: "Junio" },
-  { value: 7, label: "Julio" }, { value: 8, label: "Agosto" }, { value: 9, label: "Septiembre" },
-  { value: 10, label: "Octubre" }, { value: 11, label: "Noviembre" }, { value: 12, label: "Diciembre" }
+// These will be populated inside the component with translations
+const MONTH_KEYS = [
+  { value: 1, key: "january" }, { value: 2, key: "february" }, { value: 3, key: "march" },
+  { value: 4, key: "april" }, { value: 5, key: "may" }, { value: 6, key: "june" },
+  { value: 7, key: "july" }, { value: 8, key: "august" }, { value: 9, key: "september" },
+  { value: 10, key: "october" }, { value: 11, key: "november" }, { value: 12, key: "december" }
 ];
 
-const periodTypes = [
-  { value: "quincenal_1", label: "Quincenal (1-15)" },
-  { value: "quincenal_2", label: "Quincenal (16-30/31)" },
-  { value: "mensual", label: "Mensual" }
+const PERIOD_TYPE_KEYS = [
+  { value: "quincenal_1", key: "biweekly1" },
+  { value: "quincenal_2", key: "biweekly2" },
+  { value: "mensual", key: "monthly" }
 ];
 
-const payrollTypes = [
-  { value: "REG", label: "Regular", icon: Calendar, color: "blue" },
-  { value: "TEMP", label: "Temporal", icon: Briefcase, color: "orange" },
-  { value: "BONO", label: "Bono/Extraordinaria", icon: Gift, color: "purple" },
-  { value: "REG13", label: "Regalía Pascual", icon: Gift, color: "emerald" },
-  { value: "VAC", label: "Vacaciones", icon: Calendar, color: "cyan" },
-  { value: "LIQ", label: "Liquidación", icon: FileText, color: "red" },
-  { value: "OBREROS_NG", label: "Obreros NG 07/2007", icon: Briefcase, color: "amber" },
+const PAYROLL_TYPE_KEYS = [
+  { value: "REG", key: "regular", icon: Calendar, color: "blue" },
+  { value: "TEMP", key: "temporary", icon: Briefcase, color: "orange" },
+  { value: "BONO", key: "bonus", icon: Gift, color: "purple" },
+  { value: "REG13", key: "christmas", icon: Gift, color: "emerald" },
+  { value: "VAC", key: "vacation", icon: Calendar, color: "cyan" },
+  { value: "LIQ", key: "severance", icon: FileText, color: "red" },
+  { value: "OBREROS_NG", key: "construction", icon: Briefcase, color: "amber" },
 ];
-
-const departments = ["Administración", "Ventas", "Marketing", "TI", "Recursos Humanos", "Finanzas", "Operaciones", "Legal", "Producción", "Logística"];
 
 export default function PayrollV2Page() {
   const { t } = useTranslation();
+  
+  // Generate translated arrays
+  const months = MONTH_KEYS.map(m => ({ value: m.value, label: t(`common.months.${m.key}`) }));
+  const periodTypes = PERIOD_TYPE_KEYS.map(p => ({ value: p.value, label: t(`payrollV2.periodTypes.${p.key}`) }));
+  const payrollTypes = PAYROLL_TYPE_KEYS.map(p => ({ 
+    value: p.value, 
+    label: t(`payrollV2.payrollTypes.${p.key}`), 
+    icon: p.icon, 
+    color: p.color 
+  }));
+  
   const [activeTab, setActiveTab] = useState("dashboard");
   const [periods, setPeriods] = useState([]);
   const [selectedPeriod, setSelectedPeriod] = useState(null);
