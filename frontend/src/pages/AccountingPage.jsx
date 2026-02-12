@@ -329,12 +329,12 @@ export default function AccountingPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Cuenta creada correctamente");
+      toast.success(t('accounting.messages.accountCreated'));
       setShowNewAccount(false);
       resetAccountForm();
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al crear cuenta");
+      toast.error(error.response?.data?.detail || t('accounting.messages.errorCreatingAccount'));
     }
   };
 
@@ -346,42 +346,42 @@ export default function AccountingPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Cuenta actualizada correctamente");
+      toast.success(t('accounting.messages.accountUpdated'));
       setShowEditAccount(false);
       setSelectedAccount(null);
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al actualizar cuenta");
+      toast.error(error.response?.data?.detail || t('accounting.messages.errorUpdatingAccount'));
     }
   };
 
   const handleDeleteAccount = async (accountId) => {
-    if (!confirm("¿Eliminar esta cuenta contable?")) return;
+    if (!confirm(t('accounting.messages.confirmDeleteAccount'))) return;
     
     try {
       await axios.delete(`${API}/accounting/accounts/${accountId}`, {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Cuenta eliminada");
+      toast.success(t('accounting.messages.accountDeleted'));
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al eliminar cuenta");
+      toast.error(error.response?.data?.detail || t('accounting.messages.errorDeletingAccount'));
     }
   };
 
   const handleResetAccounts = async () => {
-    if (!confirm("¿Restablecer todas las cuentas a valores predeterminados? Esto eliminará las cuentas actuales.")) return;
+    if (!confirm(t('accounting.messages.confirmResetAccounts'))) return;
     
     try {
       await axios.post(`${API}/accounting/accounts/reset-defaults`, {}, {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Cuentas restablecidas");
+      toast.success(t('accounting.messages.accountsReset'));
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al restablecer cuentas");
+      toast.error(error.response?.data?.detail || t('accounting.messages.errorResetAccounts'));
     }
   };
 
