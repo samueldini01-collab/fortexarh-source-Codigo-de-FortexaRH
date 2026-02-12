@@ -359,61 +359,61 @@ export default function PayrollConfigPage() {
             {/* ISR Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <CurrencyInput
-                label="Salario Anual Mínimo (Exento)"
+                label={t('payrollConfig.isr.minSalary')}
                 field="isr_min_salary"
                 value={config.isr_min_salary}
-                tooltip="Salario anual hasta el cual el empleado está exento de ISR"
+                tooltip={t('payrollConfig.isr.minSalaryTooltip')}
               />
               <InputWithTooltip
-                label="Tasa ISR Mínima (%)"
+                label={t('payrollConfig.isr.minRate')}
                 field="isr_min_rate"
                 value={config.isr_min_rate}
-                tooltip="Tasa de ISR aplicada al rango entre mínimo y medio"
+                tooltip={t('payrollConfig.isr.minRateTooltip')}
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <CurrencyInput
-                label="Salario Anual Medio"
+                label={t('payrollConfig.isr.midSalary')}
                 field="isr_mid_salary"
                 value={config.isr_mid_salary}
-                tooltip="Límite superior del segundo rango de ISR"
+                tooltip={t('payrollConfig.isr.midSalaryTooltip')}
               />
               <InputWithTooltip
-                label="Tasa ISR Media (%)"
+                label={t('payrollConfig.isr.midRate')}
                 field="isr_mid_rate"
                 value={config.isr_mid_rate}
-                tooltip="Tasa de ISR aplicada al rango entre medio y máximo"
+                tooltip={t('payrollConfig.isr.midRateTooltip')}
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <CurrencyInput
-                label="Monto Fijo Medio"
+                label={t('payrollConfig.isr.midFixed')}
                 field="isr_mid_fixed"
                 value={config.isr_mid_fixed}
-                tooltip="Monto fijo de ISR para el rango medio"
+                tooltip={t('payrollConfig.isr.midFixedTooltip')}
               />
               <CurrencyInput
-                label="Salario Anual Máximo"
+                label={t('payrollConfig.isr.maxSalary')}
                 field="isr_max_salary"
                 value={config.isr_max_salary}
-                tooltip="Límite superior del tercer rango de ISR"
+                tooltip={t('payrollConfig.isr.maxSalaryTooltip')}
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <InputWithTooltip
-                label="Tasa ISR Máxima (%)"
+                label={t('payrollConfig.isr.maxRate')}
                 field="isr_max_rate"
                 value={config.isr_max_rate}
-                tooltip="Tasa de ISR aplicada al rango superior al máximo"
+                tooltip={t('payrollConfig.isr.maxRateTooltip')}
               />
               <CurrencyInput
-                label="Monto Fijo Máximo"
+                label={t('payrollConfig.isr.maxFixed')}
                 field="isr_max_fixed"
                 value={config.isr_max_fixed}
-                tooltip="Monto fijo de ISR para el rango máximo"
+                tooltip={t('payrollConfig.isr.maxFixedTooltip')}
               />
             </div>
           </CardContent>
@@ -427,7 +427,7 @@ export default function PayrollConfigPage() {
             className="bg-blue-600 hover:bg-blue-700 px-8"
           >
             <Save className="w-4 h-4 mr-2" />
-            {saving ? "Guardando..." : "Guardar Configuración"}
+            {saving ? t('common.saving') : t('payrollConfig.saveConfig')}
           </Button>
           <Button 
             variant="outline" 
@@ -435,7 +435,7 @@ export default function PayrollConfigPage() {
             className="px-8"
           >
             <RotateCcw className="w-4 h-4 mr-2" />
-            Restaurar
+            {t('payrollConfig.restore')}
           </Button>
         </div>
       </div>
