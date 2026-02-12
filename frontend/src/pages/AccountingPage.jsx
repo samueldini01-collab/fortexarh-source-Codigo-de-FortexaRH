@@ -697,32 +697,32 @@ export default function AccountingPage() {
                           <TableCell>{getStatusBadge(entry.status)}</TableCell>
                           <TableCell>
                             <div className="flex justify-end gap-1">
-                              <Button size="icon" variant="ghost" onClick={() => openPreview(entry, "summary")} title="Vista Previa">
+                              <Button size="icon" variant="ghost" onClick={() => openPreview(entry, "summary")} title={t('accounting.buttons.preview')}>
                                 <Eye className="w-4 h-4" />
                               </Button>
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                  <Button size="icon" variant="ghost" title="Exportar">
+                                  <Button size="icon" variant="ghost" title={t('common.export')}>
                                     <Download className="w-4 h-4" />
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
-                                  <DropdownMenuLabel>Exportar como</DropdownMenuLabel>
+                                  <DropdownMenuLabel>{t('accounting.preview.exportAs')}</DropdownMenuLabel>
                                   <DropdownMenuSeparator />
                                   <DropdownMenuItem onClick={() => exportToCSV(entry, "summary")}>
                                     <FileSpreadsheet className="w-4 h-4 mr-2" />
-                                    Resumido (por cuenta)
+                                    {t('accounting.preview.summary')}
                                   </DropdownMenuItem>
                                   <DropdownMenuItem onClick={() => exportToCSV(entry, "detailed")}>
                                     <List className="w-4 h-4 mr-2" />
-                                    Detallado (por empleado)
+                                    {t('accounting.preview.detailed')}
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
-                              <Button size="icon" variant="ghost" onClick={() => openEditEntry(entry)} title="Editar">
+                              <Button size="icon" variant="ghost" onClick={() => openEditEntry(entry)} title={t('common.edit')}>
                                 <Edit className="w-4 h-4" />
                               </Button>
-                              <Button size="icon" variant="ghost" className="text-red-500" onClick={() => handleDeleteEntry(entry)} title="Eliminar">
+                              <Button size="icon" variant="ghost" className="text-red-500" onClick={() => handleDeleteEntry(entry)} title={t('common.delete')}>
                                 <Trash2 className="w-4 h-4" />
                               </Button>
                             </div>
@@ -739,15 +739,15 @@ export default function AccountingPage() {
           {/* Cuentas Tab */}
           <TabsContent value="cuentas" className="space-y-4">
             <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Catálogo de Cuentas</h3>
+              <h3 className="text-lg font-semibold">{t('accounting.catalog.chartOfAccounts')}</h3>
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setShowCatalogSelector(true)}>
                   <RefreshCw className="w-4 h-4 mr-2" />
-                  Cargar Catálogo
+                  {t('accounting.buttons.loadCatalog')}
                 </Button>
                 <Button onClick={() => { resetAccountForm(); setShowNewAccount(true); }}>
                   <Plus className="w-4 h-4 mr-2" />
-                  Nueva Cuenta
+                  {t('accounting.buttons.newAccount')}
                 </Button>
               </div>
             </div>
