@@ -3571,6 +3571,10 @@
       "title": "Carte en Direct",
       "autoRefresh": "Actualisation auto",
       "lastUpdate": "Dernière mise à jour",
+      "daySummary": "Résumé du Jour",
+      "marked": "Pointé",
+      "onMap": "Sur la carte",
+      "recentMarks": "Pointages Récents",
       "filters": {
         "department": "Département",
         "allDepartments": "Tous les départements",
