@@ -464,16 +464,16 @@ export default function CostsByDepartmentPage() {
                 <div className="border-t p-4 bg-slate-50 dark:bg-slate-800 print:hidden">
                   <div className="flex items-center justify-between">
                     <p className="text-sm text-slate-500 dark:text-slate-400">
-                      ¿Listo para exportar? Descarga el reporte en tu formato preferido.
+                      {t('costsByDepartment.readyToExport')}
                     </p>
                     <div className="flex gap-2">
                       <Button onClick={exportToCSV} variant="outline" size="sm">
                         <Download className="w-4 h-4 mr-2" />
-                        Exportar CSV
+                        {t('costsByDepartment.exportCSV')}
                       </Button>
                       <Button onClick={exportToExcel} size="sm" className="bg-emerald-600 hover:bg-emerald-700">
                         <FileSpreadsheet className="w-4 h-4 mr-2" />
-                        Exportar Excel
+                        {t('costsByDepartment.exportExcel')}
                       </Button>
                     </div>
                   </div>
@@ -486,9 +486,9 @@ export default function CostsByDepartmentPage() {
               <Card>
                 <CardContent className="py-12 text-center">
                   <Building2 className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                  <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-2">Sin datos de departamentos</h3>
+                  <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-2">{t('costsByDepartment.empty.title')}</h3>
                   <p className="text-slate-500 dark:text-slate-400">
-                    No hay empleados registrados o no tienen departamento asignado para este período.
+                    {t('costsByDepartment.empty.description')}
                   </p>
                 </CardContent>
               </Card>
@@ -503,9 +503,9 @@ export default function CostsByDepartmentPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <PieChartIcon className="w-5 h-5 text-purple-500" />
-                    Distribución de Costos
+                    {t('costsByDepartment.charts.distribution')}
                   </CardTitle>
-                  <CardDescription>Porcentaje del costo total por departamento</CardDescription>
+                  <CardDescription>{t('costsByDepartment.charts.distributionDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {pieChartData.length > 0 ? (
