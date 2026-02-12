@@ -2866,9 +2866,13 @@
       "errorCreating": "Error al crear unidad",
       "errorUpdating": "Error al actualizar",
       "errorDeleting": "Error al eliminar",
-      "confirmDelete": "¿Eliminar esta unidad?",
+      "confirmDelete": "¿Eliminar este elemento?",
       "templateApplied": "Plantilla aplicada exitosamente",
-      "errorTemplate": "Error al aplicar plantilla"
+      "errorTemplate": "Error al aplicar plantilla",
+      "nameRequired": "El nombre es requerido",
+      "titleRequired": "El título es requerido",
+      "positionCreated": "Posición creada correctamente",
+      "errorCreatingPosition": "Error al crear posición"
     },
     "empty": {
       "title": "Sin organigrama",
