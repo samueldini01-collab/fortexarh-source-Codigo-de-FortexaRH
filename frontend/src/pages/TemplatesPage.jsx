@@ -132,23 +132,23 @@ export default function TemplatesPage() {
   };
 
   const handleDelete = async (templateId) => {
-    if (!window.confirm("¿Eliminar esta plantilla?")) return;
+    if (!window.confirm(t('templates.messages.confirmDelete'))) return;
     try {
       await axios.delete(`${API}/templates/${templateId}`, {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Plantilla eliminada");
+      toast.success(t('templates.messages.templateDeleted'));
       fetchData();
     } catch (error) {
-      toast.error("Error al eliminar");
+      toast.error(t('templates.messages.errorDeleting'));
     }
   };
 
   const handleDuplicate = async (template) => {
     try {
       await axios.post(`${API}/templates`, {
-        name: `${template.name} (Copia)`,
+        name: `${template.name} (${t('common.copy')})`,
         template_type: template.template_type,
         content: template.content,
         variables: template.variables,
@@ -157,10 +157,10 @@ export default function TemplatesPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Plantilla duplicada");
+      toast.success(t('templates.messages.templateDuplicated'));
       fetchData();
     } catch (error) {
-      toast.error("Error al duplicar");
+      toast.error(t('templates.messages.errorDuplicating'));
     }
   };
 
@@ -173,7 +173,7 @@ export default function TemplatesPage() {
 
   const generateDocument = () => {
     if (!selectedEmployee) {
-      toast.error("Selecciona un empleado");
+      toast.error(t('templates.messages.selectEmployee'));
       return;
     }
     
