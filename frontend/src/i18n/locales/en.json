@@ -107,7 +107,8 @@
     "preview": "Preview",
     "submit": "Submit",
     "selectOption": "Select an option",
-    "lastUpdated": "Last updated"
+    "lastUpdated": "Last updated",
+    "days": "days"
   },
   "nav": {
     "dashboard": "Dashboard",
