@@ -2266,7 +2266,14 @@
       "errorUpdating": "Error al actualizar",
       "errorDeleting": "Error al eliminar",
       "confirmDelete": "¿Eliminar este usuario?",
-      "noUsers": "No hay usuarios registrados"
+      "noUsers": "No hay usuarios registrados",
+      "fillRequired": "Complete todos los campos requeridos",
+      "roleNameRequired": "El nombre del rol es requerido",
+      "roleCreated": "Rol creado correctamente",
+      "errorCreatingRole": "Error al crear rol",
+      "passwordRequired": "La contraseña es requerida",
+      "passwordUpdated": "Contraseña actualizada correctamente",
+      "errorPassword": "Error al actualizar contraseña"
     }
   },
   "roles": {
