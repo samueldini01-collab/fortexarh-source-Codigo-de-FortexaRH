@@ -1799,7 +1799,12 @@
       "logoUploaded": "Logo actualizado",
       "logoRemoved": "Logo eliminado",
       "imageTooLarge": "Imagen muy grande (máx. 5MB)",
-      "invalidFormat": "Formato no válido"
+      "invalidFormat": "Formato no válido",
+      "infoUpdated": "Información actualizada",
+      "errorUpdating": "Error al actualizar",
+      "errorPayment": "Error al procesar el pago",
+      "passwordChanged": "Contraseña actualizada correctamente",
+      "errorPassword": "Error al cambiar contraseña"
     }
   },
   "documents": {
