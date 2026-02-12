@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuth, API } from "@/App";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
