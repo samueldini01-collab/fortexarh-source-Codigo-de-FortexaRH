@@ -1474,7 +1474,11 @@
       "errorApproving": "Error al aprobar",
       "errorRejecting": "Error al rechazar",
       "noRequests": "No hay solicitudes de vacaciones",
-      "noBalances": "No hay balances registrados"
+      "noBalances": "No hay balances registrados",
+      "errorLoading": "Error al cargar datos",
+      "errorLoadingBalance": "Error al cargar balance",
+      "exported": "Archivo exportado",
+      "errorExporting": "Error al exportar"
     },
     "calendar": {
       "today": "Hoy",
