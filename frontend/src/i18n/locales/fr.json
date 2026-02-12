@@ -2193,6 +2193,14 @@
       "ticketCreated": "Ticket créé avec succès",
       "errorCreating": "Erreur lors de la création du ticket",
       "noTickets": "Vous n'avez pas de tickets de support"
+    },
+    "success": {
+      "title": "Demande Reçue!",
+      "subtitle": "Nous avons reçu votre demande de support. Notre équipe vous contactera bientôt.",
+      "ticketNumber": "Numéro de Ticket",
+      "confirmationSent": "Une confirmation a été envoyée à",
+      "newRequest": "Nouvelle Demande",
+      "backToHome": "Retour à l'Accueil"
     }
   },
   "users": {
