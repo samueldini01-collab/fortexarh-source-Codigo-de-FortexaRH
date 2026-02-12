@@ -2866,9 +2866,13 @@
       "errorCreating": "Erreur lors de la création",
       "errorUpdating": "Erreur de mise à jour",
       "errorDeleting": "Erreur de suppression",
-      "confirmDelete": "Supprimer cette unité?",
+      "confirmDelete": "Supprimer cet élément?",
       "templateApplied": "Modèle appliqué avec succès",
-      "errorTemplate": "Erreur d'application du modèle"
+      "errorTemplate": "Erreur d'application du modèle",
+      "nameRequired": "Le nom est requis",
+      "titleRequired": "Le titre est requis",
+      "positionCreated": "Poste créé avec succès",
+      "errorCreatingPosition": "Erreur de création du poste"
     },
     "empty": {
       "title": "Pas d'organigramme",
