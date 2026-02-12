@@ -3238,6 +3238,41 @@
       "loadCatalog": "Chargez un catalogue pour commencer"
     }
   },
+  "costsByDepartment": {
+    "title": "Coûts par Département",
+    "subtitle": "Analyse des coûts de main-d'œuvre répartis par département",
+    "employees": "Employés",
+    "readyToExport": "Prêt à exporter? Téléchargez le rapport dans votre format préféré.",
+    "exportCSV": "Exporter CSV",
+    "exportExcel": "Exporter Excel",
+    "tabs": {
+      "preview": "Aperçu",
+      "charts": "Graphiques"
+    },
+    "cards": {
+      "totalCost": "Coût Total",
+      "totalEmployees": "Total Employés",
+      "avgCostPerEmployee": "Coût Moy. par Employé",
+      "departments": "Départements"
+    },
+    "charts": {
+      "distribution": "Distribution des Coûts",
+      "distributionDesc": "Pourcentage du coût total par département",
+      "comparison": "Comparaison Mensuelle",
+      "comparisonDesc": "Évolution des coûts par département"
+    },
+    "empty": {
+      "title": "Pas de données de département",
+      "description": "Pas d'employés enregistrés ou ils n'ont pas de département assigné pour cette période."
+    },
+    "messages": {
+      "errorLoading": "Erreur lors du chargement du rapport",
+      "errorLoadingEmployees": "Erreur lors du chargement des employés du département",
+      "errorExporting": "Erreur lors de l'exportation",
+      "exportedCSV": "Rapport exporté en CSV",
+      "exportedExcel": "Rapport exporté en Excel"
+    }
+  },
   "pwa": {
     "title": "Installer FortexaRH",
     "subtitle": "Accédez plus rapidement depuis votre écran d'accueil",
