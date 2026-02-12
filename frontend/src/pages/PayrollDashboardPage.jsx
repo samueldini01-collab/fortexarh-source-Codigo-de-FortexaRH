@@ -329,18 +329,18 @@ export default function PayrollDashboardPage() {
                   
                   <div className="grid grid-cols-2 gap-4 pt-4 border-t">
                     <div className="text-center p-4 bg-slate-50 rounded-lg">
-                      <p className="text-sm text-slate-500 dark:text-slate-400">Neto Pagado a Empleados</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{t('payrollDashboard.charts.netPaidToEmployees')}</p>
                       <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(employer_costs.total_net_salary)}</p>
                     </div>
                     <div className="text-center p-4 bg-slate-50 rounded-lg">
-                      <p className="text-sm text-slate-500 dark:text-slate-400">Costo Total Empleador</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{t('payrollDashboard.charts.totalEmployerCost')}</p>
                       <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{formatCurrency(employer_costs.total_employer_cost)}</p>
                     </div>
                   </div>
                 </div>
               ) : (
                 <div className="h-[250px] flex items-center justify-center text-slate-400">
-                  No hay datos de costos
+                  {t('payrollDashboard.noCostData')}
                 </div>
               )}
             </CardContent>
@@ -350,10 +350,10 @@ export default function PayrollDashboardPage() {
           <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleDrillDown("top_salary")}>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                Top 10 Salarios
+                {t('payrollDashboard.charts.topSalaries')}
                 <ChevronRight className="w-4 h-4 text-slate-400" />
               </CardTitle>
-              <CardDescription>Empleados con mayor salario base</CardDescription>
+              <CardDescription>{t('payrollDashboard.charts.topSalariesDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               {top_salaries && top_salaries.length > 0 ? (
@@ -381,7 +381,7 @@ export default function PayrollDashboardPage() {
                 </div>
               ) : (
                 <div className="h-[200px] flex items-center justify-center text-slate-400">
-                  No hay datos de salarios
+                  {t('payrollDashboard.noSalaryData')}
                 </div>
               )}
             </CardContent>
