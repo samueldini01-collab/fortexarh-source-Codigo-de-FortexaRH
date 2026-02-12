@@ -549,7 +549,7 @@ export default function Dashboard() {
           <CardContent>
             <div className="flex items-center justify-between p-4 bg-emerald-50 rounded-xl">
               <div>
-                <p className="text-sm text-emerald-600 mb-1">Total Nómina Este Mes</p>
+                <p className="text-sm text-emerald-600 mb-1">{t('dashboard.totalPayrollThisMonth')}</p>
                 <p className="text-3xl font-bold text-emerald-700">
                   ${(stats?.total_payroll_this_month || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
                 </p>
