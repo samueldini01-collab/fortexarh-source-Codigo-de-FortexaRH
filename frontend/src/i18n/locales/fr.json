@@ -107,7 +107,8 @@
     "preview": "Aperçu",
     "submit": "Soumettre",
     "selectOption": "Sélectionner une option",
-    "lastUpdated": "Dernière mise à jour"
+    "lastUpdated": "Dernière mise à jour",
+    "days": "jours"
   },
   "nav": {
     "dashboard": "Tableau de bord",
