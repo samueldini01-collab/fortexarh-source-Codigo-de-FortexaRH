@@ -144,9 +144,12 @@
     "dgiiReports": "DGII-TSS Reports",
     "geolocation": "Geolocation",
     "cdcAudit": "CDC & Audit",
+    "customizeMenu": "Customize Menu",
+    "customizeMenuDesc": "Organize and hide modules according to your preferences. Changes are saved locally.",
     "groups": {
       "dashboards": "Dashboards",
       "humanResources": "Human Resources",
+      "coreHR": "Core HR",
       "payrollFinance": "Payroll & Finance",
       "timeAttendance": "Time & Attendance",
       "reports": "Reports",
