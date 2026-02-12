@@ -151,9 +151,9 @@ export default function CostsByDepartmentPage() {
       a.click();
       window.URL.revokeObjectURL(url);
       a.remove();
-      toast.success("Reporte exportado a CSV");
+      toast.success(t('costsByDepartment.messages.exportedCSV'));
     } catch (error) {
-      toast.error("Error al exportar");
+      toast.error(t('costsByDepartment.messages.errorExporting'));
     }
   };
 
@@ -176,7 +176,7 @@ export default function CostsByDepartmentPage() {
       a.click();
       window.URL.revokeObjectURL(url);
       a.remove();
-      toast.success("Reporte exportado a Excel");
+      toast.success(t('costsByDepartment.messages.exportedExcel'));
     } catch (error) {
       // Fallback to CSV
       exportToCSV();
