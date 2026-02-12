@@ -1252,7 +1252,24 @@
         "saveSuccess": "Calculation saved successfully",
         "saveError": "Error saving calculation"
       },
-      "pdfTitle": "Payroll Calculation RD"
+      "pdfTitle": "Payroll Calculation RD",
+      "clear": "Clear",
+      "employee": "Employee",
+      "unassigned": "Unassigned",
+      "completeFormAndCalculate": "Complete the form and press Calculate",
+      "earnings": "Earnings",
+      "proportionalSalary": "Proportional Salary",
+      "extraHours": "Extra Hours",
+      "totalEarnings": "Total Earnings",
+      "employeeDeductions": "Employee Deductions",
+      "socialSecurity": "Social Security (TSS)",
+      "subtotalTss": "Subtotal TSS",
+      "incomeTax": "Income Tax (ISR)",
+      "monthlyIsr": "Monthly ISR",
+      "calculatedOnGross": "Calculated on gross salary",
+      "otherDeductionsSection": "Other Deductions",
+      "others": "Others",
+      "enterDataAndCalculate": "Enter data and press \"Calculate\" to see the result"
     }
   },
   "attendance": {
