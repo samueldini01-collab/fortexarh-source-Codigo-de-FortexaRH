@@ -48,6 +48,8 @@
     "settings": "Paramètres",
     "profile": "Profil",
     "logout": "Déconnexion",
+    "refresh": "Actualiser",
+    "clearFilters": "Effacer les filtres",
     "login": "Connexion",
     "register": "S'inscrire",
     "welcome": "Bienvenue",
