@@ -347,7 +347,7 @@ export default function OrganigramaPage() {
       
       await createUnits(templateUnits);
       
-      toast.success("Plantilla aplicada correctamente");
+      toast.success(t('orgChart.messages.templateApplied'));
       setShowTemplateWizard(false);
       setWizardStep(1);
       setSelectedTemplate(null);
@@ -358,7 +358,7 @@ export default function OrganigramaPage() {
       const detail = error.response?.data?.detail;
       const errorMsg = typeof detail === 'string' ? detail : 
                        Array.isArray(detail) ? detail.map(d => d.msg).join(', ') :
-                       "Error al aplicar plantilla";
+                       t('orgChart.messages.errorTemplate');
       toast.error(errorMsg);
     } finally {
       setLoading(false);
