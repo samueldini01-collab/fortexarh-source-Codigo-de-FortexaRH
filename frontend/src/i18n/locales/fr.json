@@ -785,6 +785,41 @@
       "dedicatedManager": "Gestionnaire de compte dédié"
     }
   },
+  "payrollV2": {
+    "periodTypes": {
+      "biweekly1": "Bimensuel (1-15)",
+      "biweekly2": "Bimensuel (16-30/31)",
+      "monthly": "Mensuel"
+    },
+    "payrollTypes": {
+      "regular": "Régulier",
+      "temporary": "Temporaire",
+      "bonus": "Bonus/Extraordinaire",
+      "christmas": "Prime de Noël",
+      "vacation": "Vacances",
+      "severance": "Indemnité de départ",
+      "construction": "Ouvriers NG 07/2007"
+    },
+    "messages": {
+      "errorLoadingPeriods": "Erreur lors du chargement des périodes",
+      "errorLoadingTss": "Erreur lors du chargement de l'aperçu TSS",
+      "tssDownloaded": "Rapport TSS téléchargé",
+      "errorDownloadingTss": "Erreur lors du téléchargement du rapport TSS",
+      "periodCreated": "Période créée avec succès",
+      "errorCreatingPeriod": "Erreur lors de la création de la période",
+      "payrollsCalculated": "Paies calculées",
+      "sentForApproval": "Paie envoyée pour approbation",
+      "errorSendingForApproval": "Erreur lors de l'envoi pour approbation",
+      "periodApproved": "Période approuvée",
+      "errorApproving": "Erreur lors de l'approbation",
+      "rejectReasonRequired": "Vous devez fournir un motif de rejet",
+      "periodRejected": "Paie rejetée et renvoyée en brouillon",
+      "errorRejecting": "Erreur lors du rejet",
+      "payrollPaid": "Paie payée. Écriture #{{entryNumber}} générée.",
+      "bankFileDownloaded": "Fichier bancaire {{bankName}} téléchargé",
+      "errorGeneratingBankFile": "Erreur lors de la génération du fichier bancaire"
+    }
+  },
   "globalSearch": {
     "placeholder": "Rechercher ou exécuter des actions IA...",
     "inputPlaceholder": "Rechercher ou tapez une commande... (ex: Créer vacances pour Juan)",
