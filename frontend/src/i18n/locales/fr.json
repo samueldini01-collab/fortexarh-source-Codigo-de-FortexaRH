@@ -1645,6 +1645,7 @@
   },
   "notifications": {
     "title": "Notifications",
+    "subtitle": "Configurez les rappels de paie et les alertes d'anniversaire",
     "markAllRead": "Marquer tout comme lu",
     "noNotifications": "Vous n'avez pas de notifications",
     "types": {
@@ -1653,6 +1654,12 @@
       "vacation": "Demande de vacances",
       "leave": "Demande de congé",
       "system": "Système"
+    },
+    "messages": {
+      "settingsSaved": "Configuration enregistrée",
+      "errorSaving": "Erreur d'enregistrement de la configuration",
+      "errorSendingReminder": "Erreur d'envoi du rappel",
+      "errorSendingNotifications": "Erreur d'envoi des notifications"
     }
   },
   "settings": {
