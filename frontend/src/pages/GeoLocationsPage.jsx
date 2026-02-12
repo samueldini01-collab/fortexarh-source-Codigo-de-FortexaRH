@@ -877,29 +877,29 @@ export default function GeoLocationsPage() {
                     {/* Quick Stats */}
                     <Card className="bg-slate-50 dark:bg-slate-800/50">
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-sm">Resumen del Día</CardTitle>
+                        <CardTitle className="text-sm">{t('geoLocationsPage.liveMap.daySummary')}</CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-slate-600 dark:text-slate-400">Marcaron</span>
+                          <span className="text-sm text-slate-600 dark:text-slate-400">{t('geoLocationsPage.liveMap.marked')}</span>
                           <Badge className="bg-emerald-100 text-emerald-700">
                             {todayAttendance?.summary?.marked_today || 0}
                           </Badge>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-slate-600 dark:text-slate-400">Pendientes</span>
+                          <span className="text-sm text-slate-600 dark:text-slate-400">{t('geoLocationsPage.cards.pending')}</span>
                           <Badge className="bg-amber-100 text-amber-700">
                             {todayAttendance?.summary?.pending || 0}
                           </Badge>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-slate-600 dark:text-slate-400">Fuera de zona</span>
+                          <span className="text-sm text-slate-600 dark:text-slate-400">{t('geoLocationsPage.liveMap.filters.outsideZone')}</span>
                           <Badge className="bg-red-100 text-red-700">
                             {todayAttendance?.summary?.outside_zone_alerts || 0}
                           </Badge>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-slate-600 dark:text-slate-400">En el mapa</span>
+                          <span className="text-sm text-slate-600 dark:text-slate-400">{t('geoLocationsPage.liveMap.onMap')}</span>
                           <Badge variant="secondary">
                             {getFilteredMapData().employees?.length || 0}
                           </Badge>
@@ -910,7 +910,7 @@ export default function GeoLocationsPage() {
                     {/* Recent Marks */}
                     <Card className="bg-slate-50 dark:bg-slate-800/50">
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-sm">Últimas Marcaciones</CardTitle>
+                        <CardTitle className="text-sm">{t('geoLocationsPage.liveMap.recentMarks')}</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-2 max-h-[280px] overflow-y-auto">
@@ -924,13 +924,13 @@ export default function GeoLocationsPage() {
                                 <span className="truncate max-w-[100px]">{emp.employee_name?.split(' ')[0]}</span>
                               </div>
                               <span className="text-xs text-slate-500">
-                                {new Date(emp.timestamp).toLocaleTimeString('es-DO', { hour: '2-digit', minute: '2-digit' })}
+                                {new Date(emp.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                               </span>
                             </div>
                           ))}
                           {(!liveMapData.employees || liveMapData.employees.length === 0) && (
                             <p className="text-center text-slate-500 text-sm py-4">
-                              Sin marcaciones hoy
+                              {t('geoLocationsPage.table.noMarksToday')}
                             </p>
                           )}
                         </div>
@@ -946,7 +946,7 @@ export default function GeoLocationsPage() {
           <TabsContent value="today">
             <Card>
               <CardHeader>
-                <CardTitle>Marcaciones de Hoy - {todayAttendance?.date}</CardTitle>
+                <CardTitle>{t('geoLocationsPage.tabs.todayAttendance')} - {todayAttendance?.date}</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <Table>
