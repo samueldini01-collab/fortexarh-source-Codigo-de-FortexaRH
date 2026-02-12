@@ -3527,5 +3527,327 @@
         "description": "Ya conoces las funciones principales de FortexaRH. Si necesitas ayuda, puedes:\n\n• Presionar ? para ver atajos de teclado\n• Reiniciar este tutorial desde Configuración\n• Contactar soporte desde el menú de ayuda"
       }
     }
+  },
+  "geoLocationsPage": {
+    "title": "Marcación con Geolocalización",
+    "subtitle": "Gestión de ubicaciones y control de asistencia GPS",
+    "newLocation": "Nueva Ubicación",
+    "cards": {
+      "locations": "Ubicaciones",
+      "markedToday": "Marcaron Hoy",
+      "pending": "Pendientes",
+      "outsideZone": "Fuera de Zona"
+    },
+    "tabs": {
+      "locations": "Ubicaciones",
+      "liveMap": "Mapa en Vivo",
+      "todayAttendance": "Asistencia Hoy",
+      "fraud": "Fraude",
+      "alerts": "Alertas"
+    },
+    "table": {
+      "location": "Ubicación",
+      "type": "Tipo",
+      "coordinates": "Coordenadas",
+      "radius": "Radio",
+      "employees": "Empleados",
+      "status": "Estado",
+      "actions": "Acciones",
+      "employee": "Empleado",
+      "time": "Hora",
+      "distance": "Distancia",
+      "level": "Nivel",
+      "message": "Mensaje",
+      "date": "Fecha",
+      "noLocations": "No hay ubicaciones configuradas",
+      "noMarksToday": "No hay marcaciones hoy",
+      "noAlerts": "No hay alertas de ubicación hoy",
+      "noFraudAlerts": "No hay alertas de fraude detectadas"
+    },
+    "locationTypes": {
+      "office": "Oficina",
+      "project": "Proyecto/Obra",
+      "branch": "Sucursal",
+      "client": "Cliente"
+    },
+    "markTypes": {
+      "entry": "Entrada",
+      "exit": "Salida"
+    },
+    "statuses": {
+      "active": "Activa",
+      "inactive": "Inactiva",
+      "approved": "Aprobada",
+      "pending": "Pendiente",
+      "rejected": "Rechazada"
+    },
+    "liveMap": {
+      "title": "Mapa en Vivo",
+      "autoRefresh": "Auto actualizar",
+      "lastUpdate": "Última actualización",
+      "filters": {
+        "department": "Departamento",
+        "allDepartments": "Todos los departamentos",
+        "location": "Ubicación",
+        "allLocations": "Todas las ubicaciones",
+        "status": "Estado",
+        "allStatuses": "Todos los estados",
+        "withinZone": "Dentro de zona",
+        "outsideZone": "Fuera de zona",
+        "pendingReview": "Pendiente revisión"
+      },
+      "employeesOnMap": "empleados en mapa",
+      "noData": "No hay datos del mapa en vivo disponibles"
+    },
+    "fraud": {
+      "title": "Alertas de Fraude Detectadas",
+      "refresh": "Actualizar",
+      "configureAlerts": "Configurar Alertas",
+      "levels": {
+        "critical": "Crítica",
+        "high": "Alta",
+        "medium": "Media",
+        "low": "Baja"
+      },
+      "status": {
+        "new": "Nueva",
+        "reviewed": "Revisada",
+        "resolved": "Resuelta",
+        "dismissed": "Descartada"
+      },
+      "topEmployees": "Empleados con Más Alertas (Últimos 30 días)",
+      "criticalAlerts": "críticas",
+      "highAlerts": "altas",
+      "mediumAlerts": "medias",
+      "totalAlerts": "Total",
+      "noAlertsMessage": "El sistema monitorea automáticamente las marcaciones",
+      "thresholds": {
+        "title": "Umbrales de Detección",
+        "maxSpeed": "Velocidad máxima",
+        "duplicateWindow": "Ventana duplicados",
+        "minGpsAccuracy": "Precisión GPS mínima",
+        "normalHours": "Horario normal"
+      }
+    },
+    "alerts": {
+      "title": "Marcaciones Fuera de Zona",
+      "subtitle": "Marcaciones que requieren revisión",
+      "outsideAuthorized": "fuera de zona autorizada"
+    },
+    "dialogs": {
+      "newLocation": {
+        "title": "Nueva Ubicación",
+        "editTitle": "Editar Ubicación",
+        "description": "Configure una geocerca para el control de asistencia",
+        "name": "Nombre de la Ubicación",
+        "namePlaceholder": "Ej: Oficina Principal",
+        "address": "Dirección",
+        "addressPlaceholder": "Ej: Av. Winston Churchill #123",
+        "latitude": "Latitud",
+        "longitude": "Longitud",
+        "radius": "Radio (metros)",
+        "locationType": "Tipo de Ubicación",
+        "tip": "Tip: Puede obtener coordenadas desde Google Maps haciendo clic derecho en un punto.",
+        "create": "Crear",
+        "update": "Actualizar"
+      },
+      "assignEmployees": {
+        "title": "Asignar Empleados",
+        "description": "Seleccione los empleados que pueden marcar en esta ubicación"
+      },
+      "report": {
+        "title": "Exportar Reporte de Asistencia",
+        "description": "Genere un reporte de marcaciones por rango de fechas",
+        "startDate": "Fecha Inicio",
+        "endDate": "Fecha Fin",
+        "location": "Ubicación",
+        "allLocations": "Todas las ubicaciones",
+        "format": "Formato",
+        "excel": "Excel/CSV",
+        "preview": "Solo vista previa",
+        "generate": "Generar Reporte",
+        "generating": "Generando..."
+      },
+      "alertSettings": {
+        "title": "Configuración de Alertas",
+        "description": "Configure notificaciones automáticas para problemas de ubicación",
+        "enableAlerts": "Activar Alertas",
+        "enableAlertsDesc": "Habilitar sistema de alertas automáticas",
+        "alertTypes": "Tipos de Alertas",
+        "outsideZone": "Marcaciones fuera de zona",
+        "fraudDetection": "Detección de fraude",
+        "dailySummary": "Resumen diario",
+        "recipients": "Destinatarios",
+        "recipientsPlaceholder": "admin@empresa.com, rrhh@empresa.com",
+        "recipientsHelp": "Separe emails con comas",
+        "distanceThreshold": "Umbral de Distancia (metros)",
+        "distanceHelp": "Distancia desde ubicación para generar alerta",
+        "sendSummary": "Enviar Resumen Ahora",
+        "sendingSummary": "Enviando..."
+      }
+    },
+    "actions": {
+      "assignEmployees": "Asignar empleados",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "approve": "Aprobar",
+      "exportReport": "Exportar Reporte"
+    },
+    "messages": {
+      "locationCreated": "Ubicación creada",
+      "locationUpdated": "Ubicación actualizada",
+      "locationDeleted": "Ubicación eliminada",
+      "employeesAssigned": "Empleados asignados correctamente",
+      "markApproved": "Marcación aprobada",
+      "alertUpdated": "Alerta actualizada",
+      "settingsSaved": "Configuración guardada",
+      "summarySet": "Resumen enviado correctamente",
+      "reportGenerated": "Reporte generado correctamente",
+      "errorLoading": "Error al cargar ubicaciones",
+      "errorSaving": "Error al guardar ubicación",
+      "errorDeleting": "Error al eliminar ubicación",
+      "errorAssigning": "Error al asignar empleados",
+      "errorApproving": "Error al aprobar marcación",
+      "errorUpdatingAlert": "Error al actualizar alerta",
+      "errorSavingSettings": "Error al guardar configuración",
+      "errorSendingSummary": "Error al enviar resumen",
+      "errorGeneratingReport": "Error al generar el reporte",
+      "confirmDelete": "¿Está seguro de eliminar esta ubicación?"
+    }
+  },
+  "settingsPage": {
+    "companyInfo": {
+      "name": "Nombre de la Empresa",
+      "industry": "Industria",
+      "industryPlaceholder": "Ej: Tecnología, Manufactura, Servicios...",
+      "address": "Dirección",
+      "phone": "Teléfono"
+    },
+    "subscription": {
+      "currentPlan": "Plan Actual",
+      "employees": "empleados",
+      "perMonth": "/mes",
+      "mostPopular": "Más Popular",
+      "currentPlanBtn": "Plan Actual",
+      "upgrade": "Actualizar"
+    },
+    "account": {
+      "title": "Mi Cuenta",
+      "subtitle": "Información de tu cuenta personal",
+      "role": "Rol",
+      "userId": "ID de Usuario"
+    },
+    "passwordSection": {
+      "title": "Cambiar Contraseña",
+      "subtitle": "Actualiza tu contraseña para mantener tu cuenta segura",
+      "currentPassword": "Contraseña Actual",
+      "currentPlaceholder": "Tu contraseña actual",
+      "newPassword": "Nueva Contraseña",
+      "newPlaceholder": "Mínimo 6 caracteres",
+      "confirmPassword": "Confirmar Nueva Contraseña",
+      "confirmPlaceholder": "Repite la nueva contraseña"
+    },
+    "buttons": {
+      "saving": "Guardando...",
+      "saveChanges": "Guardar Cambios",
+      "changePassword": "Cambiar Contraseña"
+    },
+    "plans": {
+      "basic": {
+        "name": "FortexaRH Básico",
+        "price": "$10/mes + $1.5/empleado",
+        "features": ["Hasta 50 empleados", "Gestión de empleados", "Nómina básica", "Asistencias", "Vacaciones", "Soporte por email"]
+      },
+      "pro": {
+        "name": "FortexaRH Pro",
+        "price": "$20/mes + $1.5/empleado",
+        "features": ["Hasta 200 empleados", "Todas las funciones básicas", "Evaluaciones de desempeño", "Reclutamiento", "Reportes avanzados", "Soporte prioritario"]
+      },
+      "enterprise": {
+        "name": "FortexaRH Enterprise",
+        "price": "$76/mes + $1.5/empleado",
+        "features": ["Empleados ilimitados", "Todas las funciones", "API personalizada", "Soporte 24/7", "Gerente de cuenta dedicado", "Capacitación incluida"]
+      }
+    }
+  },
+  "supportPage": {
+    "header": {
+      "login": "Iniciar Sesión",
+      "back": "Volver"
+    },
+    "hero": {
+      "title": "Centro de Soporte",
+      "subtitle": "Estamos aquí para ayudarle. Complete el formulario y nuestro equipo se pondrá en contacto con usted lo antes posible."
+    },
+    "contact": {
+      "title": "Información de Contacto",
+      "phone": "Teléfono",
+      "phoneTimes": "Lun-Vie 9am - 6pm",
+      "email": "Email",
+      "emailResponse": "Respuesta en 24h",
+      "location": "Ubicación",
+      "locationAddress": "Santo Domingo, RD"
+    },
+    "hours": {
+      "title": "Horario de Atención",
+      "weekdays": "Lunes a Viernes",
+      "weekdaysTime": "9:00 AM - 6:00 PM",
+      "saturday": "Sábado",
+      "saturdayTime": "9:00 AM - 1:00 PM",
+      "sunday": "Domingo",
+      "sundayTime": "Cerrado"
+    },
+    "response": {
+      "title": "Tiempos de Respuesta",
+      "critical": "Prioridad Crítica",
+      "criticalTime": "1-2 horas",
+      "high": "Prioridad Alta",
+      "highTime": "4-8 horas",
+      "medium": "Prioridad Media",
+      "mediumTime": "24 horas",
+      "low": "Prioridad Baja",
+      "lowTime": "48 horas"
+    },
+    "form": {
+      "title": "Enviar Solicitud de Soporte",
+      "subtitle": "Complete el formulario con los detalles de su consulta. Los campos marcados con * son obligatorios.",
+      "name": "Nombre Completo *",
+      "namePlaceholder": "Juan Pérez",
+      "email": "Correo Electrónico *",
+      "emailPlaceholder": "juan@empresa.com",
+      "company": "Empresa",
+      "companyPlaceholder": "Mi Empresa SRL",
+      "phone": "Teléfono",
+      "phonePlaceholder": "+1 (809) 555-1234",
+      "category": "Categoría *",
+      "categoryPlaceholder": "Seleccione una categoría",
+      "priority": "Prioridad",
+      "priorityPlaceholder": "Seleccione prioridad",
+      "subject": "Asunto *",
+      "subjectPlaceholder": "Breve descripción de su consulta",
+      "message": "Mensaje *",
+      "messagePlaceholder": "Describa detalladamente su consulta o problema. Incluya cualquier información relevante como mensajes de error, pasos para reproducir el problema, etc.",
+      "submit": "Enviar Solicitud",
+      "submitting": "Enviando...",
+      "categories": {
+        "general": "Consulta General",
+        "technical": "Soporte Técnico",
+        "bug": "Reportar Error",
+        "billing": "Facturación y Pagos",
+        "account": "Mi Cuenta",
+        "demo": "Solicitar Demo",
+        "enterprise": "Plan Enterprise"
+      },
+      "priorities": {
+        "low": "Baja - Consulta general",
+        "medium": "Media - Necesito ayuda pronto",
+        "high": "Alta - Problema urgente",
+        "critical": "Crítica - Sistema no funciona"
+      }
+    },
+    "footer": {
+      "tagline": "Sistema de RRHH y Nómina",
+      "copyright": "Todos los derechos reservados."
+    }
   }
 }
