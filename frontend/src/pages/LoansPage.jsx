@@ -227,7 +227,7 @@ export default function LoansPage() {
       setSelectedLoan(response.data);
       setShowDetailModal(true);
     } catch (error) {
-      toast.error("Error al cargar detalles");
+      toast.error(t('loans.messages.errorLoadDetails'));
     }
   };
 
