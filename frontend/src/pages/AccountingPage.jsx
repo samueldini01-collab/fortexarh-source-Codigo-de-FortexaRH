@@ -234,7 +234,7 @@ export default function AccountingPage() {
   // Entry CRUD
   const handleCreateEntry = async () => {
     if (!isBalanced()) {
-      toast.error("El asiento no está balanceado");
+      toast.error(t('accounting.messages.notBalanced'));
       return;
     }
     
@@ -243,18 +243,18 @@ export default function AccountingPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Asiento creado correctamente");
+      toast.success(t('accounting.messages.entryCreated'));
       setShowNewEntry(false);
       resetEntryForm();
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al crear asiento");
+      toast.error(error.response?.data?.detail || t('accounting.messages.errorCreatingEntry'));
     }
   };
 
   const handleUpdateEntry = async () => {
     if (!selectedEntry || !isBalanced()) {
-      toast.error("El asiento no está balanceado");
+      toast.error(t('accounting.messages.notBalanced'));
       return;
     }
     
@@ -263,20 +263,20 @@ export default function AccountingPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Asiento actualizado correctamente");
+      toast.success(t('accounting.messages.entryUpdated'));
       setShowEditEntry(false);
       setSelectedEntry(null);
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al actualizar asiento");
+      toast.error(error.response?.data?.detail || t('accounting.messages.errorUpdatingEntry'));
     }
   };
 
   const handleDeleteEntry = async (entry) => {
     const hasPayroll = entry.payroll_period_id;
     const message = hasPayroll 
-      ? "¿Eliminar este asiento y la nómina asociada?" 
-      : "¿Eliminar este asiento contable?";
+      ? t('accounting.messages.confirmDeleteWithPayroll')
+      : t('accounting.messages.confirmDeleteEntry');
     
     if (!confirm(message)) return;
     
@@ -289,10 +289,10 @@ export default function AccountingPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Asiento eliminado correctamente");
+      toast.success(t('accounting.messages.entryDeleted'));
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al eliminar asiento");
+      toast.error(error.response?.data?.detail || t('accounting.messages.errorDeletingEntry'));
     }
   };
 
