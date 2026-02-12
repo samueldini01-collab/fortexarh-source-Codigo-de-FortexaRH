@@ -1657,7 +1657,7 @@
     }
   },
   "settings": {
-    "title": "Company Settings",
+    "title": "Settings",
     "tabs": {
       "general": "General",
       "logo": "Logo",
@@ -1665,7 +1665,24 @@
       "branding": "Branding & Text",
       "notifications": "Notifications",
       "integrations": "Integrations",
-      "audit": "Audit"
+      "audit": "Audit",
+      "company": "Company",
+      "subscription": "Subscription",
+      "account": "My Account"
+    },
+    "company": {
+      "title": "Company Information",
+      "subtitle": "Update your company details"
+    },
+    "password": {
+      "title": "Change Password",
+      "current": "Current Password",
+      "new": "New Password",
+      "confirm": "Confirm Password",
+      "change": "Change Password",
+      "changing": "Changing...",
+      "minLength": "New password must be at least 6 characters",
+      "noMatch": "Passwords do not match"
     },
     "fontSizes": {
       "small": "Small",
