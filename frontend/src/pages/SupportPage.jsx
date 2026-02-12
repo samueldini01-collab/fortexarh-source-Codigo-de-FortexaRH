@@ -333,20 +333,20 @@ export default function SupportPage() {
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        placeholder="Juan Pérez"
+                        placeholder={t('supportPage.form.namePlaceholder')}
                         required
                         data-testid="support-name-input"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email">Correo Electrónico *</Label>
+                      <Label htmlFor="email">{t('supportPage.form.email')}</Label>
                       <Input
                         id="email"
                         name="email"
                         type="email"
                         value={formData.email}
                         onChange={handleChange}
-                        placeholder="juan@empresa.com"
+                        placeholder={t('supportPage.form.emailPlaceholder')}
                         required
                         data-testid="support-email-input"
                       />
@@ -355,25 +355,25 @@ export default function SupportPage() {
 
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="company">Empresa</Label>
+                      <Label htmlFor="company">{t('supportPage.form.company')}</Label>
                       <Input
                         id="company"
                         name="company"
                         value={formData.company}
                         onChange={handleChange}
-                        placeholder="Mi Empresa SRL"
+                        placeholder={t('supportPage.form.companyPlaceholder')}
                         data-testid="support-company-input"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Teléfono</Label>
+                      <Label htmlFor="phone">{t('supportPage.form.phone')}</Label>
                       <Input
                         id="phone"
                         name="phone"
                         type="tel"
                         value={formData.phone}
                         onChange={handleChange}
-                        placeholder="+1 (809) 555-1234"
+                        placeholder={t('supportPage.form.phonePlaceholder')}
                         data-testid="support-phone-input"
                       />
                     </div>
@@ -382,13 +382,13 @@ export default function SupportPage() {
                   {/* Category & Priority */}
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Categoría *</Label>
+                      <Label>{t('supportPage.form.category')}</Label>
                       <Select value={formData.category} onValueChange={(v) => handleSelectChange("category", v)}>
                         <SelectTrigger data-testid="support-category-select">
-                          <SelectValue placeholder="Seleccione una categoría" />
+                          <SelectValue placeholder={t('supportPage.form.categoryPlaceholder')} />
                         </SelectTrigger>
                         <SelectContent>
-                          {SUPPORT_CATEGORIES.map(cat => (
+                          {getSupportCategories().map(cat => (
                             <SelectItem key={cat.value} value={cat.value}>
                               <span className="flex items-center gap-2">
                                 <cat.icon className="w-4 h-4" />
@@ -400,13 +400,13 @@ export default function SupportPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Prioridad</Label>
+                      <Label>{t('supportPage.form.priority')}</Label>
                       <Select value={formData.priority} onValueChange={(v) => handleSelectChange("priority", v)}>
                         <SelectTrigger data-testid="support-priority-select">
-                          <SelectValue placeholder="Seleccione prioridad" />
+                          <SelectValue placeholder={t('supportPage.form.priorityPlaceholder')} />
                         </SelectTrigger>
                         <SelectContent>
-                          {PRIORITY_OPTIONS.map(opt => (
+                          {getPriorityOptions().map(opt => (
                             <SelectItem key={opt.value} value={opt.value}>
                               {opt.label}
                             </SelectItem>
