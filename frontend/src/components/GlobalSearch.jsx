@@ -37,6 +37,7 @@ const ACTION_ICONS = {
 };
 
 export default function GlobalSearch() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
