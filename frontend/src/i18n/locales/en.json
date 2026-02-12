@@ -2867,9 +2867,13 @@
       "errorCreating": "Error creating unit",
       "errorUpdating": "Error updating",
       "errorDeleting": "Error deleting",
-      "confirmDelete": "Delete this unit?",
+      "confirmDelete": "Delete this element?",
       "templateApplied": "Template applied successfully",
-      "errorTemplate": "Error applying template"
+      "errorTemplate": "Error applying template",
+      "nameRequired": "Name is required",
+      "titleRequired": "Title is required",
+      "positionCreated": "Position created successfully",
+      "errorCreatingPosition": "Error creating position"
     },
     "empty": {
       "title": "No organization chart",
