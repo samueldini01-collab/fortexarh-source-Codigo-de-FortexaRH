@@ -2,38 +2,40 @@
 
 ## Última Actualización: 2026-02-12
 
-## ✅ Completado Hoy (Sesión Actual - Fork)
+## ✅ Completado Hoy (Sesión Actual - Fork #2)
 
-### 🐛 Bug Fix P0: Claves de Traducción Duplicadas (CORREGIDO)
-- **Problema:** Las claves de traducción `common.of`, `common.avgRating`, `common.companiesTrust` se mostraban como texto plano
-- **Causa raíz:** Los archivos de traducción (en.json, es.json, fr.json) tenían DOS bloques "common" duplicados. En JSON, la segunda clave sobrescribe la primera, perdiendo claves importantes como "of"
-- **Solución:** 
-  1. Eliminados los bloques `common` duplicados (línea ~560) de los 3 archivos de idioma
-  2. Fusionadas las claves únicas del segundo bloque al primero
-  3. Agregada la clave `vacations.table.title` que faltaba
-- **Archivos modificados:**
-  - `/app/frontend/src/i18n/locales/en.json`
-  - `/app/frontend/src/i18n/locales/es.json`
-  - `/app/frontend/src/i18n/locales/fr.json`
-  - `/app/frontend/src/pages/VacationsPage.jsx` (template literal para mejor renderizado)
-- **Verificado:** Screenshots confirman "2 de 2 solicitudes" en español y "2 of 2 requests" en inglés
+### 🌐 Traducciones Corregidas en esta Sesión
 
-### 🐛 Bug Fix P1: Secciones del Dashboard no Traducidas (CORREGIDO)
-- **Problema:** Al cambiar idioma, las secciones "Empleados Recientes", "Próximas Vacaciones", "Resumen de Nómina del Mes", "Personalizar Menú" y "Core RRHH" permanecían en español
-- **Causa raíz:** Textos hardcodeados en español en Dashboard.jsx y DashboardLayout.jsx
-- **Solución:**
-  1. Reemplazados textos hardcodeados con claves de traducción t()
-  2. Agregadas nuevas claves a los 3 archivos de idioma:
-     - `dashboard.recentEmployees`, `dashboard.noEmployeesRegistered`
-     - `dashboard.upcomingVacations`, `dashboard.noVacationsScheduled`
-     - `dashboard.payrollSummary`, `dashboard.totalPayrollThisMonth`
-     - `nav.customizeMenu`, `nav.customizeMenuDesc`
-     - `nav.groups.coreHR`, `common.days`
-- **Archivos modificados:**
-  - `/app/frontend/src/pages/Dashboard.jsx`
-  - `/app/frontend/src/components/DashboardLayout.jsx`
-  - `/app/frontend/src/i18n/locales/{en,es,fr}.json`
-- **Verificado:** Screenshots confirman traducción correcta EN ↔ ES ↔ FR
+**1. PayrollDashboardPage.jsx - COMPLETADO:**
+- Título: "Payroll Dashboard" / "Dashboard de Nómina"
+- Subtítulo, tarjetas de estadísticas, gráficos
+- Alertas dinámicas del backend ahora usan claves i18n
+- ~30 nuevas claves agregadas a `payrollDashboard.*`
+
+**2. GlobalSearch.jsx - COMPLETADO:**
+- Placeholder: "Search or run AI actions..." / "Buscar o ejecutar acciones con IA..."
+- Todos los textos del diálogo de búsqueda
+- Categorías de resultados (Employees, Vacations, Payroll, etc.)
+- Mensajes de ejecución de acciones IA
+- ~15 nuevas claves agregadas a `globalSearch.*`
+
+**3. Dashboard.jsx - Secciones Inferiores COMPLETADAS:**
+- "Recent Employees" / "Empleados Recientes"
+- "Upcoming Vacations" / "Próximas Vacaciones"
+- "Monthly Payroll Summary" / "Resumen de Nómina del Mes"
+- Mensajes de estado vacío traducidos
+
+**4. DashboardLayout.jsx - COMPLETADO:**
+- "Customize Menu" / "Personalizar Menú"
+- "Core HR" / "Core RRHH"
+- Todos los grupos de navegación
+
+**5. EmployeesPage.jsx - Tabs del Formulario COMPLETADOS:**
+- Main Data, Contract, Deductions, Documents, Payment Method, Emergency Contact
+
+**6. Backend server.py - Alertas CORREGIDAS:**
+- Ahora envía claves de traducción en lugar de mensajes en español
+- Frontend traduce las alertas dinámicamente
 
 ---
 
