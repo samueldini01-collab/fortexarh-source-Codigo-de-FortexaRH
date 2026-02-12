@@ -3188,13 +3188,15 @@
     "preview": {
       "title": "Export Preview",
       "format": "Format",
-      "summary": "Summary",
-      "detailed": "Detailed",
-      "download": "Download CSV"
+      "summary": "Summary (by account)",
+      "detailed": "Detailed (by employee)",
+      "download": "Download CSV",
+      "exportAs": "Export as"
     },
     "catalog": {
       "title": "Select Chart of Accounts",
       "subtitle": "Choose a predefined catalog to load",
+      "chartOfAccounts": "Chart of Accounts",
       "apply": "Apply Catalog",
       "niif": "IFRS Catalog",
       "niifDesc": "Chart of accounts based on International Standards",
