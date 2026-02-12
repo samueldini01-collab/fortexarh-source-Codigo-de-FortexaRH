@@ -695,7 +695,13 @@
       "newCandidates": "New Candidates",
       "errorLoading": "Error loading details"
     },
-    "paymentSuccess": "Payment successful! Your subscription has been activated."
+    "paymentSuccess": "Payment successful! Your subscription has been activated.",
+    "recentEmployees": "Recent Employees",
+    "noEmployeesRegistered": "No employees registered",
+    "upcomingVacations": "Upcoming Vacations",
+    "noVacationsScheduled": "No vacations scheduled",
+    "payrollSummary": "Monthly Payroll Summary",
+    "totalPayrollThisMonth": "Total Payroll This Month"
   },
   "pricing": {
     "planNames": {
