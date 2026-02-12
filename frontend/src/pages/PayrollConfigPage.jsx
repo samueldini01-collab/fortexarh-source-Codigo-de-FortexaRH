@@ -98,9 +98,9 @@ export default function PayrollConfigPage() {
         withCredentials: true
       });
       setOriginalConfig(config);
-      toast.success("Configuración guardada correctamente");
+      toast.success(t('payrollConfig.messages.saved'));
     } catch (error) {
-      toast.error("Error al guardar la configuración");
+      toast.error(t('payrollConfig.messages.errorSaving'));
     } finally {
       setSaving(false);
     }
@@ -109,7 +109,7 @@ export default function PayrollConfigPage() {
   const handleRestore = () => {
     if (originalConfig) {
       setConfig(originalConfig);
-      toast.info("Configuración restaurada");
+      toast.info(t('payrollConfig.messages.restored'));
     }
   };
 
