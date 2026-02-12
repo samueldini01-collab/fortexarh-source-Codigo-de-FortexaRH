@@ -1251,7 +1251,24 @@
         "saveSuccess": "Cálculo guardado correctamente",
         "saveError": "Error al guardar el cálculo"
       },
-      "pdfTitle": "Cálculo de Nómina RD"
+      "pdfTitle": "Cálculo de Nómina RD",
+      "clear": "Limpiar",
+      "employee": "Empleado",
+      "unassigned": "Sin asignar",
+      "completeFormAndCalculate": "Complete el formulario y presione Calcular",
+      "earnings": "Ingresos",
+      "proportionalSalary": "Salario Proporcional",
+      "extraHours": "Horas Extra",
+      "totalEarnings": "Total Ingresos",
+      "employeeDeductions": "Deducciones del Empleado",
+      "socialSecurity": "Seguridad Social (TSS)",
+      "subtotalTss": "Subtotal TSS",
+      "incomeTax": "Impuesto Sobre la Renta (ISR)",
+      "monthlyIsr": "ISR Mensual",
+      "calculatedOnGross": "Calculado sobre salario bruto",
+      "otherDeductionsSection": "Otras Deducciones",
+      "others": "Otras",
+      "enterDataAndCalculate": "Ingrese los datos y presione \"Calcular\" para ver el resultado"
     }
   },
   "attendance": {
