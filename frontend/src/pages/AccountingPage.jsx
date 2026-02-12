@@ -151,7 +151,7 @@ export default function AccountingPage() {
   }, [fetchData, fetchCatalogTemplates]);
 
   const loadCatalogTemplate = async (catalogId) => {
-    if (!window.confirm("¿Está seguro? Esto reemplazará todas las cuentas existentes con el catálogo seleccionado.")) {
+    if (!window.confirm(t('accounting.messages.confirmLoadCatalog'))) {
       return;
     }
     
@@ -164,7 +164,7 @@ export default function AccountingPage() {
       setShowCatalogSelector(false);
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al cargar catálogo");
+      toast.error(error.response?.data?.detail || t('accounting.messages.errorLoadCatalog'));
     }
   };
 
