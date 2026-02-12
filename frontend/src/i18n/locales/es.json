@@ -3587,6 +3587,10 @@
       "title": "Mapa en Vivo",
       "autoRefresh": "Auto actualizar",
       "lastUpdate": "Última actualización",
+      "daySummary": "Resumen del Día",
+      "marked": "Marcaron",
+      "onMap": "En el mapa",
+      "recentMarks": "Últimas Marcaciones",
       "filters": {
         "department": "Departamento",
         "allDepartments": "Todos los departamentos",
