@@ -101,7 +101,13 @@
       "october": "Octobre",
       "november": "Novembre",
       "december": "Décembre"
-    }
+    },
+    "backToHome": "Retour à l'accueil",
+    "noResults": "Aucun résultat trouvé",
+    "preview": "Aperçu",
+    "submit": "Soumettre",
+    "selectOption": "Sélectionner une option",
+    "lastUpdated": "Dernière mise à jour"
   },
   "nav": {
     "dashboard": "Tableau de bord",
