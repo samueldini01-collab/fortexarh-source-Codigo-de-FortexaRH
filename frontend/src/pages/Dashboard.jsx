@@ -517,12 +517,12 @@ export default function Dashboard() {
                     <div key={index} className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800">
                       <div>
                         <p className="font-medium text-slate-900 dark:text-slate-100">{vacation.employee_name}</p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">{vacation.days} días</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{vacation.days} {t('common.days')}</p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{vacation.start_date}</p>
                         <span className="inline-flex px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-50 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400">
-                          Aprobado
+                          {t('common.approved')}
                         </span>
                       </div>
                     </div>
@@ -543,7 +543,7 @@ export default function Dashboard() {
           <CardHeader className="pb-3">
             <CardTitle className="text-lg font-semibold flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-slate-500" />
-              Resumen de Nómina del Mes
+              {t('dashboard.payrollSummary')}
             </CardTitle>
           </CardHeader>
           <CardContent>
