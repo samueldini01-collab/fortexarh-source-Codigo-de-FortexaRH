@@ -200,13 +200,13 @@ export default function UsersManagementPage() {
       toast.success(t('users.messages.userDeleted'));
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al eliminar");
+      toast.error(error.response?.data?.detail || t('users.messages.errorDeleting'));
     }
   };
 
   const handleCreateRole = async () => {
     if (!newRole.name) {
-      toast.error("El nombre del rol es requerido");
+      toast.error(t('users.messages.roleNameRequired'));
       return;
     }
     
@@ -215,26 +215,26 @@ export default function UsersManagementPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Rol creado correctamente");
+      toast.success(t('users.messages.roleCreated'));
       setShowNewRole(false);
       setNewRole({ name: "", description: "", modules: [], permissions: {} });
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al crear rol");
+      toast.error(error.response?.data?.detail || t('users.messages.errorCreatingRole'));
     }
   };
 
   const handleSetPassword = async () => {
     if (!newPasswordData.password) {
-      toast.error("La contraseña es requerida");
+      toast.error(t('users.messages.passwordRequired'));
       return;
     }
     if (newPasswordData.password.length < 6) {
-      toast.error("La contraseña debe tener al menos 6 caracteres");
+      toast.error(t('settings.password.minLength'));
       return;
     }
     if (newPasswordData.password !== newPasswordData.confirmPassword) {
-      toast.error("Las contraseñas no coinciden");
+      toast.error(t('settings.password.noMatch'));
       return;
     }
     
@@ -247,12 +247,12 @@ export default function UsersManagementPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Contraseña actualizada correctamente");
+      toast.success(t('users.messages.passwordUpdated'));
       setShowPasswordModal(false);
       setPasswordUser(null);
       setNewPasswordData({ password: "", confirmPassword: "" });
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al actualizar contraseña");
+      toast.error(error.response?.data?.detail || t('users.messages.errorPassword'));
     } finally {
       setPasswordLoading(false);
     }
