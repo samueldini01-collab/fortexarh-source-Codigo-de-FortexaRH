@@ -182,7 +182,7 @@ export default function PayrollConfigPage() {
 
   if (loading) {
     return (
-      <DashboardLayout title="Configuración de Nómina">
+      <DashboardLayout title={t('payrollConfig.title')}>
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
         </div>
@@ -191,12 +191,12 @@ export default function PayrollConfigPage() {
   }
 
   return (
-    <DashboardLayout title="Configuración de Nómina">
+    <DashboardLayout title={t('payrollConfig.title')}>
       <div className="space-y-6 max-w-4xl" data-testid="payroll-config-page">
         {/* Header */}
         <div>
           <p className="text-slate-500 dark:text-slate-400">
-            Configura las tasas y montos para el cálculo automático de nómina
+            {t('payrollConfig.subtitle')}
           </p>
         </div>
 
@@ -205,11 +205,9 @@ export default function PayrollConfigPage() {
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-semibold text-emerald-800">Información Importante</h4>
+              <h4 className="font-semibold text-emerald-800">{t('payrollConfig.importantInfo')}</h4>
               <p className="text-sm text-emerald-700 mt-1">
-                Esta configuración afecta todos los cálculos de nómina para todos los empleados. 
-                Los cambios se aplicarán inmediatamente a todos los cálculos existentes. 
-                <strong> NO AFECTARÁ NÓMINAS PREVIAMENTE CREADAS.</strong>
+                {t('payrollConfig.importantInfoText')}
               </p>
             </div>
           </div>
@@ -222,34 +220,34 @@ export default function PayrollConfigPage() {
               <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                 <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               </div>
-              <CardTitle className="text-lg">Tasas de Horas Extras</CardTitle>
+              <CardTitle className="text-lg">{t('payrollConfig.overtimeRates')}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <InputWithTooltip
-                label="Horas Extras Diurnas"
+                label={t('payrollConfig.overtime.day')}
                 field="overtime_day"
                 value={config.overtime_day}
-                tooltip="Porcentaje adicional sobre el salario hora para horas extras trabajadas durante el día"
+                tooltip={t('payrollConfig.overtime.dayTooltip')}
               />
               <InputWithTooltip
-                label="Horas Extras Nocturnas"
+                label={t('payrollConfig.overtime.night')}
                 field="overtime_night"
                 value={config.overtime_night}
-                tooltip="Porcentaje adicional sobre el salario hora para horas extras trabajadas en horario nocturno"
+                tooltip={t('payrollConfig.overtime.nightTooltip')}
               />
               <InputWithTooltip
-                label="Horas Extras Fines de Semana"
+                label={t('payrollConfig.overtime.weekend')}
                 field="overtime_weekend"
                 value={config.overtime_weekend}
-                tooltip="Porcentaje adicional sobre el salario hora para horas extras trabajadas en fines de semana"
+                tooltip={t('payrollConfig.overtime.weekendTooltip')}
               />
               <InputWithTooltip
-                label="Horas Extras Días Feriados"
+                label={t('payrollConfig.overtime.holiday')}
                 field="overtime_holiday"
                 value={config.overtime_holiday}
-                tooltip="Porcentaje adicional sobre el salario hora para horas extras trabajadas en días feriados"
+                tooltip={t('payrollConfig.overtime.holidayTooltip')}
               />
             </div>
           </CardContent>
