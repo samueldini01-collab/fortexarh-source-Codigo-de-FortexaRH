@@ -2,7 +2,28 @@
 
 ## Última Actualización: 2026-02-12
 
-## ✅ Completado Hoy (Sesión Actual - Continuación)
+## ✅ Completado Hoy (Sesión Actual - Fork)
+
+### 🐛 Bug Fix P0: Claves de Traducción Duplicadas (CORREGIDO)
+- **Problema:** Las claves de traducción `common.of`, `common.avgRating`, `common.companiesTrust` se mostraban como texto plano
+- **Causa raíz:** Los archivos de traducción (en.json, es.json, fr.json) tenían DOS bloques "common" duplicados. En JSON, la segunda clave sobrescribe la primera, perdiendo claves importantes como "of"
+- **Solución:** 
+  1. Eliminados los bloques `common` duplicados (línea ~560) de los 3 archivos de idioma
+  2. Fusionadas las claves únicas del segundo bloque al primero
+  3. Agregada la clave `vacations.table.title` que faltaba
+- **Archivos modificados:**
+  - `/app/frontend/src/i18n/locales/en.json`
+  - `/app/frontend/src/i18n/locales/es.json`
+  - `/app/frontend/src/i18n/locales/fr.json`
+  - `/app/frontend/src/pages/VacationsPage.jsx` (template literal para mejor renderizado)
+- **Verificado:** Screenshots confirman "2 de 2 solicitudes" en español y "2 of 2 requests" en inglés
+- **Bugs resueltos simultáneamente:**
+  - ✅ Bug `common.of` en VacationsPage
+  - ✅ Bug de claves de traducción en LandingPage (`common.avgRating`, `common.companiesTrust`)
+
+---
+
+## ✅ Completado en Sesiones Anteriores
 
 ### 🐛 Bug Fix Crítico: Navegación a Suscripción (P0 - CORREGIDO)
 - **Problema:** Al hacer clic en "Suscripción" en el menú del usuario, este era desconectado y redirigido a la landing page
