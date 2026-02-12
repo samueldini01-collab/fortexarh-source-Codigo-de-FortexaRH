@@ -67,10 +67,10 @@ export default function SettingsPage() {
     setSaving(true);
     try {
       await axios.put(`${API}/company`, companyForm, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Información actualizada");
+      toast.success(t('settings.messages.infoUpdated'));
       fetchData();
     } catch (error) {
-      toast.error("Error al actualizar");
+      toast.error(t('settings.messages.errorUpdating'));
     } finally {
       setSaving(false);
     }
