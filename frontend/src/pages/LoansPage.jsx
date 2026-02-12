@@ -177,7 +177,7 @@ export default function LoansPage() {
         withCredentials: true
       });
       
-      toast.success("Pago registrado");
+      toast.success(t('loans.messages.paymentRegistered'));
       setShowPaymentModal(false);
       setPaymentData({
         amount: "",
@@ -187,22 +187,22 @@ export default function LoansPage() {
       });
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al registrar pago");
+      toast.error(error.response?.data?.detail || t('loans.messages.errorPayment'));
     }
   };
 
   const handleDeleteLoan = async (loanId) => {
-    if (!window.confirm("¿Está seguro de eliminar este préstamo?")) return;
+    if (!window.confirm(t('loans.messages.confirmDelete'))) return;
 
     try {
       await axios.delete(`${API}/loans/${loanId}`, {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Préstamo eliminado");
+      toast.success(t('loans.messages.loanDeleted'));
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al eliminar préstamo");
+      toast.error(error.response?.data?.detail || t('loans.messages.errorDeleting'));
     }
   };
 
