@@ -688,8 +688,8 @@ export default function DashboardLayout({ children, title }) {
                           {!sidebarCollapsed && (
                             <div className="text-left">
                               <span className="block">{t(`nav.${group.nameKey}`)}</span>
-                              {group.subtitle && (
-                                <span className="text-[10px] text-slate-400 dark:text-slate-500 font-normal">{group.subtitle}</span>
+                              {group.subtitleKey && (
+                                <span className="text-[10px] text-slate-400 dark:text-slate-500 font-normal">{t(`nav.${group.subtitleKey}`)}</span>
                               )}
                             </div>
                           )}
