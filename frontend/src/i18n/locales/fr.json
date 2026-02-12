@@ -1919,7 +1919,11 @@
       "templateCreated": "Modèle créé",
       "errorSaving": "Erreur d'enregistrement",
       "confirmDeleteTemplate": "Supprimer ce modèle?",
-      "templateDeleted": "Modèle supprimé"
+      "templateDeleted": "Modèle supprimé",
+      "confirmDelete": "Supprimer ce modèle?",
+      "templateDuplicated": "Modèle dupliqué",
+      "errorDuplicating": "Erreur de duplication",
+      "selectEmployee": "Sélectionnez un employé"
     },
     "categories": {
       "constancia": "Attestation",
