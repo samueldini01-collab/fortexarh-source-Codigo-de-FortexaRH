@@ -757,7 +757,7 @@ export default function GeoLocationsPage() {
                       }}
                     >
                       <RefreshCw className="w-4 h-4 mr-2" />
-                      Actualizar
+                      {t('common.refresh')}
                     </Button>
                     <Button 
                       variant="default" 
@@ -765,11 +765,11 @@ export default function GeoLocationsPage() {
                       onClick={() => setShowReportDialog(true)}
                     >
                       <Download className="w-4 h-4 mr-2" />
-                      Exportar Reporte
+                      {t('geoLocationsPage.actions.exportReport')}
                     </Button>
                     {lastUpdate && (
                       <span className="text-xs text-slate-500">
-                        Última act.: {lastUpdate.toLocaleTimeString('es-DO')}
+                        {t('geoLocationsPage.liveMap.lastUpdate')}: {lastUpdate.toLocaleTimeString()}
                       </span>
                     )}
                   </div>
@@ -778,16 +778,16 @@ export default function GeoLocationsPage() {
                 {/* Filters Row */}
                 <div className="flex items-center gap-4 mt-4 pt-4 border-t flex-wrap">
                   <div className="flex items-center gap-2">
-                    <Label className="text-sm whitespace-nowrap">Departamento:</Label>
+                    <Label className="text-sm whitespace-nowrap">{t('geoLocationsPage.liveMap.filters.department')}:</Label>
                     <Select 
                       value={mapFilters.department} 
                       onValueChange={(v) => setMapFilters(prev => ({...prev, department: v}))}
                     >
                       <SelectTrigger className="w-[160px]">
-                        <SelectValue placeholder="Todos" />
+                        <SelectValue placeholder={t('geoLocationsPage.liveMap.filters.allDepartments')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">Todos</SelectItem>
+                        <SelectItem value="all">{t('geoLocationsPage.liveMap.filters.allDepartments')}</SelectItem>
                         {departments.map(dept => (
                           <SelectItem key={dept} value={dept}>{dept}</SelectItem>
                         ))}
@@ -796,16 +796,16 @@ export default function GeoLocationsPage() {
                   </div>
                   
                   <div className="flex items-center gap-2">
-                    <Label className="text-sm whitespace-nowrap">Ubicación:</Label>
+                    <Label className="text-sm whitespace-nowrap">{t('geoLocationsPage.liveMap.filters.location')}:</Label>
                     <Select 
                       value={mapFilters.location} 
                       onValueChange={(v) => setMapFilters(prev => ({...prev, location: v}))}
                     >
                       <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Todas" />
+                        <SelectValue placeholder={t('geoLocationsPage.liveMap.filters.allLocations')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">Todas</SelectItem>
+                        <SelectItem value="all">{t('geoLocationsPage.liveMap.filters.allLocations')}</SelectItem>
                         {locations.map(loc => (
                           <SelectItem key={loc.location_id} value={loc.location_id}>{loc.name}</SelectItem>
                         ))}
@@ -814,19 +814,19 @@ export default function GeoLocationsPage() {
                   </div>
                   
                   <div className="flex items-center gap-2">
-                    <Label className="text-sm whitespace-nowrap">Estado:</Label>
+                    <Label className="text-sm whitespace-nowrap">{t('geoLocationsPage.liveMap.filters.status')}:</Label>
                     <Select 
                       value={mapFilters.status} 
                       onValueChange={(v) => setMapFilters(prev => ({...prev, status: v}))}
                     >
                       <SelectTrigger className="w-[150px]">
-                        <SelectValue placeholder="Todos" />
+                        <SelectValue placeholder={t('geoLocationsPage.liveMap.filters.allStatuses')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">Todos</SelectItem>
-                        <SelectItem value="within">Dentro de zona</SelectItem>
-                        <SelectItem value="outside">Fuera de zona</SelectItem>
-                        <SelectItem value="pending">Pendientes</SelectItem>
+                        <SelectItem value="all">{t('geoLocationsPage.liveMap.filters.allStatuses')}</SelectItem>
+                        <SelectItem value="within">{t('geoLocationsPage.liveMap.filters.withinZone')}</SelectItem>
+                        <SelectItem value="outside">{t('geoLocationsPage.liveMap.filters.outsideZone')}</SelectItem>
+                        <SelectItem value="pending">{t('geoLocationsPage.liveMap.filters.pendingReview')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -837,7 +837,7 @@ export default function GeoLocationsPage() {
                       size="sm"
                       onClick={() => setMapFilters({ department: "all", location: "all", status: "all" })}
                     >
-                      Limpiar filtros
+                      {t('common.clearFilters')}
                     </Button>
                   )}
                 </div>
