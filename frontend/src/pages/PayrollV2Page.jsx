@@ -315,11 +315,11 @@ export default function PayrollV2Page() {
         department_filter: newPeriodForm.department_filter === "all" ? null : newPeriodForm.department_filter
       };
       await axios.post(`${API}/payroll-v2/periods`, dataToSend, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Período creado correctamente");
+      toast.success(t('payrollV2.messages.periodCreated'));
       setShowNewPeriod(false);
       fetchPeriods();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al crear período");
+      toast.error(error.response?.data?.detail || t('payrollV2.messages.errorCreatingPeriod'));
     }
   };
 
@@ -330,32 +330,32 @@ export default function PayrollV2Page() {
       fetchPeriodDetails(periodId);
       fetchPeriods();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error");
+      toast.error(error.response?.data?.detail || t('common.error'));
     }
   };
 
   const handleCalculatePeriod = async (periodId) => {
     try {
       await axios.post(`${API}/payroll-v2/periods/${periodId}/calculate`, {}, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Nóminas calculadas");
+      toast.success(t('payrollV2.messages.payrollsCalculated'));
       fetchPeriodDetails(periodId);
       fetchPeriods();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error");
+      toast.error(error.response?.data?.detail || t('common.error'));
     }
   };
 
   const handleSubmitForApproval = async (periodId) => {
     try {
       await axios.post(`${API}/payroll-v2/periods/${periodId}/submit-for-approval`, {}, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Nómina enviada para aprobación");
+      toast.success(t('payrollV2.messages.sentForApproval'));
       fetchPeriods();
       if (selectedPeriod?.period_id === periodId) {
         const updated = await axios.get(`${API}/payroll-v2/periods/${periodId}`, { headers: getAuthHeaders(), withCredentials: true });
         setSelectedPeriod(prev => ({ ...prev, status: 'pending_approval' }));
       }
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al enviar para aprobación");
+      toast.error(error.response?.data?.detail || t('payrollV2.messages.errorSendingForApproval'));
     }
   };
 
