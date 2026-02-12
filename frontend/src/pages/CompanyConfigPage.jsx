@@ -203,7 +203,7 @@ export default function CompanyConfigPage() {
     const tabParam = urlParams.get('tab');
     
     if (qbStatus === 'connected' && qbCompany) {
-      toast.success(`¡QuickBooks conectado exitosamente a ${decodeURIComponent(qbCompany)}!`);
+      toast.success(t('companyConfig.messages.quickbooksConnected', { company: decodeURIComponent(qbCompany) }));
       setIntegrations(prev => 
         prev.map(i => i.id === "quickbooks" 
           ? {...i, connected: true, companyName: decodeURIComponent(qbCompany)} 
@@ -213,14 +213,14 @@ export default function CompanyConfigPage() {
       // Clean URL parameters
       window.history.replaceState({}, '', window.location.pathname);
     } else if (qbStatus === 'error' && qbError) {
-      toast.error(`Error al conectar QuickBooks: ${decodeURIComponent(qbError)}`);
+      toast.error(t('companyConfig.messages.quickbooksError', { error: decodeURIComponent(qbError) }));
       window.history.replaceState({}, '', window.location.pathname);
     }
     
     if (tabParam) {
       setActiveTab(tabParam);
     }
-  }, [fetchCompanyData]);
+  }, [fetchCompanyData, t]);
 
   const handleSave = async (section) => {
     setSaving(true);
