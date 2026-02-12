@@ -3295,6 +3295,47 @@
       "done": "Done! FortexaRH will appear on your home screen as an app."
     }
   },
+  "companyConfig": {
+    "title": "Company Configuration",
+    "subtitle": "Customize your company settings",
+    "tabs": {
+      "general": "General",
+      "logo": "Logo",
+      "appearance": "Appearance",
+      "branding": "Branding & Text",
+      "notifications": "Notifications",
+      "integrations": "Integrations",
+      "audit": "Audit"
+    },
+    "fontSizes": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
+    },
+    "themes": {
+      "light": "Light",
+      "dark": "Dark",
+      "auto": "Automatic"
+    },
+    "integrations": {
+      "fortexaerp": {
+        "desc": "Complete native synchronization with the Fortexa ecosystem."
+      },
+      "quickbooks": {
+        "desc": "Automatically export payroll and journal entries to QBO."
+      },
+      "sap": {
+        "desc": "Enterprise integration for large organizations."
+      },
+      "oracle": {
+        "desc": "Cloud connectivity for advanced financial management."
+      }
+    },
+    "messages": {
+      "quickbooksConnected": "QuickBooks successfully connected to {{company}}!",
+      "quickbooksError": "Error connecting to QuickBooks: {{error}}"
+    }
+  },
   "errors": {
     "generic": "An error occurred",
     "notFound": "Page not found",
