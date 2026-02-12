@@ -3512,5 +3512,327 @@
         "description": "You now know the main features of FortexaRH. If you need help, you can:\n\n• Press ? to see keyboard shortcuts\n• Restart this tutorial from Settings\n• Contact support from the help menu"
       }
     }
+  },
+  "geoLocationsPage": {
+    "title": "Geolocation Check-in",
+    "subtitle": "Location management and GPS attendance control",
+    "newLocation": "New Location",
+    "cards": {
+      "locations": "Locations",
+      "markedToday": "Marked Today",
+      "pending": "Pending",
+      "outsideZone": "Outside Zone"
+    },
+    "tabs": {
+      "locations": "Locations",
+      "liveMap": "Live Map",
+      "todayAttendance": "Today's Attendance",
+      "fraud": "Fraud",
+      "alerts": "Alerts"
+    },
+    "table": {
+      "location": "Location",
+      "type": "Type",
+      "coordinates": "Coordinates",
+      "radius": "Radius",
+      "employees": "Employees",
+      "status": "Status",
+      "actions": "Actions",
+      "employee": "Employee",
+      "time": "Time",
+      "distance": "Distance",
+      "level": "Level",
+      "message": "Message",
+      "date": "Date",
+      "noLocations": "No locations configured",
+      "noMarksToday": "No check-ins today",
+      "noAlerts": "No location alerts today",
+      "noFraudAlerts": "No fraud alerts detected"
+    },
+    "locationTypes": {
+      "office": "Office",
+      "project": "Project/Site",
+      "branch": "Branch",
+      "client": "Client"
+    },
+    "markTypes": {
+      "entry": "Entry",
+      "exit": "Exit"
+    },
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "approved": "Approved",
+      "pending": "Pending",
+      "rejected": "Rejected"
+    },
+    "liveMap": {
+      "title": "Live Map",
+      "autoRefresh": "Auto refresh",
+      "lastUpdate": "Last update",
+      "filters": {
+        "department": "Department",
+        "allDepartments": "All departments",
+        "location": "Location",
+        "allLocations": "All locations",
+        "status": "Status",
+        "allStatuses": "All statuses",
+        "withinZone": "Within zone",
+        "outsideZone": "Outside zone",
+        "pendingReview": "Pending review"
+      },
+      "employeesOnMap": "employees on map",
+      "noData": "No live map data available"
+    },
+    "fraud": {
+      "title": "Detected Fraud Alerts",
+      "refresh": "Refresh",
+      "configureAlerts": "Configure Alerts",
+      "levels": {
+        "critical": "Critical",
+        "high": "High",
+        "medium": "Medium",
+        "low": "Low"
+      },
+      "status": {
+        "new": "New",
+        "reviewed": "Reviewed",
+        "resolved": "Resolved",
+        "dismissed": "Dismissed"
+      },
+      "topEmployees": "Employees with Most Alerts (Last 30 days)",
+      "criticalAlerts": "critical",
+      "highAlerts": "high",
+      "mediumAlerts": "medium",
+      "totalAlerts": "Total",
+      "noAlertsMessage": "The system automatically monitors check-ins",
+      "thresholds": {
+        "title": "Detection Thresholds",
+        "maxSpeed": "Maximum speed",
+        "duplicateWindow": "Duplicate window",
+        "minGpsAccuracy": "Minimum GPS accuracy",
+        "normalHours": "Normal hours"
+      }
+    },
+    "alerts": {
+      "title": "Out-of-Zone Check-ins",
+      "subtitle": "Check-ins that require review",
+      "outsideAuthorized": "outside authorized zone"
+    },
+    "dialogs": {
+      "newLocation": {
+        "title": "New Location",
+        "editTitle": "Edit Location",
+        "description": "Configure a geofence for attendance control",
+        "name": "Location Name",
+        "namePlaceholder": "Ex: Main Office",
+        "address": "Address",
+        "addressPlaceholder": "Ex: Winston Churchill Ave #123",
+        "latitude": "Latitude",
+        "longitude": "Longitude",
+        "radius": "Radius (meters)",
+        "locationType": "Location Type",
+        "tip": "Tip: You can get coordinates from Google Maps by right-clicking on a point.",
+        "create": "Create",
+        "update": "Update"
+      },
+      "assignEmployees": {
+        "title": "Assign Employees",
+        "description": "Select employees who can check in at this location"
+      },
+      "report": {
+        "title": "Export Attendance Report",
+        "description": "Generate a check-in report by date range",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "location": "Location",
+        "allLocations": "All locations",
+        "format": "Format",
+        "excel": "Excel/CSV",
+        "preview": "Preview only",
+        "generate": "Generate Report",
+        "generating": "Generating..."
+      },
+      "alertSettings": {
+        "title": "Alert Configuration",
+        "description": "Configure automatic notifications for location issues",
+        "enableAlerts": "Enable Alerts",
+        "enableAlertsDesc": "Enable automatic alert system",
+        "alertTypes": "Alert Types",
+        "outsideZone": "Out-of-zone check-ins",
+        "fraudDetection": "Fraud detection",
+        "dailySummary": "Daily summary",
+        "recipients": "Recipients",
+        "recipientsPlaceholder": "admin@company.com, hr@company.com",
+        "recipientsHelp": "Separate emails with commas",
+        "distanceThreshold": "Distance Threshold (meters)",
+        "distanceHelp": "Distance from location to trigger alert",
+        "sendSummary": "Send Summary Now",
+        "sendingSummary": "Sending..."
+      }
+    },
+    "actions": {
+      "assignEmployees": "Assign employees",
+      "edit": "Edit",
+      "delete": "Delete",
+      "approve": "Approve",
+      "exportReport": "Export Report"
+    },
+    "messages": {
+      "locationCreated": "Location created",
+      "locationUpdated": "Location updated",
+      "locationDeleted": "Location deleted",
+      "employeesAssigned": "Employees assigned successfully",
+      "markApproved": "Check-in approved",
+      "alertUpdated": "Alert updated",
+      "settingsSaved": "Configuration saved",
+      "summarySet": "Summary sent successfully",
+      "reportGenerated": "Report generated successfully",
+      "errorLoading": "Error loading locations",
+      "errorSaving": "Error saving location",
+      "errorDeleting": "Error deleting location",
+      "errorAssigning": "Error assigning employees",
+      "errorApproving": "Error approving check-in",
+      "errorUpdatingAlert": "Error updating alert",
+      "errorSavingSettings": "Error saving configuration",
+      "errorSendingSummary": "Error sending summary",
+      "errorGeneratingReport": "Error generating report",
+      "confirmDelete": "Are you sure you want to delete this location?"
+    }
+  },
+  "settingsPage": {
+    "companyInfo": {
+      "name": "Company Name",
+      "industry": "Industry",
+      "industryPlaceholder": "Ex: Technology, Manufacturing, Services...",
+      "address": "Address",
+      "phone": "Phone"
+    },
+    "subscription": {
+      "currentPlan": "Current Plan",
+      "employees": "employees",
+      "perMonth": "/month",
+      "mostPopular": "Most Popular",
+      "currentPlanBtn": "Current Plan",
+      "upgrade": "Upgrade"
+    },
+    "account": {
+      "title": "My Account",
+      "subtitle": "Your personal account information",
+      "role": "Role",
+      "userId": "User ID"
+    },
+    "passwordSection": {
+      "title": "Change Password",
+      "subtitle": "Update your password to keep your account secure",
+      "currentPassword": "Current Password",
+      "currentPlaceholder": "Your current password",
+      "newPassword": "New Password",
+      "newPlaceholder": "Minimum 6 characters",
+      "confirmPassword": "Confirm New Password",
+      "confirmPlaceholder": "Repeat the new password"
+    },
+    "buttons": {
+      "saving": "Saving...",
+      "saveChanges": "Save Changes",
+      "changePassword": "Change Password"
+    },
+    "plans": {
+      "basic": {
+        "name": "FortexaRH Basic",
+        "price": "$10/month + $1.5/employee",
+        "features": ["Up to 50 employees", "Employee management", "Basic payroll", "Attendance", "Vacations", "Email support"]
+      },
+      "pro": {
+        "name": "FortexaRH Pro",
+        "price": "$20/month + $1.5/employee",
+        "features": ["Up to 200 employees", "All basic features", "Performance evaluations", "Recruitment", "Advanced reports", "Priority support"]
+      },
+      "enterprise": {
+        "name": "FortexaRH Enterprise",
+        "price": "$76/month + $1.5/employee",
+        "features": ["Unlimited employees", "All features", "Custom API", "24/7 Support", "Dedicated account manager", "Training included"]
+      }
+    }
+  },
+  "supportPage": {
+    "header": {
+      "login": "Log In",
+      "back": "Back"
+    },
+    "hero": {
+      "title": "Support Center",
+      "subtitle": "We're here to help. Fill out the form and our team will contact you as soon as possible."
+    },
+    "contact": {
+      "title": "Contact Information",
+      "phone": "Phone",
+      "phoneTimes": "Mon-Fri 9am - 6pm",
+      "email": "Email",
+      "emailResponse": "Response within 24h",
+      "location": "Location",
+      "locationAddress": "Santo Domingo, DR"
+    },
+    "hours": {
+      "title": "Office Hours",
+      "weekdays": "Monday to Friday",
+      "weekdaysTime": "9:00 AM - 6:00 PM",
+      "saturday": "Saturday",
+      "saturdayTime": "9:00 AM - 1:00 PM",
+      "sunday": "Sunday",
+      "sundayTime": "Closed"
+    },
+    "response": {
+      "title": "Response Times",
+      "critical": "Critical Priority",
+      "criticalTime": "1-2 hours",
+      "high": "High Priority",
+      "highTime": "4-8 hours",
+      "medium": "Medium Priority",
+      "mediumTime": "24 hours",
+      "low": "Low Priority",
+      "lowTime": "48 hours"
+    },
+    "form": {
+      "title": "Submit Support Request",
+      "subtitle": "Fill out the form with your inquiry details. Fields marked with * are required.",
+      "name": "Full Name *",
+      "namePlaceholder": "John Doe",
+      "email": "Email Address *",
+      "emailPlaceholder": "john@company.com",
+      "company": "Company",
+      "companyPlaceholder": "My Company SRL",
+      "phone": "Phone",
+      "phonePlaceholder": "+1 (809) 555-1234",
+      "category": "Category *",
+      "categoryPlaceholder": "Select a category",
+      "priority": "Priority",
+      "priorityPlaceholder": "Select priority",
+      "subject": "Subject *",
+      "subjectPlaceholder": "Brief description of your inquiry",
+      "message": "Message *",
+      "messagePlaceholder": "Describe your inquiry or issue in detail. Include any relevant information such as error messages, steps to reproduce the issue, etc.",
+      "submit": "Submit Request",
+      "submitting": "Sending...",
+      "categories": {
+        "general": "General Inquiry",
+        "technical": "Technical Support",
+        "bug": "Report Bug",
+        "billing": "Billing & Payments",
+        "account": "My Account",
+        "demo": "Request Demo",
+        "enterprise": "Enterprise Plan"
+      },
+      "priorities": {
+        "low": "Low - General inquiry",
+        "medium": "Medium - Need help soon",
+        "high": "High - Urgent issue",
+        "critical": "Critical - System down"
+      }
+    },
+    "footer": {
+      "tagline": "HR and Payroll System",
+      "copyright": "All rights reserved."
+    }
   }
 }
