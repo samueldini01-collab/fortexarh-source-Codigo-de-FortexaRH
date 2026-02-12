@@ -181,7 +181,7 @@ export default function AccountingPage() {
       });
       setEntries(response.data);
     } catch (error) {
-      toast.error("Error al buscar asientos");
+      toast.error(t('accounting.messages.errorSearch'));
     }
   };
 
