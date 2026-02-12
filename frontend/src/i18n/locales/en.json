@@ -3572,6 +3572,10 @@
       "title": "Live Map",
       "autoRefresh": "Auto refresh",
       "lastUpdate": "Last update",
+      "daySummary": "Day Summary",
+      "marked": "Marked",
+      "onMap": "On map",
+      "recentMarks": "Recent Marks",
       "filters": {
         "department": "Department",
         "allDepartments": "All departments",
