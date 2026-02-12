@@ -285,13 +285,13 @@ export default function LoansPage() {
 
   const getStatusBadge = (status) => {
     const styles = {
-      active: { bg: 'bg-blue-100', text: 'text-blue-700', label: 'Activo' },
-      paid: { bg: 'bg-emerald-100', text: 'text-emerald-700', label: 'Pagado' },
-      defaulted: { bg: 'bg-red-100', text: 'text-red-700', label: 'En mora' },
-      cancelled: { bg: 'bg-slate-100', text: 'text-slate-600', label: 'Cancelado' }
+      active: { bg: 'bg-blue-100', text: 'text-blue-700' },
+      paid: { bg: 'bg-emerald-100', text: 'text-emerald-700' },
+      defaulted: { bg: 'bg-red-100', text: 'text-red-700' },
+      cancelled: { bg: 'bg-slate-100', text: 'text-slate-600' }
     };
     const style = styles[status] || styles.active;
-    return <Badge className={`${style.bg} ${style.text}`}>{style.label}</Badge>;
+    return <Badge className={`${style.bg} ${style.text}`}>{t(`loans.status.${status}`)}</Badge>;
   };
 
   // Calculate monthly payment preview
