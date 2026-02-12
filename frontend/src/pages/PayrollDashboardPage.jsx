@@ -165,7 +165,9 @@ export default function PayrollDashboardPage() {
                 alert.type === 'warning' ? 'bg-amber-50 border border-amber-200' : 'bg-blue-50 border border-blue-200'
               }`}>
                 <AlertTriangle className={`w-5 h-5 ${alert.type === 'warning' ? 'text-amber-500' : 'text-blue-500'}`} />
-                <span className={alert.type === 'warning' ? 'text-amber-700' : 'text-blue-700'}>{alert.message}</span>
+                <span className={alert.type === 'warning' ? 'text-amber-700' : 'text-blue-700'}>
+                  {t(`payrollDashboard.alerts.${alert.key}`, { count: alert.count })}
+                </span>
                 <Badge variant="outline" className="ml-auto">{alert.count}</Badge>
               </div>
             ))}
