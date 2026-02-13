@@ -68,6 +68,11 @@ export default function SubscriptionsPage() {
   const [employeeCount, setEmployeeCount] = useState(5);
   const [additionalUsers, setAdditionalUsers] = useState(0);
   
+  // Payment method state
+  const [paymentMethod, setPaymentMethod] = useState(null);
+  const [loadingPaymentMethod, setLoadingPaymentMethod] = useState(false);
+  const [updatingPaymentMethod, setUpdatingPaymentMethod] = useState(false);
+  
   // Cancellation flow states
   const [showCancelFlow, setShowCancelFlow] = useState(false);
   const [cancelStep, setCancelStep] = useState(1); // 1: retention offer, 2: survey, 3: confirm
@@ -76,6 +81,45 @@ export default function SubscriptionsPage() {
   const [cancelFeedback, setCancelFeedback] = useState("");
   const [cancelWouldReturn, setCancelWouldReturn] = useState(null);
   const [processingCancel, setProcessingCancel] = useState(false);
+
+  // Fetch payment method
+  const fetchPaymentMethod = useCallback(async () => {
+    setLoadingPaymentMethod(true);
+    try {
+      const response = await axios.get(`${API}/payment-method`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      setPaymentMethod(response.data);
+    } catch (error) {
+      console.error("Error fetching payment method:", error);
+      setPaymentMethod({ has_payment_method: false, payment_method: null });
+    } finally {
+      setLoadingPaymentMethod(false);
+    }
+  }, [getAuthHeaders]);
+
+  // Handle update payment method
+  const handleUpdatePaymentMethod = async () => {
+    setUpdatingPaymentMethod(true);
+    try {
+      const response = await axios.post(`${API}/update-payment-method`, {
+        origin_url: window.location.origin
+      }, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      
+      if (response.data.checkout_url) {
+        window.location.href = response.data.checkout_url;
+      }
+    } catch (error) {
+      console.error("Error updating payment method:", error);
+      toast.error(t('subscriptions.errorUpdatingPaymentMethod'));
+    } finally {
+      setUpdatingPaymentMethod(false);
+    }
+  };
 
   const fetchInvoices = useCallback(async () => {
     try {
