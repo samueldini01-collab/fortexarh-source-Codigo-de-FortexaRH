@@ -51,6 +51,9 @@ const getInitialLanguage = () => {
 
 const initialLang = getInitialLanguage();
 
+// Cache version - increment this to force translation reload
+const TRANSLATION_VERSION = '1.0.3';
+
 i18n
   .use(HttpBackend)
   .use(LanguageDetector)
@@ -65,8 +68,8 @@ i18n
     backend: {
       // Load translations from public folder
       loadPath: '/locales/{{lng}}.json',
-      // Add cache busting
-      queryStringParams: { v: '1.0.0' }
+      // Add cache busting with version
+      queryStringParams: { v: TRANSLATION_VERSION }
     },
     
     detection: {
