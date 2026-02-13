@@ -112,6 +112,90 @@ export default function PayrollDashboardPage() {
             { header: t('employees.fields.salary'), accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-bold text-emerald-600" }
           ];
           break;
+
+        case "paid_ytd":
+          try {
+            response = await axios.get(`${API}/payroll-v2/periods`, {
+              headers: getAuthHeaders(),
+              withCredentials: true
+            });
+            data = (response.data || []).filter(p => p.status === 'paid' || p.status === 'completed');
+          } catch { data = []; }
+          title = t('payrollDashboard.drillDown.paidPeriods');
+          columns = [
+            { header: t('payrollDashboard.drillDown.period'), accessor: "period_name", render: (_, row) => row.period_name || `${row.month}/${row.year}` },
+            { header: t('payrollDashboard.drillDown.type'), accessor: "payroll_type" },
+            { header: t('payrollDashboard.drillDown.employees'), accessor: "total_employees" },
+            { header: t('payrollDashboard.drillDown.totalNet'), accessor: "total_net", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-emerald-600" },
+            { header: t('payrollDashboard.drillDown.totalGross'), accessor: "total_gross", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+            { header: t('common.status'), accessor: "status", render: (val) => (
+              <Badge className="bg-emerald-100 text-emerald-700">{val}</Badge>
+            )}
+          ];
+          break;
+
+        case "avg_salary":
+          response = await axios.get(`${API}/employees?status=active`, {
+            headers: getAuthHeaders(),
+            withCredentials: true
+          });
+          title = t('payrollDashboard.drillDown.salaryDistribution');
+          data = (response.data || []).sort((a, b) => (b.salary || 0) - (a.salary || 0));
+          columns = [
+            { header: t('common.name'), accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
+            { header: t('employees.fields.department'), accessor: "department" },
+            { header: t('employees.fields.position'), accessor: "position" },
+            { header: t('employees.fields.salary'), accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" }
+          ];
+          break;
+
+        case "paid_payrolls":
+          try {
+            response = await axios.get(`${API}/payroll-v2/periods`, {
+              headers: getAuthHeaders(),
+              withCredentials: true
+            });
+            data = (response.data || []).filter(p => p.status === 'paid' || p.status === 'completed');
+          } catch { data = []; }
+          title = t('payrollDashboard.drillDown.completedPayrolls');
+          columns = [
+            { header: t('payrollDashboard.drillDown.period'), accessor: "period_name", render: (_, row) => row.period_name || `${row.month}/${row.year}` },
+            { header: t('payrollDashboard.drillDown.type'), accessor: "payroll_type" },
+            { header: t('payrollDashboard.drillDown.employees'), accessor: "total_employees" },
+            { header: t('payrollDashboard.drillDown.totalNet'), accessor: "total_net", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-emerald-600" },
+            { header: t('common.status'), accessor: "status", render: (val) => (
+              <Badge className="bg-emerald-100 text-emerald-700">{val}</Badge>
+            )}
+          ];
+          break;
+
+        case "monthly_trend":
+          const monthPoint = contextData;
+          title = `${t('payrollDashboard.drillDown.monthDetail')} - ${monthPoint?.month || ''}`;
+          try {
+            const periodsRes = await axios.get(`${API}/payroll-v2/periods`, {
+              headers: getAuthHeaders(),
+              withCredentials: true
+            });
+            const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            const mIdx = monthNames.indexOf(monthPoint?.month?.substring(0, 3));
+            const matched = (periodsRes.data || []).find(p => p.month === (mIdx + 1));
+            if (matched) {
+              const detailRes = await axios.get(`${API}/payroll-v2/periods/${matched.period_id}`, {
+                headers: getAuthHeaders(),
+                withCredentials: true
+              });
+              data = detailRes.data?.entries || [];
+            }
+          } catch { data = []; }
+          columns = [
+            { header: t('common.name'), accessor: "employee_name" },
+            { header: t('employees.fields.department'), accessor: "department" },
+            { header: t('payrollDashboard.drillDown.totalGross'), accessor: "gross_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+            { header: t('payrollDashboard.drillDown.deductions'), accessor: "total_deductions", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right text-red-600" },
+            { header: t('payrollDashboard.drillDown.totalNet'), accessor: "net_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-emerald-600" }
+          ];
+          break;
           
         default:
           break;
