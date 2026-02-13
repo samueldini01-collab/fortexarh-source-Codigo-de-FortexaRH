@@ -712,6 +712,7 @@
       "newCandidates": "New Candidates",
       "errorLoading": "Error loading details"
     },
+    "errorLoadingDetails": "Error loading details",
     "paymentSuccess": "Payment successful! Your subscription has been activated.",
     "recentEmployees": "Recent Employees",
     "noEmployeesRegistered": "No employees registered",
