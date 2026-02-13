@@ -847,6 +847,27 @@
       "severance": "Severance",
       "construction": "Construction NG 07/2007"
     },
+    "statuses": {
+      "open": "Open",
+      "draft": "Draft",
+      "pendingApproval": "Pending Approval",
+      "calculated": "Calculated",
+      "approved": "Approved",
+      "paid": "Paid"
+    },
+    "table": {
+      "employee": "Employee",
+      "department": "Department",
+      "gross": "Gross",
+      "deductions": "Deductions",
+      "net": "Net"
+    },
+    "breakdown": "Breakdown",
+    "filters": {
+      "openPeriods": "Open Periods",
+      "pending": "Pending",
+      "paid": "Paid"
+    },
     "messages": {
       "errorLoadingPeriods": "Error loading periods",
       "errorLoadingTss": "Error loading TSS preview",
