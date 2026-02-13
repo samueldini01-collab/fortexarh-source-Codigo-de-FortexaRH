@@ -304,7 +304,7 @@ export default function VacationsPage() {
               </div>
             ))}
             {dayLeaves.length > 3 && (
-              <div className="text-xs text-slate-500 dark:text-slate-400">+{dayLeaves.length - 3} más</div>
+              <div className="text-xs text-slate-500 dark:text-slate-400">+{dayLeaves.length - 3} {t('vacations.calendar.more')}</div>
             )}
           </div>
         </div>
@@ -597,9 +597,9 @@ export default function VacationsPage() {
           <TabsContent value="balances" className="space-y-6">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-lg font-semibold dark:text-white">Balance de Vacaciones</h3>
+                <h3 className="text-lg font-semibold dark:text-white">{t('vacations.balances.title')}</h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Según Ley 16-92 de República Dominicana: 14 días después de 1 año, +1 día por año adicional (máx 18)
+                  {t('vacations.balances.subtitle')}
                 </p>
               </div>
             </div>
@@ -614,13 +614,13 @@ export default function VacationsPage() {
                   <Table>
                     <TableHeader>
                       <TableRow className="dark:border-slate-700">
-                        <TableHead className="dark:text-slate-300">Empleado</TableHead>
-                        <TableHead className="dark:text-slate-300">Antigüedad</TableHead>
-                        <TableHead className="dark:text-slate-300">Días Asignados</TableHead>
-                        <TableHead className="dark:text-slate-300">Días Usados</TableHead>
-                        <TableHead className="dark:text-slate-300">Días Disponibles</TableHead>
-                        <TableHead className="dark:text-slate-300">Uso</TableHead>
-                        <TableHead className="text-right dark:text-slate-300">Detalles</TableHead>
+                        <TableHead className="dark:text-slate-300">{t('vacations.balances.employee')}</TableHead>
+                        <TableHead className="dark:text-slate-300">{t('vacations.balances.seniority')}</TableHead>
+                        <TableHead className="dark:text-slate-300">{t('vacations.balances.assignedDays')}</TableHead>
+                        <TableHead className="dark:text-slate-300">{t('vacations.balances.usedDays')}</TableHead>
+                        <TableHead className="dark:text-slate-300">{t('vacations.balances.availableDays')}</TableHead>
+                        <TableHead className="dark:text-slate-300">{t('vacations.balances.usage')}</TableHead>
+                        <TableHead className="text-right dark:text-slate-300">{t('vacations.balances.details')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
