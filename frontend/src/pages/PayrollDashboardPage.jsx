@@ -104,7 +104,7 @@ export default function PayrollDashboardPage() {
           
         case "top_salary":
           title = "Top 10 Salarios";
-          data = top_salaries || [];
+          data = stats?.top_salaries || [];
           columns = [
             { header: "#", accessor: "rank", render: (_, __, idx) => idx + 1 },
             { header: "Nombre", accessor: "name" },
