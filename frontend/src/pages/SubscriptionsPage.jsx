@@ -216,7 +216,19 @@ export default function SubscriptionsPage() {
   useEffect(() => {
     fetchData();
     fetchInvoices();
-  }, [fetchData, fetchInvoices]);
+    fetchPaymentMethod();
+  }, [fetchData, fetchInvoices, fetchPaymentMethod]);
+
+  // Handle payment method update callback
+  useEffect(() => {
+    if (searchParams.get("payment_method_updated") === "true") {
+      toast.success(t('subscriptions.paymentMethodUpdated'));
+      fetchPaymentMethod();
+      setSearchParams({});
+    } else if (searchParams.get("payment_method_cancelled") === "true") {
+      setSearchParams({});
+    }
+  }, [searchParams, setSearchParams, fetchPaymentMethod, t]);
 
   const handleSelectPlan = async (plan) => {
     if (!plan) return;
