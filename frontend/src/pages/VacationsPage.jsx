@@ -634,17 +634,17 @@ export default function VacationsPage() {
                               {bal.employee_name}
                             </TableCell>
                             <TableCell className="dark:text-slate-300">
-                              {bal.service_years} año{bal.service_years !== 1 ? 's' : ''}
+                              {bal.service_years} {t('vacations.balances.serviceYears')}
                             </TableCell>
                             <TableCell className="dark:text-slate-300">
-                              {bal.vacation.entitled} días
+                              {bal.vacation.entitled} {t('vacations.form.days')}
                             </TableCell>
                             <TableCell className="dark:text-slate-300">
-                              {bal.vacation.used} días
+                              {bal.vacation.used} {t('vacations.form.days')}
                             </TableCell>
                             <TableCell>
                               <span className={`font-bold ${bal.vacation.remaining > 5 ? 'text-emerald-600 dark:text-emerald-400' : bal.vacation.remaining > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-red-600 dark:text-red-400'}`}>
-                                {bal.vacation.remaining} días
+                                {bal.vacation.remaining} {t('vacations.form.days')}
                               </span>
                             </TableCell>
                             <TableCell className="w-32">
@@ -660,7 +660,7 @@ export default function VacationsPage() {
                                 onClick={() => fetchEmployeeBalance(bal.employee_id)}
                                 data-testid={`view-balance-${bal.employee_id}`}
                               >
-                                Ver
+                                {t('vacations.balances.view')}
                               </Button>
                             </TableCell>
                           </TableRow>
