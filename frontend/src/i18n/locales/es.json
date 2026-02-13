@@ -711,6 +711,7 @@
       "newCandidates": "Nuevos Candidatos",
       "errorLoading": "Error al cargar detalles"
     },
+    "errorLoadingDetails": "Error al cargar detalles",
     "paymentSuccess": "¡Pago exitoso! Tu suscripción ha sido activada.",
     "recentEmployees": "Empleados Recientes",
     "noEmployeesRegistered": "No hay empleados registrados",
