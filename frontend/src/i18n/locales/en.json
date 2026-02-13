@@ -2618,6 +2618,13 @@
       "errorAddingClient": "Error adding client",
       "noClients": "You have no registered clients"
     },
+    "dashboard": {
+      "completeRequiredFields": "Please complete the required fields",
+      "clientAdded": "Client added successfully",
+      "invitationSent": "Invitation sent to {{email}}",
+      "invitationLinkCopied": "Invitation link copied to clipboard",
+      "errorAddingClient": "Error adding client"
+    },
     "register": {
       "title": "Partner Registration",
       "subtitle": "Join our accounting partner program",
