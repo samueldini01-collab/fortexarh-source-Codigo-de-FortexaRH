@@ -108,8 +108,8 @@ export default function PayrollDashboardPage() {
           columns = [
             { header: "#", accessor: "rank" },
             { header: t('common.name'), accessor: "name" },
-            { header: t('employees.fields.department'), accessor: "department" },
-            { header: t('employees.fields.salary'), accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-bold text-emerald-600" }
+            { header: t('employees.table.department'), accessor: "department" },
+            { header: t('employees.table.salary'), accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-bold text-emerald-600" }
           ];
           break;
 
