@@ -4105,6 +4105,16 @@
     "paymentExpired": "La sesión de pago ha expirado. Intente nuevamente.",
     "paymentCancelled": "Pago cancelado"
   },
+  "users": {
+    "roles": {
+      "admin": "Administrador",
+      "adminDesc": "Acceso completo al sistema",
+      "manager": "Gerente",
+      "managerDesc": "Acceso a módulos asignados con permisos de edición",
+      "user": "Usuario",
+      "userDesc": "Acceso de solo lectura a módulos asignados"
+    }
+  },
   "supportAdmin": {
     "errorLoadingTickets": "Error al cargar tickets",
     "ticketUpdated": "Ticket actualizado a: {{status}}",
