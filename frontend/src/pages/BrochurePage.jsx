@@ -222,9 +222,7 @@ export default function BrochurePage() {
               </h1>
               
               <p className="text-xl text-slate-300 max-w-lg">
-                La solución más completa para la gestión de capital humano 
-                en República Dominicana. Automatiza, simplifica y cumple con 
-                todas las regulaciones laborales.
+                {t('brochure.cover.subtitle')}
               </p>
             </div>
             
@@ -232,18 +230,18 @@ export default function BrochurePage() {
             <div className="grid grid-cols-3 gap-6 mt-12">
               <div className="text-center p-4 bg-white/10 rounded-xl backdrop-blur">
                 <Shield className="w-10 h-10 mx-auto mb-3 text-emerald-400" />
-                <p className="font-semibold">Cumplimiento Legal</p>
-                <p className="text-sm text-slate-400">TSS, DGII, Código de Trabajo</p>
+                <p className="font-semibold">{t('landing.compliance.title') || 'Legal Compliance'}</p>
+                <p className="text-sm text-slate-400">TSS, DGII, {t('common.laborCode') || 'Labor Code'}</p>
               </div>
               <div className="text-center p-4 bg-white/10 rounded-xl backdrop-blur">
                 <Zap className="w-10 h-10 mx-auto mb-3 text-emerald-400" />
-                <p className="font-semibold">Automatización Total</p>
-                <p className="text-sm text-slate-400">Nómina, reportes, asientos</p>
+                <p className="font-semibold">{t('landing.automation.title') || 'Full Automation'}</p>
+                <p className="text-sm text-slate-400">{t('landing.automation.subtitle') || 'Payroll, reports, entries'}</p>
               </div>
               <div className="text-center p-4 bg-white/10 rounded-xl backdrop-blur">
                 <Globe className="w-10 h-10 mx-auto mb-3 text-emerald-400" />
-                <p className="font-semibold">100% en la Nube</p>
-                <p className="text-sm text-slate-400">Acceso desde cualquier lugar</p>
+                <p className="font-semibold">{t('landing.cloud.title') || '100% Cloud'}</p>
+                <p className="text-sm text-slate-400">{t('landing.cloud.subtitle') || 'Access from anywhere'}</p>
               </div>
             </div>
           </div>
@@ -251,9 +249,9 @@ export default function BrochurePage() {
           {/* Page 2: Features */}
           <div className="p-12 bg-white min-h-[800px]">
             <div className="text-center mb-8">
-              <p className="text-emerald-600 font-semibold mb-2">CARACTERÍSTICAS</p>
-              <h2 className="text-3xl font-bold text-slate-800">Todo lo que necesita su empresa</h2>
-              <p className="text-slate-500 mt-2">Sistema completo de gestión de RRHH y Nómina</p>
+              <p className="text-emerald-600 font-semibold mb-2">{t('brochure.features.sectionTitle')}</p>
+              <h2 className="text-3xl font-bold text-slate-800">{t('brochure.features.title')}</h2>
+              <p className="text-slate-500 mt-2">{t('dashboard.completeSystem') || 'Complete HR and Payroll management system'}</p>
             </div>
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -261,15 +259,15 @@ export default function BrochurePage() {
                 <Card key={idx} className={`border-slate-200 hover:border-emerald-300 transition-colors relative ${feature.isNew ? 'border-emerald-300 bg-emerald-50/30' : ''}`}>
                   {feature.isNew && (
                     <span className="absolute -top-2 -right-2 bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10">
-                      NUEVO
+                      {t('brochure.pricing.new')}
                     </span>
                   )}
                   <CardContent className="p-4">
                     <div className={`w-9 h-9 ${feature.isNew ? 'bg-emerald-200' : 'bg-emerald-100'} rounded-lg flex items-center justify-center mb-2`}>
                       <feature.icon className={`w-5 h-5 ${feature.isNew ? 'text-emerald-700' : 'text-emerald-600'}`} />
                     </div>
-                    <h3 className="font-semibold text-slate-800 text-sm mb-1">{feature.title}</h3>
-                    <p className="text-xs text-slate-500">{feature.desc}</p>
+                    <h3 className="font-semibold text-slate-800 text-sm mb-1">{t(feature.titleKey)}</h3>
+                    <p className="text-xs text-slate-500">{t(feature.descKey)}</p>
                   </CardContent>
                 </Card>
               ))}
