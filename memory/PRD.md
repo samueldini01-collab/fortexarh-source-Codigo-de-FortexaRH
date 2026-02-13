@@ -4,7 +4,7 @@
 
 ## ✅ Completado Hoy (Sesión Actual - Fork #5)
 
-### 🌐 Traducciones de Páginas BrochurePage, VacationsPage, EmployeesPage
+### 🌐 Traducciones de Páginas - Lote 1 (BrochurePage, VacationsPage, EmployeesPage)
 
 **1. BrochurePage.jsx - COMPLETADO (100%):**
 - **Cover Section:** Título, subtítulo, badges de cumplimiento legal, automatización y nube
@@ -14,27 +14,63 @@
 - **Integrations Section:** 9 integraciones listadas
 - **Pricing Section:** 3 planes (Básico, Pro, Enterprise) con ~30 features cada uno
 - **Contact Section:** Información de contacto, soporte, datos seguros
-- **Botones:** Volver, Descargar PDF
 - **~200 nuevas claves agregadas a `brochure.*`**
 
 **2. VacationsPage.jsx - COMPLETADO (100%):**
 - **Balances Tab Headers:** Employee, Seniority, Assigned Days, Used Days, Available Days, Usage, Details
 - **Balance Detail Dialog:** Hire date, years, months, Assigned, Used, Carry Over, Available, pending requests
 - **Calendar Tab:** Weekday headers (Dom, Lun, Mar...), Month Summary, scheduled absences
-- **Messages:** Export success/error
 - **~40 nuevas claves agregadas a `vacations.balances.*` y `vacations.calendar.*`**
 
 **3. EmployeesPage.jsx - COMPLETADO (100%):**
-- **Toast Messages:** Created, Updated, Deleted, Error Loading, Error Saving, Error Deleting
-- **Deductions:** Amount required
-- **Emergency Contacts:** Required fields, Max contacts message
-- **Photo Upload:** Image size error (photoTooLarge)
+- Toast Messages traducidos (Created, Updated, Deleted, Error messages)
 - **~10 nuevas claves actualizadas**
 
-**4. Testing Agent - VERIFICADO (iteration_39.json):**
-- 100% success rate frontend
-- Language switching EN/ES funciona correctamente
-- Todas las traducciones verificadas
+### 🌐 Traducciones de Páginas - Lote 2 (Alta Prioridad: Nómina y Reportes)
+
+**4. PayrollV2Page.jsx - COMPLETADO (100%):**
+- Toast messages: Period deleted, Updated, Deleted, Complete required fields
+- Novelty messages: Added, Deleted
+- Export messages: Excel exported, TSS downloaded (Autodeterminación, Novedades, IR-3, IR-17)
+- Error handling: Export errors, TSS errors, Breakdown loading
+- **~20 nuevas claves en `payrollV2.messages.*`**
+
+**5. PayrollDashboardPage.jsx - COMPLETADO:**
+- Error messages: Loading stats, Loading details
+- **~2 nuevas claves en `payrollDashboard.*`**
+
+**6. PayrollCalculatorPage.jsx - COMPLETADO:**
+- PDF export message traducido
+- **~1 nueva clave**
+
+### 🌐 Traducciones de Páginas - Lote 3 (Media Prioridad)
+
+**7. RecruitmentPage.jsx - COMPLETADO:**
+- Toast messages: Error loading, Vacancy created, Error creating vacancy, Candidate added, Error adding candidate
+- **~5 nuevas claves en `recruitment.*`**
+
+**8. CDCAuditPage.jsx - COMPLETADO:**
+- Toast messages: Error loading logs, CDC started, Error starting, CDC stopped, Error stopping
+- **~5 nuevas claves en `cdcAudit.*`**
+
+### 🌐 Traducciones de Páginas - Lote 4 (Partners y Subscriptions)
+
+**9. PartnerDashboardPage.jsx - COMPLETADO:**
+- Toast messages: Complete required fields, Client added, Invitation sent, Link copied, Error adding
+- **~5 nuevas claves en `partner.dashboard.*`**
+
+**10. SubscriptionsPage.jsx - COMPLETADO:**
+- Toast messages: Error loading data, Payment verification error, Payment success, Payment expired, Payment cancelled
+- **~5 nuevas claves en `subscriptions.*`**
+
+**11. SupportAdminPage.jsx - COMPLETADO:**
+- Toast messages: Error loading tickets, Ticket updated, Error updating ticket, Priority updated, Error updating priority
+- **~5 nuevas claves en `supportAdmin.*`**
+
+### 📊 Resumen de Páginas Traducidas Hoy:
+- Total páginas actualizadas: **11**
+- Total nuevas claves agregadas: **~300**
+- Archivos JSON actualizados: en.json, es.json, fr.json (todos válidos)
 
 ---
 
