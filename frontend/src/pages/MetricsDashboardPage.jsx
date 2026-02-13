@@ -628,10 +628,10 @@ export default function MetricsDashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-indigo-500" />
-                Comparativa Año vs Año
+                {t('metrics.charts.yoyComparison')}
               </CardTitle>
               <CardDescription>
-                {selectedYear} vs {selectedYear - 1} (click en barra para ver desglose)
+                {selectedYear} vs {selectedYear - 1} {t('metrics.charts.clickForBreakdown')}
               </CardDescription>
             </CardHeader>
             <CardContent>
