@@ -673,7 +673,7 @@ export default function PayrollV2Page() {
       link.href = URL.createObjectURL(blob);
       link.download = `tss_autodeterminacion_${data.header.periodo}.csv`;
       link.click();
-      toast.success("TSS exportado");
+      toast.success(t('payrollV2.messages.tssExported'));
     } catch (error) {
       toast.error(t('payrollV2.messages.errorExportingTss'));
     }

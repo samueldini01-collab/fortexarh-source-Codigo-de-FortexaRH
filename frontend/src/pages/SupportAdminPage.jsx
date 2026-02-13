@@ -275,7 +275,7 @@ export default function SupportAdminPage() {
   // Send response
   const sendResponse = async () => {
     if (!responseMessage.trim()) {
-      toast.error("Escribe un mensaje");
+      toast.error(t('supportAdmin.writeMessage'));
       return;
     }
     
@@ -288,7 +288,7 @@ export default function SupportAdminPage() {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      toast.success(isInternalNote ? "Nota interna agregada" : "Respuesta enviada al cliente");
+      toast.success(isInternalNote ? t('supportAdmin.internalNoteAdded') : t('supportAdmin.responseSent'));
       setResponseMessage("");
       setIsInternalNote(false);
       

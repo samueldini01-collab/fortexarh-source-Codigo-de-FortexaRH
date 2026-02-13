@@ -185,7 +185,7 @@ export default function ReportsSystemPage() {
   // Save report configuration
   const saveReportConfig = async () => {
     if (!saveConfig.name.trim()) {
-      toast.error("Ingrese un nombre para el reporte");
+      toast.error(t('reportsSystem.enterReportName'));
       return;
     }
 
@@ -205,12 +205,12 @@ export default function ReportsSystemPage() {
         headers: getAuthHeaders()
       });
       
-      toast.success("Configuración guardada");
+      toast.success(t('reportsSystem.configSaved'));
       setShowSaveDialog(false);
       setSaveConfig({ name: "", description: "", is_favorite: false });
       fetchSavedReports();
     } catch (error) {
-      toast.error("Error guardando configuración");
+      toast.error(t('reportsSystem.errorSavingConfig'));
     }
   };
 
@@ -243,7 +243,7 @@ export default function ReportsSystemPage() {
       }
       
       setActiveTab("catalog");
-      toast.success("Configuración cargada");
+      toast.success(t('reportsSystem.configLoaded'));
     }
   };
 
@@ -253,10 +253,10 @@ export default function ReportsSystemPage() {
       await axios.delete(`${API}/api/reports-system/saved/${savedReportId}`, {
         headers: getAuthHeaders()
       });
-      toast.success("Configuración eliminada");
+      toast.success(t('reportsSystem.configDeleted'));
       fetchSavedReports();
     } catch (error) {
-      toast.error("Error eliminando configuración");
+      toast.error(t('reportsSystem.errorDeletingConfig'));
     }
   };
 
