@@ -453,15 +453,6 @@ function AppRouter() {
     </Routes>
   );
 }
-      <Route path="/terms" element={<TermsPage />} />
-      <Route path="/privacy" element={<PrivacyPage />} />
-      <Route path="/brochure" element={<BrochurePage />} />
-      <Route path="/geo-attendance" element={<ProtectedRoute><GeoAttendancePage /></ProtectedRoute>} />
-      <Route path="/geo-locations" element={<ProtectedRoute><GeoLocationsPage /></ProtectedRoute>} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  );
-}
 
 // Wrapper component for keyboard shortcuts (needs to be inside BrowserRouter)
 function AppWithShortcuts() {
