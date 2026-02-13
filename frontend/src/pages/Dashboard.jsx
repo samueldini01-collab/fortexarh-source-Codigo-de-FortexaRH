@@ -194,7 +194,7 @@ export default function Dashboard() {
             withCredentials: true
           });
           title = t('dashboard.drillDown.pendingVacations');
-          data = response.data?.requests || [];
+          data = Array.isArray(response.data) ? response.data : (response.data?.requests || []);
           columns = [
             { header: t('dashboard.drillDown.employee'), accessor: "employee_name" },
             { header: t('dashboard.drillDown.from'), accessor: "start_date" },
