@@ -2112,7 +2112,13 @@
       "description": "Description",
       "actions": "Actions",
       "noTemplates": "Aucun modèle",
-      "createFirst": "Créez votre premier modèle"
+      "createFirst": "Créez votre premier modèle",
+      "types": {
+        "contract": "Contrat",
+        "letter": "Lettre",
+        "certificate": "Certificat",
+        "policy": "Politique"
+      }
     },
     "templateForm": {
       "createTitle": "Créer Modèle",
