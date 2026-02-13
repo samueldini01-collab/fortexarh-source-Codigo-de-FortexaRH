@@ -2646,7 +2646,14 @@
       "errorUpdatingBilling": "Error updating billing",
       "errorConnectingStripe": "Error connecting to Stripe",
       "errorOpeningStripeDashboard": "Error opening Stripe dashboard",
-      "errorProcessingWithdrawal": "Error processing withdrawal"
+      "errorProcessingWithdrawal": "Error processing withdrawal",
+      "referralLinkCopied": "Referral link copied to clipboard",
+      "invitationResent": "Invitation resent to {{email}}",
+      "billingTypeUpdated": "Billing type updated",
+      "minWithdrawalAmount": "Minimum withdrawal amount is $50.00",
+      "amountExceedsBalance": "Amount exceeds available balance",
+      "stripeConnected": "Stripe account connected successfully!",
+      "completeStripeSetup": "Please complete your Stripe account setup"
     },
     "register": {
       "title": "Partner Registration",
@@ -4127,7 +4134,14 @@
     "errorApplyingDiscount": "Error applying discount",
     "errorCancellingSubscription": "Error cancelling subscription",
     "errorReactivatingSubscription": "Error reactivating subscription",
-    "errorDownloadingInvoice": "Error downloading invoice"
+    "errorDownloadingInvoice": "Error downloading invoice",
+    "employeeCountUpdated": "Employee count updated",
+    "additionalUsersUpdated": "Additional users updated",
+    "discountApplied": "Discount applied! You save {{savings}} in 3 months",
+    "pleaseSelectReason": "Please select a reason",
+    "subscriptionCancelled": "Subscription cancelled. You will have access until the end of the current period.",
+    "subscriptionReactivated": "Subscription reactivated!",
+    "invoiceDownloaded": "Invoice downloaded"
   },
   "users": {
     "roles": {
@@ -4155,7 +4169,10 @@
     "candidateAdded": "Candidate added",
     "errorAddingCandidate": "Error adding candidate",
     "errorUpdating": "Error updating",
-    "errorClosing": "Error closing"
+    "errorClosing": "Error closing",
+    "stageUpdated": "Stage updated",
+    "vacancyClosed": "Vacancy closed",
+    "candidatesExported": "Candidates exported successfully"
   },
   "cdcAudit": {
     "errorLoadingLogs": "Error loading audit logs",
