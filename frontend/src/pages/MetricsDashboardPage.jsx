@@ -753,9 +753,9 @@ export default function MetricsDashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-blue-500" />
-                Análisis de Rotación de Personal
+                {t('metrics.charts.turnoverAnalysis')}
               </CardTitle>
-              <CardDescription>Entradas y salidas de empleados por mes (click para ver detalles)</CardDescription>
+              <CardDescription>{t('metrics.drillDown.hiresExits')}</CardDescription>
             </CardHeader>
             <CardContent>
               {(() => {
@@ -784,11 +784,11 @@ export default function MetricsDashboardPage() {
                       <Tooltip 
                         formatter={(value, name) => [
                           Math.abs(value), 
-                          name === 'hired' ? 'Contratados' : name === 'terminated' ? 'Salidas' : 'Neto'
+                          name === 'hired' ? t('metrics.drillDown.hired') : name === 'terminated' ? t('metrics.drillDown.terminated') : t('metrics.drillDown.netBalance')
                         ]}
                         contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }}
                       />
-                      <Legend formatter={(value) => value === 'hired' ? 'Contratados' : value === 'terminated' ? 'Salidas' : 'Balance Neto'} />
+                      <Legend formatter={(value) => value === 'hired' ? t('metrics.drillDown.hired') : value === 'terminated' ? t('metrics.drillDown.terminated') : t('metrics.drillDown.netBalance')} />
                       <Bar dataKey="hired" name="hired" fill="#10b981" stackId="stack" radius={[4, 4, 0, 0]} />
                       <Bar dataKey="terminated" name="terminated" fill="#ef4444" stackId="stack" radius={[0, 0, 4, 4]} />
                       <Line type="monotone" dataKey="net" stroke="#3b82f6" strokeWidth={2} dot={{ fill: '#3b82f6', r: 3 }} />
@@ -804,7 +804,7 @@ export default function MetricsDashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Target className="w-5 h-5 text-purple-500" />
-                KPIs de Rotación
+                {t('metrics.charts.turnoverKpis')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -819,7 +819,7 @@ export default function MetricsDashboardPage() {
                     <>
                       <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-emerald-700 dark:text-emerald-400">Contratados YTD</span>
+                          <span className="text-sm text-emerald-700 dark:text-emerald-400">{t('metrics.drillDown.hiresYTD')}</span>
                           <span className="font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1">
                             <UserPlus className="w-4 h-4" />
                             {totalHired}
