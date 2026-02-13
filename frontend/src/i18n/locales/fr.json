@@ -782,7 +782,17 @@
       "topSalariesDesc": "Employés avec le salaire de base le plus élevé"
     },
     "drillDown": {
-      "activeEmployees": "Employés Actifs"
+      "activeEmployees": "Employés Actifs",
+      "paidPeriods": "Périodes de paie payées",
+      "salaryDistribution": "Distribution des salaires",
+      "completedPayrolls": "Paies complétées",
+      "monthDetail": "Détail du mois",
+      "period": "Période",
+      "type": "Type",
+      "employees": "Employés",
+      "totalNet": "Net total",
+      "totalGross": "Brut total",
+      "deductions": "Déductions"
     },
     "noTrendData": "Pas de données de tendance",
     "noDeptData": "Pas de données par département",
