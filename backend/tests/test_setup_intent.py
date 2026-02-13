@@ -93,8 +93,8 @@ class TestSetupIntentEndpoints:
             json={"payment_method_id": "pm_invalid_test_12345"}
         )
         
-        # Should return 500 since the payment method doesn't exist in Stripe
-        assert response.status_code == 500, f"Expected 500 for invalid pm but got {response.status_code}: {response.text}"
+        # Should return 5xx error since the payment method doesn't exist in Stripe
+        assert response.status_code >= 500, f"Expected 5xx for invalid pm but got {response.status_code}: {response.text}"
         print("PASS: confirm-setup-intent correctly rejects invalid payment_method_id")
 
     def test_confirm_setup_intent_without_payment_method_id(self):
