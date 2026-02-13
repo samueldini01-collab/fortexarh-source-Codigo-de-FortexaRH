@@ -1300,6 +1300,13 @@ export default function SubscriptionsPage() {
             )}
           </DialogContent>
         </Dialog>
+
+        {/* Payment Method Dialog (Stripe Elements) */}
+        <PaymentMethodDialog
+          open={showPaymentMethodDialog}
+          onOpenChange={setShowPaymentMethodDialog}
+          onSuccess={handlePaymentMethodUpdated}
+        />
       </div>
     </DashboardLayout>
   );
