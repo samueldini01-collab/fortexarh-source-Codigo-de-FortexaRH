@@ -820,7 +820,26 @@
       "errorRejecting": "Error al rechazar",
       "payrollPaid": "Nómina pagada. Asiento #{{entryNumber}} generado.",
       "bankFileDownloaded": "Archivo bancario {{bankName}} descargado",
-      "errorGeneratingBankFile": "Error al generar archivo bancario"
+      "errorGeneratingBankFile": "Error al generar archivo bancario",
+      "periodDeleted": "Período eliminado",
+      "updated": "Actualizado",
+      "deleted": "Eliminado",
+      "completeRequiredFields": "Complete todos los campos requeridos",
+      "noveltyAdded": "Novedad agregada",
+      "noveltyDeleted": "Novedad eliminada",
+      "excelExported": "Excel exportado",
+      "errorExporting": "Error al exportar",
+      "tssAutodeterminacionDownloaded": "TSS Autodeterminación descargado",
+      "errorDownloadingTssAutodeterminacion": "Error al descargar TSS Autodeterminación",
+      "tssNovedadesDownloaded": "TSS Novedades descargado",
+      "errorDownloadingTssNovedades": "Error al descargar TSS Novedades",
+      "ir3Downloaded": "IR-3 descargado",
+      "errorDownloadingIr3": "Error al descargar IR-3",
+      "ir17Downloaded": "IR-17 descargado",
+      "errorDownloadingIr17": "Error al descargar IR-17",
+      "errorExportingTss": "Error al exportar TSS",
+      "errorLoadingBreakdown": "Error al cargar desglose",
+      "baseSalary": "Salario Base"
     }
   },
   "globalSearch": {
