@@ -746,7 +746,9 @@
     "alerts": {
       "unpaidApproved": "{{count}} nóminas aprobadas pendientes de pago",
       "incompleteEmployees": "{{count}} empleados con datos incompletos"
-    }
+    },
+    "errorLoadingStats": "Error al cargar estadísticas",
+    "errorLoadingDetails": "Error al cargar detalles"
   },
   "pricing": {
     "planNames": {
