@@ -4255,7 +4255,17 @@
     "errorClosing": "Error closing",
     "stageUpdated": "Stage updated",
     "vacancyClosed": "Vacancy closed",
-    "candidatesExported": "Candidates exported successfully"
+    "candidatesExported": "Candidates exported successfully",
+    "openVacancies": "Open Vacancies",
+    "closedVacancies": "Closed Vacancies",
+    "open": "Open",
+    "closed": "Closed",
+    "searchPlaceholder": "Search vacancies or candidates...",
+    "vacanciesCount": "{{jobs}} vacancies, {{candidates}} candidates",
+    "vacancies": "Vacancies",
+    "noVacancies": "No vacancies posted",
+    "noVacanciesFilter": "No vacancies match the filter",
+    "selectVacancy": "Select vacancy"
   },
   "cdcAudit": {
     "errorLoadingLogs": "Error loading audit logs",
