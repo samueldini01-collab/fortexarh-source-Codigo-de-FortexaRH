@@ -657,15 +657,10 @@ export default function SubscriptionsPage() {
                     {t('subscriptions.paymentMethod.noMethod')}
                   </p>
                   <Button
-                    onClick={handleUpdatePaymentMethod}
-                    disabled={updatingPaymentMethod}
+                    onClick={() => setShowPaymentMethodDialog(true)}
                     data-testid="add-payment-method-btn"
                   >
-                    {updatingPaymentMethod ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    ) : (
-                      <CreditCard className="w-4 h-4 mr-2" />
-                    )}
+                    <CreditCard className="w-4 h-4 mr-2" />
                     {t('subscriptions.paymentMethod.add')}
                   </Button>
                 </div>
