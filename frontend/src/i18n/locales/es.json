@@ -4088,6 +4088,20 @@
       "copyright": "Todos los derechos reservados."
     }
   },
+  "subscriptions": {
+    "errorLoadingData": "Error al cargar datos de suscripción",
+    "paymentVerificationError": "No se pudo verificar el estado del pago. Por favor contacte soporte.",
+    "paymentSuccess": "¡Pago exitoso! Su suscripción ha sido activada.",
+    "paymentExpired": "La sesión de pago ha expirado. Intente nuevamente.",
+    "paymentCancelled": "Pago cancelado"
+  },
+  "supportAdmin": {
+    "errorLoadingTickets": "Error al cargar tickets",
+    "ticketUpdated": "Ticket actualizado a: {{status}}",
+    "errorUpdatingTicket": "Error al actualizar ticket",
+    "priorityUpdated": "Prioridad actualizada a: {{priority}}",
+    "errorUpdatingPriority": "Error al actualizar prioridad"
+  },
   "recruitment": {
     "errorLoading": "Error al cargar datos",
     "vacancyCreated": "Vacante creada",
