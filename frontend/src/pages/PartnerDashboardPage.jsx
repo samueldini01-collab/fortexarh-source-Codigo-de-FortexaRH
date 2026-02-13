@@ -296,7 +296,7 @@ export default function PartnerDashboardPage() {
   const copyReferralLink = () => {
     if (dashboardData?.firm?.referral_link) {
       navigator.clipboard.writeText(dashboardData.firm.referral_link);
-      toast.success("Link de referido copiado al portapapeles");
+      toast.success(t('partner.dashboard.referralLinkCopied'));
     }
   };
 
@@ -306,7 +306,7 @@ export default function PartnerDashboardPage() {
       await axios.post(`${API}/partners/clients/${clientId}/resend-invitation`, null, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      toast.success(`Invitación reenviada a ${clientEmail}`);
+      toast.success(t('partner.dashboard.invitationResent', { email: clientEmail }));
       fetchClients();
     } catch (error) {
       toast.error(error.response?.data?.detail || t('partner.dashboard.errorResendingInvitation'));
@@ -320,7 +320,7 @@ export default function PartnerDashboardPage() {
         params: { billing_type: billingType },
         headers: { Authorization: `Bearer ${token}` }
       });
-      toast.success("Tipo de facturación actualizado");
+      toast.success(t('partner.dashboard.billingTypeUpdated'));
       fetchClients();
     } catch (error) {
       toast.error(t('partner.dashboard.errorUpdatingBilling'));
@@ -363,12 +363,12 @@ export default function PartnerDashboardPage() {
     const amount = payoutAmount ? parseFloat(payoutAmount) : null;
     
     if (amount && amount < 50) {
-      toast.error("El monto mínimo para retiro es $50.00");
+      toast.error(t('partner.dashboard.minWithdrawalAmount'));
       return;
     }
     
     if (amount && amount > (payoutBalance?.available_balance || 0)) {
-      toast.error("Monto superior al balance disponible");
+      toast.error(t('partner.dashboard.amountExceedsBalance'));
       return;
     }
     
