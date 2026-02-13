@@ -115,7 +115,7 @@ export default function RecruitmentPage() {
   const handleStageChange = async (candidateId, stage) => {
     try {
       await axios.put(`${API}/candidates/${candidateId}/stage?stage=${stage}`, {}, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Etapa actualizada");
+      toast.success(t('recruitment.stageUpdated'));
       fetchData();
     } catch (error) {
       toast.error(t('recruitment.errorUpdating'));
@@ -125,7 +125,7 @@ export default function RecruitmentPage() {
   const handleCloseJob = async (jobId) => {
     try {
       await axios.put(`${API}/jobs/${jobId}/close`, {}, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Vacante cerrada");
+      toast.success(t('recruitment.vacancyClosed'));
       fetchData();
     } catch (error) {
       toast.error(t('recruitment.errorClosing'));
@@ -193,7 +193,7 @@ export default function RecruitmentPage() {
     link.download = `candidatos_${new Date().toISOString().split("T")[0]}.csv`;
     link.click();
     URL.revokeObjectURL(url);
-    toast.success("Candidatos exportados correctamente");
+    toast.success(t('recruitment.candidatesExported'));
   };
   
   // Get active filter label
