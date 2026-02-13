@@ -4125,6 +4125,17 @@
       "tss": "Génération de fichiers TSS (SUIR+)",
       "dgii": "Rapports DGII-TSS (IR-3, IR-17)"
     },
+    "geolocation": {
+      "idealFor": "Idéal pour",
+      "field": "Personnel de terrain",
+      "construction": "Construction",
+      "delivery": "Livraison",
+      "sales": "Ventes",
+      "supervisors": "Superviseurs",
+      "distribution": "Routes de distribution",
+      "technicians": "Techniciens",
+      "promoters": "Promoteurs"
+    },
     "pricing": {
       "sectionTitle": "PLANS ET TARIFS",
       "title": "Investissement qui se rentabilise",
