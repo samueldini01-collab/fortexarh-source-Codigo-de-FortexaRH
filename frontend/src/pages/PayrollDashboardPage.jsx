@@ -76,9 +76,9 @@ export default function PayrollDashboardPage() {
           data = response.data || [];
           columns = [
             { header: t('common.name'), accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
-            { header: t('employees.fields.department'), accessor: "department" },
-            { header: t('employees.fields.position'), accessor: "position" },
-            { header: t('employees.fields.salary'), accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" }
+            { header: t('employees.table.department'), accessor: "department" },
+            { header: t('employees.table.position'), accessor: "position" },
+            { header: t('employees.table.salary'), accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" }
           ];
           break;
           
@@ -88,12 +88,12 @@ export default function PayrollDashboardPage() {
             headers: getAuthHeaders(),
             withCredentials: true
           });
-          title = `${t('employees.title')} - ${deptName || t('employees.fields.department')}`;
+          title = `${t('employees.title')} - ${deptName || t('employees.table.department')}`;
           data = response.data || [];
           columns = [
             { header: t('common.name'), accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
-            { header: t('employees.fields.position'), accessor: "position" },
-            { header: t('employees.fields.salary'), accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" },
+            { header: t('employees.table.position'), accessor: "position" },
+            { header: t('employees.table.salary'), accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" },
             { header: t('common.status'), accessor: "status", render: (val) => (
               <Badge className={val === "active" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"}>
                 {val === "active" ? t('common.active') : t('common.inactive')}
