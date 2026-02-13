@@ -33,10 +33,10 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
 const templateTypes = [
-  { value: "contract", label: "Contrato", icon: FileSignature, color: "bg-blue-100 text-blue-700 dark:text-blue-400" },
-  { value: "letter", label: "Carta", icon: Mail, color: "bg-emerald-100 text-emerald-700 dark:text-emerald-400" },
-  { value: "certificate", label: "Certificado", icon: Award, color: "bg-purple-100 text-purple-700" },
-  { value: "policy", label: "Política", icon: BookOpen, color: "bg-amber-100 text-amber-700 dark:text-amber-400" }
+  { value: "contract", labelKey: "templates.types.contract", icon: FileSignature, color: "bg-blue-100 text-blue-700 dark:text-blue-400" },
+  { value: "letter", labelKey: "templates.types.letter", icon: Mail, color: "bg-emerald-100 text-emerald-700 dark:text-emerald-400" },
+  { value: "certificate", labelKey: "templates.types.certificate", icon: Award, color: "bg-purple-100 text-purple-700" },
+  { value: "policy", labelKey: "templates.types.policy", icon: BookOpen, color: "bg-amber-100 text-amber-700 dark:text-amber-400" }
 ];
 
 const defaultVariables = [
