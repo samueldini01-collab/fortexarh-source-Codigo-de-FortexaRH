@@ -2161,7 +2161,11 @@
       "templateDuplicated": "Modèle dupliqué",
       "errorDuplicating": "Erreur de duplication",
       "selectEmployee": "Sélectionnez un employé",
-      "errorGeneratingPdf": "Erreur lors de la génération du PDF"
+      "errorGeneratingPdf": "Erreur lors de la génération du PDF",
+      "generatingPdf": "Génération du PDF...",
+      "pdfDownloaded": "PDF téléchargé avec succès",
+      "pleaseSignDocument": "Veuillez signer le document",
+      "documentSignedAndSaved": "Document signé et enregistré"
     },
     "categories": {
       "constancia": "Attestation",
@@ -2637,7 +2641,14 @@
       "errorUpdatingBilling": "Erreur lors de la mise à jour de la facturation",
       "errorConnectingStripe": "Erreur lors de la connexion à Stripe",
       "errorOpeningStripeDashboard": "Erreur lors de l'ouverture du dashboard Stripe",
-      "errorProcessingWithdrawal": "Erreur lors du traitement du retrait"
+      "errorProcessingWithdrawal": "Erreur lors du traitement du retrait",
+      "referralLinkCopied": "Lien de parrainage copié dans le presse-papiers",
+      "invitationResent": "Invitation renvoyée à {{email}}",
+      "billingTypeUpdated": "Type de facturation mis à jour",
+      "minWithdrawalAmount": "Le montant minimum de retrait est de $50.00",
+      "amountExceedsBalance": "Montant supérieur au solde disponible",
+      "stripeConnected": "Compte Stripe connecté avec succès!",
+      "completeStripeSetup": "Veuillez compléter la configuration de votre compte Stripe"
     },
     "register": {
       "title": "Inscription Partenaire",
@@ -4107,7 +4118,14 @@
     "errorApplyingDiscount": "Erreur lors de l'application du discount",
     "errorCancellingSubscription": "Erreur lors de l'annulation de l'abonnement",
     "errorReactivatingSubscription": "Erreur lors de la réactivation de l'abonnement",
-    "errorDownloadingInvoice": "Erreur lors du téléchargement de la facture"
+    "errorDownloadingInvoice": "Erreur lors du téléchargement de la facture",
+    "employeeCountUpdated": "Nombre d'employés mis à jour",
+    "additionalUsersUpdated": "Utilisateurs supplémentaires mis à jour",
+    "discountApplied": "Réduction appliquée! Vous économisez {{savings}} en 3 mois",
+    "pleaseSelectReason": "Veuillez sélectionner un motif",
+    "subscriptionCancelled": "Abonnement annulé. Vous aurez accès jusqu'à la fin de la période actuelle.",
+    "subscriptionReactivated": "Abonnement réactivé!",
+    "invoiceDownloaded": "Facture téléchargée"
   },
   "users": {
     "roles": {
@@ -4135,7 +4153,10 @@
     "candidateAdded": "Candidat ajouté",
     "errorAddingCandidate": "Erreur lors de l'ajout du candidat",
     "errorUpdating": "Erreur lors de la mise à jour",
-    "errorClosing": "Erreur lors de la fermeture"
+    "errorClosing": "Erreur lors de la fermeture",
+    "stageUpdated": "Étape mise à jour",
+    "vacancyClosed": "Poste fermé",
+    "candidatesExported": "Candidats exportés avec succès"
   },
   "cdcAudit": {
     "errorLoadingLogs": "Erreur lors du chargement des logs d'audit",
