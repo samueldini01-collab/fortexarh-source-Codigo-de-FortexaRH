@@ -397,12 +397,12 @@ export default function PartnerDashboardPage() {
     const stripeParam = urlParams.get("stripe");
     
     if (stripeParam === "success") {
-      toast.success("¡Cuenta de Stripe conectada exitosamente!");
+      toast.success(t('partner.dashboard.stripeConnected'));
       fetchPayoutData();
       // Clean URL
       window.history.replaceState({}, document.title, window.location.pathname);
     } else if (stripeParam === "refresh") {
-      toast.info("Por favor completa la configuración de tu cuenta de Stripe");
+      toast.info(t('partner.dashboard.completeStripeSetup'));
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, [fetchPayoutData]);
@@ -828,7 +828,7 @@ export default function PartnerDashboardPage() {
                                     className="text-slate-300 hover:text-white hover:bg-slate-700"
                                     onClick={() => {
                                       navigator.clipboard.writeText(client.invitation_link);
-                                      toast.success("Link de invitación copiado");
+                                      toast.success(t('partner.dashboard.invitationLinkCopied'));
                                     }}
                                   >
                                     <Copy className="w-4 h-4 mr-2" />
