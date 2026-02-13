@@ -113,6 +113,16 @@
     "lastUpdated": "Dernière mise à jour",
     "days": "jours"
   },
+  "colors": {
+    "red": "Rouge",
+    "orange": "Orange",
+    "yellow": "Jaune",
+    "green": "Vert",
+    "blue": "Bleu",
+    "violet": "Violet",
+    "pink": "Rose",
+    "gray": "Gris"
+  },
   "nav": {
     "dashboard": "Tableau de bord",
     "dashboardMain": "Tableau de bord Principal",
