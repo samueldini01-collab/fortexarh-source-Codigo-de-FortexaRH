@@ -4416,7 +4416,13 @@
       "success": "Método de pago actualizado correctamente",
       "error": "Error al actualizar el método de pago",
       "secureNotice": "Tu información es encriptada y procesada de forma segura por Stripe",
-      "preparingForm": "Preparando formulario seguro..."
+      "preparingForm": "Preparando formulario seguro...",
+      "history": {
+        "title": "Historial de Cambios",
+        "added": "{{brand}} ••{{last4}} agregada",
+        "updated": "Tarjeta actualizada",
+        "noHistory": "Sin cambios registrados"
+      }
     },
     "invoiceHistory": {
       "title": "Historial de Facturas",

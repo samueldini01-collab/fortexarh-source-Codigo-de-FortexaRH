@@ -4268,7 +4268,13 @@
       "success": "Moyen de paiement mis à jour avec succès",
       "error": "Erreur lors de la mise à jour du moyen de paiement",
       "secureNotice": "Vos informations sont chiffrées et traitées en toute sécurité par Stripe",
-      "preparingForm": "Préparation du formulaire sécurisé..."
+      "preparingForm": "Préparation du formulaire sécurisé...",
+      "history": {
+        "title": "Historique des modifications",
+        "added": "{{brand}} ••{{last4}} ajoutée",
+        "updated": "Carte mise à jour",
+        "noHistory": "Aucune modification enregistrée"
+      }
     },
     "invoiceHistory": {
       "title": "Historique des Factures",

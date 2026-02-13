@@ -4303,7 +4303,13 @@
       "success": "Payment method updated successfully",
       "error": "Error updating payment method",
       "secureNotice": "Your card information is encrypted and securely processed by Stripe",
-      "preparingForm": "Preparing secure form..."
+      "preparingForm": "Preparing secure form...",
+      "history": {
+        "title": "Change History",
+        "added": "{{brand}} ••{{last4}} added",
+        "updated": "Card updated",
+        "noHistory": "No changes recorded"
+      }
     },
     "invoiceHistory": {
       "title": "Invoice History",
