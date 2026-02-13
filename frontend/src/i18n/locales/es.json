@@ -2173,7 +2173,11 @@
       "templateDuplicated": "Plantilla duplicada",
       "errorDuplicating": "Error al duplicar",
       "selectEmployee": "Selecciona un empleado",
-      "errorGeneratingPdf": "Error al generar PDF"
+      "errorGeneratingPdf": "Error al generar PDF",
+      "generatingPdf": "Generando PDF...",
+      "pdfDownloaded": "PDF descargado correctamente",
+      "pleaseSignDocument": "Por favor firma el documento",
+      "documentSignedAndSaved": "Documento firmado y guardado"
     },
     "categories": {
       "constancia": "Constancia",
@@ -2649,7 +2653,14 @@
       "errorUpdatingBilling": "Error al actualizar facturación",
       "errorConnectingStripe": "Error al conectar con Stripe",
       "errorOpeningStripeDashboard": "Error al abrir el dashboard de Stripe",
-      "errorProcessingWithdrawal": "Error al procesar el retiro"
+      "errorProcessingWithdrawal": "Error al procesar el retiro",
+      "referralLinkCopied": "Link de referido copiado al portapapeles",
+      "invitationResent": "Invitación reenviada a {{email}}",
+      "billingTypeUpdated": "Tipo de facturación actualizado",
+      "minWithdrawalAmount": "El monto mínimo para retiro es $50.00",
+      "amountExceedsBalance": "Monto superior al balance disponible",
+      "stripeConnected": "¡Cuenta de Stripe conectada exitosamente!",
+      "completeStripeSetup": "Por favor completa la configuración de tu cuenta de Stripe"
     },
     "register": {
       "title": "Registro de Partner",
@@ -4130,7 +4141,14 @@
     "errorApplyingDiscount": "Error al aplicar descuento",
     "errorCancellingSubscription": "Error al cancelar suscripción",
     "errorReactivatingSubscription": "Error al reactivar suscripción",
-    "errorDownloadingInvoice": "Error al descargar la factura"
+    "errorDownloadingInvoice": "Error al descargar la factura",
+    "employeeCountUpdated": "Cantidad de empleados actualizada",
+    "additionalUsersUpdated": "Usuarios adicionales actualizados",
+    "discountApplied": "¡Descuento aplicado! Ahorras {{savings}} en 3 meses",
+    "pleaseSelectReason": "Por favor selecciona un motivo",
+    "subscriptionCancelled": "Suscripción cancelada. Tendrás acceso hasta el fin del período actual.",
+    "subscriptionReactivated": "¡Suscripción reactivada!",
+    "invoiceDownloaded": "Factura descargada"
   },
   "users": {
     "roles": {
@@ -4158,7 +4176,10 @@
     "candidateAdded": "Candidato agregado",
     "errorAddingCandidate": "Error al agregar candidato",
     "errorUpdating": "Error al actualizar",
-    "errorClosing": "Error al cerrar"
+    "errorClosing": "Error al cerrar",
+    "stageUpdated": "Etapa actualizada",
+    "vacancyClosed": "Vacante cerrada",
+    "candidatesExported": "Candidatos exportados correctamente"
   },
   "cdcAudit": {
     "errorLoadingLogs": "Error al cargar logs de auditoría",
