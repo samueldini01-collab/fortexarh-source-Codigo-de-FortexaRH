@@ -676,27 +676,27 @@ export default function VacationsPage() {
             <Dialog open={isBalanceDialogOpen} onOpenChange={setIsBalanceDialogOpen}>
               <DialogContent className="max-w-md">
                 <DialogHeader>
-                  <DialogTitle className="heading">Detalle de Balance</DialogTitle>
+                  <DialogTitle className="heading">{t('vacations.balances.detailTitle')}</DialogTitle>
                 </DialogHeader>
                 {selectedBalance && (
                   <div className="space-y-4 mt-4">
                     <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
                       <h4 className="font-semibold dark:text-white mb-2">{selectedBalance.employee_name}</h4>
                       <div className="text-sm space-y-1 text-slate-600 dark:text-slate-400">
-                        <p>Fecha de ingreso: {selectedBalance.hire_date?.split('T')[0]}</p>
-                        <p>Antigüedad: {selectedBalance.service_years} años, {selectedBalance.service_months % 12} meses</p>
+                        <p>{t('vacations.balances.hireDate')}: {selectedBalance.hire_date?.split('T')[0]}</p>
+                        <p>{t('vacations.balances.seniority')}: {selectedBalance.service_years} {t('vacations.balances.serviceYears')}, {selectedBalance.service_months % 12} {t('vacations.balances.serviceMonths')}</p>
                       </div>
                     </div>
 
                     <div className="space-y-3">
-                      <h5 className="font-medium dark:text-white">Vacaciones {selectedBalance.year}</h5>
+                      <h5 className="font-medium dark:text-white">{t('vacations.balances.vacationsYear')} {selectedBalance.year}</h5>
                       <div className="grid grid-cols-2 gap-3">
                         <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
-                          <p className="text-xs text-blue-600 dark:text-blue-400">Asignados</p>
+                          <p className="text-xs text-blue-600 dark:text-blue-400">{t('vacations.balances.assigned')}</p>
                           <p className="text-xl font-bold text-blue-700 dark:text-blue-400">{selectedBalance.vacation.entitled}</p>
                         </div>
                         <div className="p-3 bg-amber-50 dark:bg-amber-900/30 rounded-lg">
-                          <p className="text-xs text-amber-600 dark:text-amber-400">Usados</p>
+                          <p className="text-xs text-amber-600 dark:text-amber-400">{t('vacations.balances.used')}</p>
                           <p className="text-xl font-bold text-amber-700 dark:text-amber-400">{selectedBalance.vacation.used}</p>
                         </div>
                         <div className="p-3 bg-purple-50 dark:bg-purple-900/30 rounded-lg">
