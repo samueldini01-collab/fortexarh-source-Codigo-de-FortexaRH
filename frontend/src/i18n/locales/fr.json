@@ -2609,6 +2609,13 @@
       "errorAddingClient": "Erreur lors de l'ajout du client",
       "noClients": "Vous n'avez pas de clients enregistrés"
     },
+    "dashboard": {
+      "completeRequiredFields": "Veuillez remplir les champs requis",
+      "clientAdded": "Client ajouté avec succès",
+      "invitationSent": "Invitation envoyée à {{email}}",
+      "invitationLinkCopied": "Lien d'invitation copié dans le presse-papiers",
+      "errorAddingClient": "Erreur lors de l'ajout du client"
+    },
     "register": {
       "title": "Inscription Partenaire",
       "subtitle": "Rejoignez notre programme de partenaires comptables",
