@@ -279,9 +279,9 @@ export default function BrochurePage() {
                   <Shield className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-800 text-lg mb-2">{t('landing.compliance.guaranteed') || 'Guaranteed Legal Compliance'}</h3>
+                  <h3 className="font-bold text-slate-800 text-lg mb-2">{t('brochure.features.complianceTitle')}</h3>
                   <p className="text-slate-600 text-sm">
-                    {t('landing.compliance.description') || 'FortexaRH is specifically designed to comply with all labor regulations of the Dominican Republic: TSS, DGII, Labor Code, General Norm 07-2007 for Construction Workers, and more.'}
+                    {t('brochure.features.complianceDescription')}
                   </p>
                 </div>
               </div>
