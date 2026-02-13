@@ -202,7 +202,7 @@ export default function TemplatesPage() {
   const downloadPDF = async () => {
     if (!documentRef.current) return;
     
-    toast.loading("Generando PDF...");
+    toast.loading(t('templates.messages.generatingPdf'));
     
     try {
       const canvas = await html2canvas(documentRef.current, {
@@ -232,7 +232,7 @@ export default function TemplatesPage() {
       const fileName = `${selectedTemplate?.name || 'documento'}_${new Date().toISOString().split('T')[0]}.pdf`;
       pdf.save(fileName);
       toast.dismiss();
-      toast.success("PDF descargado correctamente");
+      toast.success(t('templates.messages.pdfDownloaded'));
     } catch (error) {
       toast.dismiss();
       toast.error(t('templates.messages.errorGeneratingPdf'));
@@ -251,7 +251,7 @@ export default function TemplatesPage() {
 
   const saveSignedDocument = async () => {
     if (!signatureRef.current || signatureRef.current.isEmpty()) {
-      toast.error("Por favor firma el documento");
+      toast.error(t('templates.messages.pleaseSignDocument'));
       return;
     }
 
@@ -268,7 +268,7 @@ export default function TemplatesPage() {
         withCredentials: true
       });
       
-      toast.success("Documento firmado y guardado");
+      toast.success(t('templates.messages.documentSignedAndSaved'));
       setIsSignOpen(false);
       setIsGenerateOpen(false);
       fetchData();
