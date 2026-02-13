@@ -820,7 +820,26 @@
       "errorRejecting": "Erreur lors du rejet",
       "payrollPaid": "Paie payée. Écriture #{{entryNumber}} générée.",
       "bankFileDownloaded": "Fichier bancaire {{bankName}} téléchargé",
-      "errorGeneratingBankFile": "Erreur lors de la génération du fichier bancaire"
+      "errorGeneratingBankFile": "Erreur lors de la génération du fichier bancaire",
+      "periodDeleted": "Période supprimée",
+      "updated": "Mis à jour",
+      "deleted": "Supprimé",
+      "completeRequiredFields": "Remplissez tous les champs requis",
+      "noveltyAdded": "Nouveauté ajoutée",
+      "noveltyDeleted": "Nouveauté supprimée",
+      "excelExported": "Excel exporté",
+      "errorExporting": "Erreur lors de l'exportation",
+      "tssAutodeterminacionDownloaded": "TSS Autodétermination téléchargé",
+      "errorDownloadingTssAutodeterminacion": "Erreur lors du téléchargement de TSS Autodétermination",
+      "tssNovedadesDownloaded": "TSS Nouveautés téléchargé",
+      "errorDownloadingTssNovedades": "Erreur lors du téléchargement de TSS Nouveautés",
+      "ir3Downloaded": "IR-3 téléchargé",
+      "errorDownloadingIr3": "Erreur lors du téléchargement de IR-3",
+      "ir17Downloaded": "IR-17 téléchargé",
+      "errorDownloadingIr17": "Erreur lors du téléchargement de IR-17",
+      "errorExportingTss": "Erreur lors de l'exportation TSS",
+      "errorLoadingBreakdown": "Erreur lors du chargement de la ventilation",
+      "baseSalary": "Salaire de Base"
     }
   },
   "globalSearch": {
