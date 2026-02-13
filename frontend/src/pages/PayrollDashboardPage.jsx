@@ -190,7 +190,7 @@ export default function PayrollDashboardPage() {
           } catch { data = []; }
           columns = [
             { header: t('common.name'), accessor: "employee_name" },
-            { header: t('employees.fields.department'), accessor: "department" },
+            { header: t('employees.table.department'), accessor: "department" },
             { header: t('payrollDashboard.drillDown.totalGross'), accessor: "gross_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
             { header: t('payrollDashboard.drillDown.deductions'), accessor: "total_deductions", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right text-red-600" },
             { header: t('payrollDashboard.drillDown.totalNet'), accessor: "net_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-emerald-600" }
