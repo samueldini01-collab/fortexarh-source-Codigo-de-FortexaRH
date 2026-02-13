@@ -102,7 +102,7 @@ export default function SubscriptionsPage() {
       setAdditionalUsers(subRes.data.additional_users || 0);
     } catch (error) {
       console.error("Error fetching subscription:", error);
-      toast.error("Error al cargar datos de suscripción");
+      toast.error(t('subscriptions.errorLoadingData'));
     } finally {
       setLoading(false);
     }
@@ -114,7 +114,7 @@ export default function SubscriptionsPage() {
     const pollInterval = 2000;
 
     if (attempts >= maxAttempts) {
-      toast.error("No se pudo verificar el estado del pago. Por favor contacte soporte.");
+      toast.error(t('subscriptions.paymentVerificationError'));
       setCheckingPayment(false);
       setSearchParams({});
       return;
@@ -131,7 +131,7 @@ export default function SubscriptionsPage() {
       if (response.data.payment_status === 'paid') {
         setCheckingPayment(false);
         setShowPaymentSuccess(true);
-        toast.success("¡Pago exitoso! Su suscripción ha sido activada.");
+        toast.success(t('subscriptions.paymentSuccess'));
         // Clear URL params
         setSearchParams({});
         // Refresh subscription data in both local state and global context
@@ -142,7 +142,7 @@ export default function SubscriptionsPage() {
         return;
       } else if (response.data.status === 'expired') {
         setCheckingPayment(false);
-        toast.error("La sesión de pago ha expirado. Intente nuevamente.");
+        toast.error(t('subscriptions.paymentExpired'));
         setSearchParams({});
         return;
       }
@@ -163,7 +163,7 @@ export default function SubscriptionsPage() {
     if (sessionId && status === 'success') {
       pollPaymentStatus(sessionId);
     } else if (status === 'cancelled') {
-      toast.info("Pago cancelado");
+      toast.info(t('subscriptions.paymentCancelled'));
       // Clear URL params
       setSearchParams({});
     }
