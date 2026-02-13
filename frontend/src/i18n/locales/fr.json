@@ -1328,6 +1328,7 @@
         "print": "Imprimer"
       },
       "messages": {
+        "pdfExported": "PDF exporté avec succès",
         "enterValidSalary": "Veuillez entrer un salaire de base valide",
         "calculationSuccess": "Calcul effectué avec succès",
         "calculationError": "Erreur lors du calcul de la paie",
