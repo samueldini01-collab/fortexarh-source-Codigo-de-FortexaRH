@@ -352,7 +352,10 @@ export default function MetricsDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card data-testid="cost-per-employee-card">
+          <Card data-testid="cost-per-employee-card"
+            className="cursor-pointer hover:shadow-md transition-all"
+            onClick={() => handleChartDrillDown("total_employees")}
+          >
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -366,6 +369,9 @@ export default function MetricsDashboardPage() {
                   <Percent className="w-6 h-6 text-purple-600" />
                 </div>
               </div>
+              <p className="text-xs text-slate-400 mt-2 flex items-center">
+                <ChevronRight className="w-3 h-3" /> {t('metrics.cards.clickDetail')}
+              </p>
             </CardContent>
           </Card>
         </div>
