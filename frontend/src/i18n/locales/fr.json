@@ -3319,7 +3319,75 @@
       "dark": "Sombre",
       "auto": "Automatique"
     },
+    "logo": {
+      "title": "Logo de l'Entreprise",
+      "subtitle": "Téléchargez le logo de votre entreprise pour les documents et l'en-tête du système.",
+      "currentLogo": "Logo Actuel",
+      "noLogo": "Aucun logo téléchargé",
+      "dragDrop": "Glisser-déposer ou",
+      "selectFile": "sélectionner un fichier",
+      "recommendations": "Dimensions recommandées: 400x400px",
+      "preview": "Aperçu dans les documents:",
+      "companyName": "Nom de l'Entreprise",
+      "save": "Enregistrer le Logo"
+    },
+    "appearance": {
+      "title": "Apparence et Thème",
+      "subtitle": "Personnalisez les couleurs et l'aspect visuel du système.",
+      "brandColors": "Couleurs de Marque",
+      "primaryColor": "Couleur Primaire",
+      "secondaryColor": "Couleur Secondaire",
+      "accentColor": "Couleur d'Accent",
+      "theme": "Thème",
+      "typography": "Typographie",
+      "fontFamily": "Famille de Police",
+      "fontSize": "Taille de Police",
+      "preview": "Aperçu",
+      "save": "Enregistrer l'Apparence"
+    },
+    "branding": {
+      "title": "Marque et Textes Personnalisés",
+      "subtitle": "Personnalisez les textes qui apparaissent sur les documents et les notifications.",
+      "headerText": "Texte d'En-tête",
+      "headerPlaceholder": "Texte qui apparaît en haut des documents...",
+      "footerText": "Texte de Pied de Page",
+      "footerPlaceholder": "Texte qui apparaît en bas des documents...",
+      "welcomeMessage": "Message de Bienvenue",
+      "welcomePlaceholder": "Message affiché aux employés lors de la connexion...",
+      "socialLinks": "Réseaux Sociaux",
+      "save": "Enregistrer la Marque"
+    },
+    "notifications": {
+      "title": "Paramètres de Notifications",
+      "subtitle": "Configurez comment les notifications du système sont envoyées.",
+      "channels": "Canaux de Notification",
+      "emailEnabled": "Notifications par Email",
+      "emailDesc": "Envoyer des notifications par e-mail",
+      "smsEnabled": "Notifications SMS",
+      "smsDesc": "Envoyer des notifications par SMS (coût supplémentaire)",
+      "pushEnabled": "Notifications Push",
+      "pushDesc": "Envoyer des notifications navigateur et mobiles",
+      "selfService": "Portail Libre-Service",
+      "selfServiceEnabled": "Activer le Portail",
+      "selfServiceDesc": "Permettre aux employés d'accéder à leurs informations et de faire des demandes",
+      "save": "Enregistrer les Notifications"
+    },
+    "audit": {
+      "title": "Journal d'Audit",
+      "subtitle": "Consultez les dernières modifications apportées à la configuration de l'entreprise.",
+      "recentChanges": "Modifications Récentes",
+      "noChanges": "Aucune modification récente",
+      "user": "Utilisateur",
+      "action": "Action",
+      "date": "Date"
+    },
     "integrations": {
+      "title": "Intégrations",
+      "subtitle": "Connectez FortexaRH à vos systèmes comptables et ERP.",
+      "connected": "Connecté",
+      "connect": "Connecter",
+      "disconnect": "Déconnecter",
+      "comingSoon": "Bientôt Disponible",
       "fortexaerp": {
         "desc": "Synchronisation native complète avec l'écosystème Fortexa."
       },
@@ -3335,7 +3403,9 @@
     },
     "messages": {
       "quickbooksConnected": "QuickBooks connecté avec succès à {{company}}!",
-      "quickbooksError": "Erreur de connexion à QuickBooks: {{error}}"
+      "quickbooksError": "Erreur de connexion à QuickBooks: {{error}}",
+      "saving": "Enregistrement...",
+      "savePreferences": "Enregistrer les Préférences"
     }
   },
   "errors": {
