@@ -4031,6 +4031,12 @@
         "distanceHelp": "Distance depuis l'emplacement pour déclencher une alerte",
         "sendSummary": "Envoyer le Résumé Maintenant",
         "sendingSummary": "Envoi..."
+      },
+      "levels": {
+        "critical": "CRITIQUE",
+        "high": "HAUTE",
+        "medium": "MOYENNE",
+        "low": "BASSE"
       }
     },
     "actions": {
