@@ -3153,7 +3153,15 @@
       "pending": "Pending",
       "installments": "Installments",
       "costs": "Costs",
-      "errorLoading": "Error loading details"
+      "errorLoading": "Error loading details",
+      "payrollBreakdown": "Payroll Breakdown",
+      "month": "Month",
+      "hiresExits": "Employee hires and exits by month (click to view details)",
+      "hired": "Hired",
+      "terminated": "Exits",
+      "netBalance": "Net Balance",
+      "hiresYTD": "Hires YTD",
+      "exitsYTD": "Exits YTD"
     }
   },
   "orgChart": {
