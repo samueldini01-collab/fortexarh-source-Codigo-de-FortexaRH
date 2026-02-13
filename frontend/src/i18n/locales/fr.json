@@ -2160,7 +2160,8 @@
       "confirmDelete": "Supprimer ce modèle?",
       "templateDuplicated": "Modèle dupliqué",
       "errorDuplicating": "Erreur de duplication",
-      "selectEmployee": "Sélectionnez un employé"
+      "selectEmployee": "Sélectionnez un employé",
+      "errorGeneratingPdf": "Erreur lors de la génération du PDF"
     },
     "categories": {
       "constancia": "Attestation",
