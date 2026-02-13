@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, createContext, useContext, useCallback, Suspense } from "react";
+import { useEffect, useState, useRef, createContext, useContext, useCallback, Suspense, lazy } from "react";
 import "@/App.css";
 import "@/i18n"; // Initialize i18n
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
@@ -10,9 +10,21 @@ import { KeyboardShortcutsProvider } from "@/context/KeyboardShortcutsContext";
 import { KeyboardShortcutsHelp } from "@/components/KeyboardShortcutsHelp";
 import { OnboardingProvider } from "@/context/OnboardingContext";
 import OnboardingTutorial from "@/components/OnboardingTutorial";
-import { Loader2 } from "lucide-react";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 
-// Loading Spinner Component
+// Loading Spinner Component - Compact version for page transitions
+const PageLoader = () => (
+  <div className="min-h-[60vh] flex items-center justify-center">
+    <div className="flex flex-col items-center gap-3">
+      <div className="relative">
+        <div className="w-10 h-10 rounded-full border-3 border-emerald-200 dark:border-emerald-900"></div>
+        <div className="absolute inset-0 w-10 h-10 rounded-full border-3 border-transparent border-t-emerald-500 animate-spin"></div>
+      </div>
+    </div>
+  </div>
+);
+
+// Full screen Loading Spinner for initial app load
 const LoadingSpinner = () => (
   <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
     <div className="flex flex-col items-center gap-4">
@@ -28,56 +40,75 @@ const LoadingSpinner = () => (
   </div>
 );
 
-// Pages
+// ============================================================================
+// LAZY LOADED PAGES - Code Splitting for Better Performance
+// ============================================================================
+
+// Critical pages - Keep synchronous for fast initial load
 import LandingPage from "@/pages/LandingPage";
 import LoginPage from "@/pages/LoginPage";
-import RegisterPage from "@/pages/RegisterPage";
-import CheckoutPage from "@/pages/CheckoutPage";
 import Dashboard from "@/pages/Dashboard";
-import EmployeesPage from "@/pages/EmployeesPage";
-import PayrollPage from "@/pages/PayrollPage";
-import AttendancePage from "@/pages/AttendancePage";
-import VacationsPage from "@/pages/VacationsPage";
-import EvaluationsPage from "@/pages/EvaluationsPage";
-import RecruitmentPage from "@/pages/RecruitmentPage";
-import ReportsPage from "@/pages/ReportsPage";
-import SettingsPage from "@/pages/SettingsPage";
-import PricingPage from "@/pages/PricingPage";
-import OrganigramaPage from "@/pages/OrganigramaPage";
-import PayrollConfigPage from "@/pages/PayrollConfigPage";
-import TemplatesPage from "@/pages/TemplatesPage";
-import PayrollCalculatorPage from "@/pages/PayrollCalculatorPage";
-import AccountingPage from "@/pages/AccountingPage";
-import PayrollV2Page from "@/pages/PayrollV2Page";
-import PayrollDashboardPage from "@/pages/PayrollDashboardPage";
-import CompanyConfigPage from "@/pages/CompanyConfigPage";
-import SubscriptionsPage from "@/pages/SubscriptionsPage";
-import UsersManagementPage from "@/pages/UsersManagementPage";
-import TermsPage from "@/pages/TermsPage";
-import PrivacyPage from "@/pages/PrivacyPage";
-import RolesPage from "@/pages/RolesPage";
-import DGIIReportsPage from "@/pages/DGIIReportsPage";
-import LoansPage from "@/pages/LoansPage";
-import MetricsDashboardPage from "@/pages/MetricsDashboardPage";
-import ReportsAdvancedPage from "@/pages/ReportsAdvancedPage";
-import ReportsSystemPage from "@/pages/ReportsSystemPage";
-import EmployeePortalPage from "@/pages/EmployeePortalPage";
-import DocumentsPage from "@/pages/DocumentsPage";
-import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
-import ResetPasswordPage from "@/pages/ResetPasswordPage";
-import NotificationsPage from "@/pages/NotificationsPage";
-import CostsByDepartmentPage from "@/pages/CostsByDepartmentPage";
-import ExpensesPage from "@/pages/ExpensesPage";
-import CDCAuditPage from "@/pages/CDCAuditPage";
-import SupportPage from "@/pages/SupportPage";
-import SupportAdminPage from "@/pages/SupportAdminPage";
-import AccountantsSoftwarePage from "@/pages/AccountantsSoftwarePage";
-import PartnerRegisterPage from "@/pages/PartnerRegisterPage";
-import PartnerDashboardPage from "@/pages/PartnerDashboardPage";
-import BrochurePage from "@/pages/BrochurePage";
-import GeoAttendancePage from "@/pages/GeoAttendancePage";
-import GeoLocationsPage from "@/pages/GeoLocationsPage";
-import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+
+// Auth & Onboarding - Lazy loaded
+const RegisterPage = lazy(() => import("@/pages/RegisterPage"));
+const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("@/pages/ResetPasswordPage"));
+const CheckoutPage = lazy(() => import("@/pages/CheckoutPage"));
+const PricingPage = lazy(() => import("@/pages/PricingPage"));
+
+// HR Core - Lazy loaded (Large pages)
+const EmployeesPage = lazy(() => import("@/pages/EmployeesPage"));
+const EmployeePortalPage = lazy(() => import("@/pages/EmployeePortalPage"));
+const EvaluationsPage = lazy(() => import("@/pages/EvaluationsPage"));
+const RecruitmentPage = lazy(() => import("@/pages/RecruitmentPage"));
+const OrganigramaPage = lazy(() => import("@/pages/OrganigramaPage"));
+const DocumentsPage = lazy(() => import("@/pages/DocumentsPage"));
+const TemplatesPage = lazy(() => import("@/pages/TemplatesPage"));
+
+// Payroll & Finance - Lazy loaded (Very large pages)
+const PayrollPage = lazy(() => import("@/pages/PayrollPage"));
+const PayrollV2Page = lazy(() => import("@/pages/PayrollV2Page"));
+const PayrollDashboardPage = lazy(() => import("@/pages/PayrollDashboardPage"));
+const PayrollConfigPage = lazy(() => import("@/pages/PayrollConfigPage"));
+const PayrollCalculatorPage = lazy(() => import("@/pages/PayrollCalculatorPage"));
+const AccountingPage = lazy(() => import("@/pages/AccountingPage"));
+const LoansPage = lazy(() => import("@/pages/LoansPage"));
+const ExpensesPage = lazy(() => import("@/pages/ExpensesPage"));
+const SubscriptionsPage = lazy(() => import("@/pages/SubscriptionsPage"));
+
+// Time & Attendance - Lazy loaded
+const AttendancePage = lazy(() => import("@/pages/AttendancePage"));
+const VacationsPage = lazy(() => import("@/pages/VacationsPage"));
+const GeoAttendancePage = lazy(() => import("@/pages/GeoAttendancePage"));
+const GeoLocationsPage = lazy(() => import("@/pages/GeoLocationsPage"));
+
+// Reports - Lazy loaded
+const ReportsPage = lazy(() => import("@/pages/ReportsPage"));
+const ReportsAdvancedPage = lazy(() => import("@/pages/ReportsAdvancedPage"));
+const ReportsSystemPage = lazy(() => import("@/pages/ReportsSystemPage"));
+const DGIIReportsPage = lazy(() => import("@/pages/DGIIReportsPage"));
+const MetricsDashboardPage = lazy(() => import("@/pages/MetricsDashboardPage"));
+const CostsByDepartmentPage = lazy(() => import("@/pages/CostsByDepartmentPage"));
+
+// Administration - Lazy loaded
+const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
+const CompanyConfigPage = lazy(() => import("@/pages/CompanyConfigPage"));
+const UsersManagementPage = lazy(() => import("@/pages/UsersManagementPage"));
+const RolesPage = lazy(() => import("@/pages/RolesPage"));
+const NotificationsPage = lazy(() => import("@/pages/NotificationsPage"));
+const CDCAuditPage = lazy(() => import("@/pages/CDCAuditPage"));
+
+// Partner & Support - Lazy loaded
+const PartnerDashboardPage = lazy(() => import("@/pages/PartnerDashboardPage"));
+const PartnerRegisterPage = lazy(() => import("@/pages/PartnerRegisterPage"));
+const AccountantsSoftwarePage = lazy(() => import("@/pages/AccountantsSoftwarePage"));
+const SupportPage = lazy(() => import("@/pages/SupportPage"));
+const SupportAdminPage = lazy(() => import("@/pages/SupportAdminPage"));
+
+// Static Pages - Lazy loaded
+const TermsPage = lazy(() => import("@/pages/TermsPage"));
+const PrivacyPage = lazy(() => import("@/pages/PrivacyPage"));
+const BrochurePage = lazy(() => import("@/pages/BrochurePage"));
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
