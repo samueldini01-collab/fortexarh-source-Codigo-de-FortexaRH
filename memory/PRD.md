@@ -2,53 +2,43 @@
 
 ## Última Actualización: 2026-02-13
 
-## ✅ Completado Hoy (Sesión Actual - Fork #4)
+## ✅ Completado Hoy (Sesión Actual - Fork #5)
 
-### 🌐 Traducciones de Páginas Restantes Completadas
+### 🌐 Traducciones de Páginas BrochurePage, VacationsPage, EmployeesPage
 
-**1. AccountingPage.jsx - ACTUALIZADO:**
-- Título: "Accounting Module" / "Módulo Contable"
-- Subtítulo: "Journal entries and chart of accounts" / "Asientos de diario y plan de cuentas"
-- Stats cards: Total Entries, Total Debits, Total Credits, From Payroll
-- Tabs: "Journal Entries" / "Chart of Accounts"
-- Filtros: Search by Number, Start Date, End Date, Search, Clear filters
-- Encabezados de tabla: Number, Date, Reference, Description, Debit, Credit, Status, Actions
-- Diálogos de crear/editar entrada y cuenta traducidos
-- Estados de badges traducidos (Posted, Pending, Voided, Draft)
-- Mensajes de toast CRUD traducidos
-- ~50 nuevas claves agregadas a `accounting.*`
+**1. BrochurePage.jsx - COMPLETADO (100%):**
+- **Cover Section:** Título, subtítulo, badges de cumplimiento legal, automatización y nube
+- **Features Section:** 20 características con títulos y descripciones traducidas
+- **Geolocation Section:** Highlight de nueva funcionalidad con 4 cards y sección "Ideal para" con 8 categorías
+- **Benefits Section:** 10 beneficios traducidos
+- **Integrations Section:** 9 integraciones listadas
+- **Pricing Section:** 3 planes (Básico, Pro, Enterprise) con ~30 features cada uno
+- **Contact Section:** Información de contacto, soporte, datos seguros
+- **Botones:** Volver, Descargar PDF
+- **~200 nuevas claves agregadas a `brochure.*`**
 
-**2. CostsByDepartmentPage.jsx - COMPLETADO:**
-- Título: "Costs by Department" / "Costos por Departamento"
-- Subtítulo traducido
-- Stats cards: Total Employees, Gross Salary, Employer Contributions, Total Cost
-- Tabs: Preview / Charts (Vista Previa / Gráficos)
-- Controles: Period, Refresh, Print, CSV, Excel
-- Gráficos: Cost Distribution, Monthly Comparison
-- Estado vacío traducido
-- Mensajes de error/éxito traducidos
-- ~45 nuevas claves agregadas a `costsByDepartment.*`
+**2. VacationsPage.jsx - COMPLETADO (100%):**
+- **Balances Tab Headers:** Employee, Seniority, Assigned Days, Used Days, Available Days, Usage, Details
+- **Balance Detail Dialog:** Hire date, years, months, Assigned, Used, Carry Over, Available, pending requests
+- **Calendar Tab:** Weekday headers (Dom, Lun, Mar...), Month Summary, scheduled absences
+- **Messages:** Export success/error
+- **~40 nuevas claves agregadas a `vacations.balances.*` y `vacations.calendar.*`**
 
-**3. CompanyConfigPage.jsx - COMPLETADO:**
-- Tabs dinámicos con traducciones: General, Logo, Appearance, Branding, Notifications, Integrations, Audit
-- Sección Logo: Upload, preview, recommendations
-- Sección Appearance: Brand colors, theme, typography
-- Sección Branding: Header text, footer text, welcome message, social links
-- Sección Notifications: Email, SMS, Push, Self-service settings
-- Sección Audit: Recent changes log
-- Sección Integrations: Connect/disconnect, coming soon badges
-- ~100 nuevas claves agregadas a `companyConfig.*`
+**3. EmployeesPage.jsx - COMPLETADO (100%):**
+- **Toast Messages:** Created, Updated, Deleted, Error Loading, Error Saving, Error Deleting
+- **Deductions:** Amount required
+- **Emergency Contacts:** Required fields, Max contacts message
+- **Photo Upload:** Image size error (photoTooLarge)
+- **~10 nuevas claves actualizadas**
 
-**4. AttendancePage.jsx - ACTUALIZADO:**
-- Mensajes de toast traducidos (check-in, check-out, error handling)
-
-**5. Common translations - ACTUALIZADAS:**
-- Agregadas claves: print, refresh, clearFilters
-- Validadas en los 3 idiomas (EN/ES/FR)
+**4. Testing Agent - VERIFICADO (iteration_39.json):**
+- 100% success rate frontend
+- Language switching EN/ES funciona correctamente
+- Todas las traducciones verificadas
 
 ---
 
-## ✅ Completado en Fork #3
+## ✅ Completado en Fork #4
 
 ### 🌐 Traducciones de Alta Prioridad Completadas
 
