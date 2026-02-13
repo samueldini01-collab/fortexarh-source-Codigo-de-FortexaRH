@@ -4145,6 +4145,17 @@
       "tss": "TSS file generation (SUIR+)",
       "dgii": "DGII-TSS Reports (IR-3, IR-17)"
     },
+    "geolocation": {
+      "idealFor": "Ideal for",
+      "field": "Field staff",
+      "construction": "Construction",
+      "delivery": "Delivery",
+      "sales": "Sales",
+      "supervisors": "Supervisors",
+      "distribution": "Distribution routes",
+      "technicians": "Technicians",
+      "promoters": "Promoters"
+    },
     "pricing": {
       "sectionTitle": "PLANS AND PRICING",
       "title": "Investment that pays for itself",
