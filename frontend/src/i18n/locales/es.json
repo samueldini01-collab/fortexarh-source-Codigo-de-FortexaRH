@@ -2621,6 +2621,13 @@
       "errorAddingClient": "Error al agregar cliente",
       "noClients": "No tienes clientes registrados"
     },
+    "dashboard": {
+      "completeRequiredFields": "Por favor completa los campos requeridos",
+      "clientAdded": "Cliente agregado exitosamente",
+      "invitationSent": "Invitación enviada a {{email}}",
+      "invitationLinkCopied": "Link de invitación copiado al portapapeles",
+      "errorAddingClient": "Error al agregar cliente"
+    },
     "register": {
       "title": "Registro de Partner",
       "subtitle": "Únete a nuestro programa de socios contables",
