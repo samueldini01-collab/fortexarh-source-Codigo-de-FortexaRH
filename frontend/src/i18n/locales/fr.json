@@ -4058,6 +4058,20 @@
       "copyright": "Tous droits réservés."
     }
   },
+  "recruitment": {
+    "errorLoading": "Erreur lors du chargement des données",
+    "vacancyCreated": "Poste créé",
+    "errorCreatingVacancy": "Erreur lors de la création du poste",
+    "candidateAdded": "Candidat ajouté",
+    "errorAddingCandidate": "Erreur lors de l'ajout du candidat"
+  },
+  "cdcAudit": {
+    "errorLoadingLogs": "Erreur lors du chargement des logs d'audit",
+    "cdcStarted": "CDC démarré avec succès",
+    "errorStartingCdc": "Erreur lors du démarrage du CDC",
+    "cdcStopped": "CDC arrêté avec succès",
+    "errorStoppingCdc": "Erreur lors de l'arrêt du CDC"
+  },
   "brochure": {
     "back": "Retour",
     "downloadPdf": "Télécharger PDF",
