@@ -4215,7 +4215,39 @@
     "back": "Retour",
     "confirmCancellation": "Confirmer l'Annulation",
     "paid": "Payée",
-    "pending": "En Attente"
+    "pending": "En Attente",
+    "planComparison": "Comparaison des Plans",
+    "findPerfectPlan": "Trouvez le plan parfait pour votre entreprise",
+    "mostPopular": "Le Plus Populaire",
+    "errorUpdatingPaymentMethod": "Erreur lors de la mise à jour du mode de paiement",
+    "paymentMethodUpdated": "Mode de paiement mis à jour avec succès",
+    "paymentMethod": {
+      "title": "Mode de Paiement",
+      "description": "Gérez votre carte de crédit pour les paiements automatiques",
+      "expires": "Expire",
+      "active": "Active",
+      "autoRenewal": "Votre abonnement sera renouvelé automatiquement avec cette carte",
+      "update": "Changer de Carte",
+      "add": "Ajouter une Carte",
+      "noMethod": "Vous n'avez pas de mode de paiement configuré",
+      "expired": "Votre carte a expiré",
+      "expiredMessage": "Mettez à jour votre mode de paiement pour éviter la suspension du service.",
+      "expiringSoon": "Votre carte va bientôt expirer",
+      "expiringSoonMessage": "Mettez à jour votre mode de paiement avant qu'elle n'expire pour éviter les interruptions."
+    },
+    "invoiceHistory": {
+      "title": "Historique des Factures",
+      "description": "Enregistrement de tous vos paiements",
+      "noInvoices": "Aucune facture disponible",
+      "invoicesWillAppear": "Les factures apparaîtront ici après avoir effectué un paiement",
+      "invoice": "Facture",
+      "date": "Date",
+      "plan": "Plan",
+      "employees": "Employés",
+      "total": "Total",
+      "status": "Statut",
+      "actions": "Actions"
+    }
   },
   "users": {
     "roles": {
