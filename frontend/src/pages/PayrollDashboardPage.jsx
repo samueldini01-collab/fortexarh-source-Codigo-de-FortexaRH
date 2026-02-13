@@ -143,9 +143,9 @@ export default function PayrollDashboardPage() {
           data = (response.data || []).sort((a, b) => (b.salary || 0) - (a.salary || 0));
           columns = [
             { header: t('common.name'), accessor: "name", render: (_, row) => `${row.first_name} ${row.last_name}` },
-            { header: t('employees.fields.department'), accessor: "department" },
-            { header: t('employees.fields.position'), accessor: "position" },
-            { header: t('employees.fields.salary'), accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" }
+            { header: t('employees.table.department'), accessor: "department" },
+            { header: t('employees.table.position'), accessor: "position" },
+            { header: t('employees.table.salary'), accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" }
           ];
           break;
 
