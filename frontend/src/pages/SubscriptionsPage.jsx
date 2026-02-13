@@ -203,7 +203,7 @@ export default function SubscriptionsPage() {
     fetchPaymentMethod();
   }, [fetchData, fetchInvoices, fetchPaymentMethod]);
 
-  // Handle payment method update callback
+  // Handle payment method update callback (legacy redirect flow)
   useEffect(() => {
     if (searchParams.get("payment_method_updated") === "true") {
       toast.success(t('subscriptions.paymentMethodUpdated'));
