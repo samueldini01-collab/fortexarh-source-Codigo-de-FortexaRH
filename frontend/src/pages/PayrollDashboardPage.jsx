@@ -39,7 +39,7 @@ export default function PayrollDashboardPage() {
       });
       setStats(response.data);
     } catch (error) {
-      toast.error("Error al cargar estadísticas");
+      toast.error(t('payrollDashboard.errorLoadingStats'));
     } finally {
       setLoading(false);
     }
@@ -109,7 +109,7 @@ export default function PayrollDashboardPage() {
             { header: "#", accessor: "rank", render: (_, __, idx) => idx + 1 },
             { header: "Nombre", accessor: "name" },
             { header: "Departamento", accessor: "department" },
-            { header: "Salario", accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-bold text-emerald-600" }
+            { header: t('employees.fields.salary'), accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-bold text-emerald-600" }
           ];
           break;
           
@@ -120,7 +120,7 @@ export default function PayrollDashboardPage() {
       setDrillDown({ open: true, type, title, data, columns });
     } catch (error) {
       console.error("Error fetching drill-down data:", error);
-      toast.error("Error al cargar detalles");
+      toast.error(t('payrollDashboard.errorLoadingDetails'));
       setDrillDown({ open: false, type: null, title: "", data: [], columns: [] });
     } finally {
       setDrillDownLoading(false);
