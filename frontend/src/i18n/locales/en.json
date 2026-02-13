@@ -2170,7 +2170,11 @@
       "templateDuplicated": "Template duplicated",
       "errorDuplicating": "Error duplicating",
       "selectEmployee": "Select an employee",
-      "errorGeneratingPdf": "Error generating PDF"
+      "errorGeneratingPdf": "Error generating PDF",
+      "generatingPdf": "Generating PDF...",
+      "pdfDownloaded": "PDF downloaded successfully",
+      "pleaseSignDocument": "Please sign the document",
+      "documentSignedAndSaved": "Document signed and saved"
     },
     "categories": {
       "constancia": "Certificate",
