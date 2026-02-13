@@ -211,13 +211,13 @@ export default function Dashboard() {
             headers: getAuthHeaders(),
             withCredentials: true
           });
-          title = "Vacantes Abiertas";
+          title = t('dashboard.drillDown.openJobs');
           data = response.data || [];
           columns = [
-            { header: "Título", accessor: "title" },
-            { header: "Departamento", accessor: "department" },
-            { header: "Ubicación", accessor: "location" },
-            { header: "Candidatos", accessor: "applicant_count", render: (val) => val || 0 }
+            { header: t('dashboard.drillDown.title'), accessor: "title" },
+            { header: t('dashboard.drillDown.department'), accessor: "department" },
+            { header: t('dashboard.drillDown.location'), accessor: "location" },
+            { header: t('dashboard.drillDown.candidates'), accessor: "applicant_count", render: (val) => val || 0 }
           ];
           break;
           
@@ -226,13 +226,13 @@ export default function Dashboard() {
             headers: getAuthHeaders(),
             withCredentials: true
           });
-          title = "Nuevos Candidatos";
+          title = t('dashboard.drillDown.newCandidates');
           data = response.data || [];
           columns = [
-            { header: "Nombre", accessor: "name" },
-            { header: "Email", accessor: "email" },
-            { header: "Puesto", accessor: "job_title" },
-            { header: "Estado", accessor: "status", render: (val) => (
+            { header: t('dashboard.drillDown.name'), accessor: "name" },
+            { header: t('dashboard.drillDown.email'), accessor: "email" },
+            { header: t('dashboard.drillDown.position'), accessor: "job_title" },
+            { header: t('dashboard.drillDown.status'), accessor: "status", render: (val) => (
               <Badge className="bg-cyan-100 text-cyan-700">{val}</Badge>
             )}
           ];
