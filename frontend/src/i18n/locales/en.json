@@ -821,7 +821,26 @@
       "errorRejecting": "Error rejecting",
       "payrollPaid": "Payroll paid. Entry #{{entryNumber}} generated.",
       "bankFileDownloaded": "Bank file {{bankName}} downloaded",
-      "errorGeneratingBankFile": "Error generating bank file"
+      "errorGeneratingBankFile": "Error generating bank file",
+      "periodDeleted": "Period deleted",
+      "updated": "Updated",
+      "deleted": "Deleted",
+      "completeRequiredFields": "Complete all required fields",
+      "noveltyAdded": "Novelty added",
+      "noveltyDeleted": "Novelty deleted",
+      "excelExported": "Excel exported",
+      "errorExporting": "Error exporting",
+      "tssAutodeterminacionDownloaded": "TSS Autodetermination downloaded",
+      "errorDownloadingTssAutodeterminacion": "Error downloading TSS Autodetermination",
+      "tssNovedadesDownloaded": "TSS Novedades downloaded",
+      "errorDownloadingTssNovedades": "Error downloading TSS Novedades",
+      "ir3Downloaded": "IR-3 downloaded",
+      "errorDownloadingIr3": "Error downloading IR-3",
+      "ir17Downloaded": "IR-17 downloaded",
+      "errorDownloadingIr17": "Error downloading IR-17",
+      "errorExportingTss": "Error exporting TSS",
+      "errorLoadingBreakdown": "Error loading breakdown",
+      "baseSalary": "Base Salary"
     }
   },
   "globalSearch": {
