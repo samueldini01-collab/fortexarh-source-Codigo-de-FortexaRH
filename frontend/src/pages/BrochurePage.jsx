@@ -251,7 +251,7 @@ export default function BrochurePage() {
             <div className="text-center mb-8">
               <p className="text-emerald-600 font-semibold mb-2">{t('brochure.features.sectionTitle')}</p>
               <h2 className="text-3xl font-bold text-slate-800">{t('brochure.features.title')}</h2>
-              <p className="text-slate-500 mt-2">{t('dashboard.completeSystem') || 'Complete HR and Payroll management system'}</p>
+              <p className="text-slate-500 mt-2">{t('brochure.features.subtitle') || 'Complete HR and Payroll management system'}</p>
             </div>
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
