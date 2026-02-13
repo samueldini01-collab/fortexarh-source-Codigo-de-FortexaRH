@@ -313,7 +313,7 @@ export default function EmployeesPage() {
       return;
     }
     if (formData.emergency_contacts.length >= 3) {
-      toast.error("Máximo 3 contactos de emergencia permitidos");
+      toast.error(t('employees.emergencyContacts.maxContacts'));
       return;
     }
     setFormData({
@@ -732,7 +732,7 @@ export default function EmployeesPage() {
                             const file = e.target.files?.[0];
                             if (!file) return;
                             if (file.size > 2 * 1024 * 1024) {
-                              toast.error("La imagen no debe superar 2MB");
+                              toast.error(t('employees.photoTooLarge'));
                               return;
                             }
                             // Convert to base64
