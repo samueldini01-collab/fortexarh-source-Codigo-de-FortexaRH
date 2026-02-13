@@ -4081,6 +4081,20 @@
       "copyright": "Todos los derechos reservados."
     }
   },
+  "recruitment": {
+    "errorLoading": "Error al cargar datos",
+    "vacancyCreated": "Vacante creada",
+    "errorCreatingVacancy": "Error al crear vacante",
+    "candidateAdded": "Candidato agregado",
+    "errorAddingCandidate": "Error al agregar candidato"
+  },
+  "cdcAudit": {
+    "errorLoadingLogs": "Error al cargar logs de auditoría",
+    "cdcStarted": "CDC iniciado correctamente",
+    "errorStartingCdc": "Error al iniciar CDC",
+    "cdcStopped": "CDC detenido correctamente",
+    "errorStoppingCdc": "Error al detener CDC"
+  },
   "brochure": {
     "back": "Volver",
     "downloadPdf": "Descargar PDF",
