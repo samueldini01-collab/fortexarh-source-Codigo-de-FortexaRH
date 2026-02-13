@@ -104,7 +104,20 @@ export default function SubscriptionsPage() {
   // Handle payment method updated from inline form
   const handlePaymentMethodUpdated = (newPm) => {
     setPaymentMethod({ has_payment_method: true, payment_method: newPm });
+    fetchPmHistory();
   };
+
+  const fetchPmHistory = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API}/payment-method/history`, {
+        headers: getAuthHeaders(),
+        withCredentials: true,
+      });
+      setPmHistory(res.data || []);
+    } catch {
+      setPmHistory([]);
+    }
+  }, [getAuthHeaders]);
 
   const fetchInvoices = useCallback(async () => {
     try {
