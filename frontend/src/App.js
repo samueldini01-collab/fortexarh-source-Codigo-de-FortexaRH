@@ -364,6 +364,13 @@ const SubscriptionProvider = ({ children }) => {
   );
 };
 
+// Lazy Route wrapper - wraps lazy components with Suspense
+const LazyRoute = ({ children }) => (
+  <Suspense fallback={<PageLoader />}>
+    {children}
+  </Suspense>
+);
+
 // App Router
 function AppRouter() {
   const location = useLocation();
@@ -375,49 +382,77 @@ function AppRouter() {
 
   return (
     <Routes>
+      {/* Critical routes - Not lazy loaded */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/checkout" element={<CheckoutPage />} />
-      <Route path="/pricing" element={<PricingPage />} />
-      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-      <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-      <Route path="/employees" element={<ProtectedRoute><EmployeesPage /></ProtectedRoute>} />
-      <Route path="/payroll" element={<ProtectedRoute><PayrollPage /></ProtectedRoute>} />
-      <Route path="/attendance" element={<ProtectedRoute><AttendancePage /></ProtectedRoute>} />
-      <Route path="/vacations" element={<ProtectedRoute><VacationsPage /></ProtectedRoute>} />
-      <Route path="/evaluations" element={<ProtectedRoute><EvaluationsPage /></ProtectedRoute>} />
-      <Route path="/recruitment" element={<ProtectedRoute><RecruitmentPage /></ProtectedRoute>} />
-      <Route path="/reports" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
-      <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-      <Route path="/organigrama" element={<ProtectedRoute><OrganigramaPage /></ProtectedRoute>} />
-      <Route path="/payroll-config" element={<ProtectedRoute><PayrollConfigPage /></ProtectedRoute>} />
-      <Route path="/templates" element={<ProtectedRoute><TemplatesPage /></ProtectedRoute>} />
-      <Route path="/payroll-calculator" element={<ProtectedRoute><PayrollCalculatorPage /></ProtectedRoute>} />
-      <Route path="/accounting" element={<ProtectedRoute><AccountingPage /></ProtectedRoute>} />
-      <Route path="/payroll-v2" element={<ProtectedRoute><PayrollV2Page /></ProtectedRoute>} />
-      <Route path="/payroll-dashboard" element={<ProtectedRoute><PayrollDashboardPage /></ProtectedRoute>} />
-      <Route path="/company-config" element={<ProtectedRoute><CompanyConfigPage /></ProtectedRoute>} />
-      <Route path="/subscriptions" element={<ProtectedRoute><SubscriptionsPage /></ProtectedRoute>} />
-      <Route path="/users-management" element={<ProtectedRoute><UsersManagementPage /></ProtectedRoute>} />
-      <Route path="/roles" element={<ProtectedRoute><RolesPage /></ProtectedRoute>} />
-      <Route path="/dgii-reports" element={<ProtectedRoute><DGIIReportsPage /></ProtectedRoute>} />
-      <Route path="/loans" element={<ProtectedRoute><LoansPage /></ProtectedRoute>} />
-      <Route path="/metrics-dashboard" element={<ProtectedRoute><MetricsDashboardPage /></ProtectedRoute>} />
-      <Route path="/reports-advanced" element={<ProtectedRoute><ReportsAdvancedPage /></ProtectedRoute>} />
-      <Route path="/reports-system" element={<ProtectedRoute><ReportsSystemPage /></ProtectedRoute>} />
-      <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
-      <Route path="/costs-by-department" element={<ProtectedRoute><CostsByDepartmentPage /></ProtectedRoute>} />
-      <Route path="/expenses" element={<ProtectedRoute><ExpensesPage /></ProtectedRoute>} />
-      <Route path="/cdc-audit" element={<ProtectedRoute><CDCAuditPage /></ProtectedRoute>} />
-      <Route path="/support-admin" element={<ProtectedRoute><SupportAdminPage /></ProtectedRoute>} />
-      <Route path="/employee-portal" element={<EmployeePortalPage />} />
-      <Route path="/documents" element={<ProtectedRoute><DocumentsPage /></ProtectedRoute>} />
-      <Route path="/soporte" element={<SupportPage />} />
-      <Route path="/accountants-software" element={<AccountantsSoftwarePage />} />
-      <Route path="/partner-register" element={<PartnerRegisterPage />} />
-      <Route path="/partner-dashboard" element={<ProtectedRoute><PartnerDashboardPage /></ProtectedRoute>} />
+      
+      {/* Auth routes - Lazy loaded */}
+      <Route path="/register" element={<LazyRoute><RegisterPage /></LazyRoute>} />
+      <Route path="/checkout" element={<LazyRoute><CheckoutPage /></LazyRoute>} />
+      <Route path="/pricing" element={<LazyRoute><PricingPage /></LazyRoute>} />
+      <Route path="/forgot-password" element={<LazyRoute><ForgotPasswordPage /></LazyRoute>} />
+      <Route path="/reset-password" element={<LazyRoute><ResetPasswordPage /></LazyRoute>} />
+      
+      {/* HR Core routes - Lazy loaded */}
+      <Route path="/employees" element={<ProtectedRoute><LazyRoute><EmployeesPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/employee-portal" element={<LazyRoute><EmployeePortalPage /></LazyRoute>} />
+      <Route path="/evaluations" element={<ProtectedRoute><LazyRoute><EvaluationsPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/recruitment" element={<ProtectedRoute><LazyRoute><RecruitmentPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/organigrama" element={<ProtectedRoute><LazyRoute><OrganigramaPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/documents" element={<ProtectedRoute><LazyRoute><DocumentsPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/templates" element={<ProtectedRoute><LazyRoute><TemplatesPage /></LazyRoute></ProtectedRoute>} />
+      
+      {/* Payroll routes - Lazy loaded */}
+      <Route path="/payroll" element={<ProtectedRoute><LazyRoute><PayrollPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/payroll-v2" element={<ProtectedRoute><LazyRoute><PayrollV2Page /></LazyRoute></ProtectedRoute>} />
+      <Route path="/payroll-dashboard" element={<ProtectedRoute><LazyRoute><PayrollDashboardPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/payroll-config" element={<ProtectedRoute><LazyRoute><PayrollConfigPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/payroll-calculator" element={<ProtectedRoute><LazyRoute><PayrollCalculatorPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/accounting" element={<ProtectedRoute><LazyRoute><AccountingPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/loans" element={<ProtectedRoute><LazyRoute><LoansPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/expenses" element={<ProtectedRoute><LazyRoute><ExpensesPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/subscriptions" element={<ProtectedRoute><LazyRoute><SubscriptionsPage /></LazyRoute></ProtectedRoute>} />
+      
+      {/* Time & Attendance routes - Lazy loaded */}
+      <Route path="/attendance" element={<ProtectedRoute><LazyRoute><AttendancePage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/vacations" element={<ProtectedRoute><LazyRoute><VacationsPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/geo-attendance" element={<ProtectedRoute><LazyRoute><GeoAttendancePage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/geo-locations" element={<ProtectedRoute><LazyRoute><GeoLocationsPage /></LazyRoute></ProtectedRoute>} />
+      
+      {/* Reports routes - Lazy loaded */}
+      <Route path="/reports" element={<ProtectedRoute><LazyRoute><ReportsPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/reports-advanced" element={<ProtectedRoute><LazyRoute><ReportsAdvancedPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/reports-system" element={<ProtectedRoute><LazyRoute><ReportsSystemPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/dgii-reports" element={<ProtectedRoute><LazyRoute><DGIIReportsPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/metrics-dashboard" element={<ProtectedRoute><LazyRoute><MetricsDashboardPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/costs-by-department" element={<ProtectedRoute><LazyRoute><CostsByDepartmentPage /></LazyRoute></ProtectedRoute>} />
+      
+      {/* Administration routes - Lazy loaded */}
+      <Route path="/settings" element={<ProtectedRoute><LazyRoute><SettingsPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/company-config" element={<ProtectedRoute><LazyRoute><CompanyConfigPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/users-management" element={<ProtectedRoute><LazyRoute><UsersManagementPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/roles" element={<ProtectedRoute><LazyRoute><RolesPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/notifications" element={<ProtectedRoute><LazyRoute><NotificationsPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/cdc-audit" element={<ProtectedRoute><LazyRoute><CDCAuditPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/support-admin" element={<ProtectedRoute><LazyRoute><SupportAdminPage /></LazyRoute></ProtectedRoute>} />
+      
+      {/* Partner & Support routes - Lazy loaded */}
+      <Route path="/partner-dashboard" element={<ProtectedRoute><LazyRoute><PartnerDashboardPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/partner-register" element={<LazyRoute><PartnerRegisterPage /></LazyRoute>} />
+      <Route path="/accountants-software" element={<LazyRoute><AccountantsSoftwarePage /></LazyRoute>} />
+      <Route path="/soporte" element={<LazyRoute><SupportPage /></LazyRoute>} />
+      
+      {/* Static pages - Lazy loaded */}
+      <Route path="/terms" element={<LazyRoute><TermsPage /></LazyRoute>} />
+      <Route path="/privacy" element={<LazyRoute><PrivacyPage /></LazyRoute>} />
+      <Route path="/brochure" element={<LazyRoute><BrochurePage /></LazyRoute>} />
+      
+      {/* Catch all */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/brochure" element={<BrochurePage />} />
