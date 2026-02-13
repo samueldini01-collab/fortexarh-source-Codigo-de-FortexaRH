@@ -1656,7 +1656,41 @@
     "calendar": {
       "today": "Hoy",
       "month": "Mes",
-      "week": "Semana"
+      "week": "Semana",
+      "weekDays": {
+        "sun": "Dom",
+        "mon": "Lun",
+        "tue": "Mar",
+        "wed": "Mié",
+        "thu": "Jue",
+        "fri": "Vie",
+        "sat": "Sáb"
+      },
+      "monthSummary": "Resumen del Mes",
+      "scheduledAbsences": "ausencias programadas",
+      "more": "más"
+    },
+    "balances": {
+      "title": "Balance de Vacaciones",
+      "subtitle": "Según Ley 16-92 de República Dominicana: 14 días después de 1 año, +1 día por año adicional (máx 18)",
+      "employee": "Empleado",
+      "seniority": "Antigüedad",
+      "assignedDays": "Días Asignados",
+      "usedDays": "Días Usados",
+      "availableDays": "Días Disponibles",
+      "usage": "Uso",
+      "details": "Detalles",
+      "detailTitle": "Detalle de Balance",
+      "hireDate": "Fecha de ingreso",
+      "serviceYears": "años",
+      "serviceMonths": "meses",
+      "vacationsYear": "Vacaciones",
+      "assigned": "Asignados",
+      "used": "Usados",
+      "carryOver": "Arrastrados",
+      "available": "Disponibles",
+      "pendingRequests": "solicitud(es) pendiente(s)",
+      "view": "Ver"
     }
   },
   "reports": {
