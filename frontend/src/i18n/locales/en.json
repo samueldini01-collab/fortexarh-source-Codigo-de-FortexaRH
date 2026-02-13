@@ -1047,7 +1047,8 @@
       "description2": "Description",
       "descriptionPlaceholder": "E.g. Installment 1/10",
       "amount": "Amount / %",
-      "add": "Add"
+      "add": "Add",
+      "amountRequired": "Enter an amount for the deduction"
     },
     "emergencyContacts": {
       "title": "Emergency Contacts",
