@@ -3153,7 +3153,8 @@
       "save": "Guardar",
       "cancel": "Cancelar",
       "post": "Contabilizar",
-      "void": "Anular"
+      "void": "Anular",
+      "createFirst": "Crear primer asiento"
     },
     "entry": {
       "number": "Número",
