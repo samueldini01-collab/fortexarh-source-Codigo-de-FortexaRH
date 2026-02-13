@@ -2169,7 +2169,8 @@
       "confirmDelete": "Delete this template?",
       "templateDuplicated": "Template duplicated",
       "errorDuplicating": "Error duplicating",
-      "selectEmployee": "Select an employee"
+      "selectEmployee": "Select an employee",
+      "errorGeneratingPdf": "Error generating PDF"
     },
     "categories": {
       "constancia": "Certificate",
