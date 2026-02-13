@@ -693,3 +693,114 @@ async def remove_payment_method(
     except stripe.error.StripeError as e:
         logger.error(f"Error removing payment method: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ===================== SETUP INTENT (Stripe Elements) =====================
+
+@router.post("/create-setup-intent")
+async def create_setup_intent(user: dict = Depends(get_current_user)):
+    """Create a Stripe SetupIntent for inline card collection via Stripe Elements"""
+    company_id = user.get("company_id")
+    if not company_id:
+        raise HTTPException(status_code=403, detail="No company access")
+
+    api_key = os.environ.get('STRIPE_API_KEY')
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Stripe not configured")
+
+    stripe.api_key = api_key
+
+    subscription = await db.subscriptions.find_one(
+        {"company_id": company_id},
+        {"_id": 0}
+    )
+    if not subscription:
+        raise HTTPException(status_code=404, detail="No subscription found")
+
+    try:
+        stripe_customer_id = subscription.get("stripe_customer_id")
+
+        if not stripe_customer_id:
+            company = await db.companies.find_one(
+                {"company_id": company_id},
+                {"_id": 0, "email": 1, "name": 1}
+            )
+            customer = stripe.Customer.create(
+                email=company.get("email", user.get("email")),
+                name=company.get("name", "FortexaRH Customer"),
+                metadata={"company_id": company_id}
+            )
+            stripe_customer_id = customer.id
+            await db.subscriptions.update_one(
+                {"company_id": company_id},
+                {"$set": {"stripe_customer_id": stripe_customer_id}}
+            )
+
+        setup_intent = stripe.SetupIntent.create(
+            customer=stripe_customer_id,
+            payment_method_types=["card"],
+            metadata={"company_id": company_id}
+        )
+
+        return {
+            "client_secret": setup_intent.client_secret,
+            "customer_id": stripe_customer_id
+        }
+
+    except stripe.error.StripeError as e:
+        logger.error(f"Error creating setup intent: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class ConfirmSetupRequest(BaseModel):
+    payment_method_id: str
+
+
+@router.post("/confirm-setup-intent")
+async def confirm_setup_intent(
+    data: ConfirmSetupRequest,
+    user: dict = Depends(get_current_user)
+):
+    """After Stripe Elements confirms the card, set it as default payment method"""
+    company_id = user.get("company_id")
+    if not company_id:
+        raise HTTPException(status_code=403, detail="No company access")
+
+    api_key = os.environ.get('STRIPE_API_KEY')
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Stripe not configured")
+
+    stripe.api_key = api_key
+
+    subscription = await db.subscriptions.find_one(
+        {"company_id": company_id},
+        {"_id": 0, "stripe_customer_id": 1}
+    )
+    stripe_customer_id = subscription.get("stripe_customer_id") if subscription else None
+    if not stripe_customer_id:
+        raise HTTPException(status_code=404, detail="No Stripe customer found")
+
+    try:
+        stripe.Customer.modify(
+            stripe_customer_id,
+            invoice_settings={"default_payment_method": data.payment_method_id}
+        )
+
+        pm = stripe.PaymentMethod.retrieve(data.payment_method_id)
+        card = pm.card
+
+        return {
+            "status": "success",
+            "payment_method": {
+                "id": pm.id,
+                "brand": card.brand.upper(),
+                "last4": card.last4,
+                "exp_month": card.exp_month,
+                "exp_year": card.exp_year,
+                "funding": card.funding
+            }
+        }
+
+    except stripe.error.StripeError as e:
+        logger.error(f"Error confirming setup intent: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
