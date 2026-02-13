@@ -757,20 +757,20 @@ export default function AccountingPage() {
                 {accounts.length === 0 ? (
                   <div className="text-center py-12">
                     <Settings className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                    <p className="text-slate-500 mb-4">No hay cuentas configuradas</p>
+                    <p className="text-slate-500 mb-4">{t('accounting.empty.accounts')}</p>
                     <Button onClick={() => setShowCatalogSelector(true)}>
-                      Seleccionar Catálogo de Cuentas
+                      {t('accounting.catalog.title')}
                     </Button>
                   </div>
                 ) : (
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Código</TableHead>
-                        <TableHead>Nombre</TableHead>
-                        <TableHead>Tipo</TableHead>
-                        <TableHead>Descripción</TableHead>
-                        <TableHead className="text-right">Acciones</TableHead>
+                        <TableHead>{t('accounting.account.code')}</TableHead>
+                        <TableHead>{t('accounting.account.name')}</TableHead>
+                        <TableHead>{t('accounting.account.type')}</TableHead>
+                        <TableHead>{t('common.description')}</TableHead>
+                        <TableHead className="text-right">{t('common.actions')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -806,16 +806,16 @@ export default function AccountingPage() {
         <Dialog open={showNewEntry || showEditEntry} onOpenChange={(open) => { if (!open) { setShowNewEntry(false); setShowEditEntry(false); setSelectedEntry(null); } }}>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{showEditEntry ? "Editar Asiento" : "Nuevo Asiento de Diario"}</DialogTitle>
+              <DialogTitle>{showEditEntry ? t('accounting.form.editEntry') : t('accounting.form.createEntry')}</DialogTitle>
               <DialogDescription>
-                {showEditEntry ? "Modifique los datos del asiento contable" : "Complete los datos para crear un nuevo asiento"}
+                {showEditEntry ? t('accounting.form.editEntryDesc') : t('accounting.form.createEntryDesc')}
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="space-y-2">
-                  <Label>Fecha</Label>
+                  <Label>{t('accounting.entry.date')}</Label>
                   <Input 
                     type="date" 
                     value={entryForm.entry_date}
