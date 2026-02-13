@@ -570,7 +570,7 @@ export default function PayrollV2Page() {
       toast.success(t('payrollV2.messages.excelExported'));
     } catch (error) {
       console.error("Export error:", error);
-      toast.error(error.response?.data?.detail || "Error al exportar");
+      toast.error(error.response?.data?.detail || t('payrollV2.messages.errorExporting'));
     }
   };
 
@@ -587,9 +587,9 @@ export default function PayrollV2Page() {
       link.href = URL.createObjectURL(blob);
       link.download = `TSS_Autodeterminacion.xls`;
       link.click();
-      toast.success("TSS Autodeterminación descargado");
+      toast.success(t('payrollV2.messages.tssAutodeterminacionDownloaded'));
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al descargar TSS Autodeterminación");
+      toast.error(error.response?.data?.detail || t('payrollV2.messages.errorDownloadingTssAutodeterminacion'));
     }
   };
 
@@ -606,9 +606,9 @@ export default function PayrollV2Page() {
       link.href = URL.createObjectURL(blob);
       link.download = `TSS_Novedades.xls`;
       link.click();
-      toast.success("TSS Novedades descargado");
+      toast.success(t('payrollV2.messages.tssNovedadesDownloaded'));
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al descargar TSS Novedades");
+      toast.error(error.response?.data?.detail || t('payrollV2.messages.errorDownloadingTssNovedades'));
     }
   };
 
@@ -625,9 +625,9 @@ export default function PayrollV2Page() {
       link.href = URL.createObjectURL(blob);
       link.download = `IR3_Retenciones.xls`;
       link.click();
-      toast.success("IR-3 descargado");
+      toast.success(t('payrollV2.messages.ir3Downloaded'));
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al descargar IR-3");
+      toast.error(error.response?.data?.detail || t('payrollV2.messages.errorDownloadingIr3'));
     }
   };
 
