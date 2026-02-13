@@ -189,7 +189,7 @@ export default function Dashboard() {
           break;
           
         case "vacations":
-          response = await axios.get(`${API}/vacations/requests?status=pending`, {
+          response = await axios.get(`${API}/vacations?status=pending`, {
             headers: getAuthHeaders(),
             withCredentials: true
           });
