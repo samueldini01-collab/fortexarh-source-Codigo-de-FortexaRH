@@ -4,8 +4,43 @@
 
 ## ✅ Completado Hoy (Sesión Actual - Fork #6)
 
-### 🌐 Internacionalización (i18n) - COMPLETADA AL 100%
+### 💳 Gestión de Método de Pago en Suscripciones
+**Verificado con testing_agent_v3_fork - iteration_41.json (100% backend, 100% frontend)**
 
+#### Nuevas Funcionalidades:
+- **Sección de Método de Pago**: Muestra detalles de la tarjeta (marca, últimos 4 dígitos, fecha de expiración)
+- **Cambiar/Agregar Tarjeta**: Botón que redirige a Stripe Checkout para actualizar el método de pago
+- **Alertas de Expiración**: Muestra advertencias si la tarjeta está por expirar o ya expiró
+- **Historial de Facturas**: Tabla con todas las facturas y opción de descargar PDF
+
+#### APIs Implementadas:
+- `GET /api/payment-method` - Obtiene los detalles del método de pago actual
+- `POST /api/update-payment-method` - Crea sesión de Stripe para actualizar tarjeta
+- `DELETE /api/payment-method/{id}` - Elimina un método de pago
+
+#### Archivos Modificados:
+- `/app/backend/routes/checkout.py` - Nuevos endpoints de payment method
+- `/app/frontend/src/pages/SubscriptionsPage.jsx` - UI de gestión de tarjetas
+
+---
+
+### 🚀 Fix: Página en Blanco al Cargar
+**Verificado con testing_agent_v3_fork - iteration_41.json**
+
+#### Problema:
+La página de inicio se quedaba en blanco y requería múltiples F5 para cargar.
+
+#### Solución:
+- Agregado componente `LoadingSpinner` en App.js
+- Envuelto `AppRouter` con `Suspense` para manejo de carga asíncrona
+- Delay inicial de 100ms para garantizar inicialización de i18n
+
+#### Archivos Modificados:
+- `/app/frontend/src/App.js` - LoadingSpinner component y Suspense wrapper
+
+---
+
+### 🌐 Internacionalización (i18n) - COMPLETADA AL 100%
 **Verificado con testing_agent_v3_fork - iteration_40.json**
 
 #### Resultados del Test:
@@ -20,21 +55,11 @@
 
 #### Claves Agregadas en Este Fork:
 - `dashboard.drillDown.*` - 33 claves (activeEmployees, pendingPayrolls, presentToday, etc.)
-- `subscriptions.*` - 40 claves adicionales (currentPlan, planDetails, cancelLoseAccess, etc.)
+- `subscriptions.*` - 60+ claves incluyendo paymentMethod.* y invoiceHistory.*
 - `recruitment.*` - 10 claves adicionales (openVacancies, closedVacancies, searchPlaceholder, etc.)
 - `payrollV2.statuses.*` - 6 claves (open, draft, pendingApproval, calculated, approved, paid)
 - `payrollV2.table.*` - 5 claves (employee, department, gross, deductions, net)
-- `payrollV2.filters.*` - 3 claves (openPeriods, pending, paid)
-- `metrics.drillDown.*` - 6 claves adicionales (payrollBreakdown, hiresExits, hired, terminated, etc.)
-- `geoLocationsPage.liveMap.filters.activeFilters` - 1 clave
-- `partner.dashboard.*` - 100+ claves (partnerPortal, myCompany, settings, etc.)
-
-#### Archivos Actualizados:
-- `/app/frontend/src/i18n/locales/es.json` - 4400+ líneas
-- `/app/frontend/src/i18n/locales/en.json` - 4450+ líneas
-- `/app/frontend/src/i18n/locales/fr.json` - 4420+ líneas
-- `/app/frontend/src/pages/Dashboard.jsx` - drill-down handlers using t()
-- `/app/frontend/src/pages/PayrollV2Page.jsx` - status badges and filters using t()
+- `common.employee` - clave agregada
 
 ---
 
