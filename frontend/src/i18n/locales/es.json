@@ -1328,6 +1328,7 @@
         "print": "Imprimir"
       },
       "messages": {
+        "pdfExported": "PDF exportado correctamente",
         "enterValidSalary": "Por favor ingrese un salario base válido",
         "calculationSuccess": "Cálculo realizado correctamente",
         "calculationError": "Error al calcular nómina",
