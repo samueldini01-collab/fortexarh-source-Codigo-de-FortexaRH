@@ -2124,7 +2124,13 @@
       "description": "Descripción",
       "actions": "Acciones",
       "noTemplates": "No hay plantillas",
-      "createFirst": "Cree su primera plantilla"
+      "createFirst": "Cree su primera plantilla",
+      "types": {
+        "contract": "Contrato",
+        "letter": "Carta",
+        "certificate": "Certificado",
+        "policy": "Política"
+      }
     },
     "templateForm": {
       "createTitle": "Crear Plantilla",
