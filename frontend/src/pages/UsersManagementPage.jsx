@@ -593,7 +593,7 @@ export default function UsersManagementPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {ROLES.map(role => (
-                      <SelectItem key={role.id} value={role.id}>{role.name}</SelectItem>
+                      <SelectItem key={role.id} value={role.id}>{t(role.nameKey)}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -614,7 +614,7 @@ export default function UsersManagementPage() {
                             setNewUser({...newUser, modules});
                           }}
                         />
-                        <span className="text-sm">{module.icon} {module.name}</span>
+                        <span className="text-sm">{module.icon} {t(module.nameKey)}</span>
                       </div>
                     ))}
                   </div>
@@ -657,7 +657,7 @@ export default function UsersManagementPage() {
                     </SelectTrigger>
                     <SelectContent>
                       {ROLES.map(role => (
-                        <SelectItem key={role.id} value={role.id}>{role.name}</SelectItem>
+                        <SelectItem key={role.id} value={role.id}>{t(role.nameKey)}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -678,7 +678,7 @@ export default function UsersManagementPage() {
                               setEditingUser({...editingUser, modules});
                             }}
                           />
-                          <span className="text-sm">{module.icon} {module.name}</span>
+                          <span className="text-sm">{module.icon} {t(module.nameKey)}</span>
                         </div>
                       ))}
                     </div>
