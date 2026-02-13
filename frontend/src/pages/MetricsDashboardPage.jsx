@@ -680,10 +680,10 @@ export default function MetricsDashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-emerald-500" />
-                Proyección de Gastos
+                {t('metrics.charts.expenseProjection')}
               </CardTitle>
               <CardDescription>
-                Tendencia y proyección a fin de año basada en datos actuales
+                {t('metrics.charts.expenseProjectionDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -716,7 +716,7 @@ export default function MetricsDashboardPage() {
                 return (
                   <>
                     <div className="mb-4 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg flex items-center justify-between">
-                      <span className="text-sm text-emerald-700 dark:text-emerald-400">Proyección Anual</span>
+                      <span className="text-sm text-emerald-700 dark:text-emerald-400">{t('metrics.charts.annualProjection')}</span>
                       <span className="font-bold text-emerald-800 dark:text-emerald-300 text-lg">
                         {formatCurrency(yearEndProjection)}
                       </span>
@@ -729,11 +729,11 @@ export default function MetricsDashboardPage() {
                         <Tooltip 
                           formatter={(value, name) => [
                             formatCurrency(value), 
-                            name === 'actual' ? 'Real' : name === 'projected' ? 'Proyectado' : 'Tendencia'
+                            name === 'actual' ? t('metrics.charts.actual') : name === 'projected' ? t('metrics.charts.projected') : t('metrics.charts.trend')
                           ]}
                           contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }}
                         />
-                        <Legend formatter={(value) => value === 'actual' ? 'Real' : value === 'projected' ? 'Proyectado' : 'Tendencia'} />
+                        <Legend formatter={(value) => value === 'actual' ? t('metrics.charts.actual') : value === 'projected' ? t('metrics.charts.projected') : t('metrics.charts.trend')} />
                         <Line type="monotone" dataKey="actual" stroke="#10b981" strokeWidth={3} dot={{ fill: '#10b981', r: 4 }} />
                         <Line type="monotone" dataKey="projected" stroke="#f59e0b" strokeWidth={2} strokeDasharray="5 5" dot={{ fill: '#f59e0b', r: 4 }} />
                         <Line type="monotone" dataKey="trend" stroke="#94a3b8" strokeWidth={1} strokeDasharray="3 3" dot={false} />
