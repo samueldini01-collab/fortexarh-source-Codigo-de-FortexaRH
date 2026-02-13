@@ -1648,12 +1648,50 @@
       "errorApproving": "Error approving",
       "errorRejecting": "Error rejecting",
       "noRequests": "No vacation requests",
-      "noBalances": "No balances registered"
+      "noBalances": "No balances registered",
+      "exported": "Exported successfully",
+      "errorExporting": "Error exporting",
+      "errorLoading": "Error loading vacations",
+      "errorLoadingBalance": "Error loading balance"
     },
     "calendar": {
       "today": "Today",
       "month": "Month",
-      "week": "Week"
+      "week": "Week",
+      "weekDays": {
+        "sun": "Sun",
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat"
+      },
+      "monthSummary": "Month Summary",
+      "scheduledAbsences": "scheduled absences",
+      "more": "more"
+    },
+    "balances": {
+      "title": "Vacation Balance",
+      "subtitle": "According to Law 16-92 of the Dominican Republic: 14 days after 1 year, +1 day per additional year (max 18)",
+      "employee": "Employee",
+      "seniority": "Seniority",
+      "assignedDays": "Assigned Days",
+      "usedDays": "Used Days",
+      "availableDays": "Available Days",
+      "usage": "Usage",
+      "details": "Details",
+      "detailTitle": "Balance Detail",
+      "hireDate": "Hire date",
+      "serviceYears": "years",
+      "serviceMonths": "months",
+      "vacationsYear": "Vacations",
+      "assigned": "Assigned",
+      "used": "Used",
+      "carryOver": "Carry Over",
+      "available": "Available",
+      "pendingRequests": "pending request(s)",
+      "view": "View"
     }
   },
   "reports": {
