@@ -864,7 +864,7 @@ export default function PayrollV2Page() {
             {quickFilter && (
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="px-3 py-1">
-                  Filtro: {quickFilter === 'open' ? 'Períodos Abiertos' : quickFilter === 'pending' ? 'Pendientes' : 'Pagados'}
+                  {t('common.filter')}: {quickFilter === 'open' ? t('payrollV2.filters.openPeriods') : quickFilter === 'pending' ? t('payrollV2.filters.pending') : t('payrollV2.filters.paid')}
                   <button onClick={() => setQuickFilter(null)} className="ml-2 hover:text-red-500">×</button>
                 </Badge>
               </div>
