@@ -700,11 +700,11 @@ export default function VacationsPage() {
                           <p className="text-xl font-bold text-amber-700 dark:text-amber-400">{selectedBalance.vacation.used}</p>
                         </div>
                         <div className="p-3 bg-purple-50 dark:bg-purple-900/30 rounded-lg">
-                          <p className="text-xs text-purple-600 dark:text-purple-400">Arrastrados</p>
+                          <p className="text-xs text-purple-600 dark:text-purple-400">{t('vacations.balances.carryOver')}</p>
                           <p className="text-xl font-bold text-purple-700 dark:text-purple-400">{selectedBalance.vacation.carry_over}</p>
                         </div>
                         <div className="p-3 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg">
-                          <p className="text-xs text-emerald-600 dark:text-emerald-400">Disponibles</p>
+                          <p className="text-xs text-emerald-600 dark:text-emerald-400">{t('vacations.balances.available')}</p>
                           <p className="text-xl font-bold text-emerald-700 dark:text-emerald-400">{selectedBalance.vacation.remaining}</p>
                         </div>
                       </div>
@@ -722,7 +722,7 @@ export default function VacationsPage() {
                     {selectedBalance.pending_requests > 0 && (
                       <div className="p-3 bg-slate-100 dark:bg-slate-800 rounded-lg">
                         <p className="text-sm text-slate-600 dark:text-slate-400">
-                          <span className="font-medium">{selectedBalance.pending_requests}</span> solicitud(es) pendiente(s) de aprobación
+                          <span className="font-medium">{selectedBalance.pending_requests}</span> {t('vacations.balances.pendingRequests')}
                         </p>
                       </div>
                     )}
