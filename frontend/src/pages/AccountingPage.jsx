@@ -652,23 +652,23 @@ export default function AccountingPage() {
                 ) : entries.length === 0 ? (
                   <div className="text-center py-12">
                     <BookOpen className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                    <p className="text-slate-500 dark:text-slate-400">No hay asientos de diario</p>
+                    <p className="text-slate-500 dark:text-slate-400">{t('accounting.empty.entries')}</p>
                     <Button variant="link" onClick={() => { resetEntryForm(); setShowNewEntry(true); }}>
-                      Crear primer asiento
+                      {t('accounting.buttons.createFirst')}
                     </Button>
                   </div>
                 ) : (
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="w-24">Número</TableHead>
-                        <TableHead>Fecha</TableHead>
-                        <TableHead>Referencia</TableHead>
-                        <TableHead>Descripción</TableHead>
-                        <TableHead className="text-right">Débito</TableHead>
-                        <TableHead className="text-right">Crédito</TableHead>
-                        <TableHead>Estado</TableHead>
-                        <TableHead className="text-right">Acciones</TableHead>
+                        <TableHead className="w-24">{t('accounting.entry.number')}</TableHead>
+                        <TableHead>{t('accounting.entry.date')}</TableHead>
+                        <TableHead>{t('accounting.entry.reference')}</TableHead>
+                        <TableHead>{t('accounting.entry.description')}</TableHead>
+                        <TableHead className="text-right">{t('accounting.entry.debit')}</TableHead>
+                        <TableHead className="text-right">{t('accounting.entry.credit')}</TableHead>
+                        <TableHead>{t('accounting.entry.status')}</TableHead>
+                        <TableHead className="text-right">{t('common.actions')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -686,7 +686,7 @@ export default function AccountingPage() {
                               {entry.payroll_period_id && (
                                 <Badge variant="outline" className="text-xs border-purple-300 text-purple-600">
                                   <Link2 className="w-3 h-3 mr-1" />
-                                  Nómina
+                                  {t('accounting.entry.payroll')}
                                 </Badge>
                               )}
                             </div>
