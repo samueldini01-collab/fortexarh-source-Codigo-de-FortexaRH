@@ -3269,7 +3269,15 @@
       "pending": "Pendiente",
       "installments": "Cuotas",
       "costs": "Costos",
-      "errorLoading": "Error al cargar detalles"
+      "errorLoading": "Error al cargar detalles",
+      "payrollBreakdown": "Desglose Nómina",
+      "month": "Mes",
+      "hiresExits": "Entradas y salidas de empleados por mes (click para ver detalles)",
+      "hired": "Contratados",
+      "terminated": "Salidas",
+      "netBalance": "Balance Neto",
+      "hiresYTD": "Contratados YTD",
+      "exitsYTD": "Salidas YTD"
     }
   },
   "orgChart": {
