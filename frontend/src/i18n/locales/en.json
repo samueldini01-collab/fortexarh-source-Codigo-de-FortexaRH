@@ -113,6 +113,16 @@
     "lastUpdated": "Last updated",
     "days": "days"
   },
+  "colors": {
+    "red": "Red",
+    "orange": "Orange",
+    "yellow": "Yellow",
+    "green": "Green",
+    "blue": "Blue",
+    "violet": "Violet",
+    "pink": "Pink",
+    "gray": "Gray"
+  },
   "nav": {
     "dashboard": "Dashboard",
     "dashboardMain": "Main Dashboard",
