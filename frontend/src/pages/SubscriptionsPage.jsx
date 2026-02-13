@@ -718,6 +718,50 @@ export default function SubscriptionsPage() {
                 }
                 return null;
               })()}
+
+              {/* Card Change History */}
+              {pmHistory.length > 0 && (
+                <div className="mt-5 border-t pt-4" data-testid="pm-history-section">
+                  <h4 className="text-sm font-semibold flex items-center gap-1.5 mb-3 text-slate-700 dark:text-slate-200">
+                    <History className="w-4 h-4" />
+                    {t('subscriptions.paymentMethod.history.title')}
+                  </h4>
+                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    {pmHistory.map((entry, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center gap-3 text-xs p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800"
+                        data-testid={`pm-history-entry-${idx}`}
+                      >
+                        <div className="flex-shrink-0 w-2 h-2 rounded-full bg-blue-500" />
+                        <div className="flex-1 min-w-0">
+                          {entry.change_type === 'added' ? (
+                            <span className="text-slate-600 dark:text-slate-300">
+                              {t('subscriptions.paymentMethod.history.added', {
+                                brand: entry.new_card?.brand,
+                                last4: entry.new_card?.last4,
+                              })}
+                            </span>
+                          ) : (
+                            <span className="text-slate-600 dark:text-slate-300">
+                              <span className="text-slate-400 line-through">
+                                {entry.previous_card?.brand} ••{entry.previous_card?.last4}
+                              </span>
+                              {' → '}
+                              <span className="font-medium text-slate-700 dark:text-slate-200">
+                                {entry.new_card?.brand} ••{entry.new_card?.last4}
+                              </span>
+                            </span>
+                          )}
+                        </div>
+                        <span className="flex-shrink-0 text-slate-400">
+                          {formatDate(entry.changed_at)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
