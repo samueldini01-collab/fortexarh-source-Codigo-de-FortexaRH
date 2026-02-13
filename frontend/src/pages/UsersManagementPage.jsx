@@ -479,10 +479,10 @@ export default function UsersManagementPage() {
                     <Card key={role.id} className="border-slate-200 dark:border-slate-700">
                       <CardHeader className="pb-2">
                         <div className="flex items-center justify-between">
-                          <CardTitle className="text-lg">{role.name}</CardTitle>
+                          <CardTitle className="text-lg">{t(role.nameKey)}</CardTitle>
                           <Badge variant="secondary">Sistema</Badge>
                         </div>
-                        <CardDescription>{role.description}</CardDescription>
+                        <CardDescription>{t(role.descKey)}</CardDescription>
                       </CardHeader>
                     </Card>
                   ))}
