@@ -78,7 +78,7 @@ class TestPaymentMethodFeatures:
         response = requests.post(
             f"{BASE_URL}/api/update-payment-method",
             headers=self.get_headers(),
-            json={"origin_url": "https://fortexa-portal.preview.emergentagent.com"}
+            json={"origin_url": "https://payroll-preview-2.preview.emergentagent.com"}
         )
         
         assert response.status_code == 200
