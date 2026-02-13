@@ -2111,7 +2111,13 @@
       "description": "Description",
       "actions": "Actions",
       "noTemplates": "No templates",
-      "createFirst": "Create your first template"
+      "createFirst": "Create your first template",
+      "types": {
+        "contract": "Contract",
+        "letter": "Letter",
+        "certificate": "Certificate",
+        "policy": "Policy"
+      }
     },
     "templateForm": {
       "createTitle": "Create Template",
