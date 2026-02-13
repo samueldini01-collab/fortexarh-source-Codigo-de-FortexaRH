@@ -127,7 +127,7 @@ export default function CDCAuditPage() {
       }));
     } catch (error) {
       console.error("Error fetching audit logs:", error);
-      toast.error("Error al cargar logs de auditoría");
+      toast.error(t('cdcAudit.errorLoadingLogs'));
     } finally {
       setLoading(false);
     }
@@ -145,10 +145,10 @@ export default function CDCAuditPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("CDC iniciado correctamente");
+      toast.success(t('cdcAudit.cdcStarted'));
       setTimeout(fetchCDCStatus, 1000);
     } catch (error) {
-      toast.error("Error al iniciar CDC");
+      toast.error(t('cdcAudit.errorStartingCdc'));
     }
   };
 
@@ -158,10 +158,10 @@ export default function CDCAuditPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("CDC detenido correctamente");
+      toast.success(t('cdcAudit.cdcStopped'));
       fetchCDCStatus();
     } catch (error) {
-      toast.error("Error al detener CDC");
+      toast.error(t('cdcAudit.errorStoppingCdc'));
     }
   };
 
