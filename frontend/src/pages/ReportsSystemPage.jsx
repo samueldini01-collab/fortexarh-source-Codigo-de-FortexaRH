@@ -74,7 +74,7 @@ export default function ReportsSystemPage() {
       });
       setCatalog(response.data);
     } catch (error) {
-      toast.error("Error cargando catálogo de reportes");
+      toast.error(t('reportsSystem.errorLoadingCatalog'));
     } finally {
       setLoading(false);
     }
@@ -131,9 +131,9 @@ export default function ReportsSystemPage() {
       });
       
       setPreviewData(response.data);
-      toast.success("Vista previa generada");
+      toast.success(t('reportsSystem.previewGenerated'));
     } catch (error) {
-      toast.error("Error generando vista previa");
+      toast.error(t('reportsSystem.errorGeneratingPreview'));
     } finally {
       setPreviewLoading(false);
     }
@@ -173,10 +173,10 @@ export default function ReportsSystemPage() {
       link.click();
       link.remove();
       
-      toast.success(`Reporte exportado en ${format.toUpperCase()}`);
+      toast.success(t('reportsSystem.reportExported', { format: format.toUpperCase() }));
       fetchHistory();
     } catch (error) {
-      toast.error("Error exportando reporte");
+      toast.error(t('reportsSystem.errorExportingReport'));
     } finally {
       setExporting(false);
     }
