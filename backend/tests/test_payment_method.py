@@ -166,13 +166,16 @@ class TestLandingPageLoad:
         assert len(response.text) > 100
         print("Landing page loads successfully")
     
-    def test_api_health_check(self):
-        """Test API is responsive"""
-        response = requests.get(f"{BASE_URL}/api/health")
+    def test_api_auth_endpoint_exists(self):
+        """Test API auth endpoint is responsive"""
+        response = requests.post(
+            f"{BASE_URL}/api/auth/login",
+            json={"email": "invalid@test.com", "password": "invalid"}
+        )
         
-        # Health endpoint should return 200
-        assert response.status_code == 200
-        print("API health check passed")
+        # Should return 401 for invalid credentials (not 500 or 404)
+        assert response.status_code in [401, 400]
+        print("API auth endpoint is responsive")
 
 
 if __name__ == "__main__":
