@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, createContext, useContext, useCallback } from "react";
+import { useEffect, useState, useRef, createContext, useContext, useCallback, Suspense } from "react";
 import "@/App.css";
 import "@/i18n"; // Initialize i18n
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
@@ -10,6 +10,23 @@ import { KeyboardShortcutsProvider } from "@/context/KeyboardShortcutsContext";
 import { KeyboardShortcutsHelp } from "@/components/KeyboardShortcutsHelp";
 import { OnboardingProvider } from "@/context/OnboardingContext";
 import OnboardingTutorial from "@/components/OnboardingTutorial";
+import { Loader2 } from "lucide-react";
+
+// Loading Spinner Component
+const LoadingSpinner = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <div className="flex flex-col items-center gap-4">
+      <div className="relative">
+        <div className="w-16 h-16 rounded-full border-4 border-emerald-200 dark:border-emerald-900"></div>
+        <div className="absolute inset-0 w-16 h-16 rounded-full border-4 border-transparent border-t-emerald-500 animate-spin"></div>
+      </div>
+      <div className="flex items-center gap-2">
+        <span className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-cyan-500 text-transparent bg-clip-text">FortexaRH</span>
+      </div>
+      <p className="text-sm text-slate-500 dark:text-slate-400">Cargando...</p>
+    </div>
+  </div>
+);
 
 // Pages
 import LandingPage from "@/pages/LandingPage";
