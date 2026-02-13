@@ -278,7 +278,8 @@ export default function PayrollDashboardPage() {
             </Card>
           </DrillDownCard>
 
-          <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
+          <DrillDownCard onClick={() => handleDrillDown("paid_ytd")}>
+          <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-0">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -287,10 +288,16 @@ export default function PayrollDashboardPage() {
                 </div>
                 <DollarSign className="w-12 h-12 text-emerald-200" />
               </div>
+              <div className="flex items-center mt-2 text-xs text-emerald-100">
+                <span>{t('dashboard.clickForDetails')}</span>
+                <ChevronRight className="w-3 h-3 ml-1" />
+              </div>
             </CardContent>
           </Card>
+          </DrillDownCard>
 
-          <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+          <DrillDownCard onClick={() => handleDrillDown("avg_salary")}>
+          <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -299,10 +306,16 @@ export default function PayrollDashboardPage() {
                 </div>
                 <TrendingUp className="w-12 h-12 text-purple-200" />
               </div>
+              <div className="flex items-center mt-2 text-xs text-purple-100">
+                <span>{t('dashboard.clickForDetails')}</span>
+                <ChevronRight className="w-3 h-3 ml-1" />
+              </div>
             </CardContent>
           </Card>
+          </DrillDownCard>
 
-          <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white">
+          <DrillDownCard onClick={() => handleDrillDown("paid_payrolls")}>
+          <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white border-0">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -311,8 +324,13 @@ export default function PayrollDashboardPage() {
                 </div>
                 <Building2 className="w-12 h-12 text-orange-200" />
               </div>
+              <div className="flex items-center mt-2 text-xs text-orange-100">
+                <span>{t('dashboard.clickForDetails')}</span>
+                <ChevronRight className="w-3 h-3 ml-1" />
+              </div>
             </CardContent>
           </Card>
+          </DrillDownCard>
         </div>
 
         {/* Charts Row */}
