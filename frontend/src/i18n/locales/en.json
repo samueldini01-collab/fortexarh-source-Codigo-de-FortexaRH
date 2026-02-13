@@ -63,7 +63,6 @@
     "add": "Add",
     "remove": "Remove",
     "update": "Update",
-    "refresh": "Refresh",
     "clear": "Clear",
     "apply": "Apply",
     "reset": "Reset",
@@ -85,14 +84,6 @@
     "sendEmail": "Send Email",
     "goTo": "Go to",
     "availableIn": "Available in plan",
-    "view": "View",
-    "add": "Add",
-    "update": "Update",
-    "remove": "Remove",
-    "select": "Select",
-    "clear": "Clear",
-    "apply": "Apply",
-    "reset": "Reset",
     "months": {
       "january": "January",
       "february": "February",
@@ -1407,7 +1398,7 @@
       },
       "messages": {
         "pdfExported": "PDF exported successfully",
-      "enterValidSalary": "Please enter a valid base salary",
+        "enterValidSalary": "Please enter a valid base salary",
         "calculationSuccess": "Calculation completed successfully",
         "calculationError": "Error calculating payroll",
         "saveSuccess": "Calculation saved successfully",
@@ -2542,53 +2533,13 @@
     }
   },
   "users": {
-    "title": "User Management",
-    "subtitle": "Manage system users",
-    "addUser": "New User",
-    "table": {
-      "name": "Name",
-      "email": "Email",
-      "role": "Role",
-      "status": "Status",
-      "lastLogin": "Last Login",
-      "actions": "Actions"
-    },
-    "form": {
-      "firstName": "First Name",
-      "lastName": "Last Name",
-      "email": "Email",
-      "password": "Password",
-      "confirmPassword": "Confirm Password",
-      "role": "Role",
-      "selectRole": "Select role",
-      "status": "Status",
-      "active": "Active",
-      "inactive": "Inactive"
-    },
     "roles": {
       "admin": "Administrator",
+      "adminDesc": "Full access to the system",
       "manager": "Manager",
-      "hr": "Human Resources",
-      "accountant": "Accountant",
-      "employee": "Employee",
-      "viewer": "Read Only"
-    },
-    "messages": {
-      "userCreated": "User created successfully",
-      "userUpdated": "User updated",
-      "userDeleted": "User deleted",
-      "errorCreating": "Error creating user",
-      "errorUpdating": "Error updating",
-      "errorDeleting": "Error deleting",
-      "confirmDelete": "Delete this user?",
-      "noUsers": "No users registered",
-      "fillRequired": "Fill in all required fields",
-      "roleNameRequired": "Role name is required",
-      "roleCreated": "Role created successfully",
-      "errorCreatingRole": "Error creating role",
-      "passwordRequired": "Password is required",
-      "passwordUpdated": "Password updated successfully",
-      "errorPassword": "Error updating password"
+      "managerDesc": "Access to assigned modules with edit permissions",
+      "user": "User",
+      "userDesc": "Read-only access to assigned modules"
     }
   },
   "roles": {
@@ -4138,17 +4089,38 @@
       "basic": {
         "name": "FortexaRH Basic",
         "price": "$10/month + $1.5/employee",
-        "features": ["Up to 50 employees", "Employee management", "Basic payroll", "Attendance", "Vacations", "Email support"]
+        "features": [
+          "Up to 50 employees",
+          "Employee management",
+          "Basic payroll",
+          "Attendance",
+          "Vacations",
+          "Email support"
+        ]
       },
       "pro": {
         "name": "FortexaRH Pro",
         "price": "$20/month + $1.5/employee",
-        "features": ["Up to 200 employees", "All basic features", "Performance evaluations", "Recruitment", "Advanced reports", "Priority support"]
+        "features": [
+          "Up to 200 employees",
+          "All basic features",
+          "Performance evaluations",
+          "Recruitment",
+          "Advanced reports",
+          "Priority support"
+        ]
       },
       "enterprise": {
         "name": "FortexaRH Enterprise",
         "price": "$76/month + $1.5/employee",
-        "features": ["Unlimited employees", "All features", "Custom API", "24/7 Support", "Dedicated account manager", "Training included"]
+        "features": [
+          "Unlimited employees",
+          "All features",
+          "Custom API",
+          "24/7 Support",
+          "Dedicated account manager",
+          "Training included"
+        ]
       }
     }
   },
@@ -4321,7 +4293,17 @@
       "expired": "Your card has expired",
       "expiredMessage": "Update your payment method to avoid service suspension.",
       "expiringSoon": "Your card is about to expire",
-      "expiringSoonMessage": "Update your payment method before it expires to avoid interruptions."
+      "expiringSoonMessage": "Update your payment method before it expires to avoid interruptions.",
+      "dialogTitle": "Update Payment Method",
+      "dialogDescription": "Enter your new card details below",
+      "cardholderName": "Cardholder Name",
+      "cardDetails": "Card Details",
+      "saving": "Saving...",
+      "saveCard": "Save Card",
+      "success": "Payment method updated successfully",
+      "error": "Error updating payment method",
+      "secureNotice": "Your card information is encrypted and securely processed by Stripe",
+      "preparingForm": "Preparing secure form..."
     },
     "invoiceHistory": {
       "title": "Invoice History",
@@ -4335,16 +4317,6 @@
       "total": "Total",
       "status": "Status",
       "actions": "Actions"
-    }
-  },
-  "users": {
-    "roles": {
-      "admin": "Administrator",
-      "adminDesc": "Full access to the system",
-      "manager": "Manager",
-      "managerDesc": "Access to assigned modules with edit permissions",
-      "user": "User",
-      "userDesc": "Read-only access to assigned modules"
     }
   },
   "supportAdmin": {

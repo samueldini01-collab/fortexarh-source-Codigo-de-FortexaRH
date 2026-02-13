@@ -61,9 +61,8 @@
     "view": "Voir",
     "details": "Détails",
     "add": "Ajouter",
-    "remove": "Retirer",
+    "remove": "Supprimer",
     "update": "Mettre à jour",
-    "refresh": "Actualiser",
     "clear": "Effacer",
     "apply": "Appliquer",
     "reset": "Réinitialiser",
@@ -85,14 +84,6 @@
     "sendEmail": "Envoyer un Email",
     "goTo": "Aller à",
     "availableIn": "Disponible dans le plan",
-    "view": "Voir",
-    "add": "Ajouter",
-    "update": "Mettre à jour",
-    "remove": "Supprimer",
-    "select": "Sélectionner",
-    "clear": "Effacer",
-    "apply": "Appliquer",
-    "reset": "Réinitialiser",
     "months": {
       "january": "Janvier",
       "february": "Février",
@@ -2532,53 +2523,13 @@
     }
   },
   "users": {
-    "title": "Gestion des Utilisateurs",
-    "subtitle": "Gérer les utilisateurs du système",
-    "addUser": "Nouvel Utilisateur",
-    "table": {
-      "name": "Nom",
-      "email": "Email",
-      "role": "Rôle",
-      "status": "Statut",
-      "lastLogin": "Dernière Connexion",
-      "actions": "Actions"
-    },
-    "form": {
-      "firstName": "Prénom",
-      "lastName": "Nom",
-      "email": "Email",
-      "password": "Mot de Passe",
-      "confirmPassword": "Confirmer Mot de Passe",
-      "role": "Rôle",
-      "selectRole": "Sélectionner rôle",
-      "status": "Statut",
-      "active": "Actif",
-      "inactive": "Inactif"
-    },
     "roles": {
       "admin": "Administrateur",
+      "adminDesc": "Accès complet au système",
       "manager": "Gestionnaire",
-      "hr": "Ressources Humaines",
-      "accountant": "Comptable",
-      "employee": "Employé",
-      "viewer": "Lecture Seule"
-    },
-    "messages": {
-      "userCreated": "Utilisateur créé avec succès",
-      "userUpdated": "Utilisateur mis à jour",
-      "userDeleted": "Utilisateur supprimé",
-      "errorCreating": "Erreur lors de la création",
-      "errorUpdating": "Erreur de mise à jour",
-      "errorDeleting": "Erreur de suppression",
-      "confirmDelete": "Supprimer cet utilisateur?",
-      "noUsers": "Aucun utilisateur enregistré",
-      "fillRequired": "Remplissez tous les champs requis",
-      "roleNameRequired": "Le nom du rôle est requis",
-      "roleCreated": "Rôle créé avec succès",
-      "errorCreatingRole": "Erreur lors de la création du rôle",
-      "passwordRequired": "Le mot de passe est requis",
-      "passwordUpdated": "Mot de passe mis à jour avec succès",
-      "errorPassword": "Erreur de mise à jour du mot de passe"
+      "managerDesc": "Accès aux modules assignés avec permissions d'édition",
+      "user": "Utilisateur",
+      "userDesc": "Accès en lecture seule aux modules assignés"
     }
   },
   "roles": {
@@ -4109,17 +4060,38 @@
       "basic": {
         "name": "FortexaRH Basique",
         "price": "$10/mois + $1.5/employé",
-        "features": ["Jusqu'à 50 employés", "Gestion des employés", "Paie de base", "Présences", "Congés", "Support par email"]
+        "features": [
+          "Jusqu'à 50 employés",
+          "Gestion des employés",
+          "Paie de base",
+          "Présences",
+          "Congés",
+          "Support par email"
+        ]
       },
       "pro": {
         "name": "FortexaRH Pro",
         "price": "$20/mois + $1.5/employé",
-        "features": ["Jusqu'à 200 employés", "Toutes les fonctions de base", "Évaluations de performance", "Recrutement", "Rapports avancés", "Support prioritaire"]
+        "features": [
+          "Jusqu'à 200 employés",
+          "Toutes les fonctions de base",
+          "Évaluations de performance",
+          "Recrutement",
+          "Rapports avancés",
+          "Support prioritaire"
+        ]
       },
       "enterprise": {
         "name": "FortexaRH Enterprise",
         "price": "$76/mois + $1.5/employé",
-        "features": ["Employés illimités", "Toutes les fonctions", "API personnalisée", "Support 24/7", "Gestionnaire de compte dédié", "Formation incluse"]
+        "features": [
+          "Employés illimités",
+          "Toutes les fonctions",
+          "API personnalisée",
+          "Support 24/7",
+          "Gestionnaire de compte dédié",
+          "Formation incluse"
+        ]
       }
     }
   },
@@ -4286,7 +4258,17 @@
       "expired": "Votre carte a expiré",
       "expiredMessage": "Mettez à jour votre mode de paiement pour éviter la suspension du service.",
       "expiringSoon": "Votre carte va bientôt expirer",
-      "expiringSoonMessage": "Mettez à jour votre mode de paiement avant qu'elle n'expire pour éviter les interruptions."
+      "expiringSoonMessage": "Mettez à jour votre mode de paiement avant qu'elle n'expire pour éviter les interruptions.",
+      "dialogTitle": "Mettre à jour le moyen de paiement",
+      "dialogDescription": "Entrez les détails de votre nouvelle carte ci-dessous",
+      "cardholderName": "Nom du titulaire",
+      "cardDetails": "Détails de la carte",
+      "saving": "Enregistrement...",
+      "saveCard": "Enregistrer la carte",
+      "success": "Moyen de paiement mis à jour avec succès",
+      "error": "Erreur lors de la mise à jour du moyen de paiement",
+      "secureNotice": "Vos informations sont chiffrées et traitées en toute sécurité par Stripe",
+      "preparingForm": "Préparation du formulaire sécurisé..."
     },
     "invoiceHistory": {
       "title": "Historique des Factures",
@@ -4300,16 +4282,6 @@
       "total": "Total",
       "status": "Statut",
       "actions": "Actions"
-    }
-  },
-  "users": {
-    "roles": {
-      "admin": "Administrateur",
-      "adminDesc": "Accès complet au système",
-      "manager": "Gestionnaire",
-      "managerDesc": "Accès aux modules assignés avec permissions d'édition",
-      "user": "Utilisateur",
-      "userDesc": "Accès en lecture seule aux modules assignés"
     }
   },
   "supportAdmin": {

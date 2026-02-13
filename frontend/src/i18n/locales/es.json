@@ -61,9 +61,8 @@
     "view": "Ver",
     "details": "Detalles",
     "add": "Agregar",
-    "remove": "Quitar",
+    "remove": "Eliminar",
     "update": "Actualizar",
-    "refresh": "Actualizar",
     "clear": "Limpiar",
     "apply": "Aplicar",
     "reset": "Restablecer",
@@ -85,14 +84,6 @@
     "sendEmail": "Enviar Email",
     "goTo": "Ir a",
     "availableIn": "Disponible en plan",
-    "view": "Ver",
-    "add": "Agregar",
-    "update": "Actualizar",
-    "remove": "Eliminar",
-    "select": "Seleccionar",
-    "clear": "Limpiar",
-    "apply": "Aplicar",
-    "reset": "Restablecer",
     "months": {
       "january": "Enero",
       "february": "Febrero",
@@ -2544,53 +2535,13 @@
     }
   },
   "users": {
-    "title": "Gestión de Usuarios",
-    "subtitle": "Administra los usuarios del sistema",
-    "addUser": "Nuevo Usuario",
-    "table": {
-      "name": "Nombre",
-      "email": "Email",
-      "role": "Rol",
-      "status": "Estado",
-      "lastLogin": "Último Acceso",
-      "actions": "Acciones"
-    },
-    "form": {
-      "firstName": "Nombre",
-      "lastName": "Apellido",
-      "email": "Correo Electrónico",
-      "password": "Contraseña",
-      "confirmPassword": "Confirmar Contraseña",
-      "role": "Rol",
-      "selectRole": "Seleccionar rol",
-      "status": "Estado",
-      "active": "Activo",
-      "inactive": "Inactivo"
-    },
     "roles": {
       "admin": "Administrador",
+      "adminDesc": "Acceso completo al sistema",
       "manager": "Gerente",
-      "hr": "Recursos Humanos",
-      "accountant": "Contador",
-      "employee": "Empleado",
-      "viewer": "Solo Lectura"
-    },
-    "messages": {
-      "userCreated": "Usuario creado exitosamente",
-      "userUpdated": "Usuario actualizado",
-      "userDeleted": "Usuario eliminado",
-      "errorCreating": "Error al crear usuario",
-      "errorUpdating": "Error al actualizar",
-      "errorDeleting": "Error al eliminar",
-      "confirmDelete": "¿Eliminar este usuario?",
-      "noUsers": "No hay usuarios registrados",
-      "fillRequired": "Complete todos los campos requeridos",
-      "roleNameRequired": "El nombre del rol es requerido",
-      "roleCreated": "Rol creado correctamente",
-      "errorCreatingRole": "Error al crear rol",
-      "passwordRequired": "La contraseña es requerida",
-      "passwordUpdated": "Contraseña actualizada correctamente",
-      "errorPassword": "Error al actualizar contraseña"
+      "managerDesc": "Acceso a módulos asignados con permisos de edición",
+      "user": "Usuario",
+      "userDesc": "Acceso de solo lectura a módulos asignados"
     }
   },
   "roles": {
@@ -4257,17 +4208,38 @@
       "basic": {
         "name": "FortexaRH Básico",
         "price": "$10/mes + $1.5/empleado",
-        "features": ["Hasta 50 empleados", "Gestión de empleados", "Nómina básica", "Asistencias", "Vacaciones", "Soporte por email"]
+        "features": [
+          "Hasta 50 empleados",
+          "Gestión de empleados",
+          "Nómina básica",
+          "Asistencias",
+          "Vacaciones",
+          "Soporte por email"
+        ]
       },
       "pro": {
         "name": "FortexaRH Pro",
         "price": "$20/mes + $1.5/empleado",
-        "features": ["Hasta 200 empleados", "Todas las funciones básicas", "Evaluaciones de desempeño", "Reclutamiento", "Reportes avanzados", "Soporte prioritario"]
+        "features": [
+          "Hasta 200 empleados",
+          "Todas las funciones básicas",
+          "Evaluaciones de desempeño",
+          "Reclutamiento",
+          "Reportes avanzados",
+          "Soporte prioritario"
+        ]
       },
       "enterprise": {
         "name": "FortexaRH Enterprise",
         "price": "$76/mes + $1.5/empleado",
-        "features": ["Empleados ilimitados", "Todas las funciones", "API personalizada", "Soporte 24/7", "Gerente de cuenta dedicado", "Capacitación incluida"]
+        "features": [
+          "Empleados ilimitados",
+          "Todas las funciones",
+          "API personalizada",
+          "Soporte 24/7",
+          "Gerente de cuenta dedicado",
+          "Capacitación incluida"
+        ]
       }
     }
   },
@@ -4434,7 +4406,17 @@
       "expired": "Tu tarjeta ha expirado",
       "expiredMessage": "Actualiza tu método de pago para evitar la suspensión del servicio.",
       "expiringSoon": "Tu tarjeta está por expirar",
-      "expiringSoonMessage": "Actualiza tu método de pago antes de que expire para evitar interrupciones."
+      "expiringSoonMessage": "Actualiza tu método de pago antes de que expire para evitar interrupciones.",
+      "dialogTitle": "Actualizar Método de Pago",
+      "dialogDescription": "Ingresa los datos de tu nueva tarjeta",
+      "cardholderName": "Nombre del Titular",
+      "cardDetails": "Datos de la Tarjeta",
+      "saving": "Guardando...",
+      "saveCard": "Guardar Tarjeta",
+      "success": "Método de pago actualizado correctamente",
+      "error": "Error al actualizar el método de pago",
+      "secureNotice": "Tu información es encriptada y procesada de forma segura por Stripe",
+      "preparingForm": "Preparando formulario seguro..."
     },
     "invoiceHistory": {
       "title": "Historial de Facturas",
@@ -4448,16 +4430,6 @@
       "total": "Total",
       "status": "Estado",
       "actions": "Acciones"
-    }
-  },
-  "users": {
-    "roles": {
-      "admin": "Administrador",
-      "adminDesc": "Acceso completo al sistema",
-      "manager": "Gerente",
-      "managerDesc": "Acceso a módulos asignados con permisos de edición",
-      "user": "Usuario",
-      "userDesc": "Acceso de solo lectura a módulos asignados"
     }
   },
   "supportAdmin": {
