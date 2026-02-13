@@ -923,6 +923,7 @@
     "errorLoading": "Erreur de chargement des employés",
     "errorSaving": "Erreur lors de l'enregistrement",
     "errorDeleting": "Erreur lors de la suppression",
+    "photoTooLarge": "L'image ne doit pas dépasser 2 Mo",
     "filters": {
       "all": "Tous",
       "active": "Actifs",
