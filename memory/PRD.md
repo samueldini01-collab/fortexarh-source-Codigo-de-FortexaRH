@@ -1,8 +1,54 @@
 # FortexaRH - Sistema SaaS de RRHH y Nómina
 
-## Última Actualización: 2026-02-12
+## Última Actualización: 2026-02-13
 
-## ✅ Completado Hoy (Sesión Actual - Fork #3)
+## ✅ Completado Hoy (Sesión Actual - Fork #4)
+
+### 🌐 Traducciones de Páginas Restantes Completadas
+
+**1. AccountingPage.jsx - ACTUALIZADO:**
+- Título: "Accounting Module" / "Módulo Contable"
+- Subtítulo: "Journal entries and chart of accounts" / "Asientos de diario y plan de cuentas"
+- Stats cards: Total Entries, Total Debits, Total Credits, From Payroll
+- Tabs: "Journal Entries" / "Chart of Accounts"
+- Filtros: Search by Number, Start Date, End Date, Search, Clear filters
+- Encabezados de tabla: Number, Date, Reference, Description, Debit, Credit, Status, Actions
+- Diálogos de crear/editar entrada y cuenta traducidos
+- Estados de badges traducidos (Posted, Pending, Voided, Draft)
+- Mensajes de toast CRUD traducidos
+- ~50 nuevas claves agregadas a `accounting.*`
+
+**2. CostsByDepartmentPage.jsx - COMPLETADO:**
+- Título: "Costs by Department" / "Costos por Departamento"
+- Subtítulo traducido
+- Stats cards: Total Employees, Gross Salary, Employer Contributions, Total Cost
+- Tabs: Preview / Charts (Vista Previa / Gráficos)
+- Controles: Period, Refresh, Print, CSV, Excel
+- Gráficos: Cost Distribution, Monthly Comparison
+- Estado vacío traducido
+- Mensajes de error/éxito traducidos
+- ~45 nuevas claves agregadas a `costsByDepartment.*`
+
+**3. CompanyConfigPage.jsx - COMPLETADO:**
+- Tabs dinámicos con traducciones: General, Logo, Appearance, Branding, Notifications, Integrations, Audit
+- Sección Logo: Upload, preview, recommendations
+- Sección Appearance: Brand colors, theme, typography
+- Sección Branding: Header text, footer text, welcome message, social links
+- Sección Notifications: Email, SMS, Push, Self-service settings
+- Sección Audit: Recent changes log
+- Sección Integrations: Connect/disconnect, coming soon badges
+- ~100 nuevas claves agregadas a `companyConfig.*`
+
+**4. AttendancePage.jsx - ACTUALIZADO:**
+- Mensajes de toast traducidos (check-in, check-out, error handling)
+
+**5. Common translations - ACTUALIZADAS:**
+- Agregadas claves: print, refresh, clearFilters
+- Validadas en los 3 idiomas (EN/ES/FR)
+
+---
+
+## ✅ Completado en Fork #3
 
 ### 🌐 Traducciones de Alta Prioridad Completadas
 
