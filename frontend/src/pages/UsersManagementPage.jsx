@@ -41,23 +41,23 @@ import {
 import { toast } from "sonner";
 
 const MODULES = [
-  { id: "dashboard", name: "Dashboard", icon: "📊" },
-  { id: "employees", name: "Empleados", icon: "👥" },
-  { id: "payroll", name: "Nómina", icon: "💰" },
-  { id: "attendance", name: "Asistencias", icon: "⏰" },
-  { id: "vacations", name: "Vacaciones", icon: "📅" },
-  { id: "evaluations", name: "Evaluaciones", icon: "🎯" },
-  { id: "recruitment", name: "Reclutamiento", icon: "💼" },
-  { id: "accounting", name: "Contabilidad", icon: "📒" },
-  { id: "organigrama", name: "Organigrama", icon: "🌳" },
-  { id: "reports", name: "Reportes", icon: "📈" },
-  { id: "settings", name: "Configuración", icon: "⚙️" },
+  { id: "dashboard", nameKey: "common.navigation.dashboard", icon: "📊" },
+  { id: "employees", nameKey: "common.navigation.employees", icon: "👥" },
+  { id: "payroll", nameKey: "common.navigation.payroll", icon: "💰" },
+  { id: "attendance", nameKey: "common.navigation.attendance", icon: "⏰" },
+  { id: "vacations", nameKey: "common.navigation.vacations", icon: "📅" },
+  { id: "evaluations", nameKey: "common.navigation.evaluations", icon: "🎯" },
+  { id: "recruitment", nameKey: "common.navigation.recruitment", icon: "💼" },
+  { id: "accounting", nameKey: "common.navigation.accounting", icon: "📒" },
+  { id: "organigrama", nameKey: "common.navigation.organigrama", icon: "🌳" },
+  { id: "reports", nameKey: "common.navigation.reports", icon: "📈" },
+  { id: "settings", nameKey: "common.navigation.settings", icon: "⚙️" },
 ];
 
 const ROLES = [
-  { id: "admin", name: "Administrador", description: "Acceso completo al sistema" },
-  { id: "manager", name: "Gerente", description: "Acceso a módulos asignados con permisos de edición" },
-  { id: "user", name: "Usuario", description: "Acceso de solo lectura a módulos asignados" },
+  { id: "admin", nameKey: "users.roles.admin", descKey: "users.roles.adminDesc" },
+  { id: "manager", nameKey: "users.roles.manager", descKey: "users.roles.managerDesc" },
+  { id: "user", nameKey: "users.roles.user", descKey: "users.roles.userDesc" },
 ];
 
 export default function UsersManagementPage() {
