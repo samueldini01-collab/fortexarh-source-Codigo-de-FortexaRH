@@ -424,7 +424,7 @@ export default function PayrollCalculatorPage() {
     // Save PDF
     const fileName = `nomina_${result.employee_name?.replace(/\s+/g, '_') || 'calculo'}_${new Date().toISOString().split('T')[0]}.pdf`;
     doc.save(fileName);
-    toast.success("PDF exportado correctamente");
+    toast.success(t("payroll.calculator.messages.pdfExported"));
   };
 
   const resetForm = () => {
