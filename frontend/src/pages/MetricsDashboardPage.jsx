@@ -62,6 +62,17 @@ export default function MetricsDashboardPage() {
     return `${(value || 0).toFixed(1)}%`;
   };
 
+  // Map Spanish month abbreviations to translation keys
+  const translateMonth = (monthAbbr) => {
+    const monthMap = {
+      'Ene': 'common.months.jan', 'Feb': 'common.months.feb', 'Mar': 'common.months.mar',
+      'Abr': 'common.months.apr', 'May': 'common.months.may', 'Jun': 'common.months.jun',
+      'Jul': 'common.months.jul', 'Ago': 'common.months.aug', 'Sep': 'common.months.sep',
+      'Oct': 'common.months.oct', 'Nov': 'common.months.nov', 'Dic': 'common.months.dec'
+    };
+    return t(monthMap[monthAbbr] || monthAbbr);
+  };
+
   // Drill-down handler for chart clicks
   const handleChartDrillDown = async (type, dataPoint = null) => {
     setDrillDownLoading(true);
