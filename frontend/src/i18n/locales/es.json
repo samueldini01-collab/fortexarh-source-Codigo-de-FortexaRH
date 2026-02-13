@@ -4148,6 +4148,17 @@
       "tss": "Generación de archivos TSS (SUIR+)",
       "dgii": "Reportes DGII-TSS (IR-3, IR-17)"
     },
+    "geolocation": {
+      "idealFor": "Ideal para",
+      "field": "Personal de campo",
+      "construction": "Construcción",
+      "delivery": "Delivery",
+      "sales": "Ventas",
+      "supervisors": "Supervisores",
+      "distribution": "Rutas de distribución",
+      "technicians": "Técnicos",
+      "promoters": "Promotores"
+    },
     "pricing": {
       "sectionTitle": "PLANES Y PRECIOS",
       "title": "Inversión que se paga sola",
