@@ -821,9 +821,9 @@ export default function SubscriptionsPage() {
               <div>
                 <CardTitle className="flex items-center gap-2">
                   <Receipt className="w-5 h-5" />
-                  Historial de Facturas
+                  {t('subscriptions.invoiceHistory.title')}
                 </CardTitle>
-                <CardDescription>Registro de todos tus pagos</CardDescription>
+                <CardDescription>{t('subscriptions.invoiceHistory.description')}</CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -831,20 +831,20 @@ export default function SubscriptionsPage() {
             {invoices.length === 0 ? (
               <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                 <FileText className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-                <p>No hay facturas disponibles</p>
-                <p className="text-sm">Las facturas aparecerán aquí después de realizar un pago</p>
+                <p>{t('subscriptions.invoiceHistory.noInvoices')}</p>
+                <p className="text-sm">{t('subscriptions.invoiceHistory.invoicesWillAppear')}</p>
               </div>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Factura</TableHead>
-                    <TableHead>Fecha</TableHead>
-                    <TableHead>Plan</TableHead>
-                    <TableHead>Empleados</TableHead>
-                    <TableHead className="text-right">Total</TableHead>
-                    <TableHead>Estado</TableHead>
-                    <TableHead className="text-center">Acciones</TableHead>
+                    <TableHead>{t('subscriptions.invoiceHistory.invoice')}</TableHead>
+                    <TableHead>{t('subscriptions.invoiceHistory.date')}</TableHead>
+                    <TableHead>{t('subscriptions.invoiceHistory.plan')}</TableHead>
+                    <TableHead>{t('subscriptions.invoiceHistory.employees')}</TableHead>
+                    <TableHead className="text-right">{t('subscriptions.invoiceHistory.total')}</TableHead>
+                    <TableHead>{t('subscriptions.invoiceHistory.status')}</TableHead>
+                    <TableHead className="text-center">{t('subscriptions.invoiceHistory.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -859,7 +859,7 @@ export default function SubscriptionsPage() {
                       </TableCell>
                       <TableCell>
                         <Badge className={invoice.status === 'paid' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}>
-                          {invoice.status === 'paid' ? 'Pagada' : 'Pendiente'}
+                          {invoice.status === 'paid' ? t('subscriptions.paid') : t('subscriptions.pending')}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-center">
