@@ -113,6 +113,16 @@
     "lastUpdated": "Última actualización",
     "days": "días"
   },
+  "colors": {
+    "red": "Rojo",
+    "orange": "Naranja",
+    "yellow": "Amarillo",
+    "green": "Verde",
+    "blue": "Azul",
+    "violet": "Violeta",
+    "pink": "Rosa",
+    "gray": "Gris"
+  },
   "nav": {
     "dashboard": "Panel Principal",
     "dashboardMain": "Dashboard Principal",
