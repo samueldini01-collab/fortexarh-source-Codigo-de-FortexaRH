@@ -846,6 +846,27 @@
       "severance": "Liquidación",
       "construction": "Obreros NG 07/2007"
     },
+    "statuses": {
+      "open": "Abierto",
+      "draft": "Borrador",
+      "pendingApproval": "Pendiente Aprobación",
+      "calculated": "Calculado",
+      "approved": "Aprobado",
+      "paid": "Pagado"
+    },
+    "table": {
+      "employee": "Empleado",
+      "department": "Departamento",
+      "gross": "Bruto",
+      "deductions": "Deducciones",
+      "net": "Neto"
+    },
+    "breakdown": "Desglose",
+    "filters": {
+      "openPeriods": "Períodos Abiertos",
+      "pending": "Pendientes",
+      "paid": "Pagados"
+    },
     "messages": {
       "errorLoadingPeriods": "Error al cargar períodos",
       "errorLoadingTss": "Error al cargar vista previa TSS",
