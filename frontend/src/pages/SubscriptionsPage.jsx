@@ -190,11 +190,11 @@ export default function SubscriptionsPage() {
       if (response.data.checkout_url) {
         window.location.href = response.data.checkout_url;
       } else {
-        toast.error("Error al procesar el pago");
+        toast.error(t('subscriptions.errorProcessingPayment'));
       }
     } catch (error) {
       console.error("Checkout error:", error);
-      toast.error(error.response?.data?.detail || "Error al procesar el pago");
+      toast.error(error.response?.data?.detail || t('subscriptions.errorProcessingPayment'));
     } finally {
       setProcessingPayment(false);
     }
@@ -209,7 +209,7 @@ export default function SubscriptionsPage() {
       setShowAdjustEmployees(false);
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al actualizar");
+      toast.error(error.response?.data?.detail || t('subscriptions.errorUpdating'));
     }
   };
 
@@ -222,7 +222,7 @@ export default function SubscriptionsPage() {
       setShowAddUsers(false);
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al actualizar");
+      toast.error(error.response?.data?.detail || t('subscriptions.errorUpdating'));
     }
   };
 
@@ -237,7 +237,7 @@ export default function SubscriptionsPage() {
       setCancelStep(1);
       setShowCancelFlow(true);
     } catch (error) {
-      toast.error("Error al cargar información de cancelación");
+      toast.error(t('subscriptions.errorLoadingCancellationInfo'));
     }
   };
 
@@ -252,7 +252,7 @@ export default function SubscriptionsPage() {
       setShowCancelFlow(false);
       fetchData();
     } catch (error) {
-      toast.error("Error al aplicar descuento");
+      toast.error(t('subscriptions.errorApplyingDiscount'));
     } finally {
       setProcessingCancel(false);
     }
@@ -281,7 +281,7 @@ export default function SubscriptionsPage() {
       setCancelFeedback("");
       fetchData();
     } catch (error) {
-      toast.error("Error al cancelar suscripción");
+      toast.error(t('subscriptions.errorCancellingSubscription'));
     } finally {
       setProcessingCancel(false);
     }
@@ -296,7 +296,7 @@ export default function SubscriptionsPage() {
       toast.success("¡Suscripción reactivada!");
       fetchData();
     } catch (error) {
-      toast.error("Error al reactivar suscripción");
+      toast.error(t('subscriptions.errorReactivatingSubscription'));
     }
   };
 
@@ -322,7 +322,7 @@ export default function SubscriptionsPage() {
       toast.success("Factura descargada");
     } catch (error) {
       console.error("Error downloading invoice:", error);
-      toast.error("Error al descargar la factura");
+      toast.error(t('subscriptions.errorDownloadingInvoice'));
     }
   };
 
