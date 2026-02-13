@@ -4094,7 +4094,9 @@
       "notifications": "Notifications",
       "notificationsDesc": "Alertes en temps réel des événements importants",
       "rolesPermissions": "Rôles et Permissions",
-      "rolesPermissionsDesc": "Contrôle d'accès granulaire par module et action"
+      "rolesPermissionsDesc": "Contrôle d'accès granulaire par module et action",
+      "complianceTitle": "Conformité Légale Garantie",
+      "complianceDescription": "FortexaRH est spécifiquement conçu pour respecter toutes les réglementations du travail de la République Dominicaine: TSS (Trésorerie de Sécurité Sociale), DGII (Direction Générale des Impôts), Code du Travail, Norme Générale 07-2007 pour les Ouvriers du Bâtiment, et plus."
     },
     "benefits": {
       "sectionTitle": "AVANTAGES",
