@@ -761,7 +761,7 @@ async def confirm_setup_intent(
     data: ConfirmSetupRequest,
     user: dict = Depends(get_current_user)
 ):
-    """After Stripe Elements confirms the card, set it as default payment method"""
+    """After Stripe Elements confirms the card, set it as default and log the change"""
     company_id = user.get("company_id")
     if not company_id:
         raise HTTPException(status_code=403, detail="No company access")
@@ -781,6 +781,24 @@ async def confirm_setup_intent(
         raise HTTPException(status_code=404, detail="No Stripe customer found")
 
     try:
+        # Capture the OLD payment method before updating
+        old_card_info = None
+        try:
+            old_methods = stripe.PaymentMethod.list(
+                customer=stripe_customer_id, type="card", limit=1
+            )
+            if old_methods.data:
+                old_pm = old_methods.data[0]
+                old_card_info = {
+                    "brand": old_pm.card.brand.upper(),
+                    "last4": old_pm.card.last4,
+                    "exp_month": old_pm.card.exp_month,
+                    "exp_year": old_pm.card.exp_year,
+                }
+        except Exception:
+            pass
+
+        # Set new default
         stripe.Customer.modify(
             stripe_customer_id,
             invoice_settings={"default_payment_method": data.payment_method_id}
@@ -788,6 +806,26 @@ async def confirm_setup_intent(
 
         pm = stripe.PaymentMethod.retrieve(data.payment_method_id)
         card = pm.card
+        new_card_info = {
+            "brand": card.brand.upper(),
+            "last4": card.last4,
+            "exp_month": card.exp_month,
+            "exp_year": card.exp_year,
+        }
+
+        # Log the change
+        now = datetime.now(timezone.utc)
+        change_type = "added" if old_card_info is None else "updated"
+        await db.payment_method_history.insert_one({
+            "company_id": company_id,
+            "changed_by": user.get("user_id"),
+            "changed_by_name": user.get("name", ""),
+            "changed_by_email": user.get("email", ""),
+            "change_type": change_type,
+            "previous_card": old_card_info,
+            "new_card": new_card_info,
+            "changed_at": now.isoformat(),
+        })
 
         return {
             "status": "success",
@@ -797,10 +835,26 @@ async def confirm_setup_intent(
                 "last4": card.last4,
                 "exp_month": card.exp_month,
                 "exp_year": card.exp_year,
-                "funding": card.funding
+                "funding": card.funding,
             }
         }
 
     except stripe.error.StripeError as e:
         logger.error(f"Error confirming setup intent: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/payment-method/history")
+async def get_payment_method_history(user: dict = Depends(get_current_user)):
+    """Get the history of payment method changes for the company"""
+    company_id = user.get("company_id")
+    if not company_id:
+        raise HTTPException(status_code=403, detail="No company access")
+
+    cursor = db.payment_method_history.find(
+        {"company_id": company_id},
+        {"_id": 0}
+    ).sort("changed_at", -1).limit(20)
+
+    history = await cursor.to_list(length=20)
+    return history
