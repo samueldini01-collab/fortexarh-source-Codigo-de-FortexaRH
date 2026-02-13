@@ -426,18 +426,18 @@ export default function BrochurePage() {
                       }`} />
                     </div>
                     
-                    <h3 className="text-xl font-bold text-slate-800">FortexaRH {plan.name}</h3>
-                    <p className="text-sm text-slate-500 mb-3">{plan.target}</p>
+                    <h3 className="text-xl font-bold text-slate-800">FortexaRH {t(plan.nameKey)}</h3>
+                    <p className="text-sm text-slate-500 mb-3">{t(plan.targetKey)}</p>
                     
                     <div className="mb-4">
                       <span className="text-3xl font-bold text-slate-800">{plan.price}</span>
-                      <span className="text-slate-500">/mes</span>
-                      <p className="text-sm text-emerald-600">+ {plan.perEmployee} por empleado</p>
+                      <span className="text-slate-500">{t('brochure.pricing.perMonth')}</span>
+                      <p className="text-sm text-emerald-600">+ {plan.perEmployee} {t('brochure.pricing.perEmployee')}</p>
                     </div>
                     
                     <div className="border-t pt-3 mb-3">
-                      <p className="text-sm font-medium text-slate-700">{plan.employees} empleados</p>
-                      <p className="text-sm text-slate-500">{plan.users} incluidos</p>
+                      <p className="text-sm font-medium text-slate-700">{t(plan.employeesKey)} {t('brochure.pricing.employees')}</p>
+                      <p className="text-sm text-slate-500">{t(plan.usersKey)} {t('brochure.pricing.usersIncluded')}</p>
                     </div>
                     
                     <div className="space-y-2">
@@ -449,10 +449,10 @@ export default function BrochurePage() {
                             <X className="w-4 h-4 text-slate-300 flex-shrink-0" />
                           )}
                           <span className={f.included ? "text-slate-700" : "text-slate-400"}>
-                            {f.text}
+                            {t(f.textKey)}
                             {f.isNew && f.included && (
                               <span className="ml-1 text-[10px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-bold">
-                                NUEVO
+                                {t('brochure.pricing.new')}
                               </span>
                             )}
                           </span>
@@ -465,7 +465,7 @@ export default function BrochurePage() {
             </div>
             
             <p className="text-center text-slate-500 mt-6 text-sm">
-              * Todos los planes incluyen 14 días de prueba gratis. Sin tarjeta de crédito requerida.
+              {t('brochure.pricing.trialNote')}
             </p>
           </div>
 
@@ -482,27 +482,26 @@ export default function BrochurePage() {
                 </span>
               </div>
               
-              <h2 className="text-3xl font-bold mb-4">¿Listo para transformar su gestión de RRHH?</h2>
+              <h2 className="text-3xl font-bold mb-4">{t('brochure.contact.title')}</h2>
               <p className="text-slate-300 max-w-xl mx-auto">
-                Únase a las empresas dominicanas que ya confían en FortexaRH 
-                para gestionar su nómina y recursos humanos de manera eficiente.
+                {t('brochure.contact.subtitle')}
               </p>
             </div>
             
             <div className="grid md:grid-cols-3 gap-6 mb-10">
               <div className="text-center p-6 bg-white/10 rounded-xl backdrop-blur">
                 <Globe className="w-8 h-8 mx-auto mb-3 text-emerald-400" />
-                <h3 className="font-semibold mb-1">Sitio Web</h3>
+                <h3 className="font-semibold mb-1">{t('brochure.contact.website')}</h3>
                 <p className="text-emerald-300">www.fortexarh.com</p>
               </div>
               <div className="text-center p-6 bg-white/10 rounded-xl backdrop-blur">
                 <HeadphonesIcon className="w-8 h-8 mx-auto mb-3 text-emerald-400" />
-                <h3 className="font-semibold mb-1">Teléfono</h3>
+                <h3 className="font-semibold mb-1">{t('brochure.contact.phone')}</h3>
                 <p className="text-emerald-300">809-685-9898</p>
               </div>
               <div className="text-center p-6 bg-white/10 rounded-xl backdrop-blur">
                 <Zap className="w-8 h-8 mx-auto mb-3 text-emerald-400" />
-                <h3 className="font-semibold mb-1">Email</h3>
+                <h3 className="font-semibold mb-1">{t('brochure.contact.email')}</h3>
                 <p className="text-emerald-300">info@fortexarh.com</p>
               </div>
             </div>
@@ -510,22 +509,22 @@ export default function BrochurePage() {
             <div className="flex items-center justify-center gap-6">
               <div className="flex items-center gap-2 text-slate-300">
                 <Award className="w-5 h-5" />
-                <span className="text-sm">Soporte en Español</span>
+                <span className="text-sm">{t('brochure.contact.spanishSupport')}</span>
               </div>
               <div className="flex items-center gap-2 text-slate-300">
                 <Shield className="w-5 h-5" />
-                <span className="text-sm">Datos Seguros en la Nube</span>
+                <span className="text-sm">{t('brochure.contact.secureData')}</span>
               </div>
               <div className="flex items-center gap-2 text-slate-300">
                 <Rocket className="w-5 h-5" />
-                <span className="text-sm">Actualizaciones Gratuitas</span>
+                <span className="text-sm">{t('brochure.contact.freeUpdates')}</span>
               </div>
             </div>
             
             <div className="text-center mt-10 pt-6 border-t border-white/20">
               <p className="text-slate-400 text-sm">
-                © 2026 FortexaRH. Todos los derechos reservados.<br/>
-                Santo Domingo, República Dominicana
+                {t('brochure.contact.copyright')}<br/>
+                {t('brochure.contact.location')}
               </p>
             </div>
           </div>
