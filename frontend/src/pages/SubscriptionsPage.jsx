@@ -215,7 +215,8 @@ export default function SubscriptionsPage() {
     fetchData();
     fetchInvoices();
     fetchPaymentMethod();
-  }, [fetchData, fetchInvoices, fetchPaymentMethod]);
+    fetchPmHistory();
+  }, [fetchData, fetchInvoices, fetchPaymentMethod, fetchPmHistory]);
 
   // Handle payment method update callback (legacy redirect flow)
   useEffect(() => {
