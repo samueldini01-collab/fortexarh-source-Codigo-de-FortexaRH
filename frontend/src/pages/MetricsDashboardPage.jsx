@@ -828,7 +828,7 @@ export default function MetricsDashboardPage() {
                       </div>
                       <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-red-700 dark:text-red-400">Salidas YTD</span>
+                          <span className="text-sm text-red-700 dark:text-red-400">{t('metrics.drillDown.exitsYTD')}</span>
                           <span className="font-bold text-red-800 dark:text-red-300 flex items-center gap-1">
                             <UserMinus className="w-4 h-4" />
                             {totalTerminated}
@@ -837,7 +837,7 @@ export default function MetricsDashboardPage() {
                       </div>
                       <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-blue-700 dark:text-blue-400">Tasa de Retención</span>
+                          <span className="text-sm text-blue-700 dark:text-blue-400">{t('metrics.charts.retentionRate')}</span>
                           <span className="font-bold text-blue-800 dark:text-blue-300">
                             {retentionRate}%
                           </span>
@@ -845,15 +845,15 @@ export default function MetricsDashboardPage() {
                       </div>
                       <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-purple-700 dark:text-purple-400">Antigüedad Promedio</span>
+                          <span className="text-sm text-purple-700 dark:text-purple-400">{t('metrics.charts.avgTenure')}</span>
                           <span className="font-bold text-purple-800 dark:text-purple-300">
-                            {avgTenure} años
+                            {avgTenure} {t('common.years')}
                           </span>
                         </div>
                       </div>
                       <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-amber-700 dark:text-amber-400">Costo por Rotación</span>
+                          <span className="text-sm text-amber-700 dark:text-amber-400">{t('metrics.charts.turnoverCost')}</span>
                           <span className="font-bold text-amber-800 dark:text-amber-300">
                             {formatCurrency(totalTerminated * 50000)}
                           </span>
