@@ -523,3 +523,173 @@ async def stripe_webhook(request: Request):
     except Exception as e:
         logger.error(f"Webhook error: {e}")
         return {"status": "error", "message": str(e)}
+
+
+
+# ===================== PAYMENT METHOD MANAGEMENT =====================
+
+@router.get("/payment-method")
+async def get_payment_method(user: dict = Depends(get_current_user)):
+    """Get the current payment method for the company"""
+    company_id = user.get("company_id")
+    if not company_id:
+        raise HTTPException(status_code=403, detail="No company access")
+    
+    api_key = os.environ.get('STRIPE_API_KEY', '')
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Stripe not configured")
+    
+    stripe.api_key = api_key
+    
+    # Get the subscription to find the Stripe customer
+    subscription = await db.subscriptions.find_one(
+        {"company_id": company_id},
+        {"_id": 0, "stripe_customer_id": 1, "stripe_subscription_id": 1}
+    )
+    
+    if not subscription:
+        return {"has_payment_method": False, "payment_method": None}
+    
+    stripe_customer_id = subscription.get("stripe_customer_id")
+    if not stripe_customer_id:
+        # Try to find from payment transactions
+        transaction = await db.payment_transactions.find_one(
+            {"company_id": company_id, "payment_status": "paid"},
+            {"_id": 0, "stripe_customer_id": 1},
+            sort=[("paid_at", -1)]
+        )
+        stripe_customer_id = transaction.get("stripe_customer_id") if transaction else None
+    
+    if not stripe_customer_id:
+        return {"has_payment_method": False, "payment_method": None}
+    
+    try:
+        # Retrieve customer's payment methods
+        payment_methods = stripe.PaymentMethod.list(
+            customer=stripe_customer_id,
+            type="card",
+            limit=1
+        )
+        
+        if payment_methods.data:
+            pm = payment_methods.data[0]
+            card = pm.card
+            return {
+                "has_payment_method": True,
+                "payment_method": {
+                    "id": pm.id,
+                    "brand": card.brand.upper(),
+                    "last4": card.last4,
+                    "exp_month": card.exp_month,
+                    "exp_year": card.exp_year,
+                    "funding": card.funding
+                }
+            }
+        
+        return {"has_payment_method": False, "payment_method": None}
+        
+    except stripe.error.StripeError as e:
+        logger.error(f"Error getting payment method: {e}")
+        return {"has_payment_method": False, "payment_method": None, "error": str(e)}
+
+
+class UpdatePaymentMethodRequest(BaseModel):
+    origin_url: str
+
+
+@router.post("/update-payment-method")
+async def create_update_payment_session(
+    request_data: UpdatePaymentMethodRequest,
+    user: dict = Depends(get_current_user)
+):
+    """Create a Stripe checkout session for updating payment method"""
+    company_id = user.get("company_id")
+    if not company_id:
+        raise HTTPException(status_code=403, detail="No company access")
+    
+    api_key = os.environ.get('STRIPE_API_KEY', '')
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Stripe not configured")
+    
+    stripe.api_key = api_key
+    
+    # Get subscription details
+    subscription = await db.subscriptions.find_one(
+        {"company_id": company_id},
+        {"_id": 0}
+    )
+    
+    if not subscription:
+        raise HTTPException(status_code=404, detail="No subscription found")
+    
+    try:
+        # Get or create customer
+        stripe_customer_id = subscription.get("stripe_customer_id")
+        
+        if not stripe_customer_id:
+            # Get company email
+            company = await db.companies.find_one(
+                {"company_id": company_id},
+                {"_id": 0, "email": 1, "name": 1}
+            )
+            
+            customer = stripe.Customer.create(
+                email=company.get("email", user.get("email")),
+                name=company.get("name", "FortexaRH Customer"),
+                metadata={"company_id": company_id}
+            )
+            stripe_customer_id = customer.id
+            
+            # Store customer ID
+            await db.subscriptions.update_one(
+                {"company_id": company_id},
+                {"$set": {"stripe_customer_id": stripe_customer_id}}
+            )
+        
+        # Create setup session for updating payment method
+        session = stripe.checkout.Session.create(
+            customer=stripe_customer_id,
+            mode="setup",
+            payment_method_types=["card"],
+            success_url=f"{request_data.origin_url}/subscriptions?payment_method_updated=true",
+            cancel_url=f"{request_data.origin_url}/subscriptions?payment_method_cancelled=true",
+            metadata={
+                "company_id": company_id,
+                "type": "update_payment_method"
+            }
+        )
+        
+        return {
+            "checkout_url": session.url,
+            "session_id": session.id
+        }
+        
+    except stripe.error.StripeError as e:
+        logger.error(f"Error creating update payment session: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/payment-method/{payment_method_id}")
+async def remove_payment_method(
+    payment_method_id: str,
+    user: dict = Depends(get_current_user)
+):
+    """Remove a payment method from the customer"""
+    company_id = user.get("company_id")
+    if not company_id:
+        raise HTTPException(status_code=403, detail="No company access")
+    
+    api_key = os.environ.get('STRIPE_API_KEY', '')
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Stripe not configured")
+    
+    stripe.api_key = api_key
+    
+    try:
+        # Detach the payment method
+        stripe.PaymentMethod.detach(payment_method_id)
+        return {"status": "success", "message": "Payment method removed"}
+        
+    except stripe.error.StripeError as e:
+        logger.error(f"Error removing payment method: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
