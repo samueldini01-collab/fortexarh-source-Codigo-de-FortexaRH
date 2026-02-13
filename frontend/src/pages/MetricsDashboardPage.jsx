@@ -227,7 +227,12 @@ export default function MetricsDashboardPage() {
   }
 
   // Extract data from dashboard response
-  const payrollTrend = dashboardData?.payroll_trend || [];
+  const rawPayrollTrend = dashboardData?.payroll_trend || [];
+  // Translate month names for display
+  const payrollTrend = rawPayrollTrend.map(row => ({
+    ...row,
+    month: translateMonth(row.month)
+  }));
   const departmentCosts = dashboardData?.department_costs || [];
   const employeeMetrics = dashboardData?.employee_metrics || {};
   const loanMetrics = dashboardData?.loan_metrics || {};
