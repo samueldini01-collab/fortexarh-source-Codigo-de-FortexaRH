@@ -4250,7 +4250,39 @@
     "back": "Back",
     "confirmCancellation": "Confirm Cancellation",
     "paid": "Paid",
-    "pending": "Pending"
+    "pending": "Pending",
+    "planComparison": "Plan Comparison",
+    "findPerfectPlan": "Find the perfect plan for your company",
+    "mostPopular": "Most Popular",
+    "errorUpdatingPaymentMethod": "Error updating payment method",
+    "paymentMethodUpdated": "Payment method updated successfully",
+    "paymentMethod": {
+      "title": "Payment Method",
+      "description": "Manage your credit card for automatic payments",
+      "expires": "Expires",
+      "active": "Active",
+      "autoRenewal": "Your subscription will automatically renew with this card",
+      "update": "Change Card",
+      "add": "Add Card",
+      "noMethod": "You don't have a payment method configured",
+      "expired": "Your card has expired",
+      "expiredMessage": "Update your payment method to avoid service suspension.",
+      "expiringSoon": "Your card is about to expire",
+      "expiringSoonMessage": "Update your payment method before it expires to avoid interruptions."
+    },
+    "invoiceHistory": {
+      "title": "Invoice History",
+      "description": "Record of all your payments",
+      "noInvoices": "No invoices available",
+      "invoicesWillAppear": "Invoices will appear here after making a payment",
+      "invoice": "Invoice",
+      "date": "Date",
+      "plan": "Plan",
+      "employees": "Employees",
+      "total": "Total",
+      "status": "Status",
+      "actions": "Actions"
+    }
   },
   "users": {
     "roles": {
