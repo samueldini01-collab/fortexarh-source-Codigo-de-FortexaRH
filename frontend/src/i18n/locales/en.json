@@ -3333,7 +3333,75 @@
       "dark": "Dark",
       "auto": "Automatic"
     },
+    "logo": {
+      "title": "Company Logo",
+      "subtitle": "Upload your company logo for documents and the system header.",
+      "currentLogo": "Current Logo",
+      "noLogo": "No logo uploaded",
+      "dragDrop": "Drag and drop or",
+      "selectFile": "select a file",
+      "recommendations": "Recommended dimensions: 400x400px",
+      "preview": "Document preview:",
+      "companyName": "Company Name",
+      "save": "Save Logo"
+    },
+    "appearance": {
+      "title": "Appearance and Theme",
+      "subtitle": "Customize the colors and visual appearance of the system.",
+      "brandColors": "Brand Colors",
+      "primaryColor": "Primary Color",
+      "secondaryColor": "Secondary Color",
+      "accentColor": "Accent Color",
+      "theme": "Theme",
+      "typography": "Typography",
+      "fontFamily": "Font Family",
+      "fontSize": "Font Size",
+      "preview": "Preview",
+      "save": "Save Appearance"
+    },
+    "branding": {
+      "title": "Branding and Custom Text",
+      "subtitle": "Customize the texts that appear on documents and notifications.",
+      "headerText": "Header Text",
+      "headerPlaceholder": "Text that appears at the top of documents...",
+      "footerText": "Footer Text",
+      "footerPlaceholder": "Text that appears at the bottom of documents...",
+      "welcomeMessage": "Welcome Message",
+      "welcomePlaceholder": "Message displayed to employees when they log in...",
+      "socialLinks": "Social Links",
+      "save": "Save Branding"
+    },
+    "notifications": {
+      "title": "Notification Settings",
+      "subtitle": "Configure how system notifications are sent.",
+      "channels": "Notification Channels",
+      "emailEnabled": "Email Notifications",
+      "emailDesc": "Send notifications via email",
+      "smsEnabled": "SMS Notifications",
+      "smsDesc": "Send notifications via text message (additional cost)",
+      "pushEnabled": "Push Notifications",
+      "pushDesc": "Send browser and mobile notifications",
+      "selfService": "Employee Self-Service Portal",
+      "selfServiceEnabled": "Enable Portal",
+      "selfServiceDesc": "Allow employees to access their information and make requests",
+      "save": "Save Notifications"
+    },
+    "audit": {
+      "title": "Audit Log",
+      "subtitle": "Review the latest changes made to the company configuration.",
+      "recentChanges": "Recent Changes",
+      "noChanges": "No recent changes",
+      "user": "User",
+      "action": "Action",
+      "date": "Date"
+    },
     "integrations": {
+      "title": "Integrations",
+      "subtitle": "Connect FortexaRH with your accounting and ERP systems.",
+      "connected": "Connected",
+      "connect": "Connect",
+      "disconnect": "Disconnect",
+      "comingSoon": "Coming Soon",
       "fortexaerp": {
         "desc": "Complete native synchronization with the Fortexa ecosystem."
       },
@@ -3349,7 +3417,9 @@
     },
     "messages": {
       "quickbooksConnected": "QuickBooks successfully connected to {{company}}!",
-      "quickbooksError": "Error connecting to QuickBooks: {{error}}"
+      "quickbooksError": "Error connecting to QuickBooks: {{error}}",
+      "saving": "Saving...",
+      "savePreferences": "Save Preferences"
     }
   },
   "errors": {
