@@ -279,12 +279,9 @@ export default function BrochurePage() {
                   <Shield className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-800 text-lg mb-2">Cumplimiento Legal Garantizado</h3>
+                  <h3 className="font-bold text-slate-800 text-lg mb-2">{t('landing.compliance.guaranteed') || 'Guaranteed Legal Compliance'}</h3>
                   <p className="text-slate-600 text-sm">
-                    FortexaRH está diseñado específicamente para cumplir con todas las regulaciones 
-                    laborales de República Dominicana: TSS (Tesorería de Seguridad Social), 
-                    DGII (Dirección General de Impuestos Internos), Código de Trabajo, Norma General 07-2007 
-                    para Obreros de Construcción, y más.
+                    {t('landing.compliance.description') || 'FortexaRH is specifically designed to comply with all labor regulations of the Dominican Republic: TSS, DGII, Labor Code, General Norm 07-2007 for Construction Workers, and more.'}
                   </p>
                 </div>
               </div>
