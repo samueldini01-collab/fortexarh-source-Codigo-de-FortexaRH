@@ -4060,6 +4060,12 @@
         "distanceHelp": "Distance from location to trigger alert",
         "sendSummary": "Send Summary Now",
         "sendingSummary": "Sending..."
+      },
+      "levels": {
+        "critical": "CRITICAL",
+        "high": "HIGH",
+        "medium": "MEDIUM",
+        "low": "LOW"
       }
     },
     "actions": {
