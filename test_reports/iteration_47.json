@@ -31,8 +31,8 @@
     "/app/test_reports/iteration_47.json"
   ],
   "action_items": [
-    "Fix Top 10 Salaries drill-down to show correct rank (1-10) and salary values instead of NaN/RD$0",
-    "Verify Payroll Trend chart and Department Cost chart onClick handlers are working correctly for drill-down (may need to click on specific data points)"
+    "CRITICAL FIX: PayrollDashboardPage.jsx line 107 - Change 'data = top_salaries || []' to 'data = stats?.top_salaries || []' to fix scoping issue where top_salaries is undefined in handleDrillDown function",
+    "LOW: Verify Payroll Trend chart and Department Cost chart onClick handlers on MetricsDashboard are triggering correctly for specific data point clicks"
   ],
   "critical_code_review_comments": [
     "PayrollDashboardPage.jsx line 107: The top_salary case uses 'top_salaries' variable directly but this is accessed in handleDrillDown() before stats is destructured (line 228). The variable will be undefined at this scope. Should use stats.top_salaries or pass top_salaries as a parameter."
