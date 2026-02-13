@@ -185,7 +185,7 @@ export default function BrochurePage() {
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <Button variant="ghost" onClick={() => navigate(-1)}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver
+            {t('brochure.back')}
           </Button>
           <Button 
             onClick={handleDownloadPDF} 
@@ -193,7 +193,7 @@ export default function BrochurePage() {
             className="bg-emerald-600 hover:bg-emerald-700"
           >
             <Download className="w-4 h-4 mr-2" />
-            {downloading ? "Generando PDF..." : "Descargar PDF"}
+            {downloading ? t('brochure.generatingPdf') : t('brochure.downloadPdf')}
           </Button>
         </div>
       </div>
@@ -216,9 +216,9 @@ export default function BrochurePage() {
               </div>
               
               <h1 className="text-5xl font-bold leading-tight mb-6">
-                Sistema Integral de<br/>
-                <span className="text-emerald-400">Recursos Humanos</span><br/>
-                y Nómina
+                {t('brochure.cover.title1')}<br/>
+                <span className="text-emerald-400">{t('brochure.cover.title2')}</span><br/>
+                {t('brochure.cover.title3')}
               </h1>
               
               <p className="text-xl text-slate-300 max-w-lg">
