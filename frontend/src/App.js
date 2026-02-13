@@ -404,7 +404,9 @@ function AppWithShortcuts() {
       <OnboardingProvider>
         <AuthProvider>
           <SubscriptionProvider>
-            <AppRouter />
+            <Suspense fallback={<LoadingSpinner />}>
+              <AppRouter />
+            </Suspense>
             <Toaster position="top-right" richColors />
             <AccessibilityIndicator />
             <KeyboardShortcutsHelp />
@@ -418,6 +420,18 @@ function AppWithShortcuts() {
 }
 
 function App() {
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    // Ensure the app is ready before rendering
+    const timer = setTimeout(() => setIsReady(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!isReady) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <BrowserRouter>
       <ThemeProvider defaultTheme="system" storageKey="fortexarh-theme">
