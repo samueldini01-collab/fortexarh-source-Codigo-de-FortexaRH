@@ -4108,6 +4108,16 @@
     "paymentExpired": "Payment session has expired. Please try again.",
     "paymentCancelled": "Payment cancelled"
   },
+  "users": {
+    "roles": {
+      "admin": "Administrator",
+      "adminDesc": "Full access to the system",
+      "manager": "Manager",
+      "managerDesc": "Access to assigned modules with edit permissions",
+      "user": "User",
+      "userDesc": "Read-only access to assigned modules"
+    }
+  },
   "supportAdmin": {
     "errorLoadingTickets": "Error loading tickets",
     "ticketUpdated": "Ticket updated to: {{status}}",
