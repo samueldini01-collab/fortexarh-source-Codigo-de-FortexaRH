@@ -208,7 +208,7 @@ export default function SupportAdminPage() {
       setTickets(response.data.tickets || []);
     } catch (error) {
       console.error("Error fetching tickets:", error);
-      toast.error("Error al cargar tickets");
+      toast.error(t('supportAdmin.errorLoadingTickets'));
     }
   }, [token, statusFilter, priorityFilter]);
 
@@ -241,7 +241,7 @@ export default function SupportAdminPage() {
       await axios.patch(`${API}/support/tickets/${ticketId}/status?status=${newStatus}`, null, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      toast.success(`Ticket actualizado a: ${STATUS_CONFIG[newStatus]?.label}`);
+      toast.success(t('supportAdmin.ticketUpdated', { status: STATUS_CONFIG[newStatus]?.label }));
       fetchTickets();
       fetchStats();
       
@@ -250,7 +250,7 @@ export default function SupportAdminPage() {
         setSelectedTicket(prev => ({ ...prev, status: newStatus }));
       }
     } catch (error) {
-      toast.error("Error al actualizar ticket");
+      toast.error(t('supportAdmin.errorUpdatingTicket'));
     }
   };
 
@@ -260,7 +260,7 @@ export default function SupportAdminPage() {
       await axios.patch(`${API}/support/tickets/${ticketId}/priority?priority=${newPriority}`, null, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      toast.success(`Prioridad actualizada a: ${PRIORITY_CONFIG[newPriority]?.label}`);
+      toast.success(t('supportAdmin.priorityUpdated', { priority: PRIORITY_CONFIG[newPriority]?.label }));
       fetchTickets();
       
       // Update selected ticket if open
@@ -268,7 +268,7 @@ export default function SupportAdminPage() {
         setSelectedTicket(prev => ({ ...prev, priority: newPriority }));
       }
     } catch (error) {
-      toast.error("Error al actualizar prioridad");
+      toast.error(t('supportAdmin.errorUpdatingPriority'));
     }
   };
 
