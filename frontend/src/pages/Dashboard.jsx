@@ -245,7 +245,7 @@ export default function Dashboard() {
       setDrillDownModal({ open: true, type, title, data, columns });
     } catch (error) {
       console.error("Error fetching drill-down data:", error);
-      toast.error("Error al cargar detalles");
+      toast.error(t('dashboard.errorLoadingDetails'));
       setDrillDownModal({ open: false, type: null, title: "", data: [] });
     } finally {
       setDrillDownLoading(false);

@@ -118,7 +118,7 @@ export default function RecruitmentPage() {
       toast.success("Etapa actualizada");
       fetchData();
     } catch (error) {
-      toast.error("Error al actualizar");
+      toast.error(t('recruitment.errorUpdating'));
     }
   };
 
@@ -128,7 +128,7 @@ export default function RecruitmentPage() {
       toast.success("Vacante cerrada");
       fetchData();
     } catch (error) {
-      toast.error("Error al cerrar");
+      toast.error(t('recruitment.errorClosing'));
     }
   };
 

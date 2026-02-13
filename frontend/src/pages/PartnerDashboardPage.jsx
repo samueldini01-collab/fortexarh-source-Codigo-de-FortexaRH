@@ -309,7 +309,7 @@ export default function PartnerDashboardPage() {
       toast.success(`Invitación reenviada a ${clientEmail}`);
       fetchClients();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al reenviar invitación");
+      toast.error(error.response?.data?.detail || t('partner.dashboard.errorResendingInvitation'));
     }
   };
 
@@ -323,7 +323,7 @@ export default function PartnerDashboardPage() {
       toast.success("Tipo de facturación actualizado");
       fetchClients();
     } catch (error) {
-      toast.error("Error al actualizar facturación");
+      toast.error(t('partner.dashboard.errorUpdatingBilling'));
     }
   };
 
@@ -341,7 +341,7 @@ export default function PartnerDashboardPage() {
       // Redirect to Stripe onboarding
       window.location.href = response.data.url;
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al conectar con Stripe");
+      toast.error(error.response?.data?.detail || t('partner.dashboard.errorConnectingStripe'));
       setConnectingStripe(false);
     }
   };
@@ -354,7 +354,7 @@ export default function PartnerDashboardPage() {
       });
       window.open(response.data.url, "_blank");
     } catch (error) {
-      toast.error("Error al abrir el dashboard de Stripe");
+      toast.error(t('partner.dashboard.errorOpeningStripeDashboard'));
     }
   };
 
@@ -385,7 +385,7 @@ export default function PartnerDashboardPage() {
       setPayoutAmount("");
       fetchPayoutData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al procesar el retiro");
+      toast.error(error.response?.data?.detail || t('partner.dashboard.errorProcessingWithdrawal'));
     } finally {
       setRequestingPayout(false);
     }
