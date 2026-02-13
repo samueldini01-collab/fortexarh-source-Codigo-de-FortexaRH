@@ -3288,7 +3288,9 @@
       "totalCost": "Costo Total",
       "totalEmployees": "Total Empleados",
       "avgCostPerEmployee": "Costo Prom. por Empleado",
-      "departments": "Departamentos"
+      "departments": "Departamentos",
+      "grossSalary": "Salario Bruto",
+      "employerContributions": "Aportes Patronales"
     },
     "charts": {
       "distribution": "Distribución de Costos",
