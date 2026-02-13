@@ -4,6 +4,27 @@
 
 ## ✅ Completado Hoy (Sesión Actual - Fork #6)
 
+### 🌐 Traducciones Completadas al 100%
+**Testing:** iteration_43 + iteration_44 - 100% frontend
+
+#### Correcciones de Traducciones:
+- **MetricsDashboard**: Todas las secciones ahora traducidas
+  - Year-over-Year Comparison / Comparativa Año vs Año
+  - Expense Projection / Proyección de Gastos  
+  - Turnover KPIs / KPIs de Rotación
+  - Todos los tooltips y leyendas de gráficos
+- **Meses**: Función `translateMonth()` mapea meses del backend a idioma activo
+- **Cache busting**: Sistema de versiones para forzar recarga de traducciones
+
+#### Claves Agregadas (50+ nuevas):
+- `metrics.charts.*` - yoyComparison, expenseProjection, turnoverKpis, etc.
+- `metrics.drillDown.*` - hiresYTD, exitsYTD, netBalance, hired, terminated
+- `common.months.*` - Abreviaciones de meses (jan-dec)
+- `common.years` - Para "X years"
+- `geoLocationsPage.alerts.levels.*` - critical, high, medium, low
+
+---
+
 ### ⚡ Refactorización de Rendimiento - COMPLETADA
 **Testing:** iteration_42.json - 100% frontend (6/6 tests passed)
 
@@ -25,10 +46,11 @@
 - Traducciones servidas desde `/public/locales/`
 - Solo se carga el idioma activo al inicio
 - Cambio de idioma carga el nuevo archivo dinámicamente
+- Sistema de cache busting con versiones (TRANSLATION_VERSION)
 
 #### Archivos Modificados:
 - `/app/frontend/src/App.js` - React.lazy() + Suspense para 45 páginas
-- `/app/frontend/src/i18n/index.js` - HttpBackend para traducciones
+- `/app/frontend/src/i18n/index.js` - HttpBackend + cache versioning
 - `/app/frontend/public/locales/*.json` - Traducciones servidas via HTTP
 
 ---
