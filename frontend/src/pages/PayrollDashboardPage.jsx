@@ -104,9 +104,9 @@ export default function PayrollDashboardPage() {
           
         case "top_salary":
           title = "Top 10 Salarios";
-          data = stats?.top_salaries || [];
+          data = (stats?.top_salaries || []).map((emp, i) => ({ ...emp, rank: i + 1 }));
           columns = [
-            { header: "#", accessor: "rank", render: (_, row) => (stats?.top_salaries || []).indexOf(row) + 1 },
+            { header: "#", accessor: "rank" },
             { header: t('common.name'), accessor: "name" },
             { header: t('employees.fields.department'), accessor: "department" },
             { header: t('employees.fields.salary'), accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-bold text-emerald-600" }
