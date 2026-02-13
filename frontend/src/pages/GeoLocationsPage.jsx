@@ -1120,9 +1120,9 @@ export default function GeoLocationsPage() {
                                 alert.alert_level === "medium" ? "bg-amber-500 text-white" :
                                 "bg-blue-500 text-white"
                               }>
-                                {alert.alert_level === "critical" ? "CRÍTICA" :
-                                 alert.alert_level === "high" ? "ALTA" :
-                                 alert.alert_level === "medium" ? "MEDIA" : "BAJA"}
+                                {alert.alert_level === "critical" ? t('geoLocationsPage.alerts.levels.critical') :
+                                 alert.alert_level === "high" ? t('geoLocationsPage.alerts.levels.high') :
+                                 alert.alert_level === "medium" ? t('geoLocationsPage.alerts.levels.medium') : t('geoLocationsPage.alerts.levels.low')}
                               </Badge>
                             </TableCell>
                             <TableCell className="font-medium">{alert.employee_name}</TableCell>
