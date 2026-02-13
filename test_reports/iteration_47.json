@@ -35,8 +35,7 @@
     "Verify Payroll Trend chart and Department Cost chart onClick handlers are working correctly for drill-down (may need to click on specific data points)"
   ],
   "critical_code_review_comments": [
-    "PayrollDashboardPage.jsx line 106-113: The top_salary case uses hardcoded variable 'top_salaries' but doesn't pass the index for rank calculation correctly - idx variable in render function should provide correct rank",
-    "Code shows idx+1 for rank but the data may not have index passed properly to the render function"
+    "PayrollDashboardPage.jsx line 107: The top_salary case uses 'top_salaries' variable directly but this is accessed in handleDrillDown() before stats is destructured (line 228). The variable will be undefined at this scope. Should use stats.top_salaries or pass top_salaries as a parameter."
   ],
   "updated_files": [],
   "success_rate": {
