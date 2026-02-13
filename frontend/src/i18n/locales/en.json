@@ -3188,6 +3188,8 @@
       "editAccount": "Edit Account",
       "editAccountDesc": "Modify account data",
       "createAccountDesc": "Fill in the data to create a new account",
+      "editEntryDesc": "Modify the journal entry data",
+      "createEntryDesc": "Fill in the data to create a new entry",
       "entryDate": "Entry Date",
       "referencePlaceholder": "E.g: INV-001",
       "descPlaceholder": "Entry description...",
