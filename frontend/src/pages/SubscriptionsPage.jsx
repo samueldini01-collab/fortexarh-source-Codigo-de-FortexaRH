@@ -73,6 +73,7 @@ export default function SubscriptionsPage() {
   const [paymentMethod, setPaymentMethod] = useState(null);
   const [loadingPaymentMethod, setLoadingPaymentMethod] = useState(false);
   const [showPaymentMethodDialog, setShowPaymentMethodDialog] = useState(false);
+  const [pmHistory, setPmHistory] = useState([]);
   
   // Cancellation flow states
   const [showCancelFlow, setShowCancelFlow] = useState(false);
