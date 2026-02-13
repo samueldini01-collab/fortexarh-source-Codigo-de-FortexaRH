@@ -644,9 +644,9 @@ export default function PayrollV2Page() {
       link.href = URL.createObjectURL(blob);
       link.download = `IR17_Declaracion.xls`;
       link.click();
-      toast.success("IR-17 descargado");
+      toast.success(t('payrollV2.messages.ir17Downloaded'));
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al descargar IR-17");
+      toast.error(error.response?.data?.detail || t('payrollV2.messages.errorDownloadingIr17'));
     }
   };
 
@@ -675,7 +675,7 @@ export default function PayrollV2Page() {
       link.click();
       toast.success("TSS exportado");
     } catch (error) {
-      toast.error("Error al exportar TSS");
+      toast.error(t('payrollV2.messages.errorExportingTss'));
     }
   };
 
@@ -716,7 +716,7 @@ export default function PayrollV2Page() {
       const columns = [
         { header: "Empleado", accessor: "employee_name" },
         { header: "Departamento", accessor: "department" },
-        { header: "Salario Base", accessor: "base_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+        { header: t('payrollV2.messages.baseSalary'), accessor: "base_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
         { header: "Bruto", accessor: "gross_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
         { header: "Deducciones", accessor: "total_deductions", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right text-red-600" },
         { header: "Neto", accessor: "net_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-bold text-emerald-600" }
@@ -730,7 +730,7 @@ export default function PayrollV2Page() {
       });
     } catch (error) {
       console.error("Error fetching period entries:", error);
-      toast.error("Error al cargar desglose");
+      toast.error(t('payrollV2.messages.errorLoadingBreakdown'));
       setDrillDown({ open: false, title: "", data: [], columns: [] });
     } finally {
       setDrillDownLoading(false);
