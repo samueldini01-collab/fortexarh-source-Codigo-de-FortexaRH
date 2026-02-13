@@ -4248,7 +4248,17 @@
     "errorClosing": "Error al cerrar",
     "stageUpdated": "Etapa actualizada",
     "vacancyClosed": "Vacante cerrada",
-    "candidatesExported": "Candidatos exportados correctamente"
+    "candidatesExported": "Candidatos exportados correctamente",
+    "openVacancies": "Vacantes Abiertas",
+    "closedVacancies": "Vacantes Cerradas",
+    "open": "Abierta",
+    "closed": "Cerrada",
+    "searchPlaceholder": "Buscar vacantes o candidatos...",
+    "vacanciesCount": "{{jobs}} vacantes, {{candidates}} candidatos",
+    "vacancies": "Vacantes",
+    "noVacancies": "No hay vacantes publicadas",
+    "noVacanciesFilter": "No hay vacantes que coincidan con el filtro",
+    "selectVacancy": "Seleccionar vacante"
   },
   "cdcAudit": {
     "errorLoadingLogs": "Error al cargar logs de auditoría",
