@@ -205,7 +205,7 @@ export default function SubscriptionsPage() {
       await axios.put(`${API}/subscription`, {
         employee_count: employeeCount
       }, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Cantidad de empleados actualizada");
+      toast.success(t('subscriptions.employeeCountUpdated'));
       setShowAdjustEmployees(false);
       fetchData();
     } catch (error) {
@@ -218,7 +218,7 @@ export default function SubscriptionsPage() {
       await axios.put(`${API}/subscription`, {
         additional_users: additionalUsers
       }, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Usuarios adicionales actualizados");
+      toast.success(t('subscriptions.additionalUsersUpdated'));
       setShowAddUsers(false);
       fetchData();
     } catch (error) {
@@ -248,7 +248,7 @@ export default function SubscriptionsPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success(`¡Descuento aplicado! Ahorras ${formatCurrency(response.data.savings_3_months)} en 3 meses`);
+      toast.success(t('subscriptions.discountApplied', { savings: formatCurrency(response.data.savings_3_months) }));
       setShowCancelFlow(false);
       fetchData();
     } catch (error) {
@@ -260,7 +260,7 @@ export default function SubscriptionsPage() {
 
   const handleConfirmCancellation = async () => {
     if (!cancelReason) {
-      toast.error("Por favor selecciona un motivo");
+      toast.error(t('subscriptions.pleaseSelectReason'));
       return;
     }
     
@@ -274,7 +274,7 @@ export default function SubscriptionsPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Suscripción cancelada. Tendrás acceso hasta el fin del período actual.");
+      toast.success(t('subscriptions.subscriptionCancelled'));
       setShowCancelFlow(false);
       setCancelStep(1);
       setCancelReason("");
@@ -293,7 +293,7 @@ export default function SubscriptionsPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("¡Suscripción reactivada!");
+      toast.success(t('subscriptions.subscriptionReactivated'));
       fetchData();
     } catch (error) {
       toast.error(t('subscriptions.errorReactivatingSubscription'));
@@ -319,7 +319,7 @@ export default function SubscriptionsPage() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       
-      toast.success("Factura descargada");
+      toast.success(t('subscriptions.invoiceDownloaded'));
     } catch (error) {
       console.error("Error downloading invoice:", error);
       toast.error(t('subscriptions.errorDownloadingInvoice'));
