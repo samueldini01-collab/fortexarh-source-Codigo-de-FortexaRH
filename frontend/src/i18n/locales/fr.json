@@ -2252,7 +2252,18 @@
       "september": "Septembre",
       "october": "Octobre",
       "november": "Novembre",
-      "december": "Décembre"
+      "december": "Décembre",
+      "jan": "Jan",
+      "feb": "Fév",
+      "mar": "Mar",
+      "apr": "Avr",
+      "jun": "Juin",
+      "jul": "Juil",
+      "aug": "Août",
+      "sep": "Sep",
+      "oct": "Oct",
+      "nov": "Nov",
+      "dec": "Déc"
     },
     "summary": {
       "totalPayroll": "Total Paie",
