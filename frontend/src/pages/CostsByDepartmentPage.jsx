@@ -295,7 +295,7 @@ export default function CostsByDepartmentPage() {
                     <DollarSign className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   </div>
                   <div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">Salario Bruto</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">{t('costsByDepartment.cards.grossSalary')}</p>
                     <p className="text-lg sm:text-xl font-bold" data-testid="total-gross">
                       {formatCurrency(costReport.summary.total_gross)}
                     </p>
@@ -310,7 +310,7 @@ export default function CostsByDepartmentPage() {
                     <Building2 className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                   </div>
                   <div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">Aportes Patronales</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">{t('costsByDepartment.cards.employerContributions')}</p>
                     <p className="text-lg sm:text-xl font-bold" data-testid="employer-contributions">
                       {formatCurrency(costReport.summary.total_employer_contributions)}
                     </p>
@@ -325,7 +325,7 @@ export default function CostsByDepartmentPage() {
                     <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">Costo Total</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">{t('costsByDepartment.cards.totalCost')}</p>
                     <p className="text-lg sm:text-xl font-bold text-purple-600 dark:text-purple-400" data-testid="grand-total">
                       {formatCurrency(costReport.summary.grand_total_cost)}
                     </p>
@@ -341,11 +341,11 @@ export default function CostsByDepartmentPage() {
           <TabsList className="grid grid-cols-2 w-full max-w-md">
             <TabsTrigger value="preview" className="flex items-center gap-2">
               <Eye className="w-4 h-4" />
-              Vista Previa
+              {t('costsByDepartment.tabs.preview')}
             </TabsTrigger>
             <TabsTrigger value="charts" className="flex items-center gap-2">
               <PieChartIcon className="w-4 h-4" />
-              Gráficos
+              {t('costsByDepartment.tabs.charts')}
             </TabsTrigger>
           </TabsList>
 
