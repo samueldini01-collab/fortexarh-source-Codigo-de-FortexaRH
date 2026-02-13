@@ -343,9 +343,9 @@ export default function BrochurePage() {
             </div>
 
             <div className="bg-white/5 rounded-xl p-6 border border-white/10">
-              <h4 className="font-semibold text-emerald-400 mb-3">{t('common.idealFor') || 'Ideal for'}:</h4>
+              <h4 className="font-semibold text-emerald-400 mb-3">{t('brochure.geolocation.idealFor')}:</h4>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {[t('geolocations.idealFor.field') || "Field staff", t('geolocations.idealFor.construction') || "Construction", t('geolocations.idealFor.delivery') || "Delivery", t('geolocations.idealFor.sales') || "Sales", t('geolocations.idealFor.supervisors') || "Supervisors", t('geolocations.idealFor.distribution') || "Distribution routes", t('geolocations.idealFor.technicians') || "Technicians", t('geolocations.idealFor.promoters') || "Promoters"].map((item, idx) => (
+                {[t('brochure.geolocation.field'), t('brochure.geolocation.construction'), t('brochure.geolocation.delivery'), t('brochure.geolocation.sales'), t('brochure.geolocation.supervisors'), t('brochure.geolocation.distribution'), t('brochure.geolocation.technicians'), t('brochure.geolocation.promoters')].map((item, idx) => (
                   <div key={idx} className="flex items-center gap-2 text-sm">
                     <CheckCircle className="w-4 h-4 text-emerald-400" />
                     <span className="text-slate-300">{item}</span>
