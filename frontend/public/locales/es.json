@@ -782,7 +782,17 @@
       "topSalariesDesc": "Empleados con mayor salario base"
     },
     "drillDown": {
-      "activeEmployees": "Empleados Activos"
+      "activeEmployees": "Empleados Activos",
+      "paidPeriods": "Períodos de Nómina Pagados",
+      "salaryDistribution": "Distribución de Salarios",
+      "completedPayrolls": "Nóminas Completadas",
+      "monthDetail": "Detalle del Mes",
+      "period": "Período",
+      "type": "Tipo",
+      "employees": "Empleados",
+      "totalNet": "Neto Total",
+      "totalGross": "Bruto Total",
+      "deductions": "Deducciones"
     },
     "noTrendData": "No hay datos de tendencia",
     "noDeptData": "No hay datos por departamento",

@@ -783,7 +783,17 @@
       "topSalariesDesc": "Employees with highest base salary"
     },
     "drillDown": {
-      "activeEmployees": "Active Employees"
+      "activeEmployees": "Active Employees",
+      "paidPeriods": "Paid Payroll Periods",
+      "salaryDistribution": "Salary Distribution",
+      "completedPayrolls": "Completed Payrolls",
+      "monthDetail": "Month Detail",
+      "period": "Period",
+      "type": "Type",
+      "employees": "Employees",
+      "totalNet": "Total Net",
+      "totalGross": "Total Gross",
+      "deductions": "Deductions"
     },
     "noTrendData": "No trend data available",
     "noDeptData": "No department data available",
