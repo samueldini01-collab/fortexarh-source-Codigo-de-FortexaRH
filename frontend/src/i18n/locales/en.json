@@ -3145,7 +3145,8 @@
       "save": "Save",
       "cancel": "Cancel",
       "post": "Post",
-      "void": "Void"
+      "void": "Void",
+      "createFirst": "Create first entry"
     },
     "entry": {
       "number": "Number",
