@@ -344,7 +344,11 @@ export default function PayrollDashboardPage() {
             <CardContent>
               {monthly_trend && monthly_trend.length > 0 ? (
                 <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={monthly_trend}>
+                  <LineChart data={monthly_trend} onClick={(data) => {
+                    if (data?.activePayload?.[0]?.payload) {
+                      handleDrillDown("monthly_trend", data.activePayload[0].payload);
+                    }
+                  }} style={{ cursor: 'pointer' }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                     <XAxis dataKey="month" tick={{ fontSize: 12 }} />
                     <YAxis tickFormatter={(v) => `${(v/1000).toFixed(0)}K`} tick={{ fontSize: 12 }} />
@@ -353,7 +357,7 @@ export default function PayrollDashboardPage() {
                       labelFormatter={(label) => `${t('payrollDashboard.charts.period')}: ${label}`}
                     />
                     <Legend />
-                    <Line type="monotone" dataKey="total_net" name={t('payrollDashboard.charts.netPaid')} stroke="#3b82f6" strokeWidth={3} dot={{ fill: '#3b82f6' }} />
+                    <Line type="monotone" dataKey="total_net" name={t('payrollDashboard.charts.netPaid')} stroke="#3b82f6" strokeWidth={3} dot={{ fill: '#3b82f6' }} activeDot={{ r: 8 }} />
                     <Line type="monotone" dataKey="total_gross" name={t('payrollDashboard.charts.gross')} stroke="#10b981" strokeWidth={2} strokeDasharray="5 5" />
                   </LineChart>
                 </ResponsiveContainer>
