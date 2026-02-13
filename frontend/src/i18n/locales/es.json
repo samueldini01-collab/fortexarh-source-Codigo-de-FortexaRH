@@ -3341,7 +3341,75 @@
       "dark": "Oscuro",
       "auto": "Automático"
     },
+    "logo": {
+      "title": "Logo de la Empresa",
+      "subtitle": "Sube el logo de tu empresa para documentos y el encabezado del sistema.",
+      "currentLogo": "Logo Actual",
+      "noLogo": "No hay logo cargado",
+      "dragDrop": "Arrastra y suelta o",
+      "selectFile": "selecciona un archivo",
+      "recommendations": "Dimensiones recomendadas: 400x400px",
+      "preview": "Vista previa en documentos:",
+      "companyName": "Nombre de la Empresa",
+      "save": "Guardar Logo"
+    },
+    "appearance": {
+      "title": "Apariencia y Tema",
+      "subtitle": "Personaliza los colores y el aspecto visual del sistema.",
+      "brandColors": "Colores de Marca",
+      "primaryColor": "Color Primario",
+      "secondaryColor": "Color Secundario",
+      "accentColor": "Color de Acento",
+      "theme": "Tema",
+      "typography": "Tipografía",
+      "fontFamily": "Familia de Fuente",
+      "fontSize": "Tamaño de Fuente",
+      "preview": "Vista Previa",
+      "save": "Guardar Apariencia"
+    },
+    "branding": {
+      "title": "Marca y Textos Personalizados",
+      "subtitle": "Personaliza los textos que aparecen en documentos y notificaciones.",
+      "headerText": "Texto de Encabezado",
+      "headerPlaceholder": "Texto que aparece en la parte superior de los documentos...",
+      "footerText": "Texto de Pie de Página",
+      "footerPlaceholder": "Texto que aparece en la parte inferior de los documentos...",
+      "welcomeMessage": "Mensaje de Bienvenida",
+      "welcomePlaceholder": "Mensaje que se muestra a los empleados al iniciar sesión...",
+      "socialLinks": "Redes Sociales",
+      "save": "Guardar Marca"
+    },
+    "notifications": {
+      "title": "Configuración de Notificaciones",
+      "subtitle": "Configura cómo se envían las notificaciones del sistema.",
+      "channels": "Canales de Notificación",
+      "emailEnabled": "Notificaciones por Email",
+      "emailDesc": "Enviar notificaciones por correo electrónico",
+      "smsEnabled": "Notificaciones SMS",
+      "smsDesc": "Enviar notificaciones por mensaje de texto (costo adicional)",
+      "pushEnabled": "Notificaciones Push",
+      "pushDesc": "Enviar notificaciones del navegador y móviles",
+      "selfService": "Portal de Autoservicio",
+      "selfServiceEnabled": "Habilitar Portal",
+      "selfServiceDesc": "Permitir a los empleados acceder a su información y hacer solicitudes",
+      "save": "Guardar Notificaciones"
+    },
+    "audit": {
+      "title": "Registro de Auditoría",
+      "subtitle": "Revisa los últimos cambios realizados en la configuración de la empresa.",
+      "recentChanges": "Cambios Recientes",
+      "noChanges": "No hay cambios recientes",
+      "user": "Usuario",
+      "action": "Acción",
+      "date": "Fecha"
+    },
     "integrations": {
+      "title": "Integraciones",
+      "subtitle": "Conecta FortexaRH con tus sistemas de contabilidad y ERP.",
+      "connected": "Conectado",
+      "connect": "Conectar",
+      "disconnect": "Desconectar",
+      "comingSoon": "Próximamente",
       "fortexaerp": {
         "desc": "Sincronización nativa completa con el ecosistema Fortexa."
       },
@@ -3357,7 +3425,9 @@
     },
     "messages": {
       "quickbooksConnected": "¡QuickBooks conectado exitosamente a {{company}}!",
-      "quickbooksError": "Error al conectar QuickBooks: {{error}}"
+      "quickbooksError": "Error al conectar QuickBooks: {{error}}",
+      "saving": "Guardando...",
+      "savePreferences": "Guardar Preferencias"
     }
   },
   "errors": {
