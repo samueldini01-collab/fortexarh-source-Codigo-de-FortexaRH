@@ -4179,6 +4179,12 @@
         "distanceHelp": "Distancia desde ubicación para generar alerta",
         "sendSummary": "Enviar Resumen Ahora",
         "sendingSummary": "Enviando..."
+      },
+      "levels": {
+        "critical": "CRÍTICA",
+        "high": "ALTA",
+        "medium": "MEDIA",
+        "low": "BAJA"
       }
     },
     "actions": {
