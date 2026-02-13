@@ -182,7 +182,7 @@ export default function EmployeesPage() {
       setSelectAll(false);
     } catch (error) {
       console.error("Error fetching employees:", error);
-      toast.error("Error al cargar empleados");
+      toast.error(t('employees.errorLoading'));
     } finally {
       setLoading(false);
     }
@@ -230,20 +230,20 @@ export default function EmployeesPage() {
           headers: getAuthHeaders(),
           withCredentials: true
         });
-        toast.success("Empleado actualizado correctamente");
+        toast.success(t('employees.updated'));
       } else {
         await axios.post(`${API}/employees`, data, {
           headers: getAuthHeaders(),
           withCredentials: true
         });
-        toast.success("Empleado creado correctamente");
+        toast.success(t('employees.created'));
       }
       
       setIsDialogOpen(false);
       resetForm();
       fetchEmployees();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al guardar empleado");
+      toast.error(error.response?.data?.detail || t('employees.errorSaving'));
     }
   };
 
@@ -255,10 +255,10 @@ export default function EmployeesPage() {
         headers: getAuthHeaders(),
         withCredentials: true
       });
-      toast.success("Empleado eliminado correctamente");
+      toast.success(t('employees.deleted'));
       fetchEmployees();
     } catch (error) {
-      toast.error("Error al eliminar empleado");
+      toast.error(t('employees.errorDeleting'));
     }
   };
 
@@ -285,7 +285,7 @@ export default function EmployeesPage() {
   // Add new deduction
   const addDeduction = () => {
     if (!newDeduction.amount) {
-      toast.error("Ingrese un monto para el descuento");
+      toast.error(t('employees.deductions.amountRequired') || "Enter an amount for the deduction");
       return;
     }
     setFormData({
@@ -309,7 +309,7 @@ export default function EmployeesPage() {
   // Add emergency contact
   const addEmergencyContact = () => {
     if (!newEmergencyContact.name || !newEmergencyContact.phone) {
-      toast.error("Nombre y teléfono son requeridos");
+      toast.error(t('employees.emergencyContacts.required'));
       return;
     }
     if (formData.emergency_contacts.length >= 3) {
