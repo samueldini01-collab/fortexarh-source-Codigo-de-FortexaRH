@@ -615,13 +615,129 @@ export default function SubscriptionsPage() {
               )}
             </CardContent>
           </Card>
+
+          {/* Payment Method Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CreditCard className="w-5 h-5" />
+                {t('subscriptions.paymentMethod.title')}
+              </CardTitle>
+              <CardDescription>{t('subscriptions.paymentMethod.description')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loadingPaymentMethod ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+                </div>
+              ) : paymentMethod?.has_payment_method && paymentMethod.payment_method ? (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-8 bg-gradient-to-br from-slate-700 to-slate-900 rounded flex items-center justify-center text-white text-xs font-bold">
+                        {paymentMethod.payment_method.brand}
+                      </div>
+                      <div>
+                        <p className="font-medium">
+                          •••• •••• •••• {paymentMethod.payment_method.last4}
+                        </p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                          {t('subscriptions.paymentMethod.expires')}: {paymentMethod.payment_method.exp_month.toString().padStart(2, '0')}/{paymentMethod.payment_method.exp_year}
+                        </p>
+                      </div>
+                    </div>
+                    <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                      {t('subscriptions.paymentMethod.active')}
+                    </Badge>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                      {t('subscriptions.paymentMethod.autoRenewal')}
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleUpdatePaymentMethod}
+                      disabled={updatingPaymentMethod}
+                      data-testid="update-payment-method-btn"
+                    >
+                      {updatingPaymentMethod ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <RefreshCw className="w-4 h-4 mr-2" />
+                      )}
+                      {t('subscriptions.paymentMethod.update')}
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <CreditCard className="w-12 h-12 mx-auto text-slate-300 mb-3" />
+                  <p className="text-slate-500 dark:text-slate-400 mb-4">
+                    {t('subscriptions.paymentMethod.noMethod')}
+                  </p>
+                  <Button
+                    onClick={handleUpdatePaymentMethod}
+                    disabled={updatingPaymentMethod}
+                    data-testid="add-payment-method-btn"
+                  >
+                    {updatingPaymentMethod ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <CreditCard className="w-4 h-4 mr-2" />
+                    )}
+                    {t('subscriptions.paymentMethod.add')}
+                  </Button>
+                </div>
+              )}
+              
+              {/* Card expiration warning */}
+              {paymentMethod?.has_payment_method && paymentMethod.payment_method && (() => {
+                const currentDate = new Date();
+                const expMonth = paymentMethod.payment_method.exp_month;
+                const expYear = paymentMethod.payment_method.exp_year;
+                const isExpiringSoon = (expYear === currentDate.getFullYear() && expMonth <= currentDate.getMonth() + 2) ||
+                                       (expYear === currentDate.getFullYear() && expMonth === currentDate.getMonth() + 1);
+                const isExpired = (expYear < currentDate.getFullYear()) || 
+                                  (expYear === currentDate.getFullYear() && expMonth < currentDate.getMonth() + 1);
+                
+                if (isExpired) {
+                  return (
+                    <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                      <div className="flex items-center gap-2 text-red-700 dark:text-red-400">
+                        <AlertTriangle className="w-4 h-4" />
+                        <span className="text-sm font-medium">{t('subscriptions.paymentMethod.expired')}</span>
+                      </div>
+                      <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                        {t('subscriptions.paymentMethod.expiredMessage')}
+                      </p>
+                    </div>
+                  );
+                } else if (isExpiringSoon) {
+                  return (
+                    <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+                      <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
+                        <AlertTriangle className="w-4 h-4" />
+                        <span className="text-sm font-medium">{t('subscriptions.paymentMethod.expiringSoon')}</span>
+                      </div>
+                      <p className="text-sm text-amber-600 dark:text-amber-400 mt-1">
+                        {t('subscriptions.paymentMethod.expiringSoonMessage')}
+                      </p>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+            </CardContent>
+          </Card>
         </div>
 
         {/* Plan Comparison */}
         <Card>
           <CardHeader>
-            <CardTitle>Comparación de Planes</CardTitle>
-            <CardDescription>Encuentra el plan perfecto para tu empresa</CardDescription>
+            <CardTitle>{t('subscriptions.planComparison')}</CardTitle>
+            <CardDescription>{t('subscriptions.findPerfectPlan')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -638,10 +754,10 @@ export default function SubscriptionsPage() {
                     }`}
                   >
                     {isCurrentPlan && (
-                      <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500">Plan Actual</Badge>
+                      <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500">{t('subscriptions.currentPlan')}</Badge>
                     )}
                     {plan.plan_id === 'pro' && !isCurrentPlan && (
-                      <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-500">Más Popular</Badge>
+                      <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-500">{t('subscriptions.mostPopular')}</Badge>
                     )}
                     
                     <div className="text-center mb-4">
@@ -657,7 +773,7 @@ export default function SubscriptionsPage() {
                         <span className="text-3xl font-bold">{formatCurrency(plan.base_price)}</span>
                         <span className="text-slate-500 dark:text-slate-400">/mes</span>
                       </div>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">+ {formatCurrency(plan.price_per_employee)}/empleado</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">+ {formatCurrency(plan.price_per_employee)}/{t('common.employee')}</p>
                     </div>
 
                     <div className="space-y-2 mb-6">
