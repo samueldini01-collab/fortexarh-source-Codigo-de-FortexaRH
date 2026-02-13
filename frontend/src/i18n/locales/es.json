@@ -4363,7 +4363,39 @@
     "back": "Volver",
     "confirmCancellation": "Confirmar Cancelación",
     "paid": "Pagada",
-    "pending": "Pendiente"
+    "pending": "Pendiente",
+    "planComparison": "Comparación de Planes",
+    "findPerfectPlan": "Encuentra el plan perfecto para tu empresa",
+    "mostPopular": "Más Popular",
+    "errorUpdatingPaymentMethod": "Error al actualizar método de pago",
+    "paymentMethodUpdated": "Método de pago actualizado correctamente",
+    "paymentMethod": {
+      "title": "Método de Pago",
+      "description": "Administra tu tarjeta de crédito para los pagos automáticos",
+      "expires": "Expira",
+      "active": "Activa",
+      "autoRenewal": "Tu suscripción se renovará automáticamente con esta tarjeta",
+      "update": "Cambiar Tarjeta",
+      "add": "Agregar Tarjeta",
+      "noMethod": "No tienes un método de pago configurado",
+      "expired": "Tu tarjeta ha expirado",
+      "expiredMessage": "Actualiza tu método de pago para evitar la suspensión del servicio.",
+      "expiringSoon": "Tu tarjeta está por expirar",
+      "expiringSoonMessage": "Actualiza tu método de pago antes de que expire para evitar interrupciones."
+    },
+    "invoiceHistory": {
+      "title": "Historial de Facturas",
+      "description": "Registro de todos tus pagos",
+      "noInvoices": "No hay facturas disponibles",
+      "invoicesWillAppear": "Las facturas aparecerán aquí después de realizar un pago",
+      "invoice": "Factura",
+      "date": "Fecha",
+      "plan": "Plan",
+      "employees": "Empleados",
+      "total": "Total",
+      "status": "Estado",
+      "actions": "Acciones"
+    }
   },
   "users": {
     "roles": {
