@@ -4018,10 +4018,13 @@
         "allStatuses": "Todos los estados",
         "withinZone": "Dentro de zona",
         "outsideZone": "Fuera de zona",
-        "pendingReview": "Pendiente revisión"
+        "pendingReview": "Pendiente revisión",
+        "activeFilters": "Filtros activos:"
       },
       "employeesOnMap": "empleados en mapa",
-      "noData": "No hay datos del mapa en vivo disponibles"
+      "noData": "No hay datos del mapa en vivo disponibles",
+      "employeeToast": "{{name}} - {{markType}}",
+      "locationToast": "{{name}} - Radio: {{radius}}m"
     },
     "fraud": {
       "title": "Alertas de Fraude Detectadas",
