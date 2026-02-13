@@ -33,14 +33,14 @@ import {
 import { toast } from "sonner";
 
 const ROLE_COLORS = [
-  { value: "#ef4444", name: "Rojo" },
-  { value: "#f97316", name: "Naranja" },
-  { value: "#eab308", name: "Amarillo" },
-  { value: "#22c55e", name: "Verde" },
-  { value: "#3b82f6", name: "Azul" },
-  { value: "#8b5cf6", name: "Violeta" },
-  { value: "#ec4899", name: "Rosa" },
-  { value: "#6b7280", name: "Gris" },
+  { value: "#ef4444", nameKey: "colors.red" },
+  { value: "#f97316", nameKey: "colors.orange" },
+  { value: "#eab308", nameKey: "colors.yellow" },
+  { value: "#22c55e", nameKey: "colors.green" },
+  { value: "#3b82f6", nameKey: "colors.blue" },
+  { value: "#8b5cf6", nameKey: "colors.violet" },
+  { value: "#ec4899", nameKey: "colors.pink" },
+  { value: "#6b7280", nameKey: "colors.gray" },
 ];
 
 export default function RolesPage() {
