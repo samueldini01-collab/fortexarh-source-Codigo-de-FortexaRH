@@ -591,7 +591,7 @@ export default function MetricsDashboardPage() {
                       className="border-b hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors"
                       onClick={() => handleChartDrillDown("payroll_month", row)}
                     >
-                      <td className="py-3 px-4 font-medium">{translateMonth(row.month)}</td>
+                      <td className="py-3 px-4 font-medium">{row.month}</td>
                       <td className="py-3 px-4 text-right">{formatCurrency(row.gross)}</td>
                       <td className="py-3 px-4 text-right text-red-600 dark:text-red-400">{formatCurrency(row.deductions)}</td>
                       <td className="py-3 px-4 text-right text-emerald-600 dark:text-emerald-400 font-medium">{formatCurrency(row.net)}</td>
