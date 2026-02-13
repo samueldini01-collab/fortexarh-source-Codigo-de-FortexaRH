@@ -207,7 +207,7 @@ export default function Dashboard() {
           break;
           
         case "jobs":
-          response = await axios.get(`${API}/recruitment/jobs?status=open`, {
+          response = await axios.get(`${API}/jobs?status=open`, {
             headers: getAuthHeaders(),
             withCredentials: true
           });
