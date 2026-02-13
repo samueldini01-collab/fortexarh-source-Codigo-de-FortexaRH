@@ -3280,7 +3280,9 @@
       "totalCost": "Total Cost",
       "totalEmployees": "Total Employees",
       "avgCostPerEmployee": "Avg. Cost per Employee",
-      "departments": "Departments"
+      "departments": "Departments",
+      "grossSalary": "Gross Salary",
+      "employerContributions": "Employer Contributions"
     },
     "charts": {
       "distribution": "Cost Distribution",
