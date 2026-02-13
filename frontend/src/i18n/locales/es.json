@@ -2172,7 +2172,8 @@
       "confirmDelete": "¿Eliminar esta plantilla?",
       "templateDuplicated": "Plantilla duplicada",
       "errorDuplicating": "Error al duplicar",
-      "selectEmployee": "Selecciona un empleado"
+      "selectEmployee": "Selecciona un empleado",
+      "errorGeneratingPdf": "Error al generar PDF"
     },
     "categories": {
       "constancia": "Constancia",
