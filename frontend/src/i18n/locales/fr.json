@@ -4065,6 +4065,20 @@
       "copyright": "Tous droits réservés."
     }
   },
+  "subscriptions": {
+    "errorLoadingData": "Erreur lors du chargement des données d'abonnement",
+    "paymentVerificationError": "Impossible de vérifier le statut du paiement. Veuillez contacter le support.",
+    "paymentSuccess": "Paiement réussi! Votre abonnement a été activé.",
+    "paymentExpired": "La session de paiement a expiré. Veuillez réessayer.",
+    "paymentCancelled": "Paiement annulé"
+  },
+  "supportAdmin": {
+    "errorLoadingTickets": "Erreur lors du chargement des tickets",
+    "ticketUpdated": "Ticket mis à jour: {{status}}",
+    "errorUpdatingTicket": "Erreur lors de la mise à jour du ticket",
+    "priorityUpdated": "Priorité mise à jour: {{priority}}",
+    "errorUpdatingPriority": "Erreur lors de la mise à jour de la priorité"
+  },
   "recruitment": {
     "errorLoading": "Erreur lors du chargement des données",
     "vacancyCreated": "Poste créé",
