@@ -846,6 +846,27 @@
       "severance": "Indemnité de départ",
       "construction": "Ouvriers NG 07/2007"
     },
+    "statuses": {
+      "open": "Ouvert",
+      "draft": "Brouillon",
+      "pendingApproval": "En Attente d'Approbation",
+      "calculated": "Calculé",
+      "approved": "Approuvé",
+      "paid": "Payé"
+    },
+    "table": {
+      "employee": "Employé",
+      "department": "Département",
+      "gross": "Brut",
+      "deductions": "Déductions",
+      "net": "Net"
+    },
+    "breakdown": "Ventilation",
+    "filters": {
+      "openPeriods": "Périodes Ouvertes",
+      "pending": "En Attente",
+      "paid": "Payées"
+    },
     "messages": {
       "errorLoadingPeriods": "Erreur lors du chargement des périodes",
       "errorLoadingTss": "Erreur lors du chargement de l'aperçu TSS",
