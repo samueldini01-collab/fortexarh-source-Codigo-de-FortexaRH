@@ -440,7 +440,7 @@ export default function PayrollV2Page() {
     if (!confirm("¿Eliminar este período y su asiento asociado?")) return;
     try {
       await axios.delete(`${API}/payroll-v2/periods/${periodId}`, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Período eliminado");
+      toast.success(t('payrollV2.messages.periodDeleted'));
       setSelectedPeriod(null);
       fetchPeriods();
     } catch (error) {
@@ -474,11 +474,11 @@ export default function PayrollV2Page() {
       updateData[editingCell.field] = numValue;
 
       await axios.put(`${API}/payroll-v2/entries/${entry.entry_id}`, updateData, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Actualizado");
+      toast.success(t('payrollV2.messages.updated'));
       fetchPeriodDetails(entry.period_id);
       fetchPeriods();
     } catch (error) {
-      toast.error("Error");
+      toast.error(t('common.error'));
     } finally {
       cancelEditing();
     }
@@ -488,11 +488,11 @@ export default function PayrollV2Page() {
     if (!confirm("¿Eliminar esta entrada?")) return;
     try {
       await axios.delete(`${API}/payroll-v2/entries/${entryId}`, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Eliminado");
+      toast.success(t('payrollV2.messages.deleted'));
       fetchPeriodDetails(periodId);
       fetchPeriods();
     } catch (error) {
-      toast.error("Error");
+      toast.error(t('common.error'));
     }
   };
 
@@ -505,7 +505,7 @@ export default function PayrollV2Page() {
 
   const handleAddNovelty = async () => {
     if (!selectedEntry || !noveltyForm.code || !noveltyForm.amount) {
-      toast.error("Complete todos los campos requeridos");
+      toast.error(t('payrollV2.messages.completeRequiredFields'));
       return;
     }
 
@@ -515,7 +515,7 @@ export default function PayrollV2Page() {
         ...noveltyForm,
         amount: parseFloat(noveltyForm.amount) || 0
       }, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Novedad agregada");
+      toast.success(t('payrollV2.messages.noveltyAdded'));
       setShowNoveltyDialog(false);
       fetchPeriodDetails(selectedEntry.period_id);
       fetchPeriods();
@@ -527,11 +527,11 @@ export default function PayrollV2Page() {
   const handleDeleteNovelty = async (entryId, noveltyId, periodId) => {
     try {
       await axios.delete(`${API}/payroll-v2/entries/${entryId}/novelties/${noveltyId}`, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Novedad eliminada");
+      toast.success(t('payrollV2.messages.noveltyDeleted'));
       fetchPeriodDetails(periodId);
       fetchPeriods();
     } catch (error) {
-      toast.error("Error");
+      toast.error(t('common.error'));
     }
   };
 
@@ -567,7 +567,7 @@ export default function PayrollV2Page() {
       link.href = URL.createObjectURL(blob);
       link.download = `nomina_${data.period.period_id}.csv`;
       link.click();
-      toast.success("Excel exportado");
+      toast.success(t('payrollV2.messages.excelExported'));
     } catch (error) {
       console.error("Export error:", error);
       toast.error(error.response?.data?.detail || "Error al exportar");
