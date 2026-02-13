@@ -175,7 +175,7 @@ export default function Dashboard() {
             withCredentials: true
           });
           title = t('dashboard.drillDown.presentToday');
-          data = response.data?.records || [];
+          data = response.data?.present || response.data?.records || [];
           columns = [
             { header: t('dashboard.drillDown.employee'), accessor: "employee_name" },
             { header: t('dashboard.drillDown.entry'), accessor: "check_in", render: (val) => val ? new Date(val).toLocaleTimeString(getDateLocale(), { hour: '2-digit', minute: '2-digit' }) : "-" },
