@@ -761,9 +761,9 @@ export default function VacationsPage() {
                 </Button>
               </div>
               <div className="flex gap-2 text-sm">
-                <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">Vacaciones</Badge>
-                <Badge className="bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300">Enfermedad</Badge>
-                <Badge className="bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300">Otros</Badge>
+                <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">{t('vacations.leaveTypes.vacation')}</Badge>
+                <Badge className="bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300">{t('vacations.leaveTypes.sick')}</Badge>
+                <Badge className="bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300">{t('common.other') || 'Other'}</Badge>
               </div>
             </div>
 
@@ -771,7 +771,7 @@ export default function VacationsPage() {
               <CardContent className="p-4">
                 {/* Week headers */}
                 <div className="grid grid-cols-7 gap-1 mb-1">
-                  {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map(day => (
+                  {[t('vacations.calendar.weekDays.sun'), t('vacations.calendar.weekDays.mon'), t('vacations.calendar.weekDays.tue'), t('vacations.calendar.weekDays.wed'), t('vacations.calendar.weekDays.thu'), t('vacations.calendar.weekDays.fri'), t('vacations.calendar.weekDays.sat')].map(day => (
                     <div key={day} className="text-center text-sm font-medium text-slate-500 dark:text-slate-400 py-2">
                       {day}
                     </div>
@@ -789,7 +789,7 @@ export default function VacationsPage() {
               <Card className="border-slate-200 dark:border-slate-700">
                 <CardHeader>
                   <CardTitle className="text-base dark:text-white">
-                    Resumen del Mes ({calendarData.leaves.length} ausencias programadas)
+                    {t('vacations.calendar.monthSummary')} ({calendarData.leaves.length} {t('vacations.calendar.scheduledAbsences')})
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -805,12 +805,12 @@ export default function VacationsPage() {
                             {leave.start_date} - {leave.end_date} • {getTypeLabel(leave.leave_type)}
                           </p>
                         </div>
-                        <Badge variant="outline">{leave.days_requested} días</Badge>
+                        <Badge variant="outline">{leave.days_requested} {t('vacations.form.days')}</Badge>
                       </div>
                     ))}
                     {calendarData.leaves.length > 5 && (
                       <p className="text-sm text-slate-500 dark:text-slate-400 text-center">
-                        +{calendarData.leaves.length - 5} más
+                        +{calendarData.leaves.length - 5} {t('vacations.calendar.more')}
                       </p>
                     )}
                   </div>
