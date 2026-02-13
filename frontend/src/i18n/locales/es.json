@@ -2642,7 +2642,12 @@
       "clientAdded": "Cliente agregado exitosamente",
       "invitationSent": "Invitación enviada a {{email}}",
       "invitationLinkCopied": "Link de invitación copiado al portapapeles",
-      "errorAddingClient": "Error al agregar cliente"
+      "errorAddingClient": "Error al agregar cliente",
+      "errorResendingInvitation": "Error al reenviar invitación",
+      "errorUpdatingBilling": "Error al actualizar facturación",
+      "errorConnectingStripe": "Error al conectar con Stripe",
+      "errorOpeningStripeDashboard": "Error al abrir el dashboard de Stripe",
+      "errorProcessingWithdrawal": "Error al procesar el retiro"
     },
     "register": {
       "title": "Registro de Partner",
@@ -4116,7 +4121,14 @@
     "paymentVerificationError": "No se pudo verificar el estado del pago. Por favor contacte soporte.",
     "paymentSuccess": "¡Pago exitoso! Su suscripción ha sido activada.",
     "paymentExpired": "La sesión de pago ha expirado. Intente nuevamente.",
-    "paymentCancelled": "Pago cancelado"
+    "paymentCancelled": "Pago cancelado",
+    "errorProcessingPayment": "Error al procesar el pago",
+    "errorUpdating": "Error al actualizar",
+    "errorLoadingCancellationInfo": "Error al cargar información de cancelación",
+    "errorApplyingDiscount": "Error al aplicar descuento",
+    "errorCancellingSubscription": "Error al cancelar suscripción",
+    "errorReactivatingSubscription": "Error al reactivar suscripción",
+    "errorDownloadingInvoice": "Error al descargar la factura"
   },
   "users": {
     "roles": {
@@ -4133,14 +4145,18 @@
     "ticketUpdated": "Ticket actualizado a: {{status}}",
     "errorUpdatingTicket": "Error al actualizar ticket",
     "priorityUpdated": "Prioridad actualizada a: {{priority}}",
-    "errorUpdatingPriority": "Error al actualizar prioridad"
+    "errorUpdatingPriority": "Error al actualizar prioridad",
+    "errorSendingResponse": "Error al enviar respuesta",
+    "errorLoadingDetails": "Error al cargar detalles"
   },
   "recruitment": {
     "errorLoading": "Error al cargar datos",
     "vacancyCreated": "Vacante creada",
     "errorCreatingVacancy": "Error al crear vacante",
     "candidateAdded": "Candidato agregado",
-    "errorAddingCandidate": "Error al agregar candidato"
+    "errorAddingCandidate": "Error al agregar candidato",
+    "errorUpdating": "Error al actualizar",
+    "errorClosing": "Error al cerrar"
   },
   "cdcAudit": {
     "errorLoadingLogs": "Error al cargar logs de auditoría",
