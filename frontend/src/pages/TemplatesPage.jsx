@@ -235,7 +235,7 @@ export default function TemplatesPage() {
       toast.success("PDF descargado correctamente");
     } catch (error) {
       toast.dismiss();
-      toast.error("Error al generar PDF");
+      toast.error(t('templates.messages.errorGeneratingPdf'));
     }
   };
 

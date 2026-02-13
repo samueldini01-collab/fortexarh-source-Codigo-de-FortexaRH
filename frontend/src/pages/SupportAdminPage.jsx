@@ -299,7 +299,7 @@ export default function SupportAdminPage() {
       setSelectedTicket(response.data);
       fetchTickets();
     } catch (error) {
-      toast.error("Error al enviar respuesta");
+      toast.error(t('supportAdmin.errorSendingResponse'));
     } finally {
       setSendingResponse(false);
     }
@@ -314,7 +314,7 @@ export default function SupportAdminPage() {
       setSelectedTicket(response.data);
       setShowDetailModal(true);
     } catch (error) {
-      toast.error("Error al cargar detalles");
+      toast.error(t('supportAdmin.errorLoadingDetails'));
     }
   };
 
