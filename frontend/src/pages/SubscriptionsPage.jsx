@@ -100,26 +100,9 @@ export default function SubscriptionsPage() {
     }
   }, [getAuthHeaders]);
 
-  // Handle update payment method
-  const handleUpdatePaymentMethod = async () => {
-    setUpdatingPaymentMethod(true);
-    try {
-      const response = await axios.post(`${API}/update-payment-method`, {
-        origin_url: window.location.origin
-      }, {
-        headers: getAuthHeaders(),
-        withCredentials: true
-      });
-      
-      if (response.data.checkout_url) {
-        window.location.href = response.data.checkout_url;
-      }
-    } catch (error) {
-      console.error("Error updating payment method:", error);
-      toast.error(t('subscriptions.errorUpdatingPaymentMethod'));
-    } finally {
-      setUpdatingPaymentMethod(false);
-    }
+  // Handle payment method updated from inline form
+  const handlePaymentMethodUpdated = (newPm) => {
+    setPaymentMethod({ has_payment_method: true, payment_method: newPm });
   };
 
   const fetchInvoices = useCallback(async () => {
