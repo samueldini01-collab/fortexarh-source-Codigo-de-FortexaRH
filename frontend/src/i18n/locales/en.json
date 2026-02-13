@@ -4078,6 +4078,20 @@
       "copyright": "All rights reserved."
     }
   },
+  "recruitment": {
+    "errorLoading": "Error loading data",
+    "vacancyCreated": "Vacancy created",
+    "errorCreatingVacancy": "Error creating vacancy",
+    "candidateAdded": "Candidate added",
+    "errorAddingCandidate": "Error adding candidate"
+  },
+  "cdcAudit": {
+    "errorLoadingLogs": "Error loading audit logs",
+    "cdcStarted": "CDC started successfully",
+    "errorStartingCdc": "Error starting CDC",
+    "cdcStopped": "CDC stopped successfully",
+    "errorStoppingCdc": "Error stopping CDC"
+  },
   "brochure": {
     "back": "Back",
     "downloadPdf": "Download PDF",
