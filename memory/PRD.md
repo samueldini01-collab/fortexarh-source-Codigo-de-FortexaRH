@@ -6,7 +6,7 @@ SaaS HR and Payroll management system named "FortexaRH" for the Dominican Republ
 ## Architecture
 - **Frontend**: React 19 + Tailwind CSS + Shadcn/UI + i18next (lazy-loaded translations)
 - **Backend**: FastAPI + MongoDB
-- **Payments**: Stripe (Checkout Sessions + Stripe Elements)
+- **Payments**: Stripe (Checkout Sessions + Stripe Elements + SetupIntent)
 - **Email**: Resend
 - **AI Search**: Gemini
 - **Auth**: JWT + Emergent Google Auth
@@ -29,10 +29,15 @@ SaaS HR and Payroll management system named "FortexaRH" for the Dominican Republ
 - Stripe Checkout Sessions for plan purchases
 - Subscription management (change plan, adjust employees, cancel/reactivate)
 - Invoice history with PDF download
-- **Payment Method Management with Stripe Elements** (Dec 2025)
+- **Payment Method Management with Stripe Elements** (Feb 2026)
   - Inline card form using `@stripe/react-stripe-js` CardElement
-  - SetupIntent flow (no redirect to Stripe)
-  - Add/Update credit card from Subscriptions page
+  - SetupIntent flow (no redirect to Stripe hosted page)
+  - Add/Update credit card from Subscriptions page dialog
+- **Payment Method Change History** (Feb 2026)
+  - MongoDB `payment_method_history` collection logs every card add/update
+  - Captures old card (brand, last4) and new card for each change
+  - Timeline UI in Payment Method card with date and card transition
+  - Backend: `GET /api/payment-method/history`, logging in `POST /api/confirm-setup-intent`
 
 ### Internationalization
 - Full i18n with i18next (ES, EN, FR)
@@ -40,17 +45,25 @@ SaaS HR and Payroll management system named "FortexaRH" for the Dominican Republ
 - Code-splitting with React.lazy for all 48 pages
 
 ### Integrations
-- Stripe (payments + payment methods)
+- Stripe (payments + payment methods + history)
 - Resend (email)
 - Emergent Google Auth
 - Gemini (AI Search)
 - QuickBooks Online
 - SAP/Oracle/Dynamics (MOCKED placeholders)
 
+## Key Files
+- `/app/backend/routes/checkout.py` - Stripe endpoints including SetupIntent + history
+- `/app/frontend/src/components/PaymentMethodForm.jsx` - Stripe Elements card form dialog
+- `/app/frontend/src/pages/SubscriptionsPage.jsx` - Subscriptions page with payment method + history UI
+- `/app/frontend/src/i18n/index.js` - i18n configuration
+- `/app/frontend/public/locales/{en,es,fr}.json` - Translation files
+
 ## Prioritized Backlog
 
 ### P0
 - [x] Subscription Management Phase 2 - Stripe Elements card update flow
+- [x] Payment Method Change History - Admin traceability
 - [ ] 2FA / MFA - Two-factor authentication
 
 ### P1
