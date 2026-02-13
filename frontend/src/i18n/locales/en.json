@@ -68,6 +68,7 @@
     "required": "Required",
     "optional": "Optional",
     "new": "New",
+    "print": "Print",
     "and": "and",
     "or": "or",
     "from": "from",
