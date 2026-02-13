@@ -29,7 +29,7 @@ import {
 import { 
   Check, X, CreditCard, Users, Building2, Zap, Shield, Clock,
   AlertTriangle, RefreshCw, ArrowUpRight, Crown, Rocket, Globe, Loader2, CheckCircle2,
-  FileText, Download, Receipt, Gift, Heart, MessageSquare, XCircle, RotateCcw
+  FileText, Download, Receipt, Gift, Heart, MessageSquare, XCircle, RotateCcw, History
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
