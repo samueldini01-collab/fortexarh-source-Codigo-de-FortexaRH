@@ -230,18 +230,18 @@ export default function BrochurePage() {
             <div className="grid grid-cols-3 gap-6 mt-12">
               <div className="text-center p-4 bg-white/10 rounded-xl backdrop-blur">
                 <Shield className="w-10 h-10 mx-auto mb-3 text-emerald-400" />
-                <p className="font-semibold">{t('landing.compliance.title') || 'Legal Compliance'}</p>
-                <p className="text-sm text-slate-400">TSS, DGII, {t('common.laborCode') || 'Labor Code'}</p>
+                <p className="font-semibold">{t('brochure.cover.compliance')}</p>
+                <p className="text-sm text-slate-400">{t('brochure.cover.complianceDesc')}</p>
               </div>
               <div className="text-center p-4 bg-white/10 rounded-xl backdrop-blur">
                 <Zap className="w-10 h-10 mx-auto mb-3 text-emerald-400" />
-                <p className="font-semibold">{t('landing.automation.title') || 'Full Automation'}</p>
-                <p className="text-sm text-slate-400">{t('landing.automation.subtitle') || 'Payroll, reports, entries'}</p>
+                <p className="font-semibold">{t('brochure.cover.automation')}</p>
+                <p className="text-sm text-slate-400">{t('brochure.cover.automationDesc')}</p>
               </div>
               <div className="text-center p-4 bg-white/10 rounded-xl backdrop-blur">
                 <Globe className="w-10 h-10 mx-auto mb-3 text-emerald-400" />
-                <p className="font-semibold">{t('landing.cloud.title') || '100% Cloud'}</p>
-                <p className="text-sm text-slate-400">{t('landing.cloud.subtitle') || 'Access from anywhere'}</p>
+                <p className="font-semibold">{t('brochure.cover.cloud')}</p>
+                <p className="text-sm text-slate-400">{t('brochure.cover.cloudDesc')}</p>
               </div>
             </div>
           </div>
