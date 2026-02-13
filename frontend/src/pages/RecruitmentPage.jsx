@@ -76,7 +76,7 @@ export default function RecruitmentPage() {
       setJobs(jobsRes.data);
       setCandidates(candidatesRes.data);
     } catch (error) {
-      toast.error("Error al cargar datos");
+      toast.error(t('recruitment.errorLoading'));
     } finally {
       setLoading(false);
     }
@@ -90,12 +90,12 @@ export default function RecruitmentPage() {
     e.preventDefault();
     try {
       await axios.post(`${API}/jobs`, jobForm, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Vacante creada");
+      toast.success(t('recruitment.vacancyCreated'));
       setIsJobDialogOpen(false);
       setJobForm({ title: "", department: "", description: "", requirements: "", salary_range: "", location: "", employment_type: "full_time" });
       fetchData();
     } catch (error) {
-      toast.error("Error al crear vacante");
+      toast.error(t('recruitment.errorCreatingVacancy'));
     }
   };
 
@@ -103,12 +103,12 @@ export default function RecruitmentPage() {
     e.preventDefault();
     try {
       await axios.post(`${API}/candidates`, candidateForm, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success("Candidato agregado");
+      toast.success(t('recruitment.candidateAdded'));
       setIsCandidateDialogOpen(false);
       setCandidateForm({ job_id: "", name: "", email: "", phone: "", resume_url: "", cover_letter: "" });
       fetchData();
     } catch (error) {
-      toast.error("Error al agregar candidato");
+      toast.error(t('recruitment.errorAddingCandidate'));
     }
   };
 
