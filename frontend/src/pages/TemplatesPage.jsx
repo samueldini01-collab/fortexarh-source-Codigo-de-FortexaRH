@@ -273,7 +273,7 @@ export default function TemplatesPage() {
       setIsGenerateOpen(false);
       fetchData();
     } catch (error) {
-      toast.error("Error al guardar documento");
+      toast.error(t('templates.messages.errorSaving'));
     }
   };
 
