@@ -4101,6 +4101,13 @@
       "copyright": "All rights reserved."
     }
   },
+  "reportsSystem": {
+    "errorLoadingCatalog": "Error loading report catalog",
+    "previewGenerated": "Preview generated",
+    "errorGeneratingPreview": "Error generating preview",
+    "reportExported": "Report exported in {{format}}",
+    "errorExportingReport": "Error exporting report"
+  },
   "subscriptions": {
     "errorLoadingData": "Error loading subscription data",
     "paymentVerificationError": "Could not verify payment status. Please contact support.",

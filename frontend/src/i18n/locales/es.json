@@ -4104,6 +4104,13 @@
       "copyright": "Todos los derechos reservados."
     }
   },
+  "reportsSystem": {
+    "errorLoadingCatalog": "Error al cargar catálogo de reportes",
+    "previewGenerated": "Vista previa generada",
+    "errorGeneratingPreview": "Error al generar vista previa",
+    "reportExported": "Reporte exportado en {{format}}",
+    "errorExportingReport": "Error al exportar reporte"
+  },
   "subscriptions": {
     "errorLoadingData": "Error al cargar datos de suscripción",
     "paymentVerificationError": "No se pudo verificar el estado del pago. Por favor contacte soporte.",

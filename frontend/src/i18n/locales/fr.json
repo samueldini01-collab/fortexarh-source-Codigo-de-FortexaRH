@@ -4081,6 +4081,13 @@
       "copyright": "Tous droits réservés."
     }
   },
+  "reportsSystem": {
+    "errorLoadingCatalog": "Erreur lors du chargement du catalogue de rapports",
+    "previewGenerated": "Aperçu généré",
+    "errorGeneratingPreview": "Erreur lors de la génération de l'aperçu",
+    "reportExported": "Rapport exporté en {{format}}",
+    "errorExportingReport": "Erreur lors de l'exportation du rapport"
+  },
   "subscriptions": {
     "errorLoadingData": "Erreur lors du chargement des données d'abonnement",
     "paymentVerificationError": "Impossible de vérifier le statut du paiement. Veuillez contacter le support.",
