@@ -642,15 +642,10 @@ export default function SubscriptionsPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={handleUpdatePaymentMethod}
-                      disabled={updatingPaymentMethod}
+                      onClick={() => setShowPaymentMethodDialog(true)}
                       data-testid="update-payment-method-btn"
                     >
-                      {updatingPaymentMethod ? (
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      ) : (
-                        <RefreshCw className="w-4 h-4 mr-2" />
-                      )}
+                      <RefreshCw className="w-4 h-4 mr-2" />
                       {t('subscriptions.paymentMethod.update')}
                     </Button>
                   </div>
