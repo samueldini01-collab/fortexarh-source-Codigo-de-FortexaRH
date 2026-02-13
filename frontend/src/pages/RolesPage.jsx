@@ -479,7 +479,7 @@ export default function RolesPage() {
                         }`}
                         style={{ backgroundColor: color.value }}
                         onClick={() => setFormData({ ...formData, color: color.value })}
-                        title={color.name}
+                        title={t(color.nameKey)}
                       />
                     ))}
                   </div>
@@ -624,7 +624,7 @@ export default function RolesPage() {
                         }`}
                         style={{ backgroundColor: color.value }}
                         onClick={() => setFormData({ ...formData, color: color.value })}
-                        title={color.name}
+                        title={t(color.nameKey)}
                       />
                     ))}
                   </div>
