@@ -683,12 +683,12 @@ export default function PayrollV2Page() {
 
   const getStatusBadge = (status) => {
     const badges = {
-      'open': <Badge variant="outline" className="border-blue-500 text-blue-600 dark:text-blue-400">Abierto</Badge>,
-      'draft': <Badge variant="outline" className="border-slate-500 text-slate-600 dark:text-slate-400">Borrador</Badge>,
-      'pending_approval': <Badge className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">Pendiente Aprobación</Badge>,
-      'calculated': <Badge className="bg-amber-100 text-amber-700 dark:text-amber-400">Calculado</Badge>,
-      'approved': <Badge className="bg-emerald-100 text-emerald-700 dark:text-emerald-400">Aprobado</Badge>,
-      'paid': <Badge className="bg-purple-100 text-purple-700 dark:text-purple-400">Pagado</Badge>,
+      'open': <Badge variant="outline" className="border-blue-500 text-blue-600 dark:text-blue-400">{t('payrollV2.statuses.open')}</Badge>,
+      'draft': <Badge variant="outline" className="border-slate-500 text-slate-600 dark:text-slate-400">{t('payrollV2.statuses.draft')}</Badge>,
+      'pending_approval': <Badge className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">{t('payrollV2.statuses.pendingApproval')}</Badge>,
+      'calculated': <Badge className="bg-amber-100 text-amber-700 dark:text-amber-400">{t('payrollV2.statuses.calculated')}</Badge>,
+      'approved': <Badge className="bg-emerald-100 text-emerald-700 dark:text-emerald-400">{t('payrollV2.statuses.approved')}</Badge>,
+      'paid': <Badge className="bg-purple-100 text-purple-700 dark:text-purple-400">{t('payrollV2.statuses.paid')}</Badge>,
     };
     return badges[status] || <Badge variant="secondary">{status}</Badge>;
   };
@@ -714,17 +714,17 @@ export default function PayrollV2Page() {
       // Entries are included in the period response
       const entries = response.data?.entries || response.data?.employee_records || [];
       const columns = [
-        { header: "Empleado", accessor: "employee_name" },
-        { header: "Departamento", accessor: "department" },
+        { header: t('payrollV2.table.employee'), accessor: "employee_name" },
+        { header: t('payrollV2.table.department'), accessor: "department" },
         { header: t('payrollV2.messages.baseSalary'), accessor: "base_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
-        { header: "Bruto", accessor: "gross_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
-        { header: "Deducciones", accessor: "total_deductions", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right text-red-600" },
-        { header: "Neto", accessor: "net_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-bold text-emerald-600" }
+        { header: t('payrollV2.table.gross'), accessor: "gross_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+        { header: t('payrollV2.table.deductions'), accessor: "total_deductions", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right text-red-600" },
+        { header: t('payrollV2.table.net'), accessor: "net_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-bold text-emerald-600" }
       ];
       
       setDrillDown({
         open: true,
-        title: `Desglose: ${period.description}`,
+        title: `${t('payrollV2.breakdown')}: ${period.description}`,
         data: entries,
         columns
       });
