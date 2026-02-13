@@ -3196,6 +3196,8 @@
       "editAccount": "Editar Cuenta",
       "editAccountDesc": "Modifique los datos de la cuenta",
       "createAccountDesc": "Complete los datos para crear una nueva cuenta",
+      "editEntryDesc": "Modifique los datos del asiento contable",
+      "createEntryDesc": "Complete los datos para crear un nuevo asiento",
       "entryDate": "Fecha del Asiento",
       "referencePlaceholder": "Ej: FAC-001",
       "descPlaceholder": "Descripción del asiento...",
