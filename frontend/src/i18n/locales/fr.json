@@ -4225,7 +4225,17 @@
     "errorClosing": "Erreur lors de la fermeture",
     "stageUpdated": "Étape mise à jour",
     "vacancyClosed": "Poste fermé",
-    "candidatesExported": "Candidats exportés avec succès"
+    "candidatesExported": "Candidats exportés avec succès",
+    "openVacancies": "Postes Ouverts",
+    "closedVacancies": "Postes Fermés",
+    "open": "Ouvert",
+    "closed": "Fermé",
+    "searchPlaceholder": "Rechercher des postes ou candidats...",
+    "vacanciesCount": "{{jobs}} postes, {{candidates}} candidats",
+    "vacancies": "Postes",
+    "noVacancies": "Aucun poste publié",
+    "noVacanciesFilter": "Aucun poste ne correspond au filtre",
+    "selectVacancy": "Sélectionner un poste"
   },
   "cdcAudit": {
     "errorLoadingLogs": "Erreur lors du chargement des logs d'audit",
