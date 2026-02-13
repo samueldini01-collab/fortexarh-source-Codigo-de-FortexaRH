@@ -222,7 +222,7 @@ export default function Dashboard() {
           break;
           
         case "candidates":
-          response = await axios.get(`${API}/recruitment/candidates?limit=50`, {
+          response = await axios.get(`${API}/candidates?limit=50`, {
             headers: getAuthHeaders(),
             withCredentials: true
           });
