@@ -2630,7 +2630,12 @@
       "clientAdded": "Client ajouté avec succès",
       "invitationSent": "Invitation envoyée à {{email}}",
       "invitationLinkCopied": "Lien d'invitation copié dans le presse-papiers",
-      "errorAddingClient": "Erreur lors de l'ajout du client"
+      "errorAddingClient": "Erreur lors de l'ajout du client",
+      "errorResendingInvitation": "Erreur lors du renvoi de l'invitation",
+      "errorUpdatingBilling": "Erreur lors de la mise à jour de la facturation",
+      "errorConnectingStripe": "Erreur lors de la connexion à Stripe",
+      "errorOpeningStripeDashboard": "Erreur lors de l'ouverture du dashboard Stripe",
+      "errorProcessingWithdrawal": "Erreur lors du traitement du retrait"
     },
     "register": {
       "title": "Inscription Partenaire",
@@ -4093,7 +4098,14 @@
     "paymentVerificationError": "Impossible de vérifier le statut du paiement. Veuillez contacter le support.",
     "paymentSuccess": "Paiement réussi! Votre abonnement a été activé.",
     "paymentExpired": "La session de paiement a expiré. Veuillez réessayer.",
-    "paymentCancelled": "Paiement annulé"
+    "paymentCancelled": "Paiement annulé",
+    "errorProcessingPayment": "Erreur lors du traitement du paiement",
+    "errorUpdating": "Erreur lors de la mise à jour",
+    "errorLoadingCancellationInfo": "Erreur lors du chargement des infos d'annulation",
+    "errorApplyingDiscount": "Erreur lors de l'application du discount",
+    "errorCancellingSubscription": "Erreur lors de l'annulation de l'abonnement",
+    "errorReactivatingSubscription": "Erreur lors de la réactivation de l'abonnement",
+    "errorDownloadingInvoice": "Erreur lors du téléchargement de la facture"
   },
   "users": {
     "roles": {
@@ -4110,14 +4122,18 @@
     "ticketUpdated": "Ticket mis à jour: {{status}}",
     "errorUpdatingTicket": "Erreur lors de la mise à jour du ticket",
     "priorityUpdated": "Priorité mise à jour: {{priority}}",
-    "errorUpdatingPriority": "Erreur lors de la mise à jour de la priorité"
+    "errorUpdatingPriority": "Erreur lors de la mise à jour de la priorité",
+    "errorSendingResponse": "Erreur lors de l'envoi de la réponse",
+    "errorLoadingDetails": "Erreur lors du chargement des détails"
   },
   "recruitment": {
     "errorLoading": "Erreur lors du chargement des données",
     "vacancyCreated": "Poste créé",
     "errorCreatingVacancy": "Erreur lors de la création du poste",
     "candidateAdded": "Candidat ajouté",
-    "errorAddingCandidate": "Erreur lors de l'ajout du candidat"
+    "errorAddingCandidate": "Erreur lors de l'ajout du candidat",
+    "errorUpdating": "Erreur lors de la mise à jour",
+    "errorClosing": "Erreur lors de la fermeture"
   },
   "cdcAudit": {
     "errorLoadingLogs": "Erreur lors du chargement des logs d'audit",
