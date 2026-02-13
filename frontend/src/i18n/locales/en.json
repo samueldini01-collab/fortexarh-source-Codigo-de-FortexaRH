@@ -2639,7 +2639,12 @@
       "clientAdded": "Client added successfully",
       "invitationSent": "Invitation sent to {{email}}",
       "invitationLinkCopied": "Invitation link copied to clipboard",
-      "errorAddingClient": "Error adding client"
+      "errorAddingClient": "Error adding client",
+      "errorResendingInvitation": "Error resending invitation",
+      "errorUpdatingBilling": "Error updating billing",
+      "errorConnectingStripe": "Error connecting to Stripe",
+      "errorOpeningStripeDashboard": "Error opening Stripe dashboard",
+      "errorProcessingWithdrawal": "Error processing withdrawal"
     },
     "register": {
       "title": "Partner Registration",
@@ -4113,7 +4118,14 @@
     "paymentVerificationError": "Could not verify payment status. Please contact support.",
     "paymentSuccess": "Payment successful! Your subscription has been activated.",
     "paymentExpired": "Payment session has expired. Please try again.",
-    "paymentCancelled": "Payment cancelled"
+    "paymentCancelled": "Payment cancelled",
+    "errorProcessingPayment": "Error processing payment",
+    "errorUpdating": "Error updating",
+    "errorLoadingCancellationInfo": "Error loading cancellation info",
+    "errorApplyingDiscount": "Error applying discount",
+    "errorCancellingSubscription": "Error cancelling subscription",
+    "errorReactivatingSubscription": "Error reactivating subscription",
+    "errorDownloadingInvoice": "Error downloading invoice"
   },
   "users": {
     "roles": {
@@ -4130,14 +4142,18 @@
     "ticketUpdated": "Ticket updated to: {{status}}",
     "errorUpdatingTicket": "Error updating ticket",
     "priorityUpdated": "Priority updated to: {{priority}}",
-    "errorUpdatingPriority": "Error updating priority"
+    "errorUpdatingPriority": "Error updating priority",
+    "errorSendingResponse": "Error sending response",
+    "errorLoadingDetails": "Error loading details"
   },
   "recruitment": {
     "errorLoading": "Error loading data",
     "vacancyCreated": "Vacancy created",
     "errorCreatingVacancy": "Error creating vacancy",
     "candidateAdded": "Candidate added",
-    "errorAddingCandidate": "Error adding candidate"
+    "errorAddingCandidate": "Error adding candidate",
+    "errorUpdating": "Error updating",
+    "errorClosing": "Error closing"
   },
   "cdcAudit": {
     "errorLoadingLogs": "Error loading audit logs",
