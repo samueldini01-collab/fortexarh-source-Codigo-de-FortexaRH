@@ -1,16 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-
-import es from './locales/es.json';
-import en from './locales/en.json';
-import fr from './locales/fr.json';
-
-const resources = {
-  es: { translation: es },
-  en: { translation: en },
-  fr: { translation: fr }
-};
+import HttpBackend from 'i18next-http-backend';
 
 // Supported languages
 const supportedLanguages = ['es', 'en', 'fr'];
@@ -48,14 +39,35 @@ const mapBrowserLanguage = (browserLang) => {
   return languageMap[browserLang.toLowerCase()] || languageMap[baseLang] || 'es';
 };
 
+// Get initial language
+const getInitialLanguage = () => {
+  const storedLang = localStorage.getItem('fortexarh-language');
+  if (storedLang && supportedLanguages.includes(storedLang)) {
+    return storedLang;
+  }
+  const browserLang = navigator.language || navigator.userLanguage;
+  return mapBrowserLanguage(browserLang);
+};
+
+const initialLang = getInitialLanguage();
+
 i18n
+  .use(HttpBackend)
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    resources,
+    lng: initialLang, // Set initial language immediately
     fallbackLng: 'es',
     supportedLngs: supportedLanguages,
     defaultNS: 'translation',
+    ns: ['translation'],
+    
+    backend: {
+      // Load translations from public folder
+      loadPath: '/locales/{{lng}}.json',
+      // Add cache busting
+      queryStringParams: { v: '1.0.0' }
+    },
     
     detection: {
       // Order of detection: localStorage first (user preference), then browser language
@@ -64,8 +76,6 @@ i18n
       lookupLocalStorage: 'fortexarh-language',
       lookupQuerystring: 'lang',
       lookupCookie: 'fortexarh-language',
-      
-      // Check if stored language is valid
       checkWhitelist: true
     },
 
@@ -74,36 +84,23 @@ i18n
     },
 
     react: {
-      useSuspense: false
+      useSuspense: true // Enable suspense for lazy loading
     },
     
-    // Post-process detected language to map to supported ones
     load: 'languageOnly', // Only load 'en' not 'en-US'
+    
+    // Preload only the detected language (not all languages)
+    preload: [initialLang],
+    
+    // Lazy load other languages when needed
+    partialBundledLanguages: true
   });
 
-// If no language was stored, detect and store browser language
-const initializeLanguage = () => {
-  const storedLang = localStorage.getItem('fortexarh-language');
-  
-  if (!storedLang) {
-    // Get browser language
-    const browserLang = navigator.language || navigator.userLanguage;
-    const mappedLang = mapBrowserLanguage(browserLang);
-    
-    // Set the detected language
-    i18n.changeLanguage(mappedLang);
-    localStorage.setItem('fortexarh-language', mappedLang);
-    document.documentElement.lang = mappedLang;
-    
-    console.log(`[i18n] Auto-detected language: ${browserLang} -> ${mappedLang}`);
-  } else {
-    // Ensure document lang attribute matches stored preference
-    document.documentElement.lang = storedLang;
-  }
-};
-
-// Initialize on load
-initializeLanguage();
+// Store initial language preference
+if (!localStorage.getItem('fortexarh-language')) {
+  localStorage.setItem('fortexarh-language', initialLang);
+}
+document.documentElement.lang = initialLang;
 
 export default i18n;
 
@@ -119,13 +116,15 @@ export const getCurrentLanguage = () => {
   return i18n.language?.split('-')[0] || 'es';
 };
 
-// Helper to change language
-export const changeLanguage = (lang) => {
+// Helper to change language (loads translation if not already loaded)
+export const changeLanguage = async (lang) => {
   if (!supportedLanguages.includes(lang)) {
     console.warn(`[i18n] Unsupported language: ${lang}, falling back to 'es'`);
     lang = 'es';
   }
-  i18n.changeLanguage(lang);
+  
+  // This will automatically load the language file if not already loaded
+  await i18n.changeLanguage(lang);
   localStorage.setItem('fortexarh-language', lang);
   document.documentElement.lang = lang;
 };
@@ -139,4 +138,11 @@ export const getBrowserLanguage = () => {
 // Check if user has explicitly set a language preference
 export const hasLanguagePreference = () => {
   return localStorage.getItem('fortexarh-language') !== null;
+};
+
+// Preload a specific language (useful for prefetching)
+export const preloadLanguage = (lang) => {
+  if (supportedLanguages.includes(lang)) {
+    i18n.loadLanguages(lang);
+  }
 };
