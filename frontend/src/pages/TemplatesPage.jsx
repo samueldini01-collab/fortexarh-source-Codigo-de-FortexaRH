@@ -347,7 +347,7 @@ export default function TemplatesPage() {
                           </SelectTrigger>
                           <SelectContent>
                             {templateTypes.map(type => (
-                              <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                              <SelectItem key={type.value} value={type.value}>{t(type.labelKey)}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
@@ -438,7 +438,7 @@ export default function TemplatesPage() {
                           </Badge>
                         </div>
                         <CardTitle className="text-lg mt-3">{template.name}</CardTitle>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">{typeInfo?.label}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{typeInfo ? t(typeInfo.labelKey) : ''}</p>
                       </CardHeader>
                       <CardContent>
                         <p className="text-sm text-slate-600 line-clamp-2 mb-4">
