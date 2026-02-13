@@ -248,7 +248,7 @@ export default function PartnerDashboardPage() {
     e.preventDefault();
     
     if (!newClient.company_name || !newClient.contact_name || !newClient.email) {
-      toast.error("Por favor completa los campos requeridos");
+      toast.error(t('partner.dashboard.completeRequiredFields'));
       return;
     }
     
@@ -258,17 +258,17 @@ export default function PartnerDashboardPage() {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      toast.success("Cliente agregado exitosamente");
+      toast.success(t('partner.dashboard.clientAdded'));
       
       // Show email sent status
       if (response.data.email_sent) {
-        toast.success(`Invitación enviada a ${response.data.email_sent_to}`);
+        toast.success(t('partner.dashboard.invitationSent', { email: response.data.email_sent_to }));
       }
       
       // Copy invitation link
       if (response.data.invitation_link) {
         navigator.clipboard.writeText(response.data.invitation_link);
-        toast.info("Link de invitación copiado al portapapeles");
+        toast.info(t('partner.dashboard.invitationLinkCopied'));
       }
       
       // Reset form and close modal
@@ -286,7 +286,7 @@ export default function PartnerDashboardPage() {
       fetchDashboard();
       
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al agregar cliente");
+      toast.error(error.response?.data?.detail || t('partner.dashboard.errorAddingClient'));
     } finally {
       setAddingClient(false);
     }
