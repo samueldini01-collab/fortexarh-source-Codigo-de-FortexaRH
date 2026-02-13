@@ -220,13 +220,13 @@ export default function CostsByDepartmentPage() {
   })) || [];
 
   return (
-    <DashboardLayout title="Costos por Departamento">
+    <DashboardLayout title={t('costsByDepartment.title')}>
       <div className="space-y-6" data-testid="costs-department-page">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">Costos por Departamento</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">{t('costsByDepartment.title')}</h1>
             <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-1">
-              Análisis detallado con vista previa antes de exportar
+              {t('costsByDepartment.subtitle')}
             </p>
           </div>
         </div>
@@ -236,7 +236,7 @@ export default function CostsByDepartmentPage() {
           <CardContent className="pt-6">
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-                <Label className="text-sm font-medium">Período:</Label>
+                <Label className="text-sm font-medium">{t('reports.period')}:</Label>
                 <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
                   <SelectTrigger className="w-[200px]" data-testid="period-select">
                     <SelectValue />
@@ -249,13 +249,13 @@ export default function CostsByDepartmentPage() {
                 </Select>
                 <Button variant="outline" size="sm" onClick={fetchCostReport} disabled={loading}>
                   <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                  Actualizar
+                  {t('common.refresh')}
                 </Button>
               </div>
               <div className="flex gap-2">
                 <Button onClick={printReport} variant="outline" size="sm">
                   <Printer className="w-4 h-4 mr-2" />
-                  Imprimir
+                  {t('common.print')}
                 </Button>
                 <Button onClick={exportToCSV} variant="outline" size="sm" data-testid="export-csv-btn">
                   <Download className="w-4 h-4 mr-2" />
@@ -280,7 +280,7 @@ export default function CostsByDepartmentPage() {
                     <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">Empleados</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">{t('costsByDepartment.cards.totalEmployees')}</p>
                     <p className="text-xl sm:text-2xl font-bold" data-testid="employee-count">
                       {costReport.summary.employee_count}
                     </p>
