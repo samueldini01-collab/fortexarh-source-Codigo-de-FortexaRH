@@ -106,9 +106,9 @@ export default function PayrollDashboardPage() {
           title = "Top 10 Salarios";
           data = stats?.top_salaries || [];
           columns = [
-            { header: "#", accessor: "rank", render: (_, __, idx) => idx + 1 },
-            { header: "Nombre", accessor: "name" },
-            { header: "Departamento", accessor: "department" },
+            { header: "#", accessor: "rank", render: (_, row) => (stats?.top_salaries || []).indexOf(row) + 1 },
+            { header: t('common.name'), accessor: "name" },
+            { header: t('employees.fields.department'), accessor: "department" },
             { header: t('employees.fields.salary'), accessor: "salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-bold text-emerald-600" }
           ];
           break;
