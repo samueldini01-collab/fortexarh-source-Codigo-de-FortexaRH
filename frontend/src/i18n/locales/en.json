@@ -4114,7 +4114,9 @@
       "notifications": "Notifications",
       "notificationsDesc": "Real-time alerts for important events",
       "rolesPermissions": "Roles & Permissions",
-      "rolesPermissionsDesc": "Granular access control by module and action"
+      "rolesPermissionsDesc": "Granular access control by module and action",
+      "complianceTitle": "Guaranteed Legal Compliance",
+      "complianceDescription": "FortexaRH is specifically designed to comply with all labor regulations of the Dominican Republic: TSS (Social Security Treasury), DGII (Internal Revenue), Labor Code, General Norm 07-2007 for Construction Workers, and more."
     },
     "benefits": {
       "sectionTitle": "BENEFITS",
