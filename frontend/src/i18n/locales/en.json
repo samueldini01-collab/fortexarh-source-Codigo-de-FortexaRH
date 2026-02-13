@@ -4085,6 +4085,20 @@
       "copyright": "All rights reserved."
     }
   },
+  "subscriptions": {
+    "errorLoadingData": "Error loading subscription data",
+    "paymentVerificationError": "Could not verify payment status. Please contact support.",
+    "paymentSuccess": "Payment successful! Your subscription has been activated.",
+    "paymentExpired": "Payment session has expired. Please try again.",
+    "paymentCancelled": "Payment cancelled"
+  },
+  "supportAdmin": {
+    "errorLoadingTickets": "Error loading tickets",
+    "ticketUpdated": "Ticket updated to: {{status}}",
+    "errorUpdatingTicket": "Error updating ticket",
+    "priorityUpdated": "Priority updated to: {{priority}}",
+    "errorUpdatingPriority": "Error updating priority"
+  },
   "recruitment": {
     "errorLoading": "Error loading data",
     "vacancyCreated": "Vacancy created",
