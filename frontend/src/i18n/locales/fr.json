@@ -4082,6 +4082,16 @@
     "paymentExpired": "La session de paiement a expiré. Veuillez réessayer.",
     "paymentCancelled": "Paiement annulé"
   },
+  "users": {
+    "roles": {
+      "admin": "Administrateur",
+      "adminDesc": "Accès complet au système",
+      "manager": "Gestionnaire",
+      "managerDesc": "Accès aux modules assignés avec permissions d'édition",
+      "user": "Utilisateur",
+      "userDesc": "Accès en lecture seule aux modules assignés"
+    }
+  },
   "supportAdmin": {
     "errorLoadingTickets": "Erreur lors du chargement des tickets",
     "ticketUpdated": "Ticket mis à jour: {{status}}",
