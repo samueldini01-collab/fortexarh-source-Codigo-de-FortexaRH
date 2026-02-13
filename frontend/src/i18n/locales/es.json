@@ -4066,7 +4066,13 @@
       "title1": "Sistema Integral de",
       "title2": "Recursos Humanos",
       "title3": "y Nómina",
-      "subtitle": "La solución completa para la gestión de RRHH de su empresa. Automatice nóminas, controle asistencia y cumpla con las regulaciones de TSS y DGII de República Dominicana."
+      "subtitle": "La solución completa para la gestión de RRHH de su empresa. Automatice nóminas, controle asistencia y cumpla con las regulaciones de TSS y DGII de República Dominicana.",
+      "compliance": "Cumplimiento Legal",
+      "complianceDesc": "TSS, DGII, Código de Trabajo",
+      "automation": "Automatización Total",
+      "automationDesc": "Nómina, reportes, asientos",
+      "cloud": "100% en la Nube",
+      "cloudDesc": "Acceso desde cualquier lugar"
     },
     "features": {
       "sectionTitle": "FUNCIONALIDADES",

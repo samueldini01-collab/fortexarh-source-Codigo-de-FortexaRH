@@ -4063,7 +4063,13 @@
       "title1": "Comprehensive",
       "title2": "Human Resources",
       "title3": "and Payroll System",
-      "subtitle": "The complete solution for your company's HR management. Automate payroll, control attendance, and comply with Dominican Republic TSS and DGII regulations."
+      "subtitle": "The complete solution for your company's HR management. Automate payroll, control attendance, and comply with Dominican Republic TSS and DGII regulations.",
+      "compliance": "Legal Compliance",
+      "complianceDesc": "TSS, DGII, Labor Code",
+      "automation": "Full Automation",
+      "automationDesc": "Payroll, reports, entries",
+      "cloud": "100% Cloud",
+      "cloudDesc": "Access from anywhere"
     },
     "features": {
       "sectionTitle": "FEATURES",

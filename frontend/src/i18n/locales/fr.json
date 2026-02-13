@@ -4043,7 +4043,13 @@
       "title1": "Système Intégral de",
       "title2": "Ressources Humaines",
       "title3": "et Paie",
-      "subtitle": "La solution complète pour la gestion RH de votre entreprise. Automatisez la paie, contrôlez les présences et respectez les réglementations TSS et DGII de la République Dominicaine."
+      "subtitle": "La solution complète pour la gestion RH de votre entreprise. Automatisez la paie, contrôlez les présences et respectez les réglementations TSS et DGII de la République Dominicaine.",
+      "compliance": "Conformité Légale",
+      "complianceDesc": "TSS, DGII, Code du Travail",
+      "automation": "Automatisation Totale",
+      "automationDesc": "Paie, rapports, écritures",
+      "cloud": "100% Cloud",
+      "cloudDesc": "Accès de n'importe où"
     },
     "features": {
       "sectionTitle": "FONCTIONNALITÉS",
