@@ -1640,12 +1640,50 @@
       "errorApproving": "Erreur lors de l'approbation",
       "errorRejecting": "Erreur lors du rejet",
       "noRequests": "Pas de demandes de vacances",
-      "noBalances": "Pas de soldes enregistrés"
+      "noBalances": "Pas de soldes enregistrés",
+      "exported": "Exporté avec succès",
+      "errorExporting": "Erreur lors de l'exportation",
+      "errorLoading": "Erreur lors du chargement",
+      "errorLoadingBalance": "Erreur lors du chargement du solde"
     },
     "calendar": {
       "today": "Aujourd'hui",
       "month": "Mois",
-      "week": "Semaine"
+      "week": "Semaine",
+      "weekDays": {
+        "sun": "Dim",
+        "mon": "Lun",
+        "tue": "Mar",
+        "wed": "Mer",
+        "thu": "Jeu",
+        "fri": "Ven",
+        "sat": "Sam"
+      },
+      "monthSummary": "Résumé du Mois",
+      "scheduledAbsences": "absences programmées",
+      "more": "plus"
+    },
+    "balances": {
+      "title": "Solde de Vacances",
+      "subtitle": "Selon la Loi 16-92 de la République Dominicaine: 14 jours après 1 an, +1 jour par année supplémentaire (max 18)",
+      "employee": "Employé",
+      "seniority": "Ancienneté",
+      "assignedDays": "Jours Attribués",
+      "usedDays": "Jours Utilisés",
+      "availableDays": "Jours Disponibles",
+      "usage": "Utilisation",
+      "details": "Détails",
+      "detailTitle": "Détail du Solde",
+      "hireDate": "Date d'embauche",
+      "serviceYears": "ans",
+      "serviceMonths": "mois",
+      "vacationsYear": "Vacances",
+      "assigned": "Attribués",
+      "used": "Utilisés",
+      "carryOver": "Reportés",
+      "available": "Disponibles",
+      "pendingRequests": "demande(s) en attente",
+      "view": "Voir"
     }
   },
   "reports": {
