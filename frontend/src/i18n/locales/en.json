@@ -924,6 +924,7 @@
     "errorLoading": "Error loading employees",
     "errorSaving": "Error saving employee",
     "errorDeleting": "Error deleting employee",
+    "photoTooLarge": "Image must not exceed 2MB",
     "filters": {
       "all": "All",
       "active": "Active",
