@@ -1330,7 +1330,8 @@
         "print": "Print"
       },
       "messages": {
-        "enterValidSalary": "Please enter a valid base salary",
+        "pdfExported": "PDF exported successfully",
+      "enterValidSalary": "Please enter a valid base salary",
         "calculationSuccess": "Calculation completed successfully",
         "calculationError": "Error calculating payroll",
         "saveSuccess": "Calculation saved successfully",
