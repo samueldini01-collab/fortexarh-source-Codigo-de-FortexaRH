@@ -118,8 +118,8 @@ class TestConfirmSetupIntentLogging:
             json={"payment_method_id": "pm_invalid_test_123456"}
         )
         # Should fail when trying to use invalid payment method
-        # Stripe will return an error which will result in 500
-        assert response.status_code in [400, 404, 500], f"Expected error for invalid PM, got {response.status_code}"
+        # Stripe will return an error which will result in 500 (or 520 from Cloudflare)
+        assert response.status_code in [400, 404, 500, 520], f"Expected error for invalid PM, got {response.status_code}"
         print(f"✅ confirm-setup-intent correctly handles invalid payment method (status: {response.status_code})")
 
 
