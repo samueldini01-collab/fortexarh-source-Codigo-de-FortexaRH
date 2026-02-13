@@ -923,6 +923,7 @@
     "errorLoading": "Error al cargar empleados",
     "errorSaving": "Error al guardar empleado",
     "errorDeleting": "Error al eliminar empleado",
+    "photoTooLarge": "La imagen no debe superar 2MB",
     "filters": {
       "all": "Todos",
       "active": "Activos",
