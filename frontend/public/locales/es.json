@@ -271,7 +271,7 @@
       "contact": "Contacto",
       "login": "Iniciar Sesión",
       "startFree": "Comenzar Gratis",
-      "getStarted": "Get Started"
+      "getStarted": "Comenzar"
     },
     "features": {
       "title": "Todo lo que necesitas para gestionar tu equipo",
@@ -919,7 +919,7 @@
       "errorExportingTss": "Error al exportar TSS",
       "errorLoadingBreakdown": "Error al cargar desglose",
       "baseSalary": "Salario Base",
-      "tssExported": "TSS exported"
+      "tssExported": "TSS exportado correctamente"
     }
   },
   "globalSearch": {
@@ -1147,7 +1147,7 @@
       "descriptionPlaceholder": "Ej. Cuota 1/10",
       "amount": "Monto / %",
       "add": "Agregar",
-      "amountRequired": "Enter an amount for the deduction"
+      "amountRequired": "Monto requerido"
     },
     "emergencyContacts": {
       "title": "Contactos de Emergencia",
@@ -4342,12 +4342,12 @@
     "errorGeneratingPreview": "Error al generar vista previa",
     "reportExported": "Reporte exportado en {{format}}",
     "errorExportingReport": "Error al exportar reporte",
-    "configDeleted": "Configuration deleted",
-    "configLoaded": "Configuration loaded",
-    "configSaved": "Configuration saved",
-    "enterReportName": "Enter a name for the report",
-    "errorDeletingConfig": "Error deleting configuration",
-    "errorSavingConfig": "Error saving configuration"
+    "configDeleted": "Configuración eliminada",
+    "configLoaded": "Configuración cargada",
+    "configSaved": "Configuración guardada",
+    "enterReportName": "Ingrese nombre del reporte",
+    "errorDeletingConfig": "Error al eliminar configuración",
+    "errorSavingConfig": "Error al guardar configuración"
   },
   "subscriptions": {
     "errorLoadingData": "Error al cargar datos de suscripción",
@@ -4465,9 +4465,9 @@
     "errorUpdatingPriority": "Error al actualizar prioridad",
     "errorSendingResponse": "Error al enviar respuesta",
     "errorLoadingDetails": "Error al cargar detalles",
-    "internalNoteAdded": "Internal note added",
-    "responseSent": "Response sent to client",
-    "writeMessage": "Write a message"
+    "internalNoteAdded": "Nota interna agregada",
+    "responseSent": "Respuesta enviada",
+    "writeMessage": "Escribe un mensaje..."
   },
   "recruitment": {
     "errorLoading": "Error al cargar datos",
