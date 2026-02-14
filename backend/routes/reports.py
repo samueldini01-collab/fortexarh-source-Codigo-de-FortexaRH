@@ -389,3 +389,180 @@ def calculate_isr(monthly_salary: float) -> float:
         isr_annual = 79775 + (annual - 867123) * 0.25
     
     return isr_annual / 12  # Return monthly ISR
+
+
+# ===================== PAYROLL REPORT =====================
+
+@router.get("/payroll")
+async def get_payroll_report(year: int, month: int, current_user: dict = Depends(get_current_user)):
+    company_id = current_user.get("company_id")
+    month_str = f"{year}-{month:02d}"
+    payrolls = await db.payrolls.find(
+        {"company_id": company_id, "period_start": {"$regex": f"^{month_str}"}},
+        {"_id": 0}
+    ).to_list(1000)
+
+    total_base = sum(p.get("base_salary", 0) for p in payrolls)
+    total_bonuses = sum(p.get("bonuses", 0) for p in payrolls)
+    total_deductions = sum(p.get("deductions", 0) for p in payrolls)
+    total_taxes = sum(p.get("taxes", 0) for p in payrolls)
+    total_net = sum(p.get("net_salary", 0) for p in payrolls)
+
+    return {
+        "period": month_str,
+        "payrolls": payrolls,
+        "summary": {
+            "total_base_salary": total_base,
+            "total_bonuses": total_bonuses,
+            "total_deductions": total_deductions,
+            "total_taxes": total_taxes,
+            "total_net_salary": total_net,
+            "employee_count": len(payrolls)
+        }
+    }
+
+
+# ===================== ATTENDANCE REPORT =====================
+
+@router.get("/attendance")
+async def get_attendance_report(year: int, month: int, current_user: dict = Depends(get_current_user)):
+    company_id = current_user.get("company_id")
+    month_str = f"{year}-{month:02d}"
+    attendances = await db.attendances.find(
+        {"company_id": company_id, "date": {"$regex": f"^{month_str}"}},
+        {"_id": 0}
+    ).to_list(10000)
+
+    by_employee = {}
+    for att in attendances:
+        emp_id = att["employee_id"]
+        if emp_id not in by_employee:
+            by_employee[emp_id] = {
+                "employee_name": att.get("employee_name", ""),
+                "present": 0,
+                "absent": 0,
+                "late": 0,
+                "total_hours": 0
+            }
+        status = att.get("status", "present")
+        if status == "present":
+            by_employee[emp_id]["present"] += 1
+        elif status == "absent":
+            by_employee[emp_id]["absent"] += 1
+        elif status == "late":
+            by_employee[emp_id]["late"] += 1
+        by_employee[emp_id]["total_hours"] += att.get("hours_worked", 0)
+
+    return {
+        "period": month_str,
+        "by_employee": list(by_employee.values()),
+        "summary": {
+            "total_present": sum(e["present"] for e in by_employee.values()),
+            "total_absent": sum(e["absent"] for e in by_employee.values()),
+            "total_late": sum(e["late"] for e in by_employee.values()),
+            "total_hours": sum(e["total_hours"] for e in by_employee.values())
+        }
+    }
+
+
+# ===================== GENERATE CUSTOM REPORT =====================
+
+@router.get("/generate")
+async def generate_report(
+    report_type: str,
+    date_from: str,
+    date_to: str,
+    department: str = "Todos",
+    status: str = "all",
+    employee_id: Optional[str] = None,
+    period_id: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    company_id = current_user.get("company_id")
+    data = []
+    columns = []
+    summary = {"totalRecords": 0, "totalAmount": 0}
+
+    if report_type == "payroll":
+        query = {"company_id": company_id}
+        if department != "Todos":
+            query["department"] = department
+        if period_id:
+            query["period_id"] = period_id
+        if employee_id:
+            query["employee_id"] = employee_id
+        payrolls = await db.payroll_entries.find(query, {"_id": 0}).to_list(1000)
+
+        emp_ids = [p.get("employee_id") for p in payrolls]
+        employees = await db.employees.find(
+            {"employee_id": {"$in": emp_ids}},
+            {"_id": 0, "employee_id": 1, "first_name": 1, "last_name": 1, "department": 1}
+        ).to_list(1000)
+        emp_map = {e["employee_id"]: e for e in employees}
+
+        for p in payrolls:
+            emp = emp_map.get(p.get("employee_id"), {})
+            data.append({
+                "employee": f"{emp.get('first_name', '')} {emp.get('last_name', '')}",
+                "department": emp.get("department", ""),
+                "gross": p.get("gross_salary", 0),
+                "deductions": p.get("total_deductions", 0),
+                "net": p.get("net_salary", 0),
+                "period": p.get("period_name", "")
+            })
+        columns = ["employee", "department", "gross", "deductions", "net", "period"]
+        summary["totalAmount"] = sum(p.get("gross_salary", 0) for p in payrolls)
+
+    elif report_type == "employees":
+        emp_query = {"company_id": company_id}
+        if department != "Todos":
+            emp_query["department"] = department
+        if status != "all":
+            emp_query["status"] = status
+        employees = await db.employees.find(emp_query, {"_id": 0}).to_list(1000)
+        for emp in employees:
+            data.append({
+                "name": f"{emp.get('first_name', '')} {emp.get('last_name', '')}",
+                "position": emp.get("position", ""),
+                "department": emp.get("department", ""),
+                "hire_date": emp.get("hire_date", "")[:10] if emp.get("hire_date") else "",
+                "status": emp.get("status", "")
+            })
+        columns = ["name", "position", "department", "hire_date", "status"]
+
+    elif report_type == "loans":
+        loans_query = {"company_id": company_id}
+        if status != "all":
+            loans_query["status"] = status
+        loans = await db.loans.find(loans_query, {"_id": 0}).to_list(1000)
+
+        emp_ids = [l.get("employee_id") for l in loans]
+        employees = await db.employees.find(
+            {"employee_id": {"$in": emp_ids}},
+            {"_id": 0, "employee_id": 1, "first_name": 1, "last_name": 1}
+        ).to_list(1000)
+        emp_map = {e["employee_id"]: e for e in employees}
+
+        for loan in loans:
+            emp = emp_map.get(loan.get("employee_id"), {})
+            data.append({
+                "employee": f"{emp.get('first_name', '')} {emp.get('last_name', '')}",
+                "amount": loan.get("amount", 0),
+                "balance": loan.get("remaining_balance", 0),
+                "monthly": loan.get("monthly_payment", 0),
+                "status": loan.get("status", "")
+            })
+        columns = ["employee", "amount", "balance", "monthly", "status"]
+        summary["totalAmount"] = sum(l.get("amount", 0) for l in loans)
+
+    summary["totalRecords"] = len(data)
+
+    return {
+        "reportType": report_type,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "filters": {"dateFrom": date_from, "dateTo": date_to, "department": department},
+        "summary": summary,
+        "columns": columns,
+        "data": data
+    }
+
