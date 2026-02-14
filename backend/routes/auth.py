@@ -123,7 +123,8 @@ def create_jwt_token(user_id: str, email: str) -> str:
 # ===================== ROUTES =====================
 
 @router.post("/register")
-async def register(user_data: UserCreate, response: Response):
+@limiter.limit("5/minute")
+async def register(request: Request, user_data: UserCreate, response: Response):
     existing = await db.users.find_one({"email": user_data.email})
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -261,7 +262,8 @@ async def register(user_data: UserCreate, response: Response):
 
 
 @router.post("/login")
-async def login(credentials: UserLogin, response: Response):
+@limiter.limit("10/minute")
+async def login(request: Request, credentials: UserLogin, response: Response):
     user = await db.users.find_one({"email": credentials.email}, {"_id": 0})
     if not user or not verify_password(credentials.password, user.get("password_hash", "")):
         raise HTTPException(status_code=401, detail="Invalid credentials")
