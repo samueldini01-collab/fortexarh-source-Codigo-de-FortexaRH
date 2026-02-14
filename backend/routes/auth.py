@@ -438,7 +438,8 @@ async def forgot_password(request: Request, data: PasswordResetRequest):
 
 
 @router.post("/reset-password")
-async def reset_password(data: PasswordResetConfirm):
+@limiter.limit("5/minute")
+async def reset_password(request: Request, data: PasswordResetConfirm):
     """Reset password using token from email"""
     reset = await db.password_resets.find_one(
         {"token": data.token, "used": False},
