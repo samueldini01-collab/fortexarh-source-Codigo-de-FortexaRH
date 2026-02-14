@@ -270,7 +270,8 @@
       "pricing": "Tarifs",
       "contact": "Contact",
       "login": "Connexion",
-      "startFree": "Commencer Gratuitement"
+      "startFree": "Commencer Gratuitement",
+      "getStarted": "Get Started"
     },
     "features": {
       "title": "Tout ce dont vous avez besoin pour gérer votre équipe",
@@ -917,7 +918,8 @@
       "errorDownloadingIr17": "Erreur lors du téléchargement de IR-17",
       "errorExportingTss": "Erreur lors de l'exportation TSS",
       "errorLoadingBreakdown": "Erreur lors du chargement de la ventilation",
-      "baseSalary": "Salaire de Base"
+      "baseSalary": "Salaire de Base",
+      "tssExported": "TSS exported"
     }
   },
   "globalSearch": {
@@ -1144,7 +1146,8 @@
       "description2": "Description",
       "descriptionPlaceholder": "Ex. Versement 1/10",
       "amount": "Montant / %",
-      "add": "Ajouter"
+      "add": "Ajouter",
+      "amountRequired": "Enter an amount for the deduction"
     },
     "emergencyContacts": {
       "title": "Contacts d'Urgence",
@@ -1542,7 +1545,14 @@
       "errorLoading": "Erreur chargement données",
       "errorCreateShift": "Erreur création équipe",
       "noRecordsDate": "Pas d'enregistrements pour cette date",
-      "noRecordsFilter": "Pas d'enregistrements avec ces filtres"
+      "noRecordsFilter": "Pas d'enregistrements avec ces filtres",
+      "checkInSuccess": "Entrada registrada",
+      "checkOutSuccess": "Salida registrada",
+      "errorCheckIn": "Error al registrar entrada",
+      "errorCheckOut": "Error al registrar salida",
+      "errorCreatingShift": "Error al crear turno",
+      "errorRegistering": "Error al registrar",
+      "registered": "Asistencia registrada"
     }
   },
   "expenses": {
@@ -1913,7 +1923,12 @@
       "errorPayment": "Erreur enregistrement paiement",
       "errorDeleting": "Erreur suppression",
       "noLoans": "Aucun prêt enregistré",
-      "noLoansFilter": "Aucun prêt avec ces filtres"
+      "noLoansFilter": "Aucun prêt avec ces filtres",
+      "confirmDelete": "¿Está seguro de eliminar este préstamo?",
+      "errorLoadDetails": "Error al cargar detalles",
+      "errorLoadHistory": "Error al cargar historial de pagos",
+      "errorLoading": "Error al cargar datos",
+      "fillRequired": "Complete todos los campos requeridos"
     }
   },
   "portal": {
@@ -2684,7 +2699,121 @@
       "minWithdrawalAmount": "Le montant minimum de retrait est de $50.00",
       "amountExceedsBalance": "Montant supérieur au solde disponible",
       "stripeConnected": "Compte Stripe connecté avec succès!",
-      "completeStripeSetup": "Veuillez compléter la configuration de votre compte Stripe"
+      "completeStripeSetup": "Veuillez compléter la configuration de votre compte Stripe",
+      "actions": "Actions",
+      "activeClients": "Clients Actifs",
+      "activePayingClient": "Cliente activo pagando",
+      "add": "Ajouter",
+      "addClient": "Ajouter un client",
+      "addFirstClient": "Ajouter le premier client",
+      "addNewClient": "Ajouter un nouveau client",
+      "adding": "Ajout...",
+      "allCommissionsGenerated": "Todas las comisiones generadas por tus clientes",
+      "allWithdrawals": "Todos los retiros procesados y pendientes",
+      "amount": "Montant",
+      "amountToWithdraw": "Monto a Retirar (USD)",
+      "arrivalTime": "El dinero llegará a tu cuenta en 2-3 días hábiles",
+      "availableBalance": "Solde disponible",
+      "benefitsInactive": "Beneficios de Partner Inactivos",
+      "benefitsRequirement": "Necesitas al menos 1 cliente activo con suscripción pagada para mantener el precio de $10/mes.",
+      "benefitsRequirementLabel": "Requisito para Beneficios",
+      "billing": "Facturation",
+      "billingType": "Tipo de Facturación",
+      "cancel": "Annuler",
+      "client": "Client",
+      "clients": "Clients",
+      "commission": "Commission",
+      "commissionHistory": "Historial de Comisiones",
+      "commissionPerClient": "Comisión por Cliente",
+      "commissions": "Commissions",
+      "commissionsSummary": "Resumen de Comisiones",
+      "commissionsWillAppear": "Las comisiones aparecerán cuando tus clientes paguen",
+      "commissionsWillGenerate": "Las comisiones se generarán cuando tus clientes realicen pagos",
+      "company": "Empresa",
+      "companyName": "Nombre de la Empresa",
+      "completeSetup": "Completar Configuración",
+      "confirmWithdrawal": "Confirmar Retiro",
+      "connectBankAccount": "Conecta tu Cuenta Bancaria",
+      "connectStripeFirst": "Conecta Stripe primero",
+      "connectWithStripe": "Conectar con Stripe",
+      "connecting": "Conectando...",
+      "contact": "Contacto",
+      "contactName": "Nombre del Contacto",
+      "copyInvitationLink": "Copiar Link",
+      "copyLink": "Copiar Link",
+      "date": "Date",
+      "direct": "Directo",
+      "directDescription": "El cliente pagará directamente y recibirás 30% de comisión",
+      "directToClient": "Directo al cliente (cliente paga su suscripción)",
+      "email": "Correo Electrónico",
+      "enterClientData": "Ingresa los datos del cliente para enviarle una invitación",
+      "firmDescription": "Tú pagas la suscripción del cliente con 30% de descuento",
+      "firmPays": "Firma paga",
+      "firmPaysDiscount": "Firma paga (tú pagas con descuento)",
+      "graceDaysRemaining": "Te quedan {{days}} días de gracia.",
+      "hello": "¡Hola, {{name}}!",
+      "id": "ID",
+      "inProcess": "En Proceso",
+      "invitation": "Invitación",
+      "last12Months": "Últimos 12 meses",
+      "lastAdded": "Últimos clientes agregados",
+      "leaveBlankForAll": "Deja en blanco para retirar todo el balance disponible",
+      "logout": "Cerrar Sesión",
+      "manageClients": "Gestiona tus clientes y comisiones desde tu portal de partner.",
+      "manageReferredClients": "Gestiona tus clientes referidos",
+      "minAmount": "Mínimo ${{amount}}",
+      "minForWithdrawal": "Mínimo para retiro:",
+      "minMax": "Mínimo $50 - Máximo ${{max}}",
+      "monthlyProcessing": "Los pagos se procesan mensualmente. El dinero llega en 2-3 días hábiles.",
+      "myClients": "Mis Clientes",
+      "myCompany": "Mi Empresa",
+      "noClients": "No tienes clientes aún",
+      "noClientsYet": "No tienes clientes aún",
+      "noCommissions": "Sin comisiones aún",
+      "noCommissionsYet": "Sin comisiones aún",
+      "noWithdrawalsYet": "Sin retiros aún",
+      "onTrial": "en prueba",
+      "overview": "Resumen",
+      "paid": "Pagado",
+      "partnerPlan": "Plan Partner",
+      "partnerPortal": "Portal de Partner",
+      "pending": "En attente",
+      "pendingCommissions": "Comisiones Pendientes",
+      "pendingLabel": "En attente",
+      "pendingVerification": "Verificación pendiente - completa tu configuración",
+      "phone": "Teléfono",
+      "pricePerEmployee": "Precio por empleado activo",
+      "processing": "Traitement...",
+      "readyToReceivePayments": "Lista para recibir pagos",
+      "recentClients": "Clientes Recientes",
+      "recurringForLife": "Recurrente de por vida",
+      "requestWithdrawal": "Solicitar Retiro",
+      "requestWithdrawalTitle": "Solicitar Retiro",
+      "resendInvitation": "Reenviar Invitación",
+      "sent": "Enviada",
+      "settings": "Configuración",
+      "shareForCommission": "Comparte este link para ganar 30% de comisión por cada cliente",
+      "standardPlan": "Plan Estándar",
+      "startAddingClients": "Comienza agregando tu primer cliente o comparte tu link de referido",
+      "status": "Statut",
+      "stripeAccountConnected": "Cuenta de Stripe Conectada",
+      "stripeDescription": "Para recibir tus comisiones, necesitas conectar tu cuenta bancaria a través de Stripe. Es seguro, rápido y solo toma unos minutos.",
+      "toPay": "Por pagar",
+      "totalEarned": "Total Ganado",
+      "totalEarnedLabel": "Total Ganado",
+      "transactions": "transacciones",
+      "unlimitedEmployees": "Empleados ilimitados",
+      "viewDashboard": "Ver Dashboard",
+      "viewDetails": "Ver Detalles",
+      "withdrawFunds": "Retirar Fondos",
+      "withdrawToBank": "Retira tus comisiones a tu cuenta bancaria",
+      "withdrawalHistory": "Historial de Retiros",
+      "withdrawals": "Retiros",
+      "withdrawalsWillAppear": "Cuando solicites un retiro, aparecerá aquí",
+      "yourMonthlyPrice": "Tu Precio Mensual",
+      "yourPricingModel": "Tu Modelo de Precios",
+      "yourReferralLink": "Tu Link de Referido",
+      "yourSubscription": "Tu Suscripción"
     },
     "register": {
       "title": "Inscription Partenaire",
@@ -3161,7 +3290,15 @@
       "pending": "En Attente",
       "installments": "Mensualités",
       "costs": "Coûts",
-      "errorLoading": "Erreur lors du chargement des détails"
+      "errorLoading": "Erreur lors du chargement des détails",
+      "exitsYTD": "Salidas YTD",
+      "hired": "Contratados",
+      "hiresExits": "Entradas y salidas de empleados por mes (click para ver detalles)",
+      "hiresYTD": "Contratados YTD",
+      "month": "Mois",
+      "netBalance": "Balance Neto",
+      "payrollBreakdown": "Desglose Nómina",
+      "terminated": "Salidas"
     }
   },
   "orgChart": {
@@ -3288,7 +3425,8 @@
       "save": "Enregistrer",
       "cancel": "Annuler",
       "post": "Comptabiliser",
-      "void": "Annuler"
+      "void": "Annuler",
+      "createFirst": "Crear primer asiento"
     },
     "entry": {
       "number": "Numéro",
@@ -3338,14 +3476,21 @@
       "namePlaceholder": "Ex: Caisse",
       "parentAccount": "Compte Parent",
       "selectParent": "Sélectionner compte parent",
-      "noParent": "Sans parent (niveau 1)"
+      "noParent": "Sans parent (niveau 1)",
+      "createAccountDesc": "Complete los datos para crear una nueva cuenta",
+      "createEntryDesc": "Complete los datos para crear un nuevo asiento",
+      "editAccountDesc": "Modifique los datos de la cuenta",
+      "editEntryDesc": "Modifique los datos del asiento contable",
+      "parentCode": "Código Padre (Opcional)",
+      "parentCodePlaceholder": "Ej: 51"
     },
     "preview": {
       "title": "Aperçu d'Exportation",
       "format": "Format",
       "summary": "Résumé",
       "detailed": "Détaillé",
-      "download": "Télécharger CSV"
+      "download": "Télécharger CSV",
+      "exportAs": "Exportar como"
     },
     "catalog": {
       "title": "Sélectionner Plan Comptable",
@@ -3354,7 +3499,8 @@
       "niif": "Catalogue IFRS",
       "niifDesc": "Plan comptable basé sur les Normes Internationales",
       "dr": "Catalogue RD",
-      "drDesc": "Plan comptable standard de République Dominicaine"
+      "drDesc": "Plan comptable standard de République Dominicaine",
+      "chartOfAccounts": "Catálogo de Cuentas"
     },
     "messages": {
       "entryCreated": "Écriture créée avec succès",
@@ -3414,7 +3560,9 @@
       "totalCost": "Coût Total",
       "totalEmployees": "Total Employés",
       "avgCostPerEmployee": "Coût Moy. par Employé",
-      "departments": "Départements"
+      "departments": "Départements",
+      "employerContributions": "Aportes Patronales",
+      "grossSalary": "Salario Bruto"
     },
     "charts": {
       "distribution": "Distribution des Coûts",
@@ -3902,10 +4050,13 @@
         "allStatuses": "Tous les statuts",
         "withinZone": "Dans la zone",
         "outsideZone": "Hors zone",
-        "pendingReview": "En attente de révision"
+        "pendingReview": "En attente de révision",
+        "activeFilters": "Filtros activos:"
       },
       "employeesOnMap": "employés sur la carte",
-      "noData": "Aucune donnée de carte en direct disponible"
+      "noData": "Aucune donnée de carte en direct disponible",
+      "employeeToast": "{{name}} - {{markType}}",
+      "locationToast": "{{name}} - Radio: {{radius}}m"
     },
     "fraud": {
       "title": "Alertes de Fraude Détectées",
@@ -4190,7 +4341,13 @@
     "previewGenerated": "Aperçu généré",
     "errorGeneratingPreview": "Erreur lors de la génération de l'aperçu",
     "reportExported": "Rapport exporté en {{format}}",
-    "errorExportingReport": "Erreur lors de l'exportation du rapport"
+    "errorExportingReport": "Erreur lors de l'exportation du rapport",
+    "configDeleted": "Configuration deleted",
+    "configLoaded": "Configuration loaded",
+    "configSaved": "Configuration saved",
+    "enterReportName": "Enter a name for the report",
+    "errorDeletingConfig": "Error deleting configuration",
+    "errorSavingConfig": "Error saving configuration"
   },
   "subscriptions": {
     "errorLoadingData": "Erreur lors du chargement des données d'abonnement",
@@ -4307,7 +4464,10 @@
     "priorityUpdated": "Priorité mise à jour: {{priority}}",
     "errorUpdatingPriority": "Erreur lors de la mise à jour de la priorité",
     "errorSendingResponse": "Erreur lors de l'envoi de la réponse",
-    "errorLoadingDetails": "Erreur lors du chargement des détails"
+    "errorLoadingDetails": "Erreur lors du chargement des détails",
+    "internalNoteAdded": "Internal note added",
+    "responseSent": "Response sent to client",
+    "writeMessage": "Write a message"
   },
   "recruitment": {
     "errorLoading": "Erreur lors du chargement des données",
