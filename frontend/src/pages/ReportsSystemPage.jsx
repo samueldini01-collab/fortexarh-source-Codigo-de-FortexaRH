@@ -69,7 +69,7 @@ export default function ReportsSystemPage() {
   // Fetch catalog
   const fetchCatalog = useCallback(async () => {
     try {
-      const response = await axios.get(`${API}/api/reports-system/catalog`, {
+      const response = await axios.get(`${API}/reports-system/catalog`, {
         headers: getAuthHeaders()
       });
       setCatalog(response.data);
@@ -83,7 +83,7 @@ export default function ReportsSystemPage() {
   // Fetch saved reports
   const fetchSavedReports = useCallback(async () => {
     try {
-      const response = await axios.get(`${API}/api/reports-system/saved`, {
+      const response = await axios.get(`${API}/reports-system/saved`, {
         headers: getAuthHeaders()
       });
       setSavedReports(response.data);
@@ -95,7 +95,7 @@ export default function ReportsSystemPage() {
   // Fetch report history
   const fetchHistory = useCallback(async () => {
     try {
-      const response = await axios.get(`${API}/api/reports-system/history`, {
+      const response = await axios.get(`${API}/reports-system/history`, {
         headers: getAuthHeaders()
       });
       setReportHistory(response.data);
@@ -120,7 +120,7 @@ export default function ReportsSystemPage() {
         .filter(([_, value]) => value)
         .map(([field, value]) => ({ field, value }));
 
-      const response = await axios.post(`${API}/api/reports-system/preview`, {
+      const response = await axios.post(`${API}/reports-system/preview`, {
         report_id: selectedReport.id,
         filters: filterArray,
         columns: selectedColumns.length > 0 ? selectedColumns : null,
@@ -149,7 +149,7 @@ export default function ReportsSystemPage() {
         .filter(([_, value]) => value)
         .map(([field, value]) => ({ field, value }));
 
-      const response = await axios.post(`${API}/api/reports-system/export/${format}`, {
+      const response = await axios.post(`${API}/reports-system/export/${format}`, {
         report_id: selectedReport.id,
         filters: filterArray,
         columns: selectedColumns.length > 0 ? selectedColumns : null
@@ -194,7 +194,7 @@ export default function ReportsSystemPage() {
         .filter(([_, value]) => value)
         .map(([field, value]) => ({ field, value }));
 
-      await axios.post(`${API}/api/reports-system/saved`, {
+      await axios.post(`${API}/reports-system/saved`, {
         name: saveConfig.name,
         description: saveConfig.description,
         report_id: selectedReport.id,
@@ -250,7 +250,7 @@ export default function ReportsSystemPage() {
   // Delete saved report
   const deleteSavedReport = async (savedReportId) => {
     try {
-      await axios.delete(`${API}/api/reports-system/saved/${savedReportId}`, {
+      await axios.delete(`${API}/reports-system/saved/${savedReportId}`, {
         headers: getAuthHeaders()
       });
       toast.success(t('reportsSystem.configDeleted'));
