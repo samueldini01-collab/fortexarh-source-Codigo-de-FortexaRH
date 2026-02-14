@@ -133,9 +133,13 @@ export default function MetricsDashboardPage() {
               withCredentials: true
             });
             const periods = periodsRes.data || [];
-            const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-            const monthIndex = monthNames.indexOf(monthData?.month?.substring(0, 3));
-            const monthPeriod = periods.find(p => p.month === (monthIndex + 1));
+            // Use month_number if available, otherwise try to parse month name
+            let matchMonth = monthData?.month_number;
+            if (!matchMonth) {
+              const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+              matchMonth = monthNames.indexOf(monthData?.month?.substring(0, 3)) + 1;
+            }
+            const monthPeriod = periods.find(p => p.month === matchMonth);
             
             if (monthPeriod) {
               const detailRes = await axios.get(`${API}/payroll-v2/periods/${monthPeriod.period_id}`, {
