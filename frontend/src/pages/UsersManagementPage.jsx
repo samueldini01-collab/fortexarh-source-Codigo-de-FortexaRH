@@ -131,7 +131,7 @@ export default function UsersManagementPage() {
     try {
       const [usersRes, activitiesRes, rolesRes, subRes] = await Promise.all([
         axios.get(`${API}/system-users`, { headers: getAuthHeaders(), withCredentials: true }),
-        axios.get(`${API}/user-activities`, { headers: getAuthHeaders(), withCredentials: true }),
+        axios.get(`${API}/system-users/activities/all`, { headers: getAuthHeaders(), withCredentials: true }),
         axios.get(`${API}/roles`, { headers: getAuthHeaders(), withCredentials: true }),
         axios.get(`${API}/subscription`, { headers: getAuthHeaders(), withCredentials: true })
       ]);
