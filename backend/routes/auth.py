@@ -374,7 +374,8 @@ async def logout(request: Request, response: Response):
 
 
 @router.post("/forgot-password")
-async def forgot_password(data: PasswordResetRequest):
+@limiter.limit("3/minute")
+async def forgot_password(request: Request, data: PasswordResetRequest):
     """Request password reset - sends email with reset link"""
     user = await db.users.find_one({"email": data.email}, {"_id": 0})
     
