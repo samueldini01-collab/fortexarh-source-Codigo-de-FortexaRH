@@ -13,7 +13,7 @@ import os
 import resend
 import logging
 
-router = APIRouter(prefix="/notifications", tags=["Notifications"])
+router = APIRouter(prefix="/notification-settings", tags=["Notification Settings"])
 security = HTTPBearer(auto_error=False)
 
 db = None
