@@ -25,7 +25,7 @@ db = None
 SUBSCRIPTION_PLANS = None
 send_welcome_email = None
 
-JWT_SECRET = os.environ.get('JWT_SECRET', 'hrflow_secret_key_2024')
+JWT_SECRET = os.environ['JWT_SECRET']
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_HOURS = 24 * 7
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
