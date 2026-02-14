@@ -177,9 +177,16 @@ export default function PayrollDashboardPage() {
               headers: getAuthHeaders(),
               withCredentials: true
             });
-            const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-            const mIdx = monthNames.indexOf(monthPoint?.month?.substring(0, 3));
-            const matched = (periodsRes.data || []).find(p => p.month === (mIdx + 1));
+            // month can be "YYYY-MM" format or Spanish abbreviation
+            let matchMonth = -1;
+            const monthStr = monthPoint?.month || '';
+            if (monthStr.includes('-')) {
+              matchMonth = parseInt(monthStr.split('-')[1]);
+            } else {
+              const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+              matchMonth = monthNames.indexOf(monthStr.substring(0, 3)) + 1;
+            }
+            const matched = (periodsRes.data || []).find(p => p.month === matchMonth);
             if (matched) {
               const detailRes = await axios.get(`${API}/payroll-v2/periods/${matched.period_id}`, {
                 headers: getAuthHeaders(),
