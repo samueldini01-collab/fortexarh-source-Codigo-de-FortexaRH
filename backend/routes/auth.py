@@ -17,8 +17,12 @@ import asyncio
 import stripe
 import resend
 
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 security = HTTPBearer(auto_error=False)
+limiter = Limiter(key_func=get_remote_address)
 
 # Will be initialized by init_router
 db = None
