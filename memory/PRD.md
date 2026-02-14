@@ -4,61 +4,38 @@
 SaaS HR and Payroll management system named "FortexaRH" for the Dominican Republic market. Multi-language (ES/EN/FR), with modules for user management, org chart, advanced payroll, accounting, compliance reporting (DR-specific), company/UI customization, document generation, AI search, advanced reporting, drill-down functionality, HR modules (Time & Attendance, Leave, Performance), Employee Self-Service Portal, integrations (Stripe, Resend, QuickBooks, SAP, Oracle, Dynamics), dark mode, subscription management, and more.
 
 ## Architecture
-- **Frontend**: React 19 + Tailwind CSS + Shadcn/UI + i18next (lazy-loaded via http-backend)
-- **Backend**: FastAPI + MongoDB (async motor)
+- **Frontend**: React 19 + Tailwind CSS + Shadcn/UI + i18next
+- **Backend**: FastAPI + MongoDB (async motor) + slowapi (rate limiting)
 - **Payments**: Stripe (Checkout Sessions + Stripe Elements/SetupIntent)
 - **Email**: Resend
 - **AI Search**: Gemini (Emergent LLM Key)
-- **Auth**: JWT + Emergent-managed Google Auth
+- **Auth**: JWT (no default fallback) + Emergent-managed Google Auth + Rate limiting on auth endpoints
 - **Accounting**: QuickBooks Online integration
-- **Performance**: Code-splitting (React.lazy) for all 48 pages, on-demand i18n loading
 
 ## What's Been Implemented
 
 ### Core System
 - User management & roles/permissions
 - Company settings & branding customization
-- Org chart (interactive)
-- Employee CRUD with full Dominican Republic compliance fields
-- Dashboard with metrics & KPIs + drill-down on all cards
-- Notifications system
+- Org chart, Employee CRUD, Dashboard with drill-down on all cards
+- Notifications system (split into /notifications and /notification-settings)
+
+### Security (Feb 14 2026)
+- JWT Secret: No default fallback — fails fast if env var missing
+- Rate limiting (slowapi): login 10/min, register 5/min, forgot-password 3/min, reset-password 5/min
+- File upload validation: 10MB limit + type restrictions on employee imports and expense attachments
+- Cookie security: httponly, secure, samesite=none
 
 ### Payments & Subscriptions
-- Stripe Checkout Sessions for plan purchases
-- Subscription management (change plan, adjust employees/users, cancel/reactivate)
-- Invoice history with PDF download
-- Payment Method Management with Stripe Elements (inline SetupIntent)
+- Stripe Checkout, Subscription management, Invoice history
+- Inline Payment Method updates (Stripe Elements / SetupIntent)
 - Payment Method Change History (audit trail)
 
-### Drill-Down Functionality (Feb 2026)
-**Main Dashboard:**
-- Active Employees, Pending Payrolls, Present Today, Pending Vacations, Open Jobs, New Candidates
-
-**Payroll Dashboard (ALL cards + charts):**
-- Active Employees → employee list
-- Paid This Year → paid payroll periods
-- Average Salary → salary distribution
-- Paid Payrolls → completed payroll periods
-- Monthly Trend chart → month detail with entries
-- Department Distribution pie → department employees
-- Top 10 Salaries → ranked employee list (FIXED: salary values now correct)
-
-**Metrics Dashboard (ALL cards + charts):**
-- Monthly Payroll → payroll breakdown
-- Total Employees → full employee list
-- Active Loans → loan details
-- Cost per Employee → employee list
-- Payroll Trend chart → month detail (FIXED: month parsing)
-- Department Cost chart → department employees
-- Employee Distribution pie → department employees
-- Monthly Comparison table rows → month breakdown
-- Year vs Year chart → month detail
-- Turnover Analysis chart → employee list
+### Drill-Down Functionality
+- All Dashboard/Payroll/Metrics cards and charts with drill-down modals
 
 ### Internationalization (i18n)
-- Full i18n with i18next (ES, EN, FR) across all 48 pages
-- On-demand translation loading via `i18next-http-backend`
-- All 3 languages synced to 3782 keys with 0 missing (Feb 14 2026)
+- Full i18n (ES, EN, FR) — 3782 keys, 0 missing across all 3 languages
 
 ### Integrations
 - Stripe ✅, Resend ✅, Google Auth ✅, Gemini ✅, QuickBooks ✅
@@ -66,38 +43,35 @@ SaaS HR and Payroll management system named "FortexaRH" for the Dominican Republ
 
 ## System Analysis & Fixes (Feb 14 2026)
 
-### P0 Fixes Applied
-- **Top 10 Salaries RD$0 bug**: Backend used `base_salary` field but employees use `salary`. Fixed in server.py (lines 2201, 2229, 2235, 2267)
-- **Monthly trend drill-down bug**: Was parsing YYYY-MM format as Spanish month abbreviation. Fixed in PayrollDashboardPage.jsx
-- **MetricsDashboard drill-down bug**: Month parsing didn't use `month_number` field. Fixed in MetricsDashboardPage.jsx
-- **CORS**: Added preview URL to allowed_origins
-- **Duplicate notification prefix**: Renamed notifications.py to `/notification-settings`, kept notifications_system.py as `/notifications`
+### Bugs Fixed
+| # | Bug | Impact |
+|---|-----|--------|
+| 1 | ReportsSystemPage double `/api` prefix | Page completely broken (7 API calls returning 404) |
+| 2 | Top 10 Salaries RD$0 | Backend used `base_salary` instead of `salary` |
+| 3 | Monthly trend drill-down broken | YYYY-MM parsed as Spanish month abbreviation |
+| 4 | MetricsDashboard drill-down bug | month_number not used for matching |
+| 5 | CORS missing preview URL | Potential browser CORS errors |
+| 6 | Duplicate notification prefix | /notifications conflict between 2 routers |
+| 7 | NotificationsPage API inconsistency | Used API_URL instead of API |
+| 8 | Translation gaps (122 EN, 12 ES, 160 FR) | Raw keys displayed to users |
 
-### P1 Fixes Applied
-- **Translation sync**: EN (was 122 missing), ES (was 12 missing), FR (was 160 missing) → All synced to 3782 keys
-- **Partner translations**: Full EN/FR translations for 114+ partner dashboard keys
-- **Auth audit**: Verified - all endpoints that should require auth do; public endpoints (auth, checkout webhooks, static config) are intentionally unprotected
-
-### Analysis Results (Items NOT yet addressed)
-- **P2: Hardcoded strings**: 25 pages have Spanish text not using `t()` (OrganigramaPage: 75, EmployeesPage: 46 most affected)
-- **P2: Console.log**: Multiple pages have debug console statements
-- **P2: data-testid gaps**: 8 pages have minimal test IDs
-- **P3: server.py monolith**: 2733 lines, 50 inline endpoints should be moved to modular route files
-- **P3: Empty models directory**: No centralized Pydantic models
+### Refactoring Completed
+| # | Change | Impact |
+|---|--------|--------|
+| 1 | Removed 12 duplicate endpoints from server.py | Eliminated inconsistent behavior |
+| 2 | server.py reduced from 2,733 to 2,293 lines | Better maintainability |
+| 3 | Upgraded modular dashboard.py | Full payroll-stats with top_salaries, summary, etc. |
+| 4 | Fixed UsersManagementPage to use modular endpoint | /system-users/activities/all |
 
 ## Prioritized Backlog
 
 ### P0
-- [x] Subscription Management Phase 2 — Stripe Elements card update flow
-- [x] Payment Method Change History — Admin traceability
-- [x] Drill-Down on all Dashboard/Payroll/Metrics cards and charts
-- [x] System Analysis & Critical Bug Fixes (Feb 14 2026)
 - [ ] 2FA / MFA — Two-factor authentication
 
 ### P1
 - [ ] ACH Bank Integration (BHD, Popular, Banreservas)
 - [ ] E-signature for contracts and payroll receipts
-- [ ] Hardcoded strings → i18n migration (25 pages)
+- [ ] Hardcoded Spanish strings → i18n migration (25 pages)
 
 ### P2
 - [ ] Configurable alert notifications
@@ -105,14 +79,15 @@ SaaS HR and Payroll management system named "FortexaRH" for the Dominican Republ
 - [ ] Configurable approval workflows
 - [ ] Massive data import via Excel
 - [ ] Public documented API
-- [ ] Complete Audit Trail (CDC logging enhancement)
-- [ ] Remove console.log statements for production
+- [ ] Complete Audit Trail (CDC logging)
+- [ ] Remove console.log statements
 - [ ] Add missing data-testid attributes
 
 ### P3 (Refactoring)
-- [ ] Move server.py inline routes to modular files
+- [ ] Move remaining 30 server.py inline routes to modular files
 - [ ] Centralize Pydantic models in /backend/models/
 - [ ] Consolidate payroll routes (payroll.py + payroll_v2.py)
+- [ ] Add MongoDB indexes for common query fields
 
 ## Key Credentials (Test)
 - Admin: `test_refactor@fortexa.com` / `test123`
