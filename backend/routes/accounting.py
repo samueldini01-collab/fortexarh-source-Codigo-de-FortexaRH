@@ -882,3 +882,194 @@ async def preview_journal_entry(
             preview_data["rows"].append(row)
     
     return preview_data
+
+
+# ===================== PAYROLL CONSTANTS FOR JOURNAL ENTRIES =====================
+
+SFS_EMPLOYER_RATE = 0.0709
+AFP_EMPLOYER_RATE = 0.0710
+SRL_EMPLOYER_RATE = 0.01
+INFOTEP_EMPLOYER_RATE = 0.01
+
+DEFAULT_PAYROLL_ACCOUNTS = [
+    {"code": "5101", "name": "Gastos de Sueldos y Salarios", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "5102", "name": "Gastos de Horas Extras Diurnas", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "5103", "name": "Gastos de Horas Extras Nocturnas", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "5104", "name": "Gastos de Horas Extras Fines de Semana", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "5105", "name": "Gastos de Horas Extras Dias Feriados", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "5106", "name": "Gastos de Bonificaciones", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "5107", "name": "Gastos de Comisiones", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "5201", "name": "Aportes Patronales SFS (7.09%)", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "5202", "name": "Aportes Patronales AFP (7.10%)", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "5203", "name": "Aportes Patronales SRL (1%)", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "5204", "name": "Aportes Patronales INFOTEP (1%)", "account_type": "expense", "normal_balance": "debit", "is_payroll_account": True},
+    {"code": "2201", "name": "Deducciones SFS por Pagar (3.04%)", "account_type": "liability", "normal_balance": "credit", "is_payroll_account": True},
+    {"code": "2202", "name": "Deducciones AFP por Pagar (2.87%)", "account_type": "liability", "normal_balance": "credit", "is_payroll_account": True},
+    {"code": "2203", "name": "Retencion ISR por Pagar", "account_type": "liability", "normal_balance": "credit", "is_payroll_account": True},
+    {"code": "2204", "name": "Descuentos Adicionales por Pagar", "account_type": "liability", "normal_balance": "credit", "is_payroll_account": True},
+    {"code": "2205", "name": "Aportes TSS por Pagar", "account_type": "liability", "normal_balance": "credit", "is_payroll_account": True},
+    {"code": "1101", "name": "Banco - Cuenta Nomina", "account_type": "asset", "normal_balance": "debit", "is_payroll_account": True, "is_bank_account": True},
+]
+
+
+# ===================== GENERATE PAYROLL JOURNAL ENTRY =====================
+
+@router.post("/generate-payroll-entry")
+async def generate_payroll_journal_entry(
+    payroll_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    company_id = current_user.get("company_id")
+
+    calculation = await db.payroll_calculations.find_one(
+        {"calculation_id": payroll_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not calculation:
+        raise HTTPException(status_code=404, detail="Calculo de nomina no encontrado")
+
+    lines = []
+
+    if calculation.get("proportional_salary", 0) > 0:
+        lines.append({
+            "account_code": "5101",
+            "account_name": "Gastos de Sueldos y Salarios",
+            "description": f"Salario - {calculation.get('employee_name', 'Empleado')}",
+            "debit": calculation.get("proportional_salary", 0),
+            "credit": 0
+        })
+
+    if calculation.get("extra_hours_pay", 0) > 0:
+        lines.append({
+            "account_code": "5102",
+            "account_name": "Gastos de Horas Extra",
+            "description": f"Horas extra - {calculation.get('employee_name', 'Empleado')}",
+            "debit": calculation.get("extra_hours_pay", 0),
+            "credit": 0
+        })
+
+    if calculation.get("bonuses", 0) > 0:
+        lines.append({
+            "account_code": "5103",
+            "account_name": "Gastos de Bonificaciones",
+            "description": f"Bonificacion - {calculation.get('employee_name', 'Empleado')}",
+            "debit": calculation.get("bonuses", 0),
+            "credit": 0
+        })
+
+    if calculation.get("commissions", 0) > 0:
+        lines.append({
+            "account_code": "5104",
+            "account_name": "Gastos de Comisiones",
+            "description": f"Comision - {calculation.get('employee_name', 'Empleado')}",
+            "debit": calculation.get("commissions", 0),
+            "credit": 0
+        })
+
+    total_earnings = calculation.get("total_earnings", 0)
+    sfs_employer = round(total_earnings * SFS_EMPLOYER_RATE, 2)
+    afp_employer = round(total_earnings * AFP_EMPLOYER_RATE, 2)
+    srl_employer = round(total_earnings * SRL_EMPLOYER_RATE, 2)
+    infotep_employer = round(total_earnings * INFOTEP_EMPLOYER_RATE, 2)
+
+    if sfs_employer > 0:
+        lines.append({
+            "account_code": "5201", "account_name": "Aportes Patronales SFS",
+            "description": "Aporte patronal SFS (7.09%)", "debit": sfs_employer, "credit": 0
+        })
+    if afp_employer > 0:
+        lines.append({
+            "account_code": "5202", "account_name": "Aportes Patronales AFP",
+            "description": "Aporte patronal AFP (7.10%)", "debit": afp_employer, "credit": 0
+        })
+    if srl_employer > 0:
+        lines.append({
+            "account_code": "5203", "account_name": "Aportes Patronales SRL",
+            "description": "Aporte patronal SRL (1%)", "debit": srl_employer, "credit": 0
+        })
+    if infotep_employer > 0:
+        lines.append({
+            "account_code": "5204", "account_name": "Aportes Patronales INFOTEP",
+            "description": "Aporte patronal INFOTEP (1%)", "debit": infotep_employer, "credit": 0
+        })
+
+    if calculation.get("sfs_employee", 0) > 0:
+        lines.append({
+            "account_code": "2201", "account_name": "Retenciones SFS Empleados",
+            "description": f"Retencion SFS (3.07%) - {calculation.get('employee_name', 'Empleado')}",
+            "debit": 0, "credit": calculation.get("sfs_employee", 0)
+        })
+    if calculation.get("afp_employee", 0) > 0:
+        lines.append({
+            "account_code": "2202", "account_name": "Retenciones AFP Empleados",
+            "description": f"Retencion AFP (2.87%) - {calculation.get('employee_name', 'Empleado')}",
+            "debit": 0, "credit": calculation.get("afp_employee", 0)
+        })
+    if calculation.get("isr_monthly", 0) > 0:
+        lines.append({
+            "account_code": "2203", "account_name": "Retenciones ISR Empleados",
+            "description": f"Retencion ISR - {calculation.get('employee_name', 'Empleado')}",
+            "debit": 0, "credit": calculation.get("isr_monthly", 0)
+        })
+
+    total_employer_tss = sfs_employer + afp_employer + srl_employer + infotep_employer
+    if total_employer_tss > 0:
+        lines.append({
+            "account_code": "2204", "account_name": "Aportes TSS por Pagar",
+            "description": "Aportes patronales TSS por pagar",
+            "debit": 0, "credit": total_employer_tss
+        })
+    if calculation.get("loan_deduction", 0) > 0:
+        lines.append({
+            "account_code": "2205", "account_name": "Prestamos por Pagar",
+            "description": f"Descuento prestamo - {calculation.get('employee_name', 'Empleado')}",
+            "debit": 0, "credit": calculation.get("loan_deduction", 0)
+        })
+    if calculation.get("other_deductions", 0) > 0:
+        lines.append({
+            "account_code": "2206", "account_name": "Otras Deducciones por Pagar",
+            "description": f"Otras deducciones - {calculation.get('employee_name', 'Empleado')}",
+            "debit": 0, "credit": calculation.get("other_deductions", 0)
+        })
+    if calculation.get("net_salary", 0) > 0:
+        lines.append({
+            "account_code": "2101", "account_name": "Sueldos por Pagar",
+            "description": f"Sueldo neto - {calculation.get('employee_name', 'Empleado')}",
+            "debit": 0, "credit": calculation.get("net_salary", 0)
+        })
+
+    entry_id = f"je_{uuid.uuid4().hex[:12]}"
+    today = datetime.now(timezone.utc)
+    period = today.strftime("%Y-%m")
+
+    total_debits = sum(line["debit"] for line in lines)
+    total_credits = sum(line["credit"] for line in lines)
+
+    entry = {
+        "entry_id": entry_id,
+        "company_id": company_id,
+        "entry_date": today.strftime("%Y-%m-%d"),
+        "reference": f"NOM-{payroll_id}",
+        "description": f"Nomina - {calculation.get('employee_name', 'Empleado')}",
+        "period": period,
+        "entry_type": "payroll",
+        "lines": lines,
+        "payroll_id": payroll_id,
+        "notes": "Asiento generado automaticamente desde calculo de nomina",
+        "total_debits": round(total_debits, 2),
+        "total_credits": round(total_credits, 2),
+        "status": "draft",
+        "created_by": current_user.get("user_id"),
+        "created_at": today.isoformat(),
+        "updated_at": today.isoformat()
+    }
+
+    await db.journal_entries.insert_one(entry)
+
+    return {
+        "entry_id": entry_id,
+        "message": "Asiento contable generado correctamente",
+        "total_debits": round(total_debits, 2),
+        "total_credits": round(total_credits, 2)
+    }
+
