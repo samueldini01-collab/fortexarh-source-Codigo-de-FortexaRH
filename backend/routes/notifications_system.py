@@ -10,7 +10,7 @@ from typing import Callable, Optional, List
 from datetime import datetime, timezone
 import uuid
 
-router = APIRouter(prefix="/notifications", tags=["Notifications"])
+router = APIRouter(prefix="/notifications-system", tags=["Notifications System"])
 security = HTTPBearer(auto_error=False)
 
 db = None
