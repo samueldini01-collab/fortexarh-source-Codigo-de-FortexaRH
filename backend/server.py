@@ -95,6 +95,12 @@ QB_REALM_ID = os.environ.get('QUICKBOOKS_REALM_ID', '')
 QB_REDIRECT_URI = os.environ.get('QUICKBOOKS_REDIRECT_URI', '')
 
 app = FastAPI(title="FortexaRH SaaS API")
+
+# Rate limiter
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 api_router = APIRouter(prefix="/api")
 security = HTTPBearer(auto_error=False)
 
