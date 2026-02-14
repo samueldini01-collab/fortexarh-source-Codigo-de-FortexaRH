@@ -944,79 +944,10 @@ async def get_config_status():
         "mongo_configured": bool(os.environ.get('MONGO_URL'))
     }
 
-# ===================== REPORTS =====================
-
-@api_router.get("/reports/payroll")
-async def get_payroll_report(year: int, month: int, current_user: dict = Depends(get_current_user)):
-    company_id = current_user.get("company_id")
-    
-    # Get all payrolls for the month
-    month_str = f"{year}-{month:02d}"
-    payrolls = await db.payrolls.find(
-        {"company_id": company_id, "period_start": {"$regex": f"^{month_str}"}},
-        {"_id": 0}
-    ).to_list(1000)
-    
-    total_base = sum(p.get("base_salary", 0) for p in payrolls)
-    total_bonuses = sum(p.get("bonuses", 0) for p in payrolls)
-    total_deductions = sum(p.get("deductions", 0) for p in payrolls)
-    total_taxes = sum(p.get("taxes", 0) for p in payrolls)
-    total_net = sum(p.get("net_salary", 0) for p in payrolls)
-    
-    return {
-        "period": month_str,
-        "payrolls": payrolls,
-        "summary": {
-            "total_base_salary": total_base,
-            "total_bonuses": total_bonuses,
-            "total_deductions": total_deductions,
-            "total_taxes": total_taxes,
-            "total_net_salary": total_net,
-            "employee_count": len(payrolls)
-        }
-    }
-
-@api_router.get("/reports/attendance")
-async def get_attendance_report(year: int, month: int, current_user: dict = Depends(get_current_user)):
-    company_id = current_user.get("company_id")
-    
-    month_str = f"{year}-{month:02d}"
-    attendances = await db.attendances.find(
-        {"company_id": company_id, "date": {"$regex": f"^{month_str}"}},
-        {"_id": 0}
-    ).to_list(10000)
-    
-    # Group by employee
-    by_employee = {}
-    for att in attendances:
-        emp_id = att["employee_id"]
-        if emp_id not in by_employee:
-            by_employee[emp_id] = {
-                "employee_name": att.get("employee_name", ""),
-                "present": 0,
-                "absent": 0,
-                "late": 0,
-                "total_hours": 0
-            }
-        status = att.get("status", "present")
-        if status == "present":
-            by_employee[emp_id]["present"] += 1
-        elif status == "absent":
-            by_employee[emp_id]["absent"] += 1
-        elif status == "late":
-            by_employee[emp_id]["late"] += 1
-        by_employee[emp_id]["total_hours"] += att.get("hours_worked", 0)
-    
-    return {
-        "period": month_str,
-        "by_employee": list(by_employee.values()),
-        "summary": {
-            "total_present": sum(e["present"] for e in by_employee.values()),
-            "total_absent": sum(e["absent"] for e in by_employee.values()),
-            "total_late": sum(e["late"] for e in by_employee.values()),
-            "total_hours": sum(e["total_hours"] for e in by_employee.values())
-        }
-    }
+# Reports routes moved to routes/reports.py
+# Payroll config routes moved to routes/payroll_config.py
+# Templates routes moved to routes/templates.py
+# Documents routes moved to routes/generated_docs.py
 
 # ===================== PAYROLL CONFIG ROUTES =====================
 
