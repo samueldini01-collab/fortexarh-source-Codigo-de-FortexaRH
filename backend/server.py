@@ -2198,7 +2198,7 @@ async def get_payroll_dashboard_stats(current_user: dict = Depends(get_current_u
         if dept not in dept_distribution:
             dept_distribution[dept] = {"department": dept, "count": 0, "total_salary": 0}
         dept_distribution[dept]["count"] += 1
-        dept_distribution[dept]["total_salary"] += emp.get("base_salary", 0)
+        dept_distribution[dept]["total_salary"] += emp.get("salary", emp.get("base_salary", 0))
     
     # Employer cost breakdown
     total_entries = []
@@ -2226,13 +2226,13 @@ async def get_payroll_dashboard_stats(current_user: dict = Depends(get_current_u
     )
     
     # Top 10 salaries
-    top_salaries = sorted(employees, key=lambda x: x.get("base_salary", 0), reverse=True)[:10]
+    top_salaries = sorted(employees, key=lambda x: x.get("salary", x.get("base_salary", 0)), reverse=True)[:10]
     top_salaries_data = [
         {
             "employee_id": e.get("employee_id"),
             "name": f"{e.get('first_name', '')} {e.get('last_name', '')}",
             "department": e.get("department", ""),
-            "salary": e.get("base_salary", 0)
+            "salary": e.get("salary", e.get("base_salary", 0))
         }
         for e in top_salaries
     ]
@@ -2264,7 +2264,7 @@ async def get_payroll_dashboard_stats(current_user: dict = Depends(get_current_u
         "total_periods": len(periods),
         "paid_periods": len(paid_periods),
         "total_paid_ytd": sum(p.get("total_net", 0) for p in paid_periods if p.get("year") == datetime.now().year),
-        "avg_salary": sum(e.get("base_salary", 0) for e in employees) / len(employees) if employees else 0
+        "avg_salary": sum(e.get("salary", e.get("base_salary", 0)) for e in employees) / len(employees) if employees else 0
     }
     
     return {
