@@ -951,75 +951,7 @@ async def get_config_status():
 
 # Payroll settings/config/calculator routes moved to routes/payroll_config.py
 
-# ===================== TEMPLATES ROUTES =====================
-
-@api_router.get("/templates")
-async def get_templates(current_user: dict = Depends(get_current_user)):
-    templates = await db.templates.find(
-        {"company_id": current_user.get("company_id")},
-        {"_id": 0}
-    ).to_list(1000)
-    return templates
-
-@api_router.post("/templates")
-async def create_template(data: TemplateCreate, current_user: dict = Depends(get_current_user)):
-    template_id = f"tmpl_{uuid.uuid4().hex[:12]}"
-    template = {
-        "template_id": template_id,
-        "company_id": current_user.get("company_id"),
-        **data.model_dump(),
-        "created_at": datetime.now(timezone.utc).isoformat(),
-        "updated_at": None
-    }
-    await db.templates.insert_one(template)
-    return {"template_id": template_id, "message": "Plantilla creada correctamente"}
-
-@api_router.get("/templates/{template_id}")
-async def get_template(template_id: str, current_user: dict = Depends(get_current_user)):
-    template = await db.templates.find_one(
-        {"template_id": template_id, "company_id": current_user.get("company_id")},
-        {"_id": 0}
-    )
-    if not template:
-        raise HTTPException(status_code=404, detail="Plantilla no encontrada")
-    return template
-
-@api_router.put("/templates/{template_id}")
-async def update_template(template_id: str, data: TemplateCreate, current_user: dict = Depends(get_current_user)):
-    result = await db.templates.update_one(
-        {"template_id": template_id, "company_id": current_user.get("company_id")},
-        {"$set": {
-            **data.model_dump(),
-            "updated_at": datetime.now(timezone.utc).isoformat()
-        }}
-    )
-    if result.matched_count == 0:
-        raise HTTPException(status_code=404, detail="Plantilla no encontrada")
-    return {"message": "Plantilla actualizada correctamente"}
-
-@api_router.delete("/templates/{template_id}")
-async def delete_template(template_id: str, current_user: dict = Depends(get_current_user)):
-    result = await db.templates.delete_one(
-        {"template_id": template_id, "company_id": current_user.get("company_id")}
-    )
-    if result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="Plantilla no encontrada")
-    return {"message": "Plantilla eliminada correctamente"}
-
-@api_router.post("/templates/{template_id}/generate")
-async def generate_document(template_id: str, variables: Dict[str, str], current_user: dict = Depends(get_current_user)):
-    template = await db.templates.find_one(
-        {"template_id": template_id, "company_id": current_user.get("company_id")},
-        {"_id": 0}
-    )
-    if not template:
-        raise HTTPException(status_code=404, detail="Plantilla no encontrada")
-    
-    content = template["content"]
-    for var, value in variables.items():
-        content = content.replace(f"{{{{{var}}}}}", value)
-    
-    return {"content": content, "template_name": template["name"]}
+# Templates routes moved to routes/templates.py
 
 # ===================== GENERATED DOCUMENTS & SIGNATURES =====================
 
