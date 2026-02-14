@@ -34,6 +34,12 @@ class TestAuthSession:
         if response.status_code != 200:
             pytest.skip(f"Authentication failed: {response.status_code} - {response.text}")
         
+        # Extract token and set Authorization header
+        data = response.json()
+        token = data.get("token")
+        if token:
+            session.headers.update({"Authorization": f"Bearer {token}"})
+        
         return session
     
     def test_login_success(self, auth_session):
@@ -58,6 +64,10 @@ class TestPayrollDashboardStats:
         })
         if response.status_code != 200:
             pytest.skip(f"Auth failed: {response.text}")
+        data = response.json()
+        token = data.get("token")
+        if token:
+            session.headers.update({"Authorization": f"Bearer {token}"})
         return session
     
     def test_payroll_stats_endpoint(self, auth_session):
@@ -151,6 +161,10 @@ class TestNotificationBellEndpoints:
         })
         if response.status_code != 200:
             pytest.skip(f"Auth failed: {response.text}")
+        data = response.json()
+        token = data.get("token")
+        if token:
+            session.headers.update({"Authorization": f"Bearer {token}"})
         return session
     
     def test_get_notifications(self, auth_session):
@@ -193,6 +207,10 @@ class TestNotificationSettingsEndpoints:
         })
         if response.status_code != 200:
             pytest.skip(f"Auth failed: {response.text}")
+        data = response.json()
+        token = data.get("token")
+        if token:
+            session.headers.update({"Authorization": f"Bearer {token}"})
         return session
     
     def test_get_notification_settings(self, auth_session):
@@ -243,6 +261,10 @@ class TestMetricsDashboard:
         })
         if response.status_code != 200:
             pytest.skip(f"Auth failed: {response.text}")
+        data = response.json()
+        token = data.get("token")
+        if token:
+            session.headers.update({"Authorization": f"Bearer {token}"})
         return session
     
     def test_metrics_dashboard_endpoint(self, auth_session):
