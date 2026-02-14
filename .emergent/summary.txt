@@ -17,41 +17,51 @@ The user wants to create a SaaS (Software as a Service) Human Resources and payr
 **User's preferred language**: Spanish (Español)
 
 **what currently exists?**
-The application is a comprehensive HR and Payroll SaaS platform. In this session, the agent implemented several key features and bug fixes. The update payment method flow was completely rebuilt to use an inline Stripe Elements form instead of a redirect. A new feature was added to track and display the history of payment method changes. A critical bug causing an Error al cargar detalles message on the main dashboard was diagnosed and fixed by correcting API endpoint URLs. Finally, based on a user request, missing drill-down functionality was added to several cards and charts on the Payroll and Metrics dashboards, with follow-up bugs (NaN values, untranslated headers) also being resolved. All work was validated via the testing agent. The session concluded as the agent was beginning a full system analysis for further improvements as requested by the user.
+The application is a full-stack HR and Payroll SaaS platform. In this session, the agent first fixed several bugs related to  values and incorrect salary data in dashboard drill-down modals. Following this, the agent performed a comprehensive, user-requested system analysis, which uncovered issues related to security vulnerabilities, code duplication, missing translations, and API inconsistencies.
+
+Acting on the analysis, the agent successfully implemented a batch of critical fixes:
+-   **Security:** Removed a hardcoded JWT secret fallback, implemented rate limiting on authentication routes, and added file type validation for expense uploads.
+-   **Refactoring:** Removed 12 duplicate API endpoints from  (reducing the file by 440 lines) by consolidating logic into their correct modular route files (, , ).
+-   **Bug Fixes:** Corrected an API path bug in  that caused reports to fail.
+-   **i18n:** Synchronized all translation files (EN, ES, FR) to ensure key parity and added missing translations.
+
+All fixes were comprehensively validated by the testing agent. The user has now approved the next, more extensive phase of refactoring based on the remaining findings from the system analysis.
 
 **Last working item**:
--   **Last item agent was working:** The agent was starting a comprehensive analysis of the entire system to identify potential improvements and corrections, as requested by the user. The agent had begun by listing the project's file structure to get an overview before diving into the code.
--   **Status:** IN PROGRESS
--   **Agent Testing Done:** N/A
--   **Which testing method agent to use?** N/A. The next agent should first complete the analysis, propose a plan to the user, and then determine the appropriate testing method for the approved implementation tasks.
+-   **Last item agent was working:** The user has approved a large-scale refactoring task. The agent was about to begin the first step: analyzing the 30 remaining inline API routes in  to plan their migration to modular files.
+-   **Status:** NOT STARTED
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** both. This is a significant refactoring task affecting many parts of the backend and potentially the frontend. After moving routes, adding indexes, and cleaning logs, a full regression test with  is required.
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: Complete System Analysis for Improvements.** (P0 - HIGHEST PRIORITY)
+-   **Issue 1: Large-Scale Refactoring and Optimization** (P0 - HIGHEST PRIORITY)
 
 **Issues Detail:**
--   **Issue 1: Complete System Analysis for Improvements.**
-    -   **Attempted fixes:** The agent started the process by exploring the codebase structure.
+-   **Issue 1: Large-Scale Refactoring and Optimization**
+    -   **Attempted fixes:** None. This is a new task approved by the user.
     -   **Next debug checklist:**
-        1.  Analyze key frontend pages (, , , etc.) for UI inconsistencies, performance bottlenecks, or missing functionality.
-        2.  Review backend routes to check for security gaps, inefficient queries, or non-standard API patterns.
-        3.  Consolidate findings into a clear, prioritized list of recommended improvements and bug fixes.
-        4.  Present this list to the user for approval before starting implementation.
-    -   **Why fix this issue and what will be achieved with the fix?** This directly addresses the user's latest request and will create a clear roadmap for the next development phase, improving the overall quality and stability of the application.
-    -   **Status:** IN PROGRESS
+        1.  **Refactor :** Analyze the ~30 remaining inline routes, group them by functionality (e.g., employees, candidates, recruiting), create new modular route files in , move the logic, and then safely remove the original endpoints from .
+        2.  **Add MongoDB Indexes:** Analyze the most frequent and performance-critical queries (e.g., fetching employees, payroll data, reports) and add appropriate indexes in the database connection logic to improve speed.
+        3.  **Cleanup :** Systematically search the entire frontend codebase () and remove all  statements to improve security and clean up the browser console in production.
+    -   **Why fix this issue and what will be achieved with the fix?** This will significantly improve the application's maintainability by modularizing the backend, boost performance through database indexing, and enhance security and professionalism by removing debug logs.
+    -   **Status:** NOT STARTED
     -   **Is recurring issue?** N
     -   **Should Test frontend/backend/both after fix?** both
     -   **Blocked on other issue:** None
 
 **In progress Task List**:
--   None. The system analysis is the primary in-progress item, categorized as an issue.
+-   None.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **P0: 2FA / MFA:** Implement two-factor authentication for enhanced security.
+    -   **P1: Hardcoded strings → i18n:** Find and replace hardcoded Spanish text in ~25 frontend pages with  translation keys.
+    -   **P1: 2FA / MFA:** Implement two-factor authentication for enhanced security.
     -   **P1: ACH Bank Integration:** Integrate with Dominican Republic banks (BHD, Popular, Banreservas) for direct payroll deposits.
     -   **P1: E-signature:** Implement e-signature functionality for contracts and payroll receipts.
 -   **Future Tasks:**
+    -   Consolidate  and  to remove confusion and streamline the payroll module.
+    -   Centralize Pydantic models into a shared directory.
     -   Configurable alert notifications.
     -   Backup/Exportation of all company data.
     -   Configurable Approval Workflows.
@@ -60,102 +70,97 @@ The application is a comprehensive HR and Payroll SaaS platform. In this session
     -   Complete Audit Trail (CDC logging).
 
 **Completed work in this session**
--   **Feature (Update Payment Method):** Implemented an inline dialog using Stripe Elements to update credit card details, replacing the previous redirect flow. This included a new backend endpoint () and a new frontend component ().
--   **Feature (Payment Method History):** Created a new backend endpoint () and a new MongoDB collection () to log and display a history of card changes on the .
--   **Bugfix (Dashboard Loading Error):** Resolved the Error al cargar detalles bug on  by correcting the API paths for , , and  and fixing the data parsing logic for the attendance and vacations widgets.
--   **Feature (Drill-Down Expansion):** Added requested drill-down functionality to multiple cards on  (Pagado Este Año, Salario Promedio, etc.) and  (Costo por Empleado).
--   **Bugfix (Drill-Down Modal):**
-    -   Fixed  values in the Top Salaries drill-down rank column.
-    -   Fixed untranslated column headers in the drill-down modal by correcting translation key paths from  to  in  and .
--   **Testing:** All features and fixes were successfully validated using  (, , ).
--   **Documentation:** Updated  with the latest implemented features.
+-   **Refactoring (Code Duplication):** Removed 12 duplicate inline API routes from  and consolidated the logic into , , and .
+-   **Security Hardening:** Implemented rate limiting on auth routes, removed hardcoded JWT secret fallback in , and added file type validation in .
+-   **Bugfix (Dashboard Data):** Fixed bugs causing  and  values in the Top 10 Salaries drill-down modal by correcting the backend logic in  to use the correct  field.
+-   **Bugfix (API Path):** Fixed a critical bug in  where API calls had a double  prefix, breaking all reporting functionality.
+-   **i18n (Translation Sync):** Analyzed and synchronized all three language files (, , ) to ensure they have the exact same number of keys (3782), fixing gaps in the partner module.
+-   **Testing:** All fixes were validated using , which passed all backend and frontend tests (). The testing agent also identified and fixed a regression in .
 
 **Earlier issues found/mentioned but not fixed**
--   None. All issues identified in this session were addressed.
+-   The remaining items from the system analysis have been captured in the **Upcoming and Future Tasks** sections (e.g., hardcoded strings,  cleanup, DB indexes).
 
 **Known issue recurrence from previous fork**
--   **Issue recurrence in previous fork:** Translation keys appearing in the UI instead of translated text.
--   **Recurrence count:** 1 (This occurred again when implementing the drill-down modal, where incorrect translation key paths like  were used instead of the correct ).
+-   **Issue recurrence in previous fork:** Translation key mismatches.
+-   **Recurrence count:** 0.
 -   **Status:** RESOLVED
--   **Note:** This highlights the need for careful verification of i18n key paths whenever new UI components with translated text are added.
+-   **Note:** The agent performed a comprehensive sync of all translation files in this session, which should prevent this issue from recurring.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Stripe Elements:** Used for securely collecting card information inline without sensitive data touching the server.
--   **Stripe Setup Intents:** Utilized to save a new payment method for future use.
--   **API Debugging:** Traced frontend-to-backend communication to identify and fix 404 errors caused by mismatched API routes.
--   **Feature Expansion:** Added functionality (drill-downs) to existing complex components by modifying state management and UI rendering logic.
--   **Data History Logging:** Implemented a pattern for logging changes to a separate MongoDB collection to provide an audit trail.
+-   **Code Refactoring:** Systematically moving inline API routes from a monolithic file () into modular, domain-specific router files.
+-   **Security Hardening:** Implementing rate limiting with  to prevent brute-force attacks and removing hardcoded secret fallbacks.
+-   **API Endpoint Consolidation:** Auditing and removing dozens of duplicate endpoints to create a single source of truth for backend logic.
+-   **i18n Parity:** Ensuring translation JSON files have a matching set of keys across all supported languages to prevent UI text from breaking.
+-   **Deep System Analysis:** Performing a methodical review of the entire codebase (backend, frontend, security, performance) to generate a prioritized list of improvements.
 
 **key DB schema**
--   **payment_method_history (New Collection):** 
+-   No new collections were added. A pending task is to add indexes to existing collections for performance.
 
 **changes in tech stack**
--   None.
+-   ****: Added to the backend () to provide rate-limiting middleware.
 
 **All files of reference**
--    (Core of payment method features)
--    (Stripe SetupIntent endpoint)
--    (Payment history logging logic)
--    (Dashboard bugfix)
--    (Drill-down feature expansion)
--    (Drill-down feature expansion)
--    (Final test report for drill-down fixes)
+-    (The main file undergoing refactoring)
+-    (Example of a modular route file that received consolidated logic)
+-    (Same as above)
+-    (Same as above)
+-    (File where a critical API path bug was fixed)
+-    (Directory containing the synchronized translation files)
+-    (The final, successful test report from the testing agent)
 
 **Areas that need refactoring**:
--   The current task is to perform a system analysis to identify these areas. The next agent should complete this analysis and present the findings to the user.
+-   **:** Still contains ~30 inline routes that need to be moved to modular files. (In Progress)
+-   **Database Performance:** Needs indexes on frequently queried collections. (Pending)
+-   **Frontend Code:** Contains numerous  statements that should be removed. (Pending)
 
 **key api endpoints**
--   ****: Creates a Stripe SetupIntent to securely gather new card details.
--   ****: Updated to handle attaching the new payment method via SetupIntent and logging the change.
--   ****: Retrieves the history of payment method changes.
--   **Corrected API paths for dashboard drill-downs:**
-    -   
-    -   
-    -   
+-   12 duplicate endpoints related to accounting, dashboard stats, and system users were removed from . The canonical endpoints now exist only in their respective modular files (e.g., , ).
+-   The frontend was updated to use  instead of the removed .
 
 **Critical Info for New Agent**
 -   **You must respond to the user in Spanish.**
--   The user's last request was to analyze the system for improvements and corrections. Your primary task is to continue this analysis, identify concrete action items, and propose them to the user for prioritization.
--   Be aware of the newly implemented features: inline payment method updates and payment method change history.
--   The drill-down functionality on the main , , and  has been significantly expanded and fixed.
--   A recurring pattern of using incorrect translation keys was found and fixed. Be mindful of this when adding new UI elements that require translation.
+-   Your primary mandate is to execute the large-scale refactoring approved by the user. Follow the plan in the All Pending/In progress Issue list.
+-   **Task Order:** 1. Move the ~30 routes from . 2. Add MongoDB indexes. 3. Remove all s from the frontend.
+-   A previous, smaller refactoring of 12 routes was successful. You can use that as a pattern for moving the remaining routes.
+-   After completing the refactoring, a comprehensive test using  is mandatory to catch any regressions, as this is a high-risk change.
 
 **documents and test reports created in this job**
 -   /app/memory/PRD.md
--   /app/test_reports/iteration_44.json
--   /app/test_reports/iteration_45.json
--   /app/test_reports/iteration_46.json
+-   /app/test_reports/iteration_47.json
+-   /app/test_reports/iteration_48.json
 
 **Last 10 User Messages and any pending HUMAN messages**
--   **cuales mejoras o correciones necesita el sistema?**: The user asked for a full system analysis to find improvements and fixes. (Status: **IN PROGRESS**)
--   **drill-down en estas opciones**: The user pointed to a screenshot and requested drill-down functionality be added to more dashboard cards. (Status: **Completed**)
--   **Error al cargar detalles**: The user reported a bug on the main dashboard with a screenshot. (Status: **Completed**)
--   **Actualizar el PRD y finalizar**: The user asked to update the PRD and finish. This was superseded by subsequent requests. (Status: **Superseded**)
--   **agregar un resumen visual del historial de cambios de tarjeta...**: The user requested a feature to see a history of payment method changes. (Status: **Completed**)
--   **Completar el flujo de actualizar/cambiar tarjeta de crédito...**: The user requested the completion of the update payment method feature. (Status: **Completed**)
+-   **Hacer refactoring (server.py inline routes + índices MongoDB + console.log cleanup)**: User explicitly approved the next major refactoring task, prioritizing moving inline routes, adding DB indexes, and cleaning up logs. (Status: **Next Action**)
+-   **El sistema necesita ser refactorizado ?**: User asked if the system needs refactoring after the initial fixes. (Status: **Addressed**)
+-   **Ambas opciones 1 + 2**: User confirmed they want to address both security issues and code duplication found in the analysis. (Status: **Completed**)
+-   **Abordar P0 + P1 (agregar también traducciones y auth faltante)**: User approved fixing all P0 and P1 issues from the agent's system analysis. (Status: **Completed**)
+-   **análisis completo del sistema para identificar mejoras y correcciones**: User requested a deep analysis of the system. (Status: **Completed**)
+-   **Corregir bugs pendientes → NaN en Top 10 Salarios drill-down + gráficos MetricsDashboard**: User prioritized fixing the dashboard bugs. (Status: **Completed**)
 
 **Project Health Check:**
--   **Broken:** None.
+-   **Broken:** None. All identified critical issues have been resolved and tested.
 -   **Mocked:** Enterprise integrations (SAP, Oracle, Dynamics).
--   **Needs Attention:** A full system analysis for improvements is currently in progress.
+-   **Needs Attention:** The codebase is undergoing a major, user-approved refactoring to improve maintainability and performance.  remains overly large until this is complete.
 
 **3rd Party Integrations**
 -   **i18next, react-i18next:** ✅ Fully integrated.
 -   **i18next-http-backend:** ✅ Integrated.
--   **Stripe (Payments):** ✅ Integrated, functionality expanded for inline updates and history.
+-   **Stripe (Payments):** ✅ Integrated.
 -   **Resend (Email):** ✅ Integrated.
 -   **Emergent-managed Google Auth:** ✅ Integrated.
 -   **Gemini (AI Search):** ✅ Integrated.
 -   **QuickBooks Online:** ✅ Integrated.
+-   **fastapi-limiter:** ✅ Integrated (New).
 
 **Testing status**
--   **Testing agent used after significant changes:** YES. Used to validate the payment method update flow, history feature, and the expanded drill-down functionality.
+-   **Testing agent used after significant changes:** YES. Used after the first major refactoring and security hardening phase. All 21 backend and all frontend tests passed.
 -   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:** None
--   **Known regressions:** None. All issues identified by the testing agent were resolved.
+-   **Test files created:**
+    -   
+-   **Known regressions:** None. The testing agent found and fixed one regression in  during its run.
 
 **Credentials to test flow:**
 -   **Admin User:**  / 
@@ -163,4 +168,4 @@ The application is a comprehensive HR and Payroll SaaS platform. In this session
 -   **Employee Portal User:** (Cédula)  / 
 
 **What agent forgot to execute**
--   The agent was interrupted by the end of the session while starting the system analysis requested by the user. Nothing was forgotten, but the task remains unfinished.</analysis>
+-   Nothing was forgotten. The agent is systematically working through a prioritized list of tasks approved by the user. The current task is the next logical step in that plan.</analysis>
