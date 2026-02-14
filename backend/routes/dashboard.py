@@ -111,50 +111,104 @@ async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
 
 @router.get("/payroll-stats")
 async def get_payroll_stats(current_user: dict = Depends(get_current_user)):
-    """Get payroll statistics for dashboard widgets"""
+    """Get comprehensive payroll statistics for dashboard"""
     company_id = current_user.get("company_id")
     
-    # Get current month
-    now = datetime.now(timezone.utc)
-    current_month = now.strftime("%Y-%m")
+    # Get all periods
+    periods = await db.payroll_periods.find(
+        {"company_id": company_id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
     
-    # Get monthly totals for the last 6 months
-    months_data = []
-    for i in range(6):
-        month_date = now - timedelta(days=30 * i)
-        month_str = month_date.strftime("%Y-%m")
-        
-        # Get payroll entries for this month
-        payroll_entries = await db.payroll_entries.find({
-            "company_id": company_id,
-            "period_id": {"$regex": f".*_{month_str.replace('-', '')}"}
-        }, {"_id": 0, "net_pay": 1}).to_list(10000)
-        
-        total = sum(e.get("net_pay", 0) for e in payroll_entries)
-        months_data.append({
-            "month": month_str,
-            "total": total
-        })
+    # Get all active employees
+    employees = await db.employees.find(
+        {"company_id": company_id, "status": "active"},
+        {"_id": 0}
+    ).to_list(500)
     
-    # Get by department
-    employees = await db.employees.find({
-        "company_id": company_id,
-        "status": "active"
-    }, {"_id": 0, "department": 1, "salary": 1}).to_list(1000)
+    # Monthly trend (last 12 months)
+    paid_periods = [p for p in periods if p.get("status") == "paid"]
+    monthly_data = {}
+    for p in paid_periods:
+        key = f"{p.get('year')}-{p.get('month'):02d}"
+        if key not in monthly_data:
+            monthly_data[key] = {"month": key, "total_gross": 0, "total_net": 0, "count": 0}
+        monthly_data[key]["total_gross"] += p.get("total_gross", 0)
+        monthly_data[key]["total_net"] += p.get("total_net", 0)
+        monthly_data[key]["count"] += 1
+    monthly_trend = sorted(monthly_data.values(), key=lambda x: x["month"])[-12:]
     
-    dept_totals = {}
+    # Department distribution
+    dept_distribution = {}
     for emp in employees:
         dept = emp.get("department", "Sin Departamento")
-        if dept not in dept_totals:
-            dept_totals[dept] = 0
-        dept_totals[dept] += emp.get("salary", 0)
+        if dept not in dept_distribution:
+            dept_distribution[dept] = {"department": dept, "count": 0, "total_salary": 0}
+        dept_distribution[dept]["count"] += 1
+        dept_distribution[dept]["total_salary"] += emp.get("salary", emp.get("base_salary", 0))
     
-    by_department = [{"department": k, "total": v} for k, v in dept_totals.items()]
-    by_department.sort(key=lambda x: x["total"], reverse=True)
+    # Employer cost breakdown (last 6 paid periods)
+    total_entries = []
+    for p in paid_periods[-6:]:
+        entries = await db.payroll_entries.find(
+            {"period_id": p["period_id"], "company_id": company_id},
+            {"_id": 0}
+        ).to_list(500)
+        total_entries.extend(entries)
+    
+    employer_costs = {
+        "total_gross_salary": sum(e.get("gross_salary", 0) for e in total_entries),
+        "total_net_salary": sum(e.get("net_salary", 0) for e in total_entries),
+        "total_sfs_employer": sum(e.get("sfs_employer", 0) for e in total_entries),
+        "total_afp_employer": sum(e.get("afp_employer", 0) for e in total_entries),
+        "total_srl": sum(e.get("srl_employer", 0) for e in total_entries),
+        "total_infotep": sum(e.get("infotep_employer", 0) for e in total_entries),
+    }
+    employer_costs["total_employer_cost"] = (
+        employer_costs["total_gross_salary"] +
+        employer_costs["total_sfs_employer"] +
+        employer_costs["total_afp_employer"] +
+        employer_costs["total_srl"] +
+        employer_costs["total_infotep"]
+    )
+    
+    # Top 10 salaries
+    top_salaries = sorted(employees, key=lambda x: x.get("salary", x.get("base_salary", 0)), reverse=True)[:10]
+    top_salaries_data = [
+        {
+            "employee_id": e.get("employee_id"),
+            "name": f"{e.get('first_name', '')} {e.get('last_name', '')}",
+            "department": e.get("department", ""),
+            "salary": e.get("salary", e.get("base_salary", 0))
+        }
+        for e in top_salaries
+    ]
+    
+    # Alerts
+    alerts = []
+    unpaid_approved = [p for p in periods if p.get("status") == "approved"]
+    if unpaid_approved:
+        alerts.append({"type": "warning", "key": "unpaidApproved", "count": len(unpaid_approved)})
+    incomplete_employees = [e for e in employees if not e.get("document_id") or not e.get("bank_account")]
+    if incomplete_employees:
+        alerts.append({"type": "info", "key": "incompleteEmployees", "count": len(incomplete_employees)})
+    
+    # Summary
+    summary = {
+        "total_employees": len(employees),
+        "total_periods": len(periods),
+        "paid_periods": len(paid_periods),
+        "total_paid_ytd": sum(p.get("total_net", 0) for p in paid_periods if p.get("year") == datetime.now().year),
+        "avg_salary": sum(e.get("salary", e.get("base_salary", 0)) for e in employees) / len(employees) if employees else 0
+    }
     
     return {
-        "monthly_trend": months_data[::-1],
-        "by_department": by_department[:5]
+        "summary": summary,
+        "monthly_trend": monthly_trend,
+        "department_distribution": list(dept_distribution.values()),
+        "employer_costs": employer_costs,
+        "top_salaries": top_salaries_data,
+        "alerts": alerts
     }
 
 
@@ -163,24 +217,14 @@ async def get_currency_summary(current_user: dict = Depends(get_current_user)):
     """Get currency distribution summary for dashboard"""
     company_id = current_user.get("company_id")
     
-    # Get all employees
-    employees = await db.employees.find({
-        "company_id": company_id,
-        "status": "active"
-    }, {"_id": 0, "salary": 1, "currency": 1}).to_list(1000)
+    periods = await db.payroll_periods.find(
+        {"company_id": company_id, "status": "paid"},
+        {"_id": 0}
+    ).to_list(100)
     
-    currency_totals = {}
-    for emp in employees:
-        currency = emp.get("currency", "DOP")
-        salary = emp.get("salary", 0)
-        if currency not in currency_totals:
-            currency_totals[currency] = {"count": 0, "total": 0}
-        currency_totals[currency]["count"] += 1
-        currency_totals[currency]["total"] += salary
+    currency_summary = {"DOP": 0, "USD": 0}
+    for p in periods:
+        currency = p.get("currency", "DOP")
+        currency_summary[currency] = currency_summary.get(currency, 0) + p.get("total_net", 0)
     
-    return {
-        "by_currency": [
-            {"currency": k, "count": v["count"], "total": v["total"]}
-            for k, v in currency_totals.items()
-        ]
-    }
+    return currency_summary
