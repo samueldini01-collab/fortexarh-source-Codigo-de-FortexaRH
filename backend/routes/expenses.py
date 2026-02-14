@@ -617,6 +617,13 @@ async def upload_attachment(
     current_user: dict = Depends(get_current_user)
 ):
     """Upload an attachment (receipt, invoice) to an expense request"""
+    # Validate file type
+    ALLOWED_TYPES = {'image/jpeg', 'image/png', 'image/webp', 'application/pdf',
+                     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                     'application/vnd.ms-excel'}
+    if file.content_type not in ALLOWED_TYPES:
+        raise HTTPException(status_code=400, detail="Tipo de archivo no permitido. Use: JPG, PNG, PDF, Excel")
+    
     company_id = current_user.get("company_id")
     
     expense_req = await db.expense_requests.find_one(
