@@ -953,63 +953,7 @@ async def get_config_status():
 
 # Templates routes moved to routes/templates.py
 
-# ===================== GENERATED DOCUMENTS & SIGNATURES =====================
-
-@api_router.get("/documents")
-async def get_documents(current_user: dict = Depends(get_current_user)):
-    docs = await db.generated_documents.find(
-        {"company_id": current_user.get("company_id")},
-        {"_id": 0}
-    ).to_list(1000)
-    return docs
-
-@api_router.post("/documents")
-async def save_document(data: GeneratedDocumentCreate, current_user: dict = Depends(get_current_user)):
-    company_id = current_user.get("company_id")
-    
-    template = await db.templates.find_one({"template_id": data.template_id}, {"_id": 0})
-    employee = await db.employees.find_one({"employee_id": data.employee_id, "company_id": company_id}, {"_id": 0})
-    
-    doc_id = f"doc_{uuid.uuid4().hex[:12]}"
-    document = {
-        "document_id": doc_id,
-        "company_id": company_id,
-        "template_id": data.template_id,
-        "template_name": template["name"] if template else "Documento",
-        "employee_id": data.employee_id,
-        "employee_name": f"{employee['first_name']} {employee['last_name']}" if employee else "Sin asignar",
-        "content": data.content,
-        "signature_data": data.signature_data,
-        "is_signed": bool(data.signature_data),
-        "signed_at": datetime.now(timezone.utc).isoformat() if data.signature_data else None,
-        "created_at": datetime.now(timezone.utc).isoformat()
-    }
-    await db.generated_documents.insert_one(document)
-    return {"document_id": doc_id, "message": "Documento guardado correctamente"}
-
-@api_router.put("/documents/{document_id}/sign")
-async def sign_document(document_id: str, signature_data: str, current_user: dict = Depends(get_current_user)):
-    result = await db.generated_documents.update_one(
-        {"document_id": document_id, "company_id": current_user.get("company_id")},
-        {"$set": {
-            "signature_data": signature_data,
-            "is_signed": True,
-            "signed_at": datetime.now(timezone.utc).isoformat()
-        }}
-    )
-    if result.matched_count == 0:
-        raise HTTPException(status_code=404, detail="Documento no encontrado")
-    return {"message": "Documento firmado correctamente"}
-
-@api_router.get("/documents/{document_id}")
-async def get_document(document_id: str, current_user: dict = Depends(get_current_user)):
-    doc = await db.generated_documents.find_one(
-        {"document_id": document_id, "company_id": current_user.get("company_id")},
-        {"_id": 0}
-    )
-    if not doc:
-        raise HTTPException(status_code=404, detail="Documento no encontrado")
-    return doc
+# Generated documents routes moved to routes/generated_docs.py
 
 # ===================== PAYROLL CALCULATOR (Dominican Republic) =====================
 
