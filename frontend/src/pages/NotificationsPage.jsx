@@ -40,7 +40,7 @@ export default function NotificationsPage() {
 
   const fetchNotificationSettings = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/notification-settings/settings`, {
+      const response = await fetch(`${API}/notification-settings/settings`, {
         credentials: "include"
       });
       if (response.ok) {
@@ -54,7 +54,7 @@ export default function NotificationsPage() {
 
   const fetchUpcomingBirthdays = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/notification-settings/upcoming-birthdays?days=30`, {
+      const response = await fetch(`${API}/notification-settings/upcoming-birthdays?days=30`, {
         credentials: "include"
       });
       if (response.ok) {
@@ -68,7 +68,7 @@ export default function NotificationsPage() {
 
   const fetchNotificationLogs = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/notification-settings/logs?limit=20`, {
+      const response = await fetch(`${API}/notification-settings/logs?limit=20`, {
         credentials: "include"
       });
       if (response.ok) {
@@ -95,7 +95,7 @@ export default function NotificationsPage() {
 
   const updateNotificationSettings = async (newSettings) => {
     try {
-      const response = await fetch(`${API_URL}/api/notification-settings/settings`, {
+      const response = await fetch(`${API}/notification-settings/settings`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -115,7 +115,7 @@ export default function NotificationsPage() {
   const sendPayrollReminder = async () => {
     setSendingNotification(true);
     try {
-      const response = await fetch(`${API_URL}/api/notification-settings/send-payroll-reminder`, {
+      const response = await fetch(`${API}/notification-settings/send-payroll-reminder`, {
         method: "POST",
         credentials: "include"
       });
@@ -136,7 +136,7 @@ export default function NotificationsPage() {
   const sendBirthdayNotifications = async () => {
     setSendingNotification(true);
     try {
-      const response = await fetch(`${API_URL}/api/notification-settings/send-birthday-notifications`, {
+      const response = await fetch(`${API}/notification-settings/send-birthday-notifications`, {
         method: "POST",
         credentials: "include"
       });
