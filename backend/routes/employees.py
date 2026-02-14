@@ -378,10 +378,14 @@ async def preview_import(file: UploadFile = File(...), current_user: dict = Depe
     if not file.filename.endswith(('.xlsx', '.xls')):
         raise HTTPException(status_code=400, detail="Solo se permiten archivos Excel (.xlsx, .xls)")
     
+    # File size limit: 10MB
+    content = await file.read()
+    if len(content) > 10 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="El archivo excede el límite de 10MB")
+    
     try:
         from openpyxl import load_workbook
         
-        content = await file.read()
         wb = load_workbook(io.BytesIO(content))
         ws = wb.active
         
