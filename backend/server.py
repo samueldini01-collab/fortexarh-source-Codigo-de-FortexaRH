@@ -1276,6 +1276,11 @@ init_cdc_audit_router(db, get_current_user)
 init_support_router(db)
 init_partners_router(db, get_current_user)
 init_geolocation_attendance_router(db, get_current_user)
+init_payroll_config_router(db, get_current_user)
+init_templates_router(db, get_current_user)
+init_generated_docs_router(db, get_current_user)
+init_currency_router(db, get_current_user)
+init_stats_router(db, get_current_user)
 
 # Include modular routers in api_router
 api_router.include_router(loans_router)
