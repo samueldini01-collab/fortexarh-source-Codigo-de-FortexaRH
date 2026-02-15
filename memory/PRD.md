@@ -73,27 +73,31 @@ SaaS de gestión de Recursos Humanos y nómina para República Dominicana llamad
 
 ## Lo que se ha implementado
 
-### Sesión Feb 2026 - Refactoring Mayor
-- **server.py reducido de 2293 → 933 líneas** (reducción del 59%)
-- Migración de ~30 rutas inline a 5 nuevos archivos modulares + 2 existentes modificados
-- Índices de rendimiento MongoDB en 15+ colecciones (startup)
-- Limpieza de todos los console.log del frontend
-- Fix de i18n en PayrollCalculatorPage (calculator.* → payroll.calculator.*)
-- Eliminación de modelos, constantes y funciones muertas de server.py
+### Sesión Feb 15 2026 - Refactoring + i18n completo
+**Refactoring Backend:**
+- server.py reducido de 2293 → 933 líneas (59% menos)
+- ~30 rutas inline migradas a 5 nuevos archivos modulares + 2 existentes
+- Índices MongoDB en 15+ colecciones
+- console.log eliminados del frontend
 - Testing completo: 18/18 backend + 100% frontend (iteration_50)
+
+**i18n Migration:**
+- 835+ hardcoded Spanish strings reemplazados con t() calls en 26+ archivos
+- Translation keys crecieron de 3782 a 4500+
+- Traducciones EN: 295+ strings traducidos al inglés
+- Traducciones FR: 236+ strings traducidos al francés
+- Testing: iteration_51 passed (90%+ frontend, 100% backend)
 
 ### Sesiones Anteriores
 - Eliminación de 12 rutas duplicadas
 - Hardening de seguridad (rate limiting, JWT secret, file validation)
 - Fix de bugs: NaN en dashboard, API paths dobles
-- Sincronización de traducciones i18n (3782 keys en ES/EN/FR)
 - Dashboard con drill-down funcional
 - Todas las integraciones principales funcionando
 
 ## Backlog Priorizado
 
 ### P1 - Próximas tareas
-- Hardcoded strings → i18n (~25 páginas con texto en español)
 - 2FA / MFA
 - ACH Bank Integration (BHD, Popular, Banreservas)
 - E-signature para contratos y recibos
