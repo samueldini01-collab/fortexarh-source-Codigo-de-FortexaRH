@@ -86,42 +86,7 @@ async def get_current_user(request: Request, credentials=Depends(security)):
 
 
 # ============== MODELS ==============
-
-class AuditLogEntry(BaseModel):
-    log_id: str
-    collection: str
-    collection_name: str
-    operation: str
-    operation_name: str
-    document_id: str
-    company_id: Optional[str] = None
-    user_id: Optional[str] = None
-    user_email: Optional[str] = None
-    timestamp: datetime
-    changes: Optional[Dict[str, Any]] = None
-    previous_values: Optional[Dict[str, Any]] = None
-    new_values: Optional[Dict[str, Any]] = None
-    document_key: Optional[str] = None
-    metadata: Optional[Dict[str, Any]] = None
-
-
-class CDCStatusResponse(BaseModel):
-    is_running: bool
-    watched_collections: List[str]
-    active_streams: int
-    total_events_captured: int
-    last_event_time: Optional[datetime] = None
-
-
-class AuditQueryParams(BaseModel):
-    collection: Optional[str] = None
-    operation: Optional[str] = None
-    user_id: Optional[str] = None
-    document_id: Optional[str] = None
-    start_date: Optional[str] = None
-    end_date: Optional[str] = None
-    limit: int = 50
-    skip: int = 0
+from models.system import AuditLogEntry, CDCStatusResponse, AuditQueryParams
 
 
 # ============== HELPER FUNCTIONS ==============

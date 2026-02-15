@@ -77,43 +77,10 @@ def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
 
 
 # ==================== MODELS ====================
-
-class LocationCreate(BaseModel):
-    name: str
-    address: str
-    latitude: float
-    longitude: float
-    radius: int = 100
-    location_type: str = "office"
-    is_active: bool = True
-    valid_from: Optional[str] = None
-    valid_until: Optional[str] = None
-
-
-class LocationUpdate(BaseModel):
-    name: Optional[str] = None
-    address: Optional[str] = None
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
-    radius: Optional[int] = None
-    is_active: Optional[bool] = None
-    valid_from: Optional[str] = None
-    valid_until: Optional[str] = None
-
-
-class AttendanceMarkRequest(BaseModel):
-    latitude: float
-    longitude: float
-    accuracy: float
-    mark_type: str
-    selfie_base64: Optional[str] = None
-    device_info: Optional[str] = None
-    notes: Optional[str] = None
-
-
-class EmployeeLocationAssignment(BaseModel):
-    employee_ids: List[str]
-    location_id: str
+from models.system import (
+    LocationCreate, LocationUpdate, AttendanceMarkRequest,
+    EmployeeLocationAssignment
+)
 
 
 # ==================== LOCATION MANAGEMENT ====================
@@ -875,14 +842,7 @@ async def reject_mark(mark_id: str, request: Request, reason: str = ""):
 
 
 # ==================== FRAUD DETECTION & ALERTS ====================
-
-class AlertSettingsUpdate(BaseModel):
-    enabled: bool = True
-    alert_outside_zone: bool = True
-    alert_fraud: bool = True
-    alert_daily_summary: bool = True
-    recipients: List[str] = []
-    outside_zone_threshold_meters: int = 500
+from models.system import AlertSettingsUpdate
 
 
 @router.get("/admin/fraud-alerts")
