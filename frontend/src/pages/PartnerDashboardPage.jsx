@@ -676,23 +676,23 @@ export default function PartnerDashboardPage() {
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <KPICard
-            title="Clientes Activos"
+            title={t('partner.dashboard.activeClients')}
             value={stats.active_clients || 0}
-            subtitle={`${stats.trial_clients || 0} en prueba`}
+            subtitle={`${stats.trial_clients || 0} ${t('partner.dashboard.onTrial')}`}
             icon={Users}
             color="emerald"
             onClick={() => setDrillDown("clients")}
           />
           <KPICard
-            title="Comisiones Pendientes"
+            title={t('partner.dashboard.pendingCommissions')}
             value={`$${(commissionsData.pending || 0).toFixed(2)}`}
-            subtitle="Por pagar"
+            subtitle={t('partner.dashboard.toPay')}
             icon={Wallet}
             color="amber"
             onClick={() => setDrillDown("pending")}
           />
           <KPICard
-            title="Total Ganado"
+            title={t('partner.dashboard.totalEarned')}
             value={`$${(commissionsData.total_earned || 0).toFixed(2)}`}
             subtitle={commissionsData.commission_rate}
             icon={TrendingUp}
@@ -700,9 +700,9 @@ export default function PartnerDashboardPage() {
             onClick={() => setDrillDown("earned")}
           />
           <KPICard
-            title="Tu Precio Mensual"
+            title={t('partner.dashboard.yourMonthlyPrice')}
             value={`$${typeof pricing.current_price === "number" ? pricing.current_price : 10}`}
-            subtitle={benefits.has_benefits ? "Plan Partner" : "Plan Estándar"}
+            subtitle={benefits.has_benefits ? t('partner.dashboard.partnerPlan') : t('partner.dashboard.standardPlan')}
             icon={CreditCard}
             color={benefits.has_benefits ? "emerald" : "slate"}
             onClick={() => setDrillDown("pricing")}
