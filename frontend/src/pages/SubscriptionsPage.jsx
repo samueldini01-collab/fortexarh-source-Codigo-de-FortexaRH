@@ -436,7 +436,7 @@ export default function SubscriptionsPage() {
   const includedUsers = currentPlan?.included_users || 1;
 
   return (
-    <DashboardLayout title="Suscripción">
+    <DashboardLayout title={t('subscriptions.title')}>
       <div className="space-y-6" data-testid="subscriptions-page">
         {/* Alert for trial/expired */}
         {subscription?.status === 'trial' && (
