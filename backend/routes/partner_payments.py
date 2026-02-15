@@ -35,7 +35,7 @@ async def create_connect_onboard_link(
     if not partner_id:
         raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
 
-    firm = await db.accounting_firms.find_one({"partner_id": partner_id})
+    firm = await db.accounting_firms.find_one({"partner_id": partner_id}, {"_id": 0})
     if not firm:
         raise HTTPException(status_code=404, detail="Firma no encontrada")
 
@@ -94,7 +94,7 @@ async def get_connect_status(current_user: dict = Depends(get_current_user)):
     if not partner_id:
         raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
 
-    firm = await db.accounting_firms.find_one({"partner_id": partner_id})
+    firm = await db.accounting_firms.find_one({"partner_id": partner_id}, {"_id": 0})
     if not firm:
         raise HTTPException(status_code=404, detail="Firma no encontrada")
 
@@ -154,7 +154,7 @@ async def get_connect_dashboard_link(current_user: dict = Depends(get_current_us
     if not partner_id:
         raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
 
-    firm = await db.accounting_firms.find_one({"partner_id": partner_id})
+    firm = await db.accounting_firms.find_one({"partner_id": partner_id}, {"_id": 0})
     if not firm:
         raise HTTPException(status_code=404, detail="Firma no encontrada")
 
@@ -181,7 +181,7 @@ async def configure_paypal(
     if not partner_id:
         raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
 
-    firm = await db.accounting_firms.find_one({"partner_id": partner_id})
+    firm = await db.accounting_firms.find_one({"partner_id": partner_id}, {"_id": 0})
     if not firm:
         raise HTTPException(status_code=404, detail="Firma no encontrada")
 
@@ -222,7 +222,7 @@ async def get_paypal_status(current_user: dict = Depends(get_current_user)):
     if not partner_id:
         raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
 
-    firm = await db.accounting_firms.find_one({"partner_id": partner_id})
+    firm = await db.accounting_firms.find_one({"partner_id": partner_id}, {"_id": 0})
     if not firm:
         raise HTTPException(status_code=404, detail="Firma no encontrada")
 
@@ -270,7 +270,7 @@ async def get_payout_balance(current_user: dict = Depends(get_current_user)):
     available_balance = total_earned - total_paid - total_pending
 
     # Get Stripe Connect and PayPal status
-    firm = await db.accounting_firms.find_one({"partner_id": partner_id})
+    firm = await db.accounting_firms.find_one({"partner_id": partner_id}, {"_id": 0})
     stripe_connected = firm.get("stripe_connect_status") == "active" if firm else False
     paypal_connected = bool(firm.get("paypal_email")) if firm else False
 
@@ -300,7 +300,7 @@ async def request_payout(
     if not partner_id:
         raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
 
-    firm = await db.accounting_firms.find_one({"partner_id": partner_id})
+    firm = await db.accounting_firms.find_one({"partner_id": partner_id}, {"_id": 0})
     if not firm:
         raise HTTPException(status_code=404, detail="Firma no encontrada")
 

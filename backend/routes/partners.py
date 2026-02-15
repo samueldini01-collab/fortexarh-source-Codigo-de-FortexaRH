@@ -171,7 +171,7 @@ async def check_partner_benefits_status(partner_id: str) -> dict:
     """Check if partner qualifies for flat rate benefits"""
     active_clients = await get_active_client_count(partner_id)
     
-    partner = await db.accounting_firms.find_one({"partner_id": partner_id})
+    partner = await db.accounting_firms.find_one({"partner_id": partner_id}, {"_id": 0})
     
     if active_clients >= 1:
         return {
@@ -453,7 +453,7 @@ async def add_partner_client(
     # Get firm info to get referral code and name
     firm = await db.accounting_firms.find_one(
         {"partner_id": partner_id}, 
-        {"referral_code": 1, "name": 1}
+        {"_id": 0, "referral_code": 1, "name": 1}
     )
     referral_code = firm.get("referral_code") if firm else "PARTNER"
     firm_name = firm.get("name", "Tu Contador") if firm else "Tu Contador"
@@ -624,7 +624,7 @@ async def resend_client_invitation(
     # Get firm info
     firm = await db.accounting_firms.find_one(
         {"partner_id": partner_id},
-        {"name": 1}
+        {"_id": 0, "name": 1}
     )
     firm_name = firm.get("name", "Tu Contador") if firm else "Tu Contador"
     
