@@ -59,73 +59,11 @@ DEFAULT_COMPETENCIES = [
 
 
 # ==================== Models ====================
-
-class EvaluationCycleCreate(BaseModel):
-    name: str
-    type: str = "annual"  # annual, semi_annual, quarterly, monthly
-    start_date: str
-    end_date: str
-    self_evaluation_deadline: Optional[str] = None
-    supervisor_evaluation_deadline: Optional[str] = None
-    peer_evaluation_deadline: Optional[str] = None
-    include_self_evaluation: bool = True
-    include_peer_evaluation: bool = False
-    competencies: Optional[List[Dict[str, Any]]] = None
-
-
-class ObjectiveCreate(BaseModel):
-    employee_id: str
-    title: str
-    description: Optional[str] = None
-    target_value: Optional[float] = None
-    target_unit: Optional[str] = None  # percentage, currency, quantity
-    weight: float = 100  # Weight in overall evaluation
-    due_date: Optional[str] = None
-    cycle_id: Optional[str] = None
-
-
-class ObjectiveUpdate(BaseModel):
-    progress: Optional[float] = None  # 0-100
-    actual_value: Optional[float] = None
-    status: Optional[str] = None  # not_started, in_progress, completed, cancelled
-    notes: Optional[str] = None
-
-
-class EvaluationCreate(BaseModel):
-    employee_id: str
-    cycle_id: Optional[str] = None
-    evaluation_type: str = "supervisor"  # supervisor, self, peer, 360
-    period: str  # e.g., "Q1 2025", "2025"
-    scores: List[Dict[str, Any]]  # [{competency: "performance", score: 4, comments: "..."}]
-    overall_comments: Optional[str] = None
-    strengths: Optional[List[str]] = None
-    areas_for_improvement: Optional[List[str]] = None
-    goals_for_next_period: Optional[List[str]] = None
-
-
-class PeerEvaluationCreate(BaseModel):
-    employee_id: str  # Employee being evaluated
-    cycle_id: str
-    scores: List[Dict[str, Any]]
-    comments: Optional[str] = None
-    relationship: str = "peer"  # peer, subordinate, cross_functional
-
-
-class ImprovementPlanCreate(BaseModel):
-    employee_id: str
-    evaluation_id: Optional[str] = None
-    title: str
-    areas: List[str]  # Areas to improve
-    actions: List[Dict[str, Any]]  # [{action: "...", deadline: "...", responsible: "..."}]
-    start_date: str
-    end_date: str
-    follow_up_frequency: str = "monthly"  # weekly, bi_weekly, monthly
-
-
-class ImprovementPlanUpdate(BaseModel):
-    status: Optional[str] = None  # active, completed, cancelled
-    progress_notes: Optional[str] = None
-    action_updates: Optional[List[Dict[str, Any]]] = None
+from models.hr import (
+    EvaluationCycleCreate, ObjectiveCreate, ObjectiveUpdate,
+    EvaluationCreate, PeerEvaluationCreate,
+    ImprovementPlanCreate, ImprovementPlanUpdate
+)
 
 
 # ==================== Evaluation Cycles ====================

@@ -47,39 +47,9 @@ LEAVE_TYPES = [
 
 
 # ==================== Models ====================
-
-class LeaveTypeCreate(BaseModel):
-    code: str
-    name: str
-    paid: bool = False
-    requires_approval: bool = True
-    max_days: Optional[int] = None
-    accrual_rate: Optional[float] = None  # Days per month
-
-
-class LeaveRequestCreate(BaseModel):
-    employee_id: str
-    leave_type: str  # vacation, sick, maternity, etc.
-    start_date: str
-    end_date: str
-    reason: Optional[str] = None
-    attachment_url: Optional[str] = None  # For medical certificates, etc.
-
-
-class LeaveApproval(BaseModel):
-    status: str  # approved, rejected
-    approver_comments: Optional[str] = None
-
-
-class LeavePolicyCreate(BaseModel):
-    name: str
-    base_vacation_days: int = 14  # Dominican law: 14 days after 1 year
-    additional_days_per_year: int = 1  # +1 day per additional year
-    max_vacation_days: int = 18  # Maximum 18 days per Dominican law
-    years_for_additional: int = 1  # Years of service needed for additional days
-    carry_over_allowed: bool = True
-    max_carry_over_days: int = 5
-    requires_min_service_months: int = 12
+from models.hr import (
+    LeaveTypeCreate, LeaveRequestCreate, LeaveApproval, LeavePolicyCreate
+)
 
 
 # ==================== Helper Functions ====================

@@ -32,51 +32,10 @@ async def get_current_user(request: Request, credentials=Depends(security)):
 
 
 # ==================== Models ====================
-
-class ShiftCreate(BaseModel):
-    name: str
-    start_time: str  # HH:MM format
-    end_time: str    # HH:MM format
-    break_minutes: int = 60
-    grace_period_minutes: int = 15
-    overtime_threshold_hours: float = 8.0
-    is_night_shift: bool = False
-    applies_to_days: List[str] = ["monday", "tuesday", "wednesday", "thursday", "friday"]
-
-
-class AttendanceCreate(BaseModel):
-    employee_id: str
-    date: str
-    check_in: Optional[str] = None
-    check_out: Optional[str] = None
-    status: str = "present"
-    shift_id: Optional[str] = None
-    notes: Optional[str] = None
-
-
-class AttendanceCheckIn(BaseModel):
-    employee_id: str
-    timestamp: Optional[str] = None  # ISO format, defaults to now
-    location: Optional[str] = None
-    device_id: Optional[str] = None  # For biometric integration
-    method: str = "manual"  # manual, biometric, mobile
-
-
-class AttendanceCheckOut(BaseModel):
-    employee_id: str
-    timestamp: Optional[str] = None
-    location: Optional[str] = None
-    device_id: Optional[str] = None
-    method: str = "manual"
-
-
-class BiometricEvent(BaseModel):
-    """For biometric device integration"""
-    device_id: str
-    employee_cedula: str
-    event_type: str  # check_in or check_out
-    timestamp: str
-    verification_method: str  # fingerprint, face, card
+from models.hr import (
+    ShiftCreate, AttendanceCreate, AttendanceCheckIn,
+    AttendanceCheckOut, BiometricEvent
+)
 
 
 # ==================== Helper Functions ====================

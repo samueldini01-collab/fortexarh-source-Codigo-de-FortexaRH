@@ -30,27 +30,7 @@ async def get_current_user(request: Request, credentials = Depends(security)):
 
 
 
-class JobCreate(BaseModel):
-    title: str
-    department: str
-    location: Optional[str] = None
-    type: str = "full-time"
-    salary_min: Optional[float] = None
-    salary_max: Optional[float] = None
-    description: Optional[str] = None
-    requirements: Optional[List[str]] = []
-    benefits: Optional[List[str]] = []
-
-
-class CandidateCreate(BaseModel):
-    job_id: str
-    name: str
-    email: str
-    phone: Optional[str] = None
-    resume_url: Optional[str] = None
-    linkedin_url: Optional[str] = None
-    cover_letter: Optional[str] = None
-    experience_years: Optional[int] = None
+from models.hr import JobCreate, CandidateCreate
 
 
 # ===================== JOBS =====================
