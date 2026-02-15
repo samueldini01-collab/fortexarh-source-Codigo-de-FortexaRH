@@ -1,5 +1,6 @@
 """
-Shared configuration and database setup for FortexaRH
+FortexaRH - Centralized Configuration
+Single source of truth for all application configuration.
 """
 import os
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -9,23 +10,41 @@ from dotenv import load_dotenv
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection
+# MongoDB connection with production-ready settings
 mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
+client = AsyncIOMotorClient(
+    mongo_url,
+    serverSelectionTimeoutMS=10000,
+    connectTimeoutMS=10000,
+    socketTimeoutMS=30000,
+    maxPoolSize=50,
+    minPoolSize=5,
+    retryWrites=True,
+)
 db = client[os.environ['DB_NAME']]
 
 # JWT configuration
-JWT_SECRET = os.environ.get('JWT_SECRET', 'hrflow_secret_key_2024')
+JWT_SECRET = os.environ['JWT_SECRET']
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_HOURS = 24 * 7
 
 # Stripe configuration
-STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY', '')
-STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
+import stripe
+stripe.api_key = os.environ.get('STRIPE_API_KEY', '')
 
 # Resend configuration
-RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
+import resend
+resend.api_key = os.environ.get('RESEND_API_KEY', '')
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
+
+# QuickBooks configuration
+QB_CLIENT_ID = os.environ.get('QUICKBOOKS_CLIENT_ID', '')
+QB_CLIENT_SECRET = os.environ.get('QUICKBOOKS_CLIENT_SECRET', '')
+QB_REALM_ID = os.environ.get('QUICKBOOKS_REALM_ID', '')
+QB_REDIRECT_URI = os.environ.get('QUICKBOOKS_REDIRECT_URI', '')
+
+# Subscription pricing
+ADDITIONAL_USER_PRICE = 2.5
 
 # Subscription plans
 SUBSCRIPTION_PLANS = {
@@ -40,7 +59,7 @@ SUBSCRIPTION_PLANS = {
         "trial_days": 5,
         "features": ["1 empleado máximo", "Calculadora de nómina", "5 días de prueba"],
         "allowed_features": ["payroll_calculator", "dashboard"],
-        "restricted_features": ["employees", "attendance", "vacations", "evaluations", "recruitment", "reports", "organigrama", "accounting"]
+        "restricted_features": ["employees", "attendance", "vacations", "evaluations", "recruitment", "reports", "organigrama", "accounting", "employee_portal"]
     },
     "basic": {
         "plan_id": "basic",
@@ -51,9 +70,9 @@ SUBSCRIPTION_PLANS = {
         "max_users": 3,
         "included_users": 3,
         "trial_days": 0,
-        "features": ["Hasta 50 empleados", "3 usuarios incluidos", "Gestión de empleados", "Nómina básica", "Asistencias y vacaciones", "Calculadora de nómina", "Reportes básicos", "Exportación Excel/CSV", "Soporte por email", "Integración FortexaERP"],
+        "features": ["Hasta 50 empleados", "3 usuarios incluidos", "Gestión de empleados", "Nómina básica", "Asistencias y vacaciones", "Calculadora de nómina", "Módulo de préstamos", "Reportes básicos", "Exportación Excel/CSV", "Soporte por email", "Integración FortexaERP"],
         "allowed_features": ["all_basic"],
-        "restricted_features": ["evaluations", "recruitment", "organigrama", "advanced_reports", "integrations_pro"]
+        "restricted_features": ["evaluations", "recruitment", "organigrama", "advanced_reports", "integrations_pro", "employee_portal"]
     },
     "pro": {
         "plan_id": "pro",
@@ -64,7 +83,7 @@ SUBSCRIPTION_PLANS = {
         "max_users": 5,
         "included_users": 5,
         "trial_days": 0,
-        "features": ["Hasta 200 empleados", "5 usuarios incluidos", "Todo lo del plan Básico", "Evaluaciones de desempeño", "Módulo de reclutamiento", "Organigrama intuitivo", "Reportes avanzados", "Integración QuickBooks", "Soporte prioritario"],
+        "features": ["Hasta 200 empleados", "5 usuarios incluidos", "Todo lo del plan Básico", "Evaluaciones de desempeño", "Módulo de reclutamiento", "Portal autoservicio empleados", "Organigrama intuitivo", "Reportes avanzados", "Integración QuickBooks", "Soporte prioritario"],
         "allowed_features": ["all_pro"],
         "restricted_features": ["custom_roles", "api", "advanced_workflows", "integrations_enterprise"]
     },
@@ -80,6 +99,39 @@ SUBSCRIPTION_PLANS = {
         "features": ["Empleados ilimitados", "7 usuarios incluidos", "Todo lo del plan Pro", "Roles personalizados", "Múltiples administradores", "API personalizada", "Flujos de trabajo avanzados", "Integración SAP/Oracle/Dynamics", "Soporte 24/7", "Gerente de cuenta dedicado"],
         "allowed_features": ["all"],
         "restricted_features": []
+    }
+}
+
+# Feature access mapping based on plan
+FEATURE_ACCESS = {
+    "trial": {
+        "dashboard": True, "payroll_calculator": True, "employees": False,
+        "attendance": False, "vacations": False, "evaluations": False,
+        "recruitment": False, "reports": False, "organigrama": False,
+        "accounting": False, "loans": False, "expenses": False,
+        "employee_portal": False, "subscriptions": True, "settings": True
+    },
+    "basic": {
+        "dashboard": True, "payroll_calculator": True, "employees": True,
+        "attendance": True, "vacations": True, "evaluations": False,
+        "recruitment": False, "reports": True, "organigrama": False,
+        "accounting": True, "loans": True, "expenses": False,
+        "employee_portal": False, "subscriptions": True, "settings": True
+    },
+    "pro": {
+        "dashboard": True, "payroll_calculator": True, "employees": True,
+        "attendance": True, "vacations": True, "evaluations": True,
+        "recruitment": True, "reports": True, "organigrama": True,
+        "accounting": True, "loans": True, "expenses": True,
+        "employee_portal": True, "subscriptions": True, "settings": True
+    },
+    "enterprise": {
+        "dashboard": True, "payroll_calculator": True, "employees": True,
+        "attendance": True, "vacations": True, "evaluations": True,
+        "recruitment": True, "reports": True, "organigrama": True,
+        "accounting": True, "loans": True, "expenses": True,
+        "employee_portal": True, "subscriptions": True, "settings": True,
+        "custom_roles": True, "api": True
     }
 }
 
