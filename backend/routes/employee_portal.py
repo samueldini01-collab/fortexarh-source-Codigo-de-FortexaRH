@@ -5,6 +5,7 @@ Portal for employees to view their data, payslips, request vacations, etc.
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from fastapi.security import HTTPBearer
+from sse_starlette.sse import EventSourceResponse
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime, timezone, timedelta
