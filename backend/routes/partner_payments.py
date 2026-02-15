@@ -19,6 +19,7 @@ security = HTTPBearer(auto_error=False)
 
 MINIMUM_PAYOUT_AMOUNT = 50.00
 PARTNER_COMMISSION_RATE = 0.30
+PAYOUT_FREQUENCY = "monthly"
 
 db = None
 _get_current_user_func: Callable = None
