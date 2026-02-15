@@ -584,7 +584,7 @@ export default function PartnerDashboardPage() {
   const pricing = dashboardData?.pricing || {};
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900" data-testid="partner-dashboard-page">
       {/* Header */}
       <header className="bg-slate-900/80 backdrop-blur-md border-b border-slate-700 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -619,6 +619,7 @@ export default function PartnerDashboardPage() {
                   <DropdownMenuItem 
                     className="text-red-400 hover:text-red-300 hover:bg-slate-700"
                     onClick={logout}
+                    data-testid="partner-logout-btn"
                   >
                     <LogOut className="w-4 h-4 mr-2" />
                     Cerrar Sesión
@@ -662,6 +663,7 @@ export default function PartnerDashboardPage() {
                 <Button
                   onClick={copyReferralLink}
                   className="bg-emerald-500 hover:bg-emerald-600"
+                  data-testid="copy-referral-link-btn"
                 >
                   <Copy className="w-4 h-4 mr-2" />
                   Copiar Link
@@ -734,19 +736,17 @@ export default function PartnerDashboardPage() {
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="bg-slate-800 border border-slate-700">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-emerald-600">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-emerald-600" data-testid="tab-overview">
               <BarChart3 className="w-4 h-4 mr-2" />
               Resumen
             </TabsTrigger>
-            <TabsTrigger value="clients" className="data-[state=active]:bg-emerald-600">
-              <Users className="w-4 h-4 mr-2" />
-              Clientes ({stats.total_clients || 0})
+            <TabsTrigger value="clients" className="data-[state=active]:bg-emerald-600" data-testid="tab-clients"> ({stats.total_clients || 0})
             </TabsTrigger>
-            <TabsTrigger value="commissions" className="data-[state=active]:bg-emerald-600">
+            <TabsTrigger value="commissions" className="data-[state=active]:bg-emerald-600" data-testid="tab-commissions">
               <DollarSign className="w-4 h-4 mr-2" />
               Comisiones
             </TabsTrigger>
-            <TabsTrigger value="payouts" className="data-[state=active]:bg-emerald-600">
+            <TabsTrigger value="payouts" className="data-[state=active]:bg-emerald-600" data-testid="tab-payouts">
               <Banknote className="w-4 h-4 mr-2" />
               Retiros
             </TabsTrigger>
