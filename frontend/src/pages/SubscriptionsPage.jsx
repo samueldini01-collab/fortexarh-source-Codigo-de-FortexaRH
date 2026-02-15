@@ -405,7 +405,7 @@ export default function SubscriptionsPage() {
       expired: "bg-red-100 text-red-700"
     };
     const labels = {
-      active: "Activo",
+      active: t('subscriptions.active'),
       trial: "Prueba Gratuita",
       cancelled: "Cancelado",
       expired: "Vencido"
@@ -502,7 +502,7 @@ export default function SubscriptionsPage() {
                   </h2>
                   <p className="text-slate-500 dark:text-slate-400">
                     {maxEmployees === -1 || maxEmployees === 9999 
-                      ? 'Empleados ilimitados' 
+                      ? t('subscriptions.unlimitedEmployees') 
                       : `Hasta ${maxEmployees} empleado${maxEmployees > 1 ? 's' : ''}`}
                   </p>
                   
@@ -530,7 +530,7 @@ export default function SubscriptionsPage() {
             <CardFooter className="flex flex-wrap gap-2 border-t pt-4">
               <Button variant="outline" onClick={() => setShowChangePlan(true)}>
                 <ArrowUpRight className="w-4 h-4 mr-2" />
-                {currentPlanId === 'trial' ? 'Actualizar Plan' : 'Cambiar Plan'}
+                {currentPlanId === 'trial' ? t('subscriptions.upgradePlan') : t('subscriptions.changePlan')}
               </Button>
               {currentPlanId !== 'trial' && (
                 <>
@@ -812,7 +812,7 @@ export default function SubscriptionsPage() {
                     <div className="space-y-2 mb-6">
                       <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
                         {plan.max_employees === -1 || plan.max_employees === 9999 
-                          ? 'Empleados ilimitados' 
+                          ? t('subscriptions.unlimitedEmployees') 
                           : `Hasta ${plan.max_employees} empleados`}
                       </p>
                       <p className="text-sm text-slate-500 dark:text-slate-400">{plan.included_users} usuarios incluidos</p>
