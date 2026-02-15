@@ -608,7 +608,10 @@
       "noAccount": "¿No tienes cuenta?",
       "createAccount": "Crear cuenta",
       "orContinueWith": "O continuar con",
-      "googleLogin": "Continuar con Google"
+      "googleLogin": "Continuar con Google",
+      "partnerPortal": "Portal de Contadores",
+      "partnerSubtitle": "Accede al portal de tu firma contable",
+      "partnerSubmit": "Entrar al Portal de Contadores"
     },
     "register": {
       "title": "Crear Cuenta",
