@@ -36,6 +36,7 @@ SaaS HR and Payroll management system named "FortexaRH" for the Dominican Republ
 - **Landing dropdown fix**: Translated contadoresFeatures dropdown items
 - **Clipboard API fix**: Added fallback for `navigator.clipboard.writeText` in PartnerRegisterPage (iframe context)
 - **Language auto-detection banner**: New LanguageBanner component suggests switching to browser language when mismatch detected
+- **Partner Client Management Panel**: Full CRUD for client subscriptions - activate with plan selection, edit plan/employees, deactivate, price preview with commission calculation. Backend: GET /plans, PATCH /activate, /subscription, /deactivate. Frontend: Enhanced clients table, activate/edit dialogs.
 
 ## Credentials
 - Admin: test_refactor@fortexa.com / test123
