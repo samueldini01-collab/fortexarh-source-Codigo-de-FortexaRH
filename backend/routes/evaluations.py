@@ -505,8 +505,17 @@ async def update_evaluation(
 @router.put("/{evaluation_id}/finalize")
 async def finalize_evaluation(evaluation_id: str, current_user: dict = Depends(get_current_user)):
     """Finalize an evaluation (lock it)"""
+    company_id = current_user.get("company_id")
+
+    evaluation = await db.evaluations.find_one(
+        {"evaluation_id": evaluation_id, "company_id": company_id},
+        {"_id": 0, "employee_id": 1, "overall_score": 1, "rating": 1}
+    )
+    if not evaluation:
+        raise HTTPException(status_code=404, detail="Evaluacion no encontrada")
+
     result = await db.evaluations.update_one(
-        {"evaluation_id": evaluation_id, "company_id": current_user.get("company_id")},
+        {"evaluation_id": evaluation_id, "company_id": company_id},
         {"$set": {
             "status": "finalized",
             "finalized_at": datetime.now(timezone.utc).isoformat(),
@@ -514,8 +523,23 @@ async def finalize_evaluation(evaluation_id: str, current_user: dict = Depends(g
         }}
     )
     if result.matched_count == 0:
-        raise HTTPException(status_code=404, detail="Evaluación no encontrada")
-    return {"message": "Evaluación finalizada"}
+        raise HTTPException(status_code=404, detail="Evaluacion no encontrada")
+
+    # Notify employee about their evaluation
+    score = evaluation.get("overall_score", 0)
+    rating = evaluation.get("rating", "")
+    await create_employee_notification(
+        db,
+        employee_id=evaluation["employee_id"],
+        company_id=company_id,
+        title="Nueva Evaluacion de Desempeno",
+        message=f"Tu evaluacion de desempeno ha sido finalizada. Puntuacion: {score}/5 ({rating}). Revisa los detalles en tu portal.",
+        notification_type="info",
+        category="evaluation",
+        action_url="/evaluations",
+    )
+
+    return {"message": "Evaluacion finalizada"}
 
 
 # ==================== 360° Feedback ====================
