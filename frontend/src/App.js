@@ -404,7 +404,6 @@ function AppRouter() {
       
       {/* Payroll routes - Lazy loaded */}
       <Route path="/payroll" element={<ProtectedRoute><LazyRoute><PayrollPage /></LazyRoute></ProtectedRoute>} />
-      <Route path="/payroll-v2" element={<ProtectedRoute><LazyRoute><PayrollV2Page /></LazyRoute></ProtectedRoute>} />
       <Route path="/payroll-dashboard" element={<ProtectedRoute><LazyRoute><PayrollDashboardPage /></LazyRoute></ProtectedRoute>} />
       <Route path="/payroll-config" element={<ProtectedRoute><LazyRoute><PayrollConfigPage /></LazyRoute></ProtectedRoute>} />
       <Route path="/payroll-calculator" element={<ProtectedRoute><LazyRoute><PayrollCalculatorPage /></LazyRoute></ProtectedRoute>} />
