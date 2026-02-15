@@ -1325,8 +1325,8 @@ export default function GeoLocationsPage() {
           locations={locations}
           reportData={reportData}
           loadingReport={loadingReport}
-          onGenerate={handleGenerateReport}
-          onExport={handleExportReport}
+          onGenerate={generateReport}
+          setReportData={setReportData}
         />
 
         <GeoAlertSettingsDialog
@@ -1334,7 +1334,8 @@ export default function GeoLocationsPage() {
           onOpenChange={setShowSettingsDialog}
           settingsForm={settingsForm}
           setSettingsForm={setSettingsForm}
-          onSave={handleSaveAlertSettings}
+          onSave={saveAlertSettings}
+          onSendDailySummary={sendDailySummary}
         />
 
         <FraudAlertDrillDown
