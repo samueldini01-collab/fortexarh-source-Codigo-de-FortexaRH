@@ -46,7 +46,7 @@ from routes.company import router as company_router, init_router as init_company
 from routes.organigrama import router as organigrama_router, init_router as init_organigrama_router
 from routes.evaluations import router as evaluations_router, init_router as init_evaluations_router
 from routes.recruitment import router as recruitment_router, init_router as init_recruitment_router
-from routes.payroll import router as payroll_router, init_router as init_payroll_router
+from routes.payroll import router as payroll_v2_router, legacy_router as payroll_router, init_router as init_payroll_router
 from routes.checkout import router as checkout_router, init_router as init_checkout_router
 from routes.accounting import router as accounting_router, init_router as init_accounting_router
 from routes.system_users import router as system_users_router, init_router as init_system_users_router
@@ -54,7 +54,6 @@ from routes.dgii_reports import router as dgii_reports_router, init_router as in
 from routes.notifications import router as notifications_router, init_router as init_notifications_router
 from routes.reports import router as reports_router, init_router as init_reports_router
 from routes.expenses import router as expenses_router, init_router as init_expenses_router
-from routes.payroll_v2 import router as payroll_v2_router, init_router as init_payroll_v2_router
 from routes.projects import router as projects_router, init_router as init_projects_router
 from routes.invoices import router as invoices_router, init_router as init_invoices_router
 from routes.metrics import router as metrics_router, init_router as init_metrics_router
