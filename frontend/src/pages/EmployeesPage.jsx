@@ -5,70 +5,28 @@ import { useAuth, API } from "@/App";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { 
-  Plus, 
-  Search, 
-  Edit, 
-  Trash2, 
-  User,
-  FileText,
-  CreditCard,
-  UserCheck,
-  Camera,
-  Calendar,
-  Building2,
-  Upload,
-  Download,
-  MoreVertical,
-  Edit3,
-  CheckSquare,
-  Percent,
-  Phone,
-  Lock,
-  X
+  Plus, Search, Edit, Trash2, User, FileText, UserCheck, Calendar, Building2,
+  Upload, Download, MoreVertical, Edit3
 } from "lucide-react";
 import { toast } from "sonner";
 import { ImportEmployeesModal, BulkEditModal, ExportEmployeesButton } from "@/components/EmployeeImportExport";
 import { EmployeeFormDialog } from "@/components/employees/EmployeeFormDialog";
 import {
-  departments, documentTypes, genders, maritalStatuses, contractTypes,
-  paymentMethods, paymentFrequencies, deductionTypes, relationshipTypes,
-  bloodTypes, countries, initialFormData, initialDeductionForm, initialEmergencyContactForm
+  departments, initialFormData, initialDeductionForm, initialEmergencyContactForm
 } from "@/components/employees/constants";
 
 export default function EmployeesPage() {
