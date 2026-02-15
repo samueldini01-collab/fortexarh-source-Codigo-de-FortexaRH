@@ -17,7 +17,7 @@ export function GeoLocationFormDialog({
 }) {
   const { t } = useTranslation();
   return (
-        <Dialog open={showLocationDialog} onOpenChange={setShowLocationDialog}>
+        <Dialog open={open} onOpenChange={onOpenChange}>
           <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle>
@@ -106,18 +106,25 @@ export function GeoLocationFormDialog({
             </div>
             
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowLocationDialog(false)}>
+              <Button variant="outline" onClick={() => onOpenChange(false)}>
                 Cancelar
               </Button>
-              <Button onClick={handleSaveLocation}>
+              <Button onClick={onSave}>
                 {editingLocation ? 'Actualizar' : 'Crear'}
               </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
+  );
+}
 
-        {/* Assign Employees Dialog */}
-        <Dialog open={showAssignDialog} onOpenChange={setShowAssignDialog}>
+export function GeoAssignDialog({
+  open, onOpenChange, selectedLocation, employees, selectedEmployees,
+  setSelectedEmployees, onSave
+}) {
+  const { t } = useTranslation();
+  return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
           <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle>{t('geoLocations.asignarEmpleados')}</DialogTitle>
@@ -137,15 +144,7 @@ export function GeoLocationFormDialog({
                       type="checkbox"
                       checked={selectedEmployees.includes(emp.employee_id)}
                       onChange={(e) => {
-  );
-}
-
-export function GeoAssignDialog({
-  open, onOpenChange, selectedLocation, employees, selectedEmployees,
-  setSelectedEmployees, onSave
-}) {
-  const { t } = useTranslation();
-  return (
+                        if (e.target.checked) {
                           setSelectedEmployees([...selectedEmployees, emp.employee_id]);
                         } else {
                           setSelectedEmployees(selectedEmployees.filter(id => id !== emp.employee_id));
@@ -163,10 +162,10 @@ export function GeoAssignDialog({
             </div>
             
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowAssignDialog(false)}>
+              <Button variant="outline" onClick={() => onOpenChange(false)}>
                 Cancelar
               </Button>
-              <Button onClick={handleAssignEmployees} disabled={selectedEmployees.length === 0}>
+              <Button onClick={onSave} disabled={selectedEmployees.length === 0}>
                 Asignar {selectedEmployees.length} empleados
               </Button>
             </DialogFooter>
@@ -181,8 +180,7 @@ export function GeoReportDialog({
 }) {
   const { t } = useTranslation();
   return (
-        {/* Export Report Dialog */}
-        <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
+        <Dialog open={open} onOpenChange={onOpenChange}>
           <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
@@ -285,7 +283,7 @@ export function GeoReportDialog({
             
             <DialogFooter>
               <Button variant="outline" onClick={() => {
-                setShowReportDialog(false);
+                onOpenChange(false);
                 setReportData(null);
               }}>
                 Cerrar
@@ -314,7 +312,7 @@ export function GeoAlertSettingsDialog({
 }) {
   const { t } = useTranslation();
   return (
-        <Dialog open={showSettingsDialog} onOpenChange={setShowSettingsDialog}>
+        <Dialog open={open} onOpenChange={onOpenChange}>
           <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
@@ -401,7 +399,7 @@ export function GeoAlertSettingsDialog({
             </div>
             
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowSettingsDialog(false)}>
+              <Button variant="outline" onClick={() => onOpenChange(false)}>
                 Cancelar
               </Button>
               <Button onClick={saveAlertSettings}>
