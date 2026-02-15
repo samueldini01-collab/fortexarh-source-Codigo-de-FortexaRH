@@ -813,7 +813,7 @@ export default function PartnerDashboardPage() {
                 <CardHeader>
                   <CardTitle className="text-white">{t('partnerDashboard.resumenDeComisiones')}</CardTitle>
                   <CardDescription className="text-slate-400">
-                    Últimos 12 meses
+                    {t('partner.dashboard.last12Months')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -839,9 +839,9 @@ export default function PartnerDashboardPage() {
                   ) : (
                     <div className="text-center py-8">
                       <DollarSign className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                      <p className="text-slate-400">{t('partnerDashboard.sinComisionesAun')}</p>
+                      <p className="text-slate-400">{t('partner.dashboard.noCommissions')}</p>
                       <p className="text-slate-500 text-sm mt-1">
-                        Las comisiones aparecerán cuando tus clientes paguen
+                        {t('partner.dashboard.commissionsWillAppear')}
                       </p>
                     </div>
                   )}
@@ -865,7 +865,7 @@ export default function PartnerDashboardPage() {
                       ${pricing.current_price || 10}/mes
                     </p>
                     <p className="text-emerald-400 text-sm mt-1">
-                      {benefits.has_benefits ? "Empleados ilimitados" : "Precio por empleado activo"}
+                      {benefits.has_benefits ? t('partner.dashboard.unlimitedEmployees') : t('partner.dashboard.pricePerEmployee')}
                     </p>
                   </div>
                   <div className="p-4 bg-slate-700/50 rounded-lg">
@@ -890,7 +890,7 @@ export default function PartnerDashboardPage() {
                 <div>
                   <CardTitle className="text-white">{t('partnerDashboard.misClientes')}</CardTitle>
                   <CardDescription className="text-slate-400">
-                    Gestiona clientes, activa suscripciones y asigna planes
+                    {t('partner.dashboard.manageReferredClients')}
                   </CardDescription>
                 </div>
                 <Button
@@ -899,7 +899,7 @@ export default function PartnerDashboardPage() {
                   data-testid="add-client-btn"
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Agregar Cliente
+                  {t('partner.dashboard.addClient')}
                 </Button>
               </CardHeader>
               <CardContent>
