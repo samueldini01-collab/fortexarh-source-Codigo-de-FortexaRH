@@ -1421,130 +1421,14 @@ export default function PartnerDashboardPage() {
       </main>
 
       {/* Add Client Modal */}
-      <Dialog open={showAddClient} onOpenChange={setShowAddClient}>
-        <DialogContent className="bg-slate-800 border-slate-700 max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-white">{t('partnerDashboard.agregarNuevoCliente')}</DialogTitle>
-            <DialogDescription className="text-slate-400">
-              Ingresa los datos del cliente para enviarle una invitación
-            </DialogDescription>
-          </DialogHeader>
-          
-          <form onSubmit={handleAddClient} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="company_name" className="text-slate-300">
-                Nombre de la Empresa *
-              </Label>
-              <Input
-                id="company_name"
-                value={newClient.company_name}
-                onChange={(e) => setNewClient(prev => ({ ...prev, company_name: e.target.value }))}
-                placeholder="Empresa Cliente SRL"
-                className="bg-slate-700 border-slate-600 text-white"
-                data-testid="add-client-company"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="contact_name" className="text-slate-300">
-                Nombre del Contacto *
-              </Label>
-              <Input
-                id="contact_name"
-                value={newClient.contact_name}
-                onChange={(e) => setNewClient(prev => ({ ...prev, contact_name: e.target.value }))}
-                placeholder="Juan Pérez"
-                className="bg-slate-700 border-slate-600 text-white"
-                data-testid="add-client-contact"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="client_email" className="text-slate-300">
-                Correo Electrónico *
-              </Label>
-              <Input
-                id="client_email"
-                type="email"
-                value={newClient.email}
-                onChange={(e) => setNewClient(prev => ({ ...prev, email: e.target.value }))}
-                placeholder="contacto@empresa.com"
-                className="bg-slate-700 border-slate-600 text-white"
-                data-testid="add-client-email"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="client_phone" className="text-slate-300">
-                Teléfono
-              </Label>
-              <Input
-                id="client_phone"
-                value={newClient.phone}
-                onChange={(e) => setNewClient(prev => ({ ...prev, phone: e.target.value }))}
-                placeholder="809-000-0000"
-                className="bg-slate-700 border-slate-600 text-white"
-                data-testid="add-client-phone"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label className="text-slate-300">{t('partnerDashboard.tipoDeFacturacion')}</Label>
-              <Select
-                value={newClient.billing_type}
-                onValueChange={(value) => setNewClient(prev => ({ ...prev, billing_type: value }))}
-              >
-                <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700">
-                  <SelectItem value="direct">
-                    Directo al cliente (cliente paga su suscripción)
-                  </SelectItem>
-                  <SelectItem value="firm">
-                    Firma paga (tú pagas con descuento)
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-              <p className="text-slate-500 text-xs">
-                {newClient.billing_type === "direct" 
-                  ? "El cliente pagará directamente y recibirás 30% de comisión"
-                  : "Tú pagas la suscripción del cliente con 30% de descuento"
-                }
-              </p>
-            </div>
-            
-            <DialogFooter className="pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setShowAddClient(false)}
-                className="border-slate-600 text-slate-300"
-              >
-                Cancelar
-              </Button>
-              <Button
-                type="submit"
-                className="bg-emerald-500 hover:bg-emerald-600"
-                disabled={addingClient}
-                data-testid="submit-add-client-btn"
-              >
-                {addingClient ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Agregando...
-                  </>
-                ) : (
-                  <>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Agregar Cliente
-                  </>
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <AddClientDialog
+        open={showAddClient}
+        onOpenChange={setShowAddClient}
+        newClient={newClient}
+        setNewClient={setNewClient}
+        addingClient={addingClient}
+        onSubmit={handleAddClient}
+      />
 
       {/* Activate Client Dialog */}
       <Dialog open={showActivateClient} onOpenChange={setShowActivateClient}>
