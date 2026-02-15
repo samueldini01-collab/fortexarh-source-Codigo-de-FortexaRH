@@ -11,23 +11,9 @@ import logging
 
 router = APIRouter(prefix="/bank-files", tags=["Bank Files"])
 
-db = None
-_get_current_user_func = None
-
+from config import db
+from utils.auth import get_current_user
 logger = logging.getLogger(__name__)
-
-
-def init_router(database, auth_dependency):
-    global db, _get_current_user_func
-    db = database
-    _get_current_user_func = auth_dependency
-
-
-async def get_current_user(request: Request):
-    from fastapi.security import HTTPBearer
-    security = HTTPBearer(auto_error=False)
-    credentials = await security(request)
-    return await _get_current_user_func(request, credentials)
 
 
 def format_popular_line(seq: int, account: str, amount: float, name: str, doc_type: str, doc_number: str) -> str:

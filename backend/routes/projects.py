@@ -10,25 +10,11 @@ from datetime import datetime, timezone
 import uuid
 
 router = APIRouter(prefix="/projects", tags=["Projects"])
+from config import db
+from utils.auth import get_current_user
 security = HTTPBearer(auto_error=False)
 
-db = None
-_get_current_user_func = None
-
-
 from models.system import ProjectCreate, ProjectUpdate
-
-
-async def get_current_user(request: Request, credentials=Depends(security)):
-    if _get_current_user_func is None:
-        raise HTTPException(status_code=500, detail="Auth not initialized")
-    return await _get_current_user_func(request, credentials)
-
-
-def init_router(database, auth_func):
-    global db, _get_current_user_func
-    db = database
-    _get_current_user_func = auth_func
 
 
 @router.get("")

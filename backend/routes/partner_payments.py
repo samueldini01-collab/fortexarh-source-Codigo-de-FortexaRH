@@ -15,26 +15,13 @@ stripe.api_key = os.environ.get('STRIPE_API_KEY', '')
 from models.system import PayoutRequest, StripeConnectOnboard
 
 router = APIRouter(prefix="/partners", tags=["Partner Payments"])
+from config import db
+from utils.auth import get_current_user
 security = HTTPBearer(auto_error=False)
 
 MINIMUM_PAYOUT_AMOUNT = 50.00
 PARTNER_COMMISSION_RATE = 0.30
 PAYOUT_FREQUENCY = "monthly"
-
-db = None
-_get_current_user_func: Callable = None
-
-
-def init_router(database, auth_dependency: Callable):
-    global db, _get_current_user_func
-    db = database
-    _get_current_user_func = auth_dependency
-
-
-async def get_current_user(request: Request, credentials=Depends(security)):
-    if _get_current_user_func is None:
-        raise HTTPException(status_code=500, detail="Auth not initialized")
-    return await _get_current_user_func(request, credentials)
 
 
 # ============== STRIPE CONNECT ENDPOINTS ==============

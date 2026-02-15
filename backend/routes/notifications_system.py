@@ -11,22 +11,9 @@ from datetime import datetime, timezone
 import uuid
 
 router = APIRouter(prefix="/notifications", tags=["Notifications System"])
+from config import db
+from utils.auth import get_current_user
 security = HTTPBearer(auto_error=False)
-
-db = None
-_get_current_user_func: Callable = None
-
-
-def init_router(database, auth_dependency: Callable):
-    global db, _get_current_user_func
-    db = database
-    _get_current_user_func = auth_dependency
-
-
-async def get_current_user(request: Request, credentials=Depends(security)):
-    if _get_current_user_func is None:
-        raise HTTPException(status_code=500, detail="Auth not initialized")
-    return await _get_current_user_func(request, credentials)
 
 
 def now_iso():

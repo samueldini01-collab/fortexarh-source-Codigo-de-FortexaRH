@@ -8,26 +8,11 @@ from datetime import datetime, timezone
 import logging
 
 router = APIRouter(tags=["Invoices"])
+from config import db
+from utils.auth import get_current_user
 security = HTTPBearer(auto_error=False)
 
-db = None
-_get_current_user_func = None
-
 logger = logging.getLogger(__name__)
-
-
-def init_router(database, auth_dependency):
-    """Initialize the router with database and auth dependency"""
-    global db, _get_current_user_func
-    db = database
-    _get_current_user_func = auth_dependency
-
-
-async def get_current_user(request: Request, credentials=Depends(security)):
-    """Wrapper for the injected auth function"""
-    if _get_current_user_func is None:
-        raise HTTPException(status_code=500, detail="Auth not initialized")
-    return await _get_current_user_func(request, credentials)
 
 
 @router.get("/invoices")

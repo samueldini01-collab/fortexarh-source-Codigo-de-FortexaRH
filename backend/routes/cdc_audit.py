@@ -12,10 +12,9 @@ import asyncio
 import logging
 
 router = APIRouter(prefix="/cdc", tags=["CDC & Audit"])
+from config import db
+from utils.auth import get_current_user
 security = HTTPBearer(auto_error=False)
-
-db = None
-_get_current_user_func: Callable = None
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -71,18 +70,6 @@ EXCLUDED_FIELDS = ["password", "access_token", "refresh_token", "token", "secret
 # Active change stream tasks
 change_stream_tasks: Dict[str, asyncio.Task] = {}
 is_cdc_running = False
-
-
-def init_router(database, auth_dependency: Callable):
-    global db, _get_current_user_func
-    db = database
-    _get_current_user_func = auth_dependency
-
-
-async def get_current_user(request: Request, credentials=Depends(security)):
-    if _get_current_user_func is None:
-        raise HTTPException(status_code=500, detail="Auth not initialized")
-    return await _get_current_user_func(request, credentials)
 
 
 # ============== MODELS ==============

@@ -26,9 +26,8 @@ from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
 
 router = APIRouter(prefix="/employee-portal", tags=["Employee Portal"])
 
+from config import db
 from config import JWT_SECRET, JWT_ALGORITHM
-
-db = None
 
 logger = logging.getLogger(__name__)
 
@@ -44,11 +43,6 @@ from services.employee_notifications import (
     unregister_sse_connection,
 )
 import json
-
-
-def init_router(database):
-    global db
-    db = database
 
 
 async def get_employee_from_token(request: Request):

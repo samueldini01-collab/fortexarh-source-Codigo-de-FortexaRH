@@ -29,24 +29,8 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/geolocation-attendance", tags=["Geolocation Attendance"])
 
-# These will be injected from server.py
-db = None
-_get_current_user_func = None
-
-
-def init_router(database, get_current_user_func):
-    """Initialize the router with database and auth dependencies"""
-    global db, _get_current_user_func
-    db = database
-    _get_current_user_func = get_current_user_func
-
-
-async def get_current_user(request: Request):
-    """Wrapper to call the injected get_current_user function"""
-    from fastapi.security import HTTPBearer
-    security = HTTPBearer(auto_error=False)
-    credentials = await security(request)
-    return await _get_current_user_func(request, credentials)
+from config import db
+from utils.auth import get_current_user
 
 
 def generate_id(prefix: str) -> str:

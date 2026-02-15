@@ -13,23 +13,9 @@ import logging
 
 router = APIRouter(prefix="/doc-generator", tags=["Documents"])
 
-db = None
-_get_current_user_func = None
-
+from config import db
+from utils.auth import get_current_user
 logger = logging.getLogger(__name__)
-
-
-def init_router(database, auth_dependency):
-    global db, _get_current_user_func
-    db = database
-    _get_current_user_func = auth_dependency
-
-
-async def get_current_user(request: Request):
-    from fastapi.security import HTTPBearer
-    security = HTTPBearer(auto_error=False)
-    credentials = await security(request)
-    return await _get_current_user_func(request, credentials)
 
 
 # ===================== MODELS =====================

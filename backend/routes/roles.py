@@ -11,10 +11,8 @@ import logging
 
 router = APIRouter(prefix="/roles", tags=["Custom Roles"])
 
-# These will be injected from server.py
-db = None
-_get_current_user_func = None
-
+from config import db
+from utils.auth import get_current_user
 logger = logging.getLogger(__name__)
 
 # Default modules and permissions
@@ -163,21 +161,6 @@ PERMISSION_TYPES = list(PERMISSION_LABELS.keys())
 
 # Pydantic models
 from models.system import CustomRoleCreate, CustomRoleUpdate
-
-
-def init_router(database, auth_dependency):
-    """Initialize router with database and auth dependency"""
-    global db, _get_current_user_func
-    db = database
-    _get_current_user_func = auth_dependency
-
-
-async def get_current_user(request: Request):
-    """Wrapper to call the auth dependency"""
-    from fastapi.security import HTTPBearer
-    security = HTTPBearer(auto_error=False)
-    credentials = await security(request)
-    return await _get_current_user_func(request, credentials)
 
 
 async def check_enterprise_plan(company_id: str) -> bool:

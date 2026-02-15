@@ -14,29 +14,15 @@ import resend
 import logging
 
 router = APIRouter(prefix="/notification-settings", tags=["Notification Settings"])
+from config import db
+from utils.auth import get_current_user
 security = HTTPBearer(auto_error=False)
-
-db = None
-_get_current_user_func = None
 
 logger = logging.getLogger(__name__)
 
 # Configure Resend
 resend.api_key = os.environ.get('RESEND_API_KEY')
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'noreply@fortexarh.com')
-
-
-def init_router(database, auth_func):
-    global db, _get_current_user_func
-    db = database
-    _get_current_user_func = auth_func
-
-
-async def get_current_user(request: Request, credentials=Depends(security)):
-    """Wrapper for the injected auth function"""
-    if _get_current_user_func is None:
-        raise HTTPException(status_code=500, detail="Auth not initialized")
-    return await _get_current_user_func(request, credentials)
 
 
 # ==================== MODELS ====================

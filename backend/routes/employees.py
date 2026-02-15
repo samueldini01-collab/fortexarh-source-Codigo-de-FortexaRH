@@ -13,27 +13,11 @@ import io
 import logging
 
 router = APIRouter(prefix="/employees", tags=["Employees"])
+from config import db
+from utils.auth import get_current_user
+from config import SUBSCRIPTION_PLANS
 security = HTTPBearer(auto_error=False)
 logger = logging.getLogger(__name__)
-
-# Will be initialized by init_router
-db = None
-_get_current_user_func = None
-SUBSCRIPTION_PLANS = None
-
-
-def init_router(database, auth_func, plans):
-    global db, _get_current_user_func, SUBSCRIPTION_PLANS
-    db = database
-    _get_current_user_func = auth_func
-    SUBSCRIPTION_PLANS = plans
-
-
-async def get_current_user(request: Request, credentials = Depends(security)):
-    """Wrapper for the injected auth function"""
-    if _get_current_user_func is None:
-        raise HTTPException(status_code=500, detail="Auth not initialized")
-    return await _get_current_user_func(request, credentials)
 
 
 
@@ -125,7 +109,6 @@ async def get_employee_loans(employee_id: str, current_user: dict = Depends(get_
         {"_id": 0}
     ).to_list(100)
     return loans
-
 
 
 # ===================== EXCEL IMPORT/EXPORT =====================

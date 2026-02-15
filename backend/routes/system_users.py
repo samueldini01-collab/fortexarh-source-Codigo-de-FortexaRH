@@ -11,23 +11,9 @@ import uuid
 from utils.auth import hash_password
 
 router = APIRouter(prefix="/system-users", tags=["System Users"])
+from config import db
+from utils.auth import get_current_user
 security = HTTPBearer(auto_error=False)
-
-db = None
-_get_current_user_func = None
-
-
-def init_router(database, auth_func):
-    global db, _get_current_user_func
-    db = database
-    _get_current_user_func = auth_func
-
-
-async def get_current_user(request: Request, credentials = Depends(security)):
-    if _get_current_user_func is None:
-        raise HTTPException(status_code=500, detail="Auth not initialized")
-    return await _get_current_user_func(request, credentials)
-
 
 
 from models.auth import (

@@ -15,6 +15,8 @@ import resend
 import stripe
 
 router = APIRouter(prefix="/partners", tags=["Partners"])
+from config import db
+from utils.auth import get_current_user
 security = HTTPBearer(auto_error=False)
 
 # Resend configuration
@@ -23,21 +25,6 @@ SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'noreply@fortexarh.com')
 
 # Stripe configuration for Connect
 stripe.api_key = os.environ.get('STRIPE_API_KEY', '')
-
-db = None
-_get_current_user_func: Callable = None
-
-
-def init_router(database, auth_dependency: Callable = None):
-    global db, _get_current_user_func
-    db = database
-    _get_current_user_func = auth_dependency
-
-
-async def get_current_user(request: Request, credentials=Depends(security)):
-    if _get_current_user_func is None:
-        raise HTTPException(status_code=500, detail="Auth not initialized")
-    return await _get_current_user_func(request, credentials)
 
 
 # ============== CONSTANTS ==============

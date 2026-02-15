@@ -12,18 +12,12 @@ import resend
 
 router = APIRouter(prefix="/support", tags=["Support"])
 
+from config import db
 # Resend configuration
 resend.api_key = os.environ.get('RESEND_API_KEY', '')
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'noreply@fortexarh.com')
 SUPPORT_EMAIL = os.environ.get('INFO_EMAIL', 'soporte@fortexarh.com')
 
-# MongoDB reference (will be set by init_router)
-db = None
-
-
-def init_router(database):
-    global db
-    db = database
 
 
 from models.system import (

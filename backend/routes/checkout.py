@@ -13,13 +13,11 @@ import logging
 import asyncio
 
 router = APIRouter(tags=["Checkout"])
+from config import db
+from utils.auth import get_current_user
+from config import SUBSCRIPTION_PLANS
+from email_service import send_payment_confirmation_email, send_invoice_email
 security = HTTPBearer(auto_error=False)
-
-db = None
-_get_current_user_func = None
-SUBSCRIPTION_PLANS = {}
-_send_payment_confirmation_email = None
-_send_invoice_email = None
 
 logger = logging.getLogger(__name__)
 
@@ -27,21 +25,6 @@ from models.finance import (
     PublicCheckoutRequest, CheckoutRequest,
     UpdatePaymentMethodRequest, ConfirmSetupRequest
 )
-
-
-async def get_current_user(request: Request, credentials=Depends(security)):
-    if _get_current_user_func is None:
-        raise HTTPException(status_code=500, detail="Auth not initialized")
-    return await _get_current_user_func(request, credentials)
-
-
-def init_router(database, auth_func, plans, send_payment_email=None, send_inv_email=None):
-    global db, _get_current_user_func, SUBSCRIPTION_PLANS, _send_payment_confirmation_email, _send_invoice_email
-    db = database
-    _get_current_user_func = auth_func
-    SUBSCRIPTION_PLANS = plans
-    _send_payment_confirmation_email = send_payment_email
-    _send_invoice_email = send_inv_email
 
 
 # ===================== HELPER FUNCTIONS =====================
@@ -133,8 +116,8 @@ async def activate_subscription(company_id: str, plan_id: str, employee_count: i
     logger.info(f"Subscription activated: company={company_id}, plan={plan_id}, employees={employee_count}, invoice={invoice_number}")
     
     # Send confirmation emails (non-blocking)
-    if user_email and _send_payment_confirmation_email and _send_invoice_email:
-        asyncio.create_task(_send_payment_confirmation_email(
+    if user_email and send_payment_confirmation_email and send_invoice_email:
+        asyncio.create_task(send_payment_confirmation_email(
             recipient_email=user_email,
             recipient_name=user_name or "Cliente",
             plan_name=plan.get("name", plan_id),
@@ -145,7 +128,7 @@ async def activate_subscription(company_id: str, plan_id: str, employee_count: i
             period_end=period_end.strftime("%d/%m/%Y")
         ))
         
-        asyncio.create_task(_send_invoice_email(
+        asyncio.create_task(send_invoice_email(
             recipient_email=user_email,
             recipient_name=user_name or "Cliente",
             company_name=company_name,
@@ -516,7 +499,6 @@ async def stripe_webhook(request: Request):
     except Exception as e:
         logger.error(f"Webhook error: {e}")
         return {"status": "error", "message": str(e)}
-
 
 
 # ===================== PAYMENT METHOD MANAGEMENT =====================

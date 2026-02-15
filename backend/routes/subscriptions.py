@@ -14,13 +14,9 @@ import resend
 
 router = APIRouter(prefix="/subscription", tags=["Subscriptions"])
 
-# These will be injected from server.py
-db = None
-_get_current_user_func = None
-SUBSCRIPTION_PLANS = None
-FEATURE_ACCESS = None
-ADDITIONAL_USER_PRICE = 2.5
-
+from config import db
+from utils.auth import get_current_user
+from config import SUBSCRIPTION_PLANS, FEATURE_ACCESS, ADDITIONAL_USER_PRICE
 logger = logging.getLogger(__name__)
 
 
@@ -32,23 +28,6 @@ from models.finance import (
 
 
 # ===================== ROUTER INITIALIZATION =====================
-
-def init_router(database, auth_dependency, plans, feature_access, additional_user_price):
-    """Initialize router with dependencies"""
-    global db, _get_current_user_func, SUBSCRIPTION_PLANS, FEATURE_ACCESS, ADDITIONAL_USER_PRICE
-    db = database
-    _get_current_user_func = auth_dependency
-    SUBSCRIPTION_PLANS = plans
-    FEATURE_ACCESS = feature_access
-    ADDITIONAL_USER_PRICE = additional_user_price
-
-
-async def get_current_user(request: Request):
-    """Wrapper to call the auth dependency"""
-    from fastapi.security import HTTPBearer
-    security = HTTPBearer(auto_error=False)
-    credentials = await security(request)
-    return await _get_current_user_func(request, credentials)
 
 
 def _get_stripe_key():

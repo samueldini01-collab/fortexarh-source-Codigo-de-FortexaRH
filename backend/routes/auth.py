@@ -17,24 +17,15 @@ import resend
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
-from config import SENDER_EMAIL
+from config import SENDER_EMAIL, SUBSCRIPTION_PLANS
 from utils.auth import hash_password, verify_password, create_jwt_token, get_current_user
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
+from config import db
+from email_service import send_welcome_email
 security = HTTPBearer(auto_error=False)
 limiter = Limiter(key_func=get_remote_address)
 
-# Will be initialized by init_router
-db = None
-SUBSCRIPTION_PLANS = None
-send_welcome_email = None
-
-
-def init_router(database, plans, welcome_email_func):
-    global db, SUBSCRIPTION_PLANS, send_welcome_email
-    db = database
-    SUBSCRIPTION_PLANS = plans
-    send_welcome_email = welcome_email_func
 
 
 # ===================== MODELS =====================
@@ -414,7 +405,6 @@ async def reset_password(request: Request, data: PasswordResetConfirm):
     )
     
     return {"message": "Contraseña actualizada correctamente. Ya puedes iniciar sesión."}
-
 
 
 @router.get("/me")

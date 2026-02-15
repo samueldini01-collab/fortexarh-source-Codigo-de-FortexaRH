@@ -12,17 +12,10 @@ import io
 import csv
 
 router = APIRouter(prefix="/accounting", tags=["Accounting"])
+from config import db
+from utils.auth import get_current_user
 security = HTTPBearer(auto_error=False)
 
-db = None
-_get_current_user_func = None
-
-
-async def get_current_user(request: Request, credentials = Depends(security)):
-    """Wrapper for the injected auth function"""
-    if _get_current_user_func is None:
-        raise HTTPException(status_code=500, detail="Auth not initialized")
-    return await _get_current_user_func(request, credentials)
 
 # Available chart of accounts catalogs
 CATALOG_TEMPLATES = {
@@ -202,12 +195,6 @@ CATALOG_TEMPLATES = {
 
 # Default (legacy) - for backwards compatibility
 DEFAULT_ACCOUNTS = CATALOG_TEMPLATES["dr_basico"]["accounts"]
-
-
-def init_router(database, auth_func):
-    global db, _get_current_user_func
-    db = database
-    _get_current_user_func = auth_func
 
 
 from models.finance import (
