@@ -10,6 +10,7 @@ import { Mail, Lock, AlertCircle, Eye, EyeOff, Briefcase } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
 import LanguageSelector from "@/components/LanguageSelector";
+import TwoFactorLogin from "@/components/TwoFactorLogin";
 
 export default function LoginPage() {
   const { t } = useTranslation();
@@ -19,6 +20,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [partnerInfo, setPartnerInfo] = useState(null);
+  const [twoFactorData, setTwoFactorData] = useState(null);
   const { login } = useAuth();
   const navigate = useNavigate();
   const debounceRef = useRef(null);
