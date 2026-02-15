@@ -82,6 +82,7 @@ import {
 import { KPIDrillDownDialog } from "@/components/partner/KPIDrillDownDialog";
 import { AddClientDialog } from "@/components/partner/AddClientDialog";
 import { PayoutRequestDialog } from "@/components/partner/PayoutRequestDialog";
+import NotificationBell from "@/components/NotificationBell";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
