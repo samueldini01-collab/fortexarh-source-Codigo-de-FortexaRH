@@ -35,6 +35,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import PaymentMethodDialog from "@/components/PaymentMethodForm";
+import { InvoiceHistory } from "@/components/subscriptions/InvoiceHistory";
+import { CancellationFlowDialog } from "@/components/subscriptions/CancellationFlow";
 
 const PLAN_ICONS = {
   trial: Shield,
