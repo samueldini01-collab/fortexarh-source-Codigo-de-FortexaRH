@@ -185,6 +185,21 @@ async def register(request: Request, user_data: UserCreate, response: Response):
     }
 
 
+@router.post("/check-partner")
+@limiter.limit("15/minute")
+async def check_partner(request: Request):
+    """Check if an email belongs to a partner account (returns false for non-existent emails)"""
+    body = await request.json()
+    email = body.get("email", "").lower().strip()
+    if not email:
+        return {"is_partner": False}
+    user = await db.users.find_one({"email": email, "is_partner": True}, {"_id": 0, "is_partner": 1})
+    if user:
+        firm = await db.accounting_firms.find_one({"email": email}, {"_id": 0, "firm_name": 1})
+        return {"is_partner": True, "firm_name": firm.get("firm_name") if firm else None}
+    return {"is_partner": False}
+
+
 @router.post("/login")
 @limiter.limit("10/minute")
 async def login(request: Request, credentials: UserLogin, response: Response):
