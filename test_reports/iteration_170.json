@@ -1,0 +1,87 @@
+{
+  "summary": "Language Switcher and Password Change Features - All tests passed. Backend: 8/8 tests passed. Frontend: Language selector visible and functional on login page and dashboard. Password change section visible in profile tab with all 3 inputs. Error handling works correctly (401 for wrong password).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "EmployeeDashboard",
+        "issues": ["Minor React console warning: 'Each child in a list should have a unique key prop' in CardContent - does not affect functionality (carried over from iteration 169)"]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_employee_portal_lang_password.py",
+    "/app/test_reports/pytest/employee_portal_lang_password_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Language selector implementation follows best practices with reusable component (LanguageSelector.jsx) supporting 'compact', 'landing', and 'default' variants",
+    "Password change endpoint correctly uses JSON body with ChangePasswordRequest model instead of query params",
+    "Frontend password validation correctly checks for matching passwords before API call",
+    "Password change reverts correctly - tested successfully with change and revert flow",
+    "All data-testid attributes properly added for testing: 'portal-login-lang-switcher', 'portal-lang-switcher', 'current-password-input', 'new-password-input', 'confirm-password-input', 'change-password-btn'"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_employee_portal_lang_password.py"
+  ],
+  "success_rate": {
+    "backend": "100% (8/8 tests passed)",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "employee_portal": "document_number: 001-0000001-1 / password: portal123"
+  },
+  "seed_data_creation": "None - used existing test data",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Language switcher fully functional on both login page (landing variant with white text) and dashboard header (compact variant with ES/EN/FR dropdown). Password change section in Profile/My Data tab with lock icon, title, subtitle, and 3 input fields. Backend validation: wrong password returns 401, short password (<6 chars) returns 400. Frontend validation: checks password match before API call.",
+  "verified_features": {
+    "language_selector_login_page": {
+      "visibility": "PASSED - data-testid='portal-login-lang-switcher' visible at top-right",
+      "variant": "landing (white text on dark background)",
+      "options": "ES/EN/FR with data-testid='lang-landing-es/en/fr'",
+      "switching": "PASSED - text changes correctly when switching languages"
+    },
+    "language_selector_dashboard": {
+      "visibility": "PASSED - data-testid='portal-lang-switcher' visible in header",
+      "position": "Between notification bell and logout button",
+      "variant": "compact",
+      "options": "ES/EN/FR with data-testid='lang-es/en/fr'",
+      "switching": "PASSED - dashboard text changes correctly"
+    },
+    "password_change_section": {
+      "location": "Profile tab (My Data / Mis Datos)",
+      "elements": {
+        "lock_icon": "PASSED - visible",
+        "title": "PASSED - 'Change Password' / 'Cambiar Contrasena'",
+        "subtitle": "PASSED - 'Update your portal access password'",
+        "current_password": "PASSED - data-testid='current-password-input'",
+        "new_password": "PASSED - data-testid='new-password-input'",
+        "confirm_password": "PASSED - data-testid='confirm-password-input'",
+        "change_button": "PASSED - data-testid='change-password-btn'"
+      }
+    },
+    "password_change_backend": {
+      "endpoint": "POST /api/employee-portal/change-password",
+      "request_body": "{old_password, new_password}",
+      "wrong_password_401": "PASSED - returns 401 'Contrasena actual incorrecta'",
+      "short_password_400": "PASSED - returns 400 when password < 6 chars",
+      "success_change": "PASSED - password changed and reverted successfully",
+      "login_with_new": "PASSED - can login with new password after change"
+    },
+    "notification_bell": {
+      "visibility": "PASSED - still visible alongside language selector",
+      "functionality": "PASSED - opens notification panel on click",
+      "panel_content": "Shows notifications with categories (Vacations, Payroll badges)"
+    }
+  },
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": []
+  }
+}
