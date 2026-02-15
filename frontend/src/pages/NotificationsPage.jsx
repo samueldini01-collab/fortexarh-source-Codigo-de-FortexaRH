@@ -136,7 +136,7 @@ export default function NotificationsPage() {
       console.error("Error loading notification data:", err);
     }
     setLoading(false);
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     fetchAll();
@@ -148,7 +148,7 @@ export default function NotificationsPage() {
     try {
       const res = await fetch(`${API}/notification-preferences`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         credentials: "include",
         body: JSON.stringify({ events: userPrefs, quiet_hours: quietHours, digest }),
       });
