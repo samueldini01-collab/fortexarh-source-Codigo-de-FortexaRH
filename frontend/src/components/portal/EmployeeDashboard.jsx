@@ -53,6 +53,12 @@ function EmployeeDashboard() {
   const [checkingOut, setCheckingOut] = useState(false);
   const [downloadingPdf, setDownloadingPdf] = useState(null);
 
+  // Password change states
+  const [passwordForm, setPasswordForm] = useState({ old_password: "", new_password: "", confirm_password: "" });
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+
   // Notification states
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
