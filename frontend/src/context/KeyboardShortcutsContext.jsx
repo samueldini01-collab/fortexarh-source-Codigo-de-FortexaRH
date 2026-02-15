@@ -15,7 +15,7 @@ const DEFAULT_SHORTCUTS = [
   // Navigation
   { key: "g h", description: "Ir al Dashboard", category: "Navegación", action: "navigate", path: "/dashboard" },
   { key: "g e", description: "Ir a Empleados", category: "Navegación", action: "navigate", path: "/employees" },
-  { key: "g n", description: "Ir a Nómina", category: "Navegación", action: "navigate", path: "/payroll-v2" },
+  { key: "g n", description: "Ir a Nómina", category: "Navegación", action: "navigate", path: "/payroll" },
   { key: "g v", description: "Ir a Vacaciones", category: "Navegación", action: "navigate", path: "/vacations" },
   { key: "g p", description: "Ir a Préstamos", category: "Navegación", action: "navigate", path: "/loans" },
   { key: "g a", description: "Ir a Asistencias", category: "Navegación", action: "navigate", path: "/attendance" },

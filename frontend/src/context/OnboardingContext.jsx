@@ -76,7 +76,7 @@ const ONBOARDING_STEPS = [
   {
     id: "payroll-nav",
     type: "highlight",
-    target: 'a[href="/payroll-v2"]',
+    target: 'a[href="/payroll"]',
     titleKey: "onboarding.steps.payroll.title",
     descriptionKey: "onboarding.steps.payroll.description",
     position: "right",

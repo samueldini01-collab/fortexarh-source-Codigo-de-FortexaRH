@@ -145,7 +145,7 @@ export default function Dashboard() {
           break;
           
         case "payrolls":
-          response = await axios.get(`${API}/payroll-v2/periods?status=open,draft,pending_approval,calculated`, {
+          response = await axios.get(`${API}/payroll/periods?status=open,draft,pending_approval,calculated`, {
             headers: getAuthHeaders(),
             withCredentials: true
           });
@@ -274,7 +274,7 @@ export default function Dashboard() {
       color: "bg-emerald-500",
       bgColor: "bg-emerald-50 dark:bg-emerald-900/30",
       textColor: "text-emerald-600 dark:text-emerald-400",
-      href: "/payroll-v2",
+      href: "/payroll",
       drillDownType: "payrolls"
     },
     {
@@ -573,7 +573,7 @@ export default function Dashboard() {
             // Navigate to detail page based on drill-down type
             const routes = {
               employees: `/employees/${row.employee_id}`,
-              payrolls: `/payroll-v2`,
+              payrolls: `/payroll`,
               attendance: `/attendance`,
               vacations: `/vacations`,
               jobs: `/recruitment`,

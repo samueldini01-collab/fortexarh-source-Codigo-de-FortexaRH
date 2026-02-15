@@ -128,7 +128,7 @@ export default function MetricsDashboardPage() {
           title = `Desglose Nómina - ${monthData?.month || 'Mes'}`;
           // Fetch period data for this month
           try {
-            const periodsRes = await axios.get(`${API}/payroll-v2/periods?year=${selectedYear}`, {
+            const periodsRes = await axios.get(`${API}/payroll/periods?year=${selectedYear}`, {
               headers: getAuthHeaders(),
               withCredentials: true
             });
@@ -142,7 +142,7 @@ export default function MetricsDashboardPage() {
             const monthPeriod = periods.find(p => p.month === matchMonth);
             
             if (monthPeriod) {
-              const detailRes = await axios.get(`${API}/payroll-v2/periods/${monthPeriod.period_id}`, {
+              const detailRes = await axios.get(`${API}/payroll/periods/${monthPeriod.period_id}`, {
                 headers: getAuthHeaders(),
                 withCredentials: true
               });

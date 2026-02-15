@@ -115,7 +115,7 @@ export default function PayrollDashboardPage() {
 
         case "paid_ytd":
           try {
-            response = await axios.get(`${API}/payroll-v2/periods`, {
+            response = await axios.get(`${API}/payroll/periods`, {
               headers: getAuthHeaders(),
               withCredentials: true
             });
@@ -151,7 +151,7 @@ export default function PayrollDashboardPage() {
 
         case "paid_payrolls":
           try {
-            response = await axios.get(`${API}/payroll-v2/periods`, {
+            response = await axios.get(`${API}/payroll/periods`, {
               headers: getAuthHeaders(),
               withCredentials: true
             });
@@ -173,7 +173,7 @@ export default function PayrollDashboardPage() {
           const monthPoint = contextData;
           title = `${t('payrollDashboard.drillDown.monthDetail')} - ${monthPoint?.month || ''}`;
           try {
-            const periodsRes = await axios.get(`${API}/payroll-v2/periods`, {
+            const periodsRes = await axios.get(`${API}/payroll/periods`, {
               headers: getAuthHeaders(),
               withCredentials: true
             });
@@ -188,7 +188,7 @@ export default function PayrollDashboardPage() {
             }
             const matched = (periodsRes.data || []).find(p => p.month === matchMonth);
             if (matched) {
-              const detailRes = await axios.get(`${API}/payroll-v2/periods/${matched.period_id}`, {
+              const detailRes = await axios.get(`${API}/payroll/periods/${matched.period_id}`, {
                 headers: getAuthHeaders(),
                 withCredentials: true
               });

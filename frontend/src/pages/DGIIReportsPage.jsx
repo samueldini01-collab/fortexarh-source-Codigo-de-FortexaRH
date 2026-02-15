@@ -95,7 +95,7 @@ export default function DGIIReportsPage() {
   const fetchPeriods = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API}/payroll-v2/periods`, {
+      const response = await axios.get(`${API}/payroll/periods`, {
         headers: getAuthHeaders(),
         withCredentials: true
       });
@@ -126,7 +126,7 @@ export default function DGIIReportsPage() {
 
   const fetchPeriodDetails = useCallback(async (periodId) => {
     try {
-      const response = await axios.get(`${API}/payroll-v2/periods/${periodId}`, {
+      const response = await axios.get(`${API}/payroll/periods/${periodId}`, {
         headers: getAuthHeaders(),
         withCredentials: true
       });
@@ -138,7 +138,7 @@ export default function DGIIReportsPage() {
 
   const fetchAvailableYears = useCallback(async () => {
     try {
-      const response = await axios.get(`${API}/payroll-v2/available-years`, {
+      const response = await axios.get(`${API}/payroll/available-years`, {
         headers: getAuthHeaders(),
         withCredentials: true
       });
@@ -170,7 +170,7 @@ export default function DGIIReportsPage() {
       }
       
       // Use existing endpoint that returns period with entries
-      const response = await axios.get(`${API}/payroll-v2/periods/${selectedPeriod}`, {
+      const response = await axios.get(`${API}/payroll/periods/${selectedPeriod}`, {
         headers: getAuthHeaders(),
         withCredentials: true
       });
@@ -252,27 +252,27 @@ export default function DGIIReportsPage() {
       
       switch (reportType) {
         case "ir3":
-          endpoint = `/payroll-v2/periods/${selectedPeriod}/export/ir3`;
+          endpoint = `/payroll/periods/${selectedPeriod}/export/ir3`;
           filename = "IR3_Retenciones.xls";
           break;
         case "ir4":
-          endpoint = `/payroll-v2/periods/${selectedPeriod}/export/ir4`;
+          endpoint = `/payroll/periods/${selectedPeriod}/export/ir4`;
           filename = "IR4_Detalle_Retenciones.xls";
           break;
         case "ir17":
-          endpoint = `/payroll-v2/periods/${selectedPeriod}/export/ir17`;
+          endpoint = `/payroll/periods/${selectedPeriod}/export/ir17`;
           filename = "IR17_Otras_Retenciones.xls";
           break;
         case "ir6":
-          endpoint = `/payroll-v2/periods/${selectedPeriod}/export/ir6`;
+          endpoint = `/payroll/periods/${selectedPeriod}/export/ir6`;
           filename = "IR6_Anexo_Retenciones.xls";
           break;
         case "tss-autodeterminacion":
-          endpoint = `/payroll-v2/periods/${selectedPeriod}/export/tss-autodeterminacion`;
+          endpoint = `/payroll/periods/${selectedPeriod}/export/tss-autodeterminacion`;
           filename = "TSS_Autodeterminacion.xls";
           break;
         case "tss-novedades":
-          endpoint = `/payroll-v2/periods/${selectedPeriod}/export/tss-novedades`;
+          endpoint = `/payroll/periods/${selectedPeriod}/export/tss-novedades`;
           filename = "TSS_Novedades.xls";
           break;
         default:
@@ -314,7 +314,7 @@ export default function DGIIReportsPage() {
     setDownloading(reportType);
     
     try {
-      const endpoint = `/payroll-v2/annual-report/ir13/${selectedYear}`;
+      const endpoint = `/payroll/annual-report/ir13/${selectedYear}`;
       const filename = `IR13_Declaracion_Anual_${selectedYear}.xls`;
 
       const response = await axios.get(`${API}${endpoint}`, {

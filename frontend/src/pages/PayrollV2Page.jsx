@@ -192,7 +192,7 @@ export default function PayrollV2Page() {
 
   const fetchPeriods = useCallback(async () => {
     try {
-      const response = await axios.get(`${API}/payroll-v2/periods`, { headers: getAuthHeaders(), withCredentials: true });
+      const response = await axios.get(`${API}/payroll/periods`, { headers: getAuthHeaders(), withCredentials: true });
       setPeriods(response.data);
     } catch (_error) {
       toast.error(t('payrollV2.messages.errorLoadingPeriods'));
@@ -201,7 +201,7 @@ export default function PayrollV2Page() {
 
   const fetchPeriodDetails = useCallback(async (periodId) => {
     try {
-      const response = await axios.get(`${API}/payroll-v2/periods/${periodId}`, { headers: getAuthHeaders(), withCredentials: true });
+      const response = await axios.get(`${API}/payroll/periods/${periodId}`, { headers: getAuthHeaders(), withCredentials: true });
       setPeriodEntries(response.data.entries || []);
     } catch (_error) {
       console.error("Error fetching period details");
@@ -221,7 +221,7 @@ export default function PayrollV2Page() {
 
   const fetchNoveltyTypes = useCallback(async () => {
     try {
-      const response = await axios.get(`${API}/payroll-v2/novelty-types`, { headers: getAuthHeaders(), withCredentials: true });
+      const response = await axios.get(`${API}/payroll/novelty-types`, { headers: getAuthHeaders(), withCredentials: true });
       setNoveltyTypes(response.data);
     } catch (_error) {
       console.error("Error fetching novelty types");
@@ -238,7 +238,7 @@ export default function PayrollV2Page() {
     setShowTssPreview(true);
     try {
       const response = await axios.get(
-        `${API}/payroll-v2/periods/${periodId}/tss-preview`,
+        `${API}/payroll/periods/${periodId}/tss-preview`,
         { headers: getAuthHeaders(), withCredentials: true }
       );
       setTssPreviewData(response.data);
@@ -253,7 +253,7 @@ export default function PayrollV2Page() {
   const downloadTssReport = async (periodId) => {
     try {
       const response = await axios.get(
-        `${API}/payroll-v2/periods/${periodId}/tss-report`,
+        `${API}/payroll/periods/${periodId}/tss-report`,
         { 
           headers: getAuthHeaders(), 
           withCredentials: true,
@@ -317,7 +317,7 @@ export default function PayrollV2Page() {
         ...newPeriodForm,
         department_filter: newPeriodForm.department_filter === "all" ? null : newPeriodForm.department_filter
       };
-      await axios.post(`${API}/payroll-v2/periods`, dataToSend, { headers: getAuthHeaders(), withCredentials: true });
+      await axios.post(`${API}/payroll/periods`, dataToSend, { headers: getAuthHeaders(), withCredentials: true });
       toast.success(t('payrollV2.messages.periodCreated'));
       setShowNewPeriod(false);
       fetchPeriods();
@@ -328,7 +328,7 @@ export default function PayrollV2Page() {
 
   const handleAddEmployees = async (periodId) => {
     try {
-      const response = await axios.post(`${API}/payroll-v2/periods/${periodId}/add-employees`, {}, { headers: getAuthHeaders(), withCredentials: true });
+      const response = await axios.post(`${API}/payroll/periods/${periodId}/add-employees`, {}, { headers: getAuthHeaders(), withCredentials: true });
       toast.success(response.data.message);
       fetchPeriodDetails(periodId);
       fetchPeriods();
@@ -339,7 +339,7 @@ export default function PayrollV2Page() {
 
   const handleCalculatePeriod = async (periodId) => {
     try {
-      await axios.post(`${API}/payroll-v2/periods/${periodId}/calculate`, {}, { headers: getAuthHeaders(), withCredentials: true });
+      await axios.post(`${API}/payroll/periods/${periodId}/calculate`, {}, { headers: getAuthHeaders(), withCredentials: true });
       toast.success(t('payrollV2.messages.payrollsCalculated'));
       fetchPeriodDetails(periodId);
       fetchPeriods();
@@ -350,11 +350,11 @@ export default function PayrollV2Page() {
 
   const handleSubmitForApproval = async (periodId) => {
     try {
-      await axios.post(`${API}/payroll-v2/periods/${periodId}/submit-for-approval`, {}, { headers: getAuthHeaders(), withCredentials: true });
+      await axios.post(`${API}/payroll/periods/${periodId}/submit-for-approval`, {}, { headers: getAuthHeaders(), withCredentials: true });
       toast.success(t('payrollV2.messages.sentForApproval'));
       fetchPeriods();
       if (selectedPeriod?.period_id === periodId) {
-        const updated = await axios.get(`${API}/payroll-v2/periods/${periodId}`, { headers: getAuthHeaders(), withCredentials: true });
+        const updated = await axios.get(`${API}/payroll/periods/${periodId}`, { headers: getAuthHeaders(), withCredentials: true });
         setSelectedPeriod(prev => ({ ...prev, status: 'pending_approval' }));
       }
     } catch (error) {
@@ -364,7 +364,7 @@ export default function PayrollV2Page() {
 
   const handleApprovePeriod = async (periodId) => {
     try {
-      await axios.post(`${API}/payroll-v2/periods/${periodId}/approve`, {}, { headers: getAuthHeaders(), withCredentials: true });
+      await axios.post(`${API}/payroll/periods/${periodId}/approve`, {}, { headers: getAuthHeaders(), withCredentials: true });
       toast.success(t('payrollV2.messages.periodApproved'));
       fetchPeriods();
       if (selectedPeriod?.period_id === periodId) {
@@ -381,7 +381,7 @@ export default function PayrollV2Page() {
       return;
     }
     try {
-      await axios.post(`${API}/payroll-v2/periods/${periodId}/reject`, { comments: reason }, { headers: getAuthHeaders(), withCredentials: true });
+      await axios.post(`${API}/payroll/periods/${periodId}/reject`, { comments: reason }, { headers: getAuthHeaders(), withCredentials: true });
       toast.success(t('payrollV2.messages.periodRejected'));
       fetchPeriods();
       if (selectedPeriod?.period_id === periodId) {
@@ -397,7 +397,7 @@ export default function PayrollV2Page() {
   const handlePayPeriod = async () => {
     if (!selectedPeriod) return;
     try {
-      const response = await axios.post(`${API}/payroll-v2/periods/${selectedPeriod.period_id}/pay`, 
+      const response = await axios.post(`${API}/payroll/periods/${selectedPeriod.period_id}/pay`, 
         { bank_account_code: selectedBankAccount },
         { headers: getAuthHeaders(), withCredentials: true }
       );
@@ -439,7 +439,7 @@ export default function PayrollV2Page() {
   const handleDeletePeriod = async (periodId) => {
     if (!confirm("¿Eliminar este período y su asiento asociado?")) return;
     try {
-      await axios.delete(`${API}/payroll-v2/periods/${periodId}`, { headers: getAuthHeaders(), withCredentials: true });
+      await axios.delete(`${API}/payroll/periods/${periodId}`, { headers: getAuthHeaders(), withCredentials: true });
       toast.success(t('payrollV2.messages.periodDeleted'));
       setSelectedPeriod(null);
       fetchPeriods();
@@ -473,7 +473,7 @@ export default function PayrollV2Page() {
       const numValue = parseFloat(editValue) || 0;
       updateData[editingCell.field] = numValue;
 
-      await axios.put(`${API}/payroll-v2/entries/${entry.entry_id}`, updateData, { headers: getAuthHeaders(), withCredentials: true });
+      await axios.put(`${API}/payroll/entries/${entry.entry_id}`, updateData, { headers: getAuthHeaders(), withCredentials: true });
       toast.success(t('payrollV2.messages.updated'));
       fetchPeriodDetails(entry.period_id);
       fetchPeriods();
@@ -487,7 +487,7 @@ export default function PayrollV2Page() {
   const handleDeleteEntry = async (entryId, periodId) => {
     if (!confirm("¿Eliminar esta entrada?")) return;
     try {
-      await axios.delete(`${API}/payroll-v2/entries/${entryId}`, { headers: getAuthHeaders(), withCredentials: true });
+      await axios.delete(`${API}/payroll/entries/${entryId}`, { headers: getAuthHeaders(), withCredentials: true });
       toast.success(t('payrollV2.messages.deleted'));
       fetchPeriodDetails(periodId);
       fetchPeriods();
@@ -510,7 +510,7 @@ export default function PayrollV2Page() {
     }
 
     try {
-      await axios.post(`${API}/payroll-v2/entries/${selectedEntry.entry_id}/novelties`, {
+      await axios.post(`${API}/payroll/entries/${selectedEntry.entry_id}/novelties`, {
         entry_id: selectedEntry.entry_id,
         ...noveltyForm,
         amount: parseFloat(noveltyForm.amount) || 0
@@ -526,7 +526,7 @@ export default function PayrollV2Page() {
 
   const handleDeleteNovelty = async (entryId, noveltyId, periodId) => {
     try {
-      await axios.delete(`${API}/payroll-v2/entries/${entryId}/novelties/${noveltyId}`, { headers: getAuthHeaders(), withCredentials: true });
+      await axios.delete(`${API}/payroll/entries/${entryId}/novelties/${noveltyId}`, { headers: getAuthHeaders(), withCredentials: true });
       toast.success(t('payrollV2.messages.noveltyDeleted'));
       fetchPeriodDetails(periodId);
       fetchPeriods();
@@ -538,7 +538,7 @@ export default function PayrollV2Page() {
   // Export handlers
   const handleExportExcel = async (periodId) => {
     try {
-      const response = await axios.get(`${API}/payroll-v2/periods/${periodId}/export/excel`, { headers: getAuthHeaders(), withCredentials: true });
+      const response = await axios.get(`${API}/payroll/periods/${periodId}/export/excel`, { headers: getAuthHeaders(), withCredentials: true });
       const data = response.data;
       
       // Use company name from response or state
@@ -577,7 +577,7 @@ export default function PayrollV2Page() {
   // Download TSS Autodeterminación Excel file
   const handleDownloadTSSAutodeterminacion = async (periodId) => {
     try {
-      const response = await axios.get(`${API}/payroll-v2/periods/${periodId}/export/tss-autodeterminacion`, {
+      const response = await axios.get(`${API}/payroll/periods/${periodId}/export/tss-autodeterminacion`, {
         headers: getAuthHeaders(),
         withCredentials: true,
         responseType: 'blob'
@@ -596,7 +596,7 @@ export default function PayrollV2Page() {
   // Download TSS Novedades Excel file
   const handleDownloadTSSNovedades = async (periodId) => {
     try {
-      const response = await axios.get(`${API}/payroll-v2/periods/${periodId}/export/tss-novedades`, {
+      const response = await axios.get(`${API}/payroll/periods/${periodId}/export/tss-novedades`, {
         headers: getAuthHeaders(),
         withCredentials: true,
         responseType: 'blob'
@@ -615,7 +615,7 @@ export default function PayrollV2Page() {
   // Download IR-3 Excel file
   const handleDownloadIR3 = async (periodId) => {
     try {
-      const response = await axios.get(`${API}/payroll-v2/periods/${periodId}/export/ir3`, {
+      const response = await axios.get(`${API}/payroll/periods/${periodId}/export/ir3`, {
         headers: getAuthHeaders(),
         withCredentials: true,
         responseType: 'blob'
@@ -634,7 +634,7 @@ export default function PayrollV2Page() {
   // Download IR-17 Excel file
   const handleDownloadIR17 = async (periodId) => {
     try {
-      const response = await axios.get(`${API}/payroll-v2/periods/${periodId}/export/ir17`, {
+      const response = await axios.get(`${API}/payroll/periods/${periodId}/export/ir17`, {
         headers: getAuthHeaders(),
         withCredentials: true,
         responseType: 'blob'
@@ -653,7 +653,7 @@ export default function PayrollV2Page() {
   // Legacy TSS export (JSON/CSV)
   const handleExportTSS = async (periodId) => {
     try {
-      const response = await axios.get(`${API}/payroll-v2/periods/${periodId}/export/tss`, { headers: getAuthHeaders(), withCredentials: true });
+      const response = await axios.get(`${API}/payroll/periods/${periodId}/export/tss`, { headers: getAuthHeaders(), withCredentials: true });
       const data = response.data;
       
       // Create TSS format file
@@ -706,7 +706,7 @@ export default function PayrollV2Page() {
     
     try {
       // Use existing endpoint that returns period with entries
-      const response = await axios.get(`${API}/payroll-v2/periods/${period.period_id}`, {
+      const response = await axios.get(`${API}/payroll/periods/${period.period_id}`, {
         headers: getAuthHeaders(),
         withCredentials: true
       });

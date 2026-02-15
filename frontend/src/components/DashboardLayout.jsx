@@ -103,7 +103,7 @@ const DEFAULT_NAVIGATION = [
   { id: "metrics-dashboard", nameKey: "metrics", href: "/metrics-dashboard", icon: TrendingUp, visible: true, featureKey: "reports" },
   { id: "employees", nameKey: "employees", href: "/employees", icon: Users, visible: true, featureKey: "employees" },
   { id: "organigrama", nameKey: "orgChart", href: "/organigrama", icon: Network, visible: true, featureKey: "organigrama" },
-  { id: "payroll-v2", nameKey: "payroll", href: "/payroll-v2", icon: DollarSign, visible: true, featureKey: "employees" },
+  { id: "payroll-v2", nameKey: "payroll", href: "/payroll", icon: DollarSign, visible: true, featureKey: "employees" },
   { id: "payroll-calculator", nameKey: "payrollCalculator", href: "/payroll-calculator", icon: Calculator, visible: true, featureKey: "payroll_calculator" },
   { id: "loans", nameKey: "loans", href: "/loans", icon: Wallet, visible: true, featureKey: "loans" },
   { id: "reports-system", nameKey: "reportsCenter", href: "/reports-system", icon: FileBarChart, visible: true, featureKey: "reports" },
@@ -171,7 +171,7 @@ const getMenuGroups = (t) => [
     isGroup: true,
     defaultOpen: false,
     items: [
-      { id: "payroll-v2", nameKey: "payroll", href: "/payroll-v2", icon: DollarSign, featureKey: "employees" },
+      { id: "payroll-v2", nameKey: "payroll", href: "/payroll", icon: DollarSign, featureKey: "employees" },
       { id: "payroll-calculator", nameKey: "payrollCalculator", href: "/payroll-calculator", icon: Calculator, featureKey: "payroll_calculator" },
       { id: "loans", nameKey: "loans", href: "/loans", icon: Wallet, featureKey: "loans" },
       { id: "expenses", nameKey: "expenses", href: "/expenses", icon: Receipt, featureKey: "expenses" },
