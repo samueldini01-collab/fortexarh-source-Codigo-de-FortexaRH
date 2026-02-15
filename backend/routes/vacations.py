@@ -538,6 +538,18 @@ async def approve_leave_request(
         "read": False,
         "created_at": datetime.now(timezone.utc).isoformat()
     })
+
+    # Push notification to employee portal
+    await create_employee_notification(
+        db,
+        employee_id=request["employee_id"],
+        company_id=company_id,
+        title="Vacaciones Aprobadas",
+        message=f"Tu solicitud de {request['leave_type']} del {request['start_date']} al {request['end_date']} ha sido aprobada.",
+        notification_type="success",
+        category="vacation",
+        action_url="/vacations",
+    )
     
     return {"message": "Solicitud aprobada exitosamente"}
 
