@@ -16,24 +16,16 @@ Sistema SaaS de Gestion de Recursos Humanos y Nomina llamado "FortexaRH", con mo
 ## Estructura Backend
 ```
 /app/backend/
-├── config.py                  # Centralized config: DB, JWT, Stripe, Resend, QB, Plans
-├── utils/
-│   ├── auth.py               # Auth helpers: hash, verify, JWT, get_current_user
-│   └── payroll_constants.py
-├── models/                    # Centralized Pydantic models (~55+)
-│   ├── auth.py, employee.py, payroll.py, company.py, etc.
+├── config.py
+├── utils/auth.py
+├── models/
 ├── services/
-│   ├── employee_notifications.py  # SSE push + notification creation service
-│   ├── report_catalog.py     # Report definitions (58+ reports)
-│   ├── report_generators.py  # Report data generation
-│   └── ...
-├── routes/                    # ~34 modular route files
-│   ├── employee_portal.py    # SSE /notifications/stream endpoint + notification CRUD
-│   ├── payroll.py            # Triggers notifications on pay_period
-│   ├── vacations.py          # Triggers notifications on approve/reject
-│   ├── evaluations.py        # Triggers notifications on finalize
-│   └── ...
-├── server.py                  # App init + routing (258 lines)
+│   └── employee_notifications.py  # SSE push + notification service
+├── routes/
+│   ├── employee_portal.py    # SSE stream + notification CRUD + change-password (JSON body)
+│   ├── payroll.py, vacations.py, evaluations.py  # Notification triggers
+│   └── ... (~34 route files)
+├── server.py
 └── email_service.py
 ```
 
@@ -41,16 +33,14 @@ Sistema SaaS de Gestion de Recursos Humanos y Nomina llamado "FortexaRH", con mo
 ```
 /app/frontend/src/
 ├── components/
-│   ├── portal/               # Employee Portal
+│   ├── portal/
 │   │   ├── EmployeeAuthContext.jsx
-│   │   ├── EmployeeLogin.jsx
-│   │   └── EmployeeDashboard.jsx  # SSE client + notification bell + dropdown
-│   ├── employees/
-│   ├── subscriptions/
-│   ├── geo/
-│   └── ui/                   # Shadcn components
+│   │   ├── EmployeeLogin.jsx        # + LanguageSelector (landing variant)
+│   │   └── EmployeeDashboard.jsx    # + LanguageSelector (compact) + password change section
+│   ├── LanguageSelector.jsx         # Reusable (compact/landing/default)
+│   └── ui/
 ├── pages/
-│   └── ...
+└── public/locales/{es,en,fr}.json   # + employeePortal.password.* keys
 ```
 
 ## Credenciales de Test
@@ -69,13 +59,13 @@ Sistema SaaS de Gestion de Recursos Humanos y Nomina llamado "FortexaRH", con mo
 - Geolocalizacion para asistencia
 - CDC Audit trail, Prestamos, Partners
 - QuickBooks Online integration
-- Refactoring Phase 1: server.py 581->258, model centralization
-- Refactoring Phase 2: Frontend page splits, backend route splits
+- Refactoring Phase 1 & 2: server.py, model centralization, frontend/backend splits
 - **Push Notifications (SSE)**: Real-time in-app notifications for employees (Feb 2026)
-  - SSE stream at /api/employee-portal/notifications/stream
-  - Triggers: vacation approve/reject, payroll paid, evaluation finalized
-  - Frontend: notification bell with badge, dropdown panel, mark read/delete
-  - Backend: centralized service (services/employee_notifications.py)
+- **Portal Language Switcher**: ES/EN/FR selector on login page and dashboard header (Feb 2026)
+- **Portal Password Change**: Secure password change with validation in profile tab (Feb 2026)
+
+## P0 - Pendiente
+- Mejorar patron init_router con FastAPI dependency injection (aprobado por usuario)
 
 ## P1 - Proximas Tareas
 - 2FA / MFA
@@ -83,8 +73,7 @@ Sistema SaaS de Gestion de Recursos Humanos y Nomina llamado "FortexaRH", con mo
 - E-signature para contratos y recibos
 
 ## P2 - Futuro/Backlog
-- Mejorar patron init_router con FastAPI dependency injection
-- Notificaciones de alerta configurables (extend current system)
+- Notificaciones de alerta configurables
 - Backup/Exportacion de datos
 - Workflows de aprobacion configurables
 - Importacion masiva via Excel
