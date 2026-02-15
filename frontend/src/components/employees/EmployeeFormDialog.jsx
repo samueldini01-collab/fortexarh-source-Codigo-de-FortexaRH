@@ -40,6 +40,51 @@ export function EmployeeFormDialog({
 }) {
   const { t } = useTranslation();
 
+  const addDeduction = () => {
+    if (!newDeduction.amount) {
+      toast.error(t('employees.deductions.amountRequired') || "Enter an amount for the deduction");
+      return;
+    }
+    setFormData({
+      ...formData,
+      additional_deductions: [
+        ...formData.additional_deductions,
+        { ...newDeduction, amount: parseFloat(newDeduction.amount) || 0 }
+      ]
+    });
+    setNewDeduction({ type: "Préstamo Empresa", description: "", amount: "", is_percentage: false });
+  };
+
+  const removeDeduction = (index) => {
+    setFormData({
+      ...formData,
+      additional_deductions: formData.additional_deductions.filter((_, i) => i !== index)
+    });
+  };
+
+  const addEmergencyContact = () => {
+    if (!newEmergencyContact.name || !newEmergencyContact.phone) {
+      toast.error(t('employees.emergencyContacts.required'));
+      return;
+    }
+    if (formData.emergency_contacts.length >= 3) {
+      toast.error(t('employees.emergencyContacts.maxContacts'));
+      return;
+    }
+    setFormData({
+      ...formData,
+      emergency_contacts: [...formData.emergency_contacts, { ...newEmergencyContact }]
+    });
+    setNewEmergencyContact({ name: "", relationship: "", phone: "", whatsapp: "", address: "" });
+  };
+
+  const removeEmergencyContact = (index) => {
+    setFormData({
+      ...formData,
+      emergency_contacts: formData.emergency_contacts.filter((_, i) => i !== index)
+    });
+  };
+
   return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
