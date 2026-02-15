@@ -6,9 +6,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { 
-  MapPin, Users, Download, AlertTriangle, Calendar, Globe, Info
+  MapPin, Users, Download, AlertTriangle, Calendar, Globe, Info, RefreshCw, Target
 } from "lucide-react";
 
 export function GeoLocationFormDialog({
