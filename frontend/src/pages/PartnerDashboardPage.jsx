@@ -699,7 +699,7 @@ export default function PartnerDashboardPage() {
           />
           <KPICard
             title="Tu Precio Mensual"
-            value={`$${pricing.current_price || 10}`}
+            value={`$${typeof pricing.current_price === "number" ? pricing.current_price : 10}`}
             subtitle={benefits.has_benefits ? "Plan Partner" : "Plan Estándar"}
             icon={CreditCard}
             color={benefits.has_benefits ? "emerald" : "slate"}
