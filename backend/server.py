@@ -1206,52 +1206,7 @@ ROLE_PERMISSION_TYPES = ["view", "create", "edit", "delete"]
 # Accounting generate-payroll-entry route moved to routes/accounting.py
 
 
-# ===================== CURRENCY CONFIG =====================
-
-@api_router.get("/currency/rates")
-async def get_currency_rates(current_user: dict = Depends(get_current_user)):
-    """Obtener tasas de cambio configuradas"""
-    company_id = current_user.get("company_id")
-    rates = await db.currency_rates.find(
-        {"company_id": company_id, "is_active": True},
-        {"_id": 0}
-    ).sort("effective_date", -1).to_list(50)
-    return rates
-
-@api_router.post("/currency/rates")
-async def create_currency_rate(config: CurrencyConfigCreate, current_user: dict = Depends(get_current_user)):
-    """Crear/actualizar tasa de cambio"""
-    company_id = current_user.get("company_id")
-    
-    rate_id = f"rate_{uuid.uuid4().hex[:8]}"
-    rate_doc = {
-        "rate_id": rate_id,
-        "company_id": company_id,
-        **config.dict(),
-        "created_at": datetime.now(timezone.utc).isoformat()
-    }
-    
-    await db.currency_rates.insert_one(rate_doc)
-    return {"rate_id": rate_id, "message": "Tasa de cambio guardada"}
-
-@api_router.get("/currency/latest")
-async def get_latest_exchange_rate(currency: str = "USD", current_user: dict = Depends(get_current_user)):
-    """Obtener la tasa de cambio más reciente para una moneda"""
-    company_id = current_user.get("company_id")
-    
-    rate = await db.currency_rates.find_one(
-        {"company_id": company_id, "currency_code": currency, "is_active": True},
-        {"_id": 0},
-        sort=[("effective_date", -1)]
-    )
-    
-    if not rate:
-        # Default rate for USD
-        return {"currency_code": currency, "exchange_rate": 58.50, "is_default": True}
-    
-    return rate
-
-# Note: Dashboard stats endpoints (payroll-stats, currency-summary) are in routes/dashboard.py
+# Currency routes moved to routes/currency.py
 
 # ===================== SUBSCRIPTION ENDPOINTS =====================
 
