@@ -1009,7 +1009,8 @@
     "totalAportesEmpleado": "Total Aportes Empleado",
     "totalAportesPatronal": "Total Aportes Patronal",
     "totalAPagarTss": "Total a Pagar TSS",
-    "archivo": "Archivo"
+    "archivo": "Archivo",
+    "agregueUnIngresoODeduccion": "Agregue un ingreso o deducción adicional a {{name}}"
   },
   "globalSearch": {
     "placeholder": "Buscar o ejecutar acciones con IA...",
