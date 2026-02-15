@@ -541,11 +541,13 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
-      <ThemeProvider defaultTheme="system" storageKey="fortexarh-theme">
-        <AppWithShortcuts />
-      </ThemeProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <ThemeProvider defaultTheme="system" storageKey="fortexarh-theme">
+          <AppWithShortcuts />
+        </ThemeProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 
