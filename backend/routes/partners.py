@@ -52,8 +52,11 @@ PAYOUT_FREQUENCY = "monthly"  # Monthly payouts
 # ============== MODELS ==============
 from models.system import (
     PartnerRegistration, PartnerClientCreate, PartnerUpdate,
-    PayoutRequest, StripeConnectOnboard
+    PayoutRequest, StripeConnectOnboard, ClientActivation, ClientSubscriptionUpdate
 )
+
+# Import subscription plans from config
+from config import SUBSCRIPTION_PLANS
 
 
 # ============== HELPER FUNCTIONS ==============
