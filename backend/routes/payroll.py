@@ -21,10 +21,8 @@ from utils.payroll_constants import (
     calculate_isr_monthly, generate_id, now_iso
 )
 
-# Advanced payroll router (v2)
-router = APIRouter(prefix="/payroll-v2", tags=["Payroll V2"])
-# Legacy basic payroll router
-legacy_router = APIRouter(prefix="/payroll", tags=["Payroll"])
+# Payroll router (consolidated)
+router = APIRouter(prefix="/payroll", tags=["Payroll"])
 
 security = HTTPBearer(auto_error=False)
 
