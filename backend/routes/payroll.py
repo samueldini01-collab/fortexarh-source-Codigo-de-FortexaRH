@@ -46,7 +46,7 @@ async def get_current_user(request: Request, credentials=Depends(security)):
 # ===================== PYDANTIC MODELS =====================
 
 from models.payroll import (
-    PayrollEntryCreate, ApprovalRequest, PaymentRequest, PayrollCreate
+    PayrollEntryCreate, ApprovalRequest, PaymentRequest
 )
 
 
