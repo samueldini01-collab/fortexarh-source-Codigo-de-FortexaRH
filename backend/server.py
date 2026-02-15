@@ -51,6 +51,7 @@ from routes.quickbooks import router as quickbooks_router, init_router as init_q
 from routes.cdc_audit import router as cdc_audit_router, init_router as init_cdc_audit_router, start_all_change_streams, create_indexes as create_cdc_indexes
 from routes.support import router as support_router, init_router as init_support_router
 from routes.partners import router as partners_router, init_router as init_partners_router, create_partner_indexes
+from routes.partner_payments import router as partner_payments_router, init_router as init_partner_payments_router
 from routes.geolocation_attendance import router as geolocation_attendance_router, init_router as init_geolocation_attendance_router
 from routes.payroll_config import router as payroll_config_router, init_router as init_payroll_config_router
 from routes.templates import router as templates_router, init_router as init_templates_router
