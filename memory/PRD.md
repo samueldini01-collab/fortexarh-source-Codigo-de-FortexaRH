@@ -34,6 +34,8 @@ SaaS HR and Payroll management system named "FortexaRH" for the Dominican Republ
 - **Blank page fix**: Updated Service Worker to v2 (network-first for navigation), added Error Boundary, inline HTML loader, cache cleanup script, i18n useSuspense:false
 - **Accountants page i18n**: Full translation of /accountants-software page (ES/EN/FR), added LanguageSelector
 - **Landing dropdown fix**: Translated contadoresFeatures dropdown items
+- **Clipboard API fix**: Added fallback for `navigator.clipboard.writeText` in PartnerRegisterPage (iframe context)
+- **Language auto-detection banner**: New LanguageBanner component suggests switching to browser language when mismatch detected
 
 ## Credentials
 - Admin: test_refactor@fortexa.com / test123
