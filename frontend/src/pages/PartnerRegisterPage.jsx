@@ -126,8 +126,32 @@ export default function PartnerRegisterPage() {
   };
 
   const copyReferralLink = () => {
-    navigator.clipboard.writeText(formData.referral_link);
-    toast.success(t("common.copied") || "Link copiado al portapapeles");
+    const text = formData.referral_link;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        toast.success(t("common.copied") || "Link copiado al portapapeles");
+      }).catch(() => {
+        fallbackCopy(text);
+      });
+    } else {
+      fallbackCopy(text);
+    }
+  };
+
+  const fallbackCopy = (text) => {
+    try {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      toast.success(t("common.copied") || "Link copiado al portapapeles");
+    } catch (err) {
+      toast.error("No se pudo copiar. Copia manualmente el link.");
+    }
   };
 
   return (
