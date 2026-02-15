@@ -123,9 +123,9 @@ export default function LandingPage() {
   ];
 
   const contadoresFeatures = [
-    { icon: DollarSign, title: "$10/mes", desc: t('landing.pricing.perEmployee') },
-    { icon: Percent, title: "30%", desc: "Comisión de por vida" },
-    { icon: Building2, title: "Multi-Cliente", desc: t('landing.pricing.enterpriseDesc') },
+    { icon: DollarSign, title: "$10" + t('accountants.pricePerMonth'), desc: t('landing.pricing.perEmployee') },
+    { icon: Percent, title: "30%", desc: t('landing.accountantDropdown.commission') },
+    { icon: Building2, title: t('landing.accountantDropdown.multiClient'), desc: t('landing.pricing.enterpriseDesc') },
     { icon: TrendingUp, title: "Dashboard", desc: t('landing.video.realtime') },
     { icon: Calculator, title: t('landing.features.payroll'), desc: "TSS, AFP, ISR" },
     { icon: FileText, title: t('landing.features.dgii'), desc: "IR-17, TSS" }
