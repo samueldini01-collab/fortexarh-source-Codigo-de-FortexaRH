@@ -52,6 +52,7 @@ export function ImportEmployeesModal({ open, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [importing, setImporting] = useState(false);
   const { getAuthHeaders } = useAuth();
+  const { t } = useTranslation();
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
