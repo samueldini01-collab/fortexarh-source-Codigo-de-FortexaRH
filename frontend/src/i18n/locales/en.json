@@ -601,7 +601,10 @@
       "noAccount": "Don't have an account?",
       "createAccount": "Create account",
       "orContinueWith": "Or continue with",
-      "googleLogin": "Continue with Google"
+      "googleLogin": "Continue with Google",
+      "partnerPortal": "Accountants Portal",
+      "partnerSubtitle": "Access your accounting firm portal",
+      "partnerSubmit": "Enter Accountants Portal"
     },
     "register": {
       "title": "Create Account",

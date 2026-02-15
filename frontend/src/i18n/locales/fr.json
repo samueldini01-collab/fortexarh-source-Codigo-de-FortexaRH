@@ -600,7 +600,10 @@
       "noAccount": "Pas de compte?",
       "createAccount": "Créer un compte",
       "orContinueWith": "Ou continuer avec",
-      "googleLogin": "Continuer avec Google"
+      "googleLogin": "Continuer avec Google",
+      "partnerPortal": "Portail Comptable",
+      "partnerSubtitle": "Accédez au portail de votre cabinet comptable",
+      "partnerSubmit": "Entrer au Portail Comptable"
     },
     "register": {
       "title": "Créer un compte",
