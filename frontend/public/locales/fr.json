@@ -4933,7 +4933,10 @@
     "additionalUsersCount": "Utilisateurs supplémentaires: {{count}}",
     "perMonth": "mois par utilisateur",
     "active": "Actif",
-    "upgradePlan": "Améliorer le plan"
+    "upgradePlan": "Améliorer le plan",
+    "unlimited": "Illimité",
+    "upTo": "Jusqu'à",
+    "employeesLabel": "employés"
   },
   "supportAdmin": {
     "errorLoadingTickets": "Erreur lors du chargement des tickets",

@@ -4925,7 +4925,10 @@
     "additionalUsersCount": "Usuarios adicionales: {{count}}",
     "perMonth": "mes por usuario",
     "active": "Activo",
-    "upgradePlan": "Actualizar Plan"
+    "upgradePlan": "Actualizar Plan",
+    "unlimited": "Ilimitados",
+    "upTo": "Hasta",
+    "employeesLabel": "empleados"
   },
   "supportAdmin": {
     "errorLoadingTickets": "Error al cargar tickets",
