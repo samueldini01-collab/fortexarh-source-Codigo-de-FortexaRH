@@ -177,7 +177,7 @@ export function GeoAssignDialog({
 
 export function GeoReportDialog({
   open, onOpenChange, reportFilters, setReportFilters,
-  locations, reportData, loadingReport, onGenerate, onExport
+  locations, reportData, loadingReport, onGenerate, onExport, setReportData
 }) {
   const { t } = useTranslation();
   return (
@@ -285,11 +285,11 @@ export function GeoReportDialog({
             <DialogFooter>
               <Button variant="outline" onClick={() => {
                 onOpenChange(false);
-                setReportData(null);
+                if (setReportData) setReportData(null);
               }}>
                 Cerrar
               </Button>
-              <Button onClick={generateReport} disabled={loadingReport}>
+              <Button onClick={onGenerate} disabled={loadingReport}>
                 {loadingReport ? (
                   <>
                     <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
