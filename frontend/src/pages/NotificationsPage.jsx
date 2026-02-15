@@ -100,15 +100,18 @@ export default function NotificationsPage() {
   const [sendingNotification, setSendingNotification] = useState(false);
 
   const fetchAll = useCallback(async () => {
+    if (!token) return;
+    const authHeaders = { Authorization: `Bearer ${token}` };
+    
     setLoading(true);
     try {
       const [eventsRes, prefsRes, pushRes, settingsRes, birthdaysRes, logsRes] = await Promise.all([
-        fetch(`${API}/notification-preferences/events`, { credentials: "include" }),
-        fetch(`${API}/notification-preferences`, { credentials: "include" }),
-        fetch(`${API}/notification-preferences/push/status`, { credentials: "include" }),
-        fetch(`${API}/notification-settings/settings`, { credentials: "include" }),
-        fetch(`${API}/notification-settings/upcoming-birthdays?days=30`, { credentials: "include" }),
-        fetch(`${API}/notification-settings/logs?limit=20`, { credentials: "include" }),
+        fetch(`${API}/notification-preferences/events`, { headers: authHeaders, credentials: "include" }),
+        fetch(`${API}/notification-preferences`, { headers: authHeaders, credentials: "include" }),
+        fetch(`${API}/notification-preferences/push/status`, { headers: authHeaders, credentials: "include" }),
+        fetch(`${API}/notification-settings/settings`, { headers: authHeaders, credentials: "include" }),
+        fetch(`${API}/notification-settings/upcoming-birthdays?days=30`, { headers: authHeaders, credentials: "include" }),
+        fetch(`${API}/notification-settings/logs?limit=20`, { headers: authHeaders, credentials: "include" }),
       ]);
 
       if (eventsRes.ok) {
