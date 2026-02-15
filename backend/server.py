@@ -33,6 +33,7 @@ from routes.organigrama import router as organigrama_router, init_router as init
 from routes.evaluations import router as evaluations_router, init_router as init_evaluations_router
 from routes.recruitment import router as recruitment_router, init_router as init_recruitment_router
 from routes.payroll import router as payroll_router, init_router as init_payroll_router
+from routes.payroll_exports import router as payroll_exports_router, init_router as init_payroll_exports_router
 from routes.checkout import router as checkout_router, init_router as init_checkout_router
 from routes.accounting import router as accounting_router, init_router as init_accounting_router
 from routes.system_users import router as system_users_router, init_router as init_system_users_router
