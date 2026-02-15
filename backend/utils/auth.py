@@ -59,3 +59,9 @@ async def get_current_user(request: Request, credentials=Depends(security)) -> d
             raise HTTPException(status_code=401, detail="Invalid token")
 
     raise HTTPException(status_code=401, detail="Not authenticated")
+
+
+async def get_user_from_request(request: Request) -> dict:
+    """Resolve current user from request - for manual calls outside Depends()"""
+    creds = await security(request)
+    return await get_current_user(request, creds)
