@@ -15,6 +15,9 @@ import { useAuth } from "@/App";
 import DashboardLayout from "@/components/DashboardLayout";
 import GeoMap from "@/components/GeoMap";
 import { FraudAlertDrillDown } from "@/components/DrillDown";
+import {
+  GeoLocationFormDialog, GeoAssignDialog, GeoReportDialog, GeoAlertSettingsDialog
+} from "@/components/geo/GeoDialogs";
 import { 
   MapPin, 
   Plus, 
