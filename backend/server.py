@@ -7,57 +7,52 @@ import os
 import logging
 import asyncio
 
-# Centralized config and auth
-from config import (
-    db, client,
-    SUBSCRIPTION_PLANS, FEATURE_ACCESS, ADDITIONAL_USER_PRICE,
-)
-from utils.auth import get_current_user
-from email_service import send_payment_confirmation_email, send_welcome_email, send_invoice_email
+# Centralized config
+from config import db, client, SUBSCRIPTION_PLANS
 
 # Import modular routers
-from routes.loans import router as loans_router, init_router as init_loans_router
-from routes.subscriptions import router as subscriptions_router, init_router as init_subscriptions_router
-from routes.roles import router as roles_router, init_router as init_roles_router
-from routes.bank_files import router as bank_files_router, init_router as init_bank_files_router
-from routes.employee_portal import router as employee_portal_router, init_router as init_employee_portal_router
-from routes.documents import router as documents_router, init_router as init_documents_router
-from routes.search import router as search_router, init_router as init_search_router
-from routes.auth import router as auth_router, init_router as init_auth_router
-from routes.employees import router as employees_router, init_router as init_employees_router
-from routes.attendance import router as attendance_router, init_router as init_attendance_router
-from routes.vacations import router as vacations_router, init_router as init_vacations_router
-from routes.dashboard import router as dashboard_router, init_router as init_dashboard_router
-from routes.company import router as company_router, init_router as init_company_router
-from routes.organigrama import router as organigrama_router, init_router as init_organigrama_router
-from routes.evaluations import router as evaluations_router, init_router as init_evaluations_router
-from routes.recruitment import router as recruitment_router, init_router as init_recruitment_router
-from routes.payroll import router as payroll_router, init_router as init_payroll_router
-from routes.payroll_exports import router as payroll_exports_router, init_router as init_payroll_exports_router
-from routes.checkout import router as checkout_router, init_router as init_checkout_router
-from routes.accounting import router as accounting_router, init_router as init_accounting_router
-from routes.system_users import router as system_users_router, init_router as init_system_users_router
-from routes.dgii_reports import router as dgii_reports_router, init_router as init_dgii_reports_router
-from routes.notifications import router as notifications_router, init_router as init_notifications_router
-from routes.reports import router as reports_router, init_router as init_reports_router
-from routes.expenses import router as expenses_router, init_router as init_expenses_router
-from routes.projects import router as projects_router, init_router as init_projects_router
-from routes.invoices import router as invoices_router, init_router as init_invoices_router
-from routes.metrics import router as metrics_router, init_router as init_metrics_router
-from routes.notifications_system import router as notifications_system_router, init_router as init_notifications_system_router
-from routes.reports_advanced import router as reports_advanced_router, init_router as init_reports_advanced_router
-from routes.reports_system import router as reports_system_router, init_router as init_reports_system_router
-from routes.quickbooks import router as quickbooks_router, init_router as init_quickbooks_router
-from routes.cdc_audit import router as cdc_audit_router, init_router as init_cdc_audit_router, start_all_change_streams, create_indexes as create_cdc_indexes
-from routes.support import router as support_router, init_router as init_support_router
-from routes.partners import router as partners_router, init_router as init_partners_router, create_partner_indexes
-from routes.partner_payments import router as partner_payments_router, init_router as init_partner_payments_router
-from routes.geolocation_attendance import router as geolocation_attendance_router, init_router as init_geolocation_attendance_router
-from routes.payroll_config import router as payroll_config_router, init_router as init_payroll_config_router
-from routes.templates import router as templates_router, init_router as init_templates_router
-from routes.generated_docs import router as generated_docs_router, init_router as init_generated_docs_router
-from routes.currency import router as currency_router, init_router as init_currency_router
-from routes.stats import router as stats_router, init_router as init_stats_router
+from routes.loans import router as loans_router
+from routes.subscriptions import router as subscriptions_router
+from routes.roles import router as roles_router
+from routes.bank_files import router as bank_files_router
+from routes.employee_portal import router as employee_portal_router
+from routes.documents import router as documents_router
+from routes.search import router as search_router
+from routes.auth import router as auth_router
+from routes.employees import router as employees_router
+from routes.attendance import router as attendance_router
+from routes.vacations import router as vacations_router
+from routes.dashboard import router as dashboard_router
+from routes.company import router as company_router
+from routes.organigrama import router as organigrama_router
+from routes.evaluations import router as evaluations_router
+from routes.recruitment import router as recruitment_router
+from routes.payroll import router as payroll_router
+from routes.payroll_exports import router as payroll_exports_router
+from routes.checkout import router as checkout_router
+from routes.accounting import router as accounting_router
+from routes.system_users import router as system_users_router
+from routes.dgii_reports import router as dgii_reports_router
+from routes.notifications import router as notifications_router
+from routes.reports import router as reports_router
+from routes.expenses import router as expenses_router
+from routes.projects import router as projects_router
+from routes.invoices import router as invoices_router
+from routes.metrics import router as metrics_router
+from routes.notifications_system import router as notifications_system_router
+from routes.reports_advanced import router as reports_advanced_router
+from routes.reports_system import router as reports_system_router
+from routes.quickbooks import router as quickbooks_router
+from routes.cdc_audit import router as cdc_audit_router, start_all_change_streams, create_indexes as create_cdc_indexes
+from routes.support import router as support_router
+from routes.partners import router as partners_router, create_partner_indexes
+from routes.partner_payments import router as partner_payments_router
+from routes.geolocation_attendance import router as geolocation_attendance_router
+from routes.payroll_config import router as payroll_config_router
+from routes.templates import router as templates_router
+from routes.generated_docs import router as generated_docs_router
+from routes.currency import router as currency_router
+from routes.stats import router as stats_router
 
 # ===================== APP SETUP =====================
 
@@ -138,52 +133,8 @@ async def get_config_status():
 async def get_subscription_plans():
     return [plan for plan in SUBSCRIPTION_PLANS.values() if plan["plan_id"] != "trial"]
 
-# ===================== ROUTER INITIALIZATION =====================
+# ===================== INCLUDE ROUTERS =====================
 
-init_loans_router(db, get_current_user)
-init_subscriptions_router(db, get_current_user, SUBSCRIPTION_PLANS, FEATURE_ACCESS, ADDITIONAL_USER_PRICE)
-init_roles_router(db, get_current_user)
-init_bank_files_router(db, get_current_user)
-init_employee_portal_router(db)
-init_documents_router(db, get_current_user)
-init_search_router(db, get_current_user)
-init_auth_router(db, SUBSCRIPTION_PLANS, send_welcome_email)
-init_employees_router(db, get_current_user, SUBSCRIPTION_PLANS)
-init_attendance_router(db, get_current_user)
-init_vacations_router(db, get_current_user)
-init_dashboard_router(db, get_current_user)
-init_company_router(db, get_current_user)
-init_organigrama_router(db, get_current_user)
-init_evaluations_router(db, get_current_user)
-init_recruitment_router(db, get_current_user)
-init_payroll_router(db, get_current_user)
-init_payroll_exports_router(db, get_current_user)
-init_checkout_router(db, get_current_user, SUBSCRIPTION_PLANS, send_payment_confirmation_email, send_invoice_email)
-init_invoices_router(db, get_current_user)
-init_accounting_router(db, get_current_user)
-init_system_users_router(db, get_current_user)
-init_dgii_reports_router(db, get_current_user)
-init_notifications_router(db, get_current_user)
-init_reports_router(db, get_current_user)
-init_expenses_router(db, get_current_user)
-init_projects_router(db, get_current_user)
-init_metrics_router(db, get_current_user)
-init_notifications_system_router(db, get_current_user)
-init_reports_advanced_router(db, get_current_user)
-init_reports_system_router(db, get_current_user)
-init_quickbooks_router(db, get_current_user)
-init_cdc_audit_router(db, get_current_user)
-init_support_router(db)
-init_partners_router(db, get_current_user)
-init_partner_payments_router(db, get_current_user)
-init_geolocation_attendance_router(db, get_current_user)
-init_payroll_config_router(db, get_current_user)
-init_templates_router(db, get_current_user)
-init_generated_docs_router(db, get_current_user)
-init_currency_router(db, get_current_user)
-init_stats_router(db, get_current_user)
-
-# Include modular routers
 for r in [
     loans_router, subscriptions_router, roles_router, bank_files_router,
     employee_portal_router, documents_router, search_router, auth_router,
