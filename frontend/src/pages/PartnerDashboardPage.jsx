@@ -348,6 +348,89 @@ export default function PartnerDashboardPage() {
     }
   };
 
+  // Calculate monthly value for plan + employees
+  const calculateMonthly = (planId, empCount) => {
+    const plan = plans.find(p => p.plan_id === planId);
+    if (!plan) return 0;
+    return plan.base_price + (empCount * plan.price_per_employee);
+  };
+
+  // Activate client with plan
+  const handleActivateClient = async () => {
+    if (!selectedClient) return;
+    setActivating(true);
+    try {
+      await axios.patch(`${API}/partners/clients/${selectedClient.client_id}/activate`, activationData, {
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
+      });
+      toast.success(`Cliente ${selectedClient.company_name} activado exitosamente`);
+      setShowActivateClient(false);
+      setSelectedClient(null);
+      setActivationData({ plan_id: "basic", employee_count: 1 });
+      fetchClients();
+      fetchDashboard();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al activar cliente");
+    } finally {
+      setActivating(false);
+    }
+  };
+
+  // Update client subscription
+  const handleUpdateSubscription = async () => {
+    if (!selectedClient) return;
+    setActivating(true);
+    try {
+      await axios.patch(`${API}/partners/clients/${selectedClient.client_id}/subscription`, activationData, {
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
+      });
+      toast.success("Suscripción actualizada exitosamente");
+      setShowEditSubscription(false);
+      setSelectedClient(null);
+      fetchClients();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al actualizar suscripción");
+    } finally {
+      setActivating(false);
+    }
+  };
+
+  // Deactivate client
+  const handleDeactivateClient = async (clientId, companyName) => {
+    if (!window.confirm(`¿Estás seguro de desactivar a ${companyName}?`)) return;
+    try {
+      await axios.patch(`${API}/partners/clients/${clientId}/deactivate`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success("Cliente desactivado");
+      fetchClients();
+      fetchDashboard();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al desactivar cliente");
+    }
+  };
+
+  // Clipboard fallback
+  const safeCopy = (text) => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        toast.success(t('partner.dashboard.invitationLinkCopied'));
+      }).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        toast.success(t('partner.dashboard.invitationLinkCopied'));
+      });
+    } else {
+      toast.info("Link: " + text);
+    }
+  };
+
   // Connect Stripe account
   const connectStripeAccount = async () => {
     setConnectingStripe(true);
