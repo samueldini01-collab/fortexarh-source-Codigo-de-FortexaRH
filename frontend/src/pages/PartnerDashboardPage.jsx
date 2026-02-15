@@ -103,9 +103,13 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-// KPI Card component
-const KPICard = ({ title, value, subtitle, icon: Icon, trend, trendValue, color = "emerald" }) => (
-  <Card className="bg-slate-800/50 border-slate-700">
+// KPI Card component - clickable for drill-down
+const KPICard = ({ title, value, subtitle, icon: Icon, trend, trendValue, color = "emerald", onClick }) => (
+  <Card
+    className={`bg-slate-800/50 border-slate-700 transition-all ${onClick ? "cursor-pointer hover:border-slate-500 hover:bg-slate-800/70 hover:scale-[1.02]" : ""}`}
+    onClick={onClick}
+    data-testid={`kpi-card-${title.toLowerCase().replace(/\s+/g, "-")}`}
+  >
     <CardContent className="p-6">
       <div className="flex items-start justify-between">
         <div>
@@ -119,8 +123,11 @@ const KPICard = ({ title, value, subtitle, icon: Icon, trend, trendValue, color 
             </div>
           )}
         </div>
-        <div className={`w-12 h-12 bg-${color}-500/20 rounded-lg flex items-center justify-center`}>
-          <Icon className={`w-6 h-6 text-${color}-400`} />
+        <div className="flex flex-col items-end gap-2">
+          <div className={`w-12 h-12 bg-${color}-500/20 rounded-lg flex items-center justify-center`}>
+            <Icon className={`w-6 h-6 text-${color}-400`} />
+          </div>
+          {onClick && <ChevronRight className="w-4 h-4 text-slate-500" />}
         </div>
       </div>
     </CardContent>
