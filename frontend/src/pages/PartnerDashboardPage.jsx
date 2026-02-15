@@ -253,7 +253,8 @@ export default function PartnerDashboardPage() {
         fetchDashboard(),
         fetchClients(),
         fetchCommissions(),
-        fetchPayoutData()
+        fetchPayoutData(),
+        fetchPlans()
       ]);
       setLoading(false);
     };
@@ -261,7 +262,7 @@ export default function PartnerDashboardPage() {
     if (token) {
       loadData();
     }
-  }, [token, fetchDashboard, fetchClients, fetchCommissions, fetchPayoutData]);
+  }, [token, fetchDashboard, fetchClients, fetchCommissions, fetchPayoutData, fetchPlans]);
 
   // Add new client
   const handleAddClient = async (e) => {
