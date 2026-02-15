@@ -47,44 +47,9 @@ async def get_current_user(request: Request, credentials=Depends(security)):
 
 # ===================== PYDANTIC MODELS =====================
 
-class PayrollEntryCreate(BaseModel):
-    """Entrada de nómina individual por empleado"""
-    period_id: str
-    employee_id: str
-    base_salary: float
-    overtime_day_hours: float = 0
-    overtime_day_rate: float = 35
-    overtime_night_hours: float = 0
-    overtime_night_rate: float = 15
-    overtime_weekend_hours: float = 0
-    overtime_weekend_rate: float = 100
-    overtime_holiday_hours: float = 0
-    overtime_holiday_rate: float = 100
-    bonuses: float = 0
-    commissions: float = 0
-    other_income: float = 0
-    additional_deductions: Optional[List[Dict[str, Any]]] = []
-
-
-class ApprovalRequest(BaseModel):
-    """Solicitud de aprobación de nómina"""
-    comments: Optional[str] = None
-
-
-class PaymentRequest(BaseModel):
-    payment_bank: str = ""
-    payment_date: str = ""
-    reference: str = ""
-
-
-class PayrollCreate(BaseModel):
-    """Legacy basic payroll creation"""
-    employee_id: str
-    period_start: str
-    period_end: str
-    base_salary: float
-    bonuses: float = 0
-    deductions: float = 0
+from models.payroll import (
+    PayrollEntryCreate, ApprovalRequest, PaymentRequest, PayrollCreate
+)
 
 
 # ===================== HELPER FUNCTIONS =====================
