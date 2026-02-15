@@ -168,19 +168,6 @@ EXCEL_COLUMNS = [
 ]
 
 
-class BulkEditRequest(BaseModel):
-    employee_ids: List[str]
-    fields_to_update: Dict[str, Any]
-
-
-class ImportPreviewResponse(BaseModel):
-    total_rows: int
-    valid_rows: int
-    invalid_rows: int
-    preview_data: List[Dict[str, Any]]
-    errors: List[Dict[str, Any]]
-
-
 @router.get("/template/download")
 async def download_employee_template(current_user: dict = Depends(get_current_user)):
     """Download Excel template for employee import"""
