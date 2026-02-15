@@ -25,8 +25,9 @@ from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
 
 router = APIRouter(prefix="/employee-portal", tags=["Employee Portal"])
 
+from config import JWT_SECRET, JWT_ALGORITHM
+
 db = None
-JWT_SECRET = os.environ.get("JWT_SECRET", "your-secret-key")
 
 logger = logging.getLogger(__name__)
 
