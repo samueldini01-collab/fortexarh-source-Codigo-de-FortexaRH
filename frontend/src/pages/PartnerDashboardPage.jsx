@@ -738,17 +738,19 @@ export default function PartnerDashboardPage() {
           <TabsList className="bg-slate-800 border border-slate-700">
             <TabsTrigger value="overview" className="data-[state=active]:bg-emerald-600" data-testid="tab-overview">
               <BarChart3 className="w-4 h-4 mr-2" />
-              Resumen
+              {t('partner.dashboard.overview')}
             </TabsTrigger>
-            <TabsTrigger value="clients" className="data-[state=active]:bg-emerald-600" data-testid="tab-clients"> ({stats.total_clients || 0})
+            <TabsTrigger value="clients" className="data-[state=active]:bg-emerald-600" data-testid="tab-clients">
+              <Users className="w-4 h-4 mr-2" />
+              {t('partner.dashboard.clients')} ({stats.total_clients || 0})
             </TabsTrigger>
             <TabsTrigger value="commissions" className="data-[state=active]:bg-emerald-600" data-testid="tab-commissions">
               <DollarSign className="w-4 h-4 mr-2" />
-              Comisiones
+              {t('partner.dashboard.commissions')}
             </TabsTrigger>
             <TabsTrigger value="payouts" className="data-[state=active]:bg-emerald-600" data-testid="tab-payouts">
               <Banknote className="w-4 h-4 mr-2" />
-              Retiros
+              {t('partner.dashboard.withdrawals')}
             </TabsTrigger>
           </TabsList>
 
