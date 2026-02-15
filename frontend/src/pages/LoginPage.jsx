@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "@/App";
+import { useAuth, API } from "@/App";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Mail, Lock, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, AlertCircle, Eye, EyeOff, Briefcase } from "lucide-react";
 import { toast } from "sonner";
+import axios from "axios";
 import LanguageSelector from "@/components/LanguageSelector";
 
 export default function LoginPage() {
@@ -17,8 +18,36 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [partnerInfo, setPartnerInfo] = useState(null);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const debounceRef = useRef(null);
+
+  // Debounced partner check when email changes
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    // Only check if email looks valid
+    if (!email || !email.includes("@") || !email.includes(".")) {
+      setPartnerInfo(null);
+      return;
+    }
+
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await axios.post(`${API}/auth/check-partner`, { email });
+        if (res.data.is_partner) {
+          setPartnerInfo({ firm_name: res.data.firm_name });
+        } else {
+          setPartnerInfo(null);
+        }
+      } catch {
+        setPartnerInfo(null);
+      }
+    }, 600);
+
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [email]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,13 +86,37 @@ export default function LoginPage() {
           <p className="text-sm text-slate-500">{t('landing.footer.tagline')}</p>
         </div>
 
+        {/* Partner welcome banner */}
+        {partnerInfo && (
+          <div
+            className="mb-4 flex items-center gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 animate-in fade-in slide-in-from-top-2 duration-300"
+            data-testid="partner-welcome-banner"
+          >
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100">
+              <Briefcase className="h-5 w-5 text-emerald-600" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-emerald-800" data-testid="partner-banner-title">
+                {t('auth.login.partnerPortal')}
+              </p>
+              {partnerInfo.firm_name && (
+                <p className="text-xs text-emerald-600 truncate" data-testid="partner-banner-firm">
+                  {partnerInfo.firm_name}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
         <Card className="shadow-lg border-slate-200">
           <CardHeader className="text-center">
             <div className="flex justify-end mb-2">
               <LanguageSelector variant="compact" />
             </div>
             <CardTitle className="text-2xl heading">{t('auth.login.title')}</CardTitle>
-            <CardDescription>{t('auth.login.subtitle')}</CardDescription>
+            <CardDescription>
+              {partnerInfo ? t('auth.login.partnerSubtitle') : t('auth.login.subtitle')}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -127,11 +180,16 @@ export default function LoginPage() {
 
               <Button 
                 type="submit" 
-                className="w-full bg-slate-900 hover:bg-slate-800" 
+                className={`w-full ${partnerInfo ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-slate-900 hover:bg-slate-800'}`}
                 disabled={loading}
                 data-testid="login-submit-btn"
               >
-                {loading ? t('common.loading') : t('auth.login.submit')}
+                {loading
+                  ? t('common.loading')
+                  : partnerInfo
+                    ? t('auth.login.partnerSubmit')
+                    : t('auth.login.submit')
+                }
               </Button>
             </form>
 
