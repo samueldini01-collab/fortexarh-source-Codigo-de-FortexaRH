@@ -54,6 +54,7 @@ from routes.generated_docs import router as generated_docs_router
 from routes.currency import router as currency_router
 from routes.stats import router as stats_router
 from routes.two_factor import router as two_factor_router
+from routes.notification_preferences import router as notification_preferences_router
 
 # ===================== APP SETUP =====================
 
