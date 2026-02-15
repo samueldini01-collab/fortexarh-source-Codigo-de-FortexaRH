@@ -1185,9 +1185,24 @@ async def create_employee_notification(
 # ===================== SSE REAL-TIME STREAM =====================
 
 @router.get("/notifications/stream")
-async def notification_stream(request: Request):
-    """SSE endpoint for real-time push notifications to employees."""
-    emp_data = await get_employee_from_token(request)
+async def notification_stream(request: Request, token: str = None):
+    """SSE endpoint for real-time push notifications to employees.
+    Accepts auth token as query param since EventSource doesn't support custom headers.
+    """
+    # Accept token from query param for SSE compatibility
+    if token:
+        try:
+            payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+            if payload.get("portal_type") != "employee":
+                raise HTTPException(status_code=401, detail="Token invalido")
+            emp_data = payload
+        except jwt.ExpiredSignatureError:
+            raise HTTPException(status_code=401, detail="Token expirado")
+        except jwt.InvalidTokenError:
+            raise HTTPException(status_code=401, detail="Token invalido")
+    else:
+        emp_data = await get_employee_from_token(request)
+
     employee_id = emp_data["employee_id"]
 
     queue = register_sse_connection(employee_id)
@@ -1195,19 +1210,16 @@ async def notification_stream(request: Request):
     async def event_generator():
         try:
             while True:
-                # Check if client disconnected
                 if await request.is_disconnected():
                     break
                 try:
                     notification = await asyncio.wait_for(queue.get(), timeout=30)
-                    # Build SSE-safe payload (strip _id if present)
                     payload = {k: v for k, v in notification.items() if k != "_id"}
                     yield {
                         "event": "notification",
                         "data": json.dumps(payload, default=str),
                     }
                 except asyncio.TimeoutError:
-                    # Send heartbeat keep-alive
                     yield {"event": "ping", "data": ""}
         finally:
             unregister_sse_connection(employee_id, queue)
