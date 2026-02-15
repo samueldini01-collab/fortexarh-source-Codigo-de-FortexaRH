@@ -131,9 +131,13 @@ async def employee_login(data: EmployeeLoginRequest):
     }
 
 
+class ChangePasswordRequest(BaseModel):
+    old_password: str
+    new_password: str
+
 @router.post("/change-password")
-async def change_employee_password(request: Request, old_password: str, new_password: str):
-    """Change employee password"""
+async def change_employee_password(request: Request, data: ChangePasswordRequest):
+    """Change employee password via JSON body"""
     emp_data = await get_employee_from_token(request)
     
     employee = await db.employees.find_one(
@@ -145,16 +149,19 @@ async def change_employee_password(request: Request, old_password: str, new_pass
         raise HTTPException(status_code=404, detail="Empleado no encontrado")
     
     stored_password = employee.get("portal_password", "")
-    if stored_password and not bcrypt.checkpw(old_password.encode(), stored_password.encode()):
-        raise HTTPException(status_code=401, detail="Contraseña actual incorrecta")
+    if stored_password and not bcrypt.checkpw(data.old_password.encode(), stored_password.encode()):
+        raise HTTPException(status_code=401, detail="Contrasena actual incorrecta")
     
-    hashed = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt()).decode()
+    if len(data.new_password) < 6:
+        raise HTTPException(status_code=400, detail="La contrasena debe tener al menos 6 caracteres")
+    
+    hashed = bcrypt.hashpw(data.new_password.encode(), bcrypt.gensalt()).decode()
     await db.employees.update_one(
         {"employee_id": emp_data["employee_id"]},
         {"$set": {"portal_password": hashed}}
     )
     
-    return {"message": "Contraseña actualizada"}
+    return {"message": "Contrasena actualizada"}
 
 
 # ===================== PROFILE =====================
