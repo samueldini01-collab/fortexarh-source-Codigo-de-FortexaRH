@@ -167,6 +167,9 @@ export default function PartnerDashboardPage() {
       console.error("Error fetching plans:", error);
     }
   }, [token]);
+
+  // Payouts state
+  const [payoutBalance, setPayoutBalance] = useState(null);
   const [payoutHistory, setPayoutHistory] = useState([]);
   const [stripeConnectStatus, setStripeConnectStatus] = useState(null);
   const [requestingPayout, setRequestingPayout] = useState(false);
