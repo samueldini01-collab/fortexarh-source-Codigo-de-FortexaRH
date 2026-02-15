@@ -679,6 +679,7 @@ export default function PartnerDashboardPage() {
             subtitle={`${stats.trial_clients || 0} en prueba`}
             icon={Users}
             color="emerald"
+            onClick={() => setDrillDown("clients")}
           />
           <KPICard
             title="Comisiones Pendientes"
@@ -686,6 +687,7 @@ export default function PartnerDashboardPage() {
             subtitle="Por pagar"
             icon={Wallet}
             color="amber"
+            onClick={() => setDrillDown("pending")}
           />
           <KPICard
             title="Total Ganado"
@@ -693,6 +695,7 @@ export default function PartnerDashboardPage() {
             subtitle={commissionsData.commission_rate}
             icon={TrendingUp}
             color="blue"
+            onClick={() => setDrillDown("earned")}
           />
           <KPICard
             title="Tu Precio Mensual"
@@ -700,6 +703,7 @@ export default function PartnerDashboardPage() {
             subtitle={benefits.has_benefits ? "Plan Partner" : "Plan Estándar"}
             icon={CreditCard}
             color={benefits.has_benefits ? "emerald" : "slate"}
+            onClick={() => setDrillDown("pricing")}
           />
         </div>
 
