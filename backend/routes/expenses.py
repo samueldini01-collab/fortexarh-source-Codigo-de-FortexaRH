@@ -32,93 +32,13 @@ async def get_current_user(request: Request, credentials=Depends(security)):
     return await _get_current_user_func(request, credentials)
 
 
-# ==================== ENUMS ====================
-
-class ExpenseType(str, Enum):
-    TRAVEL = "travel"  # Viaje de negocios
-    ADMINISTRATIVE = "administrative"  # Gastos administrativos
-    ACCOMMODATION = "accommodation"  # Alojamiento
-    MEALS = "meals"  # Comidas
-    TRANSPORTATION = "transportation"  # Transporte
-    OTHER = "other"  # Otros
-
-
-class RequestStatus(str, Enum):
-    DRAFT = "draft"
-    PENDING = "pending"
-    APPROVED_MANAGER = "approved_manager"
-    APPROVED_ADMIN = "approved_admin"
-    REJECTED = "rejected"
-    IN_PROGRESS = "in_progress"
-    PENDING_VERIFICATION = "pending_verification"
-    COMPLETED = "completed"
-    CANCELLED = "cancelled"
-
-
-class AdvanceStatus(str, Enum):
-    PENDING = "pending"
-    APPROVED = "approved"
-    DISBURSED = "disbursed"
-    REJECTED = "rejected"
-
-
-class VerificationStatus(str, Enum):
-    PENDING = "pending"
-    PARTIAL = "partial"
-    VERIFIED = "verified"
-    REQUIRES_RETURN = "requires_return"
-
-
-# ==================== MODELS ====================
-
-class ExpenseRequestCreate(BaseModel):
-    title: str
-    expense_type: ExpenseType
-    description: str
-    destination: Optional[str] = None
-    start_date: str
-    end_date: str
-    estimated_budget: float
-    budget_breakdown: Optional[List[dict]] = None  # [{category: str, amount: float, description: str}]
-    requires_advance: bool = False
-    advance_amount: Optional[float] = None
-    advance_date: Optional[str] = None
-    notes: Optional[str] = None
-
-
-class ExpenseRequestUpdate(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    destination: Optional[str] = None
-    start_date: Optional[str] = None
-    end_date: Optional[str] = None
-    estimated_budget: Optional[float] = None
-    budget_breakdown: Optional[List[dict]] = None
-    requires_advance: Optional[bool] = None
-    advance_amount: Optional[float] = None
-    notes: Optional[str] = None
-
-
-class ApprovalAction(BaseModel):
-    action: str  # approve, reject
-    comments: Optional[str] = None
-
-
-class ExpenseItem(BaseModel):
-    category: str
-    description: str
-    amount: float
-    date: str
-    has_receipt: bool = False
-    receipt_number: Optional[str] = None
-    vendor: Optional[str] = None
-    is_deductible: bool = True
-
-
-class ExpenseVerification(BaseModel):
-    items: List[ExpenseItem]
-    total_spent: float
-    notes: Optional[str] = None
+# ==================== ENUMS & MODELS ====================
+from models.finance import (
+    ExpenseType, RequestStatus, AdvanceStatus, VerificationStatus,
+    ExpenseRequestCreate, ExpenseRequestUpdate,
+    ExpenseApprovalAction as ApprovalAction,
+    ExpenseItem, ExpenseVerification
+)
 
 
 # ==================== EXPENSE CATEGORIES ====================
