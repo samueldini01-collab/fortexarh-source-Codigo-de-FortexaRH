@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Loader2, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { useEmployeeAuth } from "./EmployeeAuthContext";
+import LanguageSelector from "@/components/LanguageSelector";
 
 const LOGO_URL = "https://customer-assets.emergentagent.com/job_hrpulse-26/artifacts/ohljcqui_FortexaRH%20Logo.png";
 
@@ -32,7 +33,12 @@ export function EmployeeLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center p-4 relative">
+      {/* Language Selector - top right */}
+      <div className="absolute top-4 right-4 z-20" data-testid="portal-login-lang-switcher">
+        <LanguageSelector variant="landing" />
+      </div>
+
       <Card className="w-full max-w-md" data-testid="employee-login-card">
         <CardHeader className="text-center">
           <div className="flex flex-col items-center mb-4">
