@@ -71,6 +71,7 @@ import {
   FileText,
   Eye,
   Edit2,
+  Check,
   Banknote,
   ArrowUpRight,
   ShieldCheck,
