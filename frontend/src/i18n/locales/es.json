@@ -706,7 +706,32 @@
       "disabled": "2FA desactivado",
       "disableTitle": "Desactivar 2FA",
       "disableDesc": "Ingresa un código de tu app de autenticación para confirmar",
-      "confirmDisable": "Desactivar 2FA"
+      "confirmDisable": "Desactivar 2FA",
+      "recovery": {
+        "title": "Códigos de Recuperación",
+        "subtitle": "Usa un código de recuperación para acceder a tu cuenta",
+        "enterCode": "Ingresa un código de recuperación",
+        "enterCodeTitle": "Código de recuperación",
+        "enterCodeDesc": "Ingresa uno de tus códigos de recuperación de un solo uso",
+        "invalidCode": "Código de recuperación inválido",
+        "useRecoveryCode": "Usar código de recuperación",
+        "useAuthApp": "Usar aplicación de autenticación",
+        "codesTitle": "Códigos de recuperación",
+        "codesRemaining": "{{count}} códigos restantes",
+        "noCodesLeft": "No quedan códigos de recuperación",
+        "lowWarning": "Te quedan pocos códigos. Considera regenerarlos.",
+        "regenerateBtn": "Regenerar códigos",
+        "regenerateTitle": "Regenerar códigos de recuperación",
+        "regenerateDesc": "Ingresa un código de tu app de autenticación para generar nuevos códigos. Los códigos anteriores quedarán invalidados.",
+        "regenerated": "Códigos de recuperación regenerados",
+        "saveWarning": "Guarda estos códigos en un lugar seguro. Cada código solo puede usarse una vez.",
+        "importantNote": "Estos códigos son la única forma de acceder a tu cuenta si pierdes tu dispositivo de autenticación. Guárdalos de forma segura.",
+        "confirmSaved": "He guardado mis códigos",
+        "copyAll": "Copiar todos",
+        "download": "Descargar",
+        "copied": "Códigos copiados al portapapeles",
+        "downloadNote": "Cada código solo puede usarse una vez. Guárdalos en un lugar seguro."
+      }
     }
   },
   "dashboard": {

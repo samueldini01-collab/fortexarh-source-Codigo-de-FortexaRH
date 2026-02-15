@@ -707,7 +707,32 @@
       "disabled": "2FA disabled",
       "disableTitle": "Disable 2FA",
       "disableDesc": "Enter a code from your authenticator app to confirm",
-      "confirmDisable": "Disable 2FA"
+      "confirmDisable": "Disable 2FA",
+      "recovery": {
+        "title": "Recovery Codes",
+        "subtitle": "Use a recovery code to access your account",
+        "enterCode": "Enter a recovery code",
+        "enterCodeTitle": "Recovery code",
+        "enterCodeDesc": "Enter one of your one-time recovery codes",
+        "invalidCode": "Invalid recovery code",
+        "useRecoveryCode": "Use recovery code",
+        "useAuthApp": "Use authenticator app",
+        "codesTitle": "Recovery codes",
+        "codesRemaining": "{{count}} codes remaining",
+        "noCodesLeft": "No recovery codes left",
+        "lowWarning": "You have few codes left. Consider regenerating them.",
+        "regenerateBtn": "Regenerate codes",
+        "regenerateTitle": "Regenerate recovery codes",
+        "regenerateDesc": "Enter a code from your authenticator app to generate new codes. Previous codes will be invalidated.",
+        "regenerated": "Recovery codes regenerated",
+        "saveWarning": "Save these codes in a safe place. Each code can only be used once.",
+        "importantNote": "These codes are the only way to access your account if you lose your authenticator device. Keep them safe.",
+        "confirmSaved": "I have saved my codes",
+        "copyAll": "Copy all",
+        "download": "Download",
+        "copied": "Codes copied to clipboard",
+        "downloadNote": "Each code can only be used once. Keep them safe."
+      }
     }
   },
   "dashboard": {

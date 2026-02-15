@@ -706,7 +706,32 @@
       "disabled": "2FA désactivé",
       "disableTitle": "Désactiver 2FA",
       "disableDesc": "Entrez un code de votre application d'authentification pour confirmer",
-      "confirmDisable": "Désactiver 2FA"
+      "confirmDisable": "Désactiver 2FA",
+      "recovery": {
+        "title": "Codes de récupération",
+        "subtitle": "Utilisez un code de récupération pour accéder à votre compte",
+        "enterCode": "Entrez un code de récupération",
+        "enterCodeTitle": "Code de récupération",
+        "enterCodeDesc": "Entrez un de vos codes de récupération à usage unique",
+        "invalidCode": "Code de récupération invalide",
+        "useRecoveryCode": "Utiliser un code de récupération",
+        "useAuthApp": "Utiliser l'application d'authentification",
+        "codesTitle": "Codes de récupération",
+        "codesRemaining": "{{count}} codes restants",
+        "noCodesLeft": "Aucun code de récupération restant",
+        "lowWarning": "Il vous reste peu de codes. Pensez à les régénérer.",
+        "regenerateBtn": "Régénérer les codes",
+        "regenerateTitle": "Régénérer les codes de récupération",
+        "regenerateDesc": "Entrez un code de votre application d'authentification pour générer de nouveaux codes. Les codes précédents seront invalidés.",
+        "regenerated": "Codes de récupération régénérés",
+        "saveWarning": "Enregistrez ces codes dans un endroit sûr. Chaque code ne peut être utilisé qu'une seule fois.",
+        "importantNote": "Ces codes sont le seul moyen d'accéder à votre compte si vous perdez votre appareil d'authentification. Gardez-les en sécurité.",
+        "confirmSaved": "J'ai enregistré mes codes",
+        "copyAll": "Copier tout",
+        "download": "Télécharger",
+        "copied": "Codes copiés dans le presse-papiers",
+        "downloadNote": "Chaque code ne peut être utilisé qu'une seule fois. Gardez-les en sécurité."
+      }
     }
   },
   "dashboard": {
