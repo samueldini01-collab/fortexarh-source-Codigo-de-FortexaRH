@@ -25,33 +25,10 @@ logger = logging.getLogger(__name__)
 
 
 # ===================== PYDANTIC MODELS =====================
-
-class CancellationSurveyData(BaseModel):
-    """Cancellation survey model"""
-    reason: str  # too_expensive, not_using, missing_features, switching, other
-    feedback: Optional[str] = None
-    would_return: Optional[bool] = None
-
-
-class RetentionOfferResponse(BaseModel):
-    """Retention offer response model"""
-    accept_offer: bool
-
-
-class SubscriptionCreate(BaseModel):
-    """Model for creating a subscription"""
-    plan_id: str
-    employee_count: int = 1
-    additional_users: int = 0
-    billing_cycle: str = "monthly"
-
-
-class SubscriptionUpdate(BaseModel):
-    """Model for updating a subscription"""
-    plan_id: Optional[str] = None
-    employee_count: Optional[int] = None
-    additional_users: Optional[int] = None
-    action: Optional[str] = None  # cancel, renew
+from models.finance import (
+    CancellationSurveyData, RetentionOfferResponse,
+    SubscriptionCreate, SubscriptionUpdate
+)
 
 
 # ===================== ROUTER INITIALIZATION =====================

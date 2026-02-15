@@ -40,19 +40,7 @@ async def get_current_user(request: Request, credentials=Depends(security)):
 
 
 # ==================== MODELS ====================
-
-class NotificationSettings(BaseModel):
-    payroll_reminder_enabled: bool = True
-    payroll_reminder_days: int = 3  # Days before payroll date
-    birthday_notifications_enabled: bool = True
-    birthday_notification_days: int = 1  # Days before birthday
-    contract_expiry_enabled: bool = True
-    contract_expiry_days: int = 30
-
-
-class PayrollDateConfig(BaseModel):
-    payroll_day: int = 15  # Day of month for payroll
-    second_payroll_day: Optional[int] = None  # Optional second payroll date (e.g., biweekly)
+from models.system import NotificationSettings, PayrollDateConfig
 
 
 # ==================== EMAIL TEMPLATES ====================

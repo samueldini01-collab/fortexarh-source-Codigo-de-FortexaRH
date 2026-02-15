@@ -33,14 +33,7 @@ async def get_current_user(request: Request, credentials = Depends(security)):
     return await _get_current_user_func(request, credentials)
 
 
-class AISearchRequest(BaseModel):
-    query: str
-    context: Optional[str] = None
-
-
-class AIActionRequest(BaseModel):
-    action_type: str
-    parameters: Dict[str, Any]
+from models.system import AISearchRequest, AIActionRequest
 
 
 # Action types and their required parameters

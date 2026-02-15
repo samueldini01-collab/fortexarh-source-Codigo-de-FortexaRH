@@ -33,19 +33,7 @@ def now_iso():
     return datetime.now(timezone.utc).isoformat()
 
 
-class CreateNotificationRequest(BaseModel):
-    title: str
-    message: str
-    type: str  # payroll_approval, vacation_approved, vacation_rejected, evaluation, attendance, system
-    priority: str = "normal"  # low, normal, high, urgent
-    link: Optional[str] = None
-    target_user_id: Optional[str] = None  # If None, sent to all with permission
-    target_role: Optional[str] = None  # admin, hr_manager, employee, etc.
-    metadata: Optional[dict] = None
-
-
-class MarkReadRequest(BaseModel):
-    notification_ids: List[str]
+from models.system import CreateNotificationRequest, MarkReadRequest
 
 
 # ============== NOTIFICATION CRUD ==============
