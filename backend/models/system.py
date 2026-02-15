@@ -307,24 +307,29 @@ class AlertSettingsUpdate(BaseModel):
 # ===== CDC Audit =====
 
 class AuditLogEntry(BaseModel):
+    log_id: str
     collection: str
+    collection_name: str
     operation: str
+    operation_name: str
     document_id: str
-    before: Optional[Dict[str, Any]] = None
-    after: Optional[Dict[str, Any]] = None
+    company_id: Optional[str] = None
     user_id: Optional[str] = None
     user_email: Optional[str] = None
-    ip_address: Optional[str] = None
-    user_agent: Optional[str] = None
+    timestamp: Any = None
+    changes: Optional[Dict[str, Any]] = None
+    previous_values: Optional[Dict[str, Any]] = None
+    new_values: Optional[Dict[str, Any]] = None
+    document_key: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
 
 
 class CDCStatusResponse(BaseModel):
-    enabled: bool
-    tracked_collections: List[str]
-    total_audit_logs: int
-    last_log_timestamp: Optional[str] = None
-    retention_days: int
+    is_running: bool
+    watched_collections: List[str]
+    active_streams: int
+    total_events_captured: int
+    last_event_time: Optional[Any] = None
 
 
 class AuditQueryParams(BaseModel):
