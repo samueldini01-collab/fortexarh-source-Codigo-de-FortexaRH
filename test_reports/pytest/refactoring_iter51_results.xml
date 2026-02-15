@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="21" time="3.783" timestamp="2026-02-15T01:31:41.945192+00:00" hostname="agent-env-32173074-3b89-4343-b39f-a085ee07cd90"><testcase classname="backend.tests.test_backend_refactoring_iter51.TestBackendStartup" name="test_health_endpoint" time="0.152"><failure message="requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)">/root/.venv/lib/python3.11/site-packages/requests/models.py:976: in json
+    return complexjson.loads(self.text, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/__init__.py:346: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:337: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:355: in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+E   json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+backend/tests/test_backend_refactoring_iter51.py:48: in test_health_endpoint
+    data = response.json()
+           ^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/requests/models.py:980: in json
+    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)
+E   requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)</failure></testcase><testcase classname="backend.tests.test_backend_refactoring_iter51.TestBackendStartup" name="test_health_db_endpoint" time="0.133"><failure message="requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)">/root/.venv/lib/python3.11/site-packages/requests/models.py:976: in json
+    return complexjson.loads(self.text, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/__init__.py:346: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:337: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:355: in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+E   json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+backend/tests/test_backend_refactoring_iter51.py:56: in test_health_db_endpoint
+    data = response.json()
+           ^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/requests/models.py:980: in json
+    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)
+E   requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)</failure></testcase><testcase classname="backend.tests.test_backend_refactoring_iter51.TestAuthAPI" name="test_admin_login" time="0.466" /><testcase classname="backend.tests.test_backend_refactoring_iter51.TestAuthAPI" name="test_partner_login" time="0.113" /><testcase classname="backend.tests.test_backend_refactoring_iter51.TestAuthAPI" name="test_employee_portal_login" time="0.349" /><testcase classname="backend.tests.test_backend_refactoring_iter51.TestPayrollV2Routes" name="test_get_payroll_periods" time="0.506" /><testcase classname="backend.tests.test_backend_refactoring_iter51.TestPayrollV2Routes" name="test_get_payroll_types" time="0.120" /><testcase classname="backend.tests.test_backend_refactoring_iter51.TestPayrollV2Routes" name="test_get_novelty_types" time="0.121"><failure message="AssertionError: assert False&#10; +  where False = isinstance({'deduction': [{'code': 'PREST', 'description': 'Cuota de préstamo de la empresa', 'name': 'Préstamo Empresa'}, {'code': 'ANTIC', 'description': 'Anticipo de salario', 'name': 'Anticipo'}, {'code': 'COOP', 'description': 'Descuento de cooperativa', 'name': 'Cooperativa'}, {'code': 'SEG', 'description': 'Seguro de vida o médico adicional', 'name': 'Seguro Adicional'}, {'code': 'PENS', 'description': 'Retención por pensión alimenticia', 'name': 'Pensión Alimenticia'}, {'code': 'EMB', 'description': 'Embargo judicial', 'name': 'Embargo'}, ...], 'income': [{'code': 'COM', 'description': 'Comisiones de ventas', 'name': 'Comisiones'}, {'code': 'VIA', 'description': 'Gastos de transporte y alimentación', 'name': 'Viáticos'}, {'code': 'INC', 'description': 'Bonificaciones por rendimiento', 'name': 'Incentivos'}, {'code': 'HED', 'description': 'Horas extras 35%', 'name': 'Horas Extras Diurnas'}, {'code': 'HEN', 'description': 'Horas extras 15%', 'name': 'Horas Extras Nocturnas'}, {'code': 'HEFS', 'description': 'Horas extras 100%', 'name': 'Horas Extras Fin de Semana'}, ...]}, list)">backend/tests/test_backend_refactoring_iter51.py:140: in test_get_novelty_types
+    assert isinstance(data, list)
+E   AssertionError: assert False
+E    +  where False = isinstance({'deduction': [{'code': 'PREST', 'description': 'Cuota de préstamo de la empresa', 'name': 'Préstamo Empresa'}, {'code': 'ANTIC', 'description': 'Anticipo de salario', 'name': 'Anticipo'}, {'code': 'COOP', 'description': 'Descuento de cooperativa', 'name': 'Cooperativa'}, {'code': 'SEG', 'description': 'Seguro de vida o médico adicional', 'name': 'Seguro Adicional'}, {'code': 'PENS', 'description': 'Retención por pensión alimenticia', 'name': 'Pensión Alimenticia'}, {'code': 'EMB', 'description': 'Embargo judicial', 'name': 'Embargo'}, ...], 'income': [{'code': 'COM', 'description': 'Comisiones de ventas', 'name': 'Comisiones'}, {'code': 'VIA', 'description': 'Gastos de transporte y alimentación', 'name': 'Viáticos'}, {'code': 'INC', 'description': 'Bonificaciones por rendimiento', 'name': 'Incentivos'}, {'code': 'HED', 'description': 'Horas extras 35%', 'name': 'Horas Extras Diurnas'}, {'code': 'HEN', 'description': 'Horas extras 15%', 'name': 'Horas Extras Nocturnas'}, {'code': 'HEFS', 'description': 'Horas extras 100%', 'name': 'Horas Extras Fin de Semana'}, ...]}, list)</failure></testcase><testcase classname="backend.tests.test_backend_refactoring_iter51.TestLegacyPayrollRoutes" name="test_get_legacy_payroll" time="0.129" /><testcase classname="backend.tests.test_backend_refactoring_iter51.TestEmployeesAPI" name="test_get_employees" time="0.167" /><testcase classname="backend.tests.test_backend_refactoring_iter51.TestCompanyAPI" name="test_get_company" time="0.099" /><testcase classname="backend.tests.test_backend_refactoring_iter51.TestAttendanceAPI" name="test_get_shifts" time="0.110" /><testcase classname="backend.tests.test_backend_refactoring_iter51.TestVacationsAPI" name="test_get_vacations" time="0.128" /><testcase classname="backend.tests.test_backend_refactoring_iter51.TestVacationsAPI" name="test_get_vacation_policies" time="0.231" /><testcase classname="backend.tests.test_backend_refactoring_iter51.TestEvaluationsAPI" name="test_get_evaluation_cycles" time="0.111" /><testcase classname="backend.tests.test_backend_refactoring_iter51.TestAccountingAPI" name="test_get_accounts" time="0.126" /><testcase classname="backend.tests.test_backend_refactoring_iter51.TestReportsSystemAPI" name="test_get_reports_catalog" time="0.114" /><testcase classname="backend.tests.test_backend_refactoring_iter51.TestPayrollConfigAPI" name="test_get_payroll_settings" time="0.119"><failure message="assert 405 == 200&#10; +  where 405 = &lt;Response [405]&gt;.status_code">backend/tests/test_backend_refactoring_iter51.py:285: in test_get_payroll_settings
+    assert response.status_code == 200
+E   assert 405 == 200
+E    +  where 405 = &lt;Response [405]&gt;.status_code</failure></testcase><testcase classname="backend.tests.test_backend_refactoring_iter51.TestDashboardAPI" name="test_get_dashboard_stats" time="0.132" /><testcase classname="backend.tests.test_backend_refactoring_iter51.TestCentralizedModelsImport" name="test_payroll_models_used" time="0.109" /><testcase classname="backend.tests.test_backend_refactoring_iter51.TestCentralizedModelsImport" name="test_auth_models_used" time="0.113" /></testsuite></testsuites>
