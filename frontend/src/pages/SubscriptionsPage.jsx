@@ -476,7 +476,7 @@ export default function SubscriptionsPage() {
                 <div>
                   <CardTitle className="flex items-center gap-2">
                     <CreditCard className="w-5 h-5" />
-                    Plan Actual
+                    {t('subscriptions.currentPlan')}
                   </CardTitle>
                   <CardDescription>{t('subscriptions.detallesDeSuSuscripcion')}</CardDescription>
                 </div>
@@ -535,19 +535,19 @@ export default function SubscriptionsPage() {
               {currentPlanId !== 'trial' && (
                 <>
                   <Button variant="outline" onClick={() => setShowAdjustEmployees(true)}>
-                    <Users className="w-4 h-4 mr-2" />Ajustar Empleados
+                    <Users className="w-4 h-4 mr-2" />{t('subscriptions.adjustEmployees')}
                   </Button>
                   <Button variant="outline" onClick={() => setShowAddUsers(true)}>
-                    <Users className="w-4 h-4 mr-2" />Usuarios Adicionales
+                    <Users className="w-4 h-4 mr-2" />{t('subscriptions.additionalUsers')}
                   </Button>
                   {(subscription?.status === 'active') && (
                     <Button variant="ghost" className="text-red-600 ml-auto" onClick={handleCancelSubscription}>
-                      <XCircle className="w-4 h-4 mr-2" />Cancelar Suscripción
+                      <XCircle className="w-4 h-4 mr-2" />{t('subscriptions.cancelSubscription')}
                     </Button>
                   )}
                   {(subscription?.status === 'canceling' || subscription?.status === 'cancelled') && (
                     <Button variant="outline" className="text-emerald-600 border-emerald-300 ml-auto" onClick={handleReactivateSubscription}>
-                      <RotateCcw className="w-4 h-4 mr-2" />Reactivar Suscripción
+                      <RotateCcw className="w-4 h-4 mr-2" />{t('subscriptions.reactivateSubscription')}
                     </Button>
                   )}
                 </>
@@ -838,7 +838,7 @@ export default function SubscriptionsPage() {
                         setShowChangePlan(true);
                       }}
                     >
-                      {isCurrentPlan ? 'Plan Actual' : 'Seleccionar'}
+                      {isCurrentPlan ? t('subscriptions.currentPlan') : t('subscriptions.select')}
                     </Button>
                   </div>
                 );
