@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import LanguageSelector from "@/components/LanguageSelector";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,194 +25,91 @@ import {
   Award,
   ArrowRight,
   ChevronRight,
-  Star,
-  Zap,
-  Globe,
-  HeadphonesIcon,
   Percent,
   Wallet,
-  UserPlus,
   PieChart,
   Sun,
   Moon,
   Monitor,
-  Contrast
+  Contrast,
+  HeadphonesIcon
 } from "lucide-react";
 
-const BENEFITS = [
-  {
-    icon: DollarSign,
-    title: "Solo $10/mes",
-    description: "Acceso completo al sistema con empleados ilimitados. Sin costos ocultos.",
-    highlight: true
-  },
-  {
-    icon: Percent,
-    title: "30% Comisión Recurrente",
-    description: "Gana el 30% de cada pago de tus clientes, de por vida mientras permanezcan activos.",
-    highlight: true
-  },
-  {
-    icon: Users,
-    title: "Empleados Ilimitados",
-    description: "Gestiona tu propia firma sin límites. Sin costo adicional por empleado.",
-    highlight: false
-  },
-  {
-    icon: Wallet,
-    title: "Facturación Flexible",
-    description: "Elige facturar a tu cliente directamente o absorber el costo con descuento del 30%.",
-    highlight: false
-  },
-  {
-    icon: Building2,
-    title: "Gestiona Múltiples Clientes",
-    description: "Panel centralizado para administrar todos tus clientes desde un solo lugar.",
-    highlight: false
-  },
-  {
-    icon: TrendingUp,
-    title: "Dashboard de Comisiones",
-    description: "Visualiza tus ganancias, historial de pagos y proyecciones en tiempo real.",
-    highlight: false
-  }
-];
+const BENEFIT_ICONS = [DollarSign, Percent, Users, Wallet, Building2, TrendingUp];
+const FEATURE_ICONS = [Calculator, Users, Clock, FileText, BarChart3, PieChart];
 
-const FEATURES = [
-  { icon: Calculator, name: "Nómina Automatizada", desc: "Cálculo automático de TSS, AFP, ISR" },
-  { icon: Users, name: "Gestión de Empleados", desc: "Perfiles, contratos, documentos" },
-  { icon: Clock, name: "Control de Asistencia", desc: "Marcaje, horas extra, ausencias" },
-  { icon: FileText, name: "Reportes DGII-TSS", desc: "TSS, IR-17, formularios oficiales" },
-  { icon: BarChart3, name: "58+ Reportes", desc: "Análisis completo de nómina y RRHH" },
-  { icon: PieChart, name: "Contabilidad", desc: "Asientos, catálogos NIIF, exportación" }
-];
-
-const PRICING_COMPARISON = [
-  { feature: "Acceso completo al sistema", partner: true, normal: true },
-  { feature: "Gestión de nómina y RRHH", partner: true, normal: true },
-  { feature: "Reportes DGII-TSS", partner: true, normal: true },
-  { feature: "Empleados ilimitados", partner: true, normal: false },
-  { feature: "Costo por empleado", partner: "$0", normal: "$1.50" },
-  { feature: "Comisión por referidos", partner: "30%", normal: "0%" },
-  { feature: "Panel de clientes", partner: true, normal: false },
-  { feature: "Link de referido único", partner: true, normal: false },
-  { feature: "Precio mensual", partner: "$10", normal: "$5-20 + empleados" }
-];
-
-const STEPS = [
-  {
-    number: "1",
-    title: "Regístrate como Firma",
-    description: "Crea tu cuenta de firma de contadores en menos de 2 minutos."
-  },
-  {
-    number: "2",
-    title: "Consigue tu Primer Cliente",
-    description: "Comparte tu link de referido y activa los beneficios de partner."
-  },
-  {
-    number: "3",
-    title: "Gana Comisiones",
-    description: "Recibe el 30% de cada pago de tus clientes, automáticamente."
-  }
-];
-
-// Theme configurations
 const themes = {
   light: {
-    name: "Claro",
-    icon: Sun,
+    name: "light", icon: Sun,
     bg: "bg-gradient-to-br from-slate-50 via-white to-emerald-50",
     header: "bg-white/95 backdrop-blur-md border-b border-slate-200",
-    headerText: "text-slate-900",
-    headerSubtext: "text-emerald-600",
-    text: "text-slate-900",
-    textMuted: "text-slate-600",
-    textLight: "text-slate-500",
-    card: "bg-white border-slate-200 shadow-sm",
-    cardHover: "hover:shadow-md",
-    accent: "text-emerald-600",
-    accentBg: "bg-emerald-50",
+    headerText: "text-slate-900", headerSubtext: "text-emerald-600",
+    text: "text-slate-900", textMuted: "text-slate-600", textLight: "text-slate-500",
+    card: "bg-white border-slate-200 shadow-sm", cardHover: "hover:shadow-md",
+    accent: "text-emerald-600", accentBg: "bg-emerald-50",
     badge: "bg-emerald-100 text-emerald-700",
     button: "bg-emerald-500 hover:bg-emerald-600",
     buttonGhost: "text-slate-600 hover:text-slate-900 hover:bg-slate-100",
-    section: "bg-slate-50",
-    border: "border-slate-200",
-    input: "bg-white border-slate-200"
+    section: "bg-slate-50", border: "border-slate-200"
   },
   dark: {
-    name: "Oscuro",
-    icon: Moon,
+    name: "dark", icon: Moon,
     bg: "bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900",
     header: "bg-slate-900/80 backdrop-blur-md border-b border-slate-700",
-    headerText: "text-white",
-    headerSubtext: "text-emerald-400",
-    text: "text-white",
-    textMuted: "text-slate-300",
-    textLight: "text-slate-400",
-    card: "bg-slate-800/50 border-slate-700",
-    cardHover: "hover:bg-slate-700/50",
-    accent: "text-emerald-400",
-    accentBg: "bg-emerald-500/20",
+    headerText: "text-white", headerSubtext: "text-emerald-400",
+    text: "text-white", textMuted: "text-slate-300", textLight: "text-slate-400",
+    card: "bg-slate-800/50 border-slate-700", cardHover: "hover:bg-slate-700/50",
+    accent: "text-emerald-400", accentBg: "bg-emerald-500/20",
     badge: "bg-emerald-500/20 text-emerald-400",
     button: "bg-emerald-500 hover:bg-emerald-600",
     buttonGhost: "text-slate-300 hover:text-white hover:bg-slate-700",
-    section: "bg-slate-800/50",
-    border: "border-slate-700",
-    input: "bg-slate-800 border-slate-700"
+    section: "bg-slate-800/50", border: "border-slate-700"
   },
   contrast: {
-    name: "Alto Contraste",
-    icon: Contrast,
+    name: "contrast", icon: Contrast,
     bg: "bg-black",
     header: "bg-black border-b-2 border-yellow-400",
-    headerText: "text-yellow-400",
-    headerSubtext: "text-yellow-300",
-    text: "text-yellow-400",
-    textMuted: "text-yellow-300",
-    textLight: "text-yellow-200",
-    card: "bg-black border-2 border-yellow-400",
-    cardHover: "hover:border-yellow-300",
-    accent: "text-yellow-400",
-    accentBg: "bg-yellow-400/10",
+    headerText: "text-yellow-400", headerSubtext: "text-yellow-300",
+    text: "text-yellow-400", textMuted: "text-yellow-300", textLight: "text-yellow-200",
+    card: "bg-black border-2 border-yellow-400", cardHover: "hover:border-yellow-300",
+    accent: "text-yellow-400", accentBg: "bg-yellow-400/10",
     badge: "bg-yellow-400/20 text-yellow-400 border border-yellow-400",
     button: "bg-yellow-400 hover:bg-yellow-300 text-black",
     buttonGhost: "text-yellow-400 hover:text-yellow-300 hover:bg-yellow-400/10",
-    section: "bg-gray-950",
-    border: "border-yellow-400",
-    input: "bg-black border-2 border-yellow-400"
-  },
-  system: {
-    name: "Sistema",
-    icon: Monitor
+    section: "bg-gray-950", border: "border-yellow-400"
   }
 };
 
 export default function AccountantsSoftwarePage() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState("benefits");
-  
-  // Initialize theme from localStorage or default to light
   const [currentTheme, setCurrentTheme] = useState(() => {
-    const savedTheme = localStorage.getItem("accountants-theme");
-    if (savedTheme && savedTheme !== "system") {
-      return savedTheme;
-    }
-    return "light";
+    const saved = localStorage.getItem("accountants-theme");
+    return (saved && saved !== "system") ? saved : "light";
   });
-  
-  // Handle theme change
-  const handleThemeChange = (themeName) => {
-    if (themeName === "system") {
-      const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      setCurrentTheme(isDark ? "dark" : "light");
+
+  const handleThemeChange = (name) => {
+    if (name === "system") {
+      setCurrentTheme(window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
     } else {
-      setCurrentTheme(themeName);
+      setCurrentTheme(name);
     }
-    localStorage.setItem("accountants-theme", themeName);
+    localStorage.setItem("accountants-theme", name);
   };
-  
+
   const theme = themes[currentTheme] || themes.light;
+
+  const benefitHighlights = [true, true, false, false, false, false];
+  const comparisonData = [
+    { key: "comp1", partner: true, normal: true },
+    { key: "comp2", partner: true, normal: true },
+    { key: "comp3", partner: true, normal: true },
+    { key: "comp4", partner: true, normal: false },
+    { key: "comp5", partner: "$0", normal: "$1.50" },
+    { key: "comp6", partner: "30%", normal: "0%" },
+    { key: "comp7", partner: true, normal: false },
+    { key: "comp8", partner: true, normal: false },
+    { key: "comp9", partner: t('accountants.comp9Partner'), normal: t('accountants.comp9Normal') }
+  ];
 
   return (
     <div className={`min-h-screen ${theme.bg}`}>
@@ -224,7 +122,6 @@ export default function AccountantsSoftwarePage() {
               <span className={`font-bold text-xl ${theme.headerText}`}>{t('accountants.fortexarh')}</span>
               <span className={`${theme.headerSubtext} text-sm font-medium ml-2 hidden sm:inline`}>{t('accountants.paraContadores')}</span>
             </Link>
-            
             <div className="flex items-center gap-2 sm:gap-4">
               {/* Theme Selector */}
               <DropdownMenu>
@@ -237,45 +134,27 @@ export default function AccountantsSoftwarePage() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem 
-                    onClick={() => handleThemeChange("light")}
-                    className={currentTheme === "light" ? "bg-emerald-50" : ""}
-                  >
-                    <Sun className="w-4 h-4 mr-2" />
-                    Claro
-                    {currentTheme === "light" && <Check className="w-4 h-4 ml-auto text-emerald-500" />}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => handleThemeChange("dark")}
-                    className={currentTheme === "dark" ? "bg-emerald-50" : ""}
-                  >
-                    <Moon className="w-4 h-4 mr-2" />
-                    Oscuro
-                    {currentTheme === "dark" && <Check className="w-4 h-4 ml-auto text-emerald-500" />}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => handleThemeChange("contrast")}
-                    className={currentTheme === "contrast" ? "bg-emerald-50" : ""}
-                  >
-                    <Contrast className="w-4 h-4 mr-2" />
-                    Alto Contraste
-                    {currentTheme === "contrast" && <Check className="w-4 h-4 ml-auto text-emerald-500" />}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleThemeChange("system")}>
-                    <Monitor className="w-4 h-4 mr-2" />
-                    Sistema
-                  </DropdownMenuItem>
+                  {[["light", Sun, "themeLight"], ["dark", Moon, "themeDark"], ["contrast", Contrast, "themeContrast"], ["system", Monitor, "themeSystem"]].map(([key, Icon, labelKey]) => (
+                    <DropdownMenuItem key={key} onClick={() => handleThemeChange(key)} className={currentTheme === key ? "bg-emerald-50" : ""}>
+                      <Icon className="w-4 h-4 mr-2" />
+                      {t(`accountants.${labelKey}`)}
+                      {currentTheme === key && <Check className="w-4 h-4 ml-auto text-emerald-500" />}
+                    </DropdownMenuItem>
+                  ))}
                 </DropdownMenuContent>
               </DropdownMenu>
-              
+
+              {/* Language Selector */}
+              <LanguageSelector />
+
               <Link to="/login">
-                <Button variant="ghost" className={theme.buttonGhost}>
-                  Iniciar Sesión
+                <Button variant="ghost" className={theme.buttonGhost} data-testid="accountants-login-btn">
+                  {t('accountants.login')}
                 </Button>
               </Link>
               <Link to="/partner-register">
-                <Button className={theme.button}>
-                  Registrar Firma
+                <Button className={theme.button} data-testid="accountants-register-btn">
+                  {t('accountants.registerFirm')}
                 </Button>
               </Link>
             </div>
@@ -286,102 +165,80 @@ export default function AccountantsSoftwarePage() {
       {/* Hero Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMyMjIiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAyNHYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-30"></div>
-        
         <div className="max-w-7xl mx-auto relative">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <div className={`inline-flex items-center gap-2 ${theme.badge} px-4 py-2 rounded-full text-sm font-medium mb-6`}>
                 <Award className="w-4 h-4" />
-                Programa de Partners para Firmas de Contadores
+                {t('accountants.heroPartnerBadge')}
               </div>
-              
               <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold ${theme.text} mb-6 leading-tight`}>
-                Crece tu firma con{" "}
+                {t('accountants.heroTitle')}{" "}
                 <span className={theme.accent}>{t('accountants.fortexarh')}</span>
               </h1>
-              
               <p className={`text-xl ${theme.textMuted} mb-8 leading-relaxed`}>
-                Ofrece a tus clientes el mejor sistema de nómina y RRHH de República Dominicana. 
-                <strong className={theme.text}> Gana 30% de comisión recurrente</strong> por cada cliente referido.
+                {t('accountants.heroDesc')}
+                <strong className={theme.text}> {t('accountants.heroCommission')}</strong> {t('accountants.heroCommissionSuffix')}
               </p>
-              
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <Link to="/partner-register">
-                  <Button size="lg" className={`${theme.button} text-white text-lg px-8 w-full sm:w-auto`}>
-                    Registrar mi Firma
+                  <Button size="lg" className={`${theme.button} text-white text-lg px-8 w-full sm:w-auto`} data-testid="hero-register-btn">
+                    {t('accountants.registerMyFirm')}
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
                 <Link to="/soporte">
                   <Button size="lg" variant="outline" className={`${theme.border} ${theme.textMuted} ${theme.buttonGhost} w-full sm:w-auto`}>
                     <HeadphonesIcon className="w-5 h-5 mr-2" />
-                    Hablar con Ventas
+                    {t('accountants.talkToSales')}
                   </Button>
                 </Link>
               </div>
-              
               <div className={`flex items-center gap-6 ${theme.textLight} text-sm`}>
                 <div className="flex items-center gap-2">
                   <Check className={`w-4 h-4 ${theme.accent}`} />
-                  14 días de prueba gratis
+                  {t('accountants.trialDays')}
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className={`w-4 h-4 ${theme.accent}`} />
-                  Sin tarjeta requerida
+                  {t('accountants.noCard')}
                 </div>
               </div>
             </div>
-            
+
+            {/* Pricing Card */}
             <div className="relative">
               <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 border border-slate-700 shadow-2xl">
                 <div className="text-center mb-6">
                   <div className={`inline-flex items-center justify-center w-16 h-16 ${theme.accentBg} rounded-full mb-4`}>
                     <Briefcase className={`w-8 h-8 ${theme.accent}`} />
                   </div>
-                  <h3 className={`text-2xl font-bold ${theme.text} mb-2`}>{t('accountants.planPartner')}</h3>
-                  <p className={theme.textLight}>{t('accountants.paraFirmasDeContadores')}</p>
+                  <h3 className="text-2xl font-bold text-white mb-2">{t('accountants.planPartner')}</h3>
+                  <p className="text-slate-400">{t('accountants.paraFirmasDeContadores')}</p>
                 </div>
-                
                 <div className="text-center mb-6">
                   <div className="flex items-baseline justify-center gap-1">
-                    <span className={`text-5xl font-bold ${theme.text}`}>$10</span>
-                    <span className={theme.textLight}>/mes</span>
+                    <span className="text-5xl font-bold text-white">$10</span>
+                    <span className="text-slate-400">{t('accountants.pricePerMonth')}</span>
                   </div>
-                  <p className={`${theme.accent} font-medium mt-2`}>{t('accountants.empleadosIlimitadosIncluidos')}</p>
+                  <p className="text-emerald-400 font-medium mt-2">{t('accountants.empleadosIlimitadosIncluidos')}</p>
                 </div>
-                
                 <div className="space-y-3 mb-8">
-                  <div className={`flex items-center gap-3 ${theme.textMuted}`}>
-                    <Check className={`w-5 h-5 ${theme.accent} flex-shrink-0`} />
-                    <span>{t('accountants.accesoCompletoAlSistema')}</span>
-                  </div>
-                  <div className={`flex items-center gap-3 ${theme.textMuted}`}>
-                    <Check className={`w-5 h-5 ${theme.accent} flex-shrink-0`} />
-                    <span>{t('accountants.sinLimiteDeEmpleados')}</span>
-                  </div>
-                  <div className={`flex items-center gap-3 ${theme.textMuted}`}>
-                    <Check className={`w-5 h-5 ${theme.accent} flex-shrink-0`} />
-                    <span>30% comisión por cliente</span>
-                  </div>
-                  <div className={`flex items-center gap-3 ${theme.textMuted}`}>
-                    <Check className={`w-5 h-5 ${theme.accent} flex-shrink-0`} />
-                    <span>{t('accountants.panelDeGestionDe')}</span>
-                  </div>
-                  <div className={`flex items-center gap-3 ${theme.textMuted}`}>
-                    <Check className={`w-5 h-5 ${theme.accent} flex-shrink-0`} />
-                    <span>{t('accountants.linkDeReferidoUnico')}</span>
-                  </div>
+                  {['accesoCompletoAlSistema', 'sinLimiteDeEmpleados', 'comisionPorCliente', 'panelDeGestionDe', 'linkDeReferidoUnico'].map((key) => (
+                    <div key={key} className="flex items-center gap-3 text-slate-300">
+                      <Check className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                      <span>{t(`accountants.${key}`)}</span>
+                    </div>
+                  ))}
                 </div>
-                
                 <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 mb-6">
                   <p className="text-amber-400 text-sm text-center">
-                    <strong>{t('accountants.requisito')}</strong> Mantener al menos 1 cliente activo con plan de pago
+                    <strong>{t('accountants.requisito')}</strong> {t('accountants.requisitoText')}
                   </p>
                 </div>
-                
                 <Link to="/partner-register" className="block">
-                  <Button className={`w-full ${theme.button} text-lg py-6`}>
-                    Comenzar Ahora
+                  <Button className={`w-full ${theme.button} text-lg py-6`} data-testid="pricing-start-btn">
+                    {t('accountants.startNow')}
                   </Button>
                 </Link>
               </div>
@@ -394,30 +251,18 @@ export default function AccountantsSoftwarePage() {
       <section className={`py-20 px-4 sm:px-6 lg:px-8 ${theme.section}`}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className={`text-3xl sm:text-4xl font-bold ${theme.text} mb-4`}>
-              Beneficios Exclusivos para Firmas
-            </h2>
-            <p className={`text-lg ${theme.textLight} max-w-2xl mx-auto`}>
-              Maximiza tus ingresos y ofrece el mejor servicio a tus clientes con nuestro programa de partners.
-            </p>
+            <h2 className={`text-3xl sm:text-4xl font-bold ${theme.text} mb-4`}>{t('accountants.benefitsTitle')}</h2>
+            <p className={`text-lg ${theme.textLight} max-w-2xl mx-auto`}>{t('accountants.benefitsSubtitle')}</p>
           </div>
-          
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {BENEFITS.map((benefit, index) => (
-              <Card 
-                key={index} 
-                className={`${theme.card} ${theme.cardHover} transition-all ${
-                  benefit.highlight ? 'ring-2 ring-emerald-500/30' : ''
-                }`}
-              >
+            {BENEFIT_ICONS.map((Icon, index) => (
+              <Card key={index} className={`${theme.card} ${theme.cardHover} transition-all ${benefitHighlights[index] ? 'ring-2 ring-emerald-500/30' : ''}`}>
                 <CardContent className="p-6">
-                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${
-                    benefit.highlight ? theme.accentBg : theme.section
-                  }`}>
-                    <benefit.icon className={`w-6 h-6 ${benefit.highlight ? theme.accent : theme.textLight}`} />
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${benefitHighlights[index] ? theme.accentBg : theme.section}`}>
+                    <Icon className={`w-6 h-6 ${benefitHighlights[index] ? theme.accent : theme.textLight}`} />
                   </div>
-                  <h3 className={`text-lg font-semibold ${theme.text} mb-2`}>{benefit.title}</h3>
-                  <p className={`${theme.textLight} text-sm`}>{benefit.description}</p>
+                  <h3 className={`text-lg font-semibold ${theme.text} mb-2`}>{t(`accountants.benefit${index + 1}Title`)}</h3>
+                  <p className={`${theme.textLight} text-sm`}>{t(`accountants.benefit${index + 1}Desc`)}</p>
                 </CardContent>
               </Card>
             ))}
@@ -429,25 +274,18 @@ export default function AccountantsSoftwarePage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className={`text-3xl sm:text-4xl font-bold ${theme.text} mb-4`}>
-              ¿Cómo Funciona?
-            </h2>
-            <p className={`text-lg ${theme.textLight}`}>
-              Tres simples pasos para comenzar a ganar con FortexaRH
-            </p>
+            <h2 className={`text-3xl sm:text-4xl font-bold ${theme.text} mb-4`}>{t('accountants.howItWorksTitle')}</h2>
+            <p className={`text-lg ${theme.textLight}`}>{t('accountants.howItWorksSubtitle')}</p>
           </div>
-          
           <div className="grid md:grid-cols-3 gap-8">
-            {STEPS.map((step, index) => (
-              <div key={index} className="relative">
+            {[1, 2, 3].map((num, index) => (
+              <div key={num} className="relative">
                 <div className={`${theme.card} rounded-2xl p-8 h-full`}>
-                  <div className={`w-12 h-12 ${theme.button} rounded-full flex items-center justify-center text-white font-bold text-xl mb-6`}>
-                    {step.number}
-                  </div>
-                  <h3 className={`text-xl font-semibold ${theme.text} mb-3`}>{step.title}</h3>
-                  <p className={theme.textLight}>{step.description}</p>
+                  <div className={`w-12 h-12 ${theme.button} rounded-full flex items-center justify-center text-white font-bold text-xl mb-6`}>{num}</div>
+                  <h3 className={`text-xl font-semibold ${theme.text} mb-3`}>{t(`accountants.step${num}Title`)}</h3>
+                  <p className={theme.textLight}>{t(`accountants.step${num}Desc`)}</p>
                 </div>
-                {index < STEPS.length - 1 && (
+                {index < 2 && (
                   <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2">
                     <ChevronRight className={`w-8 h-8 ${theme.textLight}`} />
                   </div>
@@ -462,14 +300,9 @@ export default function AccountantsSoftwarePage() {
       <section className={`py-20 px-4 sm:px-6 lg:px-8 ${theme.accentBg}`}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className={`text-3xl sm:text-4xl font-bold ${theme.text} mb-4`}>
-              Ejemplo de Ganancias
-            </h2>
-            <p className={`text-lg ${theme.textLight}`}>
-              Mira cuánto puedes ganar con solo 10 clientes
-            </p>
+            <h2 className={`text-3xl sm:text-4xl font-bold ${theme.text} mb-4`}>{t('accountants.earningsTitle')}</h2>
+            <p className={`text-lg ${theme.textLight}`}>{t('accountants.earningsSubtitle')}</p>
           </div>
-          
           <div className={`${theme.card} rounded-2xl p-8`}>
             <div className="grid md:grid-cols-3 gap-8 text-center">
               <div>
@@ -479,15 +312,14 @@ export default function AccountantsSoftwarePage() {
               <div>
                 <p className={`${theme.textLight} mb-2`}>{t('accountants.pagoPromediocliente')}</p>
                 <p className={`text-4xl font-bold ${theme.text}`}>$25</p>
-                <p className={`text-sm ${theme.textLight}`}>($10 base + 10 empleados)</p>
+                <p className={`text-sm ${theme.textLight}`}>{t('accountants.baseNote')}</p>
               </div>
               <div>
                 <p className={`${theme.textLight} mb-2`}>{t('accountants.tuComisionMensual')}</p>
                 <p className={`text-4xl font-bold ${theme.accent}`}>$75</p>
-                <p className={`text-sm ${theme.textLight}`}>(30% de $250)</p>
+                <p className={`text-sm ${theme.textLight}`}>{t('accountants.percentNote')}</p>
               </div>
             </div>
-            
             <div className={`mt-8 pt-8 ${theme.border} border-t`}>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className={`${theme.section} rounded-lg p-4`}>
@@ -500,8 +332,8 @@ export default function AccountantsSoftwarePage() {
                 </div>
               </div>
               <p className={`text-center ${theme.textLight} mt-6 text-sm`}>
-                Con 20 clientes ganarías <strong className={theme.text}>$140/mes neto</strong> • 
-                Con 50 clientes ganarías <strong className={theme.text}>$365/mes neto</strong>
+                {t('accountants.earningsScale20')} <strong className={theme.text}>{t('accountants.earningsScale20Value')}</strong> {" \u2022 "}
+                {t('accountants.earningsScale50')} <strong className={theme.text}>{t('accountants.earningsScale50Value')}</strong>
               </p>
             </div>
           </div>
@@ -512,23 +344,18 @@ export default function AccountantsSoftwarePage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className={`text-3xl sm:text-4xl font-bold ${theme.text} mb-4`}>
-              Todo lo que Incluye FortexaRH
-            </h2>
-            <p className={`text-lg ${theme.textLight}`}>
-              Ofrece a tus clientes un sistema completo de gestión de RRHH y Nómina
-            </p>
+            <h2 className={`text-3xl sm:text-4xl font-bold ${theme.text} mb-4`}>{t('accountants.featuresTitle')}</h2>
+            <p className={`text-lg ${theme.textLight}`}>{t('accountants.featuresSubtitle')}</p>
           </div>
-          
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {FEATURES.map((feature, index) => (
+            {FEATURE_ICONS.map((Icon, index) => (
               <div key={index} className={`flex items-start gap-4 ${theme.card} rounded-lg p-6`}>
                 <div className={`w-10 h-10 ${theme.accentBg} rounded-lg flex items-center justify-center flex-shrink-0`}>
-                  <feature.icon className={`w-5 h-5 ${theme.accent}`} />
+                  <Icon className={`w-5 h-5 ${theme.accent}`} />
                 </div>
                 <div>
-                  <h3 className={`font-semibold ${theme.text} mb-1`}>{feature.name}</h3>
-                  <p className={`${theme.textLight} text-sm`}>{feature.desc}</p>
+                  <h3 className={`font-semibold ${theme.text} mb-1`}>{t(`accountants.feat${index + 1}Name`)}</h3>
+                  <p className={`${theme.textLight} text-sm`}>{t(`accountants.feat${index + 1}Desc`)}</p>
                 </div>
               </div>
             ))}
@@ -540,11 +367,8 @@ export default function AccountantsSoftwarePage() {
       <section className={`py-20 px-4 sm:px-6 lg:px-8 ${theme.section}`}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className={`text-3xl sm:text-4xl font-bold ${theme.text} mb-4`}>
-              Partner vs Plan Normal
-            </h2>
+            <h2 className={`text-3xl sm:text-4xl font-bold ${theme.text} mb-4`}>{t('accountants.comparisonTitle')}</h2>
           </div>
-          
           <div className={`${theme.card} rounded-2xl overflow-hidden`}>
             <table className="w-full">
               <thead>
@@ -555,27 +379,19 @@ export default function AccountantsSoftwarePage() {
                 </tr>
               </thead>
               <tbody>
-                {PRICING_COMPARISON.map((row, index) => (
+                {comparisonData.map((row, index) => (
                   <tr key={index} className={`${theme.border} border-b border-opacity-50`}>
-                    <td className={`p-4 ${theme.textMuted}`}>{row.feature}</td>
+                    <td className={`p-4 ${theme.textMuted}`}>{t(`accountants.${row.key}`)}</td>
                     <td className="p-4 text-center">
                       {typeof row.partner === 'boolean' ? (
-                        row.partner ? (
-                          <Check className={`w-5 h-5 ${theme.accent} mx-auto`} />
-                        ) : (
-                          <span className={theme.textLight}>—</span>
-                        )
+                        row.partner ? <Check className={`w-5 h-5 ${theme.accent} mx-auto`} /> : <span className={theme.textLight}>—</span>
                       ) : (
                         <span className={`${theme.accent} font-semibold`}>{row.partner}</span>
                       )}
                     </td>
                     <td className="p-4 text-center">
                       {typeof row.normal === 'boolean' ? (
-                        row.normal ? (
-                          <Check className={`w-5 h-5 ${theme.textLight} mx-auto`} />
-                        ) : (
-                          <span className={theme.textLight}>—</span>
-                        )
+                        row.normal ? <Check className={`w-5 h-5 ${theme.textLight} mx-auto`} /> : <span className={theme.textLight}>—</span>
                       ) : (
                         <span className={theme.textLight}>{row.normal}</span>
                       )}
@@ -592,22 +408,18 @@ export default function AccountantsSoftwarePage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <div className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-3xl p-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-              ¿Listo para Crecer tu Firma?
-            </h2>
-            <p className="text-lg text-emerald-100 mb-8 max-w-2xl mx-auto">
-              Únete a las firmas de contadores que ya están generando ingresos pasivos con FortexaRH.
-            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">{t('accountants.ctaTitle')}</h2>
+            <p className="text-lg text-emerald-100 mb-8 max-w-2xl mx-auto">{t('accountants.ctaSubtitle')}</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/partner-register">
-                <Button size="lg" className="bg-white text-emerald-600 hover:bg-slate-100 text-lg px-8">
-                  Registrar mi Firma
+                <Button size="lg" className="bg-white text-emerald-600 hover:bg-slate-100 text-lg px-8" data-testid="cta-register-btn">
+                  {t('accountants.registerMyFirm')}
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
               <Link to="/soporte">
                 <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 text-lg px-8">
-                  Contactar Ventas
+                  {t('accountants.contactSales')}
                 </Button>
               </Link>
             </div>
@@ -622,17 +434,17 @@ export default function AccountantsSoftwarePage() {
             <div className="flex items-center gap-2">
               <img src="/fortexarh-logo.png" alt="FortexaRH" className={`h-8 w-auto ${currentTheme === 'light' ? '' : 'brightness-0 invert'}`} />
               <span className={`font-bold ${theme.text}`}>{t('accountants.fortexarh')}</span>
-              <span className={`${theme.textLight} text-sm`}>| Sistema de RRHH y Nómina</span>
+              <span className={`${theme.textLight} text-sm`}>| {t('accountants.footerTagline')}</span>
             </div>
             <div className={`flex items-center gap-6 ${theme.textLight} text-sm`}>
-              <Link to="/terms" className={`hover:${theme.text} transition-colors`}>{t('accountants.terminos')}</Link>
-              <Link to="/privacy" className={`hover:${theme.text} transition-colors`}>{t('accountants.privacidad')}</Link>
-              <Link to="/soporte" className={`hover:${theme.text} transition-colors`}>{t('accountants.soporte')}</Link>
-              <Link to="/" className={`hover:${theme.text} transition-colors`}>{t('accountants.inicio')}</Link>
+              <Link to="/terms" className="hover:opacity-80 transition-opacity">{t('accountants.terminos')}</Link>
+              <Link to="/privacy" className="hover:opacity-80 transition-opacity">{t('accountants.privacidad')}</Link>
+              <Link to="/soporte" className="hover:opacity-80 transition-opacity">{t('accountants.soporte')}</Link>
+              <Link to="/" className="hover:opacity-80 transition-opacity">{t('accountants.inicio')}</Link>
             </div>
           </div>
           <div className={`mt-8 text-center ${theme.textLight} text-sm`}>
-            © {new Date().getFullYear()} FortexaRH. Todos los derechos reservados.
+            &copy; {new Date().getFullYear()} FortexaRH. {t('accountants.footerRights')}
           </div>
         </div>
       </footer>
