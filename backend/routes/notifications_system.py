@@ -210,7 +210,7 @@ async def trigger_payroll_approval_notification(
         message=f"{user_name} ha enviado la nómina '{period_description}' para aprobación.",
         notification_type="payroll_approval",
         priority="high",
-        link=f"/payroll-v2?period={period_id}",
+        link=f"/payroll?period={period_id}",
         target_role="admin",  # Also hr_manager and finance_manager should see
         metadata={"period_id": period_id, "period_description": period_description},
         created_by=current_user.get("user_id")
@@ -223,7 +223,7 @@ async def trigger_payroll_approval_notification(
         message=f"{user_name} ha enviado la nómina '{period_description}' para aprobación.",
         notification_type="payroll_approval",
         priority="high",
-        link=f"/payroll-v2?period={period_id}",
+        link=f"/payroll?period={period_id}",
         target_role="hr_manager",
         metadata={"period_id": period_id},
         created_by=current_user.get("user_id")
@@ -249,7 +249,7 @@ async def trigger_payroll_approved_notification(
         message=f"La nómina '{period_description}' ha sido aprobada por {approver_name}.",
         notification_type="payroll_approved",
         priority="normal",
-        link=f"/payroll-v2?period={period_id}",
+        link=f"/payroll?period={period_id}",
         target_user_id=submitted_by_user_id,
         metadata={"period_id": period_id, "approved_by": current_user.get("user_id")},
         created_by=current_user.get("user_id")
@@ -276,7 +276,7 @@ async def trigger_payroll_rejected_notification(
         message=f"La nómina '{period_description}' fue rechazada por {rejector_name}. Motivo: {reason}",
         notification_type="payroll_rejected",
         priority="high",
-        link=f"/payroll-v2?period={period_id}",
+        link=f"/payroll?period={period_id}",
         target_user_id=submitted_by_user_id,
         metadata={"period_id": period_id, "reason": reason},
         created_by=current_user.get("user_id")

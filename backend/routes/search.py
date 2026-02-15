@@ -91,7 +91,7 @@ ACTION_TYPES = {
         "name": "Ver Nómina",
         "required": [],
         "optional": ["period"],
-        "route": "/payroll-v2",
+        "route": "/payroll",
         "icon": "dollar"
     },
     "crear_empleado": {
@@ -112,7 +112,7 @@ ACTION_TYPES = {
         "name": "Calcular Nómina",
         "required": [],
         "optional": ["period", "department"],
-        "route": "/payroll-v2",
+        "route": "/payroll",
         "icon": "calculator"
     },
     "crear_prestamo": {
@@ -721,7 +721,7 @@ async def execute_action(data: AIActionRequest, current_user: dict = Depends(get
             destinations = {
                 "dashboard": "/dashboard",
                 "empleados": "/employees",
-                "nomina": "/payroll-v2",
+                "nomina": "/payroll",
                 "vacaciones": "/vacations",
                 "asistencia": "/attendance",
                 "evaluaciones": "/evaluations",
@@ -836,7 +836,7 @@ async def get_search_suggestions(q: str = "", current_user: dict = Depends(get_c
     # Navigation suggestions
     nav_suggestions = [
         {"text": "Ir a Empleados", "href": "/employees", "type": "navigation"},
-        {"text": "Ir a Nómina", "href": "/payroll-v2", "type": "navigation"},
+        {"text": "Ir a Nómina", "href": "/payroll", "type": "navigation"},
         {"text": "Ir a Vacaciones", "href": "/vacations", "type": "navigation"},
         {"text": "Ir a Asistencia", "href": "/attendance", "type": "navigation"},
         {"text": "Ir a Evaluaciones", "href": "/evaluations", "type": "navigation"},
