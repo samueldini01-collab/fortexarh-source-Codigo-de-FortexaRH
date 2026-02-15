@@ -844,7 +844,7 @@ export function EmployeeFormDialog({
                 <Button 
                   type="button" 
                   variant="outline" 
-                  onClick={() => setIsDialogOpen(false)}
+                  onClick={() => onOpenChange(false)}
                   className="border-blue-500 text-blue-500 hover:bg-blue-50"
                 >
                   Cancelar
