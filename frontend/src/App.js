@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, createContext, useContext, useCallback, Suspense, lazy } from "react";
+import { useEffect, useState, useRef, createContext, useContext, useCallback, Suspense, lazy, Component } from "react";
 import "@/App.css";
 import "@/i18n"; // Initialize i18n
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
@@ -11,6 +11,59 @@ import { KeyboardShortcutsHelp } from "@/components/KeyboardShortcutsHelp";
 import { OnboardingProvider } from "@/context/OnboardingContext";
 import OnboardingTutorial from "@/components/OnboardingTutorial";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+
+// Error Boundary to prevent blank pages
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('[FortexaRH] Error caught by boundary:', error, errorInfo);
+  }
+
+  handleReload = () => {
+    // Clear service worker caches before reloading
+    if ('caches' in window) {
+      caches.keys().then((names) => {
+        names.forEach((name) => caches.delete(name));
+      });
+    }
+    window.location.reload();
+  };
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', fontFamily: 'system-ui, sans-serif' }}>
+          <div style={{ textAlign: 'center', padding: '2rem', maxWidth: '400px' }}>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ margin: '0 auto' }}>
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+            </div>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#1e293b', marginBottom: '0.5rem' }}>Algo sali&oacute; mal</h2>
+            <p style={{ color: '#64748b', marginBottom: '1.5rem', fontSize: '0.875rem' }}>Ha ocurrido un error inesperado. Por favor, recarga la p&aacute;gina.</p>
+            <button
+              onClick={this.handleReload}
+              style={{ background: '#10b981', color: 'white', border: 'none', padding: '0.75rem 2rem', borderRadius: '0.5rem', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer' }}
+            >
+              Recargar P&aacute;gina
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 // Loading Spinner Component - Compact version for page transitions
 const PageLoader = () => (
