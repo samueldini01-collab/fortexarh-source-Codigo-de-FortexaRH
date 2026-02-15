@@ -482,8 +482,13 @@ function EmployeeDashboard() {
                 </div>
               )}
             </div>
+
+            {/* Language Selector */}
+            <div data-testid="portal-lang-switcher">
+              <LanguageSelector variant="compact" />
+            </div>
             
-            <Button variant="ghost" size="sm" onClick={logout} className="h-8 px-2 sm:px-3">
+            <Button variant="ghost" size="sm" onClick={logout} className="h-8 px-2 sm:px-3" data-testid="portal-logout-btn">
               <LogOut className="w-4 h-4 sm:mr-2" />
               <span className="hidden sm:inline">{t('employeePortal.messages.logout')}</span>
             </Button>
