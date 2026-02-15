@@ -466,7 +466,7 @@ export default function LoansPage() {
                           />
                         </div>
                         <p className="text-xs text-slate-500 mt-1">
-                          {Math.round((loan.total_paid / loan.amount) * 100)}% pagado
+                          {Math.round((loan.total_paid / loan.amount) * 100)}% {t('loans.paid')}
                         </p>
                       </TableCell>
                       <TableCell>{getStatusBadge(loan.status)}</TableCell>
