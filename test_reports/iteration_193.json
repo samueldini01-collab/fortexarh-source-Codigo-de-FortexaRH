@@ -1,0 +1,109 @@
+{
+  "summary": "Testing completed for P0 ObjectId serialization fixes and P0 data-testid additions. Backend: 9/9 tests passed - all partner API endpoints return valid JSON without _id fields. Frontend: All required data-testid attributes verified on PartnerDashboardPage and SettingsPage. P1 i18n issue identified - partnerDashboard namespace still contains Spanish text in en.json.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Partner Dashboard",
+        "issues": [
+          "Mixed language text - some Spanish strings still appear (e.g., 'Portal de Partner', 'Tu Link de Referido', 'Clientes Recientes')",
+          "The 'partnerDashboard' namespace in en.json contains Spanish text instead of English translations"
+        ]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_partner_objectid_serialization.py",
+    "/app/test_reports/pytest/partner_objectid_serialization_results.xml"
+  ],
+  "action_items": [
+    "P1: Update /app/frontend/src/i18n/locales/en.json - translate the 'partnerDashboard' namespace from Spanish to English (32 strings)",
+    "P1: Consider consolidating 'partnerDashboard' and 'partner.dashboard' namespaces into a single namespace to avoid confusion"
+  ],
+  "critical_code_review_comments": [
+    "P0 PASSED: Backend ObjectId serialization - All find_one queries in partners.py and partner_payments.py now include {'_id': 0} projection",
+    "P0 PASSED: PartnerDashboardPage data-testids all present: partner-dashboard-page, tab-overview, tab-clients, tab-commissions, tab-payouts, add-client-btn, partner-logout-btn, copy-referral-link-btn, kpi-drilldown-dialog",
+    "P0 PASSED: SettingsPage data-testids all present: settings-page, tab-company, tab-subscription, tab-account",
+    "P0 PASSED: TwoFactorSetup.jsx has comprehensive data-testids: 2fa-settings, 2fa-enable-btn, 2fa-disable-btn, etc.",
+    "P1 ISSUE: partnerDashboard namespace (32 uses) in en.json contains Spanish strings instead of English - needs translation"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_partner_objectid_serialization.py"
+  ],
+  "success_rate": {
+    "backend": "100% (9/9 tests passed)",
+    "frontend": "100% (all data-testid verified)"
+  },
+  "test_credentials": {
+    "partner_user": "testpartner@test.com / test123",
+    "admin_user": "test_refactor@fortexa.com / test123"
+  },
+  "seed_data_creation": "None - used existing test users",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "P0 ObjectId and data-testid fixes verified. P1 i18n incomplete - the partnerDashboard namespace in /app/frontend/src/i18n/locales/en.json (lines 5396-5434) still contains Spanish strings that need to be translated to English. The PartnerDashboardPage uses both 'partner.dashboard' (53 occurrences, English) and 'partnerDashboard' (32 occurrences, Spanish in en.json) translation keys.",
+  "tests_executed": {
+    "backend_api_tests": {
+      "GET /api/partners/dashboard": "PASSED - Returns valid JSON without _id fields",
+      "GET /api/partners/clients": "PASSED - Returns valid JSON without _id fields",
+      "GET /api/partners/connect/status": "PASSED - Returns valid JSON without _id fields",
+      "GET /api/partners/paypal/status": "PASSED - Returns valid JSON without _id fields",
+      "GET /api/partners/payouts/balance": "PASSED - Returns valid JSON without _id fields",
+      "GET /api/partners/payouts/history": "PASSED - Returns valid JSON without _id fields",
+      "POST /api/auth/login (partner)": "PASSED - Partner user logs in with is_partner=true, role=partner_admin",
+      "POST /api/auth/login (admin)": "PASSED - Admin user logs in with is_partner=false, role=admin",
+      "POST /api/auth/login (invalid)": "PASSED - Returns 401 for invalid credentials"
+    },
+    "frontend_ui_tests": {
+      "partner_dashboard_page_testid": "PASSED - data-testid='partner-dashboard-page' found",
+      "tab_overview_testid": "PASSED - data-testid='tab-overview' found",
+      "tab_clients_testid": "PASSED - data-testid='tab-clients' found",
+      "tab_commissions_testid": "PASSED - data-testid='tab-commissions' found",
+      "tab_payouts_testid": "PASSED - data-testid='tab-payouts' found",
+      "add_client_btn_testid": "PASSED - data-testid='add-client-btn' found",
+      "copy_referral_link_btn_testid": "PASSED - data-testid='copy-referral-link-btn' found",
+      "partner_logout_btn_testid": "PASSED - data-testid='partner-logout-btn' found",
+      "kpi_drilldown_dialog_testid": "PASSED - data-testid='kpi-drilldown-dialog' found",
+      "settings_page_testid": "PASSED - data-testid='settings-page' found",
+      "tab_company_testid": "PASSED - data-testid='tab-company' found",
+      "tab_subscription_testid": "PASSED - data-testid='tab-subscription' found",
+      "tab_account_testid": "PASSED - data-testid='tab-account' found",
+      "2fa_section": "PASSED - Two-Factor Authentication section visible"
+    },
+    "i18n_verification": {
+      "partner.dashboard_namespace": "PASSED - 53 keys, English translations working",
+      "partnerDashboard_namespace": "ISSUE - 32 keys still in Spanish in en.json file"
+    },
+    "data_testid_coverage_twofactorsetup": {
+      "2fa-settings": "VERIFIED",
+      "2fa-enable-btn": "VERIFIED",
+      "2fa-disable-btn": "VERIFIED",
+      "2fa-setup-dialog": "VERIFIED",
+      "2fa-qr-code": "VERIFIED",
+      "recovery-codes-dialog": "VERIFIED",
+      "copy-recovery-codes-btn": "VERIFIED"
+    }
+  },
+  "i18n_details": {
+    "issue_description": "The PartnerDashboardPage uses two translation namespaces: 'partner.dashboard' (properly translated to English) and 'partnerDashboard' (still contains Spanish text in en.json)",
+    "affected_file": "/app/frontend/src/i18n/locales/en.json lines 5396-5434",
+    "spanish_strings_remaining": [
+      "cargandoDashboard: Cargando dashboard...",
+      "portalDePartner: Portal de Partner",
+      "clientesRecientes: Clientes Recientes",
+      "noTienesClientesAun: No tienes clientes aún",
+      "resumenDeComisiones: Summary de Comisiones",
+      "tuSuscripcion: Tu Suscripción",
+      "comisionPorCliente: Comisión por Cliente",
+      "recurrenteDePorVida: Recurrente de por vida",
+      "requisitoParaBeneficios: Requisito para Beneficios",
+      "clienteActivoPagando: Cliente activo pagando",
+      "misClientes: Mis Clientes"
+    ]
+  }
+}
