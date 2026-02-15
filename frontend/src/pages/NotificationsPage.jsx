@@ -239,7 +239,7 @@ export default function NotificationsPage() {
     try {
       const res = await fetch(`${API}/notification-settings/settings`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         credentials: "include",
         body: JSON.stringify(newSettings),
       });
@@ -257,6 +257,7 @@ export default function NotificationsPage() {
     try {
       const res = await fetch(`${API}/notification-settings/send-payroll-reminder`, {
         method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
         credentials: "include",
       });
       if (res.ok) {
@@ -275,6 +276,7 @@ export default function NotificationsPage() {
     try {
       const res = await fetch(`${API}/notification-settings/send-birthday-notifications`, {
         method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
         credentials: "include",
       });
       if (res.ok) {
