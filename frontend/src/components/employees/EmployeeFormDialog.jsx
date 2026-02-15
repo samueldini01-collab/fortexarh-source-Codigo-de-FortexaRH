@@ -40,7 +40,7 @@ export function EmployeeFormDialog({
   const { t } = useTranslation();
 
   return (
-        <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
+        <Dialog open={isOpen} onOpenChange={onOpenChange}>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-xl">
@@ -48,7 +48,7 @@ export function EmployeeFormDialog({
               </DialogTitle>
             </DialogHeader>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={onSubmit}>
               {/* Progress indicator */}
               <div className="mb-4">
                 <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
