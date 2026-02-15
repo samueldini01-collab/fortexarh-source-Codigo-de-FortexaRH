@@ -46,29 +46,65 @@
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
-        <div id="root"></div>
+        <div id="root">
+            <!-- Inline loading state - visible until React mounts -->
+            <div id="initial-loader" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ecfdf5,#fff,#ecfeff);font-family:system-ui,sans-serif">
+                <div style="text-align:center">
+                    <div style="width:48px;height:48px;margin:0 auto 16px;border:4px solid #d1fae5;border-top-color:#10b981;border-radius:50%;animation:fxspin 0.8s linear infinite"></div>
+                    <div style="font-size:20px;font-weight:700;background:linear-gradient(to right,#059669,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">FortexaRH</div>
+                    <p style="color:#94a3b8;font-size:13px;margin-top:6px">Cargando...</p>
+                </div>
+            </div>
+            <style>@keyframes fxspin{to{transform:rotate(360deg)}}</style>
+        </div>
         
+        <!-- Clear stale caches immediately -->
+        <script>
+            (function() {
+                try {
+                    if ('caches' in window) {
+                        caches.keys().then(function(names) {
+                            names.forEach(function(name) {
+                                if (name.indexOf('v2') === -1) {
+                                    caches.delete(name);
+                                }
+                            });
+                        });
+                    }
+                } catch(e) {}
+            })();
+        </script>
+
         <!-- PWA Service Worker Registration -->
         <script>
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
+                    // First unregister any broken service workers
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        var needsReload = false;
+                        registrations.forEach(function(registration) {
+                            if (registration.active && registration.active.scriptURL.indexOf('service-worker') > -1) {
+                                // SW exists, force update
+                                registration.update();
+                            }
+                        });
+                    });
+
                     navigator.serviceWorker.register('/service-worker.js')
                         .then(function(registration) {
                             console.log('[PWA] Service Worker registrado:', registration.scope);
-                            
-                            // Force check for updates immediately
                             registration.update();
                             
-                            // Check for updates
                             registration.addEventListener('updatefound', function() {
                                 var newWorker = registration.installing;
-                                newWorker.addEventListener('statechange', function() {
-                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                        // Force the new service worker to activate immediately
-                                        newWorker.postMessage({ type: 'SKIP_WAITING' });
-                                        window.location.reload();
-                                    }
-                                });
+                                if (newWorker) {
+                                    newWorker.addEventListener('statechange', function() {
+                                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                            newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                            window.location.reload();
+                                        }
+                                    });
+                                }
                             });
                         })
                         .catch(function(error) {
