@@ -4923,7 +4923,9 @@
     "employeesX": "empleados ×",
     "employeeCount": "Cantidad de empleados: {{count}}",
     "additionalUsersCount": "Usuarios adicionales: {{count}}",
-    "perMonth": "mes por usuario"
+    "perMonth": "mes por usuario",
+    "active": "Activo",
+    "upgradePlan": "Actualizar Plan"
   },
   "supportAdmin": {
     "errorLoadingTickets": "Error al cargar tickets",

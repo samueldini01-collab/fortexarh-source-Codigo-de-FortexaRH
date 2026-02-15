@@ -4810,7 +4810,9 @@
     "employeesX": "employees ×",
     "employeeCount": "Employee count: {{count}}",
     "additionalUsersCount": "Additional users: {{count}}",
-    "perMonth": "month per user"
+    "perMonth": "month per user",
+    "active": "Active",
+    "upgradePlan": "Upgrade Plan"
   },
   "supportAdmin": {
     "errorLoadingTickets": "Error loading tickets",

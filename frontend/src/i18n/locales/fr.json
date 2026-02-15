@@ -4652,7 +4652,7 @@
     "employeesCount": "Employés",
     "totalMonthly": "Total mensuel",
     "updatePlan": "Mettre à jour le Plan",
-    "changePlan": "Changer de Plan",
+    "changePlan": "Changer de plan",
     "adjustEmployees": "Ajuster employés",
     "additionalUsers": "Utilisateurs supplémentaires",
     "cancelSubscription": "Annuler abonnement",
@@ -4774,7 +4774,9 @@
     "employeesX": "employés ×",
     "employeeCount": "Nombre d'employés: {{count}}",
     "additionalUsersCount": "Utilisateurs supplémentaires: {{count}}",
-    "perMonth": "mois par utilisateur"
+    "perMonth": "mois par utilisateur",
+    "active": "Actif",
+    "upgradePlan": "Améliorer le plan"
   },
   "supportAdmin": {
     "errorLoadingTickets": "Erreur lors du chargement des tickets",
