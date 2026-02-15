@@ -200,7 +200,7 @@ export default function RecruitmentPage() {
   const getFilterLabel = () => {
     const labels = [];
     if (jobStatusFilter) {
-      labels.push(jobStatusFilter === 'open' ? 'Vacantes Abiertas' : 'Vacantes Cerradas');
+      labels.push(jobStatusFilter === 'open' ? t('recruitment.openVacancies') : t('recruitment.closedVacancies'));
     }
     if (candidateStageFilter) {
       const stageLabel = stages.find(s => s.value === candidateStageFilter)?.label;
@@ -210,7 +210,7 @@ export default function RecruitmentPage() {
   };
 
   return (
-    <DashboardLayout title="Reclutamiento">
+    <DashboardLayout title={t('recruitment.title')}>
       <div className="space-y-6" data-testid="recruitment-page">
         {/* Search and Actions Bar */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -248,7 +248,7 @@ export default function RecruitmentPage() {
               data-testid="export-candidates-btn"
             >
               <Download className="w-4 h-4 mr-2" />
-              Exportar Candidatos
+              {t('recruitment.exportCandidates')}
             </Button>
           </div>
         </div>
@@ -506,7 +506,7 @@ export default function RecruitmentPage() {
                           <p className="text-sm text-slate-500 dark:text-slate-400">{job.department}</p>
                         </div>
                         <Badge variant={job.status === "open" ? "default" : "secondary"}>
-                          {job.status === "open" ? "Abierta" : "Cerrada"}
+                          {job.status === "open" ? t('recruitment.open') : t('recruitment.closed')}
                         </Badge>
                       </div>
                     </CardHeader>
@@ -533,7 +533,7 @@ export default function RecruitmentPage() {
                           className="w-full"
                           onClick={() => handleCloseJob(job.job_id)}
                         >
-                          Cerrar Vacante
+                          {t('recruitment.closeVacancy')}
                         </Button>
                       )}
                     </CardContent>
