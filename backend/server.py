@@ -1338,21 +1338,81 @@ logger = logging.getLogger(__name__)
 async def startup_db_client():
     """Initialize database connection on startup"""
     try:
-        # Test database connection with timeout
         await asyncio.wait_for(db.command("ping"), timeout=10.0)
         logger.info("Database connection established successfully")
-        
+
         # Create CDC audit indexes
         await create_cdc_indexes()
-        
-        # Start CDC Change Streams in background (optional - can be started manually)
-        # Uncomment the next line to auto-start CDC on server startup
-        # asyncio.create_task(start_all_change_streams())
-        
+
+        # Create performance indexes for common queries
+        await create_performance_indexes()
+
     except asyncio.TimeoutError:
         logger.warning("Database connection timeout during startup - will retry on first request")
     except Exception as e:
         logger.warning(f"Database connection error during startup: {e} - will retry on first request")
+
+
+async def create_performance_indexes():
+    """Create indexes for frequently queried collections"""
+    try:
+        # Employees - most queried collection
+        await db.employees.create_index([("company_id", 1), ("status", 1)])
+        await db.employees.create_index([("company_id", 1), ("department", 1)])
+        await db.employees.create_index([("employee_id", 1)], unique=True)
+
+        # Users
+        await db.users.create_index([("email", 1)], unique=True)
+        await db.users.create_index([("user_id", 1)], unique=True)
+        await db.users.create_index([("company_id", 1)])
+
+        # Payroll entries
+        await db.payroll_entries.create_index([("company_id", 1), ("period_id", 1)])
+        await db.payroll_entries.create_index([("company_id", 1), ("employee_id", 1)])
+
+        # Payroll periods
+        await db.payroll_periods.create_index([("company_id", 1), ("year", 1), ("month", 1)])
+        await db.payroll_periods.create_index([("company_id", 1), ("status", 1)])
+
+        # Attendances
+        await db.attendances.create_index([("company_id", 1), ("date", 1)])
+        await db.attendances.create_index([("company_id", 1), ("employee_id", 1)])
+
+        # Vacations
+        await db.vacations.create_index([("company_id", 1), ("status", 1)])
+        await db.vacations.create_index([("company_id", 1), ("employee_id", 1)])
+
+        # Journal entries
+        await db.journal_entries.create_index([("company_id", 1), ("period", 1)])
+        await db.journal_entries.create_index([("company_id", 1), ("status", 1)])
+
+        # Accounts
+        await db.accounts.create_index([("company_id", 1), ("code", 1)])
+
+        # Loans
+        await db.loans.create_index([("company_id", 1), ("employee_id", 1)])
+        await db.loans.create_index([("company_id", 1), ("status", 1)])
+
+        # Notifications
+        await db.notifications.create_index([("company_id", 1), ("created_at", -1)])
+
+        # Sessions
+        await db.user_sessions.create_index([("session_token", 1)])
+        await db.user_sessions.create_index([("expires_at", 1)], expireAfterSeconds=0)
+
+        # Templates & Documents
+        await db.templates.create_index([("company_id", 1)])
+        await db.generated_documents.create_index([("company_id", 1)])
+
+        # Evaluations
+        await db.evaluations.create_index([("company_id", 1), ("employee_id", 1)])
+
+        # Expenses
+        await db.expenses.create_index([("company_id", 1), ("status", 1)])
+
+        logger.info("Performance indexes created successfully")
+    except Exception as e:
+        logger.warning(f"Index creation warning (non-fatal): {e}")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
