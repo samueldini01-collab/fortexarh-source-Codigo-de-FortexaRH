@@ -35,30 +35,9 @@ async def get_current_user(request: Request, credentials = Depends(security)):
 
 
 
-class SystemUserCreate(BaseModel):
-    email: EmailStr
-    name: str
-    password: str
-    role: str = "user"
-    modules: Optional[List[str]] = []
-    is_active: bool = True
-
-
-class SystemUserUpdate(BaseModel):
-    name: Optional[str] = None
-    role: Optional[str] = None
-    modules: Optional[List[str]] = None
-    is_active: Optional[bool] = None
-
-
-class PasswordChange(BaseModel):
-    current_password: str
-    new_password: str
-
-
-class AdminPasswordSet(BaseModel):
-    user_id: str
-    new_password: str
+from models.auth import (
+    SystemUserCreate, SystemUserUpdate, PasswordChange, AdminPasswordSet
+)
 
 
 @router.get("")
