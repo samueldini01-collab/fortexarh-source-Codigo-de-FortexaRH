@@ -9,8 +9,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Building2, CreditCard, User, Check, Crown, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Building2, CreditCard, User, Check, Crown, Lock, Eye, EyeOff, AlertCircle, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
+import TwoFactorSetup from "@/components/TwoFactorSetup";
 
 export default function SettingsPage() {
   const { t } = useTranslation();
@@ -406,6 +407,22 @@ export default function SettingsPage() {
                     {savingPassword ? t('settingsPage.buttons.saving') : t('settingsPage.buttons.changePassword')}
                   </Button>
                 </form>
+              </CardContent>
+            </Card>
+
+            {/* Two-Factor Authentication Section */}
+            <Card className="border-slate-200 dark:border-slate-700">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5" />
+                  {t('auth.twoFactor.settingsTitle')}
+                </CardTitle>
+                <CardDescription>
+                  {t('auth.twoFactor.settingsDesc')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <TwoFactorSetup />
               </CardContent>
             </Card>
           </TabsContent>
