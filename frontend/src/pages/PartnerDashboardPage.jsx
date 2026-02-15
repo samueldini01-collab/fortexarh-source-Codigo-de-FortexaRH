@@ -1481,7 +1481,7 @@ export default function PartnerDashboardPage() {
                       </div>
                     </div>
                     <p className="text-slate-500 text-xs mt-1">
-                      Máx. {plan.max_employees === 999999 ? "ilimitados" : plan.max_employees} empleados
+                      Máx. {plan.max_employees >= 9999 ? "ilimitados" : plan.max_employees} empleados
                     </p>
                   </div>
                 ))}
