@@ -1053,7 +1053,7 @@ export default function SubscriptionsPage() {
             
             <div className="space-y-4 py-4">
               <div>
-                <Label>Cantidad de empleados: {employeeCount}</Label>
+                <Label>{t('subscriptions.employeeCount', {count: employeeCount})}</Label>
                 <Slider
                   value={[employeeCount]}
                   onValueChange={(v) => setEmployeeCount(v[0])}
@@ -1070,7 +1070,7 @@ export default function SubscriptionsPage() {
                   <span>{formatCurrency(currentPlan?.base_price)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>{employeeCount} empleados × {formatCurrency(currentPlan?.price_per_employee)}</span>
+                  <span>{employeeCount} {t('subscriptions.employeesX')} {formatCurrency(currentPlan?.price_per_employee)}</span>
                   <span>{formatCurrency(employeeCount * (currentPlan?.price_per_employee || 0))}</span>
                 </div>
                 <div className="flex justify-between font-bold border-t mt-2 pt-2">
@@ -1093,13 +1093,13 @@ export default function SubscriptionsPage() {
             <DialogHeader>
               <DialogTitle>{t('subscriptions.usuariosAdicionales')}</DialogTitle>
               <DialogDescription>
-                Agregue usuarios adicionales a su suscripción ($2.50/mes por usuario)
+                Agregue usuarios adicionales a su suscripción ($2.50/{t('subscriptions.perMonth')})
               </DialogDescription>
             </DialogHeader>
             
             <div className="space-y-4 py-4">
               <div>
-                <Label>Usuarios adicionales: {additionalUsers}</Label>
+                <Label>{t('subscriptions.additionalUsersCount', {count: additionalUsers})}</Label>
                 <Slider
                   value={[additionalUsers]}
                   onValueChange={(v) => setAdditionalUsers(v[0])}
