@@ -611,7 +611,8 @@ async def resend_client_invitation(
     
     # Get client
     client = await db.partner_clients.find_one(
-        {"client_id": client_id, "partner_id": partner_id}
+        {"client_id": client_id, "partner_id": partner_id},
+        {"_id": 0}
     )
     
     if not client:
@@ -708,7 +709,8 @@ async def activate_client(
     
     # Get the client
     client = await db.partner_clients.find_one(
-        {"client_id": client_id, "partner_id": partner_id}
+        {"client_id": client_id, "partner_id": partner_id},
+        {"_id": 0}
     )
     if not client:
         raise HTTPException(status_code=404, detail="Cliente no encontrado")
@@ -763,7 +765,8 @@ async def update_client_subscription(
         raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
     
     client = await db.partner_clients.find_one(
-        {"client_id": client_id, "partner_id": partner_id}
+        {"client_id": client_id, "partner_id": partner_id},
+        {"_id": 0}
     )
     if not client:
         raise HTTPException(status_code=404, detail="Cliente no encontrado")
@@ -811,7 +814,8 @@ async def deactivate_client(
         raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
     
     client = await db.partner_clients.find_one(
-        {"client_id": client_id, "partner_id": partner_id}
+        {"client_id": client_id, "partner_id": partner_id},
+        {"_id": 0}
     )
     if not client:
         raise HTTPException(status_code=404, detail="Cliente no encontrado")
