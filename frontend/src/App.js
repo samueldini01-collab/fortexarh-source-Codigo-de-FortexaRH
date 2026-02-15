@@ -66,8 +66,7 @@ const DocumentsPage = lazy(() => import("@/pages/DocumentsPage"));
 const TemplatesPage = lazy(() => import("@/pages/TemplatesPage"));
 
 // Payroll & Finance - Lazy loaded (Very large pages)
-const PayrollPage = lazy(() => import("@/pages/PayrollPage"));
-const PayrollV2Page = lazy(() => import("@/pages/PayrollV2Page"));
+const PayrollPage = lazy(() => import("@/pages/PayrollV2Page"));
 const PayrollDashboardPage = lazy(() => import("@/pages/PayrollDashboardPage"));
 const PayrollConfigPage = lazy(() => import("@/pages/PayrollConfigPage"));
 const PayrollCalculatorPage = lazy(() => import("@/pages/PayrollCalculatorPage"));
