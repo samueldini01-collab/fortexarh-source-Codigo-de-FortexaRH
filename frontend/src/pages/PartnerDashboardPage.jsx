@@ -1723,6 +1723,234 @@ export default function PartnerDashboardPage() {
         </DialogContent>
       </Dialog>
 
+      {/* KPI Drill-Down Dialog */}
+      <Dialog open={!!drillDown} onOpenChange={(open) => !open && setDrillDown(null)}>
+        <DialogContent className="bg-slate-800 border-slate-700 max-w-2xl max-h-[80vh] overflow-y-auto">
+          {drillDown === "clients" && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-white flex items-center gap-2">
+                  <Users className="w-5 h-5 text-emerald-400" />
+                  Clientes Activos — Detalle
+                </DialogTitle>
+                <DialogDescription className="text-slate-400">
+                  {stats.active_clients || 0} activos · {stats.trial_clients || 0} en prueba · {stats.inactive_clients || 0} inactivos
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-3 mt-4" data-testid="drilldown-clients">
+                {clients.length > 0 ? clients.map((c) => (
+                  <div key={c.client_id} className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                    <div className="min-w-0">
+                      <p className="text-white font-medium truncate">{c.company_name}</p>
+                      <p className="text-slate-400 text-sm">{c.contact_name} · {c.email}</p>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <StatusBadge status={c.subscription_status || c.status} />
+                      {c.monthly_value ? (
+                        <span className="text-emerald-400 font-semibold text-sm">${c.monthly_value.toFixed(2)}/mes</span>
+                      ) : (
+                        <span className="text-slate-500 text-sm">—</span>
+                      )}
+                    </div>
+                  </div>
+                )) : (
+                  <div className="text-center py-8">
+                    <Users className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                    <p className="text-slate-400">No tienes clientes aún</p>
+                  </div>
+                )}
+              </div>
+              <div className="mt-4 flex justify-end">
+                <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600" onClick={() => { setDrillDown(null); setActiveTab("clients"); }}>
+                  Ver todos los clientes <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
+            </>
+          )}
+
+          {drillDown === "pending" && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-white flex items-center gap-2">
+                  <Wallet className="w-5 h-5 text-amber-400" />
+                  Comisiones Pendientes — Detalle
+                </DialogTitle>
+                <DialogDescription className="text-slate-400">
+                  Total pendiente: ${(commissionsData.pending || 0).toFixed(2)}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-3 mt-4" data-testid="drilldown-pending">
+                {commissions.filter(c => c.status === "pending").length > 0 ? (
+                  commissions.filter(c => c.status === "pending").map((comm, idx) => (
+                    <div key={comm.commission_id || idx} className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                      <div>
+                        <p className="text-white font-medium">{comm.client_name || comm.client_id}</p>
+                        <p className="text-slate-400 text-sm">{new Date(comm.created_at).toLocaleDateString()}</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <StatusBadge status="pending" />
+                        <span className="text-amber-400 font-semibold">${comm.amount?.toFixed(2) || "0.00"}</span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <DollarSign className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                    <p className="text-slate-400">No hay comisiones pendientes</p>
+                    <p className="text-slate-500 text-sm mt-1">Las comisiones aparecerán cuando tus clientes paguen</p>
+                  </div>
+                )}
+              </div>
+              <div className="mt-4 flex justify-end">
+                <Button size="sm" className="bg-amber-500 hover:bg-amber-600" onClick={() => { setDrillDown(null); setActiveTab("commissions"); }}>
+                  Ver todas las comisiones <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
+            </>
+          )}
+
+          {drillDown === "earned" && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-white flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-blue-400" />
+                  Total Ganado — Detalle
+                </DialogTitle>
+                <DialogDescription className="text-slate-400">
+                  Total: ${(commissionsData.total_earned || 0).toFixed(2)} · Pagado: ${(commissionsData.total_paid || 0).toFixed(2)} · Pendiente: ${(commissionsData.pending || 0).toFixed(2)}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 mt-4" data-testid="drilldown-earned">
+                {/* Summary cards */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-slate-700/50 rounded-lg p-3 text-center">
+                    <p className="text-slate-400 text-xs">Total Ganado</p>
+                    <p className="text-xl font-bold text-white">${(commissionsData.total_earned || 0).toFixed(2)}</p>
+                  </div>
+                  <div className="bg-slate-700/50 rounded-lg p-3 text-center">
+                    <p className="text-slate-400 text-xs">Pagado</p>
+                    <p className="text-xl font-bold text-emerald-400">${(commissionsData.total_paid || 0).toFixed(2)}</p>
+                  </div>
+                  <div className="bg-slate-700/50 rounded-lg p-3 text-center">
+                    <p className="text-slate-400 text-xs">Pendiente</p>
+                    <p className="text-xl font-bold text-amber-400">${(commissionsData.pending || 0).toFixed(2)}</p>
+                  </div>
+                </div>
+                {/* Monthly breakdown */}
+                {commissionSummary?.monthly_breakdown?.length > 0 ? (
+                  <div className="space-y-2">
+                    <p className="text-slate-300 text-sm font-medium">Desglose mensual</p>
+                    {commissionSummary.monthly_breakdown.map((month, idx) => (
+                      <div key={month.month || idx} className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                        <div>
+                          <p className="text-white font-medium">{month.month}</p>
+                          <p className="text-slate-400 text-sm">{month.transactions} transacciones</p>
+                        </div>
+                        <span className="text-emerald-400 font-semibold">${month.total?.toFixed(2) || "0.00"}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-6">
+                    <DollarSign className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                    <p className="text-slate-400">Sin historial de ganancias aún</p>
+                  </div>
+                )}
+              </div>
+              <div className="mt-4 flex justify-end">
+                <Button size="sm" className="bg-blue-500 hover:bg-blue-600" onClick={() => { setDrillDown(null); setActiveTab("commissions"); }}>
+                  Ver comisiones <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
+            </>
+          )}
+
+          {drillDown === "pricing" && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-white flex items-center gap-2">
+                  <CreditCard className="w-5 h-5 text-emerald-400" />
+                  Tu Precio Mensual — Detalle
+                </DialogTitle>
+                <DialogDescription className="text-slate-400">
+                  {benefits.has_benefits ? "Disfrutas del precio especial de Partner" : "Activa clientes para obtener beneficios"}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 mt-4" data-testid="drilldown-pricing">
+                {/* Current plan */}
+                <div className={`rounded-lg border p-4 ${benefits.has_benefits ? "border-emerald-500/30 bg-emerald-500/10" : "border-amber-500/30 bg-amber-500/10"}`}>
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-white font-semibold">{benefits.has_benefits ? "Plan Partner Activo" : "Plan Estándar"}</h4>
+                    <span className={`text-2xl font-bold ${benefits.has_benefits ? "text-emerald-400" : "text-white"}`}>
+                      ${pricing.current_price || 10}/mes
+                    </span>
+                  </div>
+                  {benefits.has_benefits ? (
+                    <div className="space-y-2">
+                      <p className="text-emerald-400 text-sm flex items-center gap-2"><CheckCircle className="w-4 h-4" /> Empleados ilimitados</p>
+                      <p className="text-emerald-400 text-sm flex items-center gap-2"><CheckCircle className="w-4 h-4" /> Precio fijo $10/mes</p>
+                      <p className="text-emerald-400 text-sm flex items-center gap-2"><CheckCircle className="w-4 h-4" /> Comisión del 30% por cada cliente</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-amber-400 text-sm flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4" />
+                        Necesitas al menos 1 cliente activo para obtener el precio de Partner
+                      </p>
+                      {benefits.grace_days_remaining > 0 && (
+                        <p className="text-amber-300 text-sm flex items-center gap-2">
+                          <Clock className="w-4 h-4" />
+                          Te quedan {benefits.grace_days_remaining} días de gracia
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Pricing comparison */}
+                <div>
+                  <p className="text-slate-300 text-sm font-medium mb-3">Comparación de precios</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className={`rounded-lg border p-4 ${benefits.has_benefits ? "border-emerald-500/30" : "border-slate-600"}`}>
+                      <p className="text-slate-400 text-sm">Plan Partner</p>
+                      <p className="text-2xl font-bold text-emerald-400">$10/mes</p>
+                      <p className="text-slate-500 text-xs mt-1">Empleados ilimitados</p>
+                      <p className="text-slate-500 text-xs">Requiere 1+ cliente activo</p>
+                    </div>
+                    <div className={`rounded-lg border p-4 ${!benefits.has_benefits ? "border-amber-500/30" : "border-slate-600"}`}>
+                      <p className="text-slate-400 text-sm">Plan Estándar</p>
+                      <p className="text-2xl font-bold text-white">Variable</p>
+                      <p className="text-slate-500 text-xs mt-1">Precio por empleado</p>
+                      <p className="text-slate-500 text-xs">Sin requisitos</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Commission model */}
+                <div className="bg-slate-700/50 rounded-lg p-4">
+                  <p className="text-slate-300 text-sm font-medium mb-2">Modelo de comisiones</p>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-400">Tasa de comisión</span>
+                      <span className="text-emerald-400 font-semibold">30%</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-400">Tipo</span>
+                      <span className="text-white">Recurrente de por vida</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-400">Clientes activos</span>
+                      <span className="text-white">{stats.active_clients || 0}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+
       {/* Payout Request Modal */}
       <Dialog open={showPayoutModal} onOpenChange={setShowPayoutModal}>
         <DialogContent className="bg-slate-800 border-slate-700 max-w-md">
