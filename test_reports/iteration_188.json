@@ -1,0 +1,48 @@
+{
+  "summary": "Partner/Regular User Unified Login Flow Testing - All features working correctly. Backend APIs return is_partner and partner_id correctly, frontend redirects partners to /partner-dashboard and regular users to /dashboard.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_partner_login_flow.py",
+    "/app/test_reports/pytest/partner_login_flow_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_partner_login_flow.py (new test file)"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "seed_data_creation": "None - used existing test users",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Partner unified login flow tested. Partner user (testpartner@test.com / test123) has is_partner=true, partner_id=partner_43b44e37d35f851d, role=partner_admin. Regular user (test_refactor@fortexa.com / test123) has is_partner=false, partner_id=null, role=admin. Login API returns these fields correctly. Frontend LoginPage.jsx redirects based on is_partner flag.",
+  "tests_executed": {
+    "backend_api_tests": {
+      "POST /api/auth/login (partner)": "PASSED - Returns is_partner=true, partner_id set, role=partner_admin",
+      "POST /api/auth/login (regular)": "PASSED - Returns is_partner=false, partner_id=null, role=admin",
+      "POST /api/auth/login (invalid)": "PASSED - Returns 401 with 'Invalid credentials'",
+      "GET /api/auth/me (partner)": "PASSED - Returns is_partner=true, partner_id, company_name",
+      "GET /api/auth/me (regular)": "PASSED - Returns is_partner=false, partner_id=null, company_name",
+      "GET /api/auth/me (no token)": "PASSED - Returns 401/403 error",
+      "GET /api/auth/me (invalid token)": "PASSED - Returns 401 error"
+    },
+    "frontend_ui_tests": {
+      "login_page_loads": "PASSED - Login form with email, password inputs and submit button visible",
+      "partner_login_redirect": "PASSED - testpartner@test.com redirects to /partner-dashboard",
+      "regular_login_redirect": "PASSED - test_refactor@fortexa.com redirects to /dashboard",
+      "invalid_credentials_error": "PASSED - Shows 'Invalid credentials' error message",
+      "partner_dashboard_accessible": "PASSED - Shows partner header, clients, commissions sections"
+    }
+  },
+  "test_credentials": {
+    "partner_user": "testpartner@test.com / test123",
+    "regular_user": "test_refactor@fortexa.com / test123"
+  }
+}
