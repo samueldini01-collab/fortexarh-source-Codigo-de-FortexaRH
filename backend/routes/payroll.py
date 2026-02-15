@@ -1060,7 +1060,25 @@ async def pay_period(period_id: str, data: PaymentRequest = None, current_user: 
                 
                 remaining_deduction -= payment
     
-    return {"message": "Nómina pagada correctamente", "status": "paid"}
+    # Notify employees that payroll is paid
+    all_entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0, "employee_id": 1, "net_salary": 1}
+    ).to_list(5000)
+    period_name = period.get("name", period.get("period_name", period_id))
+    for entry in all_entries:
+        await create_employee_notification(
+            db,
+            employee_id=entry["employee_id"],
+            company_id=company_id,
+            title="Recibo de Nomina Disponible",
+            message=f"Tu recibo de nomina del periodo {period_name} esta disponible. Revisa tu portal para ver los detalles.",
+            notification_type="success",
+            category="payroll",
+            action_url="/payslips",
+        )
+
+    return {"message": "Nomina pagada correctamente", "status": "paid"}
 
 
 @router.get("/periods/{period_id}/workflow-history")
