@@ -12,7 +12,6 @@ import uuid
 import logging
 import jwt
 import bcrypt
-import os
 import io
 
 # PDF Generation
