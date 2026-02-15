@@ -207,6 +207,16 @@ class PartnerClientCreate(BaseModel):
     billing_type: str = "direct"
 
 
+class ClientActivation(BaseModel):
+    plan_id: str  # basic, pro, enterprise
+    employee_count: int
+
+
+class ClientSubscriptionUpdate(BaseModel):
+    plan_id: Optional[str] = None
+    employee_count: Optional[int] = None
+
+
 class PartnerUpdate(BaseModel):
     firm_name: Optional[str] = None
     contact_name: Optional[str] = None
