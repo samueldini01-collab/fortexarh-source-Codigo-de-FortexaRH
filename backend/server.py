@@ -150,6 +150,7 @@ for r in [
     partners_router, partner_payments_router, geolocation_attendance_router, payroll_config_router,
     templates_router, generated_docs_router, currency_router, stats_router,
     two_factor_router,
+    notification_preferences_router,
 ]:
     api_router.include_router(r)
 
