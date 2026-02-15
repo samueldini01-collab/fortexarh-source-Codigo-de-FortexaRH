@@ -4914,7 +4914,16 @@
     "comentariosAdicionalesOpcional": "Comentarios adicionales (opcional)",
     "considerariasVolverEnEl": "¿Considerarías volver en el futuro?",
     "alCancelarPerderasAcceso": "Al cancelar perderás acceso a:",
-    "nota": "Nota:"
+    "nota": "Nota:",
+    "title": "Suscripción",
+    "viewPlans": "Ver Planes",
+    "selectPlan": "Seleccionar Plan",
+    "select": "Seleccionar",
+    "planBase": "Base del plan ({{name}})",
+    "employeesX": "empleados ×",
+    "employeeCount": "Cantidad de empleados: {{count}}",
+    "additionalUsersCount": "Usuarios adicionales: {{count}}",
+    "perMonth": "mes por usuario"
   },
   "supportAdmin": {
     "errorLoadingTickets": "Error al cargar tickets",
@@ -4994,7 +5003,10 @@
     "telefono": "Teléfono",
     "candidato": "Candidato",
     "etapa": "Etapa",
-    "acciones": "Acciones"
+    "acciones": "Acciones",
+    "title": "Reclutamiento",
+    "exportCandidates": "Exportar Candidatos",
+    "closeVacancy": "Cerrar Vacante"
   },
   "cdcAudit": {
     "errorLoadingLogs": "Error al cargar logs de auditoría",
