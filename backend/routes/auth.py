@@ -4,12 +4,9 @@ Handles user registration, login, password management, and session management
 """
 from fastapi import APIRouter, HTTPException, Depends, Request, Response
 from fastapi.security import HTTPBearer
-from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime, timezone, timedelta
 import uuid
-import bcrypt
-import jwt
 import logging
 import os
 import httpx
@@ -20,6 +17,9 @@ import resend
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
+from config import SENDER_EMAIL
+from utils.auth import hash_password, verify_password, create_jwt_token, get_current_user
+
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 security = HTTPBearer(auto_error=False)
 limiter = Limiter(key_func=get_remote_address)
@@ -29,11 +29,6 @@ db = None
 SUBSCRIPTION_PLANS = None
 send_welcome_email = None
 
-JWT_SECRET = os.environ['JWT_SECRET']
-JWT_ALGORITHM = "HS256"
-JWT_EXPIRATION_HOURS = 24 * 7
-SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
-
 
 def init_router(database, plans, welcome_email_func):
     global db, SUBSCRIPTION_PLANS, send_welcome_email
@@ -42,60 +37,11 @@ def init_router(database, plans, welcome_email_func):
     send_welcome_email = welcome_email_func
 
 
-async def get_current_user(request: Request, credentials = Depends(security)) -> dict:
-    """Get current authenticated user from session or JWT"""
-    # Try cookie first
-    session_token = request.cookies.get("session_token")
-    if session_token:
-        session = await db.user_sessions.find_one({"session_token": session_token}, {"_id": 0})
-        if session:
-            expires_at = session.get("expires_at")
-            if isinstance(expires_at, str):
-                expires_at = datetime.fromisoformat(expires_at)
-            if expires_at.tzinfo is None:
-                expires_at = expires_at.replace(tzinfo=timezone.utc)
-            if expires_at > datetime.now(timezone.utc):
-                user = await db.users.find_one({"user_id": session["user_id"]}, {"_id": 0})
-                if user:
-                    return user
-    
-    # Try JWT from header
-    if credentials:
-        try:
-            payload = jwt.decode(credentials.credentials, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-            user = await db.users.find_one({"user_id": payload["user_id"]}, {"_id": 0})
-            if user:
-                return user
-        except jwt.ExpiredSignatureError:
-            raise HTTPException(status_code=401, detail="Token expired")
-        except jwt.InvalidTokenError:
-            raise HTTPException(status_code=401, detail="Invalid token")
-    
-    raise HTTPException(status_code=401, detail="Not authenticated")
-
-
 # ===================== MODELS =====================
 from models.auth import (
     UserCreate, UserLogin, PasswordResetRequest,
     PasswordResetConfirm, PasswordChangeRequest, AdminPasswordSetRequest
 )
-
-
-# ===================== HELPERS =====================
-
-def hash_password(password: str) -> str:
-    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-
-def verify_password(password: str, hashed: str) -> bool:
-    return bcrypt.checkpw(password.encode(), hashed.encode())
-
-def create_jwt_token(user_id: str, email: str) -> str:
-    payload = {
-        "user_id": user_id,
-        "email": email,
-        "exp": datetime.now(timezone.utc) + timedelta(hours=JWT_EXPIRATION_HOURS)
-    }
-    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
 
 # ===================== ROUTES =====================

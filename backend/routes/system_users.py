@@ -4,11 +4,11 @@ Handles system user management, roles, and activities
 """
 from fastapi import APIRouter, Request, HTTPException, Depends
 from fastapi.security import HTTPBearer
-from pydantic import BaseModel, EmailStr
 from typing import Optional, List
 from datetime import datetime, timezone
 import uuid
-import bcrypt
+
+from utils.auth import hash_password
 
 router = APIRouter(prefix="/system-users", tags=["System Users"])
 security = HTTPBearer(auto_error=False)
@@ -23,12 +23,7 @@ def init_router(database, auth_func):
     _get_current_user_func = auth_func
 
 
-def hash_password(password: str) -> str:
-    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-
-
 async def get_current_user(request: Request, credentials = Depends(security)):
-    """Wrapper for the injected auth function"""
     if _get_current_user_func is None:
         raise HTTPException(status_code=500, detail="Auth not initialized")
     return await _get_current_user_func(request, credentials)
