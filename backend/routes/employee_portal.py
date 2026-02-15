@@ -52,7 +52,7 @@ async def get_employee_from_token(request: Request):
     
     token = auth_header.replace("Bearer ", "")
     try:
-        payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         if payload.get("portal_type") != "employee":
             raise HTTPException(status_code=401, detail="Token inválido para portal de empleados")
         return payload
@@ -111,7 +111,7 @@ async def employee_login(data: EmployeeLoginRequest):
         "portal_type": "employee",
         "exp": datetime.now(timezone.utc) + timedelta(hours=8)
     }
-    token = jwt.encode(token_payload, JWT_SECRET, algorithm="HS256")
+    token = jwt.encode(token_payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
     
     return {
         "token": token,
