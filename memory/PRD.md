@@ -17,60 +17,71 @@ Sistema SaaS de Gestión de Recursos Humanos y Nómina llamado "FortexaRH", con 
 /app/backend/
 ├── config.py                  # Centralized config: DB, JWT, Stripe, Resend, QB, Plans
 ├── utils/
-│   ├── auth.py               # Auth helpers: hash_password, verify_password, create_jwt_token, get_current_user
+│   ├── auth.py               # Auth helpers: hash, verify, JWT, get_current_user
 │   └── payroll_constants.py
 ├── models/                    # Centralized Pydantic models (~55+)
-│   ├── auth.py, employee.py, payroll.py, company.py
-│   ├── hr.py, finance.py, system.py
+│   ├── auth.py, employee.py, payroll.py, company.py, etc.
 ├── services/
-│   ├── report_catalog.py     # Report definitions (58+ reports, 10 categories)
-│   ├── report_generators.py  # Report data generation functions
-│   ├── fraud_detection.py, geo_alerts.py, pdf_service.py
-├── routes/                    # ~32 modular route files
+│   ├── report_catalog.py     # Report definitions (58+ reports)
+│   ├── report_generators.py  # Report data generation
+│   └── ...
+├── routes/                    # ~34 modular route files
 │   ├── payroll.py            # Core payroll CRUD + workflow (1,151 lines)
 │   ├── payroll_exports.py    # Payroll exports: Excel, TSS, DGII (972 lines)
-│   ├── reports_system.py     # Report endpoints only (339 lines)
-│   ├── auth.py, employees.py, company.py, organigrama.py
-│   └── ... (30 more route modules)
-├── server.py                  # App init + router registration (258 lines)
+│   ├── partners.py           # Partner portal core (890 lines)
+│   ├── partner_payments.py   # Stripe Connect + Payouts (393 lines)
+│   ├── reports_system.py     # Report endpoints (339 lines)
+│   └── ...
+├── server.py                  # App init + routing (258 lines)
 └── email_service.py
 ```
 
-## Implementado
-- Sistema completo de nómina con TSS (Rep. Dominicana)
-- Exportaciones DGII: IR-3, IR-4, IR-6, IR-13, IR-17, TSS
-- Módulos HR: Asistencia, Vacaciones, Evaluaciones, Reclutamiento
-- Portal de Empleados con autoservicio
-- Contabilidad completa con plan de cuentas
-- Sistema de reportes con 58+ reportes
-- Internacionalización completa (ES/EN/FR)
-- Geolocalización para asistencia
-- CDC Audit trail
-- Gestión de préstamos
-- Sistema de socios/partners
-- Integración QuickBooks Online
+## Estructura Frontend
+```
+/app/frontend/src/
+├── components/
+│   ├── portal/               # Employee Portal
+│   │   ├── EmployeeAuthContext.jsx
+│   │   ├── EmployeeLogin.jsx
+│   │   └── EmployeeDashboard.jsx
+│   ├── employees/
+│   │   ├── EmployeeFormDialog.jsx (911 lines)
+│   │   └── constants.js
+│   ├── subscriptions/
+│   │   ├── InvoiceHistory.jsx
+│   │   └── CancellationFlow.jsx
+│   ├── geo/
+│   │   └── GeoDialogs.jsx (4 dialog components)
+│   └── ui/                   # Shadcn components
+├── pages/
+│   ├── EmployeesPage.jsx     # 576 lines (was 1,502)
+│   ├── EmployeePortalPage.jsx # 28 lines (was 1,561)
+│   ├── GeoLocationsPage.jsx  # 1,348 lines (was 1,679)
+│   ├── SubscriptionsPage.jsx # 1,146 lines (was 1,372)
+│   ├── PayrollV2Page.jsx     # Now exports PayrollPage, route /payroll
+│   └── ...
+```
 
 ## Credenciales de Test
 - Admin: test_refactor@fortexa.com / test123
 - Partner: newpartner@test.com / test123
 - Employee Portal: 001-0000001-1 / portal123
 
-## P0 - Completado
-- ✅ Refactoring masivo server.py (2293 → 581 → 258 líneas)
-- ✅ Internacionalización frontend (~835 strings)
-- ✅ Consolidación payroll.py + payroll_v2.py
-- ✅ Centralización modelos Pydantic (~55+ modelos en /models/)
-- ✅ Limpieza scripts one-off
-- ✅ Extracción auth helpers → utils/auth.py
-- ✅ Centralización config → config.py (DB, JWT, Stripe, Resend, QB, Plans, Feature Access)
-- ✅ Consolidación frontend PayrollV2Page → PayrollPage (ruta /payroll-v2 → /payroll)
-- ✅ Split reports_system.py (2,224 → 339 + services/)
-- ✅ Split payroll.py exports (2,155 → 1,151 + payroll_exports.py)
-- ✅ Limpieza 22 archivos de test obsoletos
+## Completado
+- ✅ Sistema completo de nómina con TSS (Rep. Dominicana)
+- ✅ Exportaciones DGII: IR-3, IR-4, IR-6, IR-13, IR-17, TSS
+- ✅ Módulos HR: Asistencia, Vacaciones, Evaluaciones, Reclutamiento
+- ✅ Portal de Empleados con autoservicio
+- ✅ Contabilidad con plan de cuentas
+- ✅ 58+ reportes con export PDF/Excel/CSV
+- ✅ i18n completo (ES/EN/FR)
+- ✅ Geolocalización para asistencia
+- ✅ CDC Audit trail, Préstamos, Partners
+- ✅ QuickBooks Online integration
+- ✅ **Refactoring Phase 1**: server.py 581→258, model centralization
+- ✅ **Refactoring Phase 2**: Frontend page splits, backend route splits
 
 ## P1 - Próximas Tareas
-- Dividir páginas frontend grandes (GeoLocationsPage 1,679, EmployeePortalPage 1,561, EmployeesPage 1,502, SubscriptionsPage 1,372)
-- Dividir routes/partners.py (1,245 líneas)
 - 2FA / MFA
 - ACH Bank Integration (BHD, Popular, Banreservas)
 - E-signature para contratos y recibos
