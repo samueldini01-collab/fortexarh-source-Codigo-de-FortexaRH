@@ -140,15 +140,14 @@ function EmployeeDashboard() {
   // SSE real-time notification stream
   useEffect(() => {
     if (!employee) return;
-    const token = localStorage.getItem("employee_portal_token");
-    if (!token) return;
+    const portalToken = localStorage.getItem("employee_portal_token");
+    if (!portalToken) return;
 
-    const sseUrl = `${API}/employee-portal/notifications/stream`;
     let eventSource = null;
+    let reconnectTimer = null;
 
     const connect = () => {
-      // Use EventSource with Authorization via query param workaround
-      // sse-starlette supports standard EventSource; we use fetch-based polyfill for auth
+      const sseUrl = `${API}/employee-portal/notifications/stream?token=${encodeURIComponent(portalToken)}`;
       eventSource = new EventSource(sseUrl);
 
       eventSource.addEventListener("notification", (event) => {
@@ -156,7 +155,6 @@ function EmployeeDashboard() {
           const notification = JSON.parse(event.data);
           setNotifications((prev) => [notification, ...prev]);
           setUnreadCount((prev) => prev + 1);
-          // Show toast for new notification
           toast.info(notification.title, { description: notification.message, duration: 5000 });
         } catch (e) {
           // ignore parse errors
@@ -164,13 +162,12 @@ function EmployeeDashboard() {
       });
 
       eventSource.addEventListener("ping", () => {
-        // heartbeat, do nothing
+        // heartbeat keep-alive
       });
 
       eventSource.onerror = () => {
-        eventSource.close();
-        // Reconnect after 5 seconds
-        setTimeout(connect, 5000);
+        if (eventSource) eventSource.close();
+        reconnectTimer = setTimeout(connect, 5000);
       };
     };
 
@@ -178,6 +175,7 @@ function EmployeeDashboard() {
 
     return () => {
       if (eventSource) eventSource.close();
+      if (reconnectTimer) clearTimeout(reconnectTimer);
     };
   }, [employee]);
 
