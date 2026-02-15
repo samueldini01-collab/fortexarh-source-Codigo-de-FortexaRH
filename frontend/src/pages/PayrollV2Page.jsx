@@ -1439,7 +1439,7 @@ export default function PayrollV2Page() {
         <Dialog open={showNoveltyDialog} onOpenChange={setShowNoveltyDialog}>
           <DialogContent>
             <DialogHeader><DialogTitle>{t('payrollV2.agregarNovedad')}</DialogTitle>
-              <DialogDescription>Agregue un ingreso o deducción adicional a {selectedEntry?.employee_name}</DialogDescription></DialogHeader>
+              <DialogDescription>{t('payrollV2.agregueUnIngresoODeduccion', {name: selectedEntry?.employee_name})}</DialogDescription></DialogHeader>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <Button variant={noveltyForm.novelty_type === 'income' ? 'default' : 'outline'} className="h-auto py-3 flex flex-col"
