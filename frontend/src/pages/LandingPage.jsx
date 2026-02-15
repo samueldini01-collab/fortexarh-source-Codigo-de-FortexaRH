@@ -126,7 +126,7 @@ export default function LandingPage() {
     { icon: DollarSign, title: "$10" + t('accountants.pricePerMonth'), desc: t('landing.pricing.perEmployee') },
     { icon: Percent, title: "30%", desc: t('landing.accountantDropdown.commission') },
     { icon: Building2, title: t('landing.accountantDropdown.multiClient'), desc: t('landing.pricing.enterpriseDesc') },
-    { icon: TrendingUp, title: "Dashboard", desc: t('accountants.benefit6Desc') },
+    { icon: TrendingUp, title: "Dashboard", desc: t('landing.accountantDropdown.dashboard') },
     { icon: Calculator, title: t('landing.features.payroll'), desc: "TSS, AFP, ISR" },
     { icon: FileText, title: t('landing.features.dgii'), desc: "IR-17, TSS" }
   ];
