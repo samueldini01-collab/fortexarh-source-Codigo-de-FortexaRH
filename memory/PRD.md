@@ -35,6 +35,8 @@ SaaS HR and Payroll management system named "FortexaRH" for the Dominican Republ
 - **Two-Factor Authentication (2FA/TOTP)** (Feb 2026): Full TOTP implementation with Google Authenticator/Authy. Users can enable/disable from Settings > Account. Login flow modified to require 2FA verification when enabled. QR code generation, manual key entry, 6-digit code verification. Multi-language (ES/EN/FR).
 - **2FA Recovery Codes** (Feb 2026): 10 one-time-use recovery codes generated on 2FA setup. Stored hashed (SHA256). Users can regenerate codes with TOTP verification. Recovery code login as alternative to TOTP on login. Copy/download codes. Low-code warnings. Multi-language (ES/EN/FR).
 - **Mi Perfil Bug Fix** (Feb 2026): Fixed navigation from user dropdown "Mi Perfil" to /settings (was pointing to non-existent /profile route).
+- **Partner Dashboard KPI Drill-Down** (Feb 2026): 4 KPI cards (Clientes Activos, Comisiones Pendientes, Total Ganado, Tu Precio Mensual) now clickable with detailed drill-down dialogs showing client lists, pending commission breakdowns, earning history, and pricing comparison.
+- **PayPal Withdrawal for Partners** (Feb 2026): Added PayPal as alternative payout method alongside Stripe Connect. Partners can configure PayPal email, select payout method (Stripe or PayPal) when withdrawing. Stripe Connect errors handled gracefully with user-friendly messages.
 
 ## Recent Changes (Feb 2026)
 - **Unified Partner Login (Opcion A)**: Modified /api/auth/login, /api/auth/session, /api/auth/me to return is_partner and partner_id. LoginPage.jsx redirects to /partner-dashboard for partners. AuthCallback (Google OAuth) also handles partner detection.
@@ -69,4 +71,4 @@ SaaS HR and Payroll management system named "FortexaRH" for the Dominican Republ
 - SAP, Oracle, Dynamics (enterprise connectors)
 
 ## 3rd Party Integrations (Active)
-- Stripe, Resend, Gemini AI, QuickBooks, Google Auth, i18next, sse-starlette
+- Stripe, Resend, Gemini AI, QuickBooks, Google Auth, i18next, sse-starlette, pyotp, qrcode
