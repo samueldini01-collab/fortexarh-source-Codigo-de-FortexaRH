@@ -302,8 +302,8 @@ export default function UsersManagementPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Gestión de Usuarios</h1>
-            <p className="text-slate-500 dark:text-slate-400">Administre los usuarios y roles del sistema</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{t('usersManagement.gestionDeUsuarios')}</h1>
+            <p className="text-slate-500 dark:text-slate-400">{t('usersManagement.administreLosUsuariosY')}</p>
           </div>
           <div className="flex items-center gap-3">
             <Badge variant="outline" className="text-sm">
@@ -323,7 +323,7 @@ export default function UsersManagementPage() {
             </TabsTrigger>
             <TabsTrigger value="roles" className="flex items-center gap-2">
               <Shield className="w-4 h-4" />Roles
-              {!isEnterprise && <Badge variant="secondary" className="text-xs ml-1">Enterprise</Badge>}
+              {!isEnterprise && <Badge variant="secondary" className="text-xs ml-1">{t('usersManagement.enterprise')}</Badge>}
             </TabsTrigger>
             <TabsTrigger value="activity" className="flex items-center gap-2">
               <Activity className="w-4 h-4" />Actividad
@@ -353,13 +353,13 @@ export default function UsersManagementPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Usuario</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Rol</TableHead>
-                    <TableHead>Módulos</TableHead>
-                    <TableHead>Estado</TableHead>
-                    <TableHead>Creado</TableHead>
-                    <TableHead className="text-right">Acciones</TableHead>
+                    <TableHead>{t('usersManagement.usuario')}</TableHead>
+                    <TableHead>{t('usersManagement.email')}</TableHead>
+                    <TableHead>{t('usersManagement.rol')}</TableHead>
+                    <TableHead>{t('usersManagement.modulos')}</TableHead>
+                    <TableHead>{t('usersManagement.estado')}</TableHead>
+                    <TableHead>{t('usersManagement.creado')}</TableHead>
+                    <TableHead className="text-right">{t('usersManagement.acciones')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -384,7 +384,7 @@ export default function UsersManagementPage() {
                       <TableCell>
                         <div className="flex flex-wrap gap-1">
                           {user.role === 'admin' ? (
-                            <Badge variant="outline" className="text-xs">Todos</Badge>
+                            <Badge variant="outline" className="text-xs">{t('usersManagement.todos')}</Badge>
                           ) : (
                             user.modules?.slice(0, 3).map(m => (
                               <Badge key={m} variant="outline" className="text-xs">
@@ -456,7 +456,7 @@ export default function UsersManagementPage() {
             {!isEnterprise ? (
               <Card className="p-8 text-center">
                 <Shield className="w-16 h-16 mx-auto text-slate-300 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Roles Personalizados</h3>
+                <h3 className="text-xl font-semibold mb-2">{t('usersManagement.rolesPersonalizados')}</h3>
                 <p className="text-slate-500 mb-4">
                   Los roles personalizados solo están disponibles en el plan Enterprise.
                   Actualice su plan para crear roles específicos para su organización.
@@ -480,7 +480,7 @@ export default function UsersManagementPage() {
                       <CardHeader className="pb-2">
                         <div className="flex items-center justify-between">
                           <CardTitle className="text-lg">{t(role.nameKey)}</CardTitle>
-                          <Badge variant="secondary">Sistema</Badge>
+                          <Badge variant="secondary">{t('usersManagement.sistema')}</Badge>
                         </div>
                         <CardDescription>{t(role.descKey)}</CardDescription>
                       </CardHeader>
@@ -493,7 +493,7 @@ export default function UsersManagementPage() {
                       <CardHeader className="pb-2">
                         <div className="flex items-center justify-between">
                           <CardTitle className="text-lg">{role.name}</CardTitle>
-                          <Badge className="bg-purple-500">Personalizado</Badge>
+                          <Badge className="bg-purple-500">{t('usersManagement.personalizado')}</Badge>
                         </div>
                         <CardDescription>{role.description}</CardDescription>
                       </CardHeader>
@@ -515,13 +515,13 @@ export default function UsersManagementPage() {
           <TabsContent value="activity" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Historial de Actividades</CardTitle>
-                <CardDescription>Últimas acciones realizadas en el sistema</CardDescription>
+                <CardTitle>{t('usersManagement.historialDeActividades')}</CardTitle>
+                <CardDescription>{t('usersManagement.ultimasAccionesRealizadasEn')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4 max-h-[500px] overflow-y-auto">
                   {activities.length === 0 ? (
-                    <p className="text-center text-slate-500 py-8">No hay actividades registradas</p>
+                    <p className="text-center text-slate-500 py-8">{t('usersManagement.noHayActividadesRegistradas')}</p>
                   ) : (
                     activities.map(activity => (
                       <div key={activity.activity_id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-slate-50 dark:bg-slate-800">
@@ -549,7 +549,7 @@ export default function UsersManagementPage() {
         <Dialog open={showNewUser} onOpenChange={setShowNewUser}>
           <DialogContent className="max-w-lg">
             <DialogHeader>
-              <DialogTitle>Crear Nuevo Usuario</DialogTitle>
+              <DialogTitle>{t('usersManagement.crearNuevoUsuario')}</DialogTitle>
               <DialogDescription>
                 Agregue un nuevo usuario al sistema
               </DialogDescription>
@@ -557,7 +557,7 @@ export default function UsersManagementPage() {
             
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label>Nombre completo *</Label>
+                <Label>{t('usersManagement.nombreCompleto')}</Label>
                 <Input
                   placeholder="Juan Pérez"
                   value={newUser.name}
@@ -566,7 +566,7 @@ export default function UsersManagementPage() {
               </div>
               
               <div className="space-y-2">
-                <Label>Email *</Label>
+                <Label>{t('usersManagement.email1')}</Label>
                 <Input
                   type="email"
                   placeholder="juan@empresa.com"
@@ -576,7 +576,7 @@ export default function UsersManagementPage() {
               </div>
               
               <div className="space-y-2">
-                <Label>Contraseña *</Label>
+                <Label>{t('usersManagement.contrasena')}</Label>
                 <Input
                   type="password"
                   placeholder="••••••••"
@@ -586,7 +586,7 @@ export default function UsersManagementPage() {
               </div>
               
               <div className="space-y-2">
-                <Label>Rol</Label>
+                <Label>{t('usersManagement.rol')}</Label>
                 <Select value={newUser.role} onValueChange={(v) => setNewUser({...newUser, role: v})}>
                   <SelectTrigger>
                     <SelectValue />
@@ -601,7 +601,7 @@ export default function UsersManagementPage() {
               
               {newUser.role !== 'admin' && (
                 <div className="space-y-2">
-                  <Label>Módulos permitidos</Label>
+                  <Label>{t('usersManagement.modulosPermitidos')}</Label>
                   <div className="grid grid-cols-2 gap-2 p-3 border rounded-lg max-h-48 overflow-y-auto">
                     {MODULES.map(module => (
                       <div key={module.id} className="flex items-center gap-2">
@@ -623,8 +623,8 @@ export default function UsersManagementPage() {
             </div>
             
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowNewUser(false)}>Cancelar</Button>
-              <Button onClick={handleCreateUser}>Crear Usuario</Button>
+              <Button variant="outline" onClick={() => setShowNewUser(false)}>{t('usersManagement.cancelar')}</Button>
+              <Button onClick={handleCreateUser}>{t('usersManagement.crearUsuario')}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -633,7 +633,7 @@ export default function UsersManagementPage() {
         <Dialog open={showEditUser} onOpenChange={setShowEditUser}>
           <DialogContent className="max-w-lg">
             <DialogHeader>
-              <DialogTitle>Editar Usuario</DialogTitle>
+              <DialogTitle>{t('usersManagement.editarUsuario')}</DialogTitle>
               <DialogDescription>
                 Modifique los datos del usuario
               </DialogDescription>
@@ -642,7 +642,7 @@ export default function UsersManagementPage() {
             {editingUser && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Nombre completo</Label>
+                  <Label>{t('usersManagement.nombreCompleto1')}</Label>
                   <Input
                     value={editingUser.name}
                     onChange={(e) => setEditingUser({...editingUser, name: e.target.value})}
@@ -650,7 +650,7 @@ export default function UsersManagementPage() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>Rol</Label>
+                  <Label>{t('usersManagement.rol')}</Label>
                   <Select value={editingUser.role} onValueChange={(v) => setEditingUser({...editingUser, role: v})}>
                     <SelectTrigger>
                       <SelectValue />
@@ -665,7 +665,7 @@ export default function UsersManagementPage() {
                 
                 {editingUser.role !== 'admin' && (
                   <div className="space-y-2">
-                    <Label>Módulos permitidos</Label>
+                    <Label>{t('usersManagement.modulosPermitidos')}</Label>
                     <div className="grid grid-cols-2 gap-2 p-3 border rounded-lg max-h-48 overflow-y-auto">
                       {MODULES.map(module => (
                         <div key={module.id} className="flex items-center gap-2">
@@ -690,14 +690,14 @@ export default function UsersManagementPage() {
                     checked={editingUser.is_active}
                     onCheckedChange={(checked) => setEditingUser({...editingUser, is_active: checked})}
                   />
-                  <Label>Usuario activo</Label>
+                  <Label>{t('usersManagement.usuarioActivo')}</Label>
                 </div>
               </div>
             )}
             
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowEditUser(false)}>Cancelar</Button>
-              <Button onClick={handleUpdateUser}>Guardar Cambios</Button>
+              <Button variant="outline" onClick={() => setShowEditUser(false)}>{t('usersManagement.cancelar')}</Button>
+              <Button onClick={handleUpdateUser}>{t('usersManagement.guardarCambios')}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -706,7 +706,7 @@ export default function UsersManagementPage() {
         <Dialog open={showNewRole} onOpenChange={setShowNewRole}>
           <DialogContent className="max-w-lg">
             <DialogHeader>
-              <DialogTitle>Crear Rol Personalizado</DialogTitle>
+              <DialogTitle>{t('usersManagement.crearRolPersonalizado')}</DialogTitle>
               <DialogDescription>
                 Defina un nuevo rol con permisos específicos
               </DialogDescription>
@@ -714,7 +714,7 @@ export default function UsersManagementPage() {
             
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label>Nombre del rol *</Label>
+                <Label>{t('usersManagement.nombreDelRol')}</Label>
                 <Input
                   placeholder="Ej: Supervisor de Nómina"
                   value={newRole.name}
@@ -723,7 +723,7 @@ export default function UsersManagementPage() {
               </div>
               
               <div className="space-y-2">
-                <Label>Descripción</Label>
+                <Label>{t('usersManagement.descripcion')}</Label>
                 <Input
                   placeholder="Descripción del rol..."
                   value={newRole.description}
@@ -732,7 +732,7 @@ export default function UsersManagementPage() {
               </div>
               
               <div className="space-y-2">
-                <Label>Módulos con acceso</Label>
+                <Label>{t('usersManagement.modulosConAcceso')}</Label>
                 <div className="grid grid-cols-2 gap-2 p-3 border rounded-lg max-h-48 overflow-y-auto">
                   {MODULES.map(module => (
                     <div key={module.id} className="flex items-center gap-2">
@@ -753,8 +753,8 @@ export default function UsersManagementPage() {
             </div>
             
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowNewRole(false)}>Cancelar</Button>
-              <Button onClick={handleCreateRole}>Crear Rol</Button>
+              <Button variant="outline" onClick={() => setShowNewRole(false)}>{t('usersManagement.cancelar')}</Button>
+              <Button onClick={handleCreateRole}>{t('usersManagement.crearRol')}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -775,12 +775,12 @@ export default function UsersManagementPage() {
             <div className="space-y-4">
               <div className="p-3 bg-slate-50 rounded-lg">
                 <p className="text-sm text-slate-600 dark:text-slate-300">
-                  <strong>Usuario:</strong> {passwordUser?.email}
+                  <strong>{t('usersManagement.usuario1')}</strong> {passwordUser?.email}
                 </p>
               </div>
               
               <div className="space-y-2">
-                <Label>Nueva Contraseña *</Label>
+                <Label>{t('usersManagement.nuevaContrasena')}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <Input
@@ -802,7 +802,7 @@ export default function UsersManagementPage() {
               </div>
               
               <div className="space-y-2">
-                <Label>Confirmar Contraseña *</Label>
+                <Label>{t('usersManagement.confirmarContrasena')}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <Input
@@ -822,7 +822,7 @@ export default function UsersManagementPage() {
             </div>
             
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowPasswordModal(false)}>Cancelar</Button>
+              <Button variant="outline" onClick={() => setShowPasswordModal(false)}>{t('usersManagement.cancelar')}</Button>
               <Button 
                 onClick={handleSetPassword}
                 disabled={passwordLoading}

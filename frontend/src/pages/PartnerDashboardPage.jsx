@@ -412,7 +412,7 @@ export default function PartnerDashboardPage() {
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-8 h-8 text-emerald-400 animate-spin mx-auto mb-4" />
-          <p className="text-slate-400">Cargando dashboard...</p>
+          <p className="text-slate-400">{t('partnerDashboard.cargandoDashboard')}</p>
         </div>
       </div>
     );
@@ -434,7 +434,7 @@ export default function PartnerDashboardPage() {
               <img src="/fortexarh-logo.png" alt="FortexaRH" className="h-8 w-auto" />
               <div>
                 <h1 className="font-bold text-white">{firm.name || "Mi Firma"}</h1>
-                <p className="text-emerald-400 text-xs">Portal de Partner</p>
+                <p className="text-emerald-400 text-xs">{t('partnerDashboard.portalDePartner')}</p>
               </div>
             </div>
             
@@ -596,7 +596,7 @@ export default function PartnerDashboardPage() {
               <Card className="bg-slate-800/50 border-slate-700">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
-                    <CardTitle className="text-white">Clientes Recientes</CardTitle>
+                    <CardTitle className="text-white">{t('partnerDashboard.clientesRecientes')}</CardTitle>
                     <CardDescription className="text-slate-400">
                       Últimos clientes agregados
                     </CardDescription>
@@ -630,7 +630,7 @@ export default function PartnerDashboardPage() {
                   ) : (
                     <div className="text-center py-8">
                       <Users className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                      <p className="text-slate-400">No tienes clientes aún</p>
+                      <p className="text-slate-400">{t('partnerDashboard.noTienesClientesAun')}</p>
                       <Button
                         variant="link"
                         onClick={() => setShowAddClient(true)}
@@ -646,7 +646,7 @@ export default function PartnerDashboardPage() {
               {/* Commission Summary */}
               <Card className="bg-slate-800/50 border-slate-700">
                 <CardHeader>
-                  <CardTitle className="text-white">Resumen de Comisiones</CardTitle>
+                  <CardTitle className="text-white">{t('partnerDashboard.resumenDeComisiones')}</CardTitle>
                   <CardDescription className="text-slate-400">
                     Últimos 12 meses
                   </CardDescription>
@@ -674,7 +674,7 @@ export default function PartnerDashboardPage() {
                   ) : (
                     <div className="text-center py-8">
                       <DollarSign className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                      <p className="text-slate-400">Sin comisiones aún</p>
+                      <p className="text-slate-400">{t('partnerDashboard.sinComisionesAun')}</p>
                       <p className="text-slate-500 text-sm mt-1">
                         Las comisiones aparecerán cuando tus clientes paguen
                       </p>
@@ -695,7 +695,7 @@ export default function PartnerDashboardPage() {
               <CardContent>
                 <div className="grid md:grid-cols-3 gap-6">
                   <div className="p-4 bg-slate-700/50 rounded-lg">
-                    <p className="text-slate-400 text-sm mb-1">Tu Suscripción</p>
+                    <p className="text-slate-400 text-sm mb-1">{t('partnerDashboard.tuSuscripcion')}</p>
                     <p className="text-2xl font-bold text-white">
                       ${pricing.current_price || 10}/mes
                     </p>
@@ -704,14 +704,14 @@ export default function PartnerDashboardPage() {
                     </p>
                   </div>
                   <div className="p-4 bg-slate-700/50 rounded-lg">
-                    <p className="text-slate-400 text-sm mb-1">Comisión por Cliente</p>
+                    <p className="text-slate-400 text-sm mb-1">{t('partnerDashboard.comisionPorCliente')}</p>
                     <p className="text-2xl font-bold text-emerald-400">30%</p>
-                    <p className="text-slate-400 text-sm mt-1">Recurrente de por vida</p>
+                    <p className="text-slate-400 text-sm mt-1">{t('partnerDashboard.recurrenteDePorVida')}</p>
                   </div>
                   <div className="p-4 bg-slate-700/50 rounded-lg">
-                    <p className="text-slate-400 text-sm mb-1">Requisito para Beneficios</p>
+                    <p className="text-slate-400 text-sm mb-1">{t('partnerDashboard.requisitoParaBeneficios')}</p>
                     <p className="text-2xl font-bold text-white">1+</p>
-                    <p className="text-slate-400 text-sm mt-1">Cliente activo pagando</p>
+                    <p className="text-slate-400 text-sm mt-1">{t('partnerDashboard.clienteActivoPagando')}</p>
                   </div>
                 </div>
               </CardContent>
@@ -723,7 +723,7 @@ export default function PartnerDashboardPage() {
             <Card className="bg-slate-800/50 border-slate-700">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                  <CardTitle className="text-white">Mis Clientes</CardTitle>
+                  <CardTitle className="text-white">{t('partnerDashboard.misClientes')}</CardTitle>
                   <CardDescription className="text-slate-400">
                     Gestiona tus clientes referidos
                   </CardDescription>
@@ -742,13 +742,13 @@ export default function PartnerDashboardPage() {
                     <Table>
                       <TableHeader>
                         <TableRow className="border-slate-700">
-                          <TableHead className="text-slate-400">Empresa</TableHead>
-                          <TableHead className="text-slate-400">Contacto</TableHead>
-                          <TableHead className="text-slate-400">Estado</TableHead>
-                          <TableHead className="text-slate-400">Invitación</TableHead>
-                          <TableHead className="text-slate-400">Facturación</TableHead>
-                          <TableHead className="text-slate-400">Comisión</TableHead>
-                          <TableHead className="text-slate-400">Acciones</TableHead>
+                          <TableHead className="text-slate-400">{t('partnerDashboard.empresa')}</TableHead>
+                          <TableHead className="text-slate-400">{t('partnerDashboard.contacto')}</TableHead>
+                          <TableHead className="text-slate-400">{t('partnerDashboard.estado')}</TableHead>
+                          <TableHead className="text-slate-400">{t('partnerDashboard.invitacion')}</TableHead>
+                          <TableHead className="text-slate-400">{t('partnerDashboard.facturacion')}</TableHead>
+                          <TableHead className="text-slate-400">{t('partnerDashboard.comision')}</TableHead>
+                          <TableHead className="text-slate-400">{t('partnerDashboard.acciones')}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -793,8 +793,8 @@ export default function PartnerDashboardPage() {
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent className="bg-slate-800 border-slate-700">
-                                  <SelectItem value="direct">Directo</SelectItem>
-                                  <SelectItem value="firm">Firma paga</SelectItem>
+                                  <SelectItem value="direct">{t('partnerDashboard.directo')}</SelectItem>
+                                  <SelectItem value="firm">{t('partnerDashboard.firmaPaga')}</SelectItem>
                                 </SelectContent>
                               </Select>
                             </TableCell>
@@ -879,7 +879,7 @@ export default function PartnerDashboardPage() {
             <div className="grid md:grid-cols-3 gap-4 mb-6">
               <Card className="bg-slate-800/50 border-slate-700">
                 <CardContent className="p-6">
-                  <p className="text-slate-400 text-sm mb-1">Total Ganado</p>
+                  <p className="text-slate-400 text-sm mb-1">{t('partnerDashboard.totalGanado')}</p>
                   <p className="text-3xl font-bold text-white">
                     ${(commissionsData.total_earned || 0).toFixed(2)}
                   </p>
@@ -887,7 +887,7 @@ export default function PartnerDashboardPage() {
               </Card>
               <Card className="bg-slate-800/50 border-slate-700">
                 <CardContent className="p-6">
-                  <p className="text-slate-400 text-sm mb-1">Pagado</p>
+                  <p className="text-slate-400 text-sm mb-1">{t('partnerDashboard.pagado')}</p>
                   <p className="text-3xl font-bold text-emerald-400">
                     ${(commissionsData.total_paid || 0).toFixed(2)}
                   </p>
@@ -895,7 +895,7 @@ export default function PartnerDashboardPage() {
               </Card>
               <Card className="bg-slate-800/50 border-slate-700">
                 <CardContent className="p-6">
-                  <p className="text-slate-400 text-sm mb-1">Pendiente</p>
+                  <p className="text-slate-400 text-sm mb-1">{t('partnerDashboard.pendiente')}</p>
                   <p className="text-3xl font-bold text-amber-400">
                     ${(commissionsData.pending || 0).toFixed(2)}
                   </p>
@@ -905,7 +905,7 @@ export default function PartnerDashboardPage() {
 
             <Card className="bg-slate-800/50 border-slate-700">
               <CardHeader>
-                <CardTitle className="text-white">Historial de Comisiones</CardTitle>
+                <CardTitle className="text-white">{t('partnerDashboard.historialDeComisiones')}</CardTitle>
                 <CardDescription className="text-slate-400">
                   Todas las comisiones generadas por tus clientes
                 </CardDescription>
@@ -916,10 +916,10 @@ export default function PartnerDashboardPage() {
                     <Table>
                       <TableHeader>
                         <TableRow className="border-slate-700">
-                          <TableHead className="text-slate-400">Fecha</TableHead>
-                          <TableHead className="text-slate-400">Cliente</TableHead>
-                          <TableHead className="text-slate-400">Monto</TableHead>
-                          <TableHead className="text-slate-400">Estado</TableHead>
+                          <TableHead className="text-slate-400">{t('partnerDashboard.fecha')}</TableHead>
+                          <TableHead className="text-slate-400">{t('partnerDashboard.cliente')}</TableHead>
+                          <TableHead className="text-slate-400">{t('partnerDashboard.monto')}</TableHead>
+                          <TableHead className="text-slate-400">{t('partnerDashboard.estado')}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -1016,8 +1016,8 @@ export default function PartnerDashboardPage() {
                     <div className="flex items-center gap-3">
                       <ShieldCheck className="w-6 h-6 text-emerald-400" />
                       <div>
-                        <p className="text-emerald-400 font-medium">Cuenta de Stripe Conectada</p>
-                        <p className="text-slate-400 text-sm">Lista para recibir pagos</p>
+                        <p className="text-emerald-400 font-medium">{t('partnerDashboard.cuentaDeStripeConectada')}</p>
+                        <p className="text-slate-400 text-sm">{t('partnerDashboard.listaParaRecibirPagos')}</p>
                       </div>
                     </div>
                     <Button
@@ -1038,7 +1038,7 @@ export default function PartnerDashboardPage() {
             <div className="grid md:grid-cols-4 gap-4">
               <Card className="bg-slate-800/50 border-slate-700">
                 <CardContent className="p-6">
-                  <p className="text-slate-400 text-sm mb-1">Balance Disponible</p>
+                  <p className="text-slate-400 text-sm mb-1">{t('partnerDashboard.balanceDisponible')}</p>
                   <p className="text-3xl font-bold text-emerald-400">
                     ${payoutBalance?.available_balance?.toFixed(2) || "0.00"}
                   </p>
@@ -1049,7 +1049,7 @@ export default function PartnerDashboardPage() {
               </Card>
               <Card className="bg-slate-800/50 border-slate-700">
                 <CardContent className="p-6">
-                  <p className="text-slate-400 text-sm mb-1">Total Ganado</p>
+                  <p className="text-slate-400 text-sm mb-1">{t('partnerDashboard.totalGanado')}</p>
                   <p className="text-3xl font-bold text-white">
                     ${payoutBalance?.total_earned?.toFixed(2) || "0.00"}
                   </p>
@@ -1057,7 +1057,7 @@ export default function PartnerDashboardPage() {
               </Card>
               <Card className="bg-slate-800/50 border-slate-700">
                 <CardContent className="p-6">
-                  <p className="text-slate-400 text-sm mb-1">Total Pagado</p>
+                  <p className="text-slate-400 text-sm mb-1">{t('partnerDashboard.totalPagado')}</p>
                   <p className="text-3xl font-bold text-blue-400">
                     ${payoutBalance?.total_paid?.toFixed(2) || "0.00"}
                   </p>
@@ -1065,7 +1065,7 @@ export default function PartnerDashboardPage() {
               </Card>
               <Card className="bg-slate-800/50 border-slate-700">
                 <CardContent className="p-6">
-                  <p className="text-slate-400 text-sm mb-1">En Proceso</p>
+                  <p className="text-slate-400 text-sm mb-1">{t('partnerDashboard.enProceso')}</p>
                   <p className="text-3xl font-bold text-amber-400">
                     ${payoutBalance?.pending_payouts?.toFixed(2) || "0.00"}
                   </p>
@@ -1078,7 +1078,7 @@ export default function PartnerDashboardPage() {
               <CardContent className="p-6">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div>
-                    <h3 className="text-white font-semibold">Solicitar Retiro</h3>
+                    <h3 className="text-white font-semibold">{t('partnerDashboard.solicitarRetiro')}</h3>
                     <p className="text-slate-400 text-sm">
                       Los pagos se procesan mensualmente. El dinero llega en 2-3 días hábiles.
                     </p>
@@ -1103,7 +1103,7 @@ export default function PartnerDashboardPage() {
             {/* Payout History */}
             <Card className="bg-slate-800/50 border-slate-700">
               <CardHeader>
-                <CardTitle className="text-white">Historial de Retiros</CardTitle>
+                <CardTitle className="text-white">{t('partnerDashboard.historialDeRetiros')}</CardTitle>
                 <CardDescription className="text-slate-400">
                   Todos los retiros procesados y pendientes
                 </CardDescription>
@@ -1114,10 +1114,10 @@ export default function PartnerDashboardPage() {
                     <Table>
                       <TableHeader>
                         <TableRow className="border-slate-700">
-                          <TableHead className="text-slate-400">Fecha</TableHead>
+                          <TableHead className="text-slate-400">{t('partnerDashboard.fecha')}</TableHead>
                           <TableHead className="text-slate-400">ID</TableHead>
-                          <TableHead className="text-slate-400">Monto</TableHead>
-                          <TableHead className="text-slate-400">Estado</TableHead>
+                          <TableHead className="text-slate-400">{t('partnerDashboard.monto')}</TableHead>
+                          <TableHead className="text-slate-400">{t('partnerDashboard.estado')}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -1161,7 +1161,7 @@ export default function PartnerDashboardPage() {
       <Dialog open={showAddClient} onOpenChange={setShowAddClient}>
         <DialogContent className="bg-slate-800 border-slate-700 max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-white">Agregar Nuevo Cliente</DialogTitle>
+            <DialogTitle className="text-white">{t('partnerDashboard.agregarNuevoCliente')}</DialogTitle>
             <DialogDescription className="text-slate-400">
               Ingresa los datos del cliente para enviarle una invitación
             </DialogDescription>
@@ -1225,7 +1225,7 @@ export default function PartnerDashboardPage() {
             </div>
             
             <div className="space-y-2">
-              <Label className="text-slate-300">Tipo de Facturación</Label>
+              <Label className="text-slate-300">{t('partnerDashboard.tipoDeFacturacion')}</Label>
               <Select
                 value={newClient.billing_type}
                 onValueChange={(value) => setNewClient(prev => ({ ...prev, billing_type: value }))}
@@ -1285,7 +1285,7 @@ export default function PartnerDashboardPage() {
       <Dialog open={showPayoutModal} onOpenChange={setShowPayoutModal}>
         <DialogContent className="bg-slate-800 border-slate-700 max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-white">Solicitar Retiro</DialogTitle>
+            <DialogTitle className="text-white">{t('partnerDashboard.solicitarRetiro')}</DialogTitle>
             <DialogDescription className="text-slate-400">
               Retira tus comisiones a tu cuenta bancaria
             </DialogDescription>
@@ -1293,7 +1293,7 @@ export default function PartnerDashboardPage() {
           
           <div className="space-y-4 py-4">
             <div className="bg-slate-700/50 rounded-lg p-4">
-              <p className="text-slate-400 text-sm">Balance Disponible</p>
+              <p className="text-slate-400 text-sm">{t('partnerDashboard.balanceDisponible')}</p>
               <p className="text-2xl font-bold text-emerald-400">
                 ${payoutBalance?.available_balance?.toFixed(2) || "0.00"}
               </p>

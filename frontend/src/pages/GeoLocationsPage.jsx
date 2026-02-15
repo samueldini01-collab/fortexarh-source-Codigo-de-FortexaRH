@@ -866,7 +866,7 @@ export default function GeoLocationsPage() {
                     {(mapFilters.department !== "all" || mapFilters.location !== "all" || mapFilters.status !== "all") && (
                       <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200">
                         <CardContent className="p-3">
-                          <div className="text-xs text-blue-700 dark:text-blue-300 font-medium mb-1">Filtros activos:</div>
+                          <div className="text-xs text-blue-700 dark:text-blue-300 font-medium mb-1">{t('geoLocations.filtrosActivos')}</div>
                           <div className="text-sm text-blue-600 dark:text-blue-400">
                             Mostrando {getFilteredMapData().employees.length} de {liveMapData.employees?.length || 0} empleados
                           </div>
@@ -952,13 +952,13 @@ export default function GeoLocationsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Empleado</TableHead>
-                      <TableHead>Tipo</TableHead>
-                      <TableHead>Hora</TableHead>
-                      <TableHead>Ubicación</TableHead>
-                      <TableHead>Distancia</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
+                      <TableHead>{t('geoLocations.empleado')}</TableHead>
+                      <TableHead>{t('geoLocations.tipo')}</TableHead>
+                      <TableHead>{t('geoLocations.hora')}</TableHead>
+                      <TableHead>{t('geoLocations.ubicacion')}</TableHead>
+                      <TableHead>{t('geoLocations.distancia')}</TableHead>
+                      <TableHead>{t('geoLocations.estado')}</TableHead>
+                      <TableHead className="text-right">{t('geoLocations.acciones')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -988,9 +988,9 @@ export default function GeoLocationsPage() {
                           </TableCell>
                           <TableCell>
                             {mark.status === 'approved' ? (
-                              <Badge className="bg-emerald-100 text-emerald-700">Aprobada</Badge>
+                              <Badge className="bg-emerald-100 text-emerald-700">{t('geoLocations.aprobada')}</Badge>
                             ) : mark.status === 'pending_review' ? (
-                              <Badge className="bg-amber-100 text-amber-700">Pendiente</Badge>
+                              <Badge className="bg-amber-100 text-amber-700">{t('geoLocations.pendiente')}</Badge>
                             ) : (
                               <Badge variant="secondary">{mark.status}</Badge>
                             )}
@@ -1027,7 +1027,7 @@ export default function GeoLocationsPage() {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-red-600 dark:text-red-400">Críticas</p>
+                        <p className="text-sm text-red-600 dark:text-red-400">{t('geoLocations.criticas')}</p>
                         <p className="text-2xl font-bold text-red-700">{fraudAlerts.summary?.by_level?.critical || 0}</p>
                       </div>
                       <AlertTriangle className="w-8 h-8 text-red-500" />
@@ -1038,7 +1038,7 @@ export default function GeoLocationsPage() {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-orange-600 dark:text-orange-400">Altas</p>
+                        <p className="text-sm text-orange-600 dark:text-orange-400">{t('geoLocations.altas')}</p>
                         <p className="text-2xl font-bold text-orange-700">{fraudAlerts.summary?.by_level?.high || 0}</p>
                       </div>
                       <AlertTriangle className="w-8 h-8 text-orange-500" />
@@ -1049,7 +1049,7 @@ export default function GeoLocationsPage() {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-amber-600 dark:text-amber-400">Medias</p>
+                        <p className="text-sm text-amber-600 dark:text-amber-400">{t('geoLocations.medias')}</p>
                         <p className="text-2xl font-bold text-amber-700">{fraudAlerts.summary?.by_level?.medium || 0}</p>
                       </div>
                       <AlertTriangle className="w-8 h-8 text-amber-500" />
@@ -1060,7 +1060,7 @@ export default function GeoLocationsPage() {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-blue-600 dark:text-blue-400">Bajas</p>
+                        <p className="text-sm text-blue-600 dark:text-blue-400">{t('geoLocations.bajas')}</p>
                         <p className="text-2xl font-bold text-blue-700">{fraudAlerts.summary?.by_level?.low || 0}</p>
                       </div>
                       <AlertTriangle className="w-8 h-8 text-blue-500" />
@@ -1071,7 +1071,7 @@ export default function GeoLocationsPage() {
 
               {/* Actions Row */}
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Alertas de Fraude Detectadas</h3>
+                <h3 className="text-lg font-semibold">{t('geoLocations.alertasDeFraudeDetectadas')}</h3>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" onClick={fetchFraudAlerts}>
                     <RefreshCw className="w-4 h-4 mr-2" />
@@ -1090,20 +1090,20 @@ export default function GeoLocationsPage() {
                   {fraudAlerts.alerts?.length === 0 ? (
                     <div className="text-center py-12 text-slate-500">
                       <CheckCircle className="w-12 h-12 mx-auto text-emerald-400 mb-3" />
-                      <p>No hay alertas de fraude detectadas</p>
-                      <p className="text-sm mt-1">El sistema monitorea automáticamente las marcaciones</p>
+                      <p>{t('geoLocations.noHayAlertasDe')}</p>
+                      <p className="text-sm mt-1">{t('geoLocations.elSistemaMonitoreaAutomaticamente')}</p>
                     </div>
                   ) : (
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Nivel</TableHead>
-                          <TableHead>Empleado</TableHead>
-                          <TableHead>Tipo</TableHead>
-                          <TableHead>Mensaje</TableHead>
-                          <TableHead>Fecha</TableHead>
-                          <TableHead>Estado</TableHead>
-                          <TableHead>Acciones</TableHead>
+                          <TableHead>{t('geoLocations.nivel')}</TableHead>
+                          <TableHead>{t('geoLocations.empleado')}</TableHead>
+                          <TableHead>{t('geoLocations.tipo')}</TableHead>
+                          <TableHead>{t('geoLocations.mensaje')}</TableHead>
+                          <TableHead>{t('geoLocations.fecha')}</TableHead>
+                          <TableHead>{t('geoLocations.estado')}</TableHead>
+                          <TableHead>{t('geoLocations.acciones')}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -1166,10 +1166,10 @@ export default function GeoLocationsPage() {
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="new">Nueva</SelectItem>
-                                    <SelectItem value="reviewed">Revisada</SelectItem>
-                                    <SelectItem value="resolved">Resuelta</SelectItem>
-                                    <SelectItem value="dismissed">Descartar</SelectItem>
+                                    <SelectItem value="new">{t('geoLocations.nueva')}</SelectItem>
+                                    <SelectItem value="reviewed">{t('geoLocations.revisada')}</SelectItem>
+                                    <SelectItem value="resolved">{t('geoLocations.resuelta')}</SelectItem>
+                                    <SelectItem value="dismissed">{t('geoLocations.descartar')}</SelectItem>
                                   </SelectContent>
                                 </Select>
                               </div>
@@ -1186,7 +1186,7 @@ export default function GeoLocationsPage() {
               {fraudStats?.top_employees?.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-base">Empleados con Más Alertas (Últimos 30 días)</CardTitle>
+                    <CardTitle className="text-base">{t('geoLocations.empleadosConMasAlertas')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
@@ -1224,19 +1224,19 @@ export default function GeoLocationsPage() {
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <p className="text-slate-500">Velocidad máxima</p>
+                      <p className="text-slate-500">{t('geoLocations.velocidadMaxima')}</p>
                       <p className="font-medium">{fraudStats?.thresholds?.max_speed_kmh || 150} km/h</p>
                     </div>
                     <div>
-                      <p className="text-slate-500">Ventana duplicados</p>
+                      <p className="text-slate-500">{t('geoLocations.ventanaDuplicados')}</p>
                       <p className="font-medium">{fraudStats?.thresholds?.duplicate_window_minutes || 5} min</p>
                     </div>
                     <div>
-                      <p className="text-slate-500">Precisión GPS mínima</p>
+                      <p className="text-slate-500">{t('geoLocations.precisionGpsMinima')}</p>
                       <p className="font-medium">{fraudStats?.thresholds?.low_accuracy_threshold || 100}m</p>
                     </div>
                     <div>
-                      <p className="text-slate-500">Horario normal</p>
+                      <p className="text-slate-500">{t('geoLocations.horarioNormal')}</p>
                       <p className="font-medium">{fraudStats?.thresholds?.unusual_hour_start || 5}:00 - {fraudStats?.thresholds?.unusual_hour_end || 23}:00</p>
                     </div>
                   </div>
@@ -1249,14 +1249,14 @@ export default function GeoLocationsPage() {
           <TabsContent value="alerts">
             <Card>
               <CardHeader>
-                <CardTitle>Marcaciones Fuera de Zona</CardTitle>
-                <CardDescription>Marcaciones que requieren revisión</CardDescription>
+                <CardTitle>{t('geoLocations.marcacionesFueraDeZona')}</CardTitle>
+                <CardDescription>{t('geoLocations.marcacionesQueRequierenRevision')}</CardDescription>
               </CardHeader>
               <CardContent>
                 {todayAttendance?.marks?.filter(m => !m.is_within_zone).length === 0 ? (
                   <div className="text-center py-12 text-slate-500">
                     <CheckCircle className="w-12 h-12 mx-auto text-emerald-400 mb-3" />
-                    <p>No hay alertas de ubicación hoy</p>
+                    <p>{t('geoLocations.noHayAlertasDe1')}</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -1308,7 +1308,7 @@ export default function GeoLocationsPage() {
             
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label>Nombre de la Ubicación</Label>
+                <Label>{t('geoLocations.nombreDeLaUbicacion')}</Label>
                 <Input
                   value={locationForm.name}
                   onChange={(e) => setLocationForm({ ...locationForm, name: e.target.value })}
@@ -1317,7 +1317,7 @@ export default function GeoLocationsPage() {
               </div>
               
               <div className="space-y-2">
-                <Label>Dirección</Label>
+                <Label>{t('geoLocations.direccion')}</Label>
                 <Input
                   value={locationForm.address}
                   onChange={(e) => setLocationForm({ ...locationForm, address: e.target.value })}
@@ -1327,7 +1327,7 @@ export default function GeoLocationsPage() {
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Latitud</Label>
+                  <Label>{t('geoLocations.latitud')}</Label>
                   <Input
                     type="number"
                     step="any"
@@ -1337,7 +1337,7 @@ export default function GeoLocationsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Longitud</Label>
+                  <Label>{t('geoLocations.longitud')}</Label>
                   <Input
                     type="number"
                     step="any"
@@ -1350,7 +1350,7 @@ export default function GeoLocationsPage() {
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Radio (metros)</Label>
+                  <Label>{t('geoLocations.radioMetros')}</Label>
                   <Input
                     type="number"
                     value={locationForm.radius}
@@ -1359,7 +1359,7 @@ export default function GeoLocationsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Tipo de Ubicación</Label>
+                  <Label>{t('geoLocations.tipoDeUbicacion')}</Label>
                   <Select 
                     value={locationForm.location_type} 
                     onValueChange={(v) => setLocationForm({ ...locationForm, location_type: v })}
@@ -1398,7 +1398,7 @@ export default function GeoLocationsPage() {
         <Dialog open={showAssignDialog} onOpenChange={setShowAssignDialog}>
           <DialogContent className="max-w-lg">
             <DialogHeader>
-              <DialogTitle>Asignar Empleados</DialogTitle>
+              <DialogTitle>{t('geoLocations.asignarEmpleados')}</DialogTitle>
               <DialogDescription>
                 {selectedLocation?.name} - Seleccione los empleados que pueden marcar en esta ubicación
               </DialogDescription>
@@ -1459,7 +1459,7 @@ export default function GeoLocationsPage() {
             <div className="space-y-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Fecha Inicio</Label>
+                  <Label>{t('geoLocations.fechaInicio')}</Label>
                   <Input
                     type="date"
                     value={reportFilters.startDate}
@@ -1467,7 +1467,7 @@ export default function GeoLocationsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Fecha Fin</Label>
+                  <Label>{t('geoLocations.fechaFin')}</Label>
                   <Input
                     type="date"
                     value={reportFilters.endDate}
@@ -1477,7 +1477,7 @@ export default function GeoLocationsPage() {
               </div>
               
               <div className="space-y-2">
-                <Label>Ubicación</Label>
+                <Label>{t('geoLocations.ubicacion')}</Label>
                 <Select 
                   value={reportFilters.locationId} 
                   onValueChange={(v) => setReportFilters({ ...reportFilters, locationId: v })}
@@ -1486,7 +1486,7 @@ export default function GeoLocationsPage() {
                     <SelectValue placeholder="Todas las ubicaciones" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todas las ubicaciones</SelectItem>
+                    <SelectItem value="all">{t('geoLocations.todasLasUbicaciones')}</SelectItem>
                     {locations.map(loc => (
                       <SelectItem key={loc.location_id} value={loc.location_id}>{loc.name}</SelectItem>
                     ))}
@@ -1495,7 +1495,7 @@ export default function GeoLocationsPage() {
               </div>
               
               <div className="space-y-2">
-                <Label>Formato de Exportación</Label>
+                <Label>{t('geoLocations.formatoDeExportacion')}</Label>
                 <Select 
                   value={reportFilters.format} 
                   onValueChange={(v) => setReportFilters({ ...reportFilters, format: v })}
@@ -1504,8 +1504,8 @@ export default function GeoLocationsPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="excel">Excel/CSV</SelectItem>
-                    <SelectItem value="preview">Solo Vista Previa</SelectItem>
+                    <SelectItem value="excel">{t('geoLocations.excelcsv')}</SelectItem>
+                    <SelectItem value="preview">{t('geoLocations.soloVistaPrevia')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -1513,23 +1513,23 @@ export default function GeoLocationsPage() {
               {reportData && (
                 <Card className="bg-slate-50 dark:bg-slate-800/50">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">Vista Previa del Reporte</CardTitle>
+                    <CardTitle className="text-sm">{t('geoLocations.vistaPreviaDelReporte')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div>Total de marcaciones:</div>
+                      <div>{t('geoLocations.totalDeMarcaciones')}</div>
                       <div className="font-medium">{reportData.total_marks}</div>
-                      <div>Período:</div>
+                      <div>{t('geoLocations.periodo')}</div>
                       <div className="font-medium">{reportData.period?.start} - {reportData.period?.end}</div>
-                      <div>Empleados:</div>
+                      <div>{t('geoLocations.empleados')}</div>
                       <div className="font-medium">{reportData.by_employee?.length || 0}</div>
-                      <div>Alertas fuera de zona:</div>
+                      <div>{t('geoLocations.alertasFueraDeZona')}</div>
                       <div className="font-medium text-amber-600">{reportData.outside_zone_alerts?.length || 0}</div>
                     </div>
                     
                     {reportData.by_location && Object.keys(reportData.by_location).length > 0 && (
                       <div className="mt-3 pt-3 border-t">
-                        <p className="text-xs font-medium mb-2">Por Ubicación:</p>
+                        <p className="text-xs font-medium mb-2">{t('geoLocations.porUbicacion')}</p>
                         <div className="space-y-1">
                           {Object.entries(reportData.by_location).slice(0, 5).map(([loc, count]) => (
                             <div key={loc} className="flex justify-between text-xs">
@@ -1585,8 +1585,8 @@ export default function GeoLocationsPage() {
             <div className="space-y-4 py-4">
               <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
                 <div>
-                  <p className="font-medium">Alertas por Email</p>
-                  <p className="text-sm text-slate-500">Activar notificaciones automáticas</p>
+                  <p className="font-medium">{t('geoLocations.alertasPorEmail')}</p>
+                  <p className="text-sm text-slate-500">{t('geoLocations.activarNotificacionesAutomaticas')}</p>
                 </div>
                 <input
                   type="checkbox"
@@ -1597,7 +1597,7 @@ export default function GeoLocationsPage() {
               </div>
 
               <div className="space-y-3">
-                <Label>Destinatarios (emails separados por coma)</Label>
+                <Label>{t('geoLocations.destinatariosEmailsSeparadosPor')}</Label>
                 <Input
                   value={settingsForm.recipients}
                   onChange={(e) => setSettingsForm({...settingsForm, recipients: e.target.value})}
@@ -1606,7 +1606,7 @@ export default function GeoLocationsPage() {
               </div>
 
               <div className="space-y-3">
-                <p className="font-medium text-sm">Tipos de Alerta</p>
+                <p className="font-medium text-sm">{t('geoLocations.tiposDeAlerta')}</p>
                 
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
@@ -1616,8 +1616,8 @@ export default function GeoLocationsPage() {
                     className="w-4 h-4"
                   />
                   <div>
-                    <p className="font-medium text-sm">Marcaciones fuera de zona</p>
-                    <p className="text-xs text-slate-500">Email inmediato cuando alguien marca fuera del área</p>
+                    <p className="font-medium text-sm">{t('geoLocations.marcacionesFueraDeZona1')}</p>
+                    <p className="text-xs text-slate-500">{t('geoLocations.emailInmediatoCuandoAlguien')}</p>
                   </div>
                 </label>
                 
@@ -1629,8 +1629,8 @@ export default function GeoLocationsPage() {
                     className="w-4 h-4"
                   />
                   <div>
-                    <p className="font-medium text-sm">Detección de fraude</p>
-                    <p className="text-xs text-slate-500">Alertas de velocidad imposible, duplicados, etc.</p>
+                    <p className="font-medium text-sm">{t('geoLocations.deteccionDeFraude')}</p>
+                    <p className="text-xs text-slate-500">{t('geoLocations.alertasDeVelocidadImposible')}</p>
                   </div>
                 </label>
                 
@@ -1642,8 +1642,8 @@ export default function GeoLocationsPage() {
                     className="w-4 h-4"
                   />
                   <div>
-                    <p className="font-medium text-sm">Resumen diario</p>
-                    <p className="text-xs text-slate-500">Email con estadísticas del día</p>
+                    <p className="font-medium text-sm">{t('geoLocations.resumenDiario')}</p>
+                    <p className="text-xs text-slate-500">{t('geoLocations.emailConEstadisticasDel')}</p>
                   </div>
                 </label>
               </div>

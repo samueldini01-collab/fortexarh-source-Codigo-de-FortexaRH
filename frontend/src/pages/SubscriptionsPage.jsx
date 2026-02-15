@@ -443,7 +443,7 @@ export default function SubscriptionsPage() {
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center gap-4">
             <Clock className="w-8 h-8 text-blue-500" />
             <div className="flex-1">
-              <h3 className="font-semibold text-blue-800">Período de Prueba</h3>
+              <h3 className="font-semibold text-blue-800">{t('subscriptions.periodoDePrueba')}</h3>
               <p className="text-blue-600 text-sm">
                 Te quedan {subscription?.trial_days_remaining || 0} días de prueba. 
                 Actualiza a un plan pagado para desbloquear todas las funciones.
@@ -459,8 +459,8 @@ export default function SubscriptionsPage() {
           <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-4">
             <AlertTriangle className="w-8 h-8 text-red-500" />
             <div className="flex-1">
-              <h3 className="font-semibold text-red-800">Suscripción Vencida</h3>
-              <p className="text-red-600 text-sm">Tu período de prueba ha terminado. Selecciona un plan para continuar usando el sistema.</p>
+              <h3 className="font-semibold text-red-800">{t('subscriptions.suscripcionVencida')}</h3>
+              <p className="text-red-600 text-sm">{t('subscriptions.tuPeriodoDePrueba')}</p>
             </div>
             <Button onClick={() => setShowChangePlan(true)} className="bg-red-600 hover:bg-red-700">
               <CreditCard className="w-4 h-4 mr-2" />Seleccionar Plan
@@ -478,7 +478,7 @@ export default function SubscriptionsPage() {
                     <CreditCard className="w-5 h-5" />
                     Plan Actual
                   </CardTitle>
-                  <CardDescription>Detalles de su suscripción</CardDescription>
+                  <CardDescription>{t('subscriptions.detallesDeSuSuscripcion')}</CardDescription>
                 </div>
                 {getStatusBadge(subscription?.status)}
               </div>
@@ -508,19 +508,19 @@ export default function SubscriptionsPage() {
                   
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                     <div className="p-3 bg-slate-50 rounded-lg">
-                      <p className="text-xs text-slate-500 dark:text-slate-400">Base mensual</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{t('subscriptions.baseMensual')}</p>
                       <p className="text-lg font-bold">{formatCurrency(currentPlan?.base_price)}</p>
                     </div>
                     <div className="p-3 bg-slate-50 rounded-lg">
-                      <p className="text-xs text-slate-500 dark:text-slate-400">Por empleado</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{t('subscriptions.porEmpleado')}</p>
                       <p className="text-lg font-bold">{formatCurrency(currentPlan?.price_per_employee)}</p>
                     </div>
                     <div className="p-3 bg-slate-50 rounded-lg">
-                      <p className="text-xs text-slate-500 dark:text-slate-400">Empleados</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{t('subscriptions.empleados')}</p>
                       <p className="text-lg font-bold">{subscription?.current_employees || 0}</p>
                     </div>
                     <div className="p-3 bg-emerald-50 rounded-lg">
-                      <p className="text-xs text-emerald-600 dark:text-emerald-400">Total mensual</p>
+                      <p className="text-xs text-emerald-600 dark:text-emerald-400">{t('subscriptions.totalMensual')}</p>
                       <p className="text-lg font-bold text-emerald-700 dark:text-emerald-400">{formatCurrency(subscription?.total_monthly)}</p>
                     </div>
                   </div>
@@ -558,12 +558,12 @@ export default function SubscriptionsPage() {
           {/* Usage Summary */}
           <Card>
             <CardHeader>
-              <CardTitle>Uso Actual</CardTitle>
+              <CardTitle>{t('subscriptions.usoActual')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-slate-500 dark:text-slate-400">Empleados</span>
+                  <span className="text-slate-500 dark:text-slate-400">{t('subscriptions.empleados')}</span>
                   <span className="font-medium">
                     {subscription?.current_employees || 0} / {maxEmployees === -1 || maxEmployees === 9999 ? '∞' : maxEmployees}
                   </span>
@@ -582,7 +582,7 @@ export default function SubscriptionsPage() {
               
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-slate-500 dark:text-slate-400">Usuarios</span>
+                  <span className="text-slate-500 dark:text-slate-400">{t('subscriptions.usuarios')}</span>
                   <span className="font-medium">
                     {subscription?.current_users || 0} / {includedUsers + (subscription?.additional_users || 0)}
                   </span>
@@ -598,7 +598,7 @@ export default function SubscriptionsPage() {
               </div>
 
               <div className="pt-4 border-t">
-                <p className="text-sm text-slate-500 dark:text-slate-400">Período actual</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{t('subscriptions.periodoActual')}</p>
                 <p className="font-medium">
                   {formatDate(subscription?.current_period_start)} - {formatDate(subscription?.current_period_end)}
                 </p>
@@ -918,7 +918,7 @@ export default function SubscriptionsPage() {
         <Dialog open={showChangePlan} onOpenChange={setShowChangePlan}>
           <DialogContent className="max-w-3xl">
             <DialogHeader>
-              <DialogTitle>Seleccionar Plan</DialogTitle>
+              <DialogTitle>{t('subscriptions.seleccionarPlan')}</DialogTitle>
               <DialogDescription>
                 Elige el plan que mejor se adapte a tu empresa
               </DialogDescription>
@@ -942,7 +942,7 @@ export default function SubscriptionsPage() {
                       }`}
                     >
                       {isCurrentPlan && (
-                        <Badge className="absolute -top-2 right-2 bg-slate-500 text-xs">Actual</Badge>
+                        <Badge className="absolute -top-2 right-2 bg-slate-500 text-xs">{t('subscriptions.actual')}</Badge>
                       )}
                       
                       <div className="text-center">
@@ -971,10 +971,10 @@ export default function SubscriptionsPage() {
               
               {selectedPlan && (
                 <div className="mt-6 p-4 bg-slate-50 rounded-xl">
-                  <h4 className="font-semibold mb-3">Resumen del cambio</h4>
+                  <h4 className="font-semibold mb-3">{t('subscriptions.resumenDelCambio')}</h4>
                   
                   <div className="mb-4">
-                    <Label>Cantidad de empleados</Label>
+                    <Label>{t('subscriptions.cantidadDeEmpleados')}</Label>
                     <div className="flex items-center gap-4 mt-2">
                       <Input 
                         type="number" 
@@ -1005,7 +1005,7 @@ export default function SubscriptionsPage() {
                       <span>{formatCurrency(employeeCount * selectedPlan.price_per_employee)}</span>
                     </div>
                     <div className="flex justify-between font-bold text-lg border-t pt-2 mt-2">
-                      <span>Total mensual</span>
+                      <span>{t('subscriptions.totalMensual')}</span>
                       <span className="text-emerald-600 dark:text-emerald-400">{formatCurrency(calculateTotal(selectedPlan, employeeCount))}</span>
                     </div>
                   </div>
@@ -1045,7 +1045,7 @@ export default function SubscriptionsPage() {
         <Dialog open={showAdjustEmployees} onOpenChange={setShowAdjustEmployees}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Ajustar Cantidad de Empleados</DialogTitle>
+              <DialogTitle>{t('subscriptions.ajustarCantidadDeEmpleados')}</DialogTitle>
               <DialogDescription>
                 Modifique la cantidad de empleados incluidos en su plan
               </DialogDescription>
@@ -1066,7 +1066,7 @@ export default function SubscriptionsPage() {
               
               <div className="p-4 bg-slate-50 rounded-lg">
                 <div className="flex justify-between">
-                  <span>Base del plan</span>
+                  <span>{t('subscriptions.baseDelPlan')}</span>
                   <span>{formatCurrency(currentPlan?.base_price)}</span>
                 </div>
                 <div className="flex justify-between">
@@ -1074,15 +1074,15 @@ export default function SubscriptionsPage() {
                   <span>{formatCurrency(employeeCount * (currentPlan?.price_per_employee || 0))}</span>
                 </div>
                 <div className="flex justify-between font-bold border-t mt-2 pt-2">
-                  <span>Total mensual</span>
+                  <span>{t('subscriptions.totalMensual')}</span>
                   <span>{formatCurrency((currentPlan?.base_price || 0) + (employeeCount * (currentPlan?.price_per_employee || 0)))}</span>
                 </div>
               </div>
             </div>
             
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowAdjustEmployees(false)}>Cancelar</Button>
-              <Button onClick={handleUpdateEmployees}>Confirmar Cambio</Button>
+              <Button variant="outline" onClick={() => setShowAdjustEmployees(false)}>{t('subscriptions.cancelar')}</Button>
+              <Button onClick={handleUpdateEmployees}>{t('subscriptions.confirmarCambio')}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -1091,7 +1091,7 @@ export default function SubscriptionsPage() {
         <Dialog open={showAddUsers} onOpenChange={setShowAddUsers}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Usuarios Adicionales</DialogTitle>
+              <DialogTitle>{t('subscriptions.usuariosAdicionales')}</DialogTitle>
               <DialogDescription>
                 Agregue usuarios adicionales a su suscripción ($2.50/mes por usuario)
               </DialogDescription>
@@ -1112,23 +1112,23 @@ export default function SubscriptionsPage() {
               
               <div className="p-4 bg-slate-50 rounded-lg">
                 <div className="flex justify-between">
-                  <span>Usuarios incluidos</span>
+                  <span>{t('subscriptions.usuariosIncluidos')}</span>
                   <span>{includedUsers}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Usuarios adicionales</span>
+                  <span>{t('subscriptions.usuariosAdicionales1')}</span>
                   <span>{additionalUsers} × $2.50 = {formatCurrency(additionalUsers * 2.50)}</span>
                 </div>
                 <div className="flex justify-between font-bold border-t mt-2 pt-2">
-                  <span>Total usuarios</span>
+                  <span>{t('subscriptions.totalUsuarios')}</span>
                   <span>{includedUsers + additionalUsers}</span>
                 </div>
               </div>
             </div>
             
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowAddUsers(false)}>Cancelar</Button>
-              <Button onClick={handleUpdateUsers}>Confirmar</Button>
+              <Button variant="outline" onClick={() => setShowAddUsers(false)}>{t('subscriptions.cancelar')}</Button>
+              <Button onClick={handleUpdateUsers}>{t('subscriptions.confirmar')}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -1140,7 +1140,7 @@ export default function SubscriptionsPage() {
               <div className="w-16 h-16 mx-auto rounded-full bg-emerald-100 flex items-center justify-center mb-4">
                 <CheckCircle2 className="w-10 h-10 text-emerald-600 dark:text-emerald-400" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">¡Pago Exitoso!</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">{t('subscriptions.pagoExitoso')}</h2>
               <p className="text-slate-600 mb-6">
                 Su suscripción ha sido activada correctamente. Ahora tiene acceso a todas las funciones de su plan.
               </p>
@@ -1159,7 +1159,7 @@ export default function SubscriptionsPage() {
           <DialogContent className="sm:max-w-md">
             <div className="text-center py-6">
               <Loader2 className="w-12 h-12 mx-auto text-blue-500 animate-spin mb-4" />
-              <h2 className="text-xl font-bold text-slate-900 mb-2">Verificando Pago</h2>
+              <h2 className="text-xl font-bold text-slate-900 mb-2">{t('subscriptions.verificandoPago')}</h2>
               <p className="text-slate-600 dark:text-slate-300">
                 Por favor espere mientras confirmamos su pago...
               </p>
@@ -1199,15 +1199,15 @@ export default function SubscriptionsPage() {
                     
                     <div className="mt-4 space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-slate-600 dark:text-slate-300">Precio actual:</span>
+                        <span className="text-slate-600 dark:text-slate-300">{t('subscriptions.precioActual')}</span>
                         <span className="line-through text-slate-400">{formatCurrency(cancellationInfo.current_plan?.monthly_cost)}/mes</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-600 dark:text-slate-300">Nuevo precio:</span>
+                        <span className="text-slate-600 dark:text-slate-300">{t('subscriptions.nuevoPrecio')}</span>
                         <span className="font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(cancellationInfo.retention_offer?.discounted_monthly)}/mes</span>
                       </div>
                       <div className="flex justify-between pt-2 border-t">
-                        <span className="font-medium">Ahorras en 3 meses:</span>
+                        <span className="font-medium">{t('subscriptions.ahorrasEn3Meses')}</span>
                         <span className="font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(cancellationInfo.retention_offer?.savings_total)}</span>
                       </div>
                     </div>
@@ -1253,7 +1253,7 @@ export default function SubscriptionsPage() {
                 
                 <div className="py-4 space-y-4">
                   <div>
-                    <Label className="text-sm font-medium">Motivo de cancelación *</Label>
+                    <Label className="text-sm font-medium">{t('subscriptions.motivoDeCancelacion')}</Label>
                     <RadioGroup value={cancelReason} onValueChange={setCancelReason} className="mt-2 space-y-2">
                       {(cancellationInfo.cancellation_reasons || []).map(reason => (
                         <div key={reason.id} className="flex items-center space-x-2">
@@ -1265,7 +1265,7 @@ export default function SubscriptionsPage() {
                   </div>
                   
                   <div>
-                    <Label className="text-sm font-medium">Comentarios adicionales (opcional)</Label>
+                    <Label className="text-sm font-medium">{t('subscriptions.comentariosAdicionalesOpcional')}</Label>
                     <Textarea 
                       placeholder="Cuéntanos más sobre tu experiencia..."
                       value={cancelFeedback}
@@ -1276,7 +1276,7 @@ export default function SubscriptionsPage() {
                   </div>
                   
                   <div>
-                    <Label className="text-sm font-medium">¿Considerarías volver en el futuro?</Label>
+                    <Label className="text-sm font-medium">{t('subscriptions.considerariasVolverEnEl')}</Label>
                     <div className="flex gap-4 mt-2">
                       <Button 
                         type="button"
@@ -1325,7 +1325,7 @@ export default function SubscriptionsPage() {
                 
                 <div className="py-4 space-y-4">
                   <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <h4 className="font-medium text-red-800 mb-2">Al cancelar perderás acceso a:</h4>
+                    <h4 className="font-medium text-red-800 mb-2">{t('subscriptions.alCancelarPerderasAcceso')}</h4>
                     <ul className="text-sm text-red-700 space-y-1">
                       <li>• Procesamiento de nóminas</li>
                       <li>• Gestión de empleados</li>
@@ -1336,7 +1336,7 @@ export default function SubscriptionsPage() {
                   
                   <div className="bg-slate-50 rounded-lg p-4">
                     <p className="text-sm text-slate-600 dark:text-slate-300">
-                      <strong>Nota:</strong> Tendrás acceso hasta el final de tu período de facturación actual. 
+                      <strong>{t('subscriptions.nota')}</strong> Tendrás acceso hasta el final de tu período de facturación actual. 
                       Tus datos se mantendrán guardados por 30 días por si decides volver.
                     </p>
                   </div>

@@ -610,8 +610,8 @@ export default function OrganigramaPage() {
       <Dialog open={showTemplateWizard} onOpenChange={setShowTemplateWizard}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
           <DialogHeader>
-            <DialogTitle className="text-xl">Configuración de Organigrama</DialogTitle>
-            <DialogDescription>Asistente de configuración inicial</DialogDescription>
+            <DialogTitle className="text-xl">{t('orgChart.configuracionDeOrganigrama')}</DialogTitle>
+            <DialogDescription>{t('orgChart.asistenteDeConfiguracionInicial')}</DialogDescription>
           </DialogHeader>
           
           {/* Progress Steps */}
@@ -635,8 +635,8 @@ export default function OrganigramaPage() {
             {wizardStep === 1 && (
               <div className="space-y-4">
                 <div className="text-center mb-6">
-                  <h3 className="text-lg font-semibold">Selecciona una Plantilla Base</h3>
-                  <p className="text-slate-500 text-sm">Elige la estructura que mejor se adapte al tamaño y tipo de tu organización. Podrás personalizar cada departamento y posición en el siguiente paso.</p>
+                  <h3 className="text-lg font-semibold">{t('orgChart.seleccionaUnaPlantillaBase')}</h3>
+                  <p className="text-slate-500 text-sm">{t('orgChart.eligeLaEstructuraQue')}</p>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
@@ -673,8 +673,8 @@ export default function OrganigramaPage() {
                 <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mt-4 flex items-start gap-3">
                   <Lightbulb className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="font-medium text-amber-800">¿Cómo funciona?</h4>
-                    <p className="text-sm text-amber-700 dark:text-amber-400">Al seleccionar una plantilla, no estás atado a ella. En el siguiente paso podrás renombrar unidades, agregar o eliminar posiciones, y ajustar la jerarquía visualmente antes de guardar los cambios.</p>
+                    <h4 className="font-medium text-amber-800">{t('orgChart.comoFunciona')}</h4>
+                    <p className="text-sm text-amber-700 dark:text-amber-400">{t('orgChart.alSeleccionarUnaPlantilla')}</p>
                   </div>
                 </div>
               </div>
@@ -684,8 +684,8 @@ export default function OrganigramaPage() {
             {wizardStep === 2 && selectedTemplate && (
               <div className="space-y-4">
                 <div className="text-center mb-4">
-                  <h3 className="text-lg font-semibold">Personaliza tu Estructura</h3>
-                  <p className="text-slate-500 text-sm">Activa o desactiva unidades según tus necesidades. Puedes cambiar los nombres de los departamentos. Las posiciones se crearán automáticamente dentro de cada unidad activa.</p>
+                  <h3 className="text-lg font-semibold">{t('orgChart.personalizaTuEstructura')}</h3>
+                  <p className="text-slate-500 text-sm">{t('orgChart.activaODesactivaUnidades')}</p>
                 </div>
                 
                 <div className="border rounded-lg p-4 bg-white">
@@ -693,7 +693,7 @@ export default function OrganigramaPage() {
                 </div>
 
                 <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-700 dark:text-amber-400">
-                  <strong>Nota:</strong> Desactivar una unidad principal ocultará también todas sus sub-unidades y posiciones asociadas.
+                  <strong>{t('orgChart.nota')}</strong> Desactivar una unidad principal ocultará también todas sus sub-unidades y posiciones asociadas.
                 </div>
               </div>
             )}
@@ -702,29 +702,29 @@ export default function OrganigramaPage() {
             {wizardStep === 3 && (
               <div className="space-y-4">
                 <div className="text-center mb-4">
-                  <h3 className="text-lg font-semibold">Vista Previa Final</h3>
-                  <p className="text-slate-500 text-sm">Revisa el resumen de la estructura que se generará. Esta acción creará las unidades y posiciones en tu base de datos.</p>
+                  <h3 className="text-lg font-semibold">{t('orgChart.vistaPreviaFinal')}</h3>
+                  <p className="text-slate-500 text-sm">{t('orgChart.revisaElResumenDe')}</p>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4 mb-6">
                   <Card>
                     <CardContent className="p-4 text-center">
                       <Building2 className="w-8 h-8 mx-auto text-blue-500 mb-2" />
-                      <p className="text-sm text-slate-500 dark:text-slate-400">Unidades Organizativas</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{t('orgChart.unidadesOrganizativas')}</p>
                       <p className="text-2xl font-bold">{stats.unitCount}</p>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardContent className="p-4 text-center">
                       <Briefcase className="w-8 h-8 mx-auto text-emerald-500 mb-2" />
-                      <p className="text-sm text-slate-500 dark:text-slate-400">Posiciones Definidas</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{t('orgChart.posicionesDefinidas')}</p>
                       <p className="text-2xl font-bold">{stats.positionCount}</p>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardContent className="p-4 text-center">
                       <Users className="w-8 h-8 mx-auto text-purple-500 mb-2" />
-                      <p className="text-sm text-slate-500 dark:text-slate-400">Plazas Totales</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{t('orgChart.plazasTotales')}</p>
                       <p className="text-2xl font-bold">{stats.positionCount}</p>
                     </CardContent>
                   </Card>
@@ -790,8 +790,8 @@ export default function OrganigramaPage() {
               <Network className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">Organigrama</h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400">Visualice y gestione la estructura de su organización</p>
+              <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">{t('orgChart.organigrama')}</h1>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{t('orgChart.visualiceYGestioneLa')}</p>
             </div>
           </div>
           
@@ -877,8 +877,8 @@ export default function OrganigramaPage() {
           ) : nodes.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-[500px] text-slate-400">
               <Move className="w-12 h-12 mb-4" />
-              <p className="text-lg">Estructura vacía o no cargada</p>
-              <p className="text-sm mt-2">Cree una nueva unidad o use una plantilla para comenzar</p>
+              <p className="text-lg">{t('orgChart.estructuraVaciaONo')}</p>
+              <p className="text-sm mt-2">{t('orgChart.creeUnaNuevaUnidad')}</p>
             </div>
           ) : (
             <div 
@@ -919,12 +919,12 @@ export default function OrganigramaPage() {
         <Dialog open={showNewUnit} onOpenChange={setShowNewUnit}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Nueva Unidad Organizativa</DialogTitle>
-              <DialogDescription>Crear un nuevo departamento o área en la organización</DialogDescription>
+              <DialogTitle>{t('orgChart.nuevaUnidadOrganizativa')}</DialogTitle>
+              <DialogDescription>{t('orgChart.crearUnNuevoDepartamento')}</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label>Nombre de la Unidad *</Label>
+                <Label>{t('orgChart.nombreDeLaUnidad')}</Label>
                 <Input 
                   placeholder="Ej: Recursos Humanos"
                   value={newUnit.name}
@@ -932,7 +932,7 @@ export default function OrganigramaPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Código</Label>
+                <Label>{t('orgChart.codigo')}</Label>
                 <Input 
                   placeholder="Ej: RRHH"
                   value={newUnit.code}
@@ -940,13 +940,13 @@ export default function OrganigramaPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Unidad Padre (opcional)</Label>
+                <Label>{t('orgChart.unidadPadreOpcional')}</Label>
                 <Select value={newUnit.parent_id || "none"} onValueChange={(v) => setNewUnit({...newUnit, parent_id: v === "none" ? null : v})}>
                   <SelectTrigger>
                     <SelectValue placeholder="Ninguna (raíz)" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">Ninguna (raíz)</SelectItem>
+                    <SelectItem value="none">{t('orgChart.ningunaRaiz')}</SelectItem>
                     {nodes.filter(n => n.node_type === "unit").map(node => (
                       <SelectItem key={node.node_id} value={node.node_id}>{node.name}</SelectItem>
                     ))}
@@ -954,7 +954,7 @@ export default function OrganigramaPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Descripción</Label>
+                <Label>{t('orgChart.descripcion')}</Label>
                 <Textarea 
                   placeholder="Descripción de la unidad..."
                   value={newUnit.description}
@@ -963,8 +963,8 @@ export default function OrganigramaPage() {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowNewUnit(false)}>Cancelar</Button>
-              <Button onClick={handleCreateUnit}>Crear Unidad</Button>
+              <Button variant="outline" onClick={() => setShowNewUnit(false)}>{t('orgChart.cancelar')}</Button>
+              <Button onClick={handleCreateUnit}>{t('orgChart.crearUnidad')}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -973,12 +973,12 @@ export default function OrganigramaPage() {
         <Dialog open={showNewPosition} onOpenChange={setShowNewPosition}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Nueva Posición</DialogTitle>
-              <DialogDescription>Crear una nueva posición o cargo en la organización</DialogDescription>
+              <DialogTitle>{t('orgChart.nuevaPosicion')}</DialogTitle>
+              <DialogDescription>{t('orgChart.crearUnaNuevaPosicion')}</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label>Título del Cargo *</Label>
+                <Label>{t('orgChart.tituloDelCargo')}</Label>
                 <Input 
                   placeholder="Ej: Gerente de RRHH"
                   value={newPosition.title}
@@ -986,13 +986,13 @@ export default function OrganigramaPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Unidad/Departamento</Label>
+                <Label>{t('orgChart.unidaddepartamento')}</Label>
                 <Select value={newPosition.unit_id || "none"} onValueChange={(v) => setNewPosition({...newPosition, unit_id: v === "none" ? null : v})}>
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar unidad" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">Sin asignar</SelectItem>
+                    <SelectItem value="none">{t('orgChart.sinAsignar')}</SelectItem>
                     {nodes.filter(n => n.node_type === "unit").map(node => (
                       <SelectItem key={node.node_id} value={node.node_id}>{node.name}</SelectItem>
                     ))}
@@ -1000,13 +1000,13 @@ export default function OrganigramaPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Asignar Empleado (opcional)</Label>
+                <Label>{t('orgChart.asignarEmpleadoOpcional')}</Label>
                 <Select value={newPosition.employee_id || "none"} onValueChange={(v) => setNewPosition({...newPosition, employee_id: v === "none" ? null : v})}>
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar empleado" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">Vacante</SelectItem>
+                    <SelectItem value="none">{t('orgChart.vacante')}</SelectItem>
                     {employees.map(emp => (
                       <SelectItem key={emp.employee_id} value={emp.employee_id}>
                         {emp.first_name} {emp.last_name}
@@ -1016,7 +1016,7 @@ export default function OrganigramaPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Descripción del Cargo</Label>
+                <Label>{t('orgChart.descripcionDelCargo')}</Label>
                 <Textarea 
                   placeholder="Funciones y responsabilidades..."
                   value={newPosition.description}
@@ -1025,8 +1025,8 @@ export default function OrganigramaPage() {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowNewPosition(false)}>Cancelar</Button>
-              <Button onClick={handleCreatePosition}>Crear Posición</Button>
+              <Button variant="outline" onClick={() => setShowNewPosition(false)}>{t('orgChart.cancelar')}</Button>
+              <Button onClick={handleCreatePosition}>{t('orgChart.crearPosicion')}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -1062,7 +1062,7 @@ export default function OrganigramaPage() {
                 
                 {editingNode.node_type === "unit" && (
                   <div className="space-y-2">
-                    <Label>Código</Label>
+                    <Label>{t('orgChart.codigo')}</Label>
                     <Input 
                       value={editingNode.code || ""}
                       onChange={(e) => setEditingNode({...editingNode, code: e.target.value.toUpperCase()})}
@@ -1073,7 +1073,7 @@ export default function OrganigramaPage() {
                 )}
 
                 <div className="space-y-2">
-                  <Label>Unidad Padre</Label>
+                  <Label>{t('orgChart.unidadPadre')}</Label>
                   <Select 
                     value={editingNode.parent_id || "none"} 
                     onValueChange={(v) => setEditingNode({...editingNode, parent_id: v === "none" ? null : v})}
@@ -1082,7 +1082,7 @@ export default function OrganigramaPage() {
                       <SelectValue placeholder="Ninguna (raíz)" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="none">Ninguna (raíz)</SelectItem>
+                      <SelectItem value="none">{t('orgChart.ningunaRaiz')}</SelectItem>
                       {nodes.filter(n => n.node_type === "unit" && n.node_id !== editingNode.node_id).map(node => (
                         <SelectItem key={node.node_id} value={node.node_id}>{node.name}</SelectItem>
                       ))}
@@ -1092,7 +1092,7 @@ export default function OrganigramaPage() {
 
                 {editingNode.node_type === "position" && (
                   <div className="space-y-2">
-                    <Label>Empleado Asignado</Label>
+                    <Label>{t('orgChart.empleadoAsignado')}</Label>
                     <Select 
                       value={editingNode.employee_id || "none"} 
                       onValueChange={(v) => setEditingNode({...editingNode, employee_id: v === "none" ? null : v})}
@@ -1101,7 +1101,7 @@ export default function OrganigramaPage() {
                         <SelectValue placeholder="Vacante" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="none">Vacante</SelectItem>
+                        <SelectItem value="none">{t('orgChart.vacante')}</SelectItem>
                         {employees.map(emp => (
                           <SelectItem key={emp.employee_id} value={emp.employee_id}>
                             {emp.first_name} {emp.last_name}
@@ -1113,7 +1113,7 @@ export default function OrganigramaPage() {
                 )}
 
                 <div className="space-y-2">
-                  <Label>Descripción</Label>
+                  <Label>{t('orgChart.descripcion')}</Label>
                   <Textarea 
                     value={editingNode.description || ""}
                     onChange={(e) => setEditingNode({...editingNode, description: e.target.value})}
@@ -1124,8 +1124,8 @@ export default function OrganigramaPage() {
               </div>
             )}
             <DialogFooter>
-              <Button variant="outline" onClick={() => setEditingNode(null)}>Cancelar</Button>
-              <Button onClick={handleUpdateNode}>Guardar Cambios</Button>
+              <Button variant="outline" onClick={() => setEditingNode(null)}>{t('orgChart.cancelar')}</Button>
+              <Button onClick={handleUpdateNode}>{t('orgChart.guardarCambios')}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

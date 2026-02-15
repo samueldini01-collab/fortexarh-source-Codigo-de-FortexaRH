@@ -323,14 +323,14 @@ export default function AttendancePage() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="present">Presente</SelectItem>
-                          <SelectItem value="absent">Ausente</SelectItem>
-                          <SelectItem value="late">Tarde</SelectItem>
+                          <SelectItem value="present">{t('attendance.presente')}</SelectItem>
+                          <SelectItem value="absent">{t('attendance.ausente')}</SelectItem>
+                          <SelectItem value="late">{t('attendance.tarde')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Notas (opcional)</Label>
+                      <Label>{t('attendance.notasOpcional')}</Label>
                       <Input
                         value={formData.notes}
                         onChange={(e) => setFormData({...formData, notes: e.target.value})}
@@ -690,14 +690,14 @@ export default function AttendancePage() {
                   <Table>
                     <TableHeader>
                       <TableRow className="dark:border-slate-700">
-                        <TableHead className="dark:text-slate-300">Empleado</TableHead>
-                        <TableHead className="dark:text-slate-300">Departamento</TableHead>
-                        <TableHead className="dark:text-slate-300">Fecha</TableHead>
-                        <TableHead className="dark:text-slate-300">Entrada</TableHead>
-                        <TableHead className="dark:text-slate-300">Salida</TableHead>
-                        <TableHead className="dark:text-slate-300">Horas</TableHead>
-                        <TableHead className="dark:text-slate-300">H. Extra</TableHead>
-                        <TableHead className="dark:text-slate-300">Estado</TableHead>
+                        <TableHead className="dark:text-slate-300">{t('attendance.empleado')}</TableHead>
+                        <TableHead className="dark:text-slate-300">{t('attendance.departamento')}</TableHead>
+                        <TableHead className="dark:text-slate-300">{t('attendance.fecha')}</TableHead>
+                        <TableHead className="dark:text-slate-300">{t('attendance.entrada')}</TableHead>
+                        <TableHead className="dark:text-slate-300">{t('attendance.salida')}</TableHead>
+                        <TableHead className="dark:text-slate-300">{t('attendance.horas')}</TableHead>
+                        <TableHead className="dark:text-slate-300">{t('attendance.hExtra')}</TableHead>
+                        <TableHead className="dark:text-slate-300">{t('attendance.estado')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -730,8 +730,8 @@ export default function AttendancePage() {
           <TabsContent value="shifts" className="space-y-6">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-lg font-semibold dark:text-white">Gestión de Turnos</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Configure los horarios de trabajo de su empresa</p>
+                <h3 className="text-lg font-semibold dark:text-white">{t('attendance.gestionDeTurnos')}</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{t('attendance.configureLosHorariosDe')}</p>
               </div>
               <Dialog open={isShiftDialogOpen} onOpenChange={setIsShiftDialogOpen}>
                 <DialogTrigger asChild>
@@ -742,11 +742,11 @@ export default function AttendancePage() {
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle className="heading">Crear Turno</DialogTitle>
+                    <DialogTitle className="heading">{t('attendance.crearTurno')}</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleCreateShift} className="space-y-4 mt-4">
                     <div className="space-y-2">
-                      <Label>Nombre del Turno</Label>
+                      <Label>{t('attendance.nombreDelTurno')}</Label>
                       <Input
                         value={shiftFormData.name}
                         onChange={(e) => setShiftFormData({...shiftFormData, name: e.target.value})}
@@ -757,7 +757,7 @@ export default function AttendancePage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>Hora Entrada</Label>
+                        <Label>{t('attendance.horaEntrada')}</Label>
                         <Input
                           type="time"
                           value={shiftFormData.start_time}
@@ -767,7 +767,7 @@ export default function AttendancePage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Hora Salida</Label>
+                        <Label>{t('attendance.horaSalida')}</Label>
                         <Input
                           type="time"
                           value={shiftFormData.end_time}
@@ -779,7 +779,7 @@ export default function AttendancePage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>Minutos de Almuerzo</Label>
+                        <Label>{t('attendance.minutosDeAlmuerzo')}</Label>
                         <Input
                           type="number"
                           value={shiftFormData.break_minutes}
@@ -788,7 +788,7 @@ export default function AttendancePage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Tolerancia (min)</Label>
+                        <Label>{t('attendance.toleranciaMin')}</Label>
                         <Input
                           type="number"
                           value={shiftFormData.grace_period_minutes}
@@ -805,7 +805,7 @@ export default function AttendancePage() {
                         onChange={(e) => setShiftFormData({...shiftFormData, is_night_shift: e.target.checked})}
                         className="rounded"
                       />
-                      <Label htmlFor="night-shift">Es turno nocturno</Label>
+                      <Label htmlFor="night-shift">{t('attendance.esTurnoNocturno')}</Label>
                     </div>
                     <div className="flex justify-end gap-3 pt-4">
                       <Button type="button" variant="outline" onClick={() => setIsShiftDialogOpen(false)}>
@@ -825,8 +825,8 @@ export default function AttendancePage() {
                 <Card className="col-span-full border-dashed">
                   <CardContent className="text-center py-12">
                     <Settings className="w-12 h-12 mx-auto mb-4 text-slate-300 dark:text-slate-600" />
-                    <p className="text-slate-500 dark:text-slate-400">No hay turnos configurados</p>
-                    <p className="text-sm text-slate-400 dark:text-slate-500">Cree un turno para asignar horarios a los empleados</p>
+                    <p className="text-slate-500 dark:text-slate-400">{t('attendance.noHayTurnosConfigurados')}</p>
+                    <p className="text-sm text-slate-400 dark:text-slate-500">{t('attendance.creeUnTurnoPara')}</p>
                   </CardContent>
                 </Card>
               ) : (
@@ -869,7 +869,7 @@ export default function AttendancePage() {
           <TabsContent value="alerts" className="space-y-6">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-lg font-semibold dark:text-white">Alertas de Asistencia</h3>
+                <h3 className="text-lg font-semibold dark:text-white">{t('attendance.alertasDeAsistencia')}</h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
                   {alerts.total_alerts || 0} alertas activas para hoy
                 </p>
@@ -880,8 +880,8 @@ export default function AttendancePage() {
               <Card className="border-emerald-200 dark:border-emerald-800">
                 <CardContent className="text-center py-12">
                   <UserCheck className="w-12 h-12 mx-auto mb-4 text-emerald-500" />
-                  <p className="text-emerald-700 dark:text-emerald-400 font-medium">Sin alertas pendientes</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Todo el equipo está al día con sus registros</p>
+                  <p className="text-emerald-700 dark:text-emerald-400 font-medium">{t('attendance.sinAlertasPendientes')}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('attendance.todoElEquipoEsta')}</p>
                 </CardContent>
               </Card>
             ) : (

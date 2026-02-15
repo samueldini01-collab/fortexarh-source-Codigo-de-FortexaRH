@@ -406,7 +406,7 @@ export default function CompanyConfigPage() {
         </div>
         
         <div className="space-y-2">
-          <Label>Dirección</Label>
+          <Label>{t('companyConfig.direccion')}</Label>
           <Textarea 
             placeholder="Dirección física de la empresa..."
             value={company.address}
@@ -416,7 +416,7 @@ export default function CompanyConfigPage() {
         </div>
         
         <div className="space-y-2">
-          <Label>Sitio Web</Label>
+          <Label>{t('companyConfig.sitioWeb')}</Label>
           <Input 
             placeholder="https://www.empresa.com"
             value={company.website}
@@ -437,8 +437,8 @@ export default function CompanyConfigPage() {
   const renderLogoTab = () => (
     <Card className="border-l-4 border-l-purple-500">
       <CardHeader>
-        <CardTitle>Logo de la Empresa</CardTitle>
-        <CardDescription>Sube el logo que aparecerá en reportes, documentos y la interfaz.</CardDescription>
+        <CardTitle>{t('companyConfig.logoDeLaEmpresa')}</CardTitle>
+        <CardDescription>{t('companyConfig.subeElLogoQue')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex flex-col items-center gap-6">
@@ -448,7 +448,7 @@ export default function CompanyConfigPage() {
             ) : (
               <div className="text-center text-slate-400">
                 <Image className="w-12 h-12 mx-auto mb-2" />
-                <p className="text-sm">Sin logo</p>
+                <p className="text-sm">{t('companyConfig.sinLogo')}</p>
               </div>
             )}
           </div>
@@ -462,7 +462,7 @@ export default function CompanyConfigPage() {
                 className="hidden"
               />
               <Button variant="outline" asChild>
-                <span><Upload className="w-4 h-4 mr-2" />Subir Logo</span>
+                <span><Upload className="w-4 h-4 mr-2" />{t('companyConfig.subirLogo')}</span>
               </Button>
             </label>
             
@@ -474,16 +474,16 @@ export default function CompanyConfigPage() {
           </div>
           
           <div className="text-sm text-slate-500 text-center">
-            <p>Formatos aceptados: PNG, JPG, SVG</p>
-            <p>Tamaño máximo: 2MB</p>
-            <p>Dimensiones recomendadas: 400x400px</p>
+            <p>{t('companyConfig.formatosAceptadosPngJpg')}</p>
+            <p>{t('companyConfig.tamanoMaximo2mb')}</p>
+            <p>{t('companyConfig.dimensionesRecomendadas400x400px')}</p>
           </div>
         </div>
         
         {/* Preview in document */}
         {logoPreview && (
           <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
-            <h4 className="text-sm font-medium mb-3">Vista previa en documentos:</h4>
+            <h4 className="text-sm font-medium mb-3">{t('companyConfig.vistaPreviaEnDocumentos')}</h4>
             <div className="bg-white p-6 rounded border text-center">
               <img src={logoPreview} alt="Logo preview" className="h-16 mx-auto mb-2" />
               <p className="font-semibold">{company.name || "Nombre de la Empresa"}</p>
@@ -505,16 +505,16 @@ export default function CompanyConfigPage() {
   const renderAppearanceTab = () => (
     <Card className="border-l-4 border-l-pink-500">
       <CardHeader>
-        <CardTitle>Apariencia y Tema</CardTitle>
-        <CardDescription>Personaliza los colores y el aspecto visual del sistema.</CardDescription>
+        <CardTitle>{t('companyConfig.aparienciaYTema')}</CardTitle>
+        <CardDescription>{t('companyConfig.personalizaLosColoresY')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Colors */}
         <div className="space-y-4">
-          <h3 className="font-medium">Colores de Marca</h3>
+          <h3 className="font-medium">{t('companyConfig.coloresDeMarca')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label>Color Primario</Label>
+              <Label>{t('companyConfig.colorPrimario')}</Label>
               <div className="flex gap-2">
                 <input 
                   type="color"
@@ -530,7 +530,7 @@ export default function CompanyConfigPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Color Secundario</Label>
+              <Label>{t('companyConfig.colorSecundario')}</Label>
               <div className="flex gap-2">
                 <input 
                   type="color"
@@ -546,7 +546,7 @@ export default function CompanyConfigPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Color de Acento</Label>
+              <Label>{t('companyConfig.colorDeAcento')}</Label>
               <div className="flex gap-2">
                 <input 
                   type="color"
@@ -566,7 +566,7 @@ export default function CompanyConfigPage() {
         
         {/* Theme */}
         <div className="space-y-4">
-          <h3 className="font-medium">Tema</h3>
+          <h3 className="font-medium">{t('companyConfig.tema')}</h3>
           <div className="flex gap-3">
             {THEMES.map(theme => {
               const Icon = theme.icon;
@@ -591,10 +591,10 @@ export default function CompanyConfigPage() {
         
         {/* Typography */}
         <div className="space-y-4">
-          <h3 className="font-medium">Tipografía</h3>
+          <h3 className="font-medium">{t('companyConfig.tipografia')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Familia de Fuente</Label>
+              <Label>{t('companyConfig.familiaDeFuente')}</Label>
               <Select 
                 value={appearance.fontFamily}
                 onValueChange={(v) => setAppearance({...appearance, fontFamily: v})}
@@ -610,7 +610,7 @@ export default function CompanyConfigPage() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Tamaño de Fuente</Label>
+              <Label>{t('companyConfig.tamanoDeFuente')}</Label>
               <Select 
                 value={appearance.fontSize}
                 onValueChange={(v) => setAppearance({...appearance, fontSize: v})}
@@ -630,7 +630,7 @@ export default function CompanyConfigPage() {
         
         {/* Preview */}
         <div className="p-4 rounded-lg border bg-slate-50 dark:bg-slate-800">
-          <h4 className="font-medium mb-2">Vista Previa</h4>
+          <h4 className="font-medium mb-2">{t('companyConfig.vistaPrevia')}</h4>
           <div 
             className="p-4 rounded-lg bg-white border"
             style={{ fontFamily: appearance.fontFamily }}
@@ -665,13 +665,13 @@ export default function CompanyConfigPage() {
   const renderBrandingTab = () => (
     <Card className="border-l-4 border-l-orange-500">
       <CardHeader>
-        <CardTitle>Marca y Textos</CardTitle>
-        <CardDescription>Personaliza los textos y enlaces que aparecen en la plataforma.</CardDescription>
+        <CardTitle>{t('companyConfig.marcaYTextos')}</CardTitle>
+        <CardDescription>{t('companyConfig.personalizaLosTextosY')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label>Texto de Encabezado</Label>
+            <Label>{t('companyConfig.textoDeEncabezado')}</Label>
             <Input 
               placeholder="Texto que aparece en el encabezado del sistema"
               value={branding.headerText}
@@ -680,7 +680,7 @@ export default function CompanyConfigPage() {
           </div>
           
           <div className="space-y-2">
-            <Label>Texto de Pie de Página</Label>
+            <Label>{t('companyConfig.textoDePieDe')}</Label>
             <Input 
               placeholder="Ej. © 2026 Fortexa Corp. Todos los derechos reservados."
               value={branding.footerText}
@@ -689,7 +689,7 @@ export default function CompanyConfigPage() {
           </div>
           
           <div className="space-y-2">
-            <Label>Mensaje de Bienvenida</Label>
+            <Label>{t('companyConfig.mensajeDeBienvenida')}</Label>
             <Textarea 
               placeholder="Mensaje que se muestra al iniciar sesión"
               value={branding.welcomeMessage}
@@ -700,7 +700,7 @@ export default function CompanyConfigPage() {
         </div>
         
         <div className="space-y-4">
-          <h3 className="font-medium">Redes Sociales</h3>
+          <h3 className="font-medium">{t('companyConfig.redesSociales')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
@@ -770,8 +770,8 @@ export default function CompanyConfigPage() {
   const renderNotificationsTab = () => (
     <Card className="border-l-4 border-l-green-500">
       <CardHeader>
-        <CardTitle>Notificaciones y Comunicaciones</CardTitle>
-        <CardDescription>Gestiona cómo se envían las alertas y permisos de comunicación.</CardDescription>
+        <CardTitle>{t('companyConfig.notificacionesYComunicaciones')}</CardTitle>
+        <CardDescription>{t('companyConfig.gestionaComoSeEnvian')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-3">
@@ -781,8 +781,8 @@ export default function CompanyConfigPage() {
                 <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <h4 className="font-medium">Notificaciones por Correo</h4>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Recibir resúmenes semanales y alertas importantes.</p>
+                <h4 className="font-medium">{t('companyConfig.notificacionesPorCorreo')}</h4>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{t('companyConfig.recibirResumenesSemanalesY')}</p>
               </div>
             </div>
             <Switch 
@@ -797,8 +797,8 @@ export default function CompanyConfigPage() {
                 <MessageSquare className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div>
-                <h4 className="font-medium">Notificaciones SMS</h4>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Alertas urgentes enviadas a móviles registrados.</p>
+                <h4 className="font-medium">{t('companyConfig.notificacionesSms')}</h4>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{t('companyConfig.alertasUrgentesEnviadasA')}</p>
               </div>
             </div>
             <Switch 
@@ -813,8 +813,8 @@ export default function CompanyConfigPage() {
                 <Smartphone className="w-5 h-5 text-purple-600" />
               </div>
               <div>
-                <h4 className="font-medium">Notificaciones Push</h4>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Alertas en tiempo real en la aplicación y navegador.</p>
+                <h4 className="font-medium">{t('companyConfig.notificacionesPush')}</h4>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{t('companyConfig.alertasEnTiempoReal')}</p>
               </div>
             </div>
             <Switch 
@@ -829,8 +829,8 @@ export default function CompanyConfigPage() {
                 <Users className="w-5 h-5 text-orange-600" />
               </div>
               <div>
-                <h4 className="font-medium">Portal de Autogestión</h4>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Permitir a empleados actualizar sus propios datos de contacto.</p>
+                <h4 className="font-medium">{t('companyConfig.portalDeAutogestion')}</h4>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{t('companyConfig.permitirAEmpleadosActualizar')}</p>
               </div>
             </div>
             <Switch 
@@ -853,8 +853,8 @@ export default function CompanyConfigPage() {
   const renderIntegrationsTab = () => (
     <Card className="border-l-4 border-l-cyan-500">
       <CardHeader>
-        <CardTitle>Integraciones</CardTitle>
-        <CardDescription>Conecta FortexaRH con tus herramientas favoritas de ERP y contabilidad.</CardDescription>
+        <CardTitle>{t('companyConfig.integraciones')}</CardTitle>
+        <CardDescription>{t('companyConfig.conectaFortexarhConTus')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {integrations.map(integration => (
@@ -871,10 +871,10 @@ export default function CompanyConfigPage() {
                 <div className="flex items-center gap-2">
                   <h4 className="font-medium">{integration.name}</h4>
                   {integration.id === "quickbooks" && integration.type === "oauth" && (
-                    <Badge variant="secondary" className="text-xs">OAuth 2.0</Badge>
+                    <Badge variant="secondary" className="text-xs">{t('companyConfig.oauth20')}</Badge>
                   )}
                   {integration.type === "mock" && (
-                    <Badge variant="outline" className="text-xs text-amber-600">Próximamente</Badge>
+                    <Badge variant="outline" className="text-xs text-amber-600">{t('companyConfig.proximamente')}</Badge>
                   )}
                 </div>
                 <p className="text-sm text-slate-500 dark:text-slate-400">{integration.description}</p>
@@ -902,9 +902,9 @@ export default function CompanyConfigPage() {
                 disabled={integration.id === "quickbooks" && quickbooksLoading}
               >
                 {integration.id === "quickbooks" && quickbooksLoading ? (
-                  <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Procesando...</>
+                  <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t('companyConfig.procesando')}</>
                 ) : integration.connected ? (
-                  <><Check className="w-4 h-4 mr-2" />Desconectar</>
+                  <><Check className="w-4 h-4 mr-2" />{t('companyConfig.desconectar')}</>
                 ) : (
                   "Conectar"
                 )}
@@ -917,8 +917,8 @@ export default function CompanyConfigPage() {
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-medium text-amber-800">¿Necesitas otra integración?</h4>
-              <p className="text-sm text-amber-700 dark:text-amber-400">Contáctanos para solicitar integraciones personalizadas con tus sistemas existentes.</p>
+              <h4 className="font-medium text-amber-800">{t('companyConfig.necesitasOtraIntegracion')}</h4>
+              <p className="text-sm text-amber-700 dark:text-amber-400">{t('companyConfig.contactanosParaSolicitarIntegracion')}</p>
             </div>
           </div>
         </div>
@@ -931,8 +931,8 @@ export default function CompanyConfigPage() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Historial de Auditoría</CardTitle>
-            <CardDescription>Registro de cambios en la configuración del sistema.</CardDescription>
+            <CardTitle>{t('companyConfig.historialDeAuditoria')}</CardTitle>
+            <CardDescription>{t('companyConfig.registroDeCambiosEn')}</CardDescription>
           </div>
           <Button variant="outline" size="sm" onClick={fetchCompanyData}>
             <RefreshCw className="w-4 h-4 mr-2" />Actualizar
@@ -943,7 +943,7 @@ export default function CompanyConfigPage() {
         {auditLog.length === 0 ? (
           <div className="text-center py-8 text-slate-400">
             <History className="w-12 h-12 mx-auto mb-3" />
-            <p>No hay registros de auditoría</p>
+            <p>{t('companyConfig.noHayRegistrosDe')}</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -978,8 +978,8 @@ export default function CompanyConfigPage() {
       <div className="space-y-6" data-testid="company-config-page">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Configuración de Empresa</h1>
-          <p className="text-slate-500 dark:text-slate-400">Administra la identidad, apariencia e integraciones de tu organización.</p>
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{t('companyConfig.configuracionDeEmpresa')}</h1>
+          <p className="text-slate-500 dark:text-slate-400">{t('companyConfig.administraLaIdentidadApariencia')}</p>
         </div>
         
         {/* Tabs */}

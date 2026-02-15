@@ -210,8 +210,8 @@ export default function CDCAuditPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">CDC & Auditoría</h1>
-            <p className="text-slate-500">Change Data Capture - Historial de cambios del sistema</p>
+            <h1 className="text-2xl font-bold text-slate-800">{t('cdcAudit.cdcAuditoria')}</h1>
+            <p className="text-slate-500">{t('cdcAudit.changeDataCaptureHistorial')}</p>
           </div>
           <div className="flex items-center gap-3">
             <Button variant="outline" onClick={() => { fetchCDCStatus(); fetchStatistics(); fetchAuditLogs(true); }}>
@@ -239,7 +239,7 @@ export default function CDCAuditPage() {
           <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-medium text-amber-800">Modo de Tracking Manual</h4>
+              <h4 className="font-medium text-amber-800">{t('cdcAudit.modoDeTrackingManual')}</h4>
               <p className="text-sm text-amber-700">
                 MongoDB no soporta Change Streams (requiere replica set). Los cambios se registran automáticamente mediante hooks en las operaciones CRUD del sistema.
               </p>
@@ -253,7 +253,7 @@ export default function CDCAuditPage() {
             <CardContent className="pt-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Modo CDC</p>
+                  <p className="text-sm text-slate-500">{t('cdcAudit.modoCdc')}</p>
                   <p className="text-lg font-bold">
                     {isManualMode ? (
                       <span className="text-amber-600 flex items-center gap-2">
@@ -282,7 +282,7 @@ export default function CDCAuditPage() {
             <CardContent className="pt-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Colecciones Monitoreadas</p>
+                  <p className="text-sm text-slate-500">{t('cdcAudit.coleccionesMonitoreadas')}</p>
                   <p className="text-2xl font-bold text-blue-600">
                     {cdcStatus?.watched_collections?.length || 0}
                   </p>
@@ -296,7 +296,7 @@ export default function CDCAuditPage() {
             <CardContent className="pt-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Eventos Capturados</p>
+                  <p className="text-sm text-slate-500">{t('cdcAudit.eventosCapturados')}</p>
                   <p className="text-2xl font-bold text-purple-600">
                     {cdcStatus?.total_events_captured?.toLocaleString() || 0}
                   </p>
@@ -310,7 +310,7 @@ export default function CDCAuditPage() {
             <CardContent className="pt-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Último Evento</p>
+                  <p className="text-sm text-slate-500">{t('cdcAudit.ultimoEvento')}</p>
                   <p className="text-sm font-medium text-amber-600">
                     {cdcStatus?.last_event_time ? formatDate(cdcStatus.last_event_time) : "Sin eventos"}
                   </p>
@@ -335,28 +335,28 @@ export default function CDCAuditPage() {
                 <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-200">
                   <div className="flex items-center gap-2 text-emerald-700 mb-1">
                     <Plus className="w-4 h-4" />
-                    <span className="text-sm font-medium">Creaciones</span>
+                    <span className="text-sm font-medium">{t('cdcAudit.creaciones')}</span>
                   </div>
                   <p className="text-2xl font-bold text-emerald-800">{statistics.by_operation?.insert || 0}</p>
                 </div>
                 <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                   <div className="flex items-center gap-2 text-blue-700 mb-1">
                     <Edit className="w-4 h-4" />
-                    <span className="text-sm font-medium">Actualizaciones</span>
+                    <span className="text-sm font-medium">{t('cdcAudit.actualizaciones')}</span>
                   </div>
                   <p className="text-2xl font-bold text-blue-800">{statistics.by_operation?.update || 0}</p>
                 </div>
                 <div className="p-4 bg-red-50 rounded-lg border border-red-200">
                   <div className="flex items-center gap-2 text-red-700 mb-1">
                     <Trash2 className="w-4 h-4" />
-                    <span className="text-sm font-medium">Eliminaciones</span>
+                    <span className="text-sm font-medium">{t('cdcAudit.eliminaciones')}</span>
                   </div>
                   <p className="text-2xl font-bold text-red-800">{statistics.by_operation?.delete || 0}</p>
                 </div>
                 <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
                   <div className="flex items-center gap-2 text-purple-700 mb-1">
                     <Activity className="w-4 h-4" />
-                    <span className="text-sm font-medium">Total Eventos</span>
+                    <span className="text-sm font-medium">{t('cdcAudit.totalEventos')}</span>
                   </div>
                   <p className="text-2xl font-bold text-purple-800">{statistics.total_events || 0}</p>
                 </div>
@@ -380,7 +380,7 @@ export default function CDCAuditPage() {
                   <SelectValue placeholder="Colección" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todas</SelectItem>
+                  <SelectItem value="all">{t('cdcAudit.todas')}</SelectItem>
                   {cdcStatus?.collection_names && Object.entries(cdcStatus.collection_names).map(([key, name]) => (
                     <SelectItem key={key} value={key}>{name}</SelectItem>
                   ))}
@@ -392,10 +392,10 @@ export default function CDCAuditPage() {
                   <SelectValue placeholder="Operación" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todas</SelectItem>
-                  <SelectItem value="insert">Crear</SelectItem>
-                  <SelectItem value="update">Actualizar</SelectItem>
-                  <SelectItem value="delete">Eliminar</SelectItem>
+                  <SelectItem value="all">{t('cdcAudit.todas')}</SelectItem>
+                  <SelectItem value="insert">{t('cdcAudit.crear')}</SelectItem>
+                  <SelectItem value="update">{t('cdcAudit.actualizar')}</SelectItem>
+                  <SelectItem value="delete">{t('cdcAudit.eliminar')}</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -434,7 +434,7 @@ export default function CDCAuditPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Historial de Auditoría</CardTitle>
+              <CardTitle>{t('cdcAudit.historialDeAuditoria')}</CardTitle>
               <Badge variant="secondary">{pagination.total} registros</Badge>
             </div>
           </CardHeader>
@@ -446,20 +446,20 @@ export default function CDCAuditPage() {
             ) : auditLogs.length === 0 ? (
               <div className="text-center py-12 text-slate-400">
                 <Database className="w-12 h-12 mx-auto mb-3" />
-                <p>No se encontraron registros de auditoría</p>
-                <p className="text-sm">Inicie CDC para comenzar a capturar cambios</p>
+                <p>{t('cdcAudit.noSeEncontraronRegistros')}</p>
+                <p className="text-sm">{t('cdcAudit.inicieCdcParaComenzar')}</p>
               </div>
             ) : (
               <>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Fecha/Hora</TableHead>
-                      <TableHead>Colección</TableHead>
-                      <TableHead>Operación</TableHead>
-                      <TableHead>ID Documento</TableHead>
-                      <TableHead>Usuario</TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
+                      <TableHead>{t('cdcAudit.fechahora')}</TableHead>
+                      <TableHead>{t('cdcAudit.coleccion')}</TableHead>
+                      <TableHead>{t('cdcAudit.operacion')}</TableHead>
+                      <TableHead>{t('cdcAudit.idDocumento')}</TableHead>
+                      <TableHead>{t('cdcAudit.usuario')}</TableHead>
+                      <TableHead className="text-right">{t('cdcAudit.acciones')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -521,36 +521,36 @@ export default function CDCAuditPage() {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-slate-500">Log ID</p>
+                    <p className="text-sm text-slate-500">{t('cdcAudit.logId')}</p>
                     <p className="font-mono text-sm">{selectedLog.log_id}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-slate-500">Fecha/Hora</p>
+                    <p className="text-sm text-slate-500">{t('cdcAudit.fechahora')}</p>
                     <p className="text-sm">{formatDate(selectedLog.timestamp)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-slate-500">Colección</p>
+                    <p className="text-sm text-slate-500">{t('cdcAudit.coleccion')}</p>
                     <Badge variant="outline">{selectedLog.collection_name}</Badge>
                   </div>
                   <div>
-                    <p className="text-sm text-slate-500">Operación</p>
+                    <p className="text-sm text-slate-500">{t('cdcAudit.operacion')}</p>
                     <Badge className={OPERATION_COLORS[selectedLog.operation]}>
                       {selectedLog.operation_name}
                     </Badge>
                   </div>
                   <div>
-                    <p className="text-sm text-slate-500">Document ID</p>
+                    <p className="text-sm text-slate-500">{t('cdcAudit.documentId')}</p>
                     <p className="font-mono text-sm break-all">{selectedLog.document_id}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-slate-500">Company ID</p>
+                    <p className="text-sm text-slate-500">{t('cdcAudit.companyId')}</p>
                     <p className="font-mono text-sm">{selectedLog.company_id || "-"}</p>
                   </div>
                 </div>
 
                 {selectedLog.changes && Object.keys(selectedLog.changes).length > 0 && (
                   <div>
-                    <p className="text-sm text-slate-500 mb-2">Cambios Realizados</p>
+                    <p className="text-sm text-slate-500 mb-2">{t('cdcAudit.cambiosRealizados')}</p>
                     <pre className="bg-slate-100 p-3 rounded-lg text-xs overflow-x-auto">
                       {JSON.stringify(selectedLog.changes, null, 2)}
                     </pre>
@@ -559,7 +559,7 @@ export default function CDCAuditPage() {
 
                 {selectedLog.new_values && Object.keys(selectedLog.new_values).length > 0 && (
                   <div>
-                    <p className="text-sm text-slate-500 mb-2">Valores Nuevos</p>
+                    <p className="text-sm text-slate-500 mb-2">{t('cdcAudit.valoresNuevos')}</p>
                     <pre className="bg-emerald-50 p-3 rounded-lg text-xs overflow-x-auto max-h-64">
                       {JSON.stringify(selectedLog.new_values, null, 2)}
                     </pre>
@@ -568,7 +568,7 @@ export default function CDCAuditPage() {
 
                 {selectedLog.previous_values && Object.keys(selectedLog.previous_values).length > 0 && (
                   <div>
-                    <p className="text-sm text-slate-500 mb-2">Valores Anteriores</p>
+                    <p className="text-sm text-slate-500 mb-2">{t('cdcAudit.valoresAnteriores')}</p>
                     <pre className="bg-red-50 p-3 rounded-lg text-xs overflow-x-auto">
                       {JSON.stringify(selectedLog.previous_values, null, 2)}
                     </pre>
@@ -577,7 +577,7 @@ export default function CDCAuditPage() {
 
                 {selectedLog.metadata && (
                   <div>
-                    <p className="text-sm text-slate-500 mb-2">Metadata</p>
+                    <p className="text-sm text-slate-500 mb-2">{t('cdcAudit.metadata')}</p>
                     <pre className="bg-slate-50 p-3 rounded-lg text-xs">
                       {JSON.stringify(selectedLog.metadata, null, 2)}
                     </pre>

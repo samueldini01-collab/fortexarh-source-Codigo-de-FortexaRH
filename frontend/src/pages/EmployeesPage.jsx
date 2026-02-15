@@ -747,14 +747,14 @@ export default function EmployeesPage() {
                           <Camera className="w-4 h-4 text-slate-500" />
                         </div>
                       </div>
-                      <p className="text-xs text-slate-500 mt-2">Foto de Perfil</p>
-                      <p className="text-xs text-slate-400">Clic para cambiar. Max 2MB</p>
+                      <p className="text-xs text-slate-500 mt-2">{t('employees.fotoDePerfil')}</p>
+                      <p className="text-xs text-slate-400">{t('employees.clicParaCambiarMax')}</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Nombre(s) <span className="text-red-500">*</span></Label>
+                      <Label>{t('employees.nombres')} <span className="text-red-500">*</span></Label>
                       <Input
                         value={formData.first_name}
                         onChange={(e) => setFormData({...formData, first_name: e.target.value})}
@@ -765,7 +765,7 @@ export default function EmployeesPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Apellidos <span className="text-red-500">*</span></Label>
+                      <Label>{t('employees.apellidos')} <span className="text-red-500">*</span></Label>
                       <Input
                         value={formData.last_name}
                         onChange={(e) => setFormData({...formData, last_name: e.target.value})}
@@ -778,7 +778,7 @@ export default function EmployeesPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Email <span className="text-red-500">*</span></Label>
+                    <Label>{t('employees.email')} <span className="text-red-500">*</span></Label>
                     <Input
                       type="email"
                       value={formData.email}
@@ -792,7 +792,7 @@ export default function EmployeesPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <Label>Teléfono</Label>
+                      <Label>{t('employees.telefono')}</Label>
                       <Input
                         value={formData.phone}
                         onChange={(e) => setFormData({...formData, phone: e.target.value})}
@@ -801,7 +801,7 @@ export default function EmployeesPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>WhatsApp</Label>
+                      <Label>{t('employees.whatsapp')}</Label>
                       <Input
                         value={formData.whatsapp}
                         onChange={(e) => setFormData({...formData, whatsapp: e.target.value})}
@@ -810,7 +810,7 @@ export default function EmployeesPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Nacionalidad</Label>
+                      <Label>{t('employees.nacionalidad')}</Label>
                       <Select value={formData.nationality} onValueChange={(v) => setFormData({...formData, nationality: v})}>
                         <SelectTrigger className="bg-slate-50 border-slate-200">
                           <SelectValue placeholder="Seleccionar país" />
@@ -826,7 +826,7 @@ export default function EmployeesPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <Label>Tipo Documento</Label>
+                      <Label>{t('employees.tipoDocumento')}</Label>
                       <Select value={formData.document_type} onValueChange={(v) => setFormData({...formData, document_type: v})}>
                         <SelectTrigger className="bg-slate-50 border-slate-200">
                           <SelectValue />
@@ -839,7 +839,7 @@ export default function EmployeesPage() {
                       </Select>
                     </div>
                     <div className="space-y-2 md:col-span-2">
-                      <Label>Número de Documento <span className="text-red-500">*</span></Label>
+                      <Label>{t('employees.numeroDeDocumento')} <span className="text-red-500">*</span></Label>
                       <Input
                         value={formData.document_number}
                         onChange={(e) => setFormData({...formData, document_number: e.target.value})}
@@ -852,7 +852,7 @@ export default function EmployeesPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <Label>Fecha Nacimiento</Label>
+                      <Label>{t('employees.fechaNacimiento')}</Label>
                       <Input
                         type="date"
                         value={formData.birth_date}
@@ -861,7 +861,7 @@ export default function EmployeesPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Estado Civil</Label>
+                      <Label>{t('employees.estadoCivil')}</Label>
                       <Select value={formData.marital_status} onValueChange={(v) => setFormData({...formData, marital_status: v})}>
                         <SelectTrigger className="bg-slate-50 border-slate-200">
                           <SelectValue />
@@ -874,7 +874,7 @@ export default function EmployeesPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Estado</Label>
+                      <Label>{t('employees.estado')}</Label>
                       <Select value={formData.status} onValueChange={(v) => setFormData({...formData, status: v})}>
                         <SelectTrigger className="bg-slate-50 border-slate-200">
                           <SelectValue />
@@ -905,7 +905,7 @@ export default function EmployeesPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2 md:col-span-2">
-                      <Label>Dirección</Label>
+                      <Label>{t('employees.direccion')}</Label>
                       <Input
                         value={formData.address}
                         onChange={(e) => setFormData({...formData, address: e.target.value})}
@@ -914,7 +914,7 @@ export default function EmployeesPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Ciudad</Label>
+                      <Label>{t('employees.ciudad')}</Label>
                       <Input
                         value={formData.city}
                         onChange={(e) => setFormData({...formData, city: e.target.value})}
@@ -926,7 +926,7 @@ export default function EmployeesPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div className="space-y-2">
-                      <Label>Género</Label>
+                      <Label>{t('employees.genero')}</Label>
                       <Select value={formData.gender} onValueChange={(v) => setFormData({...formData, gender: v})}>
                         <SelectTrigger className="bg-slate-50 border-slate-200">
                           <SelectValue placeholder="Seleccione" />
@@ -939,7 +939,7 @@ export default function EmployeesPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Tipo de Sangre</Label>
+                      <Label>{t('employees.tipoDeSangre')}</Label>
                       <Select value={formData.blood_type || ""} onValueChange={(v) => setFormData({...formData, blood_type: v})}>
                         <SelectTrigger className="bg-slate-50 border-slate-200">
                           <SelectValue placeholder="Seleccione" />
@@ -952,7 +952,7 @@ export default function EmployeesPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Peso (libras)</Label>
+                      <Label>{t('employees.pesoLibras')}</Label>
                       <Input
                         type="number"
                         step="0.1"
@@ -963,7 +963,7 @@ export default function EmployeesPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Estatura (metros)</Label>
+                      <Label>{t('employees.estaturaMetros')}</Label>
                       <Input
                         type="number"
                         step="0.01"
@@ -980,14 +980,14 @@ export default function EmployeesPage() {
                 <TabsContent value="contrato" className="space-y-4">
                   <Card className="bg-slate-50 border-slate-200">
                     <CardContent className="p-4">
-                      <h4 className="font-semibold text-slate-700 mb-1">Resumen Contractual</h4>
-                      <p className="text-sm text-slate-500">Defina los términos de contratación y fechas clave para la relación laboral.</p>
+                      <h4 className="font-semibold text-slate-700 mb-1">{t('employees.resumenContractual')}</h4>
+                      <p className="text-sm text-slate-500">{t('employees.definaLosTerminosDe')}</p>
                     </CardContent>
                   </Card>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Tipo de Contrato</Label>
+                      <Label>{t('employees.tipoDeContrato')}</Label>
                       <Select value={formData.contract_type} onValueChange={(v) => setFormData({...formData, contract_type: v})}>
                         <SelectTrigger className="bg-slate-50 border-slate-200">
                           <SelectValue />
@@ -1000,7 +1000,7 @@ export default function EmployeesPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Fecha de Ingreso <span className="text-red-500">*</span></Label>
+                      <Label>{t('employees.fechaDeIngreso')} <span className="text-red-500">*</span></Label>
                       <Input
                         type="date"
                         value={formData.hire_date}
@@ -1014,30 +1014,30 @@ export default function EmployeesPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Fecha Último Aumento</Label>
+                      <Label>{t('employees.fechaUltimoAumento')}</Label>
                       <Input
                         type="date"
                         value={formData.last_raise_date}
                         onChange={(e) => setFormData({...formData, last_raise_date: e.target.value})}
                         className="bg-slate-50 border-slate-200 focus:bg-white"
                       />
-                      <p className="text-xs text-slate-500">Usado para calcular antigüedad salarial</p>
+                      <p className="text-xs text-slate-500">{t('employees.usadoParaCalcularAntigedad')}</p>
                     </div>
                     <div className="space-y-2">
-                      <Label>Fecha de Salida</Label>
+                      <Label>{t('employees.fechaDeSalida')}</Label>
                       <Input
                         type="date"
                         value={formData.contract_end_date}
                         onChange={(e) => setFormData({...formData, contract_end_date: e.target.value})}
                         className="bg-slate-50 border-slate-200 focus:bg-white"
                       />
-                      <p className="text-xs text-slate-500">Solo llenar si el empleado ha sido desvinculado</p>
+                      <p className="text-xs text-slate-500">{t('employees.soloLlenarSiEl')}</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Posición / Cargo <span className="text-red-500">*</span></Label>
+                      <Label>{t('employees.posicionCargo')} <span className="text-red-500">*</span></Label>
                       <Input
                         value={formData.position}
                         onChange={(e) => setFormData({...formData, position: e.target.value})}
@@ -1048,7 +1048,7 @@ export default function EmployeesPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Departamento <span className="text-red-500">*</span></Label>
+                      <Label>{t('employees.departamento')} <span className="text-red-500">*</span></Label>
                       <Select value={formData.department} onValueChange={(v) => setFormData({...formData, department: v})}>
                         <SelectTrigger className="bg-slate-50 border-slate-200" data-testid="select-department">
                           <SelectValue placeholder="Seleccione departamento" />
@@ -1064,7 +1064,7 @@ export default function EmployeesPage() {
 
                   <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200">
                     <div>
-                      <p className="font-medium text-slate-700">Excluir de Nómina Automática</p>
+                      <p className="font-medium text-slate-700">{t('employees.excluirDeNominaAutomatica')}</p>
                       <p className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded mt-1 inline-block">
                         Al activar esta opción, este empleado no aparecerá en la generación masiva de nómina.
                       </p>
@@ -1079,15 +1079,15 @@ export default function EmployeesPage() {
                 {/* Tab 3: Descuentos */}
                 <TabsContent value="descuentos" className="space-y-4">
                   <div>
-                    <h4 className="font-semibold text-slate-700 mb-4">Deducciones de Ley</h4>
+                    <h4 className="font-semibold text-slate-700 mb-4">{t('employees.deduccionesDeLey')}</h4>
                     <p className="text-sm text-slate-500 mb-4">
                       Active o desactive las deducciones de ley para este empleado. Las deducciones desactivadas no se aplicarán en la nómina.
                     </p>
                     <div className="space-y-2 bg-slate-50 rounded-lg border border-slate-200">
                       <div className="flex items-center justify-between p-4 border-b border-slate-200">
                         <div className="flex-1">
-                          <p className="font-medium text-slate-700">SFS</p>
-                          <p className="text-sm text-slate-500">Seguro Familiar de Salud</p>
+                          <p className="font-medium text-slate-700">{t('employees.sfs')}</p>
+                          <p className="text-sm text-slate-500">{t('employees.seguroFamiliarDeSalud')}</p>
                         </div>
                         <div className="flex items-center gap-4">
                           <span className={`text-sm font-mono ${formData.sfs_discount ? 'text-emerald-600' : 'text-slate-400 line-through'}`}>3.04%</span>
@@ -1100,8 +1100,8 @@ export default function EmployeesPage() {
                       </div>
                       <div className="flex items-center justify-between p-4 border-b border-slate-200">
                         <div className="flex-1">
-                          <p className="font-medium text-slate-700">AFP</p>
-                          <p className="text-sm text-slate-500">Administradora Fondos de Pensiones</p>
+                          <p className="font-medium text-slate-700">{t('employees.afp')}</p>
+                          <p className="text-sm text-slate-500">{t('employees.administradoraFondosDePensiones')}</p>
                         </div>
                         <div className="flex items-center gap-4">
                           <span className={`text-sm font-mono ${formData.afp_discount ? 'text-emerald-600' : 'text-slate-400 line-through'}`}>2.87%</span>
@@ -1114,11 +1114,11 @@ export default function EmployeesPage() {
                       </div>
                       <div className="flex items-center justify-between p-4">
                         <div className="flex-1">
-                          <p className="font-medium text-slate-700">ISR</p>
-                          <p className="text-sm text-slate-500">Impuesto Sobre la Renta</p>
+                          <p className="font-medium text-slate-700">{t('employees.isr')}</p>
+                          <p className="text-sm text-slate-500">{t('employees.impuestoSobreLaRenta')}</p>
                         </div>
                         <div className="flex items-center gap-4">
-                          <span className={`text-sm font-mono ${formData.isr_discount ? 'text-emerald-600' : 'text-slate-400 line-through'}`}>Calculado</span>
+                          <span className={`text-sm font-mono ${formData.isr_discount ? 'text-emerald-600' : 'text-slate-400 line-through'}`}>{t('employees.calculado')}</span>
                           <Switch
                             checked={formData.isr_discount}
                             onCheckedChange={(checked) => setFormData({...formData, isr_discount: checked})}
@@ -1138,11 +1138,11 @@ export default function EmployeesPage() {
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-slate-700 mb-4">Descuentos Adicionales</h4>
+                    <h4 className="font-semibold text-slate-700 mb-4">{t('employees.descuentosAdicionales')}</h4>
                     
                     {formData.additional_deductions.length === 0 ? (
                       <div className="bg-slate-50 rounded-lg p-6 text-center border border-slate-200 border-dashed">
-                        <p className="text-slate-500 italic">No hay descuentos adicionales registrados</p>
+                        <p className="text-slate-500 italic">{t('employees.noHayDescuentosAdicionales')}</p>
                       </div>
                     ) : (
                       <div className="space-y-2 mb-4">
@@ -1176,7 +1176,7 @@ export default function EmployeesPage() {
                       <p className="text-blue-700 font-medium mb-3">+ AGREGAR DESCUENTO</p>
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                         <div className="space-y-1">
-                          <Label className="text-xs text-slate-600">Tipo</Label>
+                          <Label className="text-xs text-slate-600">{t('employees.tipo')}</Label>
                           <Select 
                             value={newDeduction.type} 
                             onValueChange={(v) => setNewDeduction({...newDeduction, type: v})}
@@ -1192,7 +1192,7 @@ export default function EmployeesPage() {
                           </Select>
                         </div>
                         <div className="space-y-1">
-                          <Label className="text-xs text-slate-600">Descripción</Label>
+                          <Label className="text-xs text-slate-600">{t('employees.descripcion')}</Label>
                           <Input
                             value={newDeduction.description}
                             onChange={(e) => setNewDeduction({...newDeduction, description: e.target.value})}
@@ -1201,7 +1201,7 @@ export default function EmployeesPage() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <Label className="text-xs text-slate-600">Monto / %</Label>
+                          <Label className="text-xs text-slate-600">{t('employees.monto')}</Label>
                           <div className="flex gap-2">
                             <Input
                               type="number"
@@ -1240,7 +1240,7 @@ export default function EmployeesPage() {
                 <TabsContent value="documentos" className="space-y-4">
                   <div className="text-center py-12 bg-slate-50 rounded-lg border-2 border-dashed border-slate-300">
                     <FileText className="w-12 h-12 mx-auto mb-4 text-slate-400" />
-                    <h4 className="font-semibold text-slate-700 mb-2">Documentos del Empleado</h4>
+                    <h4 className="font-semibold text-slate-700 mb-2">{t('employees.documentosDelEmpleado')}</h4>
                     <p className="text-sm text-slate-500 mb-4">
                       Arrastre archivos aquí o haga clic para seleccionar
                     </p>
@@ -1260,7 +1260,7 @@ export default function EmployeesPage() {
                 <TabsContent value="pago" className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Salario Mensual Bruto <span className="text-red-500">*</span></Label>
+                      <Label>{t('employees.salarioMensualBruto')} <span className="text-red-500">*</span></Label>
                       <div className="relative">
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">$</span>
                         <Input
@@ -1274,10 +1274,10 @@ export default function EmployeesPage() {
                           data-testid="input-salary"
                         />
                       </div>
-                      <p className="text-xs text-slate-500">Moneda base: DOP (Peso Dominicano)</p>
+                      <p className="text-xs text-slate-500">{t('employees.monedaBaseDopPeso')}</p>
                     </div>
                     <div className="space-y-2">
-                      <Label>Frecuencia de Pago</Label>
+                      <Label>{t('employees.frecuenciaDePago')}</Label>
                       <Select 
                         value={formData.payment_frequency} 
                         onValueChange={(v) => setFormData({...formData, payment_frequency: v})}
@@ -1301,7 +1301,7 @@ export default function EmployeesPage() {
                     </h4>
                     
                     <div className="space-y-2">
-                      <Label>Método de Pago</Label>
+                      <Label>{t('employees.metodoDePago')}</Label>
                       <Select 
                         value={formData.payment_method} 
                         onValueChange={(v) => setFormData({...formData, payment_method: v})}
@@ -1320,7 +1320,7 @@ export default function EmployeesPage() {
                     {formData.payment_method === "Transferencia Bancaria" && (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label>Banco</Label>
+                          <Label>{t('employees.banco')}</Label>
                           <Input
                             value={formData.bank_name}
                             onChange={(e) => setFormData({...formData, bank_name: e.target.value})}
@@ -1329,7 +1329,7 @@ export default function EmployeesPage() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Tipo de Cuenta</Label>
+                          <Label>{t('employees.tipoDeCuenta')}</Label>
                           <Select 
                             value={formData.account_type} 
                             onValueChange={(v) => setFormData({...formData, account_type: v})}
@@ -1338,13 +1338,13 @@ export default function EmployeesPage() {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="Ahorros">Ahorros</SelectItem>
-                              <SelectItem value="Corriente">Corriente</SelectItem>
+                              <SelectItem value="Ahorros">{t('employees.ahorros')}</SelectItem>
+                              <SelectItem value="Corriente">{t('employees.corriente')}</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
                         <div className="space-y-2 md:col-span-2">
-                          <Label>Número de Cuenta</Label>
+                          <Label>{t('employees.numeroDeCuenta')}</Label>
                           <Input
                             value={formData.account_number}
                             onChange={(e) => setFormData({...formData, account_number: e.target.value})}
@@ -1360,7 +1360,7 @@ export default function EmployeesPage() {
                 {/* Tab 6: Contacto de Emergencia */}
                 <TabsContent value="emergencia" className="space-y-4">
                   <div className="flex items-center justify-between mb-4">
-                    <h4 className="font-semibold text-slate-700">Contactos de Emergencia</h4>
+                    <h4 className="font-semibold text-slate-700">{t('employees.contactosDeEmergencia')}</h4>
                     <span className="text-sm text-slate-500">{formData.emergency_contacts.length} / 3 Agregados</span>
                   </div>
 
@@ -1390,10 +1390,10 @@ export default function EmployeesPage() {
                   {/* Add new contact form */}
                   {formData.emergency_contacts.length < 3 && (
                     <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                      <p className="text-blue-700 font-medium mb-3">NUEVO CONTACTO</p>
+                      <p className="text-blue-700 font-medium mb-3">{t('employees.nuevoContacto')}</p>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label>Nombre Completo <span className="text-red-500">*</span></Label>
+                          <Label>{t('employees.nombreCompleto')} <span className="text-red-500">*</span></Label>
                           <Input
                             value={newEmergencyContact.name}
                             onChange={(e) => setNewEmergencyContact({...newEmergencyContact, name: e.target.value})}
@@ -1402,7 +1402,7 @@ export default function EmployeesPage() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Relación / Parentesco <span className="text-red-500">*</span></Label>
+                          <Label>{t('employees.relacionParentesco')} <span className="text-red-500">*</span></Label>
                           <Select 
                             value={newEmergencyContact.relationship} 
                             onValueChange={(v) => setNewEmergencyContact({...newEmergencyContact, relationship: v})}
@@ -1418,7 +1418,7 @@ export default function EmployeesPage() {
                           </Select>
                         </div>
                         <div className="space-y-2">
-                          <Label>Teléfono Principal <span className="text-red-500">*</span></Label>
+                          <Label>{t('employees.telefonoPrincipal')} <span className="text-red-500">*</span></Label>
                           <Input
                             value={newEmergencyContact.phone}
                             onChange={(e) => setNewEmergencyContact({...newEmergencyContact, phone: e.target.value})}
@@ -1427,7 +1427,7 @@ export default function EmployeesPage() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>WhatsApp (Opcional)</Label>
+                          <Label>{t('employees.whatsappOpcional')}</Label>
                           <Input
                             value={newEmergencyContact.whatsapp}
                             onChange={(e) => setNewEmergencyContact({...newEmergencyContact, whatsapp: e.target.value})}
@@ -1436,7 +1436,7 @@ export default function EmployeesPage() {
                           />
                         </div>
                         <div className="space-y-2 md:col-span-2">
-                          <Label>Dirección Física (Opcional)</Label>
+                          <Label>{t('employees.direccionFisicaOpcional')}</Label>
                           <Input
                             value={newEmergencyContact.address}
                             onChange={(e) => setNewEmergencyContact({...newEmergencyContact, address: e.target.value})}

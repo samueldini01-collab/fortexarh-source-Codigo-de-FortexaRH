@@ -330,7 +330,7 @@ export default function TemplatesPage() {
                   <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>Nombre de la Plantilla</Label>
+                        <Label>{t('templates.nombreDeLaPlantilla')}</Label>
                         <Input
                           value={formData.name}
                           onChange={(e) => setFormData({...formData, name: e.target.value})}
@@ -340,7 +340,7 @@ export default function TemplatesPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Tipo de Documento</Label>
+                        <Label>{t('templates.tipoDeDocumento')}</Label>
                         <Select value={formData.template_type} onValueChange={(v) => setFormData({...formData, template_type: v})}>
                           <SelectTrigger data-testid="template-type">
                             <SelectValue />
@@ -355,7 +355,7 @@ export default function TemplatesPage() {
                     </div>
                     
                     <div className="space-y-2">
-                      <Label>Variables Disponibles</Label>
+                      <Label>{t('templates.variablesDisponibles')}</Label>
                       <div className="flex flex-wrap gap-2 p-3 bg-slate-50 rounded-lg">
                         {defaultVariables.map((variable) => (
                           <button
@@ -371,7 +371,7 @@ export default function TemplatesPage() {
                     </div>
                     
                     <div className="space-y-2">
-                      <Label>Contenido de la Plantilla</Label>
+                      <Label>{t('templates.contenidoDeLaPlantilla')}</Label>
                       <Textarea
                         value={formData.content}
                         onChange={(e) => setFormData({...formData, content: e.target.value})}
@@ -385,8 +385,8 @@ export default function TemplatesPage() {
                     
                     <div className="flex items-center justify-between py-2">
                       <div className="space-y-0.5">
-                        <Label>Plantilla Activa</Label>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">Disponible para generar documentos</p>
+                        <Label>{t('templates.plantillaActiva')}</Label>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{t('templates.disponibleParaGenerarDocumentos')}</p>
                       </div>
                       <Switch
                         checked={formData.is_active}
@@ -418,7 +418,7 @@ export default function TemplatesPage() {
               <Card className="border-slate-200 dark:border-slate-700">
                 <CardContent className="text-center py-12">
                   <FileText className="w-16 h-16 mx-auto mb-4 text-slate-300" />
-                  <p className="text-slate-500 mb-2">No hay plantillas creadas</p>
+                  <p className="text-slate-500 mb-2">{t('templates.noHayPlantillasCreadas')}</p>
                 </CardContent>
               </Card>
             ) : (
@@ -480,7 +480,7 @@ export default function TemplatesPage() {
               <Card className="border-slate-200 dark:border-slate-700">
                 <CardContent className="text-center py-12">
                   <FileSignature className="w-16 h-16 mx-auto mb-4 text-slate-300" />
-                  <p className="text-slate-500 dark:text-slate-400">No hay documentos generados</p>
+                  <p className="text-slate-500 dark:text-slate-400">{t('templates.noHayDocumentosGenerados')}</p>
                 </CardContent>
               </Card>
             ) : (
@@ -526,7 +526,7 @@ export default function TemplatesPage() {
             
             <div className="space-y-4 mt-4">
               <div className="space-y-2">
-                <Label>Seleccionar Empleado</Label>
+                <Label>{t('templates.seleccionarEmpleado')}</Label>
                 <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
                   <SelectTrigger data-testid="select-employee-generate">
                     <SelectValue placeholder="Seleccionar empleado" />
@@ -574,11 +574,11 @@ export default function TemplatesPage() {
         <Dialog open={isSignOpen} onOpenChange={setIsSignOpen}>
           <DialogContent className="max-w-lg">
             <DialogHeader>
-              <DialogTitle className="heading">Firma Electrónica</DialogTitle>
+              <DialogTitle className="heading">{t('templates.firmaElectronica')}</DialogTitle>
             </DialogHeader>
             
             <div className="space-y-4 mt-4">
-              <p className="text-sm text-slate-600 dark:text-slate-300">Firma en el recuadro de abajo con tu mouse o dedo:</p>
+              <p className="text-sm text-slate-600 dark:text-slate-300">{t('templates.firmaEnElRecuadro')}</p>
               
               <div className="border-2 border-dashed border-slate-300 rounded-lg bg-white">
                 <SignatureCanvas

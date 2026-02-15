@@ -880,7 +880,7 @@ export default function PayrollV2Page() {
                   <SelectValue placeholder="Todos los departamentos" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todos los departamentos</SelectItem>
+                  <SelectItem value="all">{t('payrollV2.todosLosDepartamentos')}</SelectItem>
                   {departments.map(dept => (
                     <SelectItem key={dept} value={dept}>{dept}</SelectItem>
                   ))}
@@ -898,8 +898,8 @@ export default function PayrollV2Page() {
             {periods.length === 0 ? (
               <Card className="py-12"><CardContent className="text-center">
                 <Calendar className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                <p className="text-slate-500 mb-4">No hay períodos de nómina</p>
-                <Button onClick={() => setShowNewPeriod(true)}>Crear Primera Nómina</Button>
+                <p className="text-slate-500 mb-4">{t('payrollV2.noHayPeriodosDe')}</p>
+                <Button onClick={() => setShowNewPeriod(true)}>{t('payrollV2.crearPrimeraNomina')}</Button>
               </CardContent></Card>
             ) : (
               <div className="space-y-3">
@@ -929,7 +929,7 @@ export default function PayrollV2Page() {
                         </div>
                         <div className="flex items-center gap-4">
                           <div className="text-right">
-                            <p className="text-sm text-slate-500 dark:text-slate-400">Total Neto</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">{t('payrollV2.totalNeto')}</p>
                             <p className="font-mono font-semibold">{formatCurrency(period.total_net)}</p>
                           </div>
                           {getStatusBadge(period.status)}
@@ -959,8 +959,8 @@ export default function PayrollV2Page() {
             {!selectedPeriod ? (
               <Card className="py-12"><CardContent className="text-center">
                 <FileSpreadsheet className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                <p className="text-slate-500 dark:text-slate-400">Seleccione un período</p>
-                <Button variant="link" onClick={() => setActiveTab('periodos')}>Ver períodos</Button>
+                <p className="text-slate-500 dark:text-slate-400">{t('payrollV2.seleccioneUnPeriodo')}</p>
+                <Button variant="link" onClick={() => setActiveTab('periodos')}>{t('payrollV2.verPeriodos')}</Button>
               </CardContent></Card>
             ) : (
               <>
@@ -979,8 +979,8 @@ export default function PayrollV2Page() {
                           {/* Draft/Open: Add employees, Calculate, Submit for Approval */}
                           {['open', 'draft'].includes(selectedPeriod.status) && (
                             <>
-                              <Button size="sm" variant="secondary" onClick={() => handleAddEmployees(selectedPeriod.period_id)}><Users className="w-4 h-4 mr-1" />Agregar</Button>
-                              <Button size="sm" variant="secondary" onClick={() => handleCalculatePeriod(selectedPeriod.period_id)}><Calculator className="w-4 h-4 mr-1" />Calcular</Button>
+                              <Button size="sm" variant="secondary" onClick={() => handleAddEmployees(selectedPeriod.period_id)}><Users className="w-4 h-4 mr-1" />{t('payrollV2.agregar')}</Button>
+                              <Button size="sm" variant="secondary" onClick={() => handleCalculatePeriod(selectedPeriod.period_id)}><Calculator className="w-4 h-4 mr-1" />{t('payrollV2.calcular')}</Button>
                               {selectedPeriod.employee_count > 0 && (
                                 <Button size="sm" className="bg-orange-500 hover:bg-orange-600" onClick={() => handleSubmitForApproval(selectedPeriod.period_id)}>
                                   <ChevronRight className="w-4 h-4 mr-1" />Enviar a Aprobación
@@ -1004,13 +1004,13 @@ export default function PayrollV2Page() {
                           )}
                           {/* Calculated (legacy support) */}
                           {selectedPeriod.status === 'calculated' && (
-                            <Button size="sm" variant="secondary" onClick={() => handleApprovePeriod(selectedPeriod.period_id)}><Check className="w-4 h-4 mr-1" />Aprobar</Button>
+                            <Button size="sm" variant="secondary" onClick={() => handleApprovePeriod(selectedPeriod.period_id)}><Check className="w-4 h-4 mr-1" />{t('payrollV2.aprobar')}</Button>
                           )}
                           {/* Approved: Pay */}
                           {selectedPeriod.status === 'approved' && (
-                            <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={() => openPayDialog(selectedPeriod)}><CreditCard className="w-4 h-4 mr-1" />Pagar</Button>
+                            <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={() => openPayDialog(selectedPeriod)}><CreditCard className="w-4 h-4 mr-1" />{t('payrollV2.pagar')}</Button>
                           )}
-                          <Button size="sm" variant="secondary" onClick={() => handleExportExcel(selectedPeriod.period_id)}><Download className="w-4 h-4 mr-1" />Excel</Button>
+                          <Button size="sm" variant="secondary" onClick={() => handleExportExcel(selectedPeriod.period_id)}><Download className="w-4 h-4 mr-1" />{t('payrollV2.excel')}</Button>
                           {selectedPeriod.status !== 'paid' && (
                             <Button size="sm" variant="destructive" onClick={() => handleDeletePeriod(selectedPeriod.period_id)}><Trash2 className="w-4 h-4" /></Button>
                           )}
@@ -1024,8 +1024,8 @@ export default function PayrollV2Page() {
                 {periodEntries.length === 0 ? (
                   <Card className="py-12"><CardContent className="text-center">
                     <Users className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                    <p className="text-slate-500 dark:text-slate-400">No hay empleados</p>
-                    <Button variant="link" onClick={() => handleAddEmployees(selectedPeriod.period_id)}>Agregar empleados</Button>
+                    <p className="text-slate-500 dark:text-slate-400">{t('payrollV2.noHayEmpleados')}</p>
+                    <Button variant="link" onClick={() => handleAddEmployees(selectedPeriod.period_id)}>{t('payrollV2.agregarEmpleados')}</Button>
                   </CardContent></Card>
                 ) : (
                   <Card>
@@ -1033,21 +1033,21 @@ export default function PayrollV2Page() {
                       <Table className="text-[10px]">
                         <TableHeader>
                           <TableRow className="bg-slate-100 dark:bg-slate-800">
-                            <TableHead className="font-bold text-center border-r w-8">NO.</TableHead>
-                            <TableHead className="font-bold border-r min-w-[150px]">EMPLEADO</TableHead>
-                            <TableHead className="font-bold text-center border-r w-24">CÉDULA</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-blue-50 w-24">SALARIO</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-emerald-50 w-20">COMIS.</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-emerald-50 w-20">BONOS</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-emerald-50 w-20">H.EXTRAS</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-amber-50 w-20">NOVEDADES+</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-slate-200 w-24">BRUTO</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-red-50 w-20">SFS</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-red-50 w-20">AFP</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-red-50 w-20">ISR</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-orange-50 w-20">NOVEDADES-</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-red-100 w-24">DEDUCCIONES</TableHead>
-                            <TableHead className="font-bold text-right bg-emerald-100 w-24">NETO</TableHead>
+                            <TableHead className="font-bold text-center border-r w-8">{t('payrollV2.no')}</TableHead>
+                            <TableHead className="font-bold border-r min-w-[150px]">{t('payrollV2.empleado')}</TableHead>
+                            <TableHead className="font-bold text-center border-r w-24">{t('payrollV2.cedula')}</TableHead>
+                            <TableHead className="font-bold text-right border-r bg-blue-50 w-24">{t('payrollV2.salario')}</TableHead>
+                            <TableHead className="font-bold text-right border-r bg-emerald-50 w-20">{t('payrollV2.comis')}</TableHead>
+                            <TableHead className="font-bold text-right border-r bg-emerald-50 w-20">{t('payrollV2.bonos')}</TableHead>
+                            <TableHead className="font-bold text-right border-r bg-emerald-50 w-20">{t('payrollV2.hextras')}</TableHead>
+                            <TableHead className="font-bold text-right border-r bg-amber-50 w-20">{t('payrollV2.novedades')}</TableHead>
+                            <TableHead className="font-bold text-right border-r bg-slate-200 w-24">{t('payrollV2.bruto')}</TableHead>
+                            <TableHead className="font-bold text-right border-r bg-red-50 w-20">{t('payrollV2.sfs')}</TableHead>
+                            <TableHead className="font-bold text-right border-r bg-red-50 w-20">{t('payrollV2.afp')}</TableHead>
+                            <TableHead className="font-bold text-right border-r bg-red-50 w-20">{t('payrollV2.isr')}</TableHead>
+                            <TableHead className="font-bold text-right border-r bg-orange-50 w-20">{t('payrollV2.novedades1')}</TableHead>
+                            <TableHead className="font-bold text-right border-r bg-red-100 w-24">{t('payrollV2.deducciones')}</TableHead>
+                            <TableHead className="font-bold text-right bg-emerald-100 w-24">{t('payrollV2.neto')}</TableHead>
                             {selectedPeriod.status !== 'paid' && <TableHead className="w-16"></TableHead>}
                           </TableRow>
                         </TableHeader>
@@ -1107,7 +1107,7 @@ export default function PayrollV2Page() {
                           })}
                           {/* Totals */}
                           <TableRow className="bg-slate-200 font-bold text-[11px]">
-                            <TableCell colSpan={3} className="text-right border-r">TOTALES:</TableCell>
+                            <TableCell colSpan={3} className="text-right border-r">{t('payrollV2.totales')}</TableCell>
                             <TableCell className="text-right border-r font-mono">{formatNumber(totals.baseSalary)}</TableCell>
                             <TableCell className="text-right border-r font-mono">{formatNumber(totals.commissions)}</TableCell>
                             <TableCell className="text-right border-r font-mono">{formatNumber(totals.bonuses)}</TableCell>
@@ -1134,18 +1134,18 @@ export default function PayrollV2Page() {
           {/* Aprobación Tab */}
           <TabsContent value="aprobacion" className="space-y-4">
             <Card>
-              <CardHeader><CardTitle>Nóminas Pendientes de Aprobación</CardTitle></CardHeader>
+              <CardHeader><CardTitle>{t('payrollV2.nominasPendientesDeAprobacion')}</CardTitle></CardHeader>
               <CardContent>
                 {periods.filter(p => p.status === 'calculated').length === 0 ? (
-                  <div className="text-center py-8 text-slate-500 dark:text-slate-400"><Check className="w-12 h-12 mx-auto mb-4 text-slate-300" /><p>No hay pendientes</p></div>
+                  <div className="text-center py-8 text-slate-500 dark:text-slate-400"><Check className="w-12 h-12 mx-auto mb-4 text-slate-300" /><p>{t('payrollV2.noHayPendientes')}</p></div>
                 ) : (
                   <div className="space-y-3">
                     {periods.filter(p => p.status === 'calculated').map(period => (
                       <div key={period.period_id} className="flex items-center justify-between p-4 border rounded-lg">
                         <div><h4 className="font-semibold">{period.description}</h4><p className="text-sm text-slate-500 dark:text-slate-400">{period.employee_count} empleados • {formatCurrency(period.total_net)}</p></div>
                         <div className="flex gap-2">
-                          <Button variant="outline" onClick={() => { setSelectedPeriod(period); setActiveTab('nomina'); }}>Ver</Button>
-                          <Button onClick={() => handleApprovePeriod(period.period_id)}><Check className="w-4 h-4 mr-2" />Aprobar</Button>
+                          <Button variant="outline" onClick={() => { setSelectedPeriod(period); setActiveTab('nomina'); }}>{t('payrollV2.ver')}</Button>
+                          <Button onClick={() => handleApprovePeriod(period.period_id)}><Check className="w-4 h-4 mr-2" />{t('payrollV2.aprobar')}</Button>
                         </div>
                       </div>
                     ))}
@@ -1154,16 +1154,16 @@ export default function PayrollV2Page() {
               </CardContent>
             </Card>
             <Card>
-              <CardHeader><CardTitle className="text-emerald-700 dark:text-emerald-400">Listos para Pagar</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-emerald-700 dark:text-emerald-400">{t('payrollV2.listosParaPagar')}</CardTitle></CardHeader>
               <CardContent>
                 {periods.filter(p => p.status === 'approved').length === 0 ? (
-                  <div className="text-center py-8 text-slate-500 dark:text-slate-400"><CreditCard className="w-12 h-12 mx-auto mb-4 text-slate-300" /><p>No hay aprobados</p></div>
+                  <div className="text-center py-8 text-slate-500 dark:text-slate-400"><CreditCard className="w-12 h-12 mx-auto mb-4 text-slate-300" /><p>{t('payrollV2.noHayAprobados')}</p></div>
                 ) : (
                   <div className="space-y-3">
                     {periods.filter(p => p.status === 'approved').map(period => (
                       <div key={period.period_id} className="flex items-center justify-between p-4 border border-emerald-200 bg-emerald-50 rounded-lg">
                         <div><h4 className="font-semibold text-emerald-800">{period.description}</h4><p className="text-sm text-emerald-600 dark:text-emerald-400">{period.employee_count} empleados • {formatCurrency(period.total_net)}</p></div>
-                        <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={() => openPayDialog(period)}><CreditCard className="w-4 h-4 mr-2" />Pagar</Button>
+                        <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={() => openPayDialog(period)}><CreditCard className="w-4 h-4 mr-2" />{t('payrollV2.pagar')}</Button>
                       </div>
                     ))}
                   </div>
@@ -1176,17 +1176,17 @@ export default function PayrollV2Page() {
           <TabsContent value="reportes" className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Card>
-                <CardHeader><CardTitle>Exportar Nóminas</CardTitle><CardDescription>Descarga en formato Excel o CSV</CardDescription></CardHeader>
+                <CardHeader><CardTitle>{t('payrollV2.exportarNominas')}</CardTitle><CardDescription>{t('payrollV2.descargaEnFormatoExcel')}</CardDescription></CardHeader>
                 <CardContent>
                   {periods.filter(p => ['calculated', 'approved', 'paid'].includes(p.status)).length === 0 ? (
-                    <p className="text-slate-500 text-center py-4">No hay nóminas para exportar</p>
+                    <p className="text-slate-500 text-center py-4">{t('payrollV2.noHayNominasPara')}</p>
                   ) : (
                     <div className="space-y-2">
                       {periods.filter(p => ['calculated', 'approved', 'paid'].includes(p.status)).map(period => (
                         <div key={period.period_id} className="flex items-center justify-between p-3 border rounded-lg">
                           <div><p className="font-medium">{period.description}</p>{getStatusBadge(period.status)}</div>
                           <div className="flex gap-2">
-                            <Button variant="outline" size="sm" onClick={() => handleExportExcel(period.period_id)}><FileSpreadsheet className="w-4 h-4 mr-1" />CSV</Button>
+                            <Button variant="outline" size="sm" onClick={() => handleExportExcel(period.period_id)}><FileSpreadsheet className="w-4 h-4 mr-1" />{t('payrollV2.csv')}</Button>
                           </div>
                         </div>
                       ))}
@@ -1202,11 +1202,11 @@ export default function PayrollV2Page() {
                     <Shield className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     Archivos TSS
                   </CardTitle>
-                  <CardDescription>Tesorería de la Seguridad Social - Formato SUIR+ (v5.3 / v5.1)</CardDescription>
+                  <CardDescription>{t('payrollV2.tesoreriaDeLaSeguridad')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {periods.filter(p => p.status === 'paid').length === 0 ? (
-                    <p className="text-slate-500 text-center py-4">Pague una nómina para generar archivos TSS</p>
+                    <p className="text-slate-500 text-center py-4">{t('payrollV2.pagueUnaNominaPara')}</p>
                   ) : (
                     <div className="space-y-3">
                       {periods.filter(p => p.status === 'paid').map(period => (
@@ -1237,7 +1237,7 @@ export default function PayrollV2Page() {
                             ) : (
                               <div className="text-sm text-amber-600 dark:text-amber-400 flex items-center gap-2">
                                 <AlertCircle className="w-4 h-4" />
-                                <span>Obreros NG no requiere TSS (solo ISR 2%)</span>
+                                <span>{t('payrollV2.obrerosNgNoRequiere')}</span>
                               </div>
                             )}
                           </div>
@@ -1256,11 +1256,11 @@ export default function PayrollV2Page() {
                   <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   Reportes DGII-TSS
                 </CardTitle>
-                <CardDescription>Formularios IR-3 e IR-17 para Dirección General de Impuestos Internos</CardDescription>
+                <CardDescription>{t('payrollV2.formulariosIr3EIr17')}</CardDescription>
               </CardHeader>
               <CardContent>
                 {periods.filter(p => p.status === 'paid').length === 0 ? (
-                  <p className="text-slate-500 text-center py-4">Pague una nómina para generar reportes de impuestos</p>
+                  <p className="text-slate-500 text-center py-4">{t('payrollV2.pagueUnaNominaPara1')}</p>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {periods.filter(p => p.status === 'paid').map(period => (
@@ -1273,14 +1273,14 @@ export default function PayrollV2Page() {
                           <Button variant="outline" size="sm" className="w-full justify-start text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-900/50"
                             onClick={() => handleDownloadIR3(period.period_id)}>
                             <Download className="w-4 h-4 mr-2" />
-                            <span>IR-3</span>
-                            <span className="ml-auto text-xs text-emerald-500">Retenciones</span>
+                            <span>{t('payrollV2.ir3')}</span>
+                            <span className="ml-auto text-xs text-emerald-500">{t('payrollV2.retenciones')}</span>
                           </Button>
                           <Button variant="outline" size="sm" className="w-full justify-start text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-900/50"
                             onClick={() => handleDownloadIR17(period.period_id)}>
                             <Download className="w-4 h-4 mr-2" />
-                            <span>IR-17</span>
-                            <span className="ml-auto text-xs text-emerald-500">Declaración</span>
+                            <span>{t('payrollV2.ir17')}</span>
+                            <span className="ml-auto text-xs text-emerald-500">{t('payrollV2.declaracion')}</span>
                           </Button>
                         </div>
                       </div>
@@ -1295,10 +1295,10 @@ export default function PayrollV2Page() {
         {/* New Period Dialog */}
         <Dialog open={showNewPeriod} onOpenChange={setShowNewPeriod}>
           <DialogContent className="max-w-lg">
-            <DialogHeader><DialogTitle>Crear Nueva Nómina</DialogTitle><DialogDescription>Define el tipo y período de la nómina</DialogDescription></DialogHeader>
+            <DialogHeader><DialogTitle>{t('payrollV2.crearNuevaNomina')}</DialogTitle><DialogDescription>{t('payrollV2.defineElTipoY')}</DialogDescription></DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label>Tipo de Nómina</Label>
+                <Label>{t('payrollV2.tipoDeNomina')}</Label>
                 <div className="grid grid-cols-3 gap-2">
                   {payrollTypes.map(pt => (
                     <Button key={pt.value} variant={newPeriodForm.payroll_type === pt.value ? "default" : "outline"}
@@ -1310,29 +1310,29 @@ export default function PayrollV2Page() {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2"><Label>Período</Label>
+                <div className="space-y-2"><Label>{t('payrollV2.periodo')}</Label>
                   <Select value={newPeriodForm.period_type} onValueChange={(v) => setNewPeriodForm({...newPeriodForm, period_type: v})}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>{periodTypes.map(type => (<SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>))}</SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-2"><Label>Departamento (Opcional)</Label>
+                <div className="space-y-2"><Label>{t('payrollV2.departamentoOpcional')}</Label>
                   <Select value={newPeriodForm.department_filter} onValueChange={(v) => setNewPeriodForm({...newPeriodForm, department_filter: v})}>
                     <SelectTrigger><SelectValue placeholder="Todos" /></SelectTrigger>
-                    <SelectContent><SelectItem value="all">Todos los departamentos</SelectItem>
+                    <SelectContent><SelectItem value="all">{t('payrollV2.todosLosDepartamentos')}</SelectItem>
                       {departments.map(d => (<SelectItem key={d} value={d}>{d}</SelectItem>))}
                     </SelectContent>
                   </Select>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2"><Label>Año</Label>
+                <div className="space-y-2"><Label>{t('payrollV2.ano')}</Label>
                   <Select value={String(newPeriodForm.year)} onValueChange={(v) => setNewPeriodForm({...newPeriodForm, year: parseInt(v)})}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>{[2024, 2025, 2026, 2027].map(year => (<SelectItem key={year} value={String(year)}>{year}</SelectItem>))}</SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-2"><Label>Mes</Label>
+                <div className="space-y-2"><Label>{t('payrollV2.mes')}</Label>
                   <Select value={String(newPeriodForm.month)} onValueChange={(v) => setNewPeriodForm({...newPeriodForm, month: parseInt(v)})}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>{months.map(m => (<SelectItem key={m.value} value={String(m.value)}>{m.label}</SelectItem>))}</SelectContent>
@@ -1340,12 +1340,12 @@ export default function PayrollV2Page() {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2"><Label>Fecha Inicio</Label><Input type="date" value={newPeriodForm.start_date} onChange={(e) => setNewPeriodForm({...newPeriodForm, start_date: e.target.value})} /></div>
-                <div className="space-y-2"><Label>Fecha Fin</Label><Input type="date" value={newPeriodForm.end_date} onChange={(e) => setNewPeriodForm({...newPeriodForm, end_date: e.target.value})} /></div>
+                <div className="space-y-2"><Label>{t('payrollV2.fechaInicio')}</Label><Input type="date" value={newPeriodForm.start_date} onChange={(e) => setNewPeriodForm({...newPeriodForm, start_date: e.target.value})} /></div>
+                <div className="space-y-2"><Label>{t('payrollV2.fechaFin')}</Label><Input type="date" value={newPeriodForm.end_date} onChange={(e) => setNewPeriodForm({...newPeriodForm, end_date: e.target.value})} /></div>
               </div>
-              <div className="space-y-2"><Label>Descripción</Label><Input value={newPeriodForm.description} onChange={(e) => setNewPeriodForm({...newPeriodForm, description: e.target.value})} placeholder="Ej: Nómina Quincenal Enero 2026" /></div>
+              <div className="space-y-2"><Label>{t('payrollV2.descripcion')}</Label><Input value={newPeriodForm.description} onChange={(e) => setNewPeriodForm({...newPeriodForm, description: e.target.value})} placeholder="Ej: Nómina Quincenal Enero 2026" /></div>
             </div>
-            <DialogFooter><Button variant="outline" onClick={() => setShowNewPeriod(false)}>Cancelar</Button><Button onClick={handleCreatePeriod}>Crear Nómina</Button></DialogFooter>
+            <DialogFooter><Button variant="outline" onClick={() => setShowNewPeriod(false)}>{t('payrollV2.cancelar')}</Button><Button onClick={handleCreatePeriod}>{t('payrollV2.crearNomina')}</Button></DialogFooter>
           </DialogContent>
         </Dialog>
 
@@ -1357,7 +1357,7 @@ export default function PayrollV2Page() {
                 <Wallet className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                 Pagar Nómina
               </DialogTitle>
-              <DialogDescription>Configure el pago y archivo bancario</DialogDescription>
+              <DialogDescription>{t('payrollV2.configureElPagoY')}</DialogDescription>
             </DialogHeader>
             {selectedPeriod && (
               <div className="space-y-4">
@@ -1365,13 +1365,13 @@ export default function PayrollV2Page() {
                   <p className="font-semibold">{selectedPeriod.description}</p>
                   <p className="text-sm text-slate-500 mt-1">{selectedPeriod.employee_count} empleados</p>
                   <div className="mt-3 p-3 bg-emerald-100 rounded-lg">
-                    <p className="text-sm text-emerald-700 dark:text-emerald-400">Total a Pagar</p>
+                    <p className="text-sm text-emerald-700 dark:text-emerald-400">{t('payrollV2.totalAPagar')}</p>
                     <p className="text-2xl font-bold text-emerald-800">{formatCurrency(selectedPeriod.total_net)}</p>
                   </div>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>Cuenta Contable</Label>
+                  <Label>{t('payrollV2.cuentaContable')}</Label>
                   <Select value={selectedBankAccount} onValueChange={setSelectedBankAccount}>
                     <SelectTrigger>
                       <SelectValue placeholder="Seleccione cuenta" />
@@ -1400,7 +1400,7 @@ export default function PayrollV2Page() {
                   
                   {generateBankFile && (
                     <div className="space-y-2 pl-6">
-                      <Label className="text-sm">Banco para archivo de pago</Label>
+                      <Label className="text-sm">{t('payrollV2.bancoParaArchivoDe')}</Label>
                       <Select value={selectedPaymentBank} onValueChange={setSelectedPaymentBank}>
                         <SelectTrigger>
                           <SelectValue placeholder="Seleccione banco" />
@@ -1422,7 +1422,7 @@ export default function PayrollV2Page() {
               </div>
             )}
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowPayDialog(false)}>Cancelar</Button>
+              <Button variant="outline" onClick={() => setShowPayDialog(false)}>{t('payrollV2.cancelar')}</Button>
               <Button 
                 className="bg-emerald-600 hover:bg-emerald-700" 
                 onClick={handlePayPeriod} 
@@ -1438,17 +1438,17 @@ export default function PayrollV2Page() {
         {/* Novelty Dialog */}
         <Dialog open={showNoveltyDialog} onOpenChange={setShowNoveltyDialog}>
           <DialogContent>
-            <DialogHeader><DialogTitle>Agregar Novedad</DialogTitle>
+            <DialogHeader><DialogTitle>{t('payrollV2.agregarNovedad')}</DialogTitle>
               <DialogDescription>Agregue un ingreso o deducción adicional a {selectedEntry?.employee_name}</DialogDescription></DialogHeader>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <Button variant={noveltyForm.novelty_type === 'income' ? 'default' : 'outline'} className="h-auto py-3 flex flex-col"
                   onClick={() => setNoveltyForm({...noveltyForm, novelty_type: 'income', code: '', name: ''})}>
-                  <PlusCircle className="w-5 h-5 mb-1 text-emerald-500" /><span>Ingreso</span>
+                  <PlusCircle className="w-5 h-5 mb-1 text-emerald-500" /><span>{t('payrollV2.ingreso')}</span>
                 </Button>
                 <Button variant={noveltyForm.novelty_type === 'deduction' ? 'default' : 'outline'} className="h-auto py-3 flex flex-col"
                   onClick={() => setNoveltyForm({...noveltyForm, novelty_type: 'deduction', code: '', name: ''})}>
-                  <MinusCircle className="w-5 h-5 mb-1 text-red-500" /><span>Deducción</span>
+                  <MinusCircle className="w-5 h-5 mb-1 text-red-500" /><span>{t('payrollV2.deduccion')}</span>
                 </Button>
               </div>
               <div className="space-y-2"><Label>Tipo de {noveltyForm.novelty_type === 'income' ? 'Ingreso' : 'Deducción'}</Label>
@@ -1465,15 +1465,15 @@ export default function PayrollV2Page() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2"><Label>Monto (RD$)</Label>
+              <div className="space-y-2"><Label>{t('payrollV2.montoRd')}</Label>
                 <Input type="number" step="0.01" value={noveltyForm.amount} onChange={(e) => setNoveltyForm({...noveltyForm, amount: e.target.value})} placeholder="0.00" />
               </div>
-              <div className="space-y-2"><Label>Descripción (Opcional)</Label>
+              <div className="space-y-2"><Label>{t('payrollV2.descripcionOpcional')}</Label>
                 <Input value={noveltyForm.description} onChange={(e) => setNoveltyForm({...noveltyForm, description: e.target.value})} placeholder="Ej: Comisión ventas enero" />
               </div>
             </div>
-            <DialogFooter><Button variant="outline" onClick={() => setShowNoveltyDialog(false)}>Cancelar</Button>
-              <Button onClick={handleAddNovelty}><Plus className="w-4 h-4 mr-2" />Agregar Novedad</Button>
+            <DialogFooter><Button variant="outline" onClick={() => setShowNoveltyDialog(false)}>{t('payrollV2.cancelar')}</Button>
+              <Button onClick={handleAddNovelty}><Plus className="w-4 h-4 mr-2" />{t('payrollV2.agregarNovedad')}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -1506,26 +1506,26 @@ export default function PayrollV2Page() {
                 {/* Company and Period Info */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
                   <div>
-                    <span className="text-xs text-slate-500">Empresa</span>
+                    <span className="text-xs text-slate-500">{t('payrollV2.empresa')}</span>
                     <p className="font-medium">{tssPreviewData.company?.name}</p>
                   </div>
                   <div>
-                    <span className="text-xs text-slate-500">RNC</span>
+                    <span className="text-xs text-slate-500">{t('payrollV2.rnc')}</span>
                     <p className="font-mono">{tssPreviewData.company?.rnc}</p>
                   </div>
                   <div>
-                    <span className="text-xs text-slate-500">Período</span>
+                    <span className="text-xs text-slate-500">{t('payrollV2.periodo')}</span>
                     <p className="font-medium">{tssPreviewData.period?.month}/{tssPreviewData.period?.year}</p>
                   </div>
                   <div>
-                    <span className="text-xs text-slate-500">Empleados</span>
+                    <span className="text-xs text-slate-500">{t('payrollV2.empleados')}</span>
                     <p className="font-medium">{tssPreviewData.employee_count}</p>
                   </div>
                 </div>
 
                 {/* Rates Info */}
                 <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-sm">
-                  <p className="font-medium text-blue-800 dark:text-blue-200 mb-2">Tasas Aplicadas:</p>
+                  <p className="font-medium text-blue-800 dark:text-blue-200 mb-2">{t('payrollV2.tasasAplicadas')}</p>
                   <div className="grid grid-cols-3 md:grid-cols-6 gap-2 text-blue-700 dark:text-blue-300">
                     <span>SFS Emp: {tssPreviewData.rates?.sfs_empleado}</span>
                     <span>AFP Emp: {tssPreviewData.rates?.afp_empleado}</span>
@@ -1541,15 +1541,15 @@ export default function PayrollV2Page() {
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-slate-100 dark:bg-slate-800">
-                        <TableHead>Cédula</TableHead>
-                        <TableHead>Nombre</TableHead>
-                        <TableHead className="text-right">Salario Cot.</TableHead>
-                        <TableHead className="text-right">SFS Emp</TableHead>
-                        <TableHead className="text-right">AFP Emp</TableHead>
-                        <TableHead className="text-right">SFS Pat</TableHead>
-                        <TableHead className="text-right">AFP Pat</TableHead>
-                        <TableHead className="text-right">SRL</TableHead>
-                        <TableHead className="text-right">INFOTEP</TableHead>
+                        <TableHead>{t('payrollV2.cedula1')}</TableHead>
+                        <TableHead>{t('payrollV2.nombre')}</TableHead>
+                        <TableHead className="text-right">{t('payrollV2.salarioCot')}</TableHead>
+                        <TableHead className="text-right">{t('payrollV2.sfsEmp')}</TableHead>
+                        <TableHead className="text-right">{t('payrollV2.afpEmp')}</TableHead>
+                        <TableHead className="text-right">{t('payrollV2.sfsPat')}</TableHead>
+                        <TableHead className="text-right">{t('payrollV2.afpPat')}</TableHead>
+                        <TableHead className="text-right">{t('payrollV2.srl')}</TableHead>
+                        <TableHead className="text-right">{t('payrollV2.infotep')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -1568,7 +1568,7 @@ export default function PayrollV2Page() {
                       ))}
                       {/* Totals Row */}
                       <TableRow className="bg-slate-100 dark:bg-slate-800 font-bold border-t-2">
-                        <TableCell colSpan={2} className="text-right">TOTALES</TableCell>
+                        <TableCell colSpan={2} className="text-right">{t('payrollV2.totales1')}</TableCell>
                         <TableCell className="text-right font-mono">{formatCurrency(tssPreviewData.totals?.salario_cotizable)}</TableCell>
                         <TableCell className="text-right font-mono text-blue-600">{formatCurrency(tssPreviewData.totals?.sfs_empleado)}</TableCell>
                         <TableCell className="text-right font-mono text-blue-600">{formatCurrency(tssPreviewData.totals?.afp_empleado)}</TableCell>
@@ -1585,25 +1585,25 @@ export default function PayrollV2Page() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <Card className="border-l-4 border-l-blue-500">
                     <CardContent className="p-3">
-                      <p className="text-xs text-slate-500">Total Aportes Empleado</p>
+                      <p className="text-xs text-slate-500">{t('payrollV2.totalAportesEmpleado')}</p>
                       <p className="text-lg font-bold text-blue-600">{formatCurrency(tssPreviewData.totals?.total_empleado)}</p>
                     </CardContent>
                   </Card>
                   <Card className="border-l-4 border-l-emerald-500">
                     <CardContent className="p-3">
-                      <p className="text-xs text-slate-500">Total Aportes Patronal</p>
+                      <p className="text-xs text-slate-500">{t('payrollV2.totalAportesPatronal')}</p>
                       <p className="text-lg font-bold text-emerald-600">{formatCurrency(tssPreviewData.totals?.total_patronal)}</p>
                     </CardContent>
                   </Card>
                   <Card className="border-l-4 border-l-purple-500">
                     <CardContent className="p-3">
-                      <p className="text-xs text-slate-500">Total a Pagar TSS</p>
+                      <p className="text-xs text-slate-500">{t('payrollV2.totalAPagarTss')}</p>
                       <p className="text-lg font-bold text-purple-600">{formatCurrency((tssPreviewData.totals?.total_empleado || 0) + (tssPreviewData.totals?.total_patronal || 0))}</p>
                     </CardContent>
                   </Card>
                   <Card className="border-l-4 border-l-slate-500">
                     <CardContent className="p-3">
-                      <p className="text-xs text-slate-500">Archivo</p>
+                      <p className="text-xs text-slate-500">{t('payrollV2.archivo')}</p>
                       <p className="text-sm font-mono truncate">{tssPreviewData.filename}</p>
                     </CardContent>
                   </Card>

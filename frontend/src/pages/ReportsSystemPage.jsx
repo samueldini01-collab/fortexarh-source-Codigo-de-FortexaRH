@@ -392,7 +392,7 @@ export default function ReportsSystemPage() {
                       <SelectValue placeholder="Todas las categorías" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">Todas las Categorías</SelectItem>
+                      <SelectItem value="all">{t('reportsSystem.todasLasCategorias')}</SelectItem>
                       {catalog && Object.entries(catalog.categories).map(([id, cat]) => (
                         <SelectItem key={id} value={id}>{cat.name}</SelectItem>
                       ))}
@@ -404,7 +404,7 @@ export default function ReportsSystemPage() {
               {/* Report List */}
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Reportes Disponibles</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('reportsSystem.reportesDisponibles')}</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                   <ScrollArea className="h-[400px]">
@@ -511,11 +511,11 @@ export default function ReportsSystemPage() {
                                     <SelectValue placeholder="Todos" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="all">Todos</SelectItem>
-                                    <SelectItem value="active">Activo</SelectItem>
-                                    <SelectItem value="inactive">Inactivo</SelectItem>
-                                    <SelectItem value="pending">Pendiente</SelectItem>
-                                    <SelectItem value="approved">Aprobado</SelectItem>
+                                    <SelectItem value="all">{t('reportsSystem.todos')}</SelectItem>
+                                    <SelectItem value="active">{t('reportsSystem.activo')}</SelectItem>
+                                    <SelectItem value="inactive">{t('reportsSystem.inactivo')}</SelectItem>
+                                    <SelectItem value="pending">{t('reportsSystem.pendiente')}</SelectItem>
+                                    <SelectItem value="approved">{t('reportsSystem.aprobado')}</SelectItem>
                                   </SelectContent>
                                 </Select>
                               ) : (
@@ -583,7 +583,7 @@ export default function ReportsSystemPage() {
                     <Card>
                       <CardHeader className="pb-2">
                         <div className="flex items-center justify-between">
-                          <CardTitle className="text-lg">Vista Previa</CardTitle>
+                          <CardTitle className="text-lg">{t('reportsSystem.vistaPrevia')}</CardTitle>
                           <Badge variant="secondary">
                             {previewData.pagination?.total_rows || previewData.data?.length || 0} registros
                           </Badge>
@@ -634,7 +634,7 @@ export default function ReportsSystemPage() {
                         {/* Totals */}
                         {previewData.totals && Object.keys(previewData.totals).length > 0 && (
                           <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                            <p className="font-medium text-sm mb-2">Totales</p>
+                            <p className="font-medium text-sm mb-2">{t('reportsSystem.totales')}</p>
                             <div className="flex flex-wrap gap-4 text-sm">
                               {Object.entries(previewData.totals).map(([key, value]) => (
                                 <div key={key}>
@@ -653,7 +653,7 @@ export default function ReportsSystemPage() {
                 <Card className="h-[400px] flex items-center justify-center">
                   <div className="text-center text-slate-500">
                     <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    <p>Seleccione un reporte del catálogo</p>
+                    <p>{t('reportsSystem.seleccioneUnReporteDel')}</p>
                     <p className="text-sm">para configurar filtros y generar vista previa</p>
                   </div>
                 </Card>
@@ -666,15 +666,15 @@ export default function ReportsSystemPage() {
         <TabsContent value="saved">
           <Card>
             <CardHeader>
-              <CardTitle>Reportes Guardados</CardTitle>
-              <CardDescription>Configuraciones de reportes guardadas para acceso rápido</CardDescription>
+              <CardTitle>{t('reportsSystem.reportesGuardados')}</CardTitle>
+              <CardDescription>{t('reportsSystem.configuracionesDeReportesGuardadas')}</CardDescription>
             </CardHeader>
             <CardContent>
               {savedReports.length === 0 ? (
                 <div className="text-center py-8 text-slate-500">
                   <Star className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>No hay reportes guardados</p>
-                  <p className="text-sm">Guarda configuraciones de reportes para acceso rápido</p>
+                  <p>{t('reportsSystem.noHayReportesGuardados')}</p>
+                  <p className="text-sm">{t('reportsSystem.guardaConfiguracionesDeReportes')}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -714,26 +714,26 @@ export default function ReportsSystemPage() {
         <TabsContent value="history">
           <Card>
             <CardHeader>
-              <CardTitle>Historial de Reportes</CardTitle>
-              <CardDescription>Trazabilidad de reportes generados</CardDescription>
+              <CardTitle>{t('reportsSystem.historialDeReportes')}</CardTitle>
+              <CardDescription>{t('reportsSystem.trazabilidadDeReportesGenerados')}</CardDescription>
             </CardHeader>
             <CardContent>
               {reportHistory.length === 0 ? (
                 <div className="text-center py-8 text-slate-500">
                   <History className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>No hay historial de reportes</p>
+                  <p>{t('reportsSystem.noHayHistorialDe')}</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b bg-slate-50 dark:bg-slate-800">
-                        <th className="px-4 py-2 text-left">Reporte</th>
-                        <th className="px-4 py-2 text-left">Usuario</th>
-                        <th className="px-4 py-2 text-left">Formato</th>
-                        <th className="px-4 py-2 text-left">Registros</th>
-                        <th className="px-4 py-2 text-left">Fecha</th>
-                        <th className="px-4 py-2 text-left">Filtros</th>
+                        <th className="px-4 py-2 text-left">{t('reportsSystem.reporte')}</th>
+                        <th className="px-4 py-2 text-left">{t('reportsSystem.usuario')}</th>
+                        <th className="px-4 py-2 text-left">{t('reportsSystem.formato')}</th>
+                        <th className="px-4 py-2 text-left">{t('reportsSystem.registros')}</th>
+                        <th className="px-4 py-2 text-left">{t('reportsSystem.fecha')}</th>
+                        <th className="px-4 py-2 text-left">{t('reportsSystem.filtros')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -764,14 +764,14 @@ export default function ReportsSystemPage() {
       <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Guardar Configuración de Reporte</DialogTitle>
+            <DialogTitle>{t('reportsSystem.guardarConfiguracionDeReporte')}</DialogTitle>
             <DialogDescription>
               Guarda esta configuración para acceder rápidamente en el futuro
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label>Nombre *</Label>
+              <Label>{t('reportsSystem.nombre')}</Label>
               <Input
                 value={saveConfig.name}
                 onChange={(e) => setSaveConfig({...saveConfig, name: e.target.value})}
@@ -779,7 +779,7 @@ export default function ReportsSystemPage() {
               />
             </div>
             <div>
-              <Label>Descripción</Label>
+              <Label>{t('reportsSystem.descripcion')}</Label>
               <Input
                 value={saveConfig.description}
                 onChange={(e) => setSaveConfig({...saveConfig, description: e.target.value})}
@@ -791,12 +791,12 @@ export default function ReportsSystemPage() {
                 checked={saveConfig.is_favorite}
                 onCheckedChange={(checked) => setSaveConfig({...saveConfig, is_favorite: checked})}
               />
-              <Label>Marcar como favorito</Label>
+              <Label>{t('reportsSystem.marcarComoFavorito')}</Label>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowSaveDialog(false)}>Cancelar</Button>
-            <Button onClick={saveReportConfig}>Guardar</Button>
+            <Button variant="outline" onClick={() => setShowSaveDialog(false)}>{t('reportsSystem.cancelar')}</Button>
+            <Button onClick={saveReportConfig}>{t('reportsSystem.guardar')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

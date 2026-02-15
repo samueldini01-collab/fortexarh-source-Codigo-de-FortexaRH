@@ -343,12 +343,12 @@ export default function PayrollConfigPage() {
                   <div className="flex items-start gap-2">
                     <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                     <div>
-                      <h5 className="font-semibold text-blue-900">Cómo funciona el ISR</h5>
+                      <h5 className="font-semibold text-blue-900">{t('payrollConfig.comoFuncionaElIsr')}</h5>
                       <ul className="mt-2 space-y-1 text-sm text-blue-800">
-                        <li><strong>Rango 1:</strong> Hasta el monto mínimo anual - Exento de ISR</li>
-                        <li><strong>Rango 2:</strong> Entre mínimo y medio - Se aplica el porcentaje mínimo sobre el excedente</li>
-                        <li><strong>Rango 3:</strong> Entre medio y máximo - Se aplica monto fijo medio + porcentaje medio sobre el excedente</li>
-                        <li><strong>Rango 4:</strong> Más del máximo - Se aplica monto fijo máximo + porcentaje máximo sobre el excedente</li>
+                        <li><strong>{t('payrollConfig.rango1')}</strong> Hasta el monto mínimo anual - Exento de ISR</li>
+                        <li><strong>{t('payrollConfig.rango2')}</strong> Entre mínimo y medio - Se aplica el porcentaje mínimo sobre el excedente</li>
+                        <li><strong>{t('payrollConfig.rango3')}</strong> Entre medio y máximo - Se aplica monto fijo medio + porcentaje medio sobre el excedente</li>
+                        <li><strong>{t('payrollConfig.rango4')}</strong> Más del máximo - Se aplica monto fijo máximo + porcentaje máximo sobre el excedente</li>
                       </ul>
                     </div>
                   </div>

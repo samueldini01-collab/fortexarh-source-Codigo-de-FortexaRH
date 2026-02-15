@@ -551,7 +551,7 @@ export default function DocumentsPage() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <Label className="text-xs">Cesantía</Label>
+                          <Label className="text-xs">{t('documents.cesantia')}</Label>
                           <Input 
                             type="number"
                             value={customValues.cesantia || ""}
@@ -559,7 +559,7 @@ export default function DocumentsPage() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <Label className="text-xs">Vacaciones</Label>
+                          <Label className="text-xs">{t('documents.vacaciones')}</Label>
                           <Input 
                             type="number"
                             value={customValues.vacaciones || ""}
@@ -567,7 +567,7 @@ export default function DocumentsPage() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <Label className="text-xs">Regalía</Label>
+                          <Label className="text-xs">{t('documents.regalia')}</Label>
                           <Input 
                             type="number"
                             value={customValues.regalia || ""}
@@ -602,8 +602,8 @@ export default function DocumentsPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle>Plantillas de Documentos</CardTitle>
-                    <CardDescription>Administre las plantillas disponibles</CardDescription>
+                    <CardTitle>{t('documents.plantillasDeDocumentos')}</CardTitle>
+                    <CardDescription>{t('documents.administreLasPlantillasDisponibles')}</CardDescription>
                   </div>
                   <div className="relative w-64">
                     <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -620,11 +620,11 @@ export default function DocumentsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Nombre</TableHead>
-                      <TableHead>Categoría</TableHead>
-                      <TableHead>Descripción</TableHead>
-                      <TableHead>Tipo</TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
+                      <TableHead>{t('documents.nombre')}</TableHead>
+                      <TableHead>{t('documents.categoria')}</TableHead>
+                      <TableHead>{t('documents.descripcion')}</TableHead>
+                      <TableHead>{t('documents.tipo')}</TableHead>
+                      <TableHead className="text-right">{t('documents.acciones')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -637,9 +637,9 @@ export default function DocumentsPage() {
                         </TableCell>
                         <TableCell>
                           {template.is_default ? (
-                            <Badge variant="outline">Sistema</Badge>
+                            <Badge variant="outline">{t('documents.sistema')}</Badge>
                           ) : (
-                            <Badge className="bg-purple-100 text-purple-700">Personalizada</Badge>
+                            <Badge className="bg-purple-100 text-purple-700">{t('documents.personalizada')}</Badge>
                           )}
                         </TableCell>
                         <TableCell className="text-right">
@@ -675,14 +675,14 @@ export default function DocumentsPage() {
           <TabsContent value="history" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Historial de Documentos</CardTitle>
-                <CardDescription>Documentos generados recientemente</CardDescription>
+                <CardTitle>{t('documents.historialDeDocumentos')}</CardTitle>
+                <CardDescription>{t('documents.documentosGeneradosRecientemente')}</CardDescription>
               </CardHeader>
               <CardContent>
                 {history.length === 0 ? (
                   <div className="text-center py-12">
                     <History className="w-12 h-12 mx-auto text-slate-300 mb-4" />
-                    <p className="text-slate-500 dark:text-slate-400">No hay documentos generados</p>
+                    <p className="text-slate-500 dark:text-slate-400">{t('documents.noHayDocumentosGenerados')}</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -721,7 +721,7 @@ export default function DocumentsPage() {
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{previewTitle}</DialogTitle>
-              <DialogDescription>Vista previa del documento generado</DialogDescription>
+              <DialogDescription>{t('documents.vistaPreviaDelDocumento')}</DialogDescription>
             </DialogHeader>
             <div 
               className="border rounded-lg p-4 bg-white"
@@ -743,12 +743,12 @@ export default function DocumentsPage() {
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingTemplate ? "Editar Plantilla" : "Nueva Plantilla"}</DialogTitle>
-              <DialogDescription>Configure la plantilla del documento</DialogDescription>
+              <DialogDescription>{t('documents.configureLaPlantillaDel')}</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Nombre</Label>
+                  <Label>{t('documents.nombre')}</Label>
                   <Input 
                     value={templateForm.name}
                     onChange={(e) => setTemplateForm({...templateForm, name: e.target.value})}
@@ -756,7 +756,7 @@ export default function DocumentsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Categoría</Label>
+                  <Label>{t('documents.categoria')}</Label>
                   <Select 
                     value={templateForm.category} 
                     onValueChange={(v) => setTemplateForm({...templateForm, category: v})}
@@ -765,16 +765,16 @@ export default function DocumentsPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="constancia">Constancia</SelectItem>
-                      <SelectItem value="carta">Carta</SelectItem>
-                      <SelectItem value="certificado">Certificado</SelectItem>
-                      <SelectItem value="notificacion">Notificación</SelectItem>
+                      <SelectItem value="constancia">{t('documents.constancia')}</SelectItem>
+                      <SelectItem value="carta">{t('documents.carta')}</SelectItem>
+                      <SelectItem value="certificado">{t('documents.certificado')}</SelectItem>
+                      <SelectItem value="notificacion">{t('documents.notificacion')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Descripción</Label>
+                <Label>{t('documents.descripcion')}</Label>
                 <Input 
                   value={templateForm.description}
                   onChange={(e) => setTemplateForm({...templateForm, description: e.target.value})}
@@ -782,7 +782,7 @@ export default function DocumentsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Contenido HTML</Label>
+                <Label>{t('documents.contenidoHtml')}</Label>
                 <Textarea 
                   value={templateForm.content}
                   onChange={(e) => setTemplateForm({...templateForm, content: e.target.value})}
@@ -796,7 +796,7 @@ export default function DocumentsPage() {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowTemplateEditor(false)}>Cancelar</Button>
+              <Button variant="outline" onClick={() => setShowTemplateEditor(false)}>{t('documents.cancelar')}</Button>
               <Button onClick={handleSaveTemplate}>
                 <Check className="w-4 h-4 mr-2" />Guardar Plantilla
               </Button>

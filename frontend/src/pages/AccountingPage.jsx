@@ -823,7 +823,7 @@ export default function AccountingPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Referencia</Label>
+                  <Label>{t('accounting.referencia')}</Label>
                   <Input 
                     value={entryForm.reference}
                     onChange={(e) => setEntryForm({...entryForm, reference: e.target.value})}
@@ -831,7 +831,7 @@ export default function AccountingPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Período</Label>
+                  <Label>{t('accounting.periodo')}</Label>
                   <Input 
                     type="month" 
                     value={entryForm.period}
@@ -839,22 +839,22 @@ export default function AccountingPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Tipo</Label>
+                  <Label>{t('accounting.tipo')}</Label>
                   <Select value={entryForm.entry_type} onValueChange={(v) => setEntryForm({...entryForm, entry_type: v})}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="manual">Manual</SelectItem>
-                      <SelectItem value="payroll">Nómina</SelectItem>
-                      <SelectItem value="adjustment">Ajuste</SelectItem>
+                      <SelectItem value="manual">{t('accounting.manual')}</SelectItem>
+                      <SelectItem value="payroll">{t('accounting.nomina')}</SelectItem>
+                      <SelectItem value="adjustment">{t('accounting.ajuste')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label>Descripción</Label>
+                <Label>{t('accounting.descripcion')}</Label>
                 <Input 
                   value={entryForm.description}
                   onChange={(e) => setEntryForm({...entryForm, description: e.target.value})}
@@ -865,7 +865,7 @@ export default function AccountingPage() {
               {/* Lines */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label>Líneas del Asiento</Label>
+                  <Label>{t('accounting.lineasDelAsiento')}</Label>
                   <Button type="button" variant="outline" size="sm" onClick={addLine}>
                     <Plus className="w-4 h-4 mr-1" />
                     Agregar Línea
@@ -876,10 +876,10 @@ export default function AccountingPage() {
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-slate-50 dark:bg-slate-800">
-                        <TableHead className="w-40">Cuenta</TableHead>
-                        <TableHead>Descripción</TableHead>
-                        <TableHead className="w-32 text-right">Débito</TableHead>
-                        <TableHead className="w-32 text-right">Crédito</TableHead>
+                        <TableHead className="w-40">{t('accounting.cuenta')}</TableHead>
+                        <TableHead>{t('accounting.descripcion')}</TableHead>
+                        <TableHead className="w-32 text-right">{t('accounting.debito')}</TableHead>
+                        <TableHead className="w-32 text-right">{t('accounting.credito')}</TableHead>
                         <TableHead className="w-12"></TableHead>
                       </TableRow>
                     </TableHeader>
@@ -939,7 +939,7 @@ export default function AccountingPage() {
                       ))}
                       {/* Totals Row */}
                       <TableRow className="bg-slate-50 font-bold">
-                        <TableCell colSpan={2} className="text-right">TOTALES:</TableCell>
+                        <TableCell colSpan={2} className="text-right">{t('accounting.totales')}</TableCell>
                         <TableCell className="text-right font-mono">{formatCurrency(getTotalDebits())}</TableCell>
                         <TableCell className="text-right font-mono">{formatCurrency(getTotalCredits())}</TableCell>
                         <TableCell></TableCell>
@@ -953,7 +953,7 @@ export default function AccountingPage() {
                   {isBalanced() ? (
                     <>
                       <CheckCircle className="w-5 h-5" />
-                      <span>Asiento balanceado</span>
+                      <span>{t('accounting.asientoBalanceado')}</span>
                     </>
                   ) : (
                     <>
@@ -965,7 +965,7 @@ export default function AccountingPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Notas (Opcional)</Label>
+                <Label>{t('accounting.notasOpcional')}</Label>
                 <Textarea 
                   value={entryForm.notes}
                   onChange={(e) => setEntryForm({...entryForm, notes: e.target.value})}
@@ -1070,7 +1070,7 @@ export default function AccountingPage() {
         <Dialog open={showCatalogSelector} onOpenChange={setShowCatalogSelector}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Seleccionar Catálogo de Cuentas</DialogTitle>
+              <DialogTitle>{t('accounting.seleccionarCatalogoDeCuentas')}</DialogTitle>
               <DialogDescription>
                 Elija una plantilla de catálogo de cuentas. Esto reemplazará todas las cuentas existentes.
               </DialogDescription>
@@ -1120,7 +1120,7 @@ export default function AccountingPage() {
 
             {/* Format Toggle */}
             <div className="flex items-center gap-2 py-2 border-b">
-              <span className="text-sm text-slate-500">Formato:</span>
+              <span className="text-sm text-slate-500">{t('accounting.formato')}</span>
               <Button
                 size="sm"
                 variant={previewFormat === "summary" ? "default" : "outline"}
@@ -1152,15 +1152,15 @@ export default function AccountingPage() {
                   {/* Header Info */}
                   <div className="grid grid-cols-3 gap-4 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg text-sm">
                     <div>
-                      <span className="text-slate-500">Fecha:</span>
+                      <span className="text-slate-500">{t('accounting.fecha')}</span>
                       <span className="ml-2 font-medium">{previewData.entry_date}</span>
                     </div>
                     <div>
-                      <span className="text-slate-500">Referencia:</span>
+                      <span className="text-slate-500">{t('accounting.referencia1')}</span>
                       <span className="ml-2 font-medium">{previewData.reference || "-"}</span>
                     </div>
                     <div>
-                      <span className="text-slate-500">ID:</span>
+                      <span className="text-slate-500">{t('accounting.id')}</span>
                       <span className="ml-2 font-mono text-xs">{previewData.entry_id}</span>
                     </div>
                   </div>
@@ -1170,16 +1170,16 @@ export default function AccountingPage() {
                     <Table>
                       <TableHeader>
                         <TableRow className="bg-slate-100 dark:bg-slate-800">
-                          <TableHead className="font-semibold">Código</TableHead>
-                          <TableHead className="font-semibold">Nombre de Cuenta</TableHead>
+                          <TableHead className="font-semibold">{t('accounting.codigo')}</TableHead>
+                          <TableHead className="font-semibold">{t('accounting.nombreDeCuenta')}</TableHead>
                           {previewData.has_cost_center && (
-                            <TableHead className="font-semibold">Centro de Costos</TableHead>
+                            <TableHead className="font-semibold">{t('accounting.centroDeCostos')}</TableHead>
                           )}
                           {previewFormat === "detailed" && (
-                            <TableHead className="font-semibold">Empleado</TableHead>
+                            <TableHead className="font-semibold">{t('accounting.empleado')}</TableHead>
                           )}
-                          <TableHead className="text-right font-semibold">Débito</TableHead>
-                          <TableHead className="text-right font-semibold">Crédito</TableHead>
+                          <TableHead className="text-right font-semibold">{t('accounting.debito')}</TableHead>
+                          <TableHead className="text-right font-semibold">{t('accounting.credito')}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>

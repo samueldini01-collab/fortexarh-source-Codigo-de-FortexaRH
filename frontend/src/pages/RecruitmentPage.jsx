@@ -263,7 +263,7 @@ export default function RecruitmentPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-blue-600 dark:text-blue-400">Vacantes Abiertas</p>
+                  <p className="text-sm text-blue-600 dark:text-blue-400">{t('recruitment.vacantesAbiertas')}</p>
                   <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">{openJobs}</p>
                 </div>
                 <Briefcase className="w-8 h-8 text-blue-400" />
@@ -279,7 +279,7 @@ export default function RecruitmentPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600 dark:text-slate-300">Vacantes Cerradas</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-300">{t('recruitment.vacantesCerradas')}</p>
                   <p className="text-2xl font-bold text-slate-700 dark:text-slate-200">{closedJobs}</p>
                 </div>
                 <Briefcase className="w-8 h-8 text-slate-300" />
@@ -295,7 +295,7 @@ export default function RecruitmentPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-emerald-600 dark:text-emerald-400">Total Candidatos</p>
+                  <p className="text-sm text-emerald-600 dark:text-emerald-400">{t('recruitment.totalCandidatos')}</p>
                   <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{totalCandidates}</p>
                 </div>
                 <Users className="w-8 h-8 text-emerald-400" />
@@ -311,7 +311,7 @@ export default function RecruitmentPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-purple-600 dark:text-purple-400">En Entrevista</p>
+                  <p className="text-sm text-purple-600 dark:text-purple-400">{t('recruitment.enEntrevista')}</p>
                   <p className="text-2xl font-bold text-purple-700 dark:text-purple-400">{interviewCandidates}</p>
                 </div>
                 <UserPlus className="w-8 h-8 text-purple-400" />
@@ -327,7 +327,7 @@ export default function RecruitmentPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-amber-600 dark:text-amber-400">Nuevos</p>
+                  <p className="text-sm text-amber-600 dark:text-amber-400">{t('recruitment.nuevos')}</p>
                   <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">{appliedCandidates}</p>
                 </div>
                 <UserCheck className="w-8 h-8 text-amber-400" />
@@ -343,7 +343,7 @@ export default function RecruitmentPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-green-600 dark:text-green-400">Contratados</p>
+                  <p className="text-sm text-green-600 dark:text-green-400">{t('recruitment.contratados')}</p>
                   <p className="text-2xl font-bold text-green-700 dark:text-green-400">{hiredCandidates}</p>
                 </div>
                 <UserCheck className="w-8 h-8 text-green-400" />
@@ -372,8 +372,8 @@ export default function RecruitmentPage() {
 
         <Tabs defaultValue="jobs" className="space-y-6">
           <TabsList>
-            <TabsTrigger value="jobs" data-testid="tab-jobs">Vacantes</TabsTrigger>
-            <TabsTrigger value="candidates" data-testid="tab-candidates">Candidatos</TabsTrigger>
+            <TabsTrigger value="jobs" data-testid="tab-jobs">{t('recruitment.vacantes')}</TabsTrigger>
+            <TabsTrigger value="candidates" data-testid="tab-candidates">{t('recruitment.candidatos')}</TabsTrigger>
           </TabsList>
 
           {/* Jobs Tab */}
@@ -388,12 +388,12 @@ export default function RecruitmentPage() {
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle className="heading">Nueva Vacante</DialogTitle>
+                    <DialogTitle className="heading">{t('recruitment.nuevaVacante')}</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleJobSubmit} className="space-y-4 mt-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>Título del Puesto</Label>
+                        <Label>{t('recruitment.tituloDelPuesto')}</Label>
                         <Input
                           value={jobForm.title}
                           onChange={(e) => setJobForm({...jobForm, title: e.target.value})}
@@ -402,7 +402,7 @@ export default function RecruitmentPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Departamento</Label>
+                        <Label>{t('recruitment.departamento')}</Label>
                         <Input
                           value={jobForm.department}
                           onChange={(e) => setJobForm({...jobForm, department: e.target.value})}
@@ -412,7 +412,7 @@ export default function RecruitmentPage() {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label>Descripción</Label>
+                      <Label>{t('recruitment.descripcion')}</Label>
                       <Textarea
                         value={jobForm.description}
                         onChange={(e) => setJobForm({...jobForm, description: e.target.value})}
@@ -421,7 +421,7 @@ export default function RecruitmentPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Requisitos</Label>
+                      <Label>{t('recruitment.requisitos')}</Label>
                       <Textarea
                         value={jobForm.requirements}
                         onChange={(e) => setJobForm({...jobForm, requirements: e.target.value})}
@@ -431,7 +431,7 @@ export default function RecruitmentPage() {
                     </div>
                     <div className="grid grid-cols-3 gap-4">
                       <div className="space-y-2">
-                        <Label>Rango Salarial</Label>
+                        <Label>{t('recruitment.rangoSalarial')}</Label>
                         <Input
                           placeholder="$3,000 - $5,000"
                           value={jobForm.salary_range}
@@ -441,7 +441,7 @@ export default function RecruitmentPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Ubicación</Label>
+                        <Label>{t('recruitment.ubicacion')}</Label>
                         <Input
                           value={jobForm.location}
                           onChange={(e) => setJobForm({...jobForm, location: e.target.value})}
@@ -450,16 +450,16 @@ export default function RecruitmentPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Tipo</Label>
+                        <Label>{t('recruitment.tipo')}</Label>
                         <Select value={jobForm.employment_type} onValueChange={(v) => setJobForm({...jobForm, employment_type: v})}>
                           <SelectTrigger data-testid="job-type">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="full_time">Tiempo Completo</SelectItem>
-                            <SelectItem value="part_time">Medio Tiempo</SelectItem>
-                            <SelectItem value="contract">Contrato</SelectItem>
-                            <SelectItem value="remote">Remoto</SelectItem>
+                            <SelectItem value="full_time">{t('recruitment.tiempoCompleto')}</SelectItem>
+                            <SelectItem value="part_time">{t('recruitment.medioTiempo')}</SelectItem>
+                            <SelectItem value="contract">{t('recruitment.contrato')}</SelectItem>
+                            <SelectItem value="remote">{t('recruitment.remoto')}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -555,11 +555,11 @@ export default function RecruitmentPage() {
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle className="heading">Agregar Candidato</DialogTitle>
+                    <DialogTitle className="heading">{t('recruitment.agregarCandidato')}</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleCandidateSubmit} className="space-y-4 mt-4">
                     <div className="space-y-2">
-                      <Label>Vacante</Label>
+                      <Label>{t('recruitment.vacante')}</Label>
                       <Select value={candidateForm.job_id} onValueChange={(v) => setCandidateForm({...candidateForm, job_id: v})}>
                         <SelectTrigger data-testid="candidate-job">
                           <SelectValue placeholder="Seleccionar vacante" />
@@ -573,7 +573,7 @@ export default function RecruitmentPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>Nombre</Label>
+                        <Label>{t('recruitment.nombre')}</Label>
                         <Input
                           value={candidateForm.name}
                           onChange={(e) => setCandidateForm({...candidateForm, name: e.target.value})}
@@ -582,7 +582,7 @@ export default function RecruitmentPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Email</Label>
+                        <Label>{t('recruitment.email')}</Label>
                         <Input
                           type="email"
                           value={candidateForm.email}
@@ -593,7 +593,7 @@ export default function RecruitmentPage() {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label>Teléfono</Label>
+                      <Label>{t('recruitment.telefono')}</Label>
                       <Input
                         value={candidateForm.phone}
                         onChange={(e) => setCandidateForm({...candidateForm, phone: e.target.value})}
@@ -635,10 +635,10 @@ export default function RecruitmentPage() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Candidato</TableHead>
-                        <TableHead>Vacante</TableHead>
-                        <TableHead>Etapa</TableHead>
-                        <TableHead className="text-right">Acciones</TableHead>
+                        <TableHead>{t('recruitment.candidato')}</TableHead>
+                        <TableHead>{t('recruitment.vacante')}</TableHead>
+                        <TableHead>{t('recruitment.etapa')}</TableHead>
+                        <TableHead className="text-right">{t('recruitment.acciones')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>

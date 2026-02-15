@@ -456,7 +456,7 @@ export default function PayrollCalculatorPage() {
               <div>
                 <h3 className="font-semibold text-blue-900">{t("payroll.calculator.subtitle")}</h3>
                 <p className="text-sm text-blue-700 mt-1">
-                  <strong>TSS:</strong> SFS 3.04% + AFP 2.87% | <strong>ISR:</strong> DGII
+                  <strong>{t('payrollCalc.tss')}</strong> SFS 3.04% + AFP 2.87% | <strong>{t('payrollCalc.isr')}</strong> DGII
                 </p>
               </div>
             </div>
@@ -539,7 +539,7 @@ export default function PayrollCalculatorPage() {
               {/* Extra Hours */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Horas Extra</Label>
+                  <Label>{t('payrollCalc.horasExtra')}</Label>
                   <Input
                     type="number"
                     step="0.5"
@@ -549,7 +549,7 @@ export default function PayrollCalculatorPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Valor por Hora (RD$)</Label>
+                  <Label>{t('payrollCalc.valorPorHoraRd')}</Label>
                   <Input
                     type="number"
                     step="0.01"
@@ -563,7 +563,7 @@ export default function PayrollCalculatorPage() {
               {/* Bonuses & Commissions */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Bonificaciones (RD$)</Label>
+                  <Label>{t('payrollCalc.bonificacionesRd')}</Label>
                   <Input
                     type="number"
                     step="0.01"
@@ -573,7 +573,7 @@ export default function PayrollCalculatorPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Comisiones (RD$)</Label>
+                  <Label>{t('payrollCalc.comisionesRd')}</Label>
                   <Input
                     type="number"
                     step="0.01"
@@ -589,7 +589,7 @@ export default function PayrollCalculatorPage() {
               {/* Deductions */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Préstamos (RD$)</Label>
+                  <Label>{t('payrollCalc.prestamosRd')}</Label>
                   <Input
                     type="number"
                     step="0.01"
@@ -599,7 +599,7 @@ export default function PayrollCalculatorPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Otras Deducciones (RD$)</Label>
+                  <Label>{t('payrollCalc.otrasDeduccionesRd')}</Label>
                   <Input
                     type="number"
                     step="0.01"
@@ -686,11 +686,11 @@ export default function PayrollCalculatorPage() {
                       {/* TSS Section */}
                       <p className="text-xs text-red-600 font-medium mb-1">{t('payroll.calculator.socialSecurity')}</p>
                       <div className="flex justify-between">
-                        <span className="text-slate-600 dark:text-slate-300">SFS (3.07%)</span>
+                        <span className="text-slate-600 dark:text-slate-300">{t('payrollCalc.sfs307')}</span>
                         <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.sfs_employee)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-600 dark:text-slate-300">AFP (2.87%)</span>
+                        <span className="text-slate-600 dark:text-slate-300">{t('payrollCalc.afp287')}</span>
                         <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.afp_employee)}</span>
                       </div>
                       <div className="flex justify-between text-xs">
@@ -750,28 +750,28 @@ export default function PayrollCalculatorPage() {
 
                   {/* Employer Contributions (Reference) */}
                   <div className="bg-blue-50 rounded-lg p-4 space-y-2">
-                    <h4 className="font-semibold text-blue-800 text-sm">Aportes del Empleador (Referencia)</h4>
+                    <h4 className="font-semibold text-blue-800 text-sm">{t('payrollCalc.aportesDelEmpleadorReferencia')}</h4>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div className="flex justify-between">
-                        <span className="text-slate-600 dark:text-slate-300">SFS (7.09%)</span>
+                        <span className="text-slate-600 dark:text-slate-300">{t('payrollCalc.sfs709')}</span>
                         <span className="font-medium">{formatCurrency(result.sfs_employer)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-600 dark:text-slate-300">AFP (7.10%)</span>
+                        <span className="text-slate-600 dark:text-slate-300">{t('payrollCalc.afp710')}</span>
                         <span className="font-medium">{formatCurrency(result.afp_employer)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-600 dark:text-slate-300">SRL (1%)</span>
+                        <span className="text-slate-600 dark:text-slate-300">{t('payrollCalc.srl1')}</span>
                         <span className="font-medium">{formatCurrency(result.srl_employer)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-600 dark:text-slate-300">INFOTEP (1%)</span>
+                        <span className="text-slate-600 dark:text-slate-300">{t('payrollCalc.infotep1')}</span>
                         <span className="font-medium">{formatCurrency(result.infotep_employer)}</span>
                       </div>
                     </div>
                     <Separator className="my-2" />
                     <div className="flex justify-between text-sm font-semibold text-blue-700 dark:text-blue-400">
-                      <span>Total Aportes</span>
+                      <span>{t('payrollCalc.totalAportes')}</span>
                       <span>{formatCurrency(result.total_employer_contributions)}</span>
                     </div>
                   </div>

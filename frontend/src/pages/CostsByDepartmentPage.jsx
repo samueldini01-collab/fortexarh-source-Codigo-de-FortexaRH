@@ -375,14 +375,14 @@ export default function CostsByDepartmentPage() {
                     <table className="w-full text-sm" data-testid="department-table">
                       <thead>
                         <tr className="border-b bg-slate-100 dark:bg-slate-800">
-                          <th className="text-left py-3 px-4 font-semibold">Departamento</th>
-                          <th className="text-center py-3 px-4 font-semibold">Empleados</th>
-                          <th className="text-right py-3 px-4 font-semibold">Salario Bruto</th>
-                          <th className="text-right py-3 px-4 font-semibold hidden md:table-cell">SFS</th>
-                          <th className="text-right py-3 px-4 font-semibold hidden md:table-cell">AFP</th>
-                          <th className="text-right py-3 px-4 font-semibold hidden lg:table-cell">ISR</th>
-                          <th className="text-right py-3 px-4 font-semibold hidden lg:table-cell">Patronal</th>
-                          <th className="text-right py-3 px-4 font-semibold">Costo Total</th>
+                          <th className="text-left py-3 px-4 font-semibold">{t('costsByDept.departamento')}</th>
+                          <th className="text-center py-3 px-4 font-semibold">{t('costsByDept.empleados')}</th>
+                          <th className="text-right py-3 px-4 font-semibold">{t('costsByDept.salarioBruto')}</th>
+                          <th className="text-right py-3 px-4 font-semibold hidden md:table-cell">{t('costsByDept.sfs')}</th>
+                          <th className="text-right py-3 px-4 font-semibold hidden md:table-cell">{t('costsByDept.afp')}</th>
+                          <th className="text-right py-3 px-4 font-semibold hidden lg:table-cell">{t('costsByDept.isr')}</th>
+                          <th className="text-right py-3 px-4 font-semibold hidden lg:table-cell">{t('costsByDept.patronal')}</th>
+                          <th className="text-right py-3 px-4 font-semibold">{t('costsByDept.costoTotal')}</th>
                           <th className="text-right py-3 px-4 font-semibold">%</th>
                         </tr>
                       </thead>
@@ -437,7 +437,7 @@ export default function CostsByDepartmentPage() {
                       </tbody>
                       <tfoot>
                         <tr className="bg-slate-200 dark:bg-slate-700 font-bold">
-                          <td className="py-3 px-4">TOTAL</td>
+                          <td className="py-3 px-4">{t('costsByDept.total')}</td>
                           <td className="py-3 px-4 text-center">{costReport.summary.employee_count}</td>
                           <td className="py-3 px-4 text-right font-mono">{formatCurrency(costReport.summary.total_gross)}</td>
                           <td className="py-3 px-4 text-right font-mono hidden md:table-cell text-red-600 dark:text-red-400">
@@ -532,7 +532,7 @@ export default function CostsByDepartmentPage() {
                     </ResponsiveContainer>
                   ) : (
                     <div className="h-64 flex items-center justify-center text-slate-500">
-                      <p>Sin datos disponibles</p>
+                      <p>{t('costsByDept.sinDatosDisponibles')}</p>
                     </div>
                   )}
                 </CardContent>
@@ -545,7 +545,7 @@ export default function CostsByDepartmentPage() {
                     <TrendingUp className="w-5 h-5 text-blue-500" />
                     Desglose por Departamento
                   </CardTitle>
-                  <CardDescription>Salarios, deducciones y aportes patronales</CardDescription>
+                  <CardDescription>{t('costsByDept.salariosDeduccionesYAportes')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {barChartData.length > 0 ? (
@@ -563,7 +563,7 @@ export default function CostsByDepartmentPage() {
                     </ResponsiveContainer>
                   ) : (
                     <div className="h-64 flex items-center justify-center text-slate-500">
-                      <p>Sin datos disponibles</p>
+                      <p>{t('costsByDept.sinDatosDisponibles')}</p>
                     </div>
                   )}
                 </CardContent>

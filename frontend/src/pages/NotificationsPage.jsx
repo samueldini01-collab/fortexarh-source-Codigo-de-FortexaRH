@@ -182,16 +182,16 @@ export default function NotificationsPage() {
           <TabsList className="grid w-full grid-cols-3 lg:w-[500px]">
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="w-4 h-4" />
-              <span className="hidden sm:inline">Configuración</span>
-              <span className="sm:hidden">Config</span>
+              <span className="hidden sm:inline">{t('notifications.configuracion')}</span>
+              <span className="sm:hidden">{t('notifications.config')}</span>
             </TabsTrigger>
             <TabsTrigger value="birthdays" className="flex items-center gap-2">
               <Cake className="w-4 h-4" />
-              <span>Cumpleaños</span>
+              <span>{t('notifications.cumpleanos')}</span>
             </TabsTrigger>
             <TabsTrigger value="history" className="flex items-center gap-2">
               <History className="w-4 h-4" />
-              <span>Historial</span>
+              <span>{t('notifications.historial')}</span>
             </TabsTrigger>
           </TabsList>
 
@@ -211,7 +211,7 @@ export default function NotificationsPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="payroll-reminder">Activar recordatorios</Label>
+                    <Label htmlFor="payroll-reminder">{t('notifications.activarRecordatorios')}</Label>
                     <Switch
                       id="payroll-reminder"
                       checked={notificationSettings.payroll_reminder_enabled}
@@ -223,7 +223,7 @@ export default function NotificationsPage() {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label>Día de pago de nómina</Label>
+                    <Label>{t('notifications.diaDePagoDe')}</Label>
                     <Select 
                       value={String(notificationSettings.payroll_day || 15)}
                       onValueChange={(v) => {
@@ -243,7 +243,7 @@ export default function NotificationsPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Recordar con anticipación de</Label>
+                    <Label>{t('notifications.recordarConAnticipacionDe')}</Label>
                     <Select 
                       value={String(notificationSettings.payroll_reminder_days || 3)}
                       onValueChange={(v) => {
@@ -290,7 +290,7 @@ export default function NotificationsPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="birthday-notif">Activar notificaciones</Label>
+                    <Label htmlFor="birthday-notif">{t('notifications.activarNotificaciones')}</Label>
                     <Switch
                       id="birthday-notif"
                       checked={notificationSettings.birthday_notifications_enabled}
@@ -302,7 +302,7 @@ export default function NotificationsPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Notificar con anticipación de</Label>
+                    <Label>{t('notifications.notificarConAnticipacionDe')}</Label>
                     <Select 
                       value={String(notificationSettings.birthday_notification_days || 1)}
                       onValueChange={(v) => {
@@ -314,7 +314,7 @@ export default function NotificationsPage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="0">El mismo día</SelectItem>
+                        <SelectItem value="0">{t('notifications.elMismoDia')}</SelectItem>
                         <SelectItem value="1">1 día antes</SelectItem>
                         <SelectItem value="3">3 días antes</SelectItem>
                         <SelectItem value="7">7 días antes</SelectItem>
@@ -350,7 +350,7 @@ export default function NotificationsPage() {
                 {upcomingBirthdays.length === 0 ? (
                   <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                     <Cake className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                    <p>No hay cumpleaños próximos en los siguientes 30 días</p>
+                    <p>{t('notifications.noHayCumpleanosProximos')}</p>
                   </div>
                 ) : (
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -403,7 +403,7 @@ export default function NotificationsPage() {
                 {notificationLogs.length === 0 ? (
                   <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                     <Bell className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                    <p>No hay notificaciones enviadas aún</p>
+                    <p>{t('notifications.noHayNotificacionesEnviadas')}</p>
                   </div>
                 ) : (
                   <div className="space-y-3">

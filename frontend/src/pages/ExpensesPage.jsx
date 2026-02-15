@@ -823,15 +823,15 @@ export default function ExpensesPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div>
-                      <Label className="text-slate-500 dark:text-slate-400">Título</Label>
+                      <Label className="text-slate-500 dark:text-slate-400">{t('expenses.titulo')}</Label>
                       <p className="font-medium">{requestDetails.request.title}</p>
                     </div>
                     <div>
-                      <Label className="text-slate-500 dark:text-slate-400">Tipo de Gasto</Label>
+                      <Label className="text-slate-500 dark:text-slate-400">{t('expenses.tipoDeGasto')}</Label>
                       <p>{expenseTypeLabels[requestDetails.request.expense_type] || requestDetails.request.expense_type}</p>
                     </div>
                     <div>
-                      <Label className="text-slate-500 dark:text-slate-400">Solicitante</Label>
+                      <Label className="text-slate-500 dark:text-slate-400">{t('expenses.solicitante')}</Label>
                       <p className="flex items-center gap-2">
                         <User className="w-4 h-4 text-slate-400" />
                         {requestDetails.request.employee_name}
@@ -839,7 +839,7 @@ export default function ExpensesPage() {
                     </div>
                     {requestDetails.request.department && (
                       <div>
-                        <Label className="text-slate-500 dark:text-slate-400">Departamento</Label>
+                        <Label className="text-slate-500 dark:text-slate-400">{t('expenses.departamento')}</Label>
                         <p className="flex items-center gap-2">
                           <Building2 className="w-4 h-4 text-slate-400" />
                           {requestDetails.request.department}
@@ -850,7 +850,7 @@ export default function ExpensesPage() {
                   
                   <div className="space-y-4">
                     <div>
-                      <Label className="text-slate-500 dark:text-slate-400">Período</Label>
+                      <Label className="text-slate-500 dark:text-slate-400">{t('expenses.periodo')}</Label>
                       <p className="flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-slate-400" />
                         {formatDate(requestDetails.request.start_date)} - {formatDate(requestDetails.request.end_date)}
@@ -858,7 +858,7 @@ export default function ExpensesPage() {
                     </div>
                     {requestDetails.request.destination && (
                       <div>
-                        <Label className="text-slate-500 dark:text-slate-400">Destino</Label>
+                        <Label className="text-slate-500 dark:text-slate-400">{t('expenses.destino')}</Label>
                         <p className="flex items-center gap-2">
                           <MapPin className="w-4 h-4 text-slate-400" />
                           {requestDetails.request.destination}
@@ -866,14 +866,14 @@ export default function ExpensesPage() {
                       </div>
                     )}
                     <div>
-                      <Label className="text-slate-500 dark:text-slate-400">Presupuesto Estimado</Label>
+                      <Label className="text-slate-500 dark:text-slate-400">{t('expenses.presupuestoEstimado')}</Label>
                       <p className="text-lg font-semibold text-emerald-600 dark:text-emerald-400">
                         {formatCurrency(requestDetails.request.estimated_budget)}
                       </p>
                     </div>
                     {requestDetails.request.actual_spent > 0 && (
                       <div>
-                        <Label className="text-slate-500 dark:text-slate-400">Gasto Real</Label>
+                        <Label className="text-slate-500 dark:text-slate-400">{t('expenses.gastoReal')}</Label>
                         <p className="text-lg font-semibold">
                           {formatCurrency(requestDetails.request.actual_spent)}
                         </p>
@@ -884,21 +884,21 @@ export default function ExpensesPage() {
 
                 {/* Description */}
                 <div>
-                  <Label className="text-slate-500 dark:text-slate-400">Descripción / Justificación</Label>
+                  <Label className="text-slate-500 dark:text-slate-400">{t('expenses.descripcionJustificacion')}</Label>
                   <p className="mt-1 p-3 bg-slate-50 rounded-lg">{requestDetails.request.description}</p>
                 </div>
 
                 {/* Budget Breakdown */}
                 {requestDetails.request.budget_breakdown?.length > 0 && (
                   <div>
-                    <Label className="text-slate-500 mb-2 block">Desglose del Presupuesto</Label>
+                    <Label className="text-slate-500 mb-2 block">{t('expenses.desgloseDelPresupuesto')}</Label>
                     <div className="border rounded-lg overflow-hidden">
                       <Table>
                         <TableHeader>
                           <TableRow className="bg-slate-50 dark:bg-slate-800">
-                            <TableHead>Categoría</TableHead>
-                            <TableHead>Descripción</TableHead>
-                            <TableHead className="text-right">Monto</TableHead>
+                            <TableHead>{t('expenses.categoria')}</TableHead>
+                            <TableHead>{t('expenses.descripcion')}</TableHead>
+                            <TableHead className="text-right">{t('expenses.monto')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -926,7 +926,7 @@ export default function ExpensesPage() {
                 {/* Advances */}
                 {requestDetails.advances?.length > 0 && (
                   <div>
-                    <Label className="text-slate-500 mb-2 block">Anticipos</Label>
+                    <Label className="text-slate-500 mb-2 block">{t('expenses.anticipos')}</Label>
                     <div className="space-y-2">
                       {requestDetails.advances.map((adv, i) => (
                         <div key={i} className="flex items-center justify-between p-3 bg-amber-50 border border-amber-100 rounded-lg">
@@ -955,7 +955,7 @@ export default function ExpensesPage() {
                 {/* Approval History */}
                 {requestDetails.approval_history?.length > 0 && (
                   <div>
-                    <Label className="text-slate-500 mb-2 block">Historial de Aprobaciones</Label>
+                    <Label className="text-slate-500 mb-2 block">{t('expenses.historialDeAprobaciones')}</Label>
                     <div className="space-y-2">
                       {requestDetails.approval_history.map((approval, i) => (
                         <div key={i} className="flex items-start gap-3 p-3 border rounded-lg">
@@ -1020,9 +1020,9 @@ export default function ExpensesPage() {
             <div className="space-y-4 py-4">
               {selectedRequest && (
                 <div className="p-4 bg-slate-50 rounded-lg space-y-2">
-                  <p><strong>Solicitante:</strong> {selectedRequest.employee_name}</p>
-                  <p><strong>Monto:</strong> {formatCurrency(selectedRequest.estimated_budget)}</p>
-                  <p><strong>Tipo:</strong> {expenseTypeLabels[selectedRequest.expense_type] || selectedRequest.expense_type}</p>
+                  <p><strong>{t('expenses.solicitante1')}</strong> {selectedRequest.employee_name}</p>
+                  <p><strong>{t('expenses.monto1')}</strong> {formatCurrency(selectedRequest.estimated_budget)}</p>
+                  <p><strong>{t('expenses.tipo')}</strong> {expenseTypeLabels[selectedRequest.expense_type] || selectedRequest.expense_type}</p>
                 </div>
               )}
               
@@ -1047,7 +1047,7 @@ export default function ExpensesPage() {
               </div>
               
               <div>
-                <Label>Comentarios</Label>
+                <Label>{t('expenses.comentarios')}</Label>
                 <Textarea
                   placeholder="Agregue un comentario (opcional)..."
                   value={approvalData.comments}

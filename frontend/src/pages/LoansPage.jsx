@@ -422,26 +422,26 @@ export default function LoansPage() {
         {/* Loans Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Listado de Préstamos</CardTitle>
+            <CardTitle>{t('loans.listadoDePrestamos')}</CardTitle>
           </CardHeader>
           <CardContent>
             {loans.length === 0 ? (
               <div className="text-center py-12 text-slate-500 dark:text-slate-400">
                 <Wallet className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-                <p className="font-medium">No hay préstamos registrados</p>
-                <p className="text-sm">Crea un nuevo préstamo para empezar</p>
+                <p className="font-medium">{t('loans.noHayPrestamosRegistrados')}</p>
+                <p className="text-sm">{t('loans.creaUnNuevoPrestamo')}</p>
               </div>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Empleado</TableHead>
-                    <TableHead>Monto</TableHead>
-                    <TableHead>Cuota Mensual</TableHead>
-                    <TableHead>Balance</TableHead>
-                    <TableHead>Progreso</TableHead>
-                    <TableHead>Estado</TableHead>
-                    <TableHead className="text-right">Acciones</TableHead>
+                    <TableHead>{t('loans.empleado')}</TableHead>
+                    <TableHead>{t('loans.monto')}</TableHead>
+                    <TableHead>{t('loans.cuotaMensual')}</TableHead>
+                    <TableHead>{t('loans.balance')}</TableHead>
+                    <TableHead>{t('loans.progreso')}</TableHead>
+                    <TableHead>{t('loans.estado')}</TableHead>
+                    <TableHead className="text-right">{t('loans.acciones')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -521,7 +521,7 @@ export default function LoansPage() {
         <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
           <DialogContent className="max-w-lg">
             <DialogHeader>
-              <DialogTitle>Nuevo Préstamo</DialogTitle>
+              <DialogTitle>{t('loans.nuevoPrestamo')}</DialogTitle>
               <DialogDescription>
                 Registrar un nuevo préstamo a empleado
               </DialogDescription>
@@ -529,7 +529,7 @@ export default function LoansPage() {
             
             <div className="space-y-4 py-4">
               <div>
-                <Label>Empleado *</Label>
+                <Label>{t('loans.empleado1')}</Label>
                 <Select 
                   value={formData.employee_id} 
                   onValueChange={(v) => setFormData({...formData, employee_id: v})}
@@ -549,7 +549,7 @@ export default function LoansPage() {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>Monto del Préstamo *</Label>
+                  <Label>{t('loans.montoDelPrestamo')}</Label>
                   <Input 
                     type="number"
                     value={formData.amount}
@@ -559,7 +559,7 @@ export default function LoansPage() {
                   />
                 </div>
                 <div>
-                  <Label>Moneda</Label>
+                  <Label>{t('loans.moneda')}</Label>
                   <Select 
                     value={formData.currency} 
                     onValueChange={(v) => setFormData({...formData, currency: v})}
@@ -580,7 +580,7 @@ export default function LoansPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>Tasa de Interés Anual (%)</Label>
+                  <Label>{t('loans.tasaDeInteresAnual')}</Label>
                   <Input 
                     type="number"
                     value={formData.interest_rate}
@@ -592,7 +592,7 @@ export default function LoansPage() {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>Plazo (meses) *</Label>
+                  <Label>{t('loans.plazoMeses')}</Label>
                   <Select 
                     value={formData.term_months} 
                     onValueChange={(v) => setFormData({...formData, term_months: v})}
@@ -608,7 +608,7 @@ export default function LoansPage() {
                   </Select>
                 </div>
                 <div>
-                  <Label>Fecha de Inicio</Label>
+                  <Label>{t('loans.fechaDeInicio')}</Label>
                   <Input 
                     type="date"
                     value={formData.start_date}
@@ -618,7 +618,7 @@ export default function LoansPage() {
               </div>
               
               <div>
-                <Label>Descripción / Motivo</Label>
+                <Label>{t('loans.descripcionMotivo')}</Label>
                 <Textarea 
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
@@ -632,22 +632,22 @@ export default function LoansPage() {
                   checked={formData.deduct_from_payroll}
                   onCheckedChange={(c) => setFormData({...formData, deduct_from_payroll: c})}
                 />
-                <Label className="cursor-pointer">Descontar automáticamente de nómina</Label>
+                <Label className="cursor-pointer">{t('loans.descontarAutomaticamenteDeNomina')}</Label>
               </div>
               
               {/* Payment Preview */}
               {formData.amount && formData.term_months && (
                 <div className="bg-blue-50 rounded-xl p-4">
-                  <p className="text-sm text-blue-800 font-medium">Vista Previa del Préstamo</p>
+                  <p className="text-sm text-blue-800 font-medium">{t('loans.vistaPreviaDelPrestamo')}</p>
                   <div className="grid grid-cols-2 gap-4 mt-2">
                     <div>
-                      <p className="text-xs text-blue-600 dark:text-blue-400">Cuota Mensual</p>
+                      <p className="text-xs text-blue-600 dark:text-blue-400">{t('loans.cuotaMensual')}</p>
                       <p className="text-lg font-bold text-blue-800">
                         {formatCurrency(calculateMonthlyPayment())}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-blue-600 dark:text-blue-400">Total a Pagar</p>
+                      <p className="text-xs text-blue-600 dark:text-blue-400">{t('loans.totalAPagar')}</p>
                       <p className="text-lg font-bold text-blue-800">
                         {formatCurrency(calculateMonthlyPayment() * parseInt(formData.term_months || 1))}
                       </p>
@@ -672,7 +672,7 @@ export default function LoansPage() {
         <Dialog open={showDetailModal} onOpenChange={setShowDetailModal}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Detalle del Préstamo</DialogTitle>
+              <DialogTitle>{t('loans.detalleDelPrestamo')}</DialogTitle>
             </DialogHeader>
             
             {selectedLoan && (
@@ -680,12 +680,12 @@ export default function LoansPage() {
                 {/* Employee & Loan Info */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-slate-50 rounded-xl p-4">
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Empleado</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{t('loans.empleado')}</p>
                     <p className="font-semibold">{selectedLoan.employee?.name}</p>
                     <p className="text-sm text-slate-500 dark:text-slate-400">{selectedLoan.employee?.position}</p>
                   </div>
                   <div className="bg-slate-50 rounded-xl p-4">
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Estado</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{t('loans.estado')}</p>
                     <div className="mt-1">{getStatusBadge(selectedLoan.status)}</div>
                   </div>
                 </div>
@@ -693,34 +693,34 @@ export default function LoansPage() {
                 {/* Financial Summary */}
                 <div className="grid grid-cols-4 gap-4">
                   <div className="text-center p-3 bg-blue-50 rounded-lg">
-                    <p className="text-xs text-blue-600 dark:text-blue-400">Monto Original</p>
+                    <p className="text-xs text-blue-600 dark:text-blue-400">{t('loans.montoOriginal')}</p>
                     <p className="font-bold text-blue-800">{formatCurrency(selectedLoan.amount)}</p>
                   </div>
                   <div className="text-center p-3 bg-emerald-50 rounded-lg">
-                    <p className="text-xs text-emerald-600 dark:text-emerald-400">Total Pagado</p>
+                    <p className="text-xs text-emerald-600 dark:text-emerald-400">{t('loans.totalPagado')}</p>
                     <p className="font-bold text-emerald-800">{formatCurrency(selectedLoan.total_paid)}</p>
                   </div>
                   <div className="text-center p-3 bg-amber-50 rounded-lg">
-                    <p className="text-xs text-amber-600 dark:text-amber-400">Balance Pendiente</p>
+                    <p className="text-xs text-amber-600 dark:text-amber-400">{t('loans.balancePendiente')}</p>
                     <p className="font-bold text-amber-800">{formatCurrency(selectedLoan.remaining_balance)}</p>
                   </div>
                   <div className="text-center p-3 bg-purple-50 rounded-lg">
-                    <p className="text-xs text-purple-600 dark:text-purple-400">Cuota Mensual</p>
+                    <p className="text-xs text-purple-600 dark:text-purple-400">{t('loans.cuotaMensual')}</p>
                     <p className="font-bold text-purple-800">{formatCurrency(selectedLoan.monthly_payment)}</p>
                   </div>
                 </div>
                 
                 {/* Payment Schedule */}
                 <div>
-                  <h4 className="font-semibold mb-3">Plan de Pagos</h4>
+                  <h4 className="font-semibold mb-3">{t('loans.planDePagos')}</h4>
                   <div className="max-h-64 overflow-y-auto">
                     <Table>
                       <TableHeader>
                         <TableRow>
                           <TableHead>#</TableHead>
-                          <TableHead>Fecha</TableHead>
-                          <TableHead>Monto</TableHead>
-                          <TableHead>Estado</TableHead>
+                          <TableHead>{t('loans.fecha')}</TableHead>
+                          <TableHead>{t('loans.monto')}</TableHead>
+                          <TableHead>{t('loans.estado')}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -744,7 +744,7 @@ export default function LoansPage() {
                 {/* Payment History */}
                 {selectedLoan.payments?.length > 0 && (
                   <div>
-                    <h4 className="font-semibold mb-3">Historial de Pagos</h4>
+                    <h4 className="font-semibold mb-3">{t('loans.historialDePagos')}</h4>
                     <div className="space-y-2">
                       {selectedLoan.payments.map((p, i) => (
                         <div key={i} className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
@@ -767,7 +767,7 @@ export default function LoansPage() {
         <Dialog open={showPaymentModal} onOpenChange={setShowPaymentModal}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Registrar Pago</DialogTitle>
+              <DialogTitle>{t('loans.registrarPago')}</DialogTitle>
               <DialogDescription>
                 Registrar un pago para el préstamo de {selectedLoan?.employee_name}
               </DialogDescription>
@@ -775,7 +775,7 @@ export default function LoansPage() {
             
             <div className="space-y-4 py-4">
               <div>
-                <Label>Monto del Pago *</Label>
+                <Label>{t('loans.montoDelPago')}</Label>
                 <Input 
                   type="number"
                   value={paymentData.amount}
@@ -785,7 +785,7 @@ export default function LoansPage() {
               </div>
               
               <div>
-                <Label>Fecha del Pago</Label>
+                <Label>{t('loans.fechaDelPago')}</Label>
                 <Input 
                   type="date"
                   value={paymentData.payment_date}
@@ -794,7 +794,7 @@ export default function LoansPage() {
               </div>
               
               <div>
-                <Label>Tipo de Pago</Label>
+                <Label>{t('loans.tipoDePago')}</Label>
                 <Select 
                   value={paymentData.payment_type} 
                   onValueChange={(v) => setPaymentData({...paymentData, payment_type: v})}
@@ -803,15 +803,15 @@ export default function LoansPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="payroll">Descuento de Nómina</SelectItem>
-                    <SelectItem value="manual">Pago Manual</SelectItem>
-                    <SelectItem value="other">Otro</SelectItem>
+                    <SelectItem value="payroll">{t('loans.descuentoDeNomina')}</SelectItem>
+                    <SelectItem value="manual">{t('loans.pagoManual')}</SelectItem>
+                    <SelectItem value="other">{t('loans.otro')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               
               <div>
-                <Label>Notas (opcional)</Label>
+                <Label>{t('loans.notasOpcional')}</Label>
                 <Textarea 
                   value={paymentData.notes}
                   onChange={(e) => setPaymentData({...paymentData, notes: e.target.value})}

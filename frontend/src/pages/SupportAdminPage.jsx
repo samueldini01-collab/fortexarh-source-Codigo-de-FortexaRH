@@ -439,11 +439,11 @@ export default function SupportAdminPage() {
                   <SelectValue placeholder="Estado" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todos los estados</SelectItem>
-                  <SelectItem value="open">Abiertos</SelectItem>
-                  <SelectItem value="in_progress">En Progreso</SelectItem>
-                  <SelectItem value="resolved">Resueltos</SelectItem>
-                  <SelectItem value="closed">Cerrados</SelectItem>
+                  <SelectItem value="all">{t('supportAdmin.todosLosEstados')}</SelectItem>
+                  <SelectItem value="open">{t('supportAdmin.abiertos')}</SelectItem>
+                  <SelectItem value="in_progress">{t('supportAdmin.enProgreso')}</SelectItem>
+                  <SelectItem value="resolved">{t('supportAdmin.resueltos')}</SelectItem>
+                  <SelectItem value="closed">{t('supportAdmin.cerrados')}</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={priorityFilter} onValueChange={setPriorityFilter}>
@@ -451,11 +451,11 @@ export default function SupportAdminPage() {
                   <SelectValue placeholder="Prioridad" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todas las prioridades</SelectItem>
-                  <SelectItem value="critical">Crítica</SelectItem>
-                  <SelectItem value="high">Alta</SelectItem>
-                  <SelectItem value="medium">Media</SelectItem>
-                  <SelectItem value="low">Baja</SelectItem>
+                  <SelectItem value="all">{t('supportAdmin.todasLasPrioridades')}</SelectItem>
+                  <SelectItem value="critical">{t('supportAdmin.critica')}</SelectItem>
+                  <SelectItem value="high">{t('supportAdmin.alta')}</SelectItem>
+                  <SelectItem value="medium">{t('supportAdmin.media')}</SelectItem>
+                  <SelectItem value="low">{t('supportAdmin.baja')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -477,13 +477,13 @@ export default function SupportAdminPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>ID</TableHead>
-                      <TableHead>Cliente</TableHead>
-                      <TableHead>Asunto</TableHead>
-                      <TableHead>Categoría</TableHead>
-                      <TableHead>Prioridad</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead>Creado</TableHead>
-                      <TableHead>Acciones</TableHead>
+                      <TableHead>{t('supportAdmin.cliente')}</TableHead>
+                      <TableHead>{t('supportAdmin.asunto')}</TableHead>
+                      <TableHead>{t('supportAdmin.categoria')}</TableHead>
+                      <TableHead>{t('supportAdmin.prioridad')}</TableHead>
+                      <TableHead>{t('supportAdmin.estado')}</TableHead>
+                      <TableHead>{t('supportAdmin.creado')}</TableHead>
+                      <TableHead>{t('supportAdmin.acciones')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -565,7 +565,7 @@ export default function SupportAdminPage() {
             ) : (
               <div className="text-center py-12">
                 <Inbox className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-                <h3 className="font-semibold text-lg mb-2">No hay tickets</h3>
+                <h3 className="font-semibold text-lg mb-2">{t('supportAdmin.noHayTickets')}</h3>
                 <p className="text-muted-foreground">
                   {searchQuery || statusFilter !== "all" || priorityFilter !== "all"
                     ? "No se encontraron tickets con los filtros aplicados"
@@ -698,10 +698,10 @@ export default function SupportAdminPage() {
                         <SelectValue placeholder="Cambiar estado" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="open">Abierto</SelectItem>
-                        <SelectItem value="in_progress">En Progreso</SelectItem>
-                        <SelectItem value="resolved">Resuelto</SelectItem>
-                        <SelectItem value="closed">Cerrado</SelectItem>
+                        <SelectItem value="open">{t('supportAdmin.abierto')}</SelectItem>
+                        <SelectItem value="in_progress">{t('supportAdmin.enProgreso')}</SelectItem>
+                        <SelectItem value="resolved">{t('supportAdmin.resuelto')}</SelectItem>
+                        <SelectItem value="closed">{t('supportAdmin.cerrado')}</SelectItem>
                       </SelectContent>
                     </Select>
                     
@@ -713,10 +713,10 @@ export default function SupportAdminPage() {
                         <SelectValue placeholder="Cambiar prioridad" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="low">Baja</SelectItem>
-                        <SelectItem value="medium">Media</SelectItem>
-                        <SelectItem value="high">Alta</SelectItem>
-                        <SelectItem value="critical">Crítica</SelectItem>
+                        <SelectItem value="low">{t('supportAdmin.baja')}</SelectItem>
+                        <SelectItem value="medium">{t('supportAdmin.media')}</SelectItem>
+                        <SelectItem value="high">{t('supportAdmin.alta')}</SelectItem>
+                        <SelectItem value="critical">{t('supportAdmin.critica')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
