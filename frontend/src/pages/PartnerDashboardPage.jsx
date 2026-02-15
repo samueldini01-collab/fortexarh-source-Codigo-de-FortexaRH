@@ -941,7 +941,7 @@ export default function PartnerDashboardPage() {
                                         setShowEditSubscription(true);
                                       }}
                                     >
-                                      <Edit className="w-3 h-3 mr-1" />
+                                      <Edit2 className="w-3 h-3 mr-1" />
                                       Editar
                                     </Button>
                                   )}
