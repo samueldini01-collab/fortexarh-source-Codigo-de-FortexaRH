@@ -202,7 +202,9 @@ async def login(request: Request, credentials: UserLogin, response: Response):
             "name": user["name"],
             "picture": user.get("picture"),
             "company_id": user.get("company_id"),
-            "role": user.get("role", "admin")
+            "role": user.get("role", "admin"),
+            "is_partner": user.get("is_partner", False),
+            "partner_id": user.get("partner_id")
         }
     }
 
@@ -283,7 +285,9 @@ async def exchange_session(request: Request, response: Response):
             "name": user["name"],
             "picture": user.get("picture"),
             "company_id": user.get("company_id"),
-            "role": user.get("role", "admin")
+            "role": user.get("role", "admin"),
+            "is_partner": user.get("is_partner", False),
+            "partner_id": user.get("partner_id")
         }
     }
 
@@ -412,7 +416,14 @@ async def get_me(current_user: dict = Depends(get_current_user)):
             company_name = company.get("name")
     
     return {
-        **current_user,
+        "user_id": current_user.get("user_id"),
+        "email": current_user.get("email"),
+        "name": current_user.get("name"),
+        "picture": current_user.get("picture"),
+        "company_id": current_user.get("company_id"),
+        "role": current_user.get("role", "admin"),
+        "is_partner": current_user.get("is_partner", False),
+        "partner_id": current_user.get("partner_id"),
         "company_name": company_name
     }
 
