@@ -600,6 +600,18 @@ async def reject_leave_request(
         "read": False,
         "created_at": datetime.now(timezone.utc).isoformat()
     })
+
+    # Push notification to employee portal
+    await create_employee_notification(
+        db,
+        employee_id=request["employee_id"],
+        company_id=company_id,
+        title="Solicitud de Vacaciones Rechazada",
+        message=f"Tu solicitud de {request['leave_type']} del {request['start_date']} al {request['end_date']} ha sido rechazada.{reason_text}",
+        notification_type="alert",
+        category="vacation",
+        action_url="/vacations",
+    )
     
     return {"message": "Solicitud rechazada"}
 
