@@ -1,16 +1,17 @@
 # FortexaRH - PRD (Product Requirements Document)
 
 ## Problema Original
-Sistema SaaS de Gestión de Recursos Humanos y Nómina llamado "FortexaRH", con módulos para gestión de usuarios, organigrama, nómina avanzada, contabilidad, reportes de cumplimiento (específico Rep. Dominicana), personalización de empresa/UI, y generación de documentos.
+Sistema SaaS de Gestion de Recursos Humanos y Nomina llamado "FortexaRH", con modulos para gestion de usuarios, organigrama, nomina avanzada, contabilidad, reportes de cumplimiento (especifico Rep. Dominicana), personalizacion de empresa/UI, y generacion de documentos.
 
 ## Arquitectura
 - **Frontend**: React + Shadcn/UI + i18next (ES/EN/FR)
 - **Backend**: FastAPI + MongoDB
-- **Autenticación**: JWT + Google OAuth (Emergent)
+- **Autenticacion**: JWT + Google OAuth (Emergent)
 - **Pagos**: Stripe
 - **Email**: Resend
-- **AI**: Gemini (búsqueda inteligente)
+- **AI**: Gemini (busqueda inteligente)
 - **Contabilidad**: QuickBooks Online
+- **Notificaciones Push**: SSE (Server-Sent Events) via sse-starlette
 
 ## Estructura Backend
 ```
@@ -22,15 +23,15 @@ Sistema SaaS de Gestión de Recursos Humanos y Nómina llamado "FortexaRH", con 
 ├── models/                    # Centralized Pydantic models (~55+)
 │   ├── auth.py, employee.py, payroll.py, company.py, etc.
 ├── services/
+│   ├── employee_notifications.py  # SSE push + notification creation service
 │   ├── report_catalog.py     # Report definitions (58+ reports)
 │   ├── report_generators.py  # Report data generation
 │   └── ...
 ├── routes/                    # ~34 modular route files
-│   ├── payroll.py            # Core payroll CRUD + workflow (1,151 lines)
-│   ├── payroll_exports.py    # Payroll exports: Excel, TSS, DGII (972 lines)
-│   ├── partners.py           # Partner portal core (890 lines)
-│   ├── partner_payments.py   # Stripe Connect + Payouts (393 lines)
-│   ├── reports_system.py     # Report endpoints (339 lines)
+│   ├── employee_portal.py    # SSE /notifications/stream endpoint + notification CRUD
+│   ├── payroll.py            # Triggers notifications on pay_period
+│   ├── vacations.py          # Triggers notifications on approve/reject
+│   ├── evaluations.py        # Triggers notifications on finalize
 │   └── ...
 ├── server.py                  # App init + routing (258 lines)
 └── email_service.py
@@ -43,22 +44,12 @@ Sistema SaaS de Gestión de Recursos Humanos y Nómina llamado "FortexaRH", con 
 │   ├── portal/               # Employee Portal
 │   │   ├── EmployeeAuthContext.jsx
 │   │   ├── EmployeeLogin.jsx
-│   │   └── EmployeeDashboard.jsx
+│   │   └── EmployeeDashboard.jsx  # SSE client + notification bell + dropdown
 │   ├── employees/
-│   │   ├── EmployeeFormDialog.jsx (911 lines)
-│   │   └── constants.js
 │   ├── subscriptions/
-│   │   ├── InvoiceHistory.jsx
-│   │   └── CancellationFlow.jsx
 │   ├── geo/
-│   │   └── GeoDialogs.jsx (4 dialog components)
 │   └── ui/                   # Shadcn components
 ├── pages/
-│   ├── EmployeesPage.jsx     # 576 lines (was 1,502)
-│   ├── EmployeePortalPage.jsx # 28 lines (was 1,561)
-│   ├── GeoLocationsPage.jsx  # 1,348 lines (was 1,679)
-│   ├── SubscriptionsPage.jsx # 1,146 lines (was 1,372)
-│   ├── PayrollV2Page.jsx     # Now exports PayrollPage, route /payroll
 │   └── ...
 ```
 
@@ -68,31 +59,36 @@ Sistema SaaS de Gestión de Recursos Humanos y Nómina llamado "FortexaRH", con 
 - Employee Portal: 001-0000001-1 / portal123
 
 ## Completado
-- ✅ Sistema completo de nómina con TSS (Rep. Dominicana)
-- ✅ Exportaciones DGII: IR-3, IR-4, IR-6, IR-13, IR-17, TSS
-- ✅ Módulos HR: Asistencia, Vacaciones, Evaluaciones, Reclutamiento
-- ✅ Portal de Empleados con autoservicio
-- ✅ Contabilidad con plan de cuentas
-- ✅ 58+ reportes con export PDF/Excel/CSV
-- ✅ i18n completo (ES/EN/FR)
-- ✅ Geolocalización para asistencia
-- ✅ CDC Audit trail, Préstamos, Partners
-- ✅ QuickBooks Online integration
-- ✅ **Refactoring Phase 1**: server.py 581→258, model centralization
-- ✅ **Refactoring Phase 2**: Frontend page splits, backend route splits
+- Sistema completo de nomina con TSS (Rep. Dominicana)
+- Exportaciones DGII: IR-3, IR-4, IR-6, IR-13, IR-17, TSS
+- Modulos HR: Asistencia, Vacaciones, Evaluaciones, Reclutamiento
+- Portal de Empleados con autoservicio
+- Contabilidad con plan de cuentas
+- 58+ reportes con export PDF/Excel/CSV
+- i18n completo (ES/EN/FR)
+- Geolocalizacion para asistencia
+- CDC Audit trail, Prestamos, Partners
+- QuickBooks Online integration
+- Refactoring Phase 1: server.py 581->258, model centralization
+- Refactoring Phase 2: Frontend page splits, backend route splits
+- **Push Notifications (SSE)**: Real-time in-app notifications for employees (Feb 2026)
+  - SSE stream at /api/employee-portal/notifications/stream
+  - Triggers: vacation approve/reject, payroll paid, evaluation finalized
+  - Frontend: notification bell with badge, dropdown panel, mark read/delete
+  - Backend: centralized service (services/employee_notifications.py)
 
-## P1 - Próximas Tareas
+## P1 - Proximas Tareas
 - 2FA / MFA
 - ACH Bank Integration (BHD, Popular, Banreservas)
 - E-signature para contratos y recibos
 
 ## P2 - Futuro/Backlog
-- Mejorar patrón init_router con FastAPI dependency injection
-- Notificaciones de alerta configurables
-- Backup/Exportación de datos
-- Workflows de aprobación configurables
-- Importación masiva via Excel
-- API pública documentada
+- Mejorar patron init_router con FastAPI dependency injection
+- Notificaciones de alerta configurables (extend current system)
+- Backup/Exportacion de datos
+- Workflows de aprobacion configurables
+- Importacion masiva via Excel
+- API publica documentada
 - Audit Trail completo (CDC logging)
 
 ## Integraciones Mockeadas
