@@ -997,11 +997,11 @@ export default function SubscriptionsPage() {
                   
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span>Base del plan ({selectedPlan.name})</span>
+                      <span>{t('subscriptions.planBase', {name: selectedPlan.name})}</span>
                       <span>{formatCurrency(selectedPlan.base_price)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>{employeeCount} empleados × {formatCurrency(selectedPlan.price_per_employee)}</span>
+                      <span>{employeeCount} {t('subscriptions.employeesX')} {formatCurrency(selectedPlan.price_per_employee)}</span>
                       <span>{formatCurrency(employeeCount * selectedPlan.price_per_employee)}</span>
                     </div>
                     <div className="flex justify-between font-bold text-lg border-t pt-2 mt-2">
