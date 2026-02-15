@@ -150,7 +150,7 @@ export default function CompanyConfigPage() {
         );
       }
     } catch (error) {
-      console.log("QuickBooks status check:", error.response?.data?.detail || error.message); // eslint-disable-line no-console
+      // QuickBooks status check failed silently
     }
   }, [getAuthHeaders]);
 
