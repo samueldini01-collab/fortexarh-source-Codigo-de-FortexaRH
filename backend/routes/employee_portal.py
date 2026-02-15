@@ -37,6 +37,12 @@ from models.employee import (
     PortalLeaveRequestCreate as LeaveRequestCreate,
     MarkNotificationRead
 )
+from services.employee_notifications import (
+    create_employee_notification as _create_notif,
+    register_sse_connection,
+    unregister_sse_connection,
+)
+import json
 
 
 def init_router(database):
