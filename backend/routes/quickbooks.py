@@ -46,24 +46,7 @@ async def get_current_user(request: Request, credentials=Depends(security)):
 
 
 # ============== MODELS ==============
-
-class QuickBooksConnection(BaseModel):
-    user_id: str
-    company_id: str
-    access_token: str
-    refresh_token: str
-    realm_id: str
-    company_name: Optional[str] = None
-    expires_at: datetime
-    created_at: datetime
-    updated_at: datetime
-    is_active: bool = True
-
-
-class SyncRequest(BaseModel):
-    sync_type: str  # employees, payroll, vendors, all
-    start_date: Optional[str] = None
-    end_date: Optional[str] = None
+from models.system import QuickBooksConnection, QuickBooksSyncRequest as SyncRequest
 
 
 # ============== HELPER FUNCTIONS ==============
