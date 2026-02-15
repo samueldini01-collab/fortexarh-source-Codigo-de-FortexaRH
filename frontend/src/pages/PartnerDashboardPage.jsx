@@ -1023,7 +1023,7 @@ export default function PartnerDashboardPage() {
                         <h4 className="text-white font-semibold mb-1">{plan.name}</h4>
                         <p className="text-emerald-400 text-2xl font-bold">${plan.base_price}<span className="text-sm text-slate-400">/mes</span></p>
                         <p className="text-slate-400 text-sm mt-1">+ ${plan.price_per_employee}/empleado</p>
-                        <p className="text-slate-500 text-xs mt-2">Máx. {plan.max_employees === 999999 ? "ilimitados" : plan.max_employees} empleados</p>
+                        <p className="text-slate-500 text-xs mt-2">Máx. {plan.max_employees >= 9999 ? "ilimitados" : plan.max_employees} empleados</p>
                       </div>
                     ))}
                   </div>
