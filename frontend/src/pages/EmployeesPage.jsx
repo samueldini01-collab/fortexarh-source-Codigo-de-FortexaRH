@@ -64,90 +64,12 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { ImportEmployeesModal, BulkEditModal, ExportEmployeesButton } from "@/components/EmployeeImportExport";
-
-const departments = ["Administración", "Ventas", "Marketing", "TI", "Recursos Humanos", "Finanzas", "Operaciones", "Legal", "Producción", "Logística"];
-const documentTypes = ["Cédula", "Pasaporte", "Residencia"];
-const genders = ["Masculino", "Femenino"];
-const maritalStatuses = ["Soltero/a", "Casado/a", "Divorciado/a", "Viudo/a", "Unión Libre"];
-const contractTypes = ["Indefinido", "Temporal", "Por Obra", "Pasantía", "Medio Tiempo"];
-const paymentMethods = ["Transferencia Bancaria", "Cheque", "Efectivo"];
-const paymentFrequencies = ["Quincenal", "Mensual", "Semanal"];
-const deductionTypes = ["Préstamo Empresa", "Préstamo Cooperativa", "Seguro Adicional", "Pensión Alimenticia", "Embargo", "Otro"];
-const relationshipTypes = ["Esposo/a", "Padre", "Madre", "Hijo/a", "Hermano/a", "Amigo/a", "Otro"];
-const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
-const countries = [
-  "República Dominicana", "Estados Unidos", "España", "México", "Colombia", "Venezuela", "Argentina", "Chile", 
-  "Perú", "Ecuador", "Cuba", "Puerto Rico", "Haití", "Brasil", "Panamá", "Costa Rica", "Guatemala", 
-  "Honduras", "El Salvador", "Nicaragua", "Paraguay", "Uruguay", "Bolivia", "Canadá", "Francia", 
-  "Alemania", "Italia", "Reino Unido", "Portugal", "China", "Japón", "Corea del Sur", "India", "Otro"
-];
-
-const initialFormData = {
-  // Datos Principales
-  first_name: "",
-  last_name: "",
-  email: "",
-  phone: "",
-  whatsapp: "",
-  nationality: "República Dominicana",
-  document_type: "Cédula",
-  document_number: "",
-  gender: "",
-  birth_date: "",
-  marital_status: "Soltero/a",
-  blood_type: "",
-  weight: "",
-  height: "",
-  status: "active",
-  address: "",
-  city: "Santo Domingo",
-  photo_url: "",
-  
-  // Contrato
-  position: "",
-  department: "",
-  hire_date: "",
-  contract_type: "Indefinido",
-  contract_end_date: "",
-  salary: "",
-  supervisor: "",
-  work_schedule: "Lunes a Viernes 8:00 AM - 5:00 PM",
-  exclude_from_payroll: false,
-  last_raise_date: "",
-  
-  // Descuentos
-  afp_discount: true,
-  sfs_discount: true,
-  isr_discount: true,
-  additional_deductions: [],
-  
-  // Forma de Pago
-  payment_method: "Transferencia Bancaria",
-  payment_frequency: "Quincenal",
-  bank_name: "",
-  account_type: "Ahorros",
-  account_number: "",
-  
-  // Contactos de Emergencia
-  emergency_contacts: []
-};
-
-// Formulario para nuevo descuento adicional
-const initialDeductionForm = {
-  type: "Préstamo Empresa",
-  description: "",
-  amount: "",
-  is_percentage: false
-};
-
-// Formulario para nuevo contacto de emergencia
-const initialEmergencyContactForm = {
-  name: "",
-  relationship: "",
-  phone: "",
-  whatsapp: "",
-  address: ""
-};
+import { EmployeeFormDialog } from "@/components/employees/EmployeeFormDialog";
+import {
+  departments, documentTypes, genders, maritalStatuses, contractTypes,
+  paymentMethods, paymentFrequencies, deductionTypes, relationshipTypes,
+  bloodTypes, countries, initialFormData, initialDeductionForm, initialEmergencyContactForm
+} from "@/components/employees/constants";
 
 export default function EmployeesPage() {
   const { t } = useTranslation();
