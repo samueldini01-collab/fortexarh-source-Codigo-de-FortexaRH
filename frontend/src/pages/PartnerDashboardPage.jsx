@@ -148,8 +148,25 @@ export default function PartnerDashboardPage() {
     billing_type: "direct"
   });
 
-  // Payouts state
-  const [payoutBalance, setPayoutBalance] = useState(null);
+  // Plans and activation state
+  const [plans, setPlans] = useState([]);
+  const [showActivateClient, setShowActivateClient] = useState(false);
+  const [showEditSubscription, setShowEditSubscription] = useState(false);
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [activationData, setActivationData] = useState({ plan_id: "basic", employee_count: 1 });
+  const [activating, setActivating] = useState(false);
+
+  // Fetch plans
+  const fetchPlans = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API}/partners/plans`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setPlans(response.data.plans || []);
+    } catch (error) {
+      console.error("Error fetching plans:", error);
+    }
+  }, [token]);
   const [payoutHistory, setPayoutHistory] = useState([]);
   const [stripeConnectStatus, setStripeConnectStatus] = useState(null);
   const [requestingPayout, setRequestingPayout] = useState(false);
