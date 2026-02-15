@@ -519,7 +519,7 @@ export default function AccountingPage() {
   };
 
   return (
-    <DashboardLayout title="Contabilidad">
+    <DashboardLayout title={t('accounting.title')}>
       <div className="space-y-6" data-testid="accounting-page">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
