@@ -601,7 +601,7 @@ export default function PartnerDashboardPage() {
               <Link to="/dashboard">
                 <Button variant="ghost" className="text-slate-300 hover:text-white hover:bg-slate-700">
                   <Building2 className="w-4 h-4 mr-2" />
-                  Mi Empresa
+                  {t('partner.dashboard.myCompany')}
                 </Button>
               </Link>
               
@@ -614,7 +614,7 @@ export default function PartnerDashboardPage() {
                 <DropdownMenuContent align="end" className="bg-slate-800 border-slate-700">
                   <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
                     <Settings className="w-4 h-4 mr-2" />
-                    Configuración
+                    {t('partner.dashboard.settings')}
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     className="text-red-400 hover:text-red-300 hover:bg-slate-700"
@@ -622,7 +622,7 @@ export default function PartnerDashboardPage() {
                     data-testid="partner-logout-btn"
                   >
                     <LogOut className="w-4 h-4 mr-2" />
-                    Cerrar Sesión
+                    {t('partner.dashboard.logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -636,10 +636,10 @@ export default function PartnerDashboardPage() {
         {/* Welcome Section */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-white mb-2">
-            ¡Hola, {user?.name || firm.name}!
+            {t('partner.dashboard.hello', { name: user?.name || firm.name })}
           </h2>
           <p className="text-slate-400">
-            Gestiona tus clientes y comisiones desde tu portal de partner.
+            {t('partner.dashboard.manageClients')}
           </p>
         </div>
 
@@ -650,10 +650,10 @@ export default function PartnerDashboardPage() {
               <div>
                 <h3 className="font-semibold text-white flex items-center gap-2">
                   <Award className="w-5 h-5 text-emerald-400" />
-                  Tu Link de Referido
+                  {t('partner.dashboard.yourReferralLink')}
                 </h3>
                 <p className="text-slate-300 text-sm mt-1">
-                  Comparte este link para ganar 30% de comisión por cada cliente
+                  {t('partner.dashboard.shareForCommission')}
                 </p>
                 <code className="text-emerald-400 text-sm mt-2 block">
                   {firm.referral_link || "Cargando..."}
@@ -666,7 +666,7 @@ export default function PartnerDashboardPage() {
                   data-testid="copy-referral-link-btn"
                 >
                   <Copy className="w-4 h-4 mr-2" />
-                  Copiar Link
+                  {t('partner.dashboard.copyLink')}
                 </Button>
               </div>
             </div>
