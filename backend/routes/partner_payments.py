@@ -2,7 +2,7 @@
 Partner Payments Routes - FortexaRH
 Stripe Connect and Payout endpoints for the partner portal.
 """
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter, HTTPException, Depends, Request, Query
 from fastapi.security import HTTPBearer
 from typing import Callable
 from datetime import datetime, timezone
