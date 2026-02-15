@@ -808,7 +808,7 @@ export default function DashboardLayout({ children, title }) {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align={sidebarCollapsed ? "start" : "end"} className="w-56">
-                <DropdownMenuItem onClick={() => navigate('/profile')}>
+                <DropdownMenuItem onClick={() => navigate('/settings')}>
                   <Users className="w-4 h-4 mr-2" /> Mi Perfil
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate('/company-config')}>
@@ -889,7 +889,7 @@ export default function DashboardLayout({ children, title }) {
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuItem onClick={() => navigate('/profile')}>
+                    <DropdownMenuItem onClick={() => navigate('/settings')} data-testid="user-menu-profile">
                       <Users className="w-4 h-4 mr-2" /> Mi Perfil
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate('/company-config')}>
