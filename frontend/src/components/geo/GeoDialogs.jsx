@@ -309,7 +309,7 @@ export function GeoReportDialog({
 }
 
 export function GeoAlertSettingsDialog({
-  open, onOpenChange, settingsForm, setSettingsForm, onSave
+  open, onOpenChange, settingsForm, setSettingsForm, onSave, onSendDailySummary
 }) {
   const { t } = useTranslation();
   return (
@@ -391,19 +391,21 @@ export function GeoAlertSettingsDialog({
                 </label>
               </div>
 
-              <div className="pt-2">
-                <Button variant="outline" size="sm" onClick={sendDailySummary} className="w-full">
-                  <Download className="w-4 h-4 mr-2" />
-                  Enviar Resumen Ahora
-                </Button>
-              </div>
+              {onSendDailySummary && (
+                <div className="pt-2">
+                  <Button variant="outline" size="sm" onClick={onSendDailySummary} className="w-full">
+                    <Download className="w-4 h-4 mr-2" />
+                    Enviar Resumen Ahora
+                  </Button>
+                </div>
+              )}
             </div>
             
             <DialogFooter>
               <Button variant="outline" onClick={() => onOpenChange(false)}>
                 Cancelar
               </Button>
-              <Button onClick={saveAlertSettings}>
+              <Button onClick={onSave}>
                 Guardar Configuración
               </Button>
             </DialogFooter>
