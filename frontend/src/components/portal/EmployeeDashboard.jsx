@@ -219,6 +219,7 @@ function EmployeeDashboard() {
     const badges = {
       payroll: { label: t('employeePortal.notifications.categories.payroll'), color: "bg-emerald-100 text-emerald-700" },
       vacation: { label: t('employeePortal.notifications.categories.vacation'), color: "bg-blue-100 text-blue-700" },
+      evaluation: { label: "Evaluacion", color: "bg-indigo-100 text-indigo-700" },
       attendance: { label: t('employeePortal.notifications.categories.attendance'), color: "bg-purple-100 text-purple-700" },
       announcement: { label: t('employeePortal.notifications.categories.announcement'), color: "bg-amber-100 text-amber-700" },
       document: { label: t('employeePortal.notifications.categories.document'), color: "bg-slate-100 text-slate-700" },
