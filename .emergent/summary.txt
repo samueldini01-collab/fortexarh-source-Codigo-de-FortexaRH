@@ -1,45 +1,56 @@
 <analysis>**original_problem_statement:**
-The user wants to create a SaaS (Software as a Service) Human Resources and payroll management system named FortexaRH. The user's most recent request is to define and implement the login process for companies that register as accounting firms.
+The user wants to continue building their SaaS HR and payroll management system, FortexaRH.
+
+The most recent requests from the user are:
+1.  **Bug Fix:** When a logged-in user clicks Mi Perfil (My Profile) from the user menu, they are incorrectly redirected to the landing page instead of their profile/settings page.
+2.  **Feature Enhancement:** Implement recovery codes for the Two-Factor Authentication (2FA) system, allowing users to regain access if they lose their authenticator device.
 
 **PRODUCT REQUIREMENTS:**
 -   **Core System:** A complete HR and Payroll system with modules for user management, org chart, advanced payroll, accounting, compliance reporting (Dominican Republic specific), company/UI customization, and document generation.
--   **Accountant Partner Portal:** Accounting firms must have a dedicated dashboard to manage their clients. This includes activating client subscriptions, selecting plans, setting employee counts, and viewing their commission earnings.
--   **Accountant Partner Login:** A clear and functional login flow for users registered as accounting firms.
--   **AI Search:** A global search bar that uses AI to understand natural language queries.
--   **Advanced Reporting:** A comprehensive reporting module with customizable reports and multiple export formats, including specific Dominican Republic reports.
--   **HR Modules:** Time and Attendance, Leave Management, and Performance Evaluation.
--   **Integrations:** Stripe, Resend, QuickBooks Online, SAP, Oracle, Dynamics.
+-   **Accountant Partner Portal:** A dedicated dashboard for accounting firms to manage their clients, including subscription management and commission tracking.
+-   **Security:** Implement robust security features like Two-Factor Authentication (2FA/MFA) and recovery codes.
+-   **Integrations:** Stripe, Resend, QuickBooks Online, SAP, Oracle, Dynamics, and ACH bank integrations for Dominican Republic banks.
 -   **UI/UX:** A custom favicon, legal pages, Dark Mode, and consistent branding.
--   **Multi-language:** Support for Spanish, English, and French across the application.
+-   **Multi-language:** Support for Spanish, English, and French.
 
 **User's preferred language**: Spanish (Español)
 
 **what currently exists?**
-The application is a functional HR and Payroll SaaS. In this session, the agent implemented a complete client management dashboard for accountant partners. Partners can now log in, view their clients, add new clients, activate subscriptions for them by choosing from available plans (Básico, Pro, Enterprise), and edit active subscriptions. The dashboard calculates and displays the monthly value and the partner's 30% commission.
+The application is a functional full-stack HR and Payroll SaaS. In this session, three major features were completed:
+1.  **Accountant Partner Login:** A complete, distinct login flow for accountant partners was implemented. The system now checks if a user is a partner and redirects them to the . A custom banner also appears on the login page when a partner's email is entered.
+2.  **Backend Refactor:** A significant technical debt task was completed by refactoring all 42 backend route files from an old  pattern to use FastAPI's modern  for dependency injection. This was done via an automated script and validated with the testing agent.
+3.  **Two-Factor Authentication (2FA):** A full 2FA system using TOTP (e.g., Google Authenticator) was implemented. This includes the backend logic for setup, verification, and disabling 2FA, as well as the frontend UI for managing 2FA in user settings and a verification step upon login.
 
-Additionally, the agent resolved several critical frontend issues:
-1.  **Blank Screen Bug:** Fixed a persistent white screen issue by changing the service worker caching strategy to network-first, adding a pre-load spinner, and implementing a global React Error Boundary to prevent future crashes from blanking the page.
-2.  **Multi-language:** Extended multi-language support to the Accountants software page and fixed several missing translations.
-3.  **UX Improvements:** Added an auto-detection banner that suggests switching to the user's browser language and fixed a clipboard API error on the partner registration page.
+The user has just reported a navigation bug and requested an enhancement for the new 2FA feature.
 
 **Last working item**:
--   **Last item agent was working:** The agent had just received a new question from the user: Como iniciaran sesion las empresas que se registren como firmas de contadores? (How will companies that register as accounting firms log in?). The previous task, implementing the partner's client management dashboard, was completed and fully tested.
--   **Status:** NONE (Awaiting plan for the new user request).
--   **Agent Testing Done:** Y
--   **Which testing method agent to use?** NA
--   **User Testing Done:** N/A
+-   **Last item agent was working:** The agent was investigating a bug reported by the user where clicking Mi Perfil in the header incorrectly redirects to the landing page. The agent had just used  to identify  as the likely source of the issue.
+-   **Status:** IN PROGRESS
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** Frontend testing agent (after fixing the bug, to ensure no other navigation links were broken). A screenshot can be used for initial verification.
+-   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   None. All issues reported during the session were resolved.
+-   **Issue 1:** Mi Perfil link redirects to the landing page. (Priority: **P0 - Blocker**)
+
+    -   **Issue Detail:**
+        -   **Attempted fixes:** None yet. The agent had just begun debugging.
+        -   **Next debug checklist:**
+            1.  Examine .
+            2.  Check the  or  handler associated with the Mi Perfil menu item.
+            3.  Verify the routing logic and ensure it points to the correct settings or profile page (likely ).
+        -   **Why fix this issue and what will be achieved with the fix?** This is a critical navigation bug that prevents users from accessing their own profile settings, breaking a core part of the user experience.
+        -   **Status:** IN PROGRESS
+        -   **Is recurring issue?** N
+        -   **Should Test frontend/backend/both after fix?** Frontend
+        -   **Blocked on other issue:** None
 
 **In progress Task List**:
 -   None.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **P0: Define and Implement Login for Partner Firms:** Address the user's latest question. This involves designing the user experience for how partners log in, potentially creating a separate login page or modifying the existing one, and implementing the required backend and frontend logic.
-    -   **P1: Refactor Backend  Pattern:** Update the backend to use FastAPI's modern dependency injection system (). This is a technical debt task to improve code clarity.
-    -   **P1: 2FA / MFA:** Implement two-factor authentication for enhanced security.
+    -   **P0: Implement 2FA Recovery Codes:** Add a system to generate and display one-time recovery codes when a user enables 2FA. This is a direct follow-up request from the user to make the 2FA feature more robust.
     -   **P1: ACH Bank Integration:** Integrate with Dominican Republic banks (BHD, Popular, Banreservas) for direct payroll deposits.
     -   **P1: E-signature:** Implement e-signature functionality for contracts and payroll receipts.
 -   **Future Tasks:**
@@ -51,23 +62,19 @@ Additionally, the agent resolved several critical frontend issues:
     -   Complete Audit Trail (CDC logging).
 
 **Completed work in this session**
--   **Accountant Partner Client Management Dashboard (Implemented & Tested):**
-    -   **Backend:**
-        -   Created new API endpoints in  to get plans (), activate clients (), and update subscriptions ().
-        -   Updated  with Pydantic models for subscription management.
-    -   **Frontend:**
-        -   Overhauled  with a new client management UI, including a detailed client table, plan selection cards, and activation/edit dialogs.
--   **Blank Screen Bug Fix (Resolved & Tested):**
-    -   Modified  to use a network-first caching strategy.
-    -   Added a pre-loading spinner to  for a better initial load experience.
-    -   Created and implemented a global  in  to catch JavaScript errors gracefully.
-    -   Configured  to prevent translation loading from blocking the initial render.
--   **Multi-language and UX Enhancements (Implemented & Tested):**
-    -   Implemented full multi-language support on the  page.
-    -   Created and integrated a  component to suggest language switching.
-    -   Fixed missing translations and a clipboard API error on the partner registration page.
--   **Bug Fix via Testing Agent:**
-    -   Resolved a missing  constant in  that was identified by the testing agent.
+-   **Accountant Partner Login Flow (DONE & TESTED):**
+    -   Backend (, ) now returns  and .
+    -   Frontend (, ) handles redirection to  for partners.
+-   **Custom Partner Login UI (DONE & TESTED):**
+    -   Created a new endpoint () to check if an email belongs to a partner.
+    -    was updated to show a custom banner and styling when a partner email is detected.
+-   **Backend Refactor:  to  (DONE & TESTED):**
+    -   Refactored all 42 backend route files using an automated script.
+    -   Created  to manage shared dependencies like .
+    -   Updated  to remove all legacy  calls.
+-   **Two-Factor Authentication (TOTP) (DONE & TESTED):**
+    -   **Backend:** Added new routes in  for setup, verification, and disabling 2FA. Modified  to handle the 2FA verification step during login.
+    -   **Frontend:** Created  and  components. Integrated the flow into  and .
 
 **Earlier issues found/mentioned but not fixed**
 -   None.
@@ -79,82 +86,85 @@ Additionally, the agent resolved several critical frontend issues:
 
 
 **Key Technical Concepts**
--   **Full-Stack Feature Development:** Built an end-to-end feature including backend models, API endpoints (FastAPI), and a complex frontend UI (React).
--   **Service Worker Caching:** Switched from  to  to resolve stale content issues causing a blank screen.
--   **React Error Boundaries:** Implemented a global error boundary to prevent the entire application from crashing due to a component error.
--   **Robust Frontend Loading:** Combined an inline HTML loader, non-blocking i18n, and error boundaries to ensure the application always displays something to the user, even under adverse conditions.
--   **Dynamic UI with State Management:** Used React hooks (, ) extensively in  to manage API data (clients, plans), dialog states, and user interactions.
+-   **FastAPI Dependency Injection ()**: Performed a major backend-wide refactor from a fragile global variable pattern to a modern, robust dependency injection system.
+-   **Two-Factor Authentication (TOTP)**: Implemented an end-to-end 2FA flow using the  and  libraries for secret generation/verification and QR code display.
+-   **Conditional Frontend Logic**: Implemented complex conditional rendering in React for the 2FA login step and the dynamic partner-aware UI on the login page.
+-   **Automated Refactoring**: Utilized a custom Python script to safely and efficiently refactor 42 backend files, demonstrating a scalable approach to code maintenance.
 
 **key DB schema**
--   **partners:** The  array within the partner document was enhanced to store subscription details, including , , , , and .
--   **companies:** Existing collection used to store client company details, linked from the  collection.
+-   **users:** Added  and  to the user model to store the TOTP secret and activation status for 2FA.
 
 **changes in tech stack**
--   None.
+-   **Added Python libraries:** , 
 
 **All files of reference**
--   /app/backend/routes/partners.py
--   /app/backend/models/partner.py
--   /app/frontend/src/pages/PartnerDashboard.jsx
--   /app/frontend/src/App.js
--   /app/frontend/src/components/ErrorBoundary.jsx
--   /app/frontend/src/components/LanguageAutoDetectBanner.jsx
--   /app/frontend/public/service-worker.js
--   /app/frontend/public/index.html
--   /app/memory/PRD.md
+-    (Location of the Mi Perfil bug)
+-    (Backend logic for 2FA)
+-    (Modified login flow for 2FA)
+-    (Frontend login and 2FA verification)
+-    (Frontend 2FA setup UI)
+-    (2FA setup component)
+-    (New dependency injection setup)
+-   
 
 **Areas that need refactoring**:
--   The  pattern in the backend should be updated to use FastAPI's  for dependency injection.
+-   None. A major refactor was just completed.
 
 **key api endpoints**
--   **NEW:**  - Fetches available subscription plans for partners.
--   **NEW:**  - Activates a client's subscription with a specified plan and employee count.
--   **NEW:**  - Modifies an existing client's subscription.
+-   **MODIFIED:** : Now returns  if 2FA is enabled.
+-   **NEW:** : Verifies the TOTP code using the  and returns the final session JWT.
+-   **NEW:** : Checks if an email belongs to a partner firm.
+-   **NEW:** : Generates a TOTP secret and QR code URI for the user.
+-   **NEW:** : Verifies a code and enables 2FA for the user.
+-   **NEW:** : Disables 2FA for the user.
 
 **Critical Info for New Agent**
 -   **You must respond to the user in Spanish.**
--   The absolute highest priority (P0) is to address the user's question: **How will accountant firms log in?** You need to propose a solution, get user confirmation, and then implement it.
--   The client management dashboard for partners is complete and has been successfully tested. You can build upon this functionality.
--   The blank screen bug has been fixed with a multi-layered solution (Service Worker, Error Boundary, Pre-loader). Be aware of this architecture if any similar issues arise.
+-   The highest priority (P0) is to fix the Mi Perfil navigation bug. The agent has already identified  as the file to investigate.
+-   The second priority (P0) is to implement recovery codes for the 2FA system, as requested by the user. This will involve backend changes (generating/storing/validating codes) and frontend changes (displaying codes on setup).
+-   The backend has been significantly refactored to use FastAPI's  system. All new backend code should follow this pattern, using  from .
 
 **documents and test reports created in this job**
--   /app/memory/PRD.md (updated)
--   The testing agent was run twice successfully, validating all new features and bug fixes. Reports were generated internally by the agent but not stored with a persistent path in the session.
+-    (updated)
+-   
+-   
+-   
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **Pending:**  - User is asking how accounting firms will log in. (Status: **PENDING, HIGHEST PRIORITY**)
-2.   - User requested the client management feature for the accountant partner dashboard. (Status: **COMPLETED**)
-3.   - User reported a clipboard API error and requested a language auto-detect banner. (Status: **COMPLETED**)
-4.   - User reported missing translations and requested multi-language support for the accountants page. (Status: **COMPLETED**)
-5.   - User reported the blank screen issue also occurred on mobile. (Status: **COMPLETED**)
-6.   - User's initial report of the blank screen bug. (Status: **COMPLETED**)
+1.  **Pending:**  - User requested 2FA recovery codes and reported a navigation bug. (Status: **IN PROGRESS**)
+2.   - User approved implementing 2FA with TOTP. (Status: **COMPLETED**)
+3.   - User asked for the benefits of 2FA. (Status: **COMPLETED**)
+4.   - User prioritized the backend refactor. (Status: **COMPLETED**)
+5.   - User asked for the benefits of the refactor. (Status: **COMPLETED**)
+6.   - User approved adding the custom partner login banner. (Status: **COMPLETED**)
+7.   - User approved the plan to differentiate partner login via a flag in the user object. (Status: **COMPLETED**)
+8.   - User asked for a recommendation on how to implement the partner login. (Status: **COMPLETED**)
 
 **Project Health Check:**
--   **Broken:** None.
+-   **Broken:** Core user navigation is broken due to the Mi Perfil link bug.
 -   **Mocked:** Enterprise integrations (SAP, Oracle, Dynamics).
--   **Needs Attention:** The login flow for accounting firm partners is currently undefined and must be addressed next.
+-   **Needs Attention:** The 2FA feature is incomplete without recovery codes.
 
 **3rd Party Integrations**
--   **i18next, react-i18next:** ✅ Fully integrated.
--   **i18next-http-backend:** ✅ Integrated.
+-   **pyotp:** ✅ NEW. Used for TOTP generation and verification.
+-   **qrcode:** ✅ NEW. Used to generate QR codes for 2FA setup.
+-   **i18next, react-i18next:** ✅ Integrated.
 -   **Stripe (Payments):** ✅ Integrated.
 -   **Resend (Email):** ✅ Integrated.
 -   **Emergent-managed Google Auth:** ✅ Integrated.
 -   **Gemini (AI Search):** ✅ Integrated.
 -   **QuickBooks Online:** ✅ Integrated.
--   **fastapi-limiter:** ✅ Integrated.
--   **sse-starlette:** ✅ Integrated.
 
 **Testing status**
--   **Testing agent used after significant changes:** YES (twice, to validate the blank screen fix, multi-language updates, and the new partner dashboard).
+-   **Testing agent used after significant changes:** YES (used to validate the backend refactor and the 2FA implementation).
 -   **Troubleshoot agent used after agent stuck in loop:** NO.
 -   **Test files created:** None.
--   **Known regressions:** None. The testing agent confirmed all features are working and even applied a minor preventative bug fix.
+-   **Known regressions:** Yes, the Mi Perfil navigation link is broken.
 
 **Credentials to test flow:**
 -   **Admin User:**  / 
--   **Partner User:**  /  (This user now has a fully functional client management dashboard).
+-   **Partner User:**  / 
 -   **Employee Portal User:** (Cédula)  / 
 
 **What agent forgot to execute**
--   Nothing. The agent successfully addressed all user requests and bug reports from this session.</analysis>
+-   The agent did not forget to execute any specific task, but a regression bug (Mi Perfil link) was introduced during the session's development work.</analysis>
