@@ -47,7 +47,7 @@ SaaS HR and Payroll management system named "FortexaRH" for the Dominican Republ
 ## Prioritized Backlog
 
 ### P0 - Technical Debt
-- Refactor backend `init_router` pattern to use FastAPI Depends
+- ~~Refactor backend `init_router` pattern to use FastAPI Depends~~ ✅ DONE (Feb 2026)
 
 ### P1 - Features
 - 2FA / MFA authentication
