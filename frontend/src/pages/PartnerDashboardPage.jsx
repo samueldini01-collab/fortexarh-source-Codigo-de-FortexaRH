@@ -1479,6 +1479,7 @@ export default function PartnerDashboardPage() {
                 onChange={(e) => setNewClient(prev => ({ ...prev, phone: e.target.value }))}
                 placeholder="809-000-0000"
                 className="bg-slate-700 border-slate-600 text-white"
+                data-testid="add-client-phone"
               />
             </div>
             
@@ -1521,6 +1522,7 @@ export default function PartnerDashboardPage() {
                 type="submit"
                 className="bg-emerald-500 hover:bg-emerald-600"
                 disabled={addingClient}
+                data-testid="submit-add-client-btn"
               >
                 {addingClient ? (
                   <>
@@ -1731,7 +1733,7 @@ export default function PartnerDashboardPage() {
 
       {/* KPI Drill-Down Dialog */}
       <Dialog open={!!drillDown} onOpenChange={(open) => !open && setDrillDown(null)}>
-        <DialogContent className="bg-slate-800 border-slate-700 max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="bg-slate-800 border-slate-700 max-w-2xl max-h-[80vh] overflow-y-auto" data-testid="kpi-drilldown-dialog">
           {drillDown === "clients" && (
             <>
               <DialogHeader>
