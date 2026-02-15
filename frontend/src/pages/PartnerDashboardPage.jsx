@@ -187,6 +187,14 @@ export default function PartnerDashboardPage() {
   const [showPayoutModal, setShowPayoutModal] = useState(false);
   const [payoutAmount, setPayoutAmount] = useState("");
 
+  // Drill-down states
+  const [drillDown, setDrillDown] = useState(null); // "clients" | "pending" | "earned" | "pricing"
+
+  // PayPal state
+  const [paypalEmail, setPaypalEmail] = useState("");
+  const [savingPaypal, setSavingPaypal] = useState(false);
+  const [payoutMethod, setPayoutMethod] = useState("stripe");
+
   // Fetch dashboard data
   const fetchDashboard = useCallback(async () => {
     try {
