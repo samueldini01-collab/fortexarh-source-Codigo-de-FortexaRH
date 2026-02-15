@@ -1169,28 +1169,49 @@ async def create_employee_notification(
     company_id: str,
     title: str,
     message: str,
-    notification_type: str = "info",  # info, success, warning, alert
-    category: str = "general",  # payroll, vacation, attendance, announcement, document
+    notification_type: str = "info",
+    category: str = "general",
     action_url: str = None,
-    metadata: dict = None
+    metadata: dict = None,
 ):
-    """Create a notification for an employee"""
-    notification = {
-        "notification_id": f"notif_{uuid.uuid4().hex[:12]}",
-        "employee_id": employee_id,
-        "company_id": company_id,
-        "title": title,
-        "message": message,
-        "type": notification_type,
-        "category": category,
-        "action_url": action_url,
-        "metadata": metadata or {},
-        "read": False,
-        "created_at": datetime.now(timezone.utc).isoformat()
-    }
-    
-    await db.employee_notifications.insert_one(notification)
-    return notification
+    """Delegate to centralized service (keeps existing import path working)."""
+    return await _create_notif(
+        db, employee_id, company_id, title, message,
+        notification_type, category, action_url, metadata,
+    )
+
+
+# ===================== SSE REAL-TIME STREAM =====================
+
+@router.get("/notifications/stream")
+async def notification_stream(request: Request):
+    """SSE endpoint for real-time push notifications to employees."""
+    emp_data = await get_employee_from_token(request)
+    employee_id = emp_data["employee_id"]
+
+    queue = register_sse_connection(employee_id)
+
+    async def event_generator():
+        try:
+            while True:
+                # Check if client disconnected
+                if await request.is_disconnected():
+                    break
+                try:
+                    notification = await asyncio.wait_for(queue.get(), timeout=30)
+                    # Build SSE-safe payload (strip _id if present)
+                    payload = {k: v for k, v in notification.items() if k != "_id"}
+                    yield {
+                        "event": "notification",
+                        "data": json.dumps(payload, default=str),
+                    }
+                except asyncio.TimeoutError:
+                    # Send heartbeat keep-alive
+                    yield {"event": "ping", "data": ""}
+        finally:
+            unregister_sse_connection(employee_id, queue)
+
+    return EventSourceResponse(event_generator())
 
 
 # ===================== ANNOUNCEMENTS =====================
