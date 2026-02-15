@@ -92,7 +92,7 @@ const PAYROLL_TYPE_KEYS = [
 // Static department list (these come from user data, not translations)
 const departments = ["Administración", "Ventas", "Marketing", "TI", "Recursos Humanos", "Finanzas", "Operaciones", "Legal", "Producción", "Logística"];
 
-export default function PayrollV2Page() {
+export default function PayrollPage() {
   const { t } = useTranslation();
   
   // Generate translated arrays
@@ -795,7 +795,7 @@ export default function PayrollV2Page() {
 
   return (
     <DashboardLayout title={t('payroll.title')}>
-      <div className="space-y-6" data-testid="payroll-v2-page">
+      <div className="space-y-6" data-testid="payroll-page">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
