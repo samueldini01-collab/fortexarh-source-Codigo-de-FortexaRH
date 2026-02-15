@@ -197,6 +197,19 @@ async def login(request: Request, credentials: UserLogin, response: Response):
     if not user or not verify_password(credentials.password, user.get("password_hash", "")):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
+    # Check if 2FA is enabled
+    if user.get("totp_enabled"):
+        temp_token = uuid.uuid4().hex
+        await db.users.update_one(
+            {"user_id": user["user_id"]},
+            {"$set": {"temp_2fa_token": temp_token}}
+        )
+        return {
+            "requires_2fa": True,
+            "user_id": user["user_id"],
+            "temp_token": temp_token
+        }
+    
     token = create_jwt_token(user["user_id"], user["email"])
     
     return {
