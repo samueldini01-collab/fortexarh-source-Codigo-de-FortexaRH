@@ -1723,13 +1723,13 @@ export default function PartnerDashboardPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Payout Request Modal - Original */}
+      {/* Payout Request Modal */}
       <Dialog open={showPayoutModal} onOpenChange={setShowPayoutModal}>
         <DialogContent className="bg-slate-800 border-slate-700 max-w-md">
           <DialogHeader>
             <DialogTitle className="text-white">{t('partnerDashboard.solicitarRetiro')}</DialogTitle>
             <DialogDescription className="text-slate-400">
-              Retira tus comisiones a tu cuenta bancaria
+              Retira tus comisiones a tu cuenta
             </DialogDescription>
           </DialogHeader>
           
@@ -1740,6 +1740,50 @@ export default function PartnerDashboardPage() {
                 ${payoutBalance?.available_balance?.toFixed(2) || "0.00"}
               </p>
             </div>
+
+            {/* Method selection */}
+            {payoutBalance?.stripe_connected && payoutBalance?.paypal_connected && (
+              <div className="space-y-2">
+                <Label className="text-slate-300">Método de retiro</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div
+                    onClick={() => setPayoutMethod("stripe")}
+                    className={`cursor-pointer rounded-lg border p-3 transition-all text-center ${
+                      payoutMethod === "stripe"
+                        ? "border-purple-500 bg-purple-500/10"
+                        : "border-slate-600 bg-slate-700/30 hover:border-slate-500"
+                    }`}
+                    data-testid="method-stripe"
+                  >
+                    <CreditCard className={`w-5 h-5 mx-auto mb-1 ${payoutMethod === "stripe" ? "text-purple-400" : "text-slate-400"}`} />
+                    <p className={`text-sm font-medium ${payoutMethod === "stripe" ? "text-purple-400" : "text-slate-300"}`}>Stripe</p>
+                    <p className="text-xs text-slate-500">2-3 días</p>
+                  </div>
+                  <div
+                    onClick={() => setPayoutMethod("paypal")}
+                    className={`cursor-pointer rounded-lg border p-3 transition-all text-center ${
+                      payoutMethod === "paypal"
+                        ? "border-blue-500 bg-blue-500/10"
+                        : "border-slate-600 bg-slate-700/30 hover:border-slate-500"
+                    }`}
+                    data-testid="method-paypal"
+                  >
+                    <Wallet className={`w-5 h-5 mx-auto mb-1 ${payoutMethod === "paypal" ? "text-blue-400" : "text-slate-400"}`} />
+                    <p className={`text-sm font-medium ${payoutMethod === "paypal" ? "text-blue-400" : "text-slate-300"}`}>PayPal</p>
+                    <p className="text-xs text-slate-500">3-5 días</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {payoutMethod === "paypal" && payoutBalance?.paypal_email && (
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
+                <p className="text-blue-400 text-sm flex items-center gap-2">
+                  <Wallet className="w-4 h-4" />
+                  Se enviará a: {payoutBalance.paypal_email}
+                </p>
+              </div>
+            )}
             
             <div className="space-y-2">
               <Label htmlFor="payout_amount" className="text-slate-300">
@@ -1765,7 +1809,9 @@ export default function PartnerDashboardPage() {
             <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
               <p className="text-blue-400 text-sm flex items-center gap-2">
                 <Clock className="w-4 h-4" />
-                El dinero llegará a tu cuenta en 2-3 días hábiles
+                {payoutMethod === "paypal"
+                  ? "El dinero llegará a tu PayPal en 3-5 días hábiles"
+                  : "El dinero llegará a tu cuenta en 2-3 días hábiles"}
               </p>
             </div>
           </div>
