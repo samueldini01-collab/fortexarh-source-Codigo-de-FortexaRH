@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/geolocation-attendance", tags=["Geolocation Attendance"])
 
 from config import db
-from utils.auth import get_current_user
+from utils.auth import get_current_user, get_user_from_request
 
 
 def generate_id(prefix: str) -> str:
@@ -72,7 +72,7 @@ from models.system import (
 @router.get("/locations")
 async def get_locations(request: Request):
     """Get all geofence locations for the company"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     locations = await db.geo_locations.find(
@@ -93,7 +93,7 @@ async def get_locations(request: Request):
 @router.post("/locations")
 async def create_location(data: LocationCreate, request: Request):
     """Create a new geofence location"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
@@ -126,7 +126,7 @@ async def create_location(data: LocationCreate, request: Request):
 @router.put("/locations/{location_id}")
 async def update_location(location_id: str, data: LocationUpdate, request: Request):
     """Update a geofence location"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
@@ -150,7 +150,7 @@ async def update_location(location_id: str, data: LocationUpdate, request: Reque
 @router.delete("/locations/{location_id}")
 async def delete_location(location_id: str, request: Request):
     """Delete a geofence location"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
@@ -176,7 +176,7 @@ async def delete_location(location_id: str, request: Request):
 @router.post("/locations/{location_id}/assign-employees")
 async def assign_employees_to_location(location_id: str, data: EmployeeLocationAssignment, request: Request):
     """Assign employees to a geofence location"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     location = await db.geo_locations.find_one(
@@ -209,7 +209,7 @@ async def assign_employees_to_location(location_id: str, data: EmployeeLocationA
 @router.get("/locations/{location_id}/employees")
 async def get_location_employees(location_id: str, request: Request):
     """Get employees assigned to a location"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     assignments = await db.employee_locations.find(
@@ -232,7 +232,7 @@ async def get_location_employees(location_id: str, request: Request):
 @router.post("/mark")
 async def mark_attendance(data: AttendanceMarkRequest, request: Request, background_tasks: BackgroundTasks):
     """Mark attendance with geolocation and fraud detection"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_id = current_user.get("user_id")
     
@@ -495,7 +495,7 @@ async def mark_attendance(data: AttendanceMarkRequest, request: Request, backgro
 @router.get("/my-marks")
 async def get_my_marks(request: Request, date: str = None):
     """Get current user's attendance marks"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_id = current_user.get("user_id")
     
@@ -528,7 +528,7 @@ async def get_my_marks(request: Request, date: str = None):
 @router.get("/my-locations")
 async def get_my_locations(request: Request):
     """Get locations assigned to current user"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_id = current_user.get("user_id")
     
@@ -576,7 +576,7 @@ async def get_my_locations(request: Request):
 @router.get("/my-history")
 async def get_my_history(request: Request, month: int = None, year: int = None):
     """Get current user's attendance history"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_id = current_user.get("user_id")
     
@@ -639,7 +639,7 @@ async def get_my_history(request: Request, month: int = None, year: int = None):
 @router.get("/admin/today")
 async def get_today_attendance(request: Request):
     """Get all attendance marks for today (admin view)"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
@@ -676,7 +676,7 @@ async def get_today_attendance(request: Request):
 @router.get("/admin/live-map")
 async def get_live_map_data(request: Request):
     """Get data for live map view"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
@@ -718,7 +718,7 @@ async def get_attendance_report(
     location_id: str = None
 ):
     """Get attendance report for date range"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
@@ -777,7 +777,7 @@ async def get_attendance_report(
 @router.post("/admin/approve/{mark_id}")
 async def approve_mark(mark_id: str, request: Request):
     """Approve a pending attendance mark"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
@@ -802,7 +802,7 @@ async def approve_mark(mark_id: str, request: Request):
 @router.post("/admin/reject/{mark_id}")
 async def reject_mark(mark_id: str, request: Request, reason: str = ""):
     """Reject a pending attendance mark"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
@@ -839,7 +839,7 @@ async def get_fraud_alerts(
     limit: int = 100
 ):
     """Get fraud alerts for the company"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
@@ -893,7 +893,7 @@ async def get_fraud_alerts(
 @router.put("/admin/fraud-alerts/{alert_id}")
 async def update_fraud_alert(alert_id: str, request: Request, status: str, notes: str = ""):
     """Update fraud alert status"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
@@ -923,7 +923,7 @@ async def update_fraud_alert(alert_id: str, request: Request, status: str, notes
 @router.get("/admin/fraud-stats")
 async def get_fraud_stats(request: Request, days: int = 30):
     """Get fraud detection statistics"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
@@ -986,7 +986,7 @@ async def get_fraud_stats(request: Request, days: int = 30):
 @router.get("/admin/alert-settings")
 async def get_alert_settings(request: Request):
     """Get alert settings for the company"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
@@ -1015,7 +1015,7 @@ async def get_alert_settings(request: Request):
 @router.put("/admin/alert-settings")
 async def update_alert_settings(data: AlertSettingsUpdate, request: Request):
     """Update alert settings for the company"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
@@ -1046,7 +1046,7 @@ async def update_alert_settings(data: AlertSettingsUpdate, request: Request):
 @router.post("/admin/send-daily-summary")
 async def send_daily_summary_manual(request: Request, date: str = None):
     """Manually trigger daily summary email"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     

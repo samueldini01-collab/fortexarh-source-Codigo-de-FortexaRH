@@ -14,7 +14,7 @@ import logging
 router = APIRouter(prefix="/doc-generator", tags=["Documents"])
 
 from config import db
-from utils.auth import get_current_user
+from utils.auth import get_current_user, get_user_from_request
 logger = logging.getLogger(__name__)
 
 
@@ -392,7 +392,7 @@ DEFAULT_TEMPLATES = [
 @router.get("/templates")
 async def get_document_templates(request: Request, category: str = None):
     """Get all document templates"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     # Initialize default templates if not exist
@@ -422,7 +422,7 @@ async def get_document_templates(request: Request, category: str = None):
 @router.get("/templates/{template_id}")
 async def get_document_template(template_id: str, request: Request):
     """Get a specific template"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     template = await db.document_templates.find_one(
@@ -439,7 +439,7 @@ async def get_document_template(template_id: str, request: Request):
 @router.post("/templates")
 async def create_document_template(data: DocumentTemplateCreate, request: Request):
     """Create a new document template"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     template_id = f"tpl_{uuid.uuid4().hex[:8]}"
@@ -466,7 +466,7 @@ async def create_document_template(data: DocumentTemplateCreate, request: Reques
 @router.put("/templates/{template_id}")
 async def update_document_template(template_id: str, data: DocumentTemplateUpdate, request: Request):
     """Update a document template"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     template = await db.document_templates.find_one(
@@ -502,7 +502,7 @@ async def update_document_template(template_id: str, data: DocumentTemplateUpdat
 @router.delete("/templates/{template_id}")
 async def delete_document_template(template_id: str, request: Request):
     """Delete a document template"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     template = await db.document_templates.find_one(
@@ -529,7 +529,7 @@ async def delete_document_template(template_id: str, request: Request):
 @router.post("/generate")
 async def generate_document(data: DocumentGenerateRequest, request: Request):
     """Generate a document from a template"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     # Get template
@@ -702,7 +702,7 @@ async def generate_document(data: DocumentGenerateRequest, request: Request):
 @router.get("/generate/{document_id}/pdf")
 async def download_document_pdf(document_id: str, request: Request):
     """Download generated document as PDF"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     document = await db.generated_documents.find_one(
@@ -747,7 +747,7 @@ async def download_document_pdf(document_id: str, request: Request):
 @router.get("/history")
 async def get_document_history(request: Request, employee_id: str = None, template_id: str = None):
     """Get generated documents history"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     query = {"company_id": company_id}
@@ -767,7 +767,7 @@ async def get_document_history(request: Request, employee_id: str = None, templa
 @router.get("/history/{document_id}")
 async def get_document_detail(document_id: str, request: Request):
     """Get a specific generated document"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     document = await db.generated_documents.find_one(
@@ -784,7 +784,7 @@ async def get_document_detail(document_id: str, request: Request):
 @router.delete("/history/{document_id}")
 async def delete_generated_document(document_id: str, request: Request):
     """Delete a generated document from history"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     result = await db.generated_documents.delete_one(
@@ -802,7 +802,7 @@ async def delete_generated_document(document_id: str, request: Request):
 @router.get("/categories")
 async def get_document_categories(request: Request):
     """Get available document categories"""
-    await get_current_user(request)
+    await get_user_from_request(request)
     
     return [
         {"id": "constancia", "name": "Constancias", "icon": "FileCheck"},

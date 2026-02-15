@@ -12,7 +12,7 @@ import logging
 router = APIRouter(prefix="/bank-files", tags=["Bank Files"])
 
 from config import db
-from utils.auth import get_current_user
+from utils.auth import get_current_user, get_user_from_request
 logger = logging.getLogger(__name__)
 
 
@@ -37,7 +37,7 @@ def format_banreservas_line(seq: int, account: str, amount: float, name: str, do
 @router.get("/banks")
 async def get_available_banks(request: Request):
     """Get list of available banks for file generation"""
-    await get_current_user(request)
+    await get_user_from_request(request)
     return [
         {"id": "popular", "name": "Banco Popular Dominicano", "format": "TXT (Pipe delimited)"},
         {"id": "bhd", "name": "BHD León", "format": "TXT (Fixed width)"},
@@ -48,7 +48,7 @@ async def get_available_banks(request: Request):
 @router.get("/generate/{period_id}/{bank_id}")
 async def generate_bank_file(period_id: str, bank_id: str, request: Request):
     """Generate bank payment file for a payroll period"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     # Get payroll period
@@ -151,7 +151,7 @@ async def generate_bank_file(period_id: str, bank_id: str, request: Request):
 @router.get("/history")
 async def get_bank_file_history(request: Request):
     """Get history of generated bank files"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     history = await db.bank_file_logs.find(

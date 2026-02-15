@@ -14,7 +14,7 @@ import resend
 
 router = APIRouter(prefix="/subscription", tags=["Subscriptions"])
 from config import db, SUBSCRIPTION_PLANS, FEATURE_ACCESS, ADDITIONAL_USER_PRICE
-from utils.auth import get_current_user
+from utils.auth import get_current_user, get_user_from_request
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ def _get_stripe_key():
 @router.get("")
 async def get_company_subscription(request: Request):
     """Get the current company subscription"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     subscription = await db.subscriptions.find_one(
@@ -111,7 +111,7 @@ async def get_company_subscription(request: Request):
 @router.post("")
 async def create_subscription(data: SubscriptionCreate, request: Request):
     """Create or update subscription"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     plan = SUBSCRIPTION_PLANS.get(data.plan_id)
@@ -159,7 +159,7 @@ async def create_subscription(data: SubscriptionCreate, request: Request):
 @router.put("")
 async def update_subscription(data: SubscriptionUpdate, request: Request):
     """Update subscription (change plan, employees, cancel, renew)"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     subscription = await db.subscriptions.find_one({"company_id": company_id}, {"_id": 0})
@@ -219,7 +219,7 @@ async def update_subscription(data: SubscriptionUpdate, request: Request):
 @router.get("/check-access")
 async def check_subscription_access(request: Request):
     """Check if user has system access based on subscription"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     subscription = await db.subscriptions.find_one({"company_id": company_id}, {"_id": 0})
@@ -262,7 +262,7 @@ async def check_subscription_access(request: Request):
 @router.get("/cancellation-info")
 async def get_cancellation_info(request: Request):
     """Get information needed for cancellation flow"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     subscription = await db.subscriptions.find_one(
@@ -319,7 +319,7 @@ async def get_cancellation_info(request: Request):
 @router.post("/accept-retention-offer")
 async def accept_retention_offer(request: Request):
     """Accept the retention offer (20% discount for 3 months)"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_email = current_user.get("email")
     
@@ -403,7 +403,7 @@ async def accept_retention_offer(request: Request):
 @router.post("/cancel")
 async def cancel_subscription(survey: CancellationSurveyData, request: Request):
     """Cancel subscription with survey feedback"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     user_email = current_user.get("email")
     user_name = current_user.get("name", "")
@@ -513,7 +513,7 @@ async def cancel_subscription(survey: CancellationSurveyData, request: Request):
 @router.post("/reactivate")
 async def reactivate_subscription(request: Request):
     """Reactivate a canceled subscription"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     subscription = await db.subscriptions.find_one(

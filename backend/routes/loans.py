@@ -12,7 +12,7 @@ import logging
 router = APIRouter(prefix="/loans", tags=["Employee Loans"])
 
 from config import db
-from utils.auth import get_current_user
+from utils.auth import get_current_user, get_user_from_request
 logger = logging.getLogger(__name__)
 
 
@@ -32,7 +32,7 @@ async def get_loans(
     employee_id: Optional[str] = None
 ):
     """Get all loans for the company"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     query = {"company_id": company_id}
@@ -60,7 +60,7 @@ async def get_loans(
 @router.get("/summary")
 async def get_loans_summary(request: Request):
     """Get loans summary for dashboard"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     # Get all active loans
@@ -97,7 +97,7 @@ async def get_loans_summary(request: Request):
 @router.post("")
 async def create_loan(data: LoanCreate, request: Request):
     """Create a new loan for an employee"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     # Verify employee exists
@@ -195,7 +195,7 @@ async def create_loan(data: LoanCreate, request: Request):
 @router.get("/{loan_id}")
 async def get_loan(loan_id: str, request: Request):
     """Get loan details"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     loan = await db.loans.find_one(
@@ -226,7 +226,7 @@ async def get_loan(loan_id: str, request: Request):
 @router.post("/{loan_id}/payment")
 async def register_loan_payment(loan_id: str, data: LoanPaymentCreate, request: Request):
     """Register a payment for a loan"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     loan = await db.loans.find_one(
@@ -291,7 +291,7 @@ async def register_loan_payment(loan_id: str, data: LoanPaymentCreate, request: 
 @router.delete("/{loan_id}")
 async def delete_loan(loan_id: str, request: Request):
     """Delete a loan (only if no payments made)"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     loan = await db.loans.find_one(

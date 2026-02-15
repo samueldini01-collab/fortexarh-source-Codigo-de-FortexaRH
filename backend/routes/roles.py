@@ -12,7 +12,7 @@ import logging
 router = APIRouter(prefix="/roles", tags=["Custom Roles"])
 
 from config import db
-from utils.auth import get_current_user
+from utils.auth import get_current_user, get_user_from_request
 logger = logging.getLogger(__name__)
 
 # Default modules and permissions
@@ -175,7 +175,7 @@ async def check_enterprise_plan(company_id: str) -> bool:
 @router.get("/modules")
 async def get_available_modules(request: Request):
     """Get list of available modules for role configuration"""
-    await get_current_user(request)  # Verify auth
+    await get_user_from_request(request)  # Verify auth
     return {
         "modules": DEFAULT_MODULES,
         "permission_types": PERMISSION_TYPES,
@@ -186,7 +186,7 @@ async def get_available_modules(request: Request):
 @router.get("")
 async def get_custom_roles(request: Request):
     """Get all custom roles for the company (Enterprise only)"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     # Check if enterprise plan
@@ -295,7 +295,7 @@ async def get_custom_roles(request: Request):
 @router.post("")
 async def create_custom_role(data: CustomRoleCreate, request: Request):
     """Create a new custom role (Enterprise only)"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     # Check if enterprise plan
@@ -369,7 +369,7 @@ async def create_custom_role(data: CustomRoleCreate, request: Request):
 @router.get("/{role_id}")
 async def get_custom_role(role_id: str, request: Request):
     """Get a specific custom role"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     role = await db.custom_roles.find_one(
@@ -386,7 +386,7 @@ async def get_custom_role(role_id: str, request: Request):
 @router.put("/{role_id}")
 async def update_custom_role(role_id: str, data: CustomRoleUpdate, request: Request):
     """Update a custom role"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     # Check if role exists
@@ -452,7 +452,7 @@ async def update_custom_role(role_id: str, data: CustomRoleUpdate, request: Requ
 @router.delete("/{role_id}")
 async def delete_custom_role(role_id: str, request: Request):
     """Delete a custom role"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     # Check if any users have this role
@@ -481,7 +481,7 @@ async def delete_custom_role(role_id: str, request: Request):
 @router.post("/{role_id}/duplicate")
 async def duplicate_custom_role(role_id: str, request: Request):
     """Duplicate an existing role"""
-    current_user = await get_current_user(request)
+    current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
     # Check if enterprise plan
