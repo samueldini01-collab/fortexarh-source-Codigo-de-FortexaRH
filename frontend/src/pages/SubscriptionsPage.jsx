@@ -422,7 +422,7 @@ export default function SubscriptionsPage() {
 
   if (loading) {
     return (
-      <DashboardLayout title="Suscripción">
+      <DashboardLayout title={t('subscriptions.title')}>
         <div className="flex items-center justify-center h-64">
           <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
         </div>
@@ -450,7 +450,7 @@ export default function SubscriptionsPage() {
               </p>
             </div>
             <Button onClick={() => setShowChangePlan(true)} className="bg-blue-600 hover:bg-blue-700">
-              <ArrowUpRight className="w-4 h-4 mr-2" />Ver Planes
+              <ArrowUpRight className="w-4 h-4 mr-2" />{t('subscriptions.viewPlans')}
             </Button>
           </div>
         )}
@@ -463,7 +463,7 @@ export default function SubscriptionsPage() {
               <p className="text-red-600 text-sm">{t('subscriptions.tuPeriodoDePrueba')}</p>
             </div>
             <Button onClick={() => setShowChangePlan(true)} className="bg-red-600 hover:bg-red-700">
-              <CreditCard className="w-4 h-4 mr-2" />Seleccionar Plan
+              <CreditCard className="w-4 h-4 mr-2" />{t('subscriptions.selectPlan')}
             </Button>
           </div>
         )}
