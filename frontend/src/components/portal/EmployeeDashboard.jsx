@@ -1335,6 +1335,80 @@ function EmployeeDashboard() {
                 )}
               </CardContent>
             </Card>
+
+            {/* Password Change Card */}
+            <Card className="mt-4">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Lock className="w-5 h-5 text-slate-600" />
+                  {t('employeePortal.password.title')}
+                </CardTitle>
+                <CardDescription>{t('employeePortal.password.subtitle')}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="max-w-md space-y-4">
+                  <div className="space-y-2">
+                    <Label>{t('employeePortal.password.current')}</Label>
+                    <div className="relative">
+                      <Input
+                        type={showOldPassword ? "text" : "password"}
+                        value={passwordForm.old_password}
+                        onChange={(e) => setPasswordForm({ ...passwordForm, old_password: e.target.value })}
+                        placeholder={t('employeePortal.password.currentPlaceholder')}
+                        className="pr-10"
+                        data-testid="current-password-input"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowOldPassword(!showOldPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      >
+                        {showOldPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{t('employeePortal.password.new')}</Label>
+                    <div className="relative">
+                      <Input
+                        type={showNewPassword ? "text" : "password"}
+                        value={passwordForm.new_password}
+                        onChange={(e) => setPasswordForm({ ...passwordForm, new_password: e.target.value })}
+                        placeholder={t('employeePortal.password.newPlaceholder')}
+                        className="pr-10"
+                        data-testid="new-password-input"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowNewPassword(!showNewPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      >
+                        {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{t('employeePortal.password.confirm')}</Label>
+                    <Input
+                      type="password"
+                      value={passwordForm.confirm_password}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, confirm_password: e.target.value })}
+                      placeholder={t('employeePortal.password.confirmPlaceholder')}
+                      data-testid="confirm-password-input"
+                    />
+                  </div>
+                  <Button
+                    onClick={handleChangePassword}
+                    disabled={changingPassword || !passwordForm.old_password || !passwordForm.new_password || !passwordForm.confirm_password}
+                    className="w-full sm:w-auto"
+                    data-testid="change-password-btn"
+                  >
+                    {changingPassword ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Lock className="w-4 h-4 mr-2" />}
+                    {t('employeePortal.password.changeBtn')}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
           </div>{/* End swipeable content area */}
         </Tabs>
