@@ -26,21 +26,10 @@ def init_router(database):
     db = database
 
 
-class SupportTicketRequest(BaseModel):
-    name: str
-    email: EmailStr
-    company: Optional[str] = None
-    phone: Optional[str] = None
-    category: str
-    priority: str = "medium"
-    subject: str
-    message: str
-
-
-class SupportTicketResponse(BaseModel):
-    ticket_id: str
-    message: str
-    status: str
+from models.system import (
+    SupportTicketRequest, SupportTicketResponse,
+    TicketResponseCreate, TicketAssignment
+)
 
 
 CATEGORY_LABELS = {
@@ -329,18 +318,6 @@ async def update_ticket_status(ticket_id: str, status: str):
         raise HTTPException(status_code=404, detail="Ticket no encontrado")
     
     return {"message": f"Ticket actualizado a estado: {status}", "ticket_id": ticket_id}
-
-
-class TicketResponseCreate(BaseModel):
-    """Admin response to a ticket"""
-    message: str
-    internal_note: bool = False  # If true, only visible to staff
-
-
-class TicketAssignment(BaseModel):
-    """Assign ticket to a staff member"""
-    assigned_to: str
-    assigned_email: str
 
 
 @router.post("/tickets/{ticket_id}/respond")

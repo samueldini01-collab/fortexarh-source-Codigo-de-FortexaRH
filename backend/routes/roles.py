@@ -162,23 +162,7 @@ PERMISSION_TYPES = list(PERMISSION_LABELS.keys())
 
 
 # Pydantic models
-class CustomRoleCreate(BaseModel):
-    """Model for creating a custom role"""
-    name: str
-    description: Optional[str] = None
-    modules: List[str] = []
-    permissions: Dict[str, List[str]] = {}  # module_id: [view, create, edit, delete]
-    color: Optional[str] = "#3b82f6"  # Default blue
-
-
-class CustomRoleUpdate(BaseModel):
-    """Model for updating a custom role"""
-    name: Optional[str] = None
-    description: Optional[str] = None
-    modules: Optional[List[str]] = None
-    permissions: Optional[Dict[str, List[str]]] = None
-    color: Optional[str] = None
-    is_active: Optional[bool] = None
+from models.system import CustomRoleCreate, CustomRoleUpdate
 
 
 def init_router(database, auth_dependency):
