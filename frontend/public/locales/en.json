@@ -2138,8 +2138,8 @@
       "fillRequired": "Complete todos los campos requeridos"
     },
     "listadoDePrestamos": "Loans List",
-    "noHayPrestamosRegistrados": "No hay préstamos registrados",
-    "creaUnNuevoPrestamo": "Crea un nuevo préstamo para empezar",
+    "noHayPrestamosRegistrados": "No loans registered",
+    "creaUnNuevoPrestamo": "Create a new loan to get started",
     "empleado": "Employee",
     "monto": "Amount",
     "cuotaMensual": "Monthly Payment",
