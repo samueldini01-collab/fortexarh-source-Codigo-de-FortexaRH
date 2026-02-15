@@ -1439,9 +1439,6 @@ export default function PartnerDashboardPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Payout Request Modal */}
-      <Dialog open={showPayoutModal} onOpenChange={setShowPayoutModal}>
-
       {/* Activate Client Dialog */}
       <Dialog open={showActivateClient} onOpenChange={setShowActivateClient}>
         <DialogContent className="bg-slate-800 border-slate-700 max-w-lg">
