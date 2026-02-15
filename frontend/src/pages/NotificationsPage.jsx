@@ -193,7 +193,7 @@ export default function NotificationsPage() {
         if (sub) {
           await fetch(`${API}/notification-preferences/push/unsubscribe`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
             credentials: "include",
             body: JSON.stringify({ endpoint: sub.endpoint }),
           });
@@ -219,7 +219,7 @@ export default function NotificationsPage() {
         const subJSON = sub.toJSON();
         await fetch(`${API}/notification-preferences/push/subscribe`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
           credentials: "include",
           body: JSON.stringify({
             endpoint: subJSON.endpoint,
