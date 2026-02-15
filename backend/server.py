@@ -66,6 +66,11 @@ from routes.cdc_audit import router as cdc_audit_router, init_router as init_cdc
 from routes.support import router as support_router, init_router as init_support_router
 from routes.partners import router as partners_router, init_router as init_partners_router, create_partner_indexes
 from routes.geolocation_attendance import router as geolocation_attendance_router, init_router as init_geolocation_attendance_router
+from routes.payroll_config import router as payroll_config_router, init_router as init_payroll_config_router
+from routes.templates import router as templates_router, init_router as init_templates_router
+from routes.generated_docs import router as generated_docs_router, init_router as init_generated_docs_router
+from routes.currency import router as currency_router, init_router as init_currency_router
+from routes.stats import router as stats_router, init_router as init_stats_router
 
 # MongoDB connection with production-ready settings
 mongo_url = os.environ['MONGO_URL']
