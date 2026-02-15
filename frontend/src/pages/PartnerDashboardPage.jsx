@@ -1440,6 +1440,199 @@ export default function PartnerDashboardPage() {
 
       {/* Payout Request Modal */}
       <Dialog open={showPayoutModal} onOpenChange={setShowPayoutModal}>
+
+      {/* Activate Client Dialog */}
+      <Dialog open={showActivateClient} onOpenChange={setShowActivateClient}>
+        <DialogContent className="bg-slate-800 border-slate-700 max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-white">Activar Cliente</DialogTitle>
+            <DialogDescription className="text-slate-400">
+              Selecciona un plan y la cantidad de empleados para <span className="text-emerald-400 font-medium">{selectedClient?.company_name}</span>
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6 py-4">
+            {/* Plan Selection */}
+            <div className="space-y-3">
+              <Label className="text-slate-300 font-medium">Plan de Suscripción</Label>
+              <div className="grid gap-3">
+                {plans.map((plan) => (
+                  <div
+                    key={plan.plan_id}
+                    onClick={() => setActivationData(prev => ({ ...prev, plan_id: plan.plan_id }))}
+                    className={`cursor-pointer rounded-lg border p-4 transition-all ${
+                      activationData.plan_id === plan.plan_id
+                        ? "border-emerald-500 bg-emerald-500/10"
+                        : "border-slate-600 bg-slate-700/30 hover:border-slate-500"
+                    }`}
+                    data-testid={`plan-option-${plan.plan_id}`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="text-white font-semibold">{plan.name}</h4>
+                        <p className="text-slate-400 text-sm">${plan.base_price}/mes base + ${plan.price_per_employee}/empleado</p>
+                      </div>
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                        activationData.plan_id === plan.plan_id
+                          ? "border-emerald-500 bg-emerald-500"
+                          : "border-slate-500"
+                      }`}>
+                        {activationData.plan_id === plan.plan_id && (
+                          <Check className="w-3 h-3 text-white" />
+                        )}
+                      </div>
+                    </div>
+                    <p className="text-slate-500 text-xs mt-1">
+                      Máx. {plan.max_employees === 999999 ? "ilimitados" : plan.max_employees} empleados
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Employee Count */}
+            <div className="space-y-2">
+              <Label className="text-slate-300 font-medium">Cantidad de Empleados</Label>
+              <Input
+                type="number"
+                min="1"
+                max={plans.find(p => p.plan_id === activationData.plan_id)?.max_employees || 999}
+                value={activationData.employee_count}
+                onChange={(e) => setActivationData(prev => ({ ...prev, employee_count: Math.max(1, parseInt(e.target.value) || 1) }))}
+                className="bg-slate-700 border-slate-600 text-white"
+                data-testid="employee-count-input"
+              />
+            </div>
+
+            {/* Price Preview */}
+            <div className="bg-slate-700/50 rounded-lg p-4 space-y-2">
+              <div className="flex justify-between text-slate-400 text-sm">
+                <span>Base del plan</span>
+                <span>${plans.find(p => p.plan_id === activationData.plan_id)?.base_price || 0}</span>
+              </div>
+              <div className="flex justify-between text-slate-400 text-sm">
+                <span>{activationData.employee_count} empleados x ${plans.find(p => p.plan_id === activationData.plan_id)?.price_per_employee || 0}</span>
+                <span>${(activationData.employee_count * (plans.find(p => p.plan_id === activationData.plan_id)?.price_per_employee || 0)).toFixed(2)}</span>
+              </div>
+              <div className="border-t border-slate-600 pt-2 flex justify-between">
+                <span className="text-white font-semibold">Total Mensual</span>
+                <span className="text-white font-bold text-lg">${calculateMonthly(activationData.plan_id, activationData.employee_count).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-emerald-400 text-sm font-medium">
+                <span>Tu comisión (30%)</span>
+                <span>${(calculateMonthly(activationData.plan_id, activationData.employee_count) * 0.3).toFixed(2)}/mes</span>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowActivateClient(false)} className="border-slate-600 text-slate-300">
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleActivateClient}
+              className="bg-emerald-500 hover:bg-emerald-600"
+              disabled={activating}
+              data-testid="confirm-activate-btn"
+            >
+              {activating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Check className="w-4 h-4 mr-2" />}
+              {activating ? "Activando..." : "Activar Cliente"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Subscription Dialog */}
+      <Dialog open={showEditSubscription} onOpenChange={setShowEditSubscription}>
+        <DialogContent className="bg-slate-800 border-slate-700 max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-white">Editar Suscripción</DialogTitle>
+            <DialogDescription className="text-slate-400">
+              Modifica el plan o la cantidad de empleados de <span className="text-emerald-400 font-medium">{selectedClient?.company_name}</span>
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6 py-4">
+            {/* Plan Selection */}
+            <div className="space-y-3">
+              <Label className="text-slate-300 font-medium">Plan de Suscripción</Label>
+              <div className="grid gap-3">
+                {plans.map((plan) => (
+                  <div
+                    key={plan.plan_id}
+                    onClick={() => setActivationData(prev => ({ ...prev, plan_id: plan.plan_id }))}
+                    className={`cursor-pointer rounded-lg border p-4 transition-all ${
+                      activationData.plan_id === plan.plan_id
+                        ? "border-emerald-500 bg-emerald-500/10"
+                        : "border-slate-600 bg-slate-700/30 hover:border-slate-500"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="text-white font-semibold">{plan.name}</h4>
+                        <p className="text-slate-400 text-sm">${plan.base_price}/mes base + ${plan.price_per_employee}/empleado</p>
+                      </div>
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                        activationData.plan_id === plan.plan_id
+                          ? "border-emerald-500 bg-emerald-500"
+                          : "border-slate-500"
+                      }`}>
+                        {activationData.plan_id === plan.plan_id && (
+                          <Check className="w-3 h-3 text-white" />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Employee Count */}
+            <div className="space-y-2">
+              <Label className="text-slate-300 font-medium">Cantidad de Empleados</Label>
+              <Input
+                type="number"
+                min="1"
+                max={plans.find(p => p.plan_id === activationData.plan_id)?.max_employees || 999}
+                value={activationData.employee_count}
+                onChange={(e) => setActivationData(prev => ({ ...prev, employee_count: Math.max(1, parseInt(e.target.value) || 1) }))}
+                className="bg-slate-700 border-slate-600 text-white"
+                data-testid="edit-employee-count"
+              />
+            </div>
+
+            {/* Price Preview */}
+            <div className="bg-slate-700/50 rounded-lg p-4 space-y-2">
+              <div className="flex justify-between">
+                <span className="text-white font-semibold">Nuevo Total Mensual</span>
+                <span className="text-white font-bold text-lg">${calculateMonthly(activationData.plan_id, activationData.employee_count).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-emerald-400 text-sm font-medium">
+                <span>Tu comisión (30%)</span>
+                <span>${(calculateMonthly(activationData.plan_id, activationData.employee_count) * 0.3).toFixed(2)}/mes</span>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowEditSubscription(false)} className="border-slate-600 text-slate-300">
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleUpdateSubscription}
+              className="bg-emerald-500 hover:bg-emerald-600"
+              disabled={activating}
+              data-testid="confirm-edit-sub-btn"
+            >
+              {activating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Check className="w-4 h-4 mr-2" />}
+              {activating ? "Guardando..." : "Guardar Cambios"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Payout Request Modal - Original */}
+      <Dialog open={showPayoutModal} onOpenChange={setShowPayoutModal}>
         <DialogContent className="bg-slate-800 border-slate-700 max-w-md">
           <DialogHeader>
             <DialogTitle className="text-white">{t('partnerDashboard.solicitarRetiro')}</DialogTitle>
