@@ -955,7 +955,7 @@ export default function SubscriptionsPage() {
                         <p className="text-2xl font-bold mt-1">{formatCurrency(plan.base_price)}<span className="text-sm font-normal text-slate-500 dark:text-slate-400">/mes</span></p>
                         <p className="text-xs text-slate-500 dark:text-slate-400">+ {formatCurrency(plan.price_per_employee)}/empleado</p>
                         <p className="text-xs text-slate-400 mt-2">
-                          {plan.max_employees === 9999 ? 'Ilimitados' : `Hasta ${plan.max_employees}`} empleados
+                          {plan.max_employees === 9999 ? t('subscriptions.unlimited') : `${t('subscriptions.upTo')} ${plan.max_employees}`} {t('subscriptions.employeesLabel')}
                         </p>
                       </div>
                       
