@@ -1,95 +1,109 @@
 # FortexaRH - PRD (Product Requirements Document)
 
-## Original Problem Statement
-SaaS HR and Payroll management system named "FortexaRH" for the Dominican Republic market. Multi-language (ES/EN/FR), with modules for user management, org chart, advanced payroll, accounting, compliance reporting (DR-specific), company/UI customization, document generation, AI search, advanced reporting, drill-down functionality, HR modules (Time & Attendance, Leave, Performance), Employee Self-Service Portal, integrations (Stripe, Resend, QuickBooks, SAP, Oracle, Dynamics), dark mode, subscription management, and more.
+## Problema Original
+SaaS de gestión de Recursos Humanos y nómina para República Dominicana llamado "FortexaRH".
 
-## Architecture
-- **Frontend**: React 19 + Tailwind CSS + Shadcn/UI + i18next
-- **Backend**: FastAPI + MongoDB (async motor) + slowapi (rate limiting)
-- **Payments**: Stripe (Checkout Sessions + Stripe Elements/SetupIntent)
-- **Email**: Resend
-- **AI Search**: Gemini (Emergent LLM Key)
-- **Auth**: JWT (no default fallback) + Emergent-managed Google Auth + Rate limiting on auth endpoints
-- **Accounting**: QuickBooks Online integration
+## Módulos Principales
+- Dashboard con métricas y drill-down
+- Gestión de empleados (CRUD, organigrama)
+- Nómina avanzada (calculadora, TSS, ISR, DGII)
+- Contabilidad (plan de cuentas, asientos de diario)
+- Reportes y cumplimiento (Rep. Dominicana)
+- Gestión de tiempo y asistencias
+- Vacaciones y permisos
+- Evaluaciones de desempeño
+- Reclutamiento y candidatos
+- Portal de auto-servicio para empleados
+- Préstamos y gastos
+- Suscripciones con Stripe
+- Configuración de empresa y UI
+- Multi-idioma (ES, EN, FR)
+- Dark mode
+- Búsqueda AI con Gemini
 
-## What's Been Implemented
+## Stack Tecnológico
+- **Frontend:** React + Shadcn/UI + Tailwind CSS + i18next
+- **Backend:** FastAPI + Motor (MongoDB async)
+- **DB:** MongoDB
+- **Integraciones:** Stripe, Resend, Google Auth (Emergent), Gemini AI, QuickBooks Online, fastapi-limiter
 
-### Core System
-- User management & roles/permissions
-- Company settings & branding customization
-- Org chart, Employee CRUD, Dashboard with drill-down on all cards
-- Notifications system (split into /notifications and /notification-settings)
-
-### Security (Feb 14 2026)
-- JWT Secret: No default fallback — fails fast if env var missing
-- Rate limiting (slowapi): login 10/min, register 5/min, forgot-password 3/min, reset-password 5/min
-- File upload validation: 10MB limit + type restrictions on employee imports and expense attachments
-- Cookie security: httponly, secure, samesite=none
-
-### Payments & Subscriptions
-- Stripe Checkout, Subscription management, Invoice history
-- Inline Payment Method updates (Stripe Elements / SetupIntent)
-- Payment Method Change History (audit trail)
-
-### Drill-Down Functionality
-- All Dashboard/Payroll/Metrics cards and charts with drill-down modals
-
-### Internationalization (i18n)
-- Full i18n (ES, EN, FR) — 3782 keys, 0 missing across all 3 languages
-
-### Integrations
-- Stripe ✅, Resend ✅, Google Auth ✅, Gemini ✅, QuickBooks ✅
-- SAP/Oracle/Dynamics (MOCKED)
-
-## System Analysis & Fixes (Feb 14 2026)
-
-### Bugs Fixed
-| # | Bug | Impact |
-|---|-----|--------|
-| 1 | ReportsSystemPage double `/api` prefix | Page completely broken (7 API calls returning 404) |
-| 2 | Top 10 Salaries RD$0 | Backend used `base_salary` instead of `salary` |
-| 3 | Monthly trend drill-down broken | YYYY-MM parsed as Spanish month abbreviation |
-| 4 | MetricsDashboard drill-down bug | month_number not used for matching |
-| 5 | CORS missing preview URL | Potential browser CORS errors |
-| 6 | Duplicate notification prefix | /notifications conflict between 2 routers |
-| 7 | NotificationsPage API inconsistency | Used API_URL instead of API |
-| 8 | Translation gaps (122 EN, 12 ES, 160 FR) | Raw keys displayed to users |
-
-### Refactoring Completed
-| # | Change | Impact |
-|---|--------|--------|
-| 1 | Removed 12 duplicate endpoints from server.py | Eliminated inconsistent behavior |
-| 2 | server.py reduced from 2,733 to 2,293 lines | Better maintainability |
-| 3 | Upgraded modular dashboard.py | Full payroll-stats with top_salaries, summary, etc. |
-| 4 | Fixed UsersManagementPage to use modular endpoint | /system-users/activities/all |
-
-## Prioritized Backlog
-
-### P0
-- [ ] 2FA / MFA — Two-factor authentication
-
-### P1
-- [ ] ACH Bank Integration (BHD, Popular, Banreservas)
-- [ ] E-signature for contracts and payroll receipts
-- [ ] Hardcoded Spanish strings → i18n migration (25 pages)
-
-### P2
-- [ ] Configurable alert notifications
-- [ ] Backup/Export all company data
-- [ ] Configurable approval workflows
-- [ ] Massive data import via Excel
-- [ ] Public documented API
-- [ ] Complete Audit Trail (CDC logging)
-- [ ] Remove console.log statements
-- [ ] Add missing data-testid attributes
-
-### P3 (Refactoring)
-- [ ] Move remaining 30 server.py inline routes to modular files
-- [ ] Centralize Pydantic models in /backend/models/
-- [ ] Consolidate payroll routes (payroll.py + payroll_v2.py)
-- [ ] Add MongoDB indexes for common query fields
-
-## Key Credentials (Test)
+## Credenciales de Prueba
 - Admin: `test_refactor@fortexa.com` / `test123`
 - Partner: `newpartner@test.com` / `test123`
 - Employee Portal: `001-0000001-1` / `portal123`
+
+## Arquitectura Backend (Post-Refactoring Feb 2026)
+```
+/app/backend/
+├── server.py              (933 lines - core app, auth, health, config)
+├── rate_limiter.py
+├── utils/
+│   └── payroll_constants.py
+├── routes/
+│   ├── accounting.py      (+ generate-payroll-entry)
+│   ├── auth.py
+│   ├── candidates.py
+│   ├── cdc_audit.py
+│   ├── compliance.py
+│   ├── currency.py        ★ NEW
+│   ├── dashboard.py
+│   ├── documents.py       (doc-generator)
+│   ├── employees.py
+│   ├── evaluations.py
+│   ├── expenses.py
+│   ├── generated_docs.py  ★ NEW
+│   ├── geolocation_attendance.py
+│   ├── loans.py
+│   ├── notifications.py
+│   ├── org_chart.py
+│   ├── partner.py
+│   ├── payroll.py
+│   ├── payroll_config.py  ★ NEW
+│   ├── payroll_v2.py
+│   ├── portal.py
+│   ├── projects.py
+│   ├── reports.py         (+ payroll, attendance, generate)
+│   ├── roles.py
+│   ├── stats.py           ★ NEW
+│   ├── subscriptions.py
+│   ├── system_users.py
+│   ├── templates.py       ★ NEW
+│   └── vacations.py
+```
+
+## Lo que se ha implementado
+
+### Sesión Feb 2026 - Refactoring Mayor
+- **server.py reducido de 2293 → 933 líneas** (reducción del 59%)
+- Migración de ~30 rutas inline a 5 nuevos archivos modulares + 2 existentes modificados
+- Índices de rendimiento MongoDB en 15+ colecciones (startup)
+- Limpieza de todos los console.log del frontend
+- Fix de i18n en PayrollCalculatorPage (calculator.* → payroll.calculator.*)
+- Eliminación de modelos, constantes y funciones muertas de server.py
+- Testing completo: 18/18 backend + 100% frontend (iteration_50)
+
+### Sesiones Anteriores
+- Eliminación de 12 rutas duplicadas
+- Hardening de seguridad (rate limiting, JWT secret, file validation)
+- Fix de bugs: NaN en dashboard, API paths dobles
+- Sincronización de traducciones i18n (3782 keys en ES/EN/FR)
+- Dashboard con drill-down funcional
+- Todas las integraciones principales funcionando
+
+## Backlog Priorizado
+
+### P1 - Próximas tareas
+- Hardcoded strings → i18n (~25 páginas con texto en español)
+- 2FA / MFA
+- ACH Bank Integration (BHD, Popular, Banreservas)
+- E-signature para contratos y recibos
+
+### P2 - Futuras
+- Consolidar payroll.py y payroll_v2.py
+- Centralizar modelos Pydantic en directorio compartido
+- Notificaciones configurables
+- Backup/Exportación de datos
+- Workflows de aprobación configurables
+- Importación masiva por Excel
+- API pública documentada
+- Audit Trail completo (CDC logging)
