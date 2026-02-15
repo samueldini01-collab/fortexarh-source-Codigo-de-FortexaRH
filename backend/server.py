@@ -194,7 +194,7 @@ for r in [
     notifications_router, reports_router, expenses_router, projects_router,
     metrics_router, notifications_system_router, reports_advanced_router,
     reports_system_router, quickbooks_router, cdc_audit_router,
-    partners_router, geolocation_attendance_router, payroll_config_router,
+    partners_router, partner_payments_router, geolocation_attendance_router, payroll_config_router,
     templates_router, generated_docs_router, currency_router, stats_router,
 ]:
     api_router.include_router(r)
