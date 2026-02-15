@@ -759,32 +759,7 @@ REPORT_DEFINITIONS = {
 
 
 # ============== MODELS ==============
-
-class ReportFilter(BaseModel):
-    field: str
-    operator: str  # eq, ne, gt, lt, gte, lte, contains, in, between
-    value: Any
-
-
-class ReportRequest(BaseModel):
-    report_id: str
-    filters: Optional[List[Dict[str, Any]]] = []
-    columns: Optional[List[str]] = None
-    sort_by: Optional[str] = None
-    sort_order: Optional[str] = "asc"
-    page: Optional[int] = 1
-    page_size: Optional[int] = 50
-
-
-class SavedReportConfig(BaseModel):
-    name: str
-    description: Optional[str] = ""
-    report_id: str
-    filters: List[Dict[str, Any]] = []
-    columns: Optional[List[str]] = None
-    sort_by: Optional[str] = None
-    sort_order: Optional[str] = "asc"
-    is_favorite: Optional[bool] = False
+from models.system import ReportFilter, ReportRequest, SavedReportConfig
 
 
 # ============== HELPER FUNCTIONS ==============

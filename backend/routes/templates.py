@@ -28,12 +28,7 @@ async def get_current_user(request: Request, credentials=Depends(security)):
     return await _get_current_user_func(request, credentials)
 
 
-class TemplateCreate(BaseModel):
-    name: str
-    template_type: str
-    content: str
-    variables: List[str] = []
-    is_active: bool = True
+from models.system import TemplateCreate
 
 
 @router.get("")

@@ -50,44 +50,10 @@ PAYOUT_FREQUENCY = "monthly"  # Monthly payouts
 
 
 # ============== MODELS ==============
-
-class PartnerRegistration(BaseModel):
-    firm_name: str
-    rnc: Optional[str] = None  # RNC (Tax ID) - optional
-    contact_name: str
-    email: EmailStr
-    phone: str
-    password: str
-    address: Optional[str] = None
-    city: Optional[str] = None
-    website: Optional[str] = None
-    employee_count: Optional[int] = 1
-
-
-class PartnerClientCreate(BaseModel):
-    company_name: str
-    contact_name: str
-    email: EmailStr
-    phone: Optional[str] = None
-    billing_type: str = "direct"  # "direct" (client pays) or "firm" (firm pays with discount)
-
-
-class PartnerUpdate(BaseModel):
-    firm_name: Optional[str] = None
-    contact_name: Optional[str] = None
-    phone: Optional[str] = None
-    address: Optional[str] = None
-    city: Optional[str] = None
-    website: Optional[str] = None
-
-
-class PayoutRequest(BaseModel):
-    amount: Optional[float] = None  # None means withdraw all available
-
-
-class StripeConnectOnboard(BaseModel):
-    return_url: str
-    refresh_url: str
+from models.system import (
+    PartnerRegistration, PartnerClientCreate, PartnerUpdate,
+    PayoutRequest, StripeConnectOnboard
+)
 
 
 # ============== HELPER FUNCTIONS ==============

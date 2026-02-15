@@ -28,11 +28,7 @@ async def get_current_user(request: Request, credentials=Depends(security)):
     return await _get_current_user_func(request, credentials)
 
 
-class GeneratedDocumentCreate(BaseModel):
-    template_id: str
-    employee_id: str
-    content: str
-    signature_data: Optional[str] = None
+from models.system import GeneratedDocumentCreate
 
 
 @router.get("")

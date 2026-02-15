@@ -28,11 +28,7 @@ async def get_current_user(request: Request, credentials=Depends(security)):
     return await _get_current_user_func(request, credentials)
 
 
-class CurrencyConfigCreate(BaseModel):
-    currency_code: str
-    exchange_rate: float
-    effective_date: str
-    is_active: bool = True
+from models.system import CurrencyConfigCreate
 
 
 @router.get("/rates")
