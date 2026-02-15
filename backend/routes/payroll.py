@@ -1568,7 +1568,7 @@ async def submit_for_approval(period_id: str, data: ApprovalRequest = None, curr
         "message": f"{user_name} ha enviado la nómina '{period_desc}' para aprobación.",
         "type": "payroll_approval",
         "priority": "high",
-        "link": f"/payroll-v2?period={period_id}",
+        "link": f"/payroll?period={period_id}",
         "target_user_id": None,
         "target_role": "admin",
         "metadata": {"period_id": period_id, "period_description": period_desc},
