@@ -30,26 +30,12 @@ JWT_SECRET = os.environ.get("JWT_SECRET", "your-secret-key")
 
 logger = logging.getLogger(__name__)
 
-
-class EmployeeLoginRequest(BaseModel):
-    document_number: str  # Cédula
-    password: str
-
-
-class EmployeeUpdateRequest(BaseModel):
-    phone: Optional[str] = None
-    address: Optional[str] = None
-    email: Optional[str] = None
-    bank_name: Optional[str] = None
-    bank_account: Optional[str] = None
-    emergency_contact_name: Optional[str] = None
-    emergency_contact_phone: Optional[str] = None
-
-
-class VacationRequestCreate(BaseModel):
-    start_date: str
-    end_date: str
-    reason: Optional[str] = None
+from models.employee import (
+    EmployeeLoginRequest, EmployeeUpdateRequest,
+    PortalVacationRequestCreate as VacationRequestCreate,
+    PortalLeaveRequestCreate as LeaveRequestCreate,
+    MarkNotificationRead
+)
 
 
 def init_router(database):
@@ -759,14 +745,6 @@ async def get_evaluation_detail(evaluation_id: str, request: Request):
 
 # ===================== LEAVE/PERMIT REQUESTS =====================
 
-class LeaveRequestCreate(BaseModel):
-    leave_type: str  # sick, personal, bereavement, maternity, paternity, other
-    start_date: str
-    end_date: str
-    reason: str
-    attachment_url: Optional[str] = None
-
-
 LEAVE_TYPES = {
     "sick": {"name": "Licencia por Enfermedad", "max_days": 3, "requires_doc": True},
     "personal": {"name": "Permiso Personal", "max_days": 1, "requires_doc": False},
@@ -1092,10 +1070,6 @@ async def get_attendance_history(request: Request, month: Optional[str] = None):
 
 
 # ===================== EMPLOYEE NOTIFICATIONS =====================
-
-class MarkNotificationRead(BaseModel):
-    notification_id: str
-
 
 @router.get("/notifications")
 async def get_employee_notifications(request: Request, limit: int = 50, unread_only: bool = False):
