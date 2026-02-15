@@ -237,14 +237,21 @@ class CurrencyConfigCreate(BaseModel):
 # ===== QuickBooks =====
 
 class QuickBooksConnection(BaseModel):
-    auth_code: str
+    user_id: str
+    company_id: str
+    access_token: str
+    refresh_token: str
     realm_id: str
-    redirect_uri: str
+    company_name: Optional[str] = None
+    expires_at: Any = None
+    created_at: Any = None
+    updated_at: Any = None
+    is_active: bool = True
 
 
 class QuickBooksSyncRequest(BaseModel):
     sync_type: str
-    date_from: Optional[str] = None
+    start_date: Optional[str] = None
     date_to: Optional[str] = None
 
 

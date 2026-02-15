@@ -116,3 +116,7 @@ class PayrollCalculatorResult(BaseModel):
     infotep_employer: float
     total_tss_employer: float
     total_cost_employer: float
+    total_other_deductions: float = 0
+    total_deductions: float = 0
+    total_employer_contributions: float = 0
+    breakdown: Optional[Dict[str, Any]] = None
