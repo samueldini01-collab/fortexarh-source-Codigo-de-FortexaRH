@@ -2251,7 +2251,7 @@
   },
   "notifications": {
     "title": "Notifications",
-    "subtitle": "Configure payroll reminders and birthday alerts",
+    "subtitle": "Configure how and when you receive system notifications",
     "markAllRead": "Mark all as read",
     "noNotifications": "You have no notifications",
     "types": {
@@ -2262,19 +2262,17 @@
       "system": "System"
     },
     "messages": {
-      "settingsSaved": "Settings saved",
-      "errorSaving": "Error saving settings",
-      "errorSendingReminder": "Error sending reminder",
-      "errorSendingNotifications": "Error sending notifications"
+      "settingsSaved": "Settings saved successfully",
+      "errorSaving": "Error saving settings"
     },
     "configuracion": "Settings",
     "config": "Config",
     "cumpleanos": "Cumpleaños",
     "historial": "History",
-    "activarRecordatorios": "Activar recordatorios",
+    "activarRecordatorios": "Enable Reminders",
     "diaDePagoDe": "Día de pago de nómina",
     "recordarConAnticipacionDe": "Recordar con anticipación de",
-    "activarNotificaciones": "Activar notificaciones",
+    "activarNotificaciones": "Enable Notifications",
     "notificarConAnticipacionDe": "Notificar con anticipación de",
     "elMismoDia": "El mismo día",
     "noHayCumpleanosProximos": "No hay cumpleaños próximos en los siguientes 30 días",

@@ -2240,7 +2240,7 @@
   },
   "notifications": {
     "title": "Notifications",
-    "subtitle": "Configurez les rappels de paie et les alertes d'anniversaire",
+    "subtitle": "Configurez comment et quand vous recevez des notifications systeme",
     "markAllRead": "Marquer tout comme lu",
     "noNotifications": "Vous n'avez pas de notifications",
     "types": {
@@ -2251,19 +2251,17 @@
       "system": "Système"
     },
     "messages": {
-      "settingsSaved": "Configuration enregistrée",
-      "errorSaving": "Erreur d'enregistrement de la configuration",
-      "errorSendingReminder": "Erreur d'envoi du rappel",
-      "errorSendingNotifications": "Erreur d'envoi des notifications"
+      "settingsSaved": "Configuration enregistree avec succes",
+      "errorSaving": "Erreur lors de la sauvegarde"
     },
     "configuracion": "Settings",
     "config": "Config",
     "cumpleanos": "Cumpleaños",
-    "historial": "History",
-    "activarRecordatorios": "Activar recordatorios",
+    "historial": "Historique",
+    "activarRecordatorios": "Activer les Rappels",
     "diaDePagoDe": "Día de pago de nómina",
     "recordarConAnticipacionDe": "Recordar con anticipación de",
-    "activarNotificaciones": "Activar notificaciones",
+    "activarNotificaciones": "Activer les Notifications",
     "notificarConAnticipacionDe": "Notificar con anticipación de",
     "elMismoDia": "El mismo día",
     "noHayCumpleanosProximos": "No hay cumpleaños próximos en los siguientes 30 días",

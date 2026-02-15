@@ -2253,7 +2253,7 @@
   },
   "notifications": {
     "title": "Notificaciones",
-    "subtitle": "Configura recordatorios de nómina y alertas de cumpleaños",
+    "subtitle": "Configura como y cuando recibes notificaciones del sistema",
     "markAllRead": "Marcar todas como leídas",
     "noNotifications": "No tienes notificaciones",
     "types": {
@@ -2264,19 +2264,17 @@
       "system": "Sistema"
     },
     "messages": {
-      "settingsSaved": "Configuración guardada",
-      "errorSaving": "Error al guardar configuración",
-      "errorSendingReminder": "Error al enviar recordatorio",
-      "errorSendingNotifications": "Error al enviar notificaciones"
+      "settingsSaved": "Configuracion guardada correctamente",
+      "errorSaving": "Error al guardar la configuracion"
     },
     "configuracion": "Configuración",
     "config": "Config",
     "cumpleanos": "Cumpleaños",
     "historial": "Historial",
-    "activarRecordatorios": "Activar recordatorios",
+    "activarRecordatorios": "Activar Recordatorios",
     "diaDePagoDe": "Día de pago de nómina",
     "recordarConAnticipacionDe": "Recordar con anticipación de",
-    "activarNotificaciones": "Activar notificaciones",
+    "activarNotificaciones": "Activar Notificaciones",
     "notificarConAnticipacionDe": "Notificar con anticipación de",
     "elMismoDia": "El mismo día",
     "noHayCumpleanosProximos": "No hay cumpleaños próximos en los siguientes 30 días",
