@@ -57,15 +57,42 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const userData = await login(email, password);
-      toast.success(t('common.welcome') + "!");
-      navigate(userData?.is_partner ? "/partner-dashboard" : "/dashboard");
+      const response = await axios.post(`${API}/auth/login`, { email, password });
+      
+      // Check if 2FA is required
+      if (response.data.requires_2fa) {
+        setTwoFactorData({
+          user_id: response.data.user_id,
+          temp_token: response.data.temp_token
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Normal login (no 2FA)
+      const { token, user: userData } = response.data;
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(userData));
+      window.location.href = userData?.is_partner ? "/partner-dashboard" : "/dashboard";
     } catch (err) {
       setError(err.response?.data?.detail || t('errors.generic'));
       toast.error(t('errors.generic'));
     } finally {
       setLoading(false);
     }
+  };
+
+  const handle2FAVerified = async (userId, tempToken, code) => {
+    const response = await axios.post(`${API}/auth/2fa/verify-login`, {
+      user_id: userId,
+      temp_token: tempToken,
+      code
+    });
+    const { token, user: userData } = response.data;
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(userData));
+    toast.success(t('common.welcome') + "!");
+    window.location.href = userData?.is_partner ? "/partner-dashboard" : "/dashboard";
   };
 
   // REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
