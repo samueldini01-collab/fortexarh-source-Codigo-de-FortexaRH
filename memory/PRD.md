@@ -15,34 +15,25 @@ Sistema SaaS de Gestión de Recursos Humanos y Nómina llamado "FortexaRH", con 
 ## Estructura Backend
 ```
 /app/backend/
-├── models/                    # Modelos Pydantic centralizados
-│   ├── auth.py               # Auth & User models
-│   ├── employee.py           # Employee & Portal models
-│   ├── payroll.py            # Payroll models
-│   ├── company.py            # Company & Org models
-│   ├── hr.py                 # Attendance, Vacations, Evaluations, Recruitment
-│   ├── finance.py            # Accounting, Expenses, Checkout, Subscriptions, Loans
-│   └── system.py             # Roles, Notifications, Search, Support, Documents, Reports, etc.
-├── routes/
-│   ├── auth.py, employees.py, company.py, organigrama.py
-│   ├── payroll.py            # Consolidated: /payroll-v2 (advanced) + /payroll (legacy)
-│   ├── payroll_config.py, attendance.py, vacations.py
-│   ├── evaluations.py, recruitment.py, accounting.py
-│   ├── expenses.py, checkout.py, subscriptions.py
-│   ├── notifications.py, notifications_system.py
-│   ├── search.py, roles.py, system_users.py
-│   ├── dgii_reports.py, reports.py, reports_system.py
-│   ├── documents.py, generated_docs.py, templates.py
-│   ├── partners.py, projects.py, loans.py
-│   ├── currency.py, stats.py, quickbooks.py
-│   ├── support.py, employee_portal.py
-│   ├── geolocation_attendance.py, cdc_audit.py
-│   ├── bank_files.py, metrics.py, dashboard.py
-│   └── subscriptions.py
+├── config.py                  # Centralized config: DB, JWT, Stripe, Resend, QB, Plans
 ├── utils/
+│   ├── auth.py               # Auth helpers: hash_password, verify_password, create_jwt_token, get_current_user
 │   └── payroll_constants.py
-├── server.py                  # ~581 lines - App init, middleware, router includes
-└── config.py
+├── models/                    # Centralized Pydantic models (~55+)
+│   ├── auth.py, employee.py, payroll.py, company.py
+│   ├── hr.py, finance.py, system.py
+├── services/
+│   ├── report_catalog.py     # Report definitions (58+ reports, 10 categories)
+│   ├── report_generators.py  # Report data generation functions
+│   ├── fraud_detection.py, geo_alerts.py, pdf_service.py
+├── routes/                    # ~32 modular route files
+│   ├── payroll.py            # Core payroll CRUD + workflow (1,151 lines)
+│   ├── payroll_exports.py    # Payroll exports: Excel, TSS, DGII (972 lines)
+│   ├── reports_system.py     # Report endpoints only (339 lines)
+│   ├── auth.py, employees.py, company.py, organigrama.py
+│   └── ... (30 more route modules)
+├── server.py                  # App init + router registration (258 lines)
+└── email_service.py
 ```
 
 ## Implementado
@@ -65,18 +56,27 @@ Sistema SaaS de Gestión de Recursos Humanos y Nómina llamado "FortexaRH", con 
 - Employee Portal: 001-0000001-1 / portal123
 
 ## P0 - Completado
-- ✅ Refactoring masivo server.py (2293 → 581 líneas)
+- ✅ Refactoring masivo server.py (2293 → 581 → 258 líneas)
 - ✅ Internacionalización frontend (~835 strings)
 - ✅ Consolidación payroll.py + payroll_v2.py
-- ✅ Centralización modelos Pydantic (~90+ modelos en /models/)
+- ✅ Centralización modelos Pydantic (~55+ modelos en /models/)
 - ✅ Limpieza scripts one-off
+- ✅ Extracción auth helpers → utils/auth.py
+- ✅ Centralización config → config.py (DB, JWT, Stripe, Resend, QB, Plans, Feature Access)
+- ✅ Consolidación frontend PayrollV2Page → PayrollPage (ruta /payroll-v2 → /payroll)
+- ✅ Split reports_system.py (2,224 → 339 + services/)
+- ✅ Split payroll.py exports (2,155 → 1,151 + payroll_exports.py)
+- ✅ Limpieza 22 archivos de test obsoletos
 
 ## P1 - Próximas Tareas
+- Dividir páginas frontend grandes (GeoLocationsPage 1,679, EmployeePortalPage 1,561, EmployeesPage 1,502, SubscriptionsPage 1,372)
+- Dividir routes/partners.py (1,245 líneas)
 - 2FA / MFA
 - ACH Bank Integration (BHD, Popular, Banreservas)
 - E-signature para contratos y recibos
 
 ## P2 - Futuro/Backlog
+- Mejorar patrón init_router con FastAPI dependency injection
 - Notificaciones de alerta configurables
 - Backup/Exportación de datos
 - Workflows de aprobación configurables
