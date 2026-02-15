@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="23" time="9.077" timestamp="2026-02-15T05:36:04.314102+00:00" hostname="agent-env-f40df0da-3fc2-456f-9fe7-2c6efa063dcd"><testcase classname="tests.test_init_router_removal_refactor.TestHealthEndpoints" name="test_health_check" time="0.208"><failure message="requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)">/root/.venv/lib/python3.11/site-packages/requests/models.py:976: in json
+    return complexjson.loads(self.text, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/__init__.py:346: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:337: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:355: in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+E   json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+tests/test_init_router_removal_refactor.py:39: in test_health_check
+    data = response.json()
+           ^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/requests/models.py:980: in json
+    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)
+E   requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)</failure></testcase><testcase classname="tests.test_init_router_removal_refactor.TestHealthEndpoints" name="test_health_db" time="0.146"><failure message="requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)">/root/.venv/lib/python3.11/site-packages/requests/models.py:976: in json
+    return complexjson.loads(self.text, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/__init__.py:346: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:337: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:355: in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+E   json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+tests/test_init_router_removal_refactor.py:47: in test_health_db
+    data = response.json()
+           ^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/requests/models.py:980: in json
+    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)
+E   requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)</failure></testcase><testcase classname="tests.test_init_router_removal_refactor.TestHealthEndpoints" name="test_config_status" time="0.113" /><testcase classname="tests.test_init_router_removal_refactor.TestAuthEndpointsRegularUser" name="test_login_regular_user" time="0.414" /><testcase classname="tests.test_init_router_removal_refactor.TestAuthEndpointsRegularUser" name="test_login_invalid_credentials" time="0.108" /><testcase classname="tests.test_init_router_removal_refactor.TestAuthEndpointsPartnerUser" name="test_login_partner_user" time="0.408" /><testcase classname="tests.test_init_router_removal_refactor.TestAuthEndpointsPartnerUser" name="test_check_partner_with_partner_email" time="0.119" /><testcase classname="tests.test_init_router_removal_refactor.TestAuthEndpointsPartnerUser" name="test_check_partner_with_regular_email" time="0.123" /><testcase classname="tests.test_init_router_removal_refactor.TestAuthMeEndpoint" name="test_auth_me_regular_user" time="0.488" /><testcase classname="tests.test_init_router_removal_refactor.TestAuthMeEndpoint" name="test_auth_me_partner_user" time="0.484" /><testcase classname="tests.test_init_router_removal_refactor.TestAuthMeEndpoint" name="test_auth_me_no_token" time="0.210" /><testcase classname="tests.test_init_router_removal_refactor.TestSubscriptionEndpoint" name="test_get_subscription" time="0.477" /><testcase classname="tests.test_init_router_removal_refactor.TestDashboardEndpoint" name="test_dashboard_stats" time="0.455" /><testcase classname="tests.test_init_router_removal_refactor.TestEmployeesEndpoint" name="test_get_employees" time="0.476" /><testcase classname="tests.test_init_router_removal_refactor.TestLoansEndpoint" name="test_get_loans" time="0.444" /><testcase classname="tests.test_init_router_removal_refactor.TestRolesEndpoint" name="test_get_roles" time="0.522" /><testcase classname="tests.test_init_router_removal_refactor.TestDocumentsEndpoint" name="test_get_document_templates" time="1.055" /><testcase classname="tests.test_init_router_removal_refactor.TestPartnerEndpoints" name="test_partner_dashboard" time="0.529" /><testcase classname="tests.test_init_router_removal_refactor.TestPartnerEndpoints" name="test_partner_clients" time="0.505" /><testcase classname="tests.test_init_router_removal_refactor.TestPartnerEndpoints" name="test_partner_plans" time="0.497" /><testcase classname="tests.test_init_router_removal_refactor.TestPlansEndpoint" name="test_get_plans" time="0.126" /><testcase classname="tests.test_init_router_removal_refactor.TestGeolocationAttendanceEndpoint" name="test_get_geo_locations" time="0.525" /><testcase classname="tests.test_init_router_removal_refactor.TestBankFilesEndpoint" name="test_get_bank_list" time="0.465" /></testsuite></testsuites>
