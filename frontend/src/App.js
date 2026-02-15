@@ -531,7 +531,9 @@ function App() {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    // Ensure the app is ready before rendering
+    // Remove inline loader and ensure the app is ready before rendering
+    const loader = document.getElementById('initial-loader');
+    if (loader) loader.remove();
     const timer = setTimeout(() => setIsReady(true), 100);
     return () => clearTimeout(timer);
   }, []);
