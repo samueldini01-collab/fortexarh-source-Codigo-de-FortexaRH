@@ -75,7 +75,7 @@ allowed_origins = [
     "https://fortexarh.com",
     "https://www.fortexarh.com",
     "https://staff-genius-2.emergent.host",
-    "https://fortexa-preview.preview.emergentagent.com",
+    "https://emp-alerts.preview.emergentagent.com",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
