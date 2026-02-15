@@ -1,113 +1,88 @@
 # FortexaRH - PRD (Product Requirements Document)
 
 ## Problema Original
-SaaS de gestión de Recursos Humanos y nómina para República Dominicana llamado "FortexaRH".
+Sistema SaaS de Gestión de Recursos Humanos y Nómina llamado "FortexaRH", con módulos para gestión de usuarios, organigrama, nómina avanzada, contabilidad, reportes de cumplimiento (específico Rep. Dominicana), personalización de empresa/UI, y generación de documentos.
 
-## Módulos Principales
-- Dashboard con métricas y drill-down
-- Gestión de empleados (CRUD, organigrama)
-- Nómina avanzada (calculadora, TSS, ISR, DGII)
-- Contabilidad (plan de cuentas, asientos de diario)
-- Reportes y cumplimiento (Rep. Dominicana)
-- Gestión de tiempo y asistencias
-- Vacaciones y permisos
-- Evaluaciones de desempeño
-- Reclutamiento y candidatos
-- Portal de auto-servicio para empleados
-- Préstamos y gastos
-- Suscripciones con Stripe
-- Configuración de empresa y UI
-- Multi-idioma (ES, EN, FR)
-- Dark mode
-- Búsqueda AI con Gemini
+## Arquitectura
+- **Frontend**: React + Shadcn/UI + i18next (ES/EN/FR)
+- **Backend**: FastAPI + MongoDB
+- **Autenticación**: JWT + Google OAuth (Emergent)
+- **Pagos**: Stripe
+- **Email**: Resend
+- **AI**: Gemini (búsqueda inteligente)
+- **Contabilidad**: QuickBooks Online
 
-## Stack Tecnológico
-- **Frontend:** React + Shadcn/UI + Tailwind CSS + i18next
-- **Backend:** FastAPI + Motor (MongoDB async)
-- **DB:** MongoDB
-- **Integraciones:** Stripe, Resend, Google Auth (Emergent), Gemini AI, QuickBooks Online, fastapi-limiter
-
-## Credenciales de Prueba
-- Admin: `test_refactor@fortexa.com` / `test123`
-- Partner: `newpartner@test.com` / `test123`
-- Employee Portal: `001-0000001-1` / `portal123`
-
-## Arquitectura Backend (Post-Refactoring Feb 2026)
+## Estructura Backend
 ```
 /app/backend/
-├── server.py              (933 lines - core app, auth, health, config)
-├── rate_limiter.py
+├── models/                    # Modelos Pydantic centralizados
+│   ├── auth.py               # Auth & User models
+│   ├── employee.py           # Employee & Portal models
+│   ├── payroll.py            # Payroll models
+│   ├── company.py            # Company & Org models
+│   ├── hr.py                 # Attendance, Vacations, Evaluations, Recruitment
+│   ├── finance.py            # Accounting, Expenses, Checkout, Subscriptions, Loans
+│   └── system.py             # Roles, Notifications, Search, Support, Documents, Reports, etc.
+├── routes/
+│   ├── auth.py, employees.py, company.py, organigrama.py
+│   ├── payroll.py            # Consolidated: /payroll-v2 (advanced) + /payroll (legacy)
+│   ├── payroll_config.py, attendance.py, vacations.py
+│   ├── evaluations.py, recruitment.py, accounting.py
+│   ├── expenses.py, checkout.py, subscriptions.py
+│   ├── notifications.py, notifications_system.py
+│   ├── search.py, roles.py, system_users.py
+│   ├── dgii_reports.py, reports.py, reports_system.py
+│   ├── documents.py, generated_docs.py, templates.py
+│   ├── partners.py, projects.py, loans.py
+│   ├── currency.py, stats.py, quickbooks.py
+│   ├── support.py, employee_portal.py
+│   ├── geolocation_attendance.py, cdc_audit.py
+│   ├── bank_files.py, metrics.py, dashboard.py
+│   └── subscriptions.py
 ├── utils/
 │   └── payroll_constants.py
-├── routes/
-│   ├── accounting.py      (+ generate-payroll-entry)
-│   ├── auth.py
-│   ├── candidates.py
-│   ├── cdc_audit.py
-│   ├── compliance.py
-│   ├── currency.py        ★ NEW
-│   ├── dashboard.py
-│   ├── documents.py       (doc-generator)
-│   ├── employees.py
-│   ├── evaluations.py
-│   ├── expenses.py
-│   ├── generated_docs.py  ★ NEW
-│   ├── geolocation_attendance.py
-│   ├── loans.py
-│   ├── notifications.py
-│   ├── org_chart.py
-│   ├── partner.py
-│   ├── payroll.py
-│   ├── payroll_config.py  ★ NEW
-│   ├── payroll_v2.py
-│   ├── portal.py
-│   ├── projects.py
-│   ├── reports.py         (+ payroll, attendance, generate)
-│   ├── roles.py
-│   ├── stats.py           ★ NEW
-│   ├── subscriptions.py
-│   ├── system_users.py
-│   ├── templates.py       ★ NEW
-│   └── vacations.py
+├── server.py                  # ~581 lines - App init, middleware, router includes
+└── config.py
 ```
 
-## Lo que se ha implementado
+## Implementado
+- Sistema completo de nómina con TSS (Rep. Dominicana)
+- Exportaciones DGII: IR-3, IR-4, IR-6, IR-13, IR-17, TSS
+- Módulos HR: Asistencia, Vacaciones, Evaluaciones, Reclutamiento
+- Portal de Empleados con autoservicio
+- Contabilidad completa con plan de cuentas
+- Sistema de reportes con 58+ reportes
+- Internacionalización completa (ES/EN/FR)
+- Geolocalización para asistencia
+- CDC Audit trail
+- Gestión de préstamos
+- Sistema de socios/partners
+- Integración QuickBooks Online
 
-### Sesión Feb 15 2026 - Refactoring + i18n completo
-**Refactoring Backend:**
-- server.py reducido de 2293 → 933 líneas (59% menos)
-- ~30 rutas inline migradas a 5 nuevos archivos modulares + 2 existentes
-- Índices MongoDB en 15+ colecciones
-- console.log eliminados del frontend
-- Testing completo: 18/18 backend + 100% frontend (iteration_50)
+## Credenciales de Test
+- Admin: test_refactor@fortexa.com / test123
+- Partner: newpartner@test.com / test123
+- Employee Portal: 001-0000001-1 / portal123
 
-**i18n Migration:**
-- 835+ hardcoded Spanish strings reemplazados con t() calls en 26+ archivos
-- Translation keys crecieron de 3782 a 4500+
-- Traducciones EN: 295+ strings traducidos al inglés
-- Traducciones FR: 236+ strings traducidos al francés
-- Testing: iteration_51 passed (90%+ frontend, 100% backend)
+## P0 - Completado
+- ✅ Refactoring masivo server.py (2293 → 581 líneas)
+- ✅ Internacionalización frontend (~835 strings)
+- ✅ Consolidación payroll.py + payroll_v2.py
+- ✅ Centralización modelos Pydantic (~90+ modelos en /models/)
+- ✅ Limpieza scripts one-off
 
-### Sesiones Anteriores
-- Eliminación de 12 rutas duplicadas
-- Hardening de seguridad (rate limiting, JWT secret, file validation)
-- Fix de bugs: NaN en dashboard, API paths dobles
-- Dashboard con drill-down funcional
-- Todas las integraciones principales funcionando
-
-## Backlog Priorizado
-
-### P1 - Próximas tareas
+## P1 - Próximas Tareas
 - 2FA / MFA
 - ACH Bank Integration (BHD, Popular, Banreservas)
 - E-signature para contratos y recibos
 
-### P2 - Futuras
-- Consolidar payroll.py y payroll_v2.py
-- Centralizar modelos Pydantic en directorio compartido
-- Notificaciones configurables
+## P2 - Futuro/Backlog
+- Notificaciones de alerta configurables
 - Backup/Exportación de datos
 - Workflows de aprobación configurables
-- Importación masiva por Excel
+- Importación masiva via Excel
 - API pública documentada
 - Audit Trail completo (CDC logging)
+
+## Integraciones Mockeadas
+- SAP, Oracle, Dynamics (enterprise)
