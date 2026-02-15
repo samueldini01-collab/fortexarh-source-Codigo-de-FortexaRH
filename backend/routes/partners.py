@@ -670,6 +670,188 @@ async def resend_client_invitation(
         raise HTTPException(status_code=500, detail="Error al enviar el email de invitación")
 
 
+# ============== PLANS ENDPOINT ==============
+
+@router.get("/plans")
+async def get_available_plans(current_user: dict = Depends(get_current_user)):
+    """Get available subscription plans for partner clients"""
+    partner_id = current_user.get("partner_id")
+    if not partner_id:
+        raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
+    
+    plans = []
+    for plan_id, plan in SUBSCRIPTION_PLANS.items():
+        if plan_id == "trial":
+            continue
+        plans.append({
+            "plan_id": plan["plan_id"],
+            "name": plan["name"],
+            "base_price": plan["base_price"],
+            "price_per_employee": plan["price_per_employee"],
+            "max_employees": plan["max_employees"],
+            "max_users": plan["max_users"],
+            "features": plan["features"]
+        })
+    return {"plans": plans}
+
+
+# ============== CLIENT ACTIVATION & SUBSCRIPTION ==============
+
+@router.patch("/clients/{client_id}/activate")
+async def activate_client(
+    client_id: str,
+    data: ClientActivation,
+    current_user: dict = Depends(get_current_user)
+):
+    """Activate a client with a subscription plan and employee count"""
+    partner_id = current_user.get("partner_id")
+    if not partner_id:
+        raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
+    
+    # Validate plan
+    plan = SUBSCRIPTION_PLANS.get(data.plan_id)
+    if not plan or data.plan_id == "trial":
+        raise HTTPException(status_code=400, detail="Plan no válido")
+    
+    # Validate employee count
+    if data.employee_count < 1:
+        raise HTTPException(status_code=400, detail="Debe tener al menos 1 empleado")
+    if data.employee_count > plan["max_employees"]:
+        raise HTTPException(status_code=400, detail=f"El plan {plan['name']} permite máximo {plan['max_employees']} empleados")
+    
+    # Get the client
+    client = await db.partner_clients.find_one(
+        {"client_id": client_id, "partner_id": partner_id}
+    )
+    if not client:
+        raise HTTPException(status_code=404, detail="Cliente no encontrado")
+    
+    # Calculate monthly value
+    monthly_value = plan["base_price"] + (data.employee_count * plan["price_per_employee"])
+    
+    # Update client
+    await db.partner_clients.update_one(
+        {"client_id": client_id, "partner_id": partner_id},
+        {"$set": {
+            "status": "active",
+            "subscription_status": "active",
+            "subscription_plan": data.plan_id,
+            "employee_count": data.employee_count,
+            "monthly_value": monthly_value,
+            "activated_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc)
+        }}
+    )
+    
+    # Update firm statistics
+    await db.accounting_firms.update_one(
+        {"partner_id": partner_id},
+        {
+            "$inc": {"active_clients": 1},
+            "$set": {
+                "last_active_client_date": datetime.now(timezone.utc),
+                "updated_at": datetime.now(timezone.utc)
+            }
+        }
+    )
+    
+    return {
+        "message": f"Cliente activado con plan {plan['name']}",
+        "client_id": client_id,
+        "plan": data.plan_id,
+        "employee_count": data.employee_count,
+        "monthly_value": monthly_value
+    }
+
+
+@router.patch("/clients/{client_id}/subscription")
+async def update_client_subscription(
+    client_id: str,
+    data: ClientSubscriptionUpdate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Update subscription plan or employee count for an existing client"""
+    partner_id = current_user.get("partner_id")
+    if not partner_id:
+        raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
+    
+    client = await db.partner_clients.find_one(
+        {"client_id": client_id, "partner_id": partner_id}
+    )
+    if not client:
+        raise HTTPException(status_code=404, detail="Cliente no encontrado")
+    
+    update_fields = {"updated_at": datetime.now(timezone.utc)}
+    plan_id = data.plan_id or client.get("subscription_plan", "basic")
+    employee_count = data.employee_count or client.get("employee_count", 1)
+    
+    plan = SUBSCRIPTION_PLANS.get(plan_id)
+    if not plan or plan_id == "trial":
+        raise HTTPException(status_code=400, detail="Plan no válido")
+    
+    if employee_count < 1:
+        raise HTTPException(status_code=400, detail="Debe tener al menos 1 empleado")
+    if employee_count > plan["max_employees"]:
+        raise HTTPException(status_code=400, detail=f"El plan {plan['name']} permite máximo {plan['max_employees']} empleados")
+    
+    monthly_value = plan["base_price"] + (employee_count * plan["price_per_employee"])
+    
+    update_fields["subscription_plan"] = plan_id
+    update_fields["employee_count"] = employee_count
+    update_fields["monthly_value"] = monthly_value
+    
+    await db.partner_clients.update_one(
+        {"client_id": client_id, "partner_id": partner_id},
+        {"$set": update_fields}
+    )
+    
+    return {
+        "message": "Suscripción actualizada",
+        "plan": plan_id,
+        "employee_count": employee_count,
+        "monthly_value": monthly_value
+    }
+
+
+@router.patch("/clients/{client_id}/deactivate")
+async def deactivate_client(
+    client_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Deactivate a client"""
+    partner_id = current_user.get("partner_id")
+    if not partner_id:
+        raise HTTPException(status_code=403, detail="No es una cuenta de firma de contadores")
+    
+    client = await db.partner_clients.find_one(
+        {"client_id": client_id, "partner_id": partner_id}
+    )
+    if not client:
+        raise HTTPException(status_code=404, detail="Cliente no encontrado")
+    
+    was_active = client.get("status") == "active"
+    
+    await db.partner_clients.update_one(
+        {"client_id": client_id, "partner_id": partner_id},
+        {"$set": {
+            "status": "inactive",
+            "subscription_status": "cancelled",
+            "updated_at": datetime.now(timezone.utc)
+        }}
+    )
+    
+    if was_active:
+        await db.accounting_firms.update_one(
+            {"partner_id": partner_id},
+            {
+                "$inc": {"active_clients": -1},
+                "$set": {"updated_at": datetime.now(timezone.utc)}
+            }
+        )
+    
+    return {"message": "Cliente desactivado"}
+
+
 # ============== COMMISSION ENDPOINTS ==============
 
 @router.get("/commissions")
