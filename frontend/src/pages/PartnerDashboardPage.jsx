@@ -1368,6 +1368,7 @@ export default function PartnerDashboardPage() {
                         <TableRow className="border-slate-700">
                           <TableHead className="text-slate-400">{t('partnerDashboard.fecha')}</TableHead>
                           <TableHead className="text-slate-400">ID</TableHead>
+                          <TableHead className="text-slate-400">Método</TableHead>
                           <TableHead className="text-slate-400">{t('partnerDashboard.monto')}</TableHead>
                           <TableHead className="text-slate-400">{t('partnerDashboard.estado')}</TableHead>
                         </TableRow>
@@ -1380,6 +1381,11 @@ export default function PartnerDashboardPage() {
                             </TableCell>
                             <TableCell className="text-slate-400 font-mono text-xs">
                               {payout.payout_id}
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline" className={payout.method === "paypal" ? "text-blue-400 border-blue-500/30" : "text-purple-400 border-purple-500/30"}>
+                                {payout.method === "paypal" ? "PayPal" : "Stripe"}
+                              </Badge>
                             </TableCell>
                             <TableCell className="text-emerald-400 font-medium">
                               ${payout.amount?.toFixed(2) || "0.00"}
