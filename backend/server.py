@@ -53,6 +53,7 @@ from routes.templates import router as templates_router
 from routes.generated_docs import router as generated_docs_router
 from routes.currency import router as currency_router
 from routes.stats import router as stats_router
+from routes.two_factor import router as two_factor_router
 
 # ===================== APP SETUP =====================
 
@@ -147,6 +148,7 @@ for r in [
     reports_system_router, quickbooks_router, cdc_audit_router,
     partners_router, partner_payments_router, geolocation_attendance_router, payroll_config_router,
     templates_router, generated_docs_router, currency_router, stats_router,
+    two_factor_router,
 ]:
     api_router.include_router(r)
 
