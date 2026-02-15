@@ -592,7 +592,8 @@
       "commission": "Lifetime commission",
       "multiClient": "Multi-Client",
       "forLargeCorp": "For large corporations",
-      "realtime": "landing, video, real-time"
+      "realtime": "landing, video, real-time",
+      "dashboard": "Earnings and projections in real-time"
     }
   },
   "auth": {

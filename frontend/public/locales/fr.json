@@ -592,7 +592,8 @@
       "commission": "Commission à vie",
       "multiClient": "Multi-Client",
       "forLargeCorp": "Pour grandes entreprises",
-      "realtime": "landing, vidéo, temps réel"
+      "realtime": "landing, vidéo, temps réel",
+      "dashboard": "Gains et projections en temps réel"
     }
   },
   "auth": {
