@@ -26,9 +26,9 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await login(email, password);
+      const userData = await login(email, password);
       toast.success(t('common.welcome') + "!");
-      navigate("/dashboard");
+      navigate(userData?.is_partner ? "/partner-dashboard" : "/dashboard");
     } catch (err) {
       setError(err.response?.data?.detail || t('errors.generic'));
       toast.error(t('errors.generic'));
