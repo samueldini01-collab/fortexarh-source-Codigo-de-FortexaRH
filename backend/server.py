@@ -187,7 +187,7 @@ for r in [
     employee_portal_router, documents_router, search_router, auth_router,
     support_router, employees_router, attendance_router, vacations_router,
     dashboard_router, company_router, organigrama_router, evaluations_router,
-    recruitment_router, payroll_router, checkout_router, invoices_router,
+    recruitment_router, payroll_router, payroll_exports_router, checkout_router, invoices_router,
     accounting_router, system_users_router, dgii_reports_router,
     notifications_router, reports_router, expenses_router, projects_router,
     metrics_router, notifications_system_router, reports_advanced_router,
