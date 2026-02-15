@@ -1888,7 +1888,7 @@ export default function PartnerDashboardPage() {
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="text-white font-semibold">{benefits.has_benefits ? "Plan Partner Activo" : "Plan Estándar"}</h4>
                     <span className={`text-2xl font-bold ${benefits.has_benefits ? "text-emerald-400" : "text-white"}`}>
-                      ${pricing.current_price || 10}/mes
+                      ${typeof pricing.current_price === "number" ? pricing.current_price : 10}/mes
                     </span>
                   </div>
                   {benefits.has_benefits ? (
