@@ -619,10 +619,10 @@ export default function PayrollCalculatorPage() {
                   data-testid="calculate-btn"
                 >
                   <Calculator className="w-4 h-4 mr-2" />
-                  {calculating ? t('calculator.calculating') : t('calculator.calculate')}
+                  {calculating ? t('payroll.calculator.calculating') : t('payroll.calculator.calculate')}
                 </Button>
                 <Button variant="outline" onClick={resetForm} data-testid="reset-btn">
-                  {t('calculator.clear')}
+                  {t('payroll.calculator.clear')}
                 </Button>
               </div>
             </CardContent>
@@ -633,10 +633,10 @@ export default function PayrollCalculatorPage() {
             <CardHeader>
               <CardTitle className="heading flex items-center gap-2">
                 <FileText className="w-5 h-5" />
-                {t('calculator.result')}
+                {t('payroll.calculator.result')}
               </CardTitle>
               <CardDescription>
-                {result ? `${t('calculator.employee')}: ${result.employee_name || t('calculator.unassigned')}` : t('calculator.completeFormAndCalculate')}
+                {result ? `${t('payroll.calculator.employee')}: ${result.employee_name || t('payroll.calculator.unassigned')}` : t('payroll.calculator.completeFormAndCalculate')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -646,34 +646,34 @@ export default function PayrollCalculatorPage() {
                   <div className="bg-emerald-50 rounded-lg p-4 space-y-2">
                     <h4 className="font-semibold text-emerald-800 flex items-center gap-2">
                       <DollarSign className="w-4 h-4" />
-                      {t('calculator.earnings')}
+                      {t('payroll.calculator.earnings')}
                     </h4>
                     <div className="space-y-1 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-slate-600 dark:text-slate-300">{t('calculator.proportionalSalary')} ({result.days_worked} {t('common.days')})</span>
+                        <span className="text-slate-600 dark:text-slate-300">{t('payroll.calculator.proportionalSalary')} ({result.days_worked} {t('common.days')})</span>
                         <span className="font-medium">{formatCurrency(result.proportional_salary)}</span>
                       </div>
                       {result.extra_hours_pay > 0 && (
                         <div className="flex justify-between">
-                          <span className="text-slate-600 dark:text-slate-300">{t('calculator.extraHours')} ({result.hours_extra}h)</span>
+                          <span className="text-slate-600 dark:text-slate-300">{t('payroll.calculator.extraHours')} ({result.hours_extra}h)</span>
                           <span className="font-medium">{formatCurrency(result.extra_hours_pay)}</span>
                         </div>
                       )}
                       {result.bonuses > 0 && (
                         <div className="flex justify-between">
-                          <span className="text-slate-600 dark:text-slate-300">{t('calculator.bonuses')}</span>
+                          <span className="text-slate-600 dark:text-slate-300">{t('payroll.calculator.bonuses')}</span>
                           <span className="font-medium">{formatCurrency(result.bonuses)}</span>
                         </div>
                       )}
                       {result.commissions > 0 && (
                         <div className="flex justify-between">
-                          <span className="text-slate-600 dark:text-slate-300">{t('calculator.commissions')}</span>
+                          <span className="text-slate-600 dark:text-slate-300">{t('payroll.calculator.commissions')}</span>
                           <span className="font-medium">{formatCurrency(result.commissions)}</span>
                         </div>
                       )}
                       <Separator className="my-2" />
                       <div className="flex justify-between font-semibold text-emerald-700 dark:text-emerald-400">
-                        <span>{t('calculator.totalEarnings')}</span>
+                        <span>{t('payroll.calculator.totalEarnings')}</span>
                         <span>{formatCurrency(result.total_earnings)}</span>
                       </div>
                     </div>
@@ -681,10 +681,10 @@ export default function PayrollCalculatorPage() {
 
                   {/* Employee Deductions */}
                   <div className="bg-red-50 rounded-lg p-4 space-y-2">
-                    <h4 className="font-semibold text-red-800">{t('calculator.employeeDeductions')}</h4>
+                    <h4 className="font-semibold text-red-800">{t('payroll.calculator.employeeDeductions')}</h4>
                     <div className="space-y-1 text-sm">
                       {/* TSS Section */}
-                      <p className="text-xs text-red-600 font-medium mb-1">{t('calculator.socialSecurity')}</p>
+                      <p className="text-xs text-red-600 font-medium mb-1">{t('payroll.calculator.socialSecurity')}</p>
                       <div className="flex justify-between">
                         <span className="text-slate-600 dark:text-slate-300">SFS (3.07%)</span>
                         <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.sfs_employee)}</span>
@@ -694,20 +694,20 @@ export default function PayrollCalculatorPage() {
                         <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.afp_employee)}</span>
                       </div>
                       <div className="flex justify-between text-xs">
-                        <span className="text-slate-500 dark:text-slate-400">{t('calculator.subtotalTss')}</span>
+                        <span className="text-slate-500 dark:text-slate-400">{t('payroll.calculator.subtotalTss')}</span>
                         <span className="font-medium text-red-500">-{formatCurrency(result.total_tss_employee)}</span>
                       </div>
                       
                       {/* ISR Section */}
                       <Separator className="my-2" />
-                      <p className="text-xs text-red-600 font-medium mb-1">{t('calculator.incomeTax')}</p>
+                      <p className="text-xs text-red-600 font-medium mb-1">{t('payroll.calculator.incomeTax')}</p>
                       <div className="flex justify-between">
-                        <span className="text-slate-600 dark:text-slate-300">{t('calculator.monthlyIsr')} ({result.isr_bracket})</span>
+                        <span className="text-slate-600 dark:text-slate-300">{t('payroll.calculator.monthlyIsr')} ({result.isr_bracket})</span>
                         <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.isr_monthly)}</span>
                       </div>
                       {result.isr_monthly > 0 && (
                         <div className="text-xs text-slate-500 mt-1">
-                          {t('calculator.calculatedOnGross')}: {formatCurrency(result.isr_taxable_base)}
+                          {t('payroll.calculator.calculatedOnGross')}: {formatCurrency(result.isr_taxable_base)}
                         </div>
                       )}
                       
@@ -715,16 +715,16 @@ export default function PayrollCalculatorPage() {
                       {(result.loan_deduction > 0 || result.other_deductions > 0) && (
                         <>
                           <Separator className="my-2" />
-                          <p className="text-xs text-red-600 font-medium mb-1">{t('calculator.otherDeductions')}</p>
+                          <p className="text-xs text-red-600 font-medium mb-1">{t('payroll.calculator.otherDeductions')}</p>
                           {result.loan_deduction > 0 && (
                             <div className="flex justify-between">
-                              <span className="text-slate-600 dark:text-slate-300">{t('calculator.loans')}</span>
+                              <span className="text-slate-600 dark:text-slate-300">{t('payroll.calculator.loans')}</span>
                               <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.loan_deduction)}</span>
                             </div>
                           )}
                           {result.other_deductions > 0 && (
                             <div className="flex justify-between">
-                              <span className="text-slate-600 dark:text-slate-300">{t('calculator.others')}</span>
+                              <span className="text-slate-600 dark:text-slate-300">{t('payroll.calculator.others')}</span>
                               <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.other_deductions)}</span>
                             </div>
                           )}
@@ -732,7 +732,7 @@ export default function PayrollCalculatorPage() {
                       )}
                       <Separator className="my-2" />
                       <div className="flex justify-between font-semibold text-red-700">
-                        <span>{t('calculator.totalDeductions')}</span>
+                        <span>{t('payroll.calculator.totalDeductions')}</span>
                         <span>-{formatCurrency(result.total_deductions)}</span>
                       </div>
                     </div>
@@ -741,7 +741,7 @@ export default function PayrollCalculatorPage() {
                   {/* Net Salary */}
                   <div className="bg-slate-900 rounded-lg p-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-white font-semibold text-lg">{t('calculator.netSalary')}</span>
+                      <span className="text-white font-semibold text-lg">{t('payroll.calculator.netSalary')}</span>
                       <span className="text-white font-bold text-2xl" data-testid="net-salary">
                         {formatCurrency(result.net_salary)}
                       </span>
@@ -799,7 +799,7 @@ export default function PayrollCalculatorPage() {
               ) : (
                 <div className="text-center py-12">
                   <Calculator className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                  <p className="text-slate-500 dark:text-slate-400">{t('calculator.enterDataAndCalculate')}</p>
+                  <p className="text-slate-500 dark:text-slate-400">{t('payroll.calculator.enterDataAndCalculate')}</p>
                 </div>
               )}
             </CardContent>
