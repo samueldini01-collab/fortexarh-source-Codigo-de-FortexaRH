@@ -50,9 +50,7 @@ ISR_BRACKETS = [
 ]
 
 
-class ReportRequest(BaseModel):
-    period: str  # YYYY-MM format
-    report_type: str  # tss, ir3, ir17, ir4, ir13
+from models.system import DGIIReportRequest as ReportRequest
 
 
 def calculate_isr(annual_income: float) -> float:

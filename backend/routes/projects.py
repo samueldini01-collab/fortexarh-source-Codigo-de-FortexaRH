@@ -16,16 +16,7 @@ db = None
 _get_current_user_func = None
 
 
-class ProjectCreate(BaseModel):
-    name: str
-    description: Optional[str] = ""
-    status: str = "active"
-
-
-class ProjectUpdate(BaseModel):
-    name: Optional[str] = None
-    description: Optional[str] = None
-    status: Optional[str] = None
+from models.system import ProjectCreate, ProjectUpdate
 
 
 async def get_current_user(request: Request, credentials=Depends(security)):

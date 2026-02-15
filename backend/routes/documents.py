@@ -33,30 +33,9 @@ async def get_current_user(request: Request):
 
 
 # ===================== MODELS =====================
-
-class DocumentTemplateCreate(BaseModel):
-    name: str
-    category: str  # constancia, carta, certificado, notificacion
-    description: Optional[str] = None
-    content: str  # HTML/text template with placeholders
-    variables: List[str] = []  # List of variable names used in template
-    is_active: bool = True
-
-
-class DocumentTemplateUpdate(BaseModel):
-    name: Optional[str] = None
-    category: Optional[str] = None
-    description: Optional[str] = None
-    content: Optional[str] = None
-    variables: Optional[List[str]] = None
-    is_active: Optional[bool] = None
-
-
-class DocumentGenerateRequest(BaseModel):
-    template_id: str
-    employee_id: str
-    custom_values: Dict[str, Any] = {}
-    save_to_history: bool = True
+from models.system import (
+    DocumentTemplateCreate, DocumentTemplateUpdate, DocumentGenerateRequest
+)
 
 
 # Default templates for Dominican Republic HR documents
