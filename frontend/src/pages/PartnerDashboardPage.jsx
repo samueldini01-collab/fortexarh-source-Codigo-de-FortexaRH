@@ -602,6 +602,7 @@ export default function PartnerDashboardPage() {
             </div>
             
             <div className="flex items-center gap-4">
+              <NotificationBell />
               <Link to="/dashboard">
                 <Button variant="ghost" className="text-slate-300 hover:text-white hover:bg-slate-700">
                   <Building2 className="w-4 h-4 mr-2" />
