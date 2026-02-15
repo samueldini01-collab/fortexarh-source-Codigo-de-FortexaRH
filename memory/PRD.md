@@ -1,74 +1,106 @@
 # FortexaRH - PRD (Product Requirements Document)
 
 ## Original Problem Statement
-SaaS HR and Payroll management system named "FortexaRH" for the Dominican Republic market. Supports Spanish, English, and French.
+FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the Dominican Republic market. The platform includes modules for user management, org chart, advanced payroll, accounting, compliance reporting, company/UI customization, document generation, and an accountant partner portal.
 
-## Core Modules
-- User management, org chart, advanced payroll, accounting
-- Compliance reporting (Dominican Republic: DGII, TSS)
-- Company/UI customization, document generation
-- AI-powered global search (Gemini)
-- Advanced reporting with drill-down
-- Time & Attendance, Leave Management, Performance Evaluation
-- Employee Self-Service Portal with notifications
-- Stripe payments, Resend email, QuickBooks integration
-- Multi-language (ES/EN/FR)
+## Core System
+- HR & Payroll system with Dominican Republic specific compliance
+- Multi-language support (ES, EN, FR)
+- Dark mode, custom branding, favicon
+- Accountant Partner Portal with commission tracking
+
+## User Personas
+- **Company Admin**: Manages employees, payroll, org chart
+- **Partner (Accountant)**: Manages referred clients, earns commissions
+- **Employee**: Self-service portal for payslips, time-off requests
+
+## Tech Stack
+- **Frontend**: React + Tailwind CSS + Shadcn/UI + react-i18next
+- **Backend**: FastAPI + Motor (async MongoDB)
+- **Database**: MongoDB
+- **Integrations**: Stripe, PayPal, Resend, QuickBooks, Google Auth, Gemini AI, pyotp, qrcode
+
+## What's Been Implemented
+- User auth (JWT + Google OAuth), 2FA with recovery codes
+- Dashboard, org chart, payroll, accounting modules
+- Compliance reporting (DR-specific: TSS, DGII, ISR)
+- Partner portal with KPI drill-downs, PayPal/Stripe payouts
+- Subscription management with Stripe
+- Document generation (contracts, payslips)
+- E-signature module
+- AI-powered search (Gemini)
+- Employee self-service portal
+
+## Recent Session (Feb 15, 2026) - System Analysis Fixes
+
+### P0 - Critical (COMPLETED & TESTED)
+- **ObjectId Serialization Fix**: Added `{"_id": 0}` projection to ALL `find_one` calls in `partner_payments.py`, `partners.py`. Prevents potential 500 errors.
+- **data-testid Attributes**: Added unique test IDs to all interactive elements in `PartnerDashboardPage.jsx` and verified `SettingsPage.jsx` and `TwoFactorSetup.jsx`.
+
+### P1 - Important (COMPLETED & TESTED)
+- **i18n Hardcoded Strings**: Replaced all hardcoded Spanish strings in PartnerDashboardPage with `t()` translation calls using existing `partner.dashboard.*` and `partnerDashboard.*` namespaces.
+- **EN/FR Translations**: Added 131+ English and French translations for the `partner.dashboard` namespace and 37 translations for the legacy `partnerDashboard` namespace.
+
+### P2 - Maintenance (COMPLETED & TESTED)
+- **Component Refactoring**: Extracted 3 large dialog components from PartnerDashboardPage (2089 → 1652 lines):
+  - `KPIDrillDownDialog.jsx` (276 lines) - KPI card drill-down details
+  - `AddClientDialog.jsx` (159 lines) - Add new client form
+  - `PayoutRequestDialog.jsx` (150 lines) - Payout request modal
+- **CSS Variables**: Already well-organized (standard Shadcn/Tailwind pattern). No changes needed.
+
+## Key Credentials
+- **Admin**: test_refactor@fortexa.com / test123
+- **Partner**: testpartner@test.com / test123
+- **Employee Portal**: 001-0000001-1 / portal123
 
 ## Architecture
-- **Frontend**: React + Tailwind + Shadcn/UI + i18next
-- **Backend**: FastAPI + MongoDB
-- **Integrations**: Stripe, Resend, Gemini AI, QuickBooks, Google Auth, SSE notifications
-
-## What's Been Implemented (Complete)
-- Full HR/Payroll system with all core modules
-- Employee Self-Service Portal with SSE notifications
-- Language selector and password change for employees
-- Multi-language support across landing, accountants, portal pages
-- Service Worker PWA with network-first strategy
-- Error Boundary for crash protection
-- Dark mode, accessibility, onboarding tutorial
-- Code splitting with lazy loading
-- CDC Audit trail, DGII reports
-- Partner Client Management Dashboard (activate/edit/deactivate subscriptions)
-- **Unified Login with Auto Role Detection** (Feb 2026): Partners and regular companies use the same /login form. Backend detects is_partner flag and returns it in login/session/me responses. Frontend redirects partners to /partner-dashboard and regular users to /dashboard.
-- **Partner Welcome Banner on Login** (Feb 2026): When a partner email is typed in the login form, a personalized banner appears showing "Portal de Contadores" and the firm name. The submit button changes to green with partner-specific text. Multi-language (ES/EN/FR).
-- **Two-Factor Authentication (2FA/TOTP)** (Feb 2026): Full TOTP implementation with Google Authenticator/Authy. Users can enable/disable from Settings > Account. Login flow modified to require 2FA verification when enabled. QR code generation, manual key entry, 6-digit code verification. Multi-language (ES/EN/FR).
-- **2FA Recovery Codes** (Feb 2026): 10 one-time-use recovery codes generated on 2FA setup. Stored hashed (SHA256). Users can regenerate codes with TOTP verification. Recovery code login as alternative to TOTP on login. Copy/download codes. Low-code warnings. Multi-language (ES/EN/FR).
-- **Mi Perfil Bug Fix** (Feb 2026): Fixed navigation from user dropdown "Mi Perfil" to /settings (was pointing to non-existent /profile route).
-- **Partner Dashboard KPI Drill-Down** (Feb 2026): 4 KPI cards (Clientes Activos, Comisiones Pendientes, Total Ganado, Tu Precio Mensual) now clickable with detailed drill-down dialogs showing client lists, pending commission breakdowns, earning history, and pricing comparison.
-- **PayPal Withdrawal for Partners** (Feb 2026): Added PayPal as alternative payout method alongside Stripe Connect. Partners can configure PayPal email, select payout method (Stripe or PayPal) when withdrawing. Stripe Connect errors handled gracefully with user-friendly messages.
-
-## Recent Changes (Feb 2026)
-- **Unified Partner Login (Opcion A)**: Modified /api/auth/login, /api/auth/session, /api/auth/me to return is_partner and partner_id. LoginPage.jsx redirects to /partner-dashboard for partners. AuthCallback (Google OAuth) also handles partner detection.
-- **Blank page fix**: Updated Service Worker to v2 (network-first for navigation), added Error Boundary, inline HTML loader, cache cleanup script, i18n useSuspense:false
-- **Accountants page i18n**: Full translation of /accountants-software page (ES/EN/FR), added LanguageSelector
-- **Partner Client Management Panel**: Full CRUD for client subscriptions
-
-## Credentials
-- Admin: test_refactor@fortexa.com / test123
-- Partner: testpartner@test.com / test123
-- Employee Portal: 001-0000001-1 / portal123
+```
+/app/
+├── backend/
+│   ├── models/
+│   │   ├── partner.py
+│   │   └── user.py
+│   ├── routes/
+│   │   ├── partner_payments.py (ObjectId fixed)
+│   │   ├── partners.py (ObjectId fixed)
+│   │   └── two_factor.py (verified clean)
+│   └── server.py
+├── frontend/
+│   └── src/
+│       ├── components/
+│       │   ├── partner/ (NEW - extracted components)
+│       │   │   ├── KPIDrillDownDialog.jsx
+│       │   │   ├── AddClientDialog.jsx
+│       │   │   └── PayoutRequestDialog.jsx
+│       │   ├── KPICard.jsx
+│       │   ├── TwoFactorSetup.jsx
+│       │   └── layouts/DashboardLayout.jsx
+│       ├── pages/
+│       │   ├── PartnerDashboardPage.jsx (refactored)
+│       │   └── SettingsPage.jsx
+│       └── i18n/locales/ (EN, ES, FR updated)
+```
 
 ## Prioritized Backlog
 
-### P0 - Technical Debt
-- ~~Refactor backend `init_router` pattern to use FastAPI Depends~~ ✅ DONE (Feb 2026)
+### P0 (Next Priority)
+- None currently
 
-### P1 - Features
-- ~~2FA / MFA~~ ✅ DONE (Feb 2026) - TOTP with Google Authenticator/Authy + Recovery Codes
-- ACH Bank Integration (Dominican banks)
-- E-signature for contracts/receipts
+### P1 (Upcoming)
+- ACH Bank Integration (Dominican Republic: BHD, Popular, Banreservas)
+- E-signature for contracts and payroll receipts
 
-### P2 - Future
+### P2 (Future)
 - Configurable alert notifications
-- Backup/Export all company data
+- Backup/Export of all company data
 - Configurable approval workflows
-- Mass data import via Excel
-- Documented Public API
-- Complete Audit Trail (CDC logging)
+- Massive data import via Excel
+- Documented public API
+- Complete audit trail (CDC logging)
 
 ## Mocked Integrations
 - SAP, Oracle, Dynamics (enterprise connectors)
 
-## 3rd Party Integrations (Active)
-- Stripe, Resend, Gemini AI, QuickBooks, Google Auth, i18next, sse-starlette, pyotp, qrcode
+## Test Reports
+- `/app/test_reports/iteration_193.json` - P0 verification
+- `/app/test_reports/iteration_194.json` - Full P0+P1+P2 verification
