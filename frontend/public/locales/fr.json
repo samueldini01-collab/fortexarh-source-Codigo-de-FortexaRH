@@ -3356,6 +3356,22 @@
       "errorClockout": "Erreur d'enregistrement de sortie",
       "errorLoadingData": "Erreur de chargement des données",
       "logout": "Déconnexion"
+    },
+    "password": {
+      "title": "Changer le mot de passe",
+      "subtitle": "Mettre a jour votre mot de passe du portail",
+      "current": "Mot de passe actuel",
+      "currentPlaceholder": "Entrez votre mot de passe actuel",
+      "new": "Nouveau mot de passe",
+      "newPlaceholder": "Entrez votre nouveau mot de passe",
+      "confirm": "Confirmer le nouveau mot de passe",
+      "confirmPlaceholder": "Repetez votre nouveau mot de passe",
+      "changeBtn": "Changer le mot de passe",
+      "updated": "Mot de passe mis a jour avec succes",
+      "error": "Erreur lors du changement de mot de passe",
+      "fillAll": "Remplissez tous les champs",
+      "minLength": "Le mot de passe doit contenir au moins 6 caracteres",
+      "noMatch": "Les mots de passe ne correspondent pas"
     }
   },
   "geoAttendance": {

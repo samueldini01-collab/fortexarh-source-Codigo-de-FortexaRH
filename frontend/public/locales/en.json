@@ -3357,6 +3357,22 @@
       "errorClockout": "Error clocking out",
       "errorLoadingData": "Error loading data",
       "logout": "Log out"
+    },
+    "password": {
+      "title": "Change Password",
+      "subtitle": "Update your portal access password",
+      "current": "Current Password",
+      "currentPlaceholder": "Enter your current password",
+      "new": "New Password",
+      "newPlaceholder": "Enter your new password",
+      "confirm": "Confirm New Password",
+      "confirmPlaceholder": "Repeat your new password",
+      "changeBtn": "Change Password",
+      "updated": "Password updated successfully",
+      "error": "Error changing password",
+      "fillAll": "Fill in all fields",
+      "minLength": "Password must be at least 6 characters",
+      "noMatch": "Passwords do not match"
     }
   },
   "geoAttendance": {

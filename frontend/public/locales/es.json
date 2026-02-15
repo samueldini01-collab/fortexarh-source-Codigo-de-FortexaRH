@@ -3357,6 +3357,22 @@
       "errorClockout": "Error al registrar salida",
       "errorLoadingData": "Error al cargar datos",
       "logout": "Salir"
+    },
+    "password": {
+      "title": "Cambiar Contrasena",
+      "subtitle": "Actualiza tu contrasena de acceso al portal",
+      "current": "Contrasena actual",
+      "currentPlaceholder": "Ingresa tu contrasena actual",
+      "new": "Nueva contrasena",
+      "newPlaceholder": "Ingresa tu nueva contrasena",
+      "confirm": "Confirmar nueva contrasena",
+      "confirmPlaceholder": "Repite tu nueva contrasena",
+      "changeBtn": "Cambiar Contrasena",
+      "updated": "Contrasena actualizada exitosamente",
+      "error": "Error al cambiar la contrasena",
+      "fillAll": "Completa todos los campos",
+      "minLength": "La contrasena debe tener al menos 6 caracteres",
+      "noMatch": "Las contrasenas no coinciden"
     }
   },
   "geoAttendance": {
