@@ -37,54 +37,7 @@ async def get_current_user(request: Request, credentials = Depends(security)):
 
 
 
-class EmployeeCreate(BaseModel):
-    # Datos Principales
-    first_name: str
-    last_name: str
-    email: EmailStr
-    phone: Optional[str] = None
-    whatsapp: Optional[str] = None
-    nationality: Optional[str] = "Dominicana"
-    document_type: Optional[str] = "Cédula"
-    document_number: Optional[str] = None
-    gender: Optional[str] = None
-    birth_date: Optional[str] = None
-    marital_status: Optional[str] = "Soltero/a"
-    blood_type: Optional[str] = None
-    weight: Optional[float] = None
-    height: Optional[float] = None
-    status: str = "active"
-    address: Optional[str] = None
-    city: Optional[str] = "Santo Domingo"
-    photo_url: Optional[str] = None
-    
-    # Contrato
-    position: str
-    department: str
-    hire_date: str
-    contract_type: Optional[str] = "Indefinido"
-    contract_end_date: Optional[str] = None
-    salary: float
-    supervisor: Optional[str] = None
-    work_schedule: Optional[str] = "Lunes a Viernes 8:00 AM - 5:00 PM"
-    exclude_from_payroll: bool = False
-    last_raise_date: Optional[str] = None
-    
-    # Descuentos
-    afp_discount: bool = True
-    sfs_discount: bool = True
-    isr_discount: bool = True
-    additional_deductions: Optional[List[Dict[str, Any]]] = []
-    
-    # Forma de Pago
-    payment_method: Optional[str] = "Transferencia Bancaria"
-    payment_frequency: Optional[str] = "Quincenal"
-    bank_name: Optional[str] = None
-    account_type: Optional[str] = "Ahorros"
-    account_number: Optional[str] = None
-    
-    # Contactos de Emergencia
-    emergency_contacts: Optional[List[Dict[str, Any]]] = []
+from models.employee import EmployeeCreate, BulkEditRequest, ImportPreviewResponse
 
 
 @router.get("")

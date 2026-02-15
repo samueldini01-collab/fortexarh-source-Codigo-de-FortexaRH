@@ -30,17 +30,7 @@ async def get_current_user(request: Request, credentials = Depends(security)):
 
 
 
-class OrgNodeCreate(BaseModel):
-    name: str
-    parent_id: Optional[str] = None
-    type: str = "department"
-    manager_id: Optional[str] = None
-    description: Optional[str] = None
-    budget: Optional[float] = None
-
-
-class OrgNodeReorder(BaseModel):
-    nodes: List[dict]
+from models.company import OrgNodeCreate, OrgNodeReorder
 
 
 @router.get("")
