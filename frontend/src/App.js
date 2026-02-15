@@ -208,7 +208,8 @@ const AuthCallback = () => {
         try {
           const response = await axios.post(`${API}/auth/session`, { session_id: sessionId }, { withCredentials: true });
           localStorage.setItem("user", JSON.stringify(response.data.user));
-          navigate("/dashboard", { state: { user: response.data.user }, replace: true });
+          const dest = response.data.user?.is_partner ? "/partner-dashboard" : "/dashboard";
+          navigate(dest, { state: { user: response.data.user }, replace: true });
         } catch (error) {
           console.error("Auth error:", error);
           navigate("/login", { replace: true });
