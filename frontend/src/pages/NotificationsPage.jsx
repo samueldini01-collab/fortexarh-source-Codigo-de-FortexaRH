@@ -62,6 +62,7 @@ const CATEGORY_COLORS = {
 
 export default function NotificationsPage() {
   const { t, i18n } = useTranslation();
+  const { token } = useAuth();
   const isEN = i18n.language?.startsWith("en");
   const [activeTab, setActiveTab] = useState("preferences");
 
