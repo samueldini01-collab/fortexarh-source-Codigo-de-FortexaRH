@@ -1,84 +1,65 @@
 # FortexaRH - PRD (Product Requirements Document)
 
-## Problema Original
-Sistema SaaS de Gestion de Recursos Humanos y Nomina llamado "FortexaRH", con modulos para gestion de usuarios, organigrama, nomina avanzada, contabilidad, reportes de cumplimiento (especifico Rep. Dominicana), personalizacion de empresa/UI, y generacion de documentos.
+## Original Problem Statement
+SaaS HR and Payroll management system named "FortexaRH" for the Dominican Republic market. Supports Spanish, English, and French.
 
-## Arquitectura
-- **Frontend**: React + Shadcn/UI + i18next (ES/EN/FR)
+## Core Modules
+- User management, org chart, advanced payroll, accounting
+- Compliance reporting (Dominican Republic: DGII, TSS)
+- Company/UI customization, document generation
+- AI-powered global search (Gemini)
+- Advanced reporting with drill-down
+- Time & Attendance, Leave Management, Performance Evaluation
+- Employee Self-Service Portal with notifications
+- Stripe payments, Resend email, QuickBooks integration
+- Multi-language (ES/EN/FR)
+
+## Architecture
+- **Frontend**: React + Tailwind + Shadcn/UI + i18next
 - **Backend**: FastAPI + MongoDB
-- **Autenticacion**: JWT + Google OAuth (Emergent)
-- **Pagos**: Stripe
-- **Email**: Resend
-- **AI**: Gemini (busqueda inteligente)
-- **Contabilidad**: QuickBooks Online
-- **Notificaciones Push**: SSE (Server-Sent Events) via sse-starlette
+- **Integrations**: Stripe, Resend, Gemini AI, QuickBooks, Google Auth, SSE notifications
 
-## Estructura Backend
-```
-/app/backend/
-├── config.py
-├── utils/auth.py
-├── models/
-├── services/
-│   └── employee_notifications.py  # SSE push + notification service
-├── routes/
-│   ├── employee_portal.py    # SSE stream + notification CRUD + change-password (JSON body)
-│   ├── payroll.py, vacations.py, evaluations.py  # Notification triggers
-│   └── ... (~34 route files)
-├── server.py
-└── email_service.py
-```
+## What's Been Implemented (Complete)
+- Full HR/Payroll system with all core modules
+- Employee Self-Service Portal with SSE notifications
+- Language selector and password change for employees
+- Multi-language support across landing, accountants, portal pages
+- Service Worker PWA with network-first strategy
+- Error Boundary for crash protection
+- Dark mode, accessibility, onboarding tutorial
+- Code splitting with lazy loading
+- CDC Audit trail, DGII reports
 
-## Estructura Frontend
-```
-/app/frontend/src/
-├── components/
-│   ├── portal/
-│   │   ├── EmployeeAuthContext.jsx
-│   │   ├── EmployeeLogin.jsx        # + LanguageSelector (landing variant)
-│   │   └── EmployeeDashboard.jsx    # + LanguageSelector (compact) + password change section
-│   ├── LanguageSelector.jsx         # Reusable (compact/landing/default)
-│   └── ui/
-├── pages/
-└── public/locales/{es,en,fr}.json   # + employeePortal.password.* keys
-```
+## Recent Changes (Feb 2026)
+- **Blank page fix**: Updated Service Worker to v2 (network-first for navigation), added Error Boundary, inline HTML loader, cache cleanup script, i18n useSuspense:false
+- **Accountants page i18n**: Full translation of /accountants-software page (ES/EN/FR), added LanguageSelector
+- **Landing dropdown fix**: Translated contadoresFeatures dropdown items
 
-## Credenciales de Test
+## Credentials
 - Admin: test_refactor@fortexa.com / test123
 - Partner: newpartner@test.com / test123
 - Employee Portal: 001-0000001-1 / portal123
 
-## Completado
-- Sistema completo de nomina con TSS (Rep. Dominicana)
-- Exportaciones DGII: IR-3, IR-4, IR-6, IR-13, IR-17, TSS
-- Modulos HR: Asistencia, Vacaciones, Evaluaciones, Reclutamiento
-- Portal de Empleados con autoservicio
-- Contabilidad con plan de cuentas
-- 58+ reportes con export PDF/Excel/CSV
-- i18n completo (ES/EN/FR)
-- Geolocalizacion para asistencia
-- CDC Audit trail, Prestamos, Partners
-- QuickBooks Online integration
-- Refactoring Phase 1 & 2: server.py, model centralization, frontend/backend splits
-- **Push Notifications (SSE)**: Real-time in-app notifications for employees (Feb 2026)
-- **Portal Language Switcher**: ES/EN/FR selector on login page and dashboard header (Feb 2026)
-- **Portal Password Change**: Secure password change with validation in profile tab (Feb 2026)
+## Prioritized Backlog
 
-## P0 - Pendiente
-- Mejorar patron init_router con FastAPI dependency injection (aprobado por usuario)
+### P0 - Technical Debt
+- Refactor backend `init_router` pattern to use FastAPI Depends
 
-## P1 - Proximas Tareas
-- 2FA / MFA
-- ACH Bank Integration (BHD, Popular, Banreservas)
-- E-signature para contratos y recibos
+### P1 - Features
+- 2FA / MFA authentication
+- ACH Bank Integration (Dominican banks)
+- E-signature for contracts/receipts
 
-## P2 - Futuro/Backlog
-- Notificaciones de alerta configurables
-- Backup/Exportacion de datos
-- Workflows de aprobacion configurables
-- Importacion masiva via Excel
-- API publica documentada
-- Audit Trail completo (CDC logging)
+### P2 - Future
+- Configurable alert notifications
+- Backup/Export all company data
+- Configurable approval workflows
+- Mass data import via Excel
+- Documented Public API
+- Complete Audit Trail (CDC logging)
 
-## Integraciones Mockeadas
-- SAP, Oracle, Dynamics (enterprise)
+## Mocked Integrations
+- SAP, Oracle, Dynamics (enterprise connectors)
+
+## 3rd Party Integrations (Active)
+- Stripe, Resend, Gemini AI, QuickBooks, Google Auth, i18next, sse-starlette
