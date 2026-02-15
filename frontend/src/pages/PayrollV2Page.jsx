@@ -185,7 +185,7 @@ export default function PayrollV2Page() {
           setCompanyName(meResponse.data.company_name);
         }
       } catch (meError) {
-        console.log("Could not fetch company name from auth/me");
+        // Company name fetch failed silently
       }
     }
   }, [getAuthHeaders]);

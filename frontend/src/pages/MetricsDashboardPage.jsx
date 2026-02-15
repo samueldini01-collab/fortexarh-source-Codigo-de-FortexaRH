@@ -149,7 +149,6 @@ export default function MetricsDashboardPage() {
               data = detailRes.data?.entries || [];
             }
           } catch (e) {
-            console.log("Could not fetch month details", e);
             data = [];
           }
           columns = [

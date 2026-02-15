@@ -150,7 +150,7 @@ export default function CompanyConfigPage() {
         );
       }
     } catch (error) {
-      console.log("QuickBooks status check:", error.response?.data?.detail || error.message);
+      console.log("QuickBooks status check:", error.response?.data?.detail || error.message); // eslint-disable-line no-console
     }
   }, [getAuthHeaders]);
 
@@ -186,7 +186,6 @@ export default function CompanyConfigPage() {
       if (data.auditLog) setAuditLog(data.auditLog);
     } catch (error) {
       // Initialize with defaults
-      console.log("Loading defaults");
     } finally {
       setLoading(false);
     }
