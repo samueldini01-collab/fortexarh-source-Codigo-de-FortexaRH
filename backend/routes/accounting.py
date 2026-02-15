@@ -210,44 +210,9 @@ def init_router(database, auth_func):
     _get_current_user_func = auth_func
 
 
-class AccountCreate(BaseModel):
-    code: str
-    name: str
-    account_type: str
-    parent_code: Optional[str] = None
-    description: Optional[str] = None
-
-
-class JournalLine(BaseModel):
-    account_code: str
-    account_name: str
-    debit: float = 0
-    credit: float = 0
-    description: Optional[str] = None
-    cost_center: Optional[str] = None
-    employee_id: Optional[str] = None
-    employee_name: Optional[str] = None
-
-
-class JournalEntryCreate(BaseModel):
-    entry_date: str
-    reference: Optional[str] = None
-    description: str
-    period: str
-    entry_type: str = "general"
-    lines: List[JournalLine]
-    payroll_id: Optional[str] = None
-    notes: Optional[str] = None
-
-
-class JournalEntryUpdate(BaseModel):
-    entry_date: Optional[str] = None
-    reference: Optional[str] = None
-    description: Optional[str] = None
-    period: Optional[str] = None
-    notes: Optional[str] = None
-    status: Optional[str] = None
-    lines: Optional[List[JournalLine]] = None
+from models.finance import (
+    AccountCreate, JournalLine, JournalEntryCreate, JournalEntryUpdate
+)
 
 
 @router.get("/accounts")

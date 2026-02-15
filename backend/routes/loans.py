@@ -19,25 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 # ===================== PYDANTIC MODELS =====================
-
-class LoanCreate(BaseModel):
-    """Model for creating a loan"""
-    employee_id: str
-    amount: float  # Total loan amount
-    currency: str = "DOP"  # Currency code (DOP, USD, EUR)
-    interest_rate: float = 0  # Annual interest rate (%)
-    term_months: int  # Term in months
-    start_date: str  # Start date (YYYY-MM-DD)
-    description: Optional[str] = None
-    deduct_from_payroll: bool = True
-
-
-class LoanPaymentCreate(BaseModel):
-    """Model for registering a loan payment"""
-    amount: float
-    payment_date: str
-    payment_type: str = "payroll"  # payroll, manual, other
-    notes: Optional[str] = None
+from models.finance import LoanCreate, LoanPaymentCreate
 
 
 # ===================== ROUTER INITIALIZATION =====================
