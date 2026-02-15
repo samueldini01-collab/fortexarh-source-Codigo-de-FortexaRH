@@ -23,17 +23,10 @@ _send_invoice_email = None
 
 logger = logging.getLogger(__name__)
 
-
-class PublicCheckoutRequest(BaseModel):
-    plan_id: str
-    employee_count: int = 1
-    origin_url: str
-
-
-class CheckoutRequest(BaseModel):
-    plan_id: str
-    employee_count: int = 1
-    origin_url: str
+from models.finance import (
+    PublicCheckoutRequest, CheckoutRequest,
+    UpdatePaymentMethodRequest, ConfirmSetupRequest
+)
 
 
 async def get_current_user(request: Request, credentials=Depends(security)):
@@ -593,10 +586,6 @@ async def get_payment_method(user: dict = Depends(get_current_user)):
         return {"has_payment_method": False, "payment_method": None, "error": str(e)}
 
 
-class UpdatePaymentMethodRequest(BaseModel):
-    origin_url: str
-
-
 @router.post("/update-payment-method")
 async def create_update_payment_session(
     request_data: UpdatePaymentMethodRequest,
@@ -750,10 +739,6 @@ async def create_setup_intent(user: dict = Depends(get_current_user)):
     except stripe.error.StripeError as e:
         logger.error(f"Error creating setup intent: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-
-
-class ConfirmSetupRequest(BaseModel):
-    payment_method_id: str
 
 
 @router.post("/confirm-setup-intent")
