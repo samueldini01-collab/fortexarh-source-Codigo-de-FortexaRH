@@ -497,7 +497,8 @@ export default function PartnerDashboardPage() {
     setRequestingPayout(true);
     try {
       const response = await axios.post(`${API}/partners/payouts/request`, {
-        amount: amount
+        amount: amount,
+        method: payoutMethod
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -510,6 +511,42 @@ export default function PartnerDashboardPage() {
       toast.error(error.response?.data?.detail || t('partner.dashboard.errorProcessingWithdrawal'));
     } finally {
       setRequestingPayout(false);
+    }
+  };
+
+  // Configure PayPal
+  const handleSavePaypal = async () => {
+    if (!paypalEmail || !paypalEmail.includes("@")) {
+      toast.error("Ingresa un email de PayPal válido");
+      return;
+    }
+    setSavingPaypal(true);
+    try {
+      await axios.post(`${API}/partners/paypal/configure`, {
+        paypal_email: paypalEmail
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success("Email de PayPal configurado correctamente");
+      fetchPayoutData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al configurar PayPal");
+    } finally {
+      setSavingPaypal(false);
+    }
+  };
+
+  // Remove PayPal
+  const handleRemovePaypal = async () => {
+    try {
+      await axios.delete(`${API}/partners/paypal/configure`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success("Configuración de PayPal eliminada");
+      setPaypalEmail("");
+      fetchPayoutData();
+    } catch (error) {
+      toast.error("Error al eliminar PayPal");
     }
   };
 
