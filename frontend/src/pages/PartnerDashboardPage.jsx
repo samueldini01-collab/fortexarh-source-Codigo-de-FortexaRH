@@ -717,13 +717,13 @@ export default function PartnerDashboardPage() {
                 <AlertCircle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-amber-400 font-medium">
-                    Beneficios de Partner Inactivos
+                    {t('partner.dashboard.benefitsInactive')}
                   </p>
                   <p className="text-slate-400 text-sm mt-1">
-                    Necesitas al menos 1 cliente activo con suscripción pagada para mantener el precio de $10/mes.
+                    {t('partner.dashboard.benefitsRequirement')}
                     {benefits.grace_days_remaining > 0 && (
                       <span className="text-amber-400">
-                        {" "}Te quedan {benefits.grace_days_remaining} días de gracia.
+                        {" "}{t('partner.dashboard.graceDaysRemaining', { days: benefits.grace_days_remaining })}
                       </span>
                     )}
                   </p>
@@ -763,7 +763,7 @@ export default function PartnerDashboardPage() {
                   <div>
                     <CardTitle className="text-white">{t('partnerDashboard.clientesRecientes')}</CardTitle>
                     <CardDescription className="text-slate-400">
-                      Últimos clientes agregados
+                      {t('partner.dashboard.lastAdded')}
                     </CardDescription>
                   </div>
                   <Button
@@ -773,7 +773,7 @@ export default function PartnerDashboardPage() {
                     className="border-emerald-500 text-emerald-400 hover:bg-emerald-500 hover:text-white"
                   >
                     <Plus className="w-4 h-4 mr-1" />
-                    Agregar
+                    {t('partner.dashboard.add')}
                   </Button>
                 </CardHeader>
                 <CardContent>
@@ -801,7 +801,7 @@ export default function PartnerDashboardPage() {
                         onClick={() => setShowAddClient(true)}
                         className="text-emerald-400 mt-2"
                       >
-                        Agregar primer cliente
+                        {t('partner.dashboard.addFirstClient')}
                       </Button>
                     </div>
                   )}
