@@ -29,18 +29,18 @@ SaaS HR and Payroll management system named "FortexaRH" for the Dominican Republ
 - Dark mode, accessibility, onboarding tutorial
 - Code splitting with lazy loading
 - CDC Audit trail, DGII reports
+- Partner Client Management Dashboard (activate/edit/deactivate subscriptions)
+- **Unified Login with Auto Role Detection** (Feb 2026): Partners and regular companies use the same /login form. Backend detects is_partner flag and returns it in login/session/me responses. Frontend redirects partners to /partner-dashboard and regular users to /dashboard.
 
 ## Recent Changes (Feb 2026)
+- **Unified Partner Login (Opcion A)**: Modified /api/auth/login, /api/auth/session, /api/auth/me to return is_partner and partner_id. LoginPage.jsx redirects to /partner-dashboard for partners. AuthCallback (Google OAuth) also handles partner detection.
 - **Blank page fix**: Updated Service Worker to v2 (network-first for navigation), added Error Boundary, inline HTML loader, cache cleanup script, i18n useSuspense:false
 - **Accountants page i18n**: Full translation of /accountants-software page (ES/EN/FR), added LanguageSelector
-- **Landing dropdown fix**: Translated contadoresFeatures dropdown items
-- **Clipboard API fix**: Added fallback for `navigator.clipboard.writeText` in PartnerRegisterPage (iframe context)
-- **Language auto-detection banner**: New LanguageBanner component suggests switching to browser language when mismatch detected
-- **Partner Client Management Panel**: Full CRUD for client subscriptions - activate with plan selection, edit plan/employees, deactivate, price preview with commission calculation. Backend: GET /plans, PATCH /activate, /subscription, /deactivate. Frontend: Enhanced clients table, activate/edit dialogs.
+- **Partner Client Management Panel**: Full CRUD for client subscriptions
 
 ## Credentials
 - Admin: test_refactor@fortexa.com / test123
-- Partner: newpartner@test.com / test123
+- Partner: testpartner@test.com / test123
 - Employee Portal: 001-0000001-1 / portal123
 
 ## Prioritized Backlog
