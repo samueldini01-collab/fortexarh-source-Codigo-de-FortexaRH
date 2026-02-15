@@ -208,6 +208,34 @@ function EmployeeDashboard() {
     }
   };
 
+  const handleChangePassword = async () => {
+    if (!passwordForm.old_password || !passwordForm.new_password) {
+      toast.error(t('employeePortal.password.fillAll'));
+      return;
+    }
+    if (passwordForm.new_password.length < 6) {
+      toast.error(t('employeePortal.password.minLength'));
+      return;
+    }
+    if (passwordForm.new_password !== passwordForm.confirm_password) {
+      toast.error(t('employeePortal.password.noMatch'));
+      return;
+    }
+    setChangingPassword(true);
+    try {
+      await axios.post(`${API}/employee-portal/change-password`, {
+        old_password: passwordForm.old_password,
+        new_password: passwordForm.new_password
+      }, { headers: getAuthHeaders() });
+      toast.success(t('employeePortal.password.updated'));
+      setPasswordForm({ old_password: "", new_password: "", confirm_password: "" });
+    } catch (error) {
+      toast.error(error.response?.data?.detail || t('employeePortal.password.error'));
+    } finally {
+      setChangingPassword(false);
+    }
+  };
+
   // Notification handlers
   const fetchNotifications = async () => {
     setLoadingNotifications(true);
