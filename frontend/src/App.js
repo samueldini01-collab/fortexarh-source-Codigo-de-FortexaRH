@@ -11,6 +11,7 @@ import { KeyboardShortcutsHelp } from "@/components/KeyboardShortcutsHelp";
 import { OnboardingProvider } from "@/context/OnboardingContext";
 import OnboardingTutorial from "@/components/OnboardingTutorial";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+import LanguageBanner from "@/components/LanguageBanner";
 
 // Error Boundary to prevent blank pages
 class ErrorBoundary extends Component {
