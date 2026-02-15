@@ -79,6 +79,9 @@ import {
   X,
   Info
 } from "lucide-react";
+import { KPIDrillDownDialog } from "@/components/partner/KPIDrillDownDialog";
+import { AddClientDialog } from "@/components/partner/AddClientDialog";
+import { PayoutRequestDialog } from "@/components/partner/PayoutRequestDialog";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
