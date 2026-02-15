@@ -221,8 +221,8 @@ export default function AccountantsSoftwarePage() {
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="flex items-center gap-2">
               <img src="/fortexarh-logo.png" alt="FortexaRH" className="h-8 w-auto" />
-              <span className={`font-bold text-xl ${theme.headerText}`}>FortexaRH</span>
-              <span className={`${theme.headerSubtext} text-sm font-medium ml-2 hidden sm:inline`}>Para Contadores</span>
+              <span className={`font-bold text-xl ${theme.headerText}`}>{t('accountants.fortexarh')}</span>
+              <span className={`${theme.headerSubtext} text-sm font-medium ml-2 hidden sm:inline`}>{t('accountants.paraContadores')}</span>
             </Link>
             
             <div className="flex items-center gap-2 sm:gap-4">
@@ -233,7 +233,7 @@ export default function AccountantsSoftwarePage() {
                     {currentTheme === "light" && <Sun className="w-4 h-4" />}
                     {currentTheme === "dark" && <Moon className="w-4 h-4" />}
                     {currentTheme === "contrast" && <Contrast className="w-4 h-4" />}
-                    <span className="ml-2 hidden sm:inline">Apariencia</span>
+                    <span className="ml-2 hidden sm:inline">{t('accountants.apariencia')}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
@@ -297,7 +297,7 @@ export default function AccountantsSoftwarePage() {
               
               <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold ${theme.text} mb-6 leading-tight`}>
                 Crece tu firma con{" "}
-                <span className={theme.accent}>FortexaRH</span>
+                <span className={theme.accent}>{t('accountants.fortexarh')}</span>
               </h1>
               
               <p className={`text-xl ${theme.textMuted} mb-8 leading-relaxed`}>
@@ -338,8 +338,8 @@ export default function AccountantsSoftwarePage() {
                   <div className={`inline-flex items-center justify-center w-16 h-16 ${theme.accentBg} rounded-full mb-4`}>
                     <Briefcase className={`w-8 h-8 ${theme.accent}`} />
                   </div>
-                  <h3 className={`text-2xl font-bold ${theme.text} mb-2`}>Plan Partner</h3>
-                  <p className={theme.textLight}>Para firmas de contadores</p>
+                  <h3 className={`text-2xl font-bold ${theme.text} mb-2`}>{t('accountants.planPartner')}</h3>
+                  <p className={theme.textLight}>{t('accountants.paraFirmasDeContadores')}</p>
                 </div>
                 
                 <div className="text-center mb-6">
@@ -347,17 +347,17 @@ export default function AccountantsSoftwarePage() {
                     <span className={`text-5xl font-bold ${theme.text}`}>$10</span>
                     <span className={theme.textLight}>/mes</span>
                   </div>
-                  <p className={`${theme.accent} font-medium mt-2`}>Empleados ilimitados incluidos</p>
+                  <p className={`${theme.accent} font-medium mt-2`}>{t('accountants.empleadosIlimitadosIncluidos')}</p>
                 </div>
                 
                 <div className="space-y-3 mb-8">
                   <div className={`flex items-center gap-3 ${theme.textMuted}`}>
                     <Check className={`w-5 h-5 ${theme.accent} flex-shrink-0`} />
-                    <span>Acceso completo al sistema</span>
+                    <span>{t('accountants.accesoCompletoAlSistema')}</span>
                   </div>
                   <div className={`flex items-center gap-3 ${theme.textMuted}`}>
                     <Check className={`w-5 h-5 ${theme.accent} flex-shrink-0`} />
-                    <span>Sin límite de empleados</span>
+                    <span>{t('accountants.sinLimiteDeEmpleados')}</span>
                   </div>
                   <div className={`flex items-center gap-3 ${theme.textMuted}`}>
                     <Check className={`w-5 h-5 ${theme.accent} flex-shrink-0`} />
@@ -365,17 +365,17 @@ export default function AccountantsSoftwarePage() {
                   </div>
                   <div className={`flex items-center gap-3 ${theme.textMuted}`}>
                     <Check className={`w-5 h-5 ${theme.accent} flex-shrink-0`} />
-                    <span>Panel de gestión de clientes</span>
+                    <span>{t('accountants.panelDeGestionDe')}</span>
                   </div>
                   <div className={`flex items-center gap-3 ${theme.textMuted}`}>
                     <Check className={`w-5 h-5 ${theme.accent} flex-shrink-0`} />
-                    <span>Link de referido único</span>
+                    <span>{t('accountants.linkDeReferidoUnico')}</span>
                   </div>
                 </div>
                 
                 <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 mb-6">
                   <p className="text-amber-400 text-sm text-center">
-                    <strong>Requisito:</strong> Mantener al menos 1 cliente activo con plan de pago
+                    <strong>{t('accountants.requisito')}</strong> Mantener al menos 1 cliente activo con plan de pago
                   </p>
                 </div>
                 
@@ -473,16 +473,16 @@ export default function AccountantsSoftwarePage() {
           <div className={`${theme.card} rounded-2xl p-8`}>
             <div className="grid md:grid-cols-3 gap-8 text-center">
               <div>
-                <p className={`${theme.textLight} mb-2`}>Clientes Activos</p>
+                <p className={`${theme.textLight} mb-2`}>{t('accountants.clientesActivos')}</p>
                 <p className={`text-4xl font-bold ${theme.text}`}>10</p>
               </div>
               <div>
-                <p className={`${theme.textLight} mb-2`}>Pago Promedio/Cliente</p>
+                <p className={`${theme.textLight} mb-2`}>{t('accountants.pagoPromediocliente')}</p>
                 <p className={`text-4xl font-bold ${theme.text}`}>$25</p>
                 <p className={`text-sm ${theme.textLight}`}>($10 base + 10 empleados)</p>
               </div>
               <div>
-                <p className={`${theme.textLight} mb-2`}>Tu Comisión Mensual</p>
+                <p className={`${theme.textLight} mb-2`}>{t('accountants.tuComisionMensual')}</p>
                 <p className={`text-4xl font-bold ${theme.accent}`}>$75</p>
                 <p className={`text-sm ${theme.textLight}`}>(30% de $250)</p>
               </div>
@@ -491,11 +491,11 @@ export default function AccountantsSoftwarePage() {
             <div className={`mt-8 pt-8 ${theme.border} border-t`}>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className={`${theme.section} rounded-lg p-4`}>
-                  <p className={`${theme.textLight} text-sm mb-1`}>Tu costo mensual</p>
+                  <p className={`${theme.textLight} text-sm mb-1`}>{t('accountants.tuCostoMensual')}</p>
                   <p className={`text-2xl font-bold ${theme.text}`}>$10</p>
                 </div>
                 <div className={`${theme.accentBg} rounded-lg p-4`}>
-                  <p className={`${theme.accent} text-sm mb-1`}>Ganancia neta mensual</p>
+                  <p className={`${theme.accent} text-sm mb-1`}>{t('accountants.gananciaNetaMensual')}</p>
                   <p className={`text-2xl font-bold ${theme.accent}`}>$65</p>
                 </div>
               </div>
@@ -549,9 +549,9 @@ export default function AccountantsSoftwarePage() {
             <table className="w-full">
               <thead>
                 <tr className={`${theme.border} border-b`}>
-                  <th className={`text-left p-4 ${theme.textLight} font-medium`}>Característica</th>
-                  <th className={`text-center p-4 ${theme.accent} font-medium`}>Plan Partner</th>
-                  <th className={`text-center p-4 ${theme.textLight} font-medium`}>Plan Normal</th>
+                  <th className={`text-left p-4 ${theme.textLight} font-medium`}>{t('accountants.caracteristica')}</th>
+                  <th className={`text-center p-4 ${theme.accent} font-medium`}>{t('accountants.planPartner')}</th>
+                  <th className={`text-center p-4 ${theme.textLight} font-medium`}>{t('accountants.planNormal')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -621,14 +621,14 @@ export default function AccountantsSoftwarePage() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-2">
               <img src="/fortexarh-logo.png" alt="FortexaRH" className={`h-8 w-auto ${currentTheme === 'light' ? '' : 'brightness-0 invert'}`} />
-              <span className={`font-bold ${theme.text}`}>FortexaRH</span>
+              <span className={`font-bold ${theme.text}`}>{t('accountants.fortexarh')}</span>
               <span className={`${theme.textLight} text-sm`}>| Sistema de RRHH y Nómina</span>
             </div>
             <div className={`flex items-center gap-6 ${theme.textLight} text-sm`}>
-              <Link to="/terms" className={`hover:${theme.text} transition-colors`}>Términos</Link>
-              <Link to="/privacy" className={`hover:${theme.text} transition-colors`}>Privacidad</Link>
-              <Link to="/soporte" className={`hover:${theme.text} transition-colors`}>Soporte</Link>
-              <Link to="/" className={`hover:${theme.text} transition-colors`}>Inicio</Link>
+              <Link to="/terms" className={`hover:${theme.text} transition-colors`}>{t('accountants.terminos')}</Link>
+              <Link to="/privacy" className={`hover:${theme.text} transition-colors`}>{t('accountants.privacidad')}</Link>
+              <Link to="/soporte" className={`hover:${theme.text} transition-colors`}>{t('accountants.soporte')}</Link>
+              <Link to="/" className={`hover:${theme.text} transition-colors`}>{t('accountants.inicio')}</Link>
             </div>
           </div>
           <div className={`mt-8 text-center ${theme.textLight} text-sm`}>

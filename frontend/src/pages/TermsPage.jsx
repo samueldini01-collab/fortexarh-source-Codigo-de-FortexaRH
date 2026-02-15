@@ -12,7 +12,7 @@ export default function TermsPage() {
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <img src="/favicon.png" alt="FortexaRH" className="h-8 w-8" />
-            <span className="font-bold text-slate-800">FortexaRH</span>
+            <span className="font-bold text-slate-800">{t('terms.fortexarh')}</span>
           </Link>
           <Link to="/">
             <Button variant="ghost" size="sm">
@@ -30,8 +30,8 @@ export default function TermsPage() {
               <FileText className="w-6 h-6 text-emerald-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-slate-900">Términos de Servicio</h1>
-              <p className="text-slate-500">Última actualización: Enero 2025</p>
+              <h1 className="text-3xl font-bold text-slate-900">{t('terms.terminosDeServicio')}</h1>
+              <p className="text-slate-500">{t('terms.ultimaActualizacionEnero2025')}</p>
             </div>
           </div>
 
@@ -45,10 +45,10 @@ export default function TermsPage() {
               Al acceder o utilizar nuestro Servicio, usted acepta estar sujeto a estos Términos. Si no está de acuerdo con alguna parte de estos términos, no podrá acceder al Servicio. Estos términos se rigen por las leyes de la República Dominicana, incluyendo pero no limitado a:
             </p>
             <ul className="list-disc pl-6 text-slate-600 mb-4">
-              <li>Código de Trabajo de la República Dominicana (Ley 16-92)</li>
-              <li>Ley General de Protección de los Derechos del Consumidor o Usuario (Ley 358-05)</li>
-              <li>Ley sobre Comercio Electrónico, Documentos y Firmas Digitales (Ley 126-02)</li>
-              <li>Ley Orgánica sobre Protección de Datos de Carácter Personal (Ley 172-13)</li>
+              <li>{t('terms.codigoDeTrabajoDe')}</li>
+              <li>{t('terms.leyGeneralDeProteccion')}</li>
+              <li>{t('terms.leySobreComercioElectronico')}</li>
+              <li>{t('terms.leyOrganicaSobreProteccion')}</li>
             </ul>
 
             <h2 className="text-xl font-semibold text-slate-900 mt-8 mb-4">2. Descripción del Servicio</h2>
@@ -56,12 +56,12 @@ export default function TermsPage() {
               FortexaRH es una plataforma de software como servicio (SaaS) que proporciona:
             </p>
             <ul className="list-disc pl-6 text-slate-600 mb-4">
-              <li>Gestión de empleados y expedientes laborales</li>
-              <li>Procesamiento y cálculo de nóminas conforme a la legislación dominicana</li>
-              <li>Generación de archivos TSS (Tesorería de la Seguridad Social)</li>
-              <li>Control de asistencias y vacaciones</li>
-              <li>Reportes y formularios requeridos por la DGII</li>
-              <li>Organigrama y estructura organizacional</li>
+              <li>{t('terms.gestionDeEmpleadosY')}</li>
+              <li>{t('terms.procesamientoYCalculoDe')}</li>
+              <li>{t('terms.generacionDeArchivosTss')}</li>
+              <li>{t('terms.controlDeAsistenciasY')}</li>
+              <li>{t('terms.reportesYFormulariosRequeridos')}</li>
+              <li>{t('terms.organigramaYEstructuraOrganizacional')}</li>
             </ul>
 
             <h2 className="text-xl font-semibold text-slate-900 mt-8 mb-4">3. Licencia de Uso</h2>
@@ -70,14 +70,14 @@ export default function TermsPage() {
             </p>
 
             <h2 className="text-xl font-semibold text-slate-900 mt-8 mb-4">4. Restricciones de Uso</h2>
-            <p className="text-slate-600 mb-4">Usted se compromete a NO:</p>
+            <p className="text-slate-600 mb-4">{t('terms.ustedSeComprometeA')}</p>
             <ul className="list-disc pl-6 text-slate-600 mb-4">
-              <li>Copiar, modificar, distribuir, vender o arrendar ninguna parte del Servicio</li>
-              <li>Realizar ingeniería inversa o intentar extraer el código fuente</li>
-              <li>Usar el Servicio para actividades ilegales o fraudulentas</li>
-              <li>Interferir con la seguridad o integridad del Servicio</li>
-              <li>Compartir credenciales de acceso con terceros no autorizados</li>
-              <li>Procesar datos de nómina que no correspondan a empleados legítimos de su empresa</li>
+              <li>{t('terms.copiarModificarDistribuirVender')}</li>
+              <li>{t('terms.realizarIngenieriaInversaO')}</li>
+              <li>{t('terms.usarElServicioPara')}</li>
+              <li>{t('terms.interferirConLaSeguridad')}</li>
+              <li>{t('terms.compartirCredencialesDeAcceso')}</li>
+              <li>{t('terms.procesarDatosDeNomina')}</li>
             </ul>
 
             <h2 className="text-xl font-semibold text-slate-900 mt-8 mb-4">5. Propiedad Intelectual</h2>
@@ -125,10 +125,10 @@ export default function TermsPage() {
               Si tiene preguntas sobre estos Términos, contáctenos:
             </p>
             <div className="bg-slate-50 p-4 rounded-lg text-slate-600">
-              <p><strong>Cloudtexa Solutions SRL</strong></p>
-              <p>Av. Winston Churchill, Santo Domingo, República Dominicana</p>
-              <p>Email: info@fortexarh.com</p>
-              <p>Teléfono: (809) 685-9898</p>
+              <p><strong>{t('terms.cloudtexaSolutionsSrl')}</strong></p>
+              <p>{t('terms.avWinstonChurchillSanto')}</p>
+              <p>{t('terms.emailInfofortexarhcom')}</p>
+              <p>{t('terms.telefono8096859898')}</p>
             </div>
           </div>
         </div>

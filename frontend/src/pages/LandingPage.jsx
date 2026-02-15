@@ -765,7 +765,7 @@ export default function LandingPage() {
                 <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white mb-3 sm:mb-4">
                   <Zap className="w-6 h-6 sm:w-7 sm:h-7" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 heading">FortexaRH Pro</h3>
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 heading">{t('landing.fortexarhPro')}</h3>
                 <p className="text-slate-600 mt-1 text-sm sm:text-base">{t('landing.pricing.proDesc')}</p>
                 <div className="mt-3 sm:mt-4">
                   <span className="text-3xl sm:text-4xl font-bold text-slate-900">$10</span>
@@ -805,7 +805,7 @@ export default function LandingPage() {
                 <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white mb-3 sm:mb-4">
                   <Crown className="w-6 h-6 sm:w-7 sm:h-7" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 heading">FortexaRH Enterprise</h3>
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 heading">{t('landing.fortexarhEnterprise')}</h3>
                 <p className="text-slate-600 mt-1 text-sm sm:text-base">{t('landing.pricing.enterpriseDesc')}</p>
                 <div className="mt-3 sm:mt-4">
                   <span className="text-3xl sm:text-4xl font-bold text-slate-900">$20</span>
@@ -1218,8 +1218,8 @@ export default function LandingPage() {
               <div className="text-slate-400 text-xs sm:text-sm space-y-1 sm:space-y-2">
                 <p className="flex items-start gap-2">
                   <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mt-0.5 flex-shrink-0" /> 
-                  <span className="hidden sm:inline">Av. George Washington #503, Gazcue<br />Santo Domingo, Distrito Nacional</span>
-                  <span className="sm:hidden">Santo Domingo, D.N.</span>
+                  <span className="hidden sm:inline">{t('landing.avGeorgeWashington503')}<br />{t('landing.santoDomingoDistritoNacional')}</span>
+                  <span className="sm:hidden">{t('landing.santoDomingoDn')}</span>
                 </p>
                 <p className="flex items-center gap-2"><Mail className="w-3 h-3 sm:w-4 sm:h-4" /> info@fortexarh.com</p>
                 <p className="flex items-center gap-2"><Phone className="w-3 h-3 sm:w-4 sm:h-4" /> (809) 685-9898</p>
