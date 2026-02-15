@@ -1319,6 +1319,11 @@ api_router.include_router(quickbooks_router)
 api_router.include_router(cdc_audit_router)
 api_router.include_router(partners_router)
 api_router.include_router(geolocation_attendance_router)
+api_router.include_router(payroll_config_router)
+api_router.include_router(templates_router)
+api_router.include_router(generated_docs_router)
+api_router.include_router(currency_router)
+api_router.include_router(stats_router)
 
 # Include the API router
 app.include_router(api_router)
