@@ -101,6 +101,18 @@ export default function LoginPage() {
     window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
   };
 
+  // If 2FA is required, show the verification screen
+  if (twoFactorData) {
+    return (
+      <TwoFactorLogin
+        userId={twoFactorData.user_id}
+        tempToken={twoFactorData.temp_token}
+        onVerified={handle2FAVerified}
+        onBack={() => setTwoFactorData(null)}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-md">
