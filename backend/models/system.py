@@ -228,6 +228,11 @@ class PartnerUpdate(BaseModel):
 
 class PayoutRequest(BaseModel):
     amount: Optional[float] = None
+    method: Optional[str] = "stripe"  # "stripe" or "paypal"
+
+
+class PayPalConfig(BaseModel):
+    paypal_email: str
 
 
 class StripeConnectOnboard(BaseModel):
