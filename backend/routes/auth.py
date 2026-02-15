@@ -75,32 +75,10 @@ async def get_current_user(request: Request, credentials = Depends(security)) ->
 
 
 # ===================== MODELS =====================
-
-class UserCreate(BaseModel):
-    email: EmailStr
-    password: str
-    name: str
-    company_name: Optional[str] = None
-    payment_session_id: Optional[str] = None
-
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
-
-class PasswordResetRequest(BaseModel):
-    email: EmailStr
-
-class PasswordResetConfirm(BaseModel):
-    token: str
-    new_password: str
-
-class PasswordChangeRequest(BaseModel):
-    current_password: str
-    new_password: str
-
-class AdminPasswordSetRequest(BaseModel):
-    user_id: str
-    new_password: str
+from models.auth import (
+    UserCreate, UserLogin, PasswordResetRequest,
+    PasswordResetConfirm, PasswordChangeRequest, AdminPasswordSetRequest
+)
 
 
 # ===================== HELPERS =====================
