@@ -829,12 +829,13 @@ export default function PartnerDashboardPage() {
                 <div>
                   <CardTitle className="text-white">{t('partnerDashboard.misClientes')}</CardTitle>
                   <CardDescription className="text-slate-400">
-                    Gestiona tus clientes referidos
+                    Gestiona clientes, activa suscripciones y asigna planes
                   </CardDescription>
                 </div>
                 <Button
                   onClick={() => setShowAddClient(true)}
                   className="bg-emerald-500 hover:bg-emerald-600"
+                  data-testid="add-client-btn"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Agregar Cliente
@@ -846,128 +847,158 @@ export default function PartnerDashboardPage() {
                     <Table>
                       <TableHeader>
                         <TableRow className="border-slate-700">
-                          <TableHead className="text-slate-400">{t('partnerDashboard.empresa')}</TableHead>
-                          <TableHead className="text-slate-400">{t('partnerDashboard.contacto')}</TableHead>
-                          <TableHead className="text-slate-400">{t('partnerDashboard.estado')}</TableHead>
-                          <TableHead className="text-slate-400">{t('partnerDashboard.invitacion')}</TableHead>
-                          <TableHead className="text-slate-400">{t('partnerDashboard.facturacion')}</TableHead>
-                          <TableHead className="text-slate-400">{t('partnerDashboard.comision')}</TableHead>
-                          <TableHead className="text-slate-400">{t('partnerDashboard.acciones')}</TableHead>
+                          <TableHead className="text-slate-400">Empresa</TableHead>
+                          <TableHead className="text-slate-400">Contacto</TableHead>
+                          <TableHead className="text-slate-400">Estado</TableHead>
+                          <TableHead className="text-slate-400">Plan</TableHead>
+                          <TableHead className="text-slate-400">Empleados</TableHead>
+                          <TableHead className="text-slate-400">Valor Mensual</TableHead>
+                          <TableHead className="text-slate-400">Comisión (30%)</TableHead>
+                          <TableHead className="text-slate-400">Acciones</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {clients.map((client) => (
-                          <TableRow key={client.client_id} className="border-slate-700">
-                            <TableCell>
-                              <div>
-                                <p className="text-white font-medium">{client.company_name}</p>
-                                <p className="text-slate-500 text-sm">{client.email}</p>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="text-slate-300">
-                                <p>{client.contact_name}</p>
-                                {client.phone && (
-                                  <p className="text-slate-500 text-sm">{client.phone}</p>
+                        {clients.map((client) => {
+                          const isActive = client.status === "active";
+                          const planName = plans.find(p => p.plan_id === client.subscription_plan)?.name || "-";
+                          return (
+                            <TableRow key={client.client_id} className="border-slate-700">
+                              <TableCell>
+                                <div>
+                                  <p className="text-white font-medium">{client.company_name}</p>
+                                  <p className="text-slate-500 text-sm">{client.email}</p>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="text-slate-300">
+                                  <p>{client.contact_name}</p>
+                                  {client.phone && <p className="text-slate-500 text-sm">{client.phone}</p>}
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <StatusBadge status={client.subscription_status || client.status} />
+                              </TableCell>
+                              <TableCell>
+                                {client.subscription_plan ? (
+                                  <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
+                                    {planName}
+                                  </Badge>
+                                ) : (
+                                  <span className="text-slate-500">-</span>
                                 )}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <StatusBadge status={client.subscription_status || client.status} />
-                            </TableCell>
-                            <TableCell>
-                              {client.invitation_sent ? (
-                                <Badge variant="outline" className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
-                                  <Mail className="w-3 h-3 mr-1" />
-                                  Enviada
-                                </Badge>
-                              ) : (
-                                <Badge variant="outline" className="bg-amber-500/20 text-amber-400 border-amber-500/30">
-                                  <Clock className="w-3 h-3 mr-1" />
-                                  Pendiente
-                                </Badge>
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              <Select
-                                value={client.billing_type}
-                                onValueChange={(value) => updateClientBilling(client.client_id, value)}
-                              >
-                                <SelectTrigger className="w-32 bg-slate-700 border-slate-600 text-slate-300">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent className="bg-slate-800 border-slate-700">
-                                  <SelectItem value="direct">{t('partnerDashboard.directo')}</SelectItem>
-                                  <SelectItem value="firm">{t('partnerDashboard.firmaPaga')}</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </TableCell>
-                            <TableCell>
-                              <p className="text-emerald-400 font-medium">
-                                ${(client.commission_earned || 0).toFixed(2)}
-                              </p>
-                            </TableCell>
-                            <TableCell>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="sm" className="text-slate-400">
-                                    <MoreHorizontal className="w-4 h-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="bg-slate-800 border-slate-700">
-                                  <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
-                                    <Eye className="w-4 h-4 mr-2" />
-                                    Ver Detalles
-                                  </DropdownMenuItem>
-                                  {(client.status === "invited" || client.subscription_status === "pending") && (
-                                    <DropdownMenuItem 
-                                      className="text-slate-300 hover:text-white hover:bg-slate-700"
-                                      onClick={() => resendInvitation(client.client_id, client.email)}
+                              </TableCell>
+                              <TableCell>
+                                {client.employee_count ? (
+                                  <span className="text-slate-300 font-medium">{client.employee_count}</span>
+                                ) : (
+                                  <span className="text-slate-500">-</span>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                {client.monthly_value ? (
+                                  <span className="text-white font-medium">${client.monthly_value.toFixed(2)}</span>
+                                ) : (
+                                  <span className="text-slate-500">-</span>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                {client.monthly_value ? (
+                                  <span className="text-emerald-400 font-semibold">
+                                    ${(client.monthly_value * 0.3).toFixed(2)}
+                                  </span>
+                                ) : (
+                                  <span className="text-slate-500">-</span>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-center gap-1">
+                                  {!isActive ? (
+                                    <Button
+                                      size="sm"
+                                      className="bg-emerald-500 hover:bg-emerald-600 text-xs"
+                                      data-testid={`activate-client-${client.client_id}`}
+                                      onClick={() => {
+                                        setSelectedClient(client);
+                                        setActivationData({ plan_id: "basic", employee_count: 1 });
+                                        setShowActivateClient(true);
+                                      }}
                                     >
-                                      <Mail className="w-4 h-4 mr-2" />
-                                      Reenviar Invitación
-                                    </DropdownMenuItem>
+                                      Activar
+                                    </Button>
+                                  ) : (
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="border-slate-600 text-slate-300 text-xs"
+                                      data-testid={`edit-sub-${client.client_id}`}
+                                      onClick={() => {
+                                        setSelectedClient(client);
+                                        setActivationData({
+                                          plan_id: client.subscription_plan || "basic",
+                                          employee_count: client.employee_count || 1
+                                        });
+                                        setShowEditSubscription(true);
+                                      }}
+                                    >
+                                      <Edit className="w-3 h-3 mr-1" />
+                                      Editar
+                                    </Button>
                                   )}
-                                  <DropdownMenuItem 
-                                    className="text-slate-300 hover:text-white hover:bg-slate-700"
-                                    onClick={() => {
-                                      navigator.clipboard.writeText(client.invitation_link);
-                                      toast.success(t('partner.dashboard.invitationLinkCopied'));
-                                    }}
-                                  >
-                                    <Copy className="w-4 h-4 mr-2" />
-                                    Copiar Link
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </TableCell>
-                          </TableRow>
-                        ))}
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button variant="ghost" size="sm" className="text-slate-400">
+                                        <MoreHorizontal className="w-4 h-4" />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="bg-slate-800 border-slate-700">
+                                      {(client.status === "invited" || client.subscription_status === "pending") && (
+                                        <DropdownMenuItem
+                                          className="text-slate-300 hover:text-white hover:bg-slate-700"
+                                          onClick={() => resendInvitation(client.client_id, client.email)}
+                                        >
+                                          <Mail className="w-4 h-4 mr-2" />
+                                          Reenviar Invitación
+                                        </DropdownMenuItem>
+                                      )}
+                                      <DropdownMenuItem
+                                        className="text-slate-300 hover:text-white hover:bg-slate-700"
+                                        onClick={() => safeCopy(client.invitation_link)}
+                                      >
+                                        <Copy className="w-4 h-4 mr-2" />
+                                        Copiar Link
+                                      </DropdownMenuItem>
+                                      {isActive && (
+                                        <DropdownMenuItem
+                                          className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                                          onClick={() => handleDeactivateClient(client.client_id, client.company_name)}
+                                        >
+                                          <XCircle className="w-4 h-4 mr-2" />
+                                          Desactivar
+                                        </DropdownMenuItem>
+                                      )}
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
                       </TableBody>
                     </Table>
                   </div>
                 ) : (
                   <div className="text-center py-12">
                     <Users className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-white mb-2">
-                      No tienes clientes aún
-                    </h3>
+                    <h3 className="text-lg font-semibold text-white mb-2">No tienes clientes aún</h3>
                     <p className="text-slate-400 mb-4">
                       Comienza agregando tu primer cliente o comparte tu link de referido
                     </p>
                     <div className="flex gap-3 justify-center">
-                      <Button
-                        onClick={() => setShowAddClient(true)}
-                        className="bg-emerald-500 hover:bg-emerald-600"
-                      >
+                      <Button onClick={() => setShowAddClient(true)} className="bg-emerald-500 hover:bg-emerald-600">
                         <Plus className="w-4 h-4 mr-2" />
                         Agregar Cliente
                       </Button>
-                      <Button
-                        variant="outline"
-                        onClick={copyReferralLink}
-                        className="border-slate-600 text-slate-300"
-                      >
+                      <Button variant="outline" onClick={() => safeCopy(dashboardData.referral_link)} className="border-slate-600 text-slate-300">
                         <Copy className="w-4 h-4 mr-2" />
                         Copiar Link
                       </Button>
@@ -976,6 +1007,28 @@ export default function PartnerDashboardPage() {
                 )}
               </CardContent>
             </Card>
+
+            {/* Plans Summary */}
+            {plans.length > 0 && (
+              <Card className="bg-slate-800/50 border-slate-700">
+                <CardHeader>
+                  <CardTitle className="text-white text-lg">Planes Disponibles</CardTitle>
+                  <CardDescription className="text-slate-400">Planes que puedes asignar a tus clientes</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    {plans.map((plan) => (
+                      <div key={plan.plan_id} className="bg-slate-700/50 border border-slate-600 rounded-lg p-4">
+                        <h4 className="text-white font-semibold mb-1">{plan.name}</h4>
+                        <p className="text-emerald-400 text-2xl font-bold">${plan.base_price}<span className="text-sm text-slate-400">/mes</span></p>
+                        <p className="text-slate-400 text-sm mt-1">+ ${plan.price_per_employee}/empleado</p>
+                        <p className="text-slate-500 text-xs mt-2">Máx. {plan.max_employees === 999999 ? "ilimitados" : plan.max_employees} empleados</p>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           {/* Commissions Tab */}
