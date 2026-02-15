@@ -52,7 +52,7 @@ const getInitialLanguage = () => {
 const initialLang = getInitialLanguage();
 
 // Cache version - increment this to force translation reload
-const TRANSLATION_VERSION = '1.0.7';
+const TRANSLATION_VERSION = '1.0.8';
 
 i18n
   .use(HttpBackend)
@@ -69,7 +69,11 @@ i18n
       // Load translations from public folder
       loadPath: '/locales/{{lng}}.json',
       // Add cache busting with version
-      queryStringParams: { v: TRANSLATION_VERSION }
+      queryStringParams: { v: TRANSLATION_VERSION },
+      // Timeout for loading translations
+      requestOptions: {
+        cache: 'no-store'
+      }
     },
     
     detection: {
@@ -87,7 +91,7 @@ i18n
     },
 
     react: {
-      useSuspense: true // Enable suspense for lazy loading
+      useSuspense: false // Disable suspense to prevent blank pages
     },
     
     load: 'languageOnly', // Only load 'en' not 'en-US'
