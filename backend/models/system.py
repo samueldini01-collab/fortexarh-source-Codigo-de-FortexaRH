@@ -38,6 +38,40 @@ class PayrollDateConfig(BaseModel):
     second_payroll_day: Optional[int] = None
 
 
+# ===== User Notification Preferences =====
+
+class NotificationChannelConfig(BaseModel):
+    in_app: bool = True
+    email: bool = False
+    push: bool = False
+
+
+class QuietHoursConfig(BaseModel):
+    enabled: bool = False
+    start_time: str = "20:00"
+    end_time: str = "08:00"
+    timezone: str = "America/Santo_Domingo"
+    skip_weekends: bool = True
+
+
+class DigestConfig(BaseModel):
+    enabled: bool = False
+    frequency: str = "daily"  # daily, weekly
+    day_of_week: int = 1  # 0=Monday, 6=Sunday (for weekly)
+    send_time: str = "08:00"
+
+
+class UserNotificationPreferences(BaseModel):
+    events: Dict[str, Dict[str, bool]] = {}
+    quiet_hours: Optional[QuietHoursConfig] = None
+    digest: Optional[DigestConfig] = None
+
+
+class PushSubscription(BaseModel):
+    endpoint: str
+    keys: Dict[str, str]
+
+
 class CreateNotificationRequest(BaseModel):
     title: str
     message: str
