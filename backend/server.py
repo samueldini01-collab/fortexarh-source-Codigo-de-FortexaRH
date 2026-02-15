@@ -250,6 +250,8 @@ async def create_performance_indexes():
         await db.generated_documents.create_index([("company_id", 1)])
         await db.evaluations.create_index([("company_id", 1), ("employee_id", 1)])
         await db.expenses.create_index([("company_id", 1), ("status", 1)])
+        await db.employee_notifications.create_index([("employee_id", 1), ("company_id", 1), ("created_at", -1)])
+        await db.employee_notifications.create_index([("employee_id", 1), ("read", 1)])
         logger.info("Performance indexes created successfully")
     except Exception as e:
         logger.warning(f"Index creation warning (non-fatal): {e}")
