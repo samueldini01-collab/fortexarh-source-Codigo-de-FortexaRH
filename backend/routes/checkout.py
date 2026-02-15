@@ -13,10 +13,10 @@ import logging
 import asyncio
 
 router = APIRouter(tags=["Checkout"])
-from config import db
+from config import db, SUBSCRIPTION_PLANS
 from utils.auth import get_current_user
-from config import SUBSCRIPTION_PLANS
 from email_service import send_payment_confirmation_email, send_invoice_email
+
 security = HTTPBearer(auto_error=False)
 
 logger = logging.getLogger(__name__)

@@ -13,10 +13,9 @@ import stripe
 import resend
 
 router = APIRouter(prefix="/subscription", tags=["Subscriptions"])
-
-from config import db
+from config import db, SUBSCRIPTION_PLANS, FEATURE_ACCESS, ADDITIONAL_USER_PRICE
 from utils.auth import get_current_user
-from config import SUBSCRIPTION_PLANS, FEATURE_ACCESS, ADDITIONAL_USER_PRICE
+
 logger = logging.getLogger(__name__)
 
 

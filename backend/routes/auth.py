@@ -17,12 +17,11 @@ import resend
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
-from config import SENDER_EMAIL, SUBSCRIPTION_PLANS
+from config import db, SENDER_EMAIL, SUBSCRIPTION_PLANS
 from utils.auth import hash_password, verify_password, create_jwt_token, get_current_user
+from email_service import send_welcome_email
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
-from config import db
-from email_service import send_welcome_email
 security = HTTPBearer(auto_error=False)
 limiter = Limiter(key_func=get_remote_address)
 

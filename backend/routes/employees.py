@@ -13,9 +13,9 @@ import io
 import logging
 
 router = APIRouter(prefix="/employees", tags=["Employees"])
-from config import db
+from config import db, SUBSCRIPTION_PLANS
 from utils.auth import get_current_user
-from config import SUBSCRIPTION_PLANS
+
 security = HTTPBearer(auto_error=False)
 logger = logging.getLogger(__name__)
 
