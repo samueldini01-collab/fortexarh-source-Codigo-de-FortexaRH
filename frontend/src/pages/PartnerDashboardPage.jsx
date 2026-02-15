@@ -1175,80 +1175,113 @@ export default function PartnerDashboardPage() {
 
           {/* Payouts Tab */}
           <TabsContent value="payouts" className="space-y-6">
-            {/* Stripe Connect Status */}
-            {!stripeConnectStatus?.connected || stripeConnectStatus?.status !== "active" ? (
-              <Card className="bg-gradient-to-r from-purple-600/20 to-indigo-600/20 border-purple-500/30">
+            {/* Payment Methods */}
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Stripe Connect Card */}
+              <Card className={`border ${stripeConnectStatus?.connected && stripeConnectStatus?.status === "active" ? "bg-emerald-500/10 border-emerald-500/30" : "bg-slate-800/50 border-slate-700"}`}>
                 <CardContent className="p-6">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
-                        <CreditCard className="w-6 h-6 text-purple-400" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-white flex items-center gap-2">
-                          Conecta tu Cuenta Bancaria
-                        </h3>
-                        <p className="text-slate-300 text-sm mt-1 max-w-md">
-                          Para recibir tus comisiones, necesitas conectar tu cuenta bancaria a través de Stripe.
-                          Es seguro, rápido y solo toma unos minutos.
-                        </p>
-                        {stripeConnectStatus?.status === "pending" && (
-                          <p className="text-amber-400 text-sm mt-2 flex items-center gap-1">
-                            <AlertTriangle className="w-4 h-4" />
-                            Verificación pendiente - completa tu configuración
-                          </p>
-                        )}
-                      </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center shrink-0">
+                      <CreditCard className="w-6 h-6 text-purple-400" />
                     </div>
-                    <Button
-                      onClick={connectStripeAccount}
-                      disabled={connectingStripe}
-                      className="bg-purple-500 hover:bg-purple-600"
-                    >
-                      {connectingStripe ? (
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-white">Stripe Connect</h3>
+                      {stripeConnectStatus?.connected && stripeConnectStatus?.status === "active" ? (
                         <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Conectando...
-                        </>
-                      ) : stripeConnectStatus?.status === "pending" ? (
-                        <>
-                          <ArrowUpRight className="w-4 h-4 mr-2" />
-                          Completar Configuración
+                          <p className="text-emerald-400 text-sm flex items-center gap-1 mt-1">
+                            <ShieldCheck className="w-4 h-4" /> Conectado
+                          </p>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={openStripeDashboard}
+                            className="mt-3 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20"
+                            data-testid="stripe-dashboard-btn"
+                          >
+                            <ExternalLink className="w-3 h-3 mr-1" /> Ver Dashboard
+                          </Button>
                         </>
                       ) : (
                         <>
-                          <CreditCard className="w-4 h-4 mr-2" />
-                          Conectar con Stripe
+                          <p className="text-slate-400 text-sm mt-1">
+                            Recibe pagos directos a tu cuenta bancaria
+                          </p>
+                          <Button
+                            size="sm"
+                            onClick={connectStripeAccount}
+                            disabled={connectingStripe}
+                            className="mt-3 bg-purple-500 hover:bg-purple-600"
+                            data-testid="connect-stripe-btn"
+                          >
+                            {connectingStripe ? (
+                              <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                            ) : (
+                              <CreditCard className="w-3 h-3 mr-1" />
+                            )}
+                            {stripeConnectStatus?.status === "pending" ? "Completar" : "Conectar"}
+                          </Button>
                         </>
                       )}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card className="bg-emerald-500/10 border-emerald-500/30">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <ShieldCheck className="w-6 h-6 text-emerald-400" />
-                      <div>
-                        <p className="text-emerald-400 font-medium">{t('partnerDashboard.cuentaDeStripeConectada')}</p>
-                        <p className="text-slate-400 text-sm">{t('partnerDashboard.listaParaRecibirPagos')}</p>
-                      </div>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={openStripeDashboard}
-                      className="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20"
-                    >
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Ver Dashboard
-                    </Button>
                   </div>
                 </CardContent>
               </Card>
-            )}
+
+              {/* PayPal Card */}
+              <Card className={`border ${payoutBalance?.paypal_connected ? "bg-blue-500/10 border-blue-500/30" : "bg-slate-800/50 border-slate-700"}`}>
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
+                      <Wallet className="w-6 h-6 text-blue-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-white">PayPal</h3>
+                      {payoutBalance?.paypal_connected ? (
+                        <>
+                          <p className="text-blue-400 text-sm flex items-center gap-1 mt-1">
+                            <ShieldCheck className="w-4 h-4" /> {payoutBalance.paypal_email}
+                          </p>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleRemovePaypal}
+                            className="mt-3 border-red-500/30 text-red-400 hover:bg-red-500/20"
+                            data-testid="remove-paypal-btn"
+                          >
+                            <X className="w-3 h-3 mr-1" /> Desconectar
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-slate-400 text-sm mt-1">
+                            Recibe pagos a tu cuenta de PayPal
+                          </p>
+                          <div className="flex gap-2 mt-3">
+                            <Input
+                              type="email"
+                              value={paypalEmail}
+                              onChange={(e) => setPaypalEmail(e.target.value)}
+                              placeholder="tu@paypal.com"
+                              className="bg-slate-700 border-slate-600 text-white text-sm h-9"
+                              data-testid="paypal-email-input"
+                            />
+                            <Button
+                              size="sm"
+                              onClick={handleSavePaypal}
+                              disabled={savingPaypal || !paypalEmail}
+                              className="bg-blue-500 hover:bg-blue-600 shrink-0"
+                              data-testid="save-paypal-btn"
+                            >
+                              {savingPaypal ? <Loader2 className="w-3 h-3 animate-spin" /> : "Guardar"}
+                            </Button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
             {/* Balance Cards */}
             <div className="grid md:grid-cols-4 gap-4">
@@ -1296,11 +1329,14 @@ export default function PartnerDashboardPage() {
                   <div>
                     <h3 className="text-white font-semibold">{t('partnerDashboard.solicitarRetiro')}</h3>
                     <p className="text-slate-400 text-sm">
-                      Los pagos se procesan mensualmente. El dinero llega en 2-3 días hábiles.
+                      Retira vía {payoutBalance?.stripe_connected && payoutBalance?.paypal_connected ? "Stripe o PayPal" : payoutBalance?.paypal_connected ? "PayPal" : "Stripe"}. Los pagos se procesan en 2-5 días hábiles.
                     </p>
                   </div>
                   <Button
-                    onClick={() => setShowPayoutModal(true)}
+                    onClick={() => {
+                      setPayoutMethod(payoutBalance?.stripe_connected ? "stripe" : "paypal");
+                      setShowPayoutModal(true);
+                    }}
                     disabled={!payoutBalance?.can_withdraw}
                     className="bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50"
                     data-testid="request-payout-btn"
@@ -1308,9 +1344,9 @@ export default function PartnerDashboardPage() {
                     <Banknote className="w-4 h-4 mr-2" />
                     {payoutBalance?.can_withdraw 
                       ? "Retirar Fondos" 
-                      : payoutBalance?.stripe_connected 
+                      : (payoutBalance?.stripe_connected || payoutBalance?.paypal_connected)
                         ? `Mínimo $${payoutBalance?.minimum_payout || 50}` 
-                        : "Conecta Stripe primero"}
+                        : "Configura un método de pago"}
                   </Button>
                 </div>
               </CardContent>
