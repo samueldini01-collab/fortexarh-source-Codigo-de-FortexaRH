@@ -521,6 +521,7 @@ function AppWithShortcuts() {
             <KeyboardShortcutsHelp />
             <OnboardingTutorial />
             <PWAInstallPrompt />
+            <LanguageBanner />
           </SubscriptionProvider>
         </AuthProvider>
       </OnboardingProvider>
