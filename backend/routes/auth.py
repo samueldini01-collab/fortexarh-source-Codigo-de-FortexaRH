@@ -441,6 +441,7 @@ async def get_me(current_user: dict = Depends(get_current_user)):
         "role": current_user.get("role", "admin"),
         "is_partner": current_user.get("is_partner", False),
         "partner_id": current_user.get("partner_id"),
+        "totp_enabled": current_user.get("totp_enabled", False),
         "company_name": company_name
     }
 
