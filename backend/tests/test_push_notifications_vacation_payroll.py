@@ -6,6 +6,7 @@ import pytest
 import requests
 import os
 import uuid
+import random
 from datetime import datetime, timedelta
 
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
@@ -42,7 +43,7 @@ class TestAdminAuth:
         })
         assert response.status_code == 200, f"Admin login failed: {response.text}"
         data = response.json()
-        token = data.get("access_token") or data.get("token")
+        token = data.get("token")  # This API returns 'token' not 'access_token'
         assert token, f"No token in response: {data}"
         print(f"PASSED: Admin login successful")
         return token
@@ -64,8 +65,7 @@ class TestVacationApprovalPushNotification:
         })
         assert response.status_code == 200, f"Admin login failed: {response.text}"
         data = response.json()
-        token = data.get("access_token") or data.get("token")
-        return token
+        return data.get("token")
     
     @pytest.fixture
     def auth_headers(self, admin_token):
@@ -76,16 +76,17 @@ class TestVacationApprovalPushNotification:
         # Use the specified employee_id
         employee_id = "emp_7d20680627a9"
         
-        # Create a vacation request
-        start_date = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
-        end_date = (datetime.now() + timedelta(days=35)).strftime("%Y-%m-%d")
+        # Use random far future dates to avoid conflicts
+        days_offset = random.randint(100, 365)
+        start_date = (datetime.now() + timedelta(days=days_offset)).strftime("%Y-%m-%d")
+        end_date = (datetime.now() + timedelta(days=days_offset + 3)).strftime("%Y-%m-%d")
         
         vacation_data = {
             "employee_id": employee_id,
             "leave_type": "vacaciones",
             "start_date": start_date,
             "end_date": end_date,
-            "reason": "TEST_Push notification test vacation"
+            "reason": f"TEST_Push notification test vacation {uuid.uuid4().hex[:8]}"
         }
         
         create_response = requests.post(
@@ -112,17 +113,7 @@ class TestVacationApprovalPushNotification:
         print(f"PASSED: Vacation approved - Response: {approve_data}")
         
         # The approval should not have any error and should complete successfully
-        # Push notification will be attempted (returns 0 if no subscriptions exist)
-        assert "error" not in str(approve_data).lower() or "message" in approve_data
-        
-        # Cleanup - cancel the vacation
-        try:
-            requests.put(
-                f"{BASE_URL}/api/vacations/{vacation_id}/cancel",
-                headers=auth_headers
-            )
-        except:
-            pass
+        assert "message" in approve_data or approve_data.get("status") == "approved"
         
         return vacation_id
     
@@ -130,15 +121,17 @@ class TestVacationApprovalPushNotification:
         """Create a vacation request and reject it - verify it works without errors"""
         employee_id = "emp_7d20680627a9"
         
-        start_date = (datetime.now() + timedelta(days=40)).strftime("%Y-%m-%d")
-        end_date = (datetime.now() + timedelta(days=45)).strftime("%Y-%m-%d")
+        # Use random far future dates to avoid conflicts
+        days_offset = random.randint(400, 500)
+        start_date = (datetime.now() + timedelta(days=days_offset)).strftime("%Y-%m-%d")
+        end_date = (datetime.now() + timedelta(days=days_offset + 3)).strftime("%Y-%m-%d")
         
         vacation_data = {
             "employee_id": employee_id,
             "leave_type": "vacaciones",
             "start_date": start_date,
             "end_date": end_date,
-            "reason": "TEST_Push notification test vacation for rejection"
+            "reason": f"TEST_Push notification test vacation for rejection {uuid.uuid4().hex[:8]}"
         }
         
         create_response = requests.post(
@@ -165,7 +158,7 @@ class TestVacationApprovalPushNotification:
         print(f"PASSED: Vacation rejected - Response: {reject_data}")
         
         # The rejection should not have any error
-        assert "error" not in str(reject_data).lower() or "message" in reject_data
+        assert "message" in reject_data
         
         return vacation_id
 
@@ -175,16 +168,16 @@ class TestEmployeePortalPushSubscription:
     
     @pytest.fixture
     def employee_token(self):
-        """Get employee portal auth token"""
+        """Get employee portal auth token - uses document_number field"""
         response = requests.post(f"{BASE_URL}/api/employee-portal/login", json={
-            "cedula": "001-0000001-1",
+            "document_number": "001-0000001-1",
             "password": "portal123"
         })
         assert response.status_code == 200, f"Employee login failed: {response.text}"
         data = response.json()
-        token = data.get("access_token") or data.get("token")
+        token = data.get("token")  # This API returns 'token'
         assert token, f"No token in response: {data}"
-        employee_id = data.get("employee", {}).get("employee_id") or data.get("employee_id")
+        employee_id = data.get("employee", {}).get("employee_id")
         print(f"PASSED: Employee login successful, employee_id: {employee_id}")
         return token, employee_id
     
@@ -212,7 +205,13 @@ class TestEmployeePortalPushSubscription:
         data = response.json()
         print(f"PASSED: Push subscribe response: {data}")
         
-        # Store endpoint for cleanup
+        # Cleanup - unsubscribe
+        requests.post(
+            f"{BASE_URL}/api/employee-portal/push/unsubscribe",
+            json={"endpoint": subscription_data["endpoint"]},
+            headers=headers
+        )
+        
         return subscription_data["endpoint"], headers
     
     def test_push_status(self, employee_token):
@@ -272,12 +271,12 @@ class TestEmployeeNotificationCenter:
     def employee_token(self):
         """Get employee portal auth token"""
         response = requests.post(f"{BASE_URL}/api/employee-portal/login", json={
-            "cedula": "001-0000001-1",
+            "document_number": "001-0000001-1",
             "password": "portal123"
         })
         assert response.status_code == 200, f"Employee login failed: {response.text}"
         data = response.json()
-        token = data.get("access_token") or data.get("token")
+        token = data.get("token")
         return token
     
     def test_notification_center_endpoint(self, employee_token):
@@ -309,7 +308,7 @@ class TestAdminNotificationPreferences:
         })
         assert response.status_code == 200
         data = response.json()
-        return data.get("access_token") or data.get("token")
+        return data.get("token")
     
     def test_notification_events_include_label_fr(self, admin_token):
         """GET /api/notification-preferences/events should include label_fr"""
@@ -323,14 +322,15 @@ class TestAdminNotificationPreferences:
         assert response.status_code == 200, f"Notification events failed: {response.text}"
         data = response.json()
         
-        # Check that events exist and have label_fr
-        events = data if isinstance(data, list) else data.get("events", [])
-        assert len(events) > 0, f"No events returned: {data}"
+        # The response is {"events": {...dict of events...}}
+        events_dict = data.get("events", data)
+        assert len(events_dict) > 0, f"No events returned: {data}"
         
         # Check first event has label_fr
-        first_event = events[0]
+        first_event_key = list(events_dict.keys())[0]
+        first_event = events_dict[first_event_key]
         assert "label_fr" in first_event, f"Event missing label_fr: {first_event}"
-        print(f"PASSED: Notification events include label_fr. First event: {first_event}")
+        print(f"PASSED: Notification events include label_fr. First event ({first_event_key}): label_fr={first_event.get('label_fr')}")
 
 
 class TestPayrollPushNotificationCodePresence:
@@ -345,7 +345,7 @@ class TestPayrollPushNotificationCodePresence:
         })
         assert response.status_code == 200
         data = response.json()
-        return data.get("access_token") or data.get("token")
+        return data.get("token")
     
     def test_payroll_periods_list(self, admin_token):
         """Verify payroll periods endpoint works (setup for push test)"""
