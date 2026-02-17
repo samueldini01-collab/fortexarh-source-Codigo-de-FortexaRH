@@ -75,6 +75,7 @@ function EmployeeDashboard() {
     { id: "leaves", label: t('employeePortal.tabs.leaves'), icon: ClipboardList },
     { id: "evaluations", label: t('employeePortal.tabs.evaluations'), icon: Target },
     { id: "loans", label: t('employeePortal.tabs.loans'), icon: Wallet },
+    { id: "notifications", label: t('employeePortal.tabs.notifications'), icon: Bell },
     { id: "profile", label: t('employeePortal.tabs.profile'), icon: User }
   ], [t]);
 
