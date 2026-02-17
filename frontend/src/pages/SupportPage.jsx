@@ -287,6 +287,22 @@ export default function SupportPage() {
               </CardContent>
             </Card>
 
+            {/* Help Center Link */}
+            <Card className="bg-blue-50 border-blue-200">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-3 mb-2">
+                  <FileQuestion className="w-5 h-5 text-blue-600" />
+                  <h3 className="font-semibold text-blue-800">{t('supportPage.helpCenter.title')}</h3>
+                </div>
+                <p className="text-sm text-blue-700 mb-3">{t('supportPage.helpCenter.desc')}</p>
+                <Link to="/help-center">
+                  <Button variant="outline" size="sm" className="w-full border-blue-300 text-blue-700 hover:bg-blue-100" data-testid="support-help-center-link">
+                    {t('supportPage.helpCenter.button')}
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
             {/* Response Times */}
             <Card className="bg-emerald-50 border-emerald-200">
               <CardContent className="pt-6">
