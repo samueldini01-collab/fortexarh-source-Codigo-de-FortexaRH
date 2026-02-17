@@ -9,11 +9,6 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - Dark mode, custom branding, favicon
 - Accountant Partner Portal with commission tracking
 
-## User Personas
-- **Company Admin**: Manages employees, payroll, org chart
-- **Partner (Accountant)**: Manages referred clients, earns commissions
-- **Employee**: Self-service portal for payslips, time-off requests, notifications
-
 ## Tech Stack
 - **Frontend**: React + Tailwind CSS + Shadcn/UI + react-i18next
 - **Backend**: FastAPI + Motor (async MongoDB)
@@ -39,7 +34,6 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - Quiet Hours with timezone support
 - Digest system: Daily/weekly email summary
 - Multi-portal bells: Admin + Partner dashboards
-- 4-tab UI: Preferencias, Horarios, Recordatorios, Historial
 
 ### Configurable Notifications - Phase 2: Push (PWA) + Employee Bell (Feb 17, 2026) DONE
 - VAPID key infrastructure with pywebpush
@@ -50,66 +44,37 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - Admin push test endpoint
 
 ### i18n for All Notification Components (Feb 17, 2026) DONE
-- All 20 notification event types now have label, label_en, label_fr
-- All 8 notification categories have label_fr
-- NotificationsPage.jsx: All hardcoded strings replaced with t() calls (tabs, push, quiet hours, digest, reminders, history)
-- NotificationBell.jsx (admin/partner): All strings translated (title, mark all, view all, time labels)
-- EmployeeNotificationBell.jsx: Push toggle text, toast messages, time labels translated
-- EmployeeNotificationCenter.jsx: All UI labels translated
-- Translation version bumped to 1.1.0 for cache invalidation
+- All 20 notification event types: label, label_en, label_fr
+- All 8 notification categories: label_fr
+- NotificationsPage, NotificationBell, EmployeeNotificationBell, EmployeeNotificationCenter: all strings translated
+- Translation version bumped to 1.1.0
 
 ### Backend API Error Standardization (Feb 17, 2026) DONE
-- Created utils/errors.py with AppError base class
-- Subclasses: NotFoundError, AuthenticationError, AuthorizationError, ValidationError, ConflictError, RateLimitError
-- Global exception handler registered in server.py returns {error, detail, status_code, path}
+- utils/errors.py: AppError + NotFoundError, AuthenticationError, AuthorizationError, ValidationError, ConflictError, RateLimitError
+- Global exception handler in server.py: returns {error, detail, status_code, path}
 
 ### Employee Notification Center (Feb 17, 2026) DONE
-- New "Notifications" tab in employee portal with Bell icon
-- Backend: /center (paginated, filterable), /categories (distinct), /export (CSV)
-- Frontend: EmployeeNotificationCenter with search bar, category filter, export CSV, mark all as read, load more pagination
-- Integrated as 8th tab in EmployeeDashboard
+- New "Notifications" tab in employee portal
+- Backend: /center (paginated/filterable), /categories, /export (CSV)
+- Frontend: search, category filter, export CSV, mark all read, pagination
+
+### Automatic Push Notifications (Feb 17, 2026) DONE
+- Vacation approved → push to employee
+- Vacation rejected → push to employee
+- Payroll approved → push to period creator
+- Payroll paid → push to each employee with payslip
+- Fixed employee_id format in push subscriptions (no double emp_ prefix)
+
+### /health Endpoint Fix (Feb 17, 2026) DONE
+- Both /health and /api/health return JSON {status: "healthy", service: "fortexarh-api"}
 
 ### System Analysis Fixes (Feb 15, 2026) DONE
-- P0: ObjectId serialization fix in partner_payments.py, partners.py
-- P0: data-testid attributes on all interactive elements
-- P1: i18n hardcoded strings replaced with translation calls
-- P1: EN/FR translations added (131+ partner.dashboard keys)
-- P2: PartnerDashboardPage refactored (2089 -> 1652 lines, 3 extracted components)
+- ObjectId serialization, data-testid, i18n strings, PartnerDashboardPage refactor
 
 ## Key Credentials
 - **Admin**: test_refactor@fortexa.com / test123
 - **Partner**: testpartner@test.com / test123
 - **Employee Portal**: 001-0000001-1 / portal123
-
-## Architecture
-```
-/app/
-├── backend/
-│   ├── models/system.py
-│   ├── routes/
-│   │   ├── notification_preferences.py (20 events, 8 categories, VAPID, push, test push)
-│   │   ├── employee_portal.py (push subscribe/unsubscribe, notification center/categories/export)
-│   │   └── ...
-│   ├── services/
-│   │   └── push_service.py (pywebpush)
-│   └── utils/
-│       └── errors.py (AppError, NotFoundError, AuthenticationError, etc.)
-├── frontend/
-│   └── src/
-│       ├── components/
-│       │   ├── NotificationBell.jsx (admin/partner, i18n)
-│       │   ├── portal/
-│       │   │   ├── EmployeeNotificationBell.jsx (push toggle, i18n)
-│       │   │   ├── EmployeeNotificationCenter.jsx (NEW - search, filter, export)
-│       │   │   └── EmployeeDashboard.jsx (notifications tab added)
-│       │   └── partner/
-│       ├── pages/
-│       │   └── NotificationsPage.jsx (fully i18n-ized)
-│       ├── i18n/
-│       │   ├── index.js (version 1.1.0)
-│       │   └── locales/ (es.json, en.json, fr.json)
-│       └── public/locales/ (synced copies for HttpBackend)
-```
 
 ## Prioritized Backlog
 
@@ -132,5 +97,6 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - SAP, Oracle, Dynamics (enterprise connectors)
 
 ## Test Reports
-- `/app/test_reports/iteration_196.json` - Push Notifications Phase 2 (17/17 backend)
-- `/app/test_reports/iteration_197.json` - i18n + Error Standardization + Notification Center (93% backend, 100% frontend)
+- `/app/test_reports/iteration_196.json` - Push Phase 2 (17/17)
+- `/app/test_reports/iteration_197.json` - i18n + Errors + Center (93% BE, 100% FE)
+- `/app/test_reports/iteration_198.json` - Auto Push + Health fix (100% BE)
