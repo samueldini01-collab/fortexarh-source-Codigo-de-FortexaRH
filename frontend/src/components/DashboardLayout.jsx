@@ -225,6 +225,7 @@ const getMenuGroups = (t) => [
       { id: "users-management", nameKey: "users", href: "/users-management", icon: UserCog, featureKey: "settings" },
       { id: "subscriptions", nameKey: "subscriptions", href: "/subscriptions", icon: CreditCard, featureKey: "subscriptions" },
       { id: "support-admin", nameKey: "support", href: "/support-admin", icon: HelpCircle, featureKey: "settings" },
+      { id: "help-center", nameKey: "helpCenter", href: "/help-center", icon: BookOpen, featureKey: "settings" },
       { id: "cdc-audit", nameKey: "cdcAudit", href: "/cdc-audit", icon: Activity, featureKey: "settings" },
       { id: "company-config", nameKey: "settings", href: "/company-config", icon: Building2, featureKey: "settings" },
     ]
