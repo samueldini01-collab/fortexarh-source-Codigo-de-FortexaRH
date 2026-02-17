@@ -1165,6 +1165,102 @@ async def delete_notification(notification_id: str, request: Request):
     return {"message": "Notificación eliminada"}
 
 
+@router.get("/notifications/center")
+async def get_notification_center(
+    request: Request,
+    category: str = None,
+    search: str = None,
+    skip: int = 0,
+    limit: int = 20,
+):
+    """Get paginated, filtered notifications for the notification center."""
+    emp_data = await get_employee_from_token(request)
+
+    query = {
+        "employee_id": emp_data["employee_id"],
+        "company_id": emp_data["company_id"],
+    }
+    if category and category != "all":
+        query["category"] = category
+    if search:
+        query["$or"] = [
+            {"title": {"$regex": search, "$options": "i"}},
+            {"message": {"$regex": search, "$options": "i"}},
+        ]
+
+    total = await db.employee_notifications.count_documents(query)
+    notifications = (
+        await db.employee_notifications.find(query, {"_id": 0})
+        .sort("created_at", -1)
+        .skip(skip)
+        .limit(limit)
+        .to_list(limit)
+    )
+
+    return {"notifications": notifications, "total": total, "skip": skip, "limit": limit}
+
+
+@router.get("/notifications/categories")
+async def get_notification_categories(request: Request):
+    """Get distinct categories used in the employee's notifications."""
+    emp_data = await get_employee_from_token(request)
+
+    categories = await db.employee_notifications.distinct(
+        "category",
+        {"employee_id": emp_data["employee_id"], "company_id": emp_data["company_id"]},
+    )
+    return {"categories": categories}
+
+
+@router.get("/notifications/export")
+async def export_notifications_csv(request: Request, category: str = None, search: str = None):
+    """Export notifications as CSV."""
+    import csv
+    import io
+    from starlette.responses import StreamingResponse
+
+    emp_data = await get_employee_from_token(request)
+
+    query = {
+        "employee_id": emp_data["employee_id"],
+        "company_id": emp_data["company_id"],
+    }
+    if category and category != "all":
+        query["category"] = category
+    if search:
+        query["$or"] = [
+            {"title": {"$regex": search, "$options": "i"}},
+            {"message": {"$regex": search, "$options": "i"}},
+        ]
+
+    notifications = (
+        await db.employee_notifications.find(query, {"_id": 0})
+        .sort("created_at", -1)
+        .to_list(500)
+    )
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["Fecha", "Categoria", "Tipo", "Titulo", "Mensaje", "Leida"])
+    for n in notifications:
+        writer.writerow([
+            n.get("created_at", ""),
+            n.get("category", ""),
+            n.get("type", ""),
+            n.get("title", ""),
+            n.get("message", ""),
+            "Si" if n.get("read") else "No",
+        ])
+
+    output.seek(0)
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=notificaciones.csv"},
+    )
+
+
+
 # Helper function to create employee notifications (called from other routes)
 async def create_employee_notification(
     employee_id: str,
