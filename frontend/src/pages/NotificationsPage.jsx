@@ -665,9 +665,9 @@ export default function NotificationsPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calendar className="w-5 h-5 text-amber-500" />
-                    Recordatorios de Nomina
+                    {t("notifications.reminders.payrollReminders")}
                   </CardTitle>
-                  <CardDescription>Recibe notificaciones antes de la fecha de pago</CardDescription>
+                  <CardDescription>{t("notifications.reminders.payrollRemindersDesc")}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -680,7 +680,7 @@ export default function NotificationsPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Dia de pago</Label>
+                    <Label>{t("notifications.reminders.payDay")}</Label>
                     <Select
                       value={String(notificationSettings.payroll_day || 15)}
                       onValueChange={(v) => {
