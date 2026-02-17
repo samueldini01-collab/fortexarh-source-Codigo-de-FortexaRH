@@ -4860,6 +4860,11 @@
     "footer": {
       "tagline": "Système RH et Paie",
       "copyright": "Tous droits réservés."
+    },
+    "helpCenter": {
+      "title": "Centre d'aide",
+      "desc": "Guides, nouveautes et FAQ sur toutes les fonctions du systeme.",
+      "button": "Aller au centre d'aide"
     }
   },
   "reportsSystem": {

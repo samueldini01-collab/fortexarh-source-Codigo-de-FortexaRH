@@ -4890,6 +4890,11 @@
     "footer": {
       "tagline": "HR and Payroll System",
       "copyright": "All rights reserved."
+    },
+    "helpCenter": {
+      "title": "Help Center",
+      "desc": "Guides, updates and FAQ about all system features.",
+      "button": "Go to Help Center"
     }
   },
   "reportsSystem": {

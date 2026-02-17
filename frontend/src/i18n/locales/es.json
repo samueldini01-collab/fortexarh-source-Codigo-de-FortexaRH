@@ -4895,6 +4895,11 @@
     "footer": {
       "tagline": "Sistema de RRHH y Nómina",
       "copyright": "Todos los derechos reservados."
+    },
+    "helpCenter": {
+      "title": "Centro de Ayuda",
+      "desc": "Guias, novedades y FAQ sobre todas las funciones del sistema.",
+      "button": "Ir al Centro de Ayuda"
     }
   },
   "reportsSystem": {
