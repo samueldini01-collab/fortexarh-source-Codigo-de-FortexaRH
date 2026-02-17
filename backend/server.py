@@ -10,6 +10,9 @@ import asyncio
 # Centralized config
 from config import db, client, SUBSCRIPTION_PLANS
 
+# Standardized error handling
+from utils.errors import AppError, app_error_handler
+
 # Import modular routers
 from routes.loans import router as loans_router
 from routes.subscriptions import router as subscriptions_router
