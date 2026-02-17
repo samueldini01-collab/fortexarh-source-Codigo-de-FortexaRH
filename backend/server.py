@@ -72,7 +72,7 @@ allowed_origins = [
     "https://fortexarh.com",
     "https://www.fortexarh.com",
     "https://staff-genius-2.emergent.host",
-    "https://payroll-refactor-lab.preview.emergentagent.com",
+    "https://company-config-debug.preview.emergentagent.com",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]

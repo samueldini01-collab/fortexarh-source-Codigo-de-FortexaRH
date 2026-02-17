@@ -7,7 +7,7 @@ import requests
 import os
 import json
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://payroll-refactor-lab.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://company-config-debug.preview.emergentagent.com').rstrip('/')
 
 class TestPartnerObjectIdSerialization:
     """Test that Partner API endpoints properly exclude _id fields"""
