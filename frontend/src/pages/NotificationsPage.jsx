@@ -424,7 +424,7 @@ export default function NotificationsPage() {
 
               {/* Column headers */}
               <div className="hidden sm:grid sm:grid-cols-[1fr_80px_80px_80px] gap-2 px-4 text-xs font-medium text-slate-500 uppercase">
-                <span>Evento</span>
+                <span>{t("notifications.events.event")}</span>
                 <span className="text-center flex items-center justify-center gap-1"><Monitor className="w-3 h-3" /> In-App</span>
                 <span className="text-center flex items-center justify-center gap-1"><Mail className="w-3 h-3" /> Email</span>
                 <span className="text-center flex items-center justify-center gap-1"><Smartphone className="w-3 h-3" /> Push</span>
