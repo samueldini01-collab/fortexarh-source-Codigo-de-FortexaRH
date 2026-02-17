@@ -433,7 +433,7 @@ export default function NotificationsPage() {
               {Object.entries(eventsByCategory).map(([catKey, events]) => {
                 const CatIcon = CATEGORY_ICONS[catKey] || Bell;
                 const catColor = CATEGORY_COLORS[catKey] || "text-slate-500 bg-slate-500/10";
-                const catLabel = isEN ? categories[catKey]?.label_en : categories[catKey]?.label;
+                const catLabel = categories[catKey]?.[labelKey] || categories[catKey]?.label;
 
                 return (
                   <Card key={catKey} data-testid={`category-${catKey}`}>
@@ -469,7 +469,7 @@ export default function NotificationsPage() {
                           data-testid={`event-${evt.key}`}
                         >
                           <span className="text-sm text-slate-700 dark:text-slate-300">
-                            {isEN ? evt.label_en : evt.label}
+                            {evt[labelKey] || evt.label}
                           </span>
                           <div className="flex sm:justify-center">
                             <Switch
