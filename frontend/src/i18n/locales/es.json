@@ -5689,5 +5689,241 @@
     "privacidad": "Privacidad",
     "soporte": "Soporte",
     "inicio": "Inicio"
+  },
+  "helpCenter": {
+    "title": "Centro de Ayuda",
+    "subtitle": "Guias, novedades y respuestas a tus preguntas frecuentes",
+    "searchPlaceholder": "Buscar en guias, novedades y FAQ...",
+    "noResults": "No se encontraron resultados para tu busqueda",
+    "tabs": {
+      "guides": "Guias",
+      "updates": "Novedades",
+      "faq": "FAQ"
+    },
+    "badge": {
+      "feature": "Nueva funcion",
+      "improvement": "Mejora",
+      "fix": "Correccion"
+    },
+    "modules": {
+      "payroll": {
+        "title": "Nomina",
+        "desc": "Periodos, recibos, aprobaciones y reportes"
+      },
+      "vacations": {
+        "title": "Vacaciones y Permisos",
+        "desc": "Solicitudes, aprobaciones y politicas"
+      },
+      "employees": {
+        "title": "Empleados",
+        "desc": "Gestion, portal y organigrama"
+      },
+      "notifications": {
+        "title": "Notificaciones",
+        "desc": "Configuracion, push, centro y digest"
+      },
+      "attendance": {
+        "title": "Asistencia",
+        "desc": "Entrada/salida, geolocalizacion y reportes"
+      },
+      "evaluations": {
+        "title": "Evaluaciones",
+        "desc": "Desempeno, plantillas y programacion"
+      },
+      "partner": {
+        "title": "Portal de Partner",
+        "desc": "Clientes, comisiones y retiros"
+      },
+      "settings": {
+        "title": "Configuracion",
+        "desc": "Empresa, seguridad, idioma e integraciones"
+      }
+    },
+    "articles": {
+      "payroll-create": {
+        "title": "Crear un periodo de nomina",
+        "body": "Ve a Nomina > Nuevo Periodo. Selecciona el mes, ano y tipo (quincenal/mensual). El sistema calculara automaticamente salarios, deducciones TSS, ISR y AFP para todos los empleados activos."
+      },
+      "payroll-approve": {
+        "title": "Flujo de aprobacion de nomina",
+        "body": "Una vez creado el periodo, debe ser enviado a aprobacion. Un usuario con rol de aprobador puede aprobar o rechazar la nomina. Al aprobar, los recibos quedan listos para pago. Al rechazar, vuelve a borrador con comentarios."
+      },
+      "payroll-pay": {
+        "title": "Procesar pago de nomina",
+        "body": "Despues de aprobada, presiona 'Marcar como Pagada'. Cada empleado recibira una notificacion push en su portal con el recibo disponible. Los recibos se generan automaticamente en PDF."
+      },
+      "payroll-export": {
+        "title": "Exportar reportes de cumplimiento",
+        "body": "Genera reportes de TSS, DGII e ISR desde la seccion de Reportes. Puedes exportar en formato Excel o PDF para presentar ante las autoridades dominicanas."
+      },
+      "vacation-request": {
+        "title": "Solicitar vacaciones",
+        "body": "Los empleados pueden solicitar vacaciones desde su portal o un administrador puede crearlas. Selecciona el tipo de permiso, las fechas y agrega un motivo opcional."
+      },
+      "vacation-approve": {
+        "title": "Aprobar o rechazar solicitudes",
+        "body": "Las solicitudes pendientes aparecen en el dashboard. Al aprobar o rechazar, el empleado recibe una notificacion push instantanea en su navegador y una notificacion in-app en su portal."
+      },
+      "vacation-policy": {
+        "title": "Configurar politica de vacaciones",
+        "body": "Define los dias disponibles por ano de servicio, politica de acumulacion, tope maximo de dias y reglas especiales segun la legislacion dominicana."
+      },
+      "leave-types": {
+        "title": "Tipos de permisos y licencias",
+        "body": "El sistema soporta: Vacaciones, Licencia por Maternidad/Paternidad, Licencia Medica, Permiso Personal, Duelo, y permisos personalizados."
+      },
+      "employee-add": {
+        "title": "Agregar un nuevo empleado",
+        "body": "Ve a Empleados > Nuevo. Completa datos personales, cedula, posicion, departamento, salario y fecha de ingreso. El empleado recibira acceso automatico al portal de autoservicio."
+      },
+      "employee-portal": {
+        "title": "Portal de Autoservicio del Empleado",
+        "body": "Los empleados acceden con su cedula y contrasena. Pueden ver recibos de nomina, solicitar vacaciones, registrar asistencia, ver evaluaciones y gestionar sus notificaciones."
+      },
+      "org-chart": {
+        "title": "Organigrama de la empresa",
+        "body": "Visualiza la estructura organizacional de tu empresa. Arrastra y suelta empleados para reorganizar departamentos y lineas de reporte."
+      },
+      "employee-docs": {
+        "title": "Documentos y contratos",
+        "body": "Genera contratos laborales, cartas de trabajo y otros documentos desde la ficha del empleado. Soporta firma electronica para validacion."
+      },
+      "notif-config": {
+        "title": "Configurar preferencias de notificaciones",
+        "body": "Ve a Configuracion > Notificaciones. Activa o desactiva canales (In-App, Email, Push) para cada uno de los 20 tipos de evento. Personaliza que alertas recibes y como las recibes."
+      },
+      "notif-push": {
+        "title": "Activar notificaciones Push",
+        "body": "Las notificaciones push te avisan incluso cuando no tienes la app abierta. Activa el switch de 'Push Notifications' y acepta el permiso del navegador. Funciona en Chrome, Edge y Firefox."
+      },
+      "notif-center": {
+        "title": "Centro de Notificaciones del Empleado",
+        "body": "Los empleados tienen un tab dedicado 'Notificaciones' en su portal con busqueda, filtro por categoria, marcar como leidas y exportar historial a CSV."
+      },
+      "notif-quiet": {
+        "title": "Horas de silencio y Digest",
+        "body": "Configura horas de silencio para no recibir push/email durante la noche o fines de semana. Activa el Digest para recibir un resumen diario o semanal en vez de emails individuales."
+      },
+      "attendance-checkin": {
+        "title": "Registrar entrada y salida",
+        "body": "Los empleados registran su entrada y salida desde el portal. El sistema calcula automaticamente horas trabajadas, horas extra y tardanzas."
+      },
+      "attendance-geo": {
+        "title": "Asistencia con geolocalizacion",
+        "body": "Configura zonas permitidas para registro de asistencia. El sistema valida que el empleado este en la ubicacion autorizada al registrar entrada/salida."
+      },
+      "attendance-report": {
+        "title": "Reportes de asistencia",
+        "body": "Genera reportes de asistencia por empleado, departamento o periodo. Incluye horas trabajadas, tardanzas, ausencias y horas extra."
+      },
+      "eval-create": {
+        "title": "Crear evaluaciones de desempeno",
+        "body": "Programa evaluaciones para empleados individuales o grupos. Define criterios, escalas de calificacion y objetivos medibles."
+      },
+      "eval-templates": {
+        "title": "Plantillas de evaluacion",
+        "body": "Crea plantillas reutilizables con criterios predefinidos. Ahorra tiempo al evaluar multiples empleados con los mismos parametros."
+      },
+      "partner-dashboard": {
+        "title": "Dashboard del Partner Contable",
+        "body": "Visualiza KPIs de tus clientes referidos: ingresos recurrentes, comisiones pendientes, retiros procesados y metricas de crecimiento."
+      },
+      "partner-clients": {
+        "title": "Gestionar clientes referidos",
+        "body": "Agrega nuevos clientes desde tu panel. Cada cliente que se registra a traves de tu enlace genera comisiones automaticas sobre su suscripcion."
+      },
+      "partner-payouts": {
+        "title": "Solicitar retiros de comisiones",
+        "body": "Solicita retiros via PayPal o Stripe cuando tu balance alcance el minimo. Los pagos se procesan en 24-48 horas habiles."
+      },
+      "settings-company": {
+        "title": "Configurar datos de la empresa",
+        "body": "Personaliza nombre, logo, colores de marca, direccion y datos fiscales (RNC). Estos datos aparecen en documentos generados y el portal."
+      },
+      "settings-2fa": {
+        "title": "Activar autenticacion de dos factores",
+        "body": "Agrega una capa extra de seguridad. Escanea el codigo QR con Google Authenticator o Authy. Guarda tus codigos de recuperacion en un lugar seguro."
+      },
+      "settings-language": {
+        "title": "Cambiar idioma del sistema",
+        "body": "FortexaRH esta disponible en Espanol, Ingles y Frances. Cambia el idioma desde el selector de idioma (icono de globo) en la barra superior."
+      },
+      "settings-integrations": {
+        "title": "Integraciones disponibles",
+        "body": "Conecta con Stripe y PayPal para pagos, QuickBooks para contabilidad, y habilita Google Auth para inicio de sesion social. Las integraciones enterprise (SAP, Oracle) estan disponibles en el plan Enterprise."
+      }
+    },
+    "updates": {
+      "update-push-auto": {
+        "title": "Push automatico en Nomina y Vacaciones",
+        "body": "Ahora los empleados reciben notificaciones push automaticas cuando se procesa su nomina o se aprueba/rechaza una solicitud de vacaciones. No requiere configuracion adicional."
+      },
+      "update-notif-center": {
+        "title": "Centro de Notificaciones para Empleados",
+        "body": "Nuevo tab 'Notificaciones' en el portal de empleados con busqueda por texto, filtro por categoria, marcar todas como leidas y exportar historial completo a CSV."
+      },
+      "update-i18n-notif": {
+        "title": "Notificaciones en tu idioma",
+        "body": "Todas las notificaciones, eventos y categorias ahora se muestran en el idioma configurado del usuario (Espanol, Ingles o Frances). Incluye la campana, el centro y la pagina de configuracion."
+      },
+      "update-error-std": {
+        "title": "Respuestas de error mejoradas en la API",
+        "body": "Las respuestas de error de la API ahora siguen un formato estandarizado con tipo de error, detalle, codigo de estado y ruta. Esto mejora la experiencia al depurar problemas."
+      },
+      "update-push-pwa": {
+        "title": "Notificaciones Push y Campana en Portal de Empleados",
+        "body": "Los empleados ahora pueden activar push notifications desde su portal para recibir alertas en tiempo real. La campana de notificaciones muestra un panel con toggle de push y banner de activacion."
+      },
+      "update-notif-phase1": {
+        "title": "Sistema de Notificaciones Configurables",
+        "body": "20 tipos de evento configurables por canal (In-App, Email, Push). Horas de silencio con soporte de zona horaria. Sistema de digest para resumenes diarios o semanales."
+      },
+      "update-tech-debt": {
+        "title": "Mejoras de estabilidad y rendimiento",
+        "body": "Correccion de errores de serializacion, mejora de testabilidad con data-testid en componentes interactivos, internacionalizacion del portal de partner y refactorizacion de componentes grandes."
+      }
+    },
+    "faq": {
+      "faq-reset-password": {
+        "q": "Como recupero mi contrasena?",
+        "a": "En la pantalla de login, presiona 'Olvidaste tu contrasena?'. Ingresa tu email y recibiras un enlace para crear una nueva contrasena. Si tienes 2FA activado, tambien necesitaras tu codigo de verificacion."
+      },
+      "faq-portal-access": {
+        "q": "Como accede un empleado a su portal?",
+        "a": "Los empleados acceden desde /employee-portal usando su numero de cedula como usuario. La primera vez, la contrasena es su mismo numero de cedula. Se recomienda cambiarla inmediatamente."
+      },
+      "faq-push-enable": {
+        "q": "Como activo las notificaciones push?",
+        "a": "Ve a Configuracion > Notificaciones y activa el switch de Push Notifications. Tu navegador te pedira permiso para enviar notificaciones. En el portal de empleados, la campana de notificaciones tiene un toggle de push integrado."
+      },
+      "faq-export-data": {
+        "q": "Como exporto datos del sistema?",
+        "a": "Cada modulo tiene opciones de exportacion. Nomina: exporta reportes TSS/DGII en Excel. Empleados: exporta lista en CSV. Notificaciones: usa el boton 'Exportar CSV' en el Centro de Notificaciones."
+      },
+      "faq-language-change": {
+        "q": "Como cambio el idioma del sistema?",
+        "a": "Haz clic en el icono de globo en la barra superior y selecciona Espanol, Ingles o Frances. El cambio es inmediato y se aplica a todo el sistema, incluyendo notificaciones."
+      },
+      "faq-vacation-balance": {
+        "q": "Como veo mis dias de vacaciones disponibles?",
+        "a": "En el portal de empleados, la tarjeta 'Vacaciones Disponibles' muestra tu balance actual. Tambien puedes ver el desglose completo en el tab de Vacaciones: dias acumulados, usados y disponibles."
+      },
+      "faq-payslip-view": {
+        "q": "Donde veo mis recibos de nomina?",
+        "a": "En el portal de empleados, ve al tab 'Recibos de Nomina'. Alli encontraras todos tus recibos ordenados por fecha. Puedes ver el detalle y descargar en PDF."
+      },
+      "faq-2fa-setup": {
+        "q": "Como configuro la autenticacion de dos factores?",
+        "a": "Ve a Configuracion > Seguridad > Activar 2FA. Escanea el codigo QR con una app como Google Authenticator o Authy. Guarda los codigos de recuperacion que se generan, ya que son tu unica forma de acceder si pierdes tu dispositivo."
+      },
+      "faq-partner-join": {
+        "q": "Como me convierto en Partner de FortexaRH?",
+        "a": "Contactanos a traves del formulario en /soporte seleccionando la categoria 'Plan Enterprise' o escribenos a info@fortexarh.com. Te enviaremos los detalles del programa de partners y comisiones."
+      },
+      "faq-quiet-hours": {
+        "q": "Que son las Horas de Silencio?",
+        "a": "Las Horas de Silencio te permiten pausar las notificaciones push y email durante horarios especificos (ej: 10pm a 7am). Las notificaciones in-app siguen acumulandose para que las veas cuando quieras. Puedes configurarlas en Notificaciones > Horarios."
+      }
+    }
   }
 }

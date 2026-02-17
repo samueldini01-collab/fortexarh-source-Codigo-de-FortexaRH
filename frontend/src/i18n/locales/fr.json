@@ -5654,5 +5654,241 @@
     "privacidad": "Privacidad",
     "soporte": "Soporte",
     "inicio": "Inicio"
+  },
+  "helpCenter": {
+    "title": "Centre d'aide",
+    "subtitle": "Guides, nouveautes et reponses a vos questions frequentes",
+    "searchPlaceholder": "Rechercher dans les guides, nouveautes et FAQ...",
+    "noResults": "Aucun resultat trouve pour votre recherche",
+    "tabs": {
+      "guides": "Guides",
+      "updates": "Nouveautes",
+      "faq": "FAQ"
+    },
+    "badge": {
+      "feature": "Nouvelle fonction",
+      "improvement": "Amelioration",
+      "fix": "Correction"
+    },
+    "modules": {
+      "payroll": {
+        "title": "Paie",
+        "desc": "Periodes, bulletins, approbations et rapports"
+      },
+      "vacations": {
+        "title": "Vacances et Conges",
+        "desc": "Demandes, approbations et politiques"
+      },
+      "employees": {
+        "title": "Employes",
+        "desc": "Gestion, portail et organigramme"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "desc": "Configuration, push, centre et digest"
+      },
+      "attendance": {
+        "title": "Presence",
+        "desc": "Pointage, geolocalisation et rapports"
+      },
+      "evaluations": {
+        "title": "Evaluations",
+        "desc": "Performance, modeles et planification"
+      },
+      "partner": {
+        "title": "Portail Partenaire",
+        "desc": "Clients, commissions et retraits"
+      },
+      "settings": {
+        "title": "Configuration",
+        "desc": "Entreprise, securite, langue et integrations"
+      }
+    },
+    "articles": {
+      "payroll-create": {
+        "title": "Creer une periode de paie",
+        "body": "Allez dans Paie > Nouvelle periode. Selectionnez le mois, l'annee et le type. Le systeme calculera automatiquement les salaires et deductions."
+      },
+      "payroll-approve": {
+        "title": "Flux d'approbation de la paie",
+        "body": "Une fois creee, la periode doit etre soumise pour approbation. Un approbateur peut approuver ou rejeter."
+      },
+      "payroll-pay": {
+        "title": "Traiter le paiement",
+        "body": "Apres approbation, cliquez sur 'Marquer comme payee'. Chaque employe recoit une notification push."
+      },
+      "payroll-export": {
+        "title": "Exporter les rapports",
+        "body": "Generez des rapports TSS, DGII et ISR depuis la section Rapports."
+      },
+      "vacation-request": {
+        "title": "Demander des vacances",
+        "body": "Les employes peuvent demander des vacances depuis leur portail."
+      },
+      "vacation-approve": {
+        "title": "Approuver ou rejeter",
+        "body": "Les demandes en attente apparaissent dans le tableau de bord. L'employe recoit une notification push."
+      },
+      "vacation-policy": {
+        "title": "Configurer la politique",
+        "body": "Definissez les jours disponibles par annee de service."
+      },
+      "leave-types": {
+        "title": "Types de conges",
+        "body": "Vacances, Maternite/Paternite, Maladie, Personnel, Deuil et types personnalises."
+      },
+      "employee-add": {
+        "title": "Ajouter un employe",
+        "body": "Allez dans Employes > Nouveau. Remplissez les donnees personnelles."
+      },
+      "employee-portal": {
+        "title": "Portail libre-service",
+        "body": "Les employes se connectent avec leur numero d'identite."
+      },
+      "org-chart": {
+        "title": "Organigramme",
+        "body": "Visualisez la structure organisationnelle de votre entreprise."
+      },
+      "employee-docs": {
+        "title": "Documents et contrats",
+        "body": "Generez des contrats et lettres depuis le profil de l'employe."
+      },
+      "notif-config": {
+        "title": "Configurer les preferences",
+        "body": "Activez ou desactivez les canaux pour chaque type d'evenement."
+      },
+      "notif-push": {
+        "title": "Activer les notifications Push",
+        "body": "Les notifications push vous alertent meme quand l'application n'est pas ouverte."
+      },
+      "notif-center": {
+        "title": "Centre de notifications",
+        "body": "Onglet dedie avec recherche, filtre par categorie et export CSV."
+      },
+      "notif-quiet": {
+        "title": "Heures de silence et Digest",
+        "body": "Configurez des heures de silence et activez le digest pour des resumes."
+      },
+      "attendance-checkin": {
+        "title": "Enregistrer entree et sortie",
+        "body": "Les employes enregistrent depuis le portail."
+      },
+      "attendance-geo": {
+        "title": "Presence par geolocalisation",
+        "body": "Configurez les zones autorisees pour le pointage."
+      },
+      "attendance-report": {
+        "title": "Rapports de presence",
+        "body": "Generez des rapports par employe, departement ou periode."
+      },
+      "eval-create": {
+        "title": "Creer des evaluations",
+        "body": "Planifiez des evaluations individuelles ou de groupe."
+      },
+      "eval-templates": {
+        "title": "Modeles d'evaluation",
+        "body": "Creez des modeles reutilisables avec des criteres predefinis."
+      },
+      "partner-dashboard": {
+        "title": "Tableau de bord Partenaire",
+        "body": "Visualisez les KPIs de vos clients referes."
+      },
+      "partner-clients": {
+        "title": "Gerer les clients referes",
+        "body": "Ajoutez de nouveaux clients depuis votre panneau."
+      },
+      "partner-payouts": {
+        "title": "Demander des retraits",
+        "body": "Demandez des retraits via PayPal ou Stripe."
+      },
+      "settings-company": {
+        "title": "Configurer l'entreprise",
+        "body": "Personnalisez nom, logo, couleurs et donnees fiscales."
+      },
+      "settings-2fa": {
+        "title": "Activer l'authentification 2FA",
+        "body": "Ajoutez une couche de securite supplementaire."
+      },
+      "settings-language": {
+        "title": "Changer la langue",
+        "body": "FortexaRH est disponible en espagnol, anglais et francais."
+      },
+      "settings-integrations": {
+        "title": "Integrations disponibles",
+        "body": "Connectez Stripe, PayPal, QuickBooks et Google Auth."
+      }
+    },
+    "updates": {
+      "update-push-auto": {
+        "title": "Push automatique Paie et Vacances",
+        "body": "Les employes recoivent des notifications push automatiques lors du traitement de la paie ou de l'approbation des vacances."
+      },
+      "update-notif-center": {
+        "title": "Centre de notifications pour employes",
+        "body": "Nouvel onglet avec recherche, filtre par categorie et export CSV."
+      },
+      "update-i18n-notif": {
+        "title": "Notifications dans votre langue",
+        "body": "Toutes les notifications s'affichent dans la langue configuree."
+      },
+      "update-error-std": {
+        "title": "Reponses d'erreur ameliorees",
+        "body": "Format standardise avec type d'erreur, detail et code de statut."
+      },
+      "update-push-pwa": {
+        "title": "Push et cloche dans le portail employe",
+        "body": "Les employes peuvent activer les notifications push depuis leur portail."
+      },
+      "update-notif-phase1": {
+        "title": "Systeme de notifications configurables",
+        "body": "20 types d'evenements configurables par canal avec heures de silence."
+      },
+      "update-tech-debt": {
+        "title": "Ameliorations de stabilite",
+        "body": "Correction d'erreurs, amelioration de la testabilite et internationalisation."
+      }
+    },
+    "faq": {
+      "faq-reset-password": {
+        "q": "Comment reinitialiser mon mot de passe?",
+        "a": "Sur l'ecran de connexion, cliquez 'Mot de passe oublie?'. Entrez votre email pour recevoir un lien de reinitialisation."
+      },
+      "faq-portal-access": {
+        "q": "Comment un employe accede a son portail?",
+        "a": "Les employes accedent depuis /employee-portal avec leur numero d'identite."
+      },
+      "faq-push-enable": {
+        "q": "Comment activer les notifications push?",
+        "a": "Allez dans Configuration > Notifications et activez le switch Push Notifications."
+      },
+      "faq-export-data": {
+        "q": "Comment exporter des donnees?",
+        "a": "Chaque module a des options d'export. Utilisez le bouton 'Exporter CSV'."
+      },
+      "faq-language-change": {
+        "q": "Comment changer la langue?",
+        "a": "Cliquez sur l'icone globe dans la barre superieure et selectionnez votre langue."
+      },
+      "faq-vacation-balance": {
+        "q": "Comment voir mes jours de vacances?",
+        "a": "Dans le portail employe, la carte 'Vacances disponibles' montre votre solde."
+      },
+      "faq-payslip-view": {
+        "q": "Ou voir mes bulletins de paie?",
+        "a": "Dans le portail employe, onglet 'Bulletins de paie'."
+      },
+      "faq-2fa-setup": {
+        "q": "Comment configurer le 2FA?",
+        "a": "Allez dans Configuration > Securite > Activer 2FA. Scannez le code QR."
+      },
+      "faq-partner-join": {
+        "q": "Comment devenir partenaire?",
+        "a": "Contactez-nous via le formulaire de support ou par email."
+      },
+      "faq-quiet-hours": {
+        "q": "Que sont les heures de silence?",
+        "a": "Les heures de silence pausent les notifications push et email pendant des horaires specifiques."
+      }
+    }
   }
 }
