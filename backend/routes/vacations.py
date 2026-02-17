@@ -541,7 +541,7 @@ async def approve_leave_request(
 
     # Web push notification
     await send_push_to_user(
-        user_id=f"emp_{request['employee_id']}",
+        user_id=request['employee_id'],
         title="Vacaciones Aprobadas",
         body=f"Tu solicitud de {request['leave_type']} del {request['start_date']} al {request['end_date']} ha sido aprobada.",
         url="/employee-portal",
@@ -611,7 +611,7 @@ async def reject_leave_request(
 
     # Web push notification
     await send_push_to_user(
-        user_id=f"emp_{request['employee_id']}",
+        user_id=request['employee_id'],
         title="Vacaciones Rechazadas",
         body=f"Tu solicitud de {request['leave_type']} del {request['start_date']} al {request['end_date']} ha sido rechazada.{reason_text}",
         url="/employee-portal",

@@ -1088,7 +1088,7 @@ async def pay_period(period_id: str, data: PaymentRequest = None, current_user: 
         )
         # Web push notification
         await send_push_to_user(
-            user_id=f"emp_{entry['employee_id']}",
+            user_id=entry['employee_id'],
             title="Nomina Procesada",
             body=f"Tu recibo de nomina del periodo {period_name} esta disponible.",
             url="/employee-portal",
