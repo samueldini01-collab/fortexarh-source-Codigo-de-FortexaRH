@@ -954,6 +954,17 @@ async def reject_period(period_id: str, data: ApprovalRequest, current_user: dic
         {"period_id": period_id, "company_id": company_id},
         {"$set": {"status": "draft"}}
     )
+
+    # Push notification to the user who created the period
+    created_by = period.get("created_by")
+    if created_by:
+        period_name = period.get("name", period.get("period_name", period_id))
+        await send_push_to_user(
+            user_id=created_by,
+            title="Nomina Rechazada",
+            body=f"El periodo de nomina '{period_name}' fue rechazado. Motivo: {data.comments}",
+            url="/payroll",
+        )
     
     return {"message": "Nómina rechazada y devuelta a borrador", "status": "draft", "reason": data.comments}
 
