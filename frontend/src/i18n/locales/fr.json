@@ -2265,7 +2265,101 @@
     "notificarConAnticipacionDe": "Notificar con anticipación de",
     "elMismoDia": "El mismo día",
     "noHayCumpleanosProximos": "No hay cumpleaños próximos en los siguientes 30 días",
-    "noHayNotificacionesEnviadas": "No hay notificaciones enviadas aún"
+    "noHayNotificacionesEnviadas": "No hay notificaciones enviadas aún",
+    "tabs": {
+      "preferences": "Preferences",
+      "schedule": "Horaires",
+      "reminders": "Rappels",
+      "history": "Historique"
+    },
+    "push": {
+      "title": "Notifications Push",
+      "desc": "Recevez des notifications directement dans votre navigateur, meme lorsque l'application n'est pas ouverte.",
+      "enabled": "Active",
+      "disabled": "Desactive",
+      "notSupported": "Votre navigateur ne supporte pas les notifications push.",
+      "activated": "Notifications push activees",
+      "deactivated": "Notifications push desactivees",
+      "permissionDenied": "Permission de notification refusee",
+      "vapidError": "Cle VAPID non configuree sur le serveur",
+      "toggleError": "Erreur lors du changement des notifications push",
+      "enable": "Activer",
+      "pushNotifications": "Notifications push"
+    },
+    "events": {
+      "configureByEvent": "Configurer par evenement",
+      "saveChanges": "Enregistrer",
+      "event": "Evenement",
+      "toggleAll": "Tous"
+    },
+    "quietHours": {
+      "title": "Heures de silence",
+      "desc": "Pendant ces heures, vous ne recevrez pas de notifications push ou email. Les notifications in-app continueront de s'accumuler.",
+      "enable": "Activer les heures de silence",
+      "startTime": "Heure de debut (Ne pas deranger)",
+      "endTime": "Heure de fin",
+      "timezone": "Fuseau horaire",
+      "silenceWeekends": "Silence les weekends"
+    },
+    "digest": {
+      "title": "Resume par email (Digest)",
+      "desc": "Recevez un resume de toutes les notifications accumulees au lieu d'emails individuels.",
+      "enable": "Activer le Digest",
+      "frequency": "Frequence",
+      "daily": "Quotidien",
+      "weekly": "Hebdomadaire",
+      "dayOfWeek": "Jour de la semaine",
+      "sendTime": "Heure d'envoi",
+      "saveConfig": "Enregistrer la configuration"
+    },
+    "days": {
+      "monday": "Lundi",
+      "tuesday": "Mardi",
+      "wednesday": "Mercredi",
+      "thursday": "Jeudi",
+      "friday": "Vendredi",
+      "saturday": "Samedi",
+      "sunday": "Dimanche"
+    },
+    "reminders": {
+      "payrollReminders": "Rappels de paie",
+      "payrollRemindersDesc": "Recevez des notifications avant la date de paie",
+      "payDay": "Jour de paie",
+      "dayOfMonth": "Jour {{day}} de chaque mois",
+      "advance": "Preavis",
+      "daysBefore": "{{count}} jour avant",
+      "daysBefore_plural": "{{count}} jours avant",
+      "sendReminder": "Envoyer le rappel maintenant",
+      "birthdayReminders": "Anniversaires des employes",
+      "birthdayRemindersDesc": "Recevez des alertes pour les anniversaires a venir",
+      "sendBirthdayNotifs": "Notifier les anniversaires du jour",
+      "errorSendingReminder": "Erreur lors de l'envoi du rappel",
+      "errorSendingNotifs": "Erreur lors de l'envoi des notifications"
+    },
+    "bell": {
+      "title": "Notifications",
+      "markAll": "Tout marquer",
+      "viewAll": "Voir toutes les notifications",
+      "allMarked": "Toutes les notifications marquees comme lues",
+      "noNotifications": "Vous n'avez pas de notifications"
+    },
+    "time": {
+      "now": "Maintenant",
+      "minutesAgo": "{{count}}m",
+      "hoursAgo": "{{count}}h",
+      "daysAgo": "{{count}}j"
+    },
+    "center": {
+      "title": "Centre de notifications",
+      "search": "Rechercher des notifications...",
+      "allCategories": "Toutes",
+      "export": "Exporter",
+      "exportCSV": "Exporter CSV",
+      "noResults": "Aucune notification trouvee",
+      "noResultsDesc": "Essayez d'autres filtres ou termes de recherche",
+      "showing": "Affichage de {{count}} sur {{total}}",
+      "loadMore": "Charger plus"
+    }
   },
   "settings": {
     "title": "Paramètres",
@@ -3216,7 +3310,8 @@
       "evaluations": "Évaluations",
       "loans": "Prêts",
       "profile": "Mes Données",
-      "requests": "Mes Demandes"
+      "requests": "Mes Demandes",
+      "notifications": "Notifications"
     },
     "swipe": {
       "hint": "Glissez pour naviguer"
@@ -3363,6 +3458,19 @@
         "announcement": "Annonce",
         "document": "Document",
         "general": "Général"
+      },
+      "center": {
+        "title": "Centre de notifications",
+        "search": "Rechercher des notifications...",
+        "allCategories": "Toutes",
+        "export": "Exporter CSV",
+        "noResults": "Aucune notification trouvee",
+        "noResultsDesc": "Essayez d'autres filtres ou termes de recherche",
+        "showing": "Affichage",
+        "of": "sur",
+        "loadMore": "Charger plus",
+        "markAllRead": "Tout marquer comme lu",
+        "pushEnable": "Activez le push pour recevoir des alertes en temps reel"
       }
     },
     "announcements": {

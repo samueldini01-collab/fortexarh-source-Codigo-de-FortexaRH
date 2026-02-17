@@ -2276,7 +2276,101 @@
     "notificarConAnticipacionDe": "Notificar con anticipación de",
     "elMismoDia": "El mismo día",
     "noHayCumpleanosProximos": "No hay cumpleaños próximos en los siguientes 30 días",
-    "noHayNotificacionesEnviadas": "No hay notificaciones enviadas aún"
+    "noHayNotificacionesEnviadas": "No hay notificaciones enviadas aún",
+    "tabs": {
+      "preferences": "Preferences",
+      "schedule": "Schedule",
+      "reminders": "Reminders",
+      "history": "History"
+    },
+    "push": {
+      "title": "Push Notifications",
+      "desc": "Receive notifications directly in your browser, even when the app is not open.",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "notSupported": "Your browser does not support push notifications.",
+      "activated": "Push notifications enabled",
+      "deactivated": "Push notifications disabled",
+      "permissionDenied": "Notification permission denied",
+      "vapidError": "VAPID key not configured on server",
+      "toggleError": "Error toggling push notifications",
+      "enable": "Enable",
+      "pushNotifications": "Push notifications"
+    },
+    "events": {
+      "configureByEvent": "Configure by Event",
+      "saveChanges": "Save Changes",
+      "event": "Event",
+      "toggleAll": "All"
+    },
+    "quietHours": {
+      "title": "Quiet Hours",
+      "desc": "During these hours you won't receive push or email notifications. In-app notifications will continue to accumulate.",
+      "enable": "Enable Quiet Hours",
+      "startTime": "Start time (Do Not Disturb)",
+      "endTime": "End time",
+      "timezone": "Timezone",
+      "silenceWeekends": "Silence Weekends"
+    },
+    "digest": {
+      "title": "Email Summary (Digest)",
+      "desc": "Receive a summary of all accumulated notifications instead of individual emails.",
+      "enable": "Enable Digest",
+      "frequency": "Frequency",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "dayOfWeek": "Day of the week",
+      "sendTime": "Send time",
+      "saveConfig": "Save Configuration"
+    },
+    "days": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    },
+    "reminders": {
+      "payrollReminders": "Payroll Reminders",
+      "payrollRemindersDesc": "Receive notifications before the pay date",
+      "payDay": "Pay day",
+      "dayOfMonth": "Day {{day}} of each month",
+      "advance": "Advance notice",
+      "daysBefore": "{{count}} day before",
+      "daysBefore_plural": "{{count}} days before",
+      "sendReminder": "Send reminder now",
+      "birthdayReminders": "Employee Birthdays",
+      "birthdayRemindersDesc": "Receive alerts for upcoming birthdays",
+      "sendBirthdayNotifs": "Notify today's birthdays",
+      "errorSendingReminder": "Error sending reminder",
+      "errorSendingNotifs": "Error sending notifications"
+    },
+    "bell": {
+      "title": "Notifications",
+      "markAll": "Mark all",
+      "viewAll": "View all notifications",
+      "allMarked": "All notifications marked as read",
+      "noNotifications": "You have no notifications"
+    },
+    "time": {
+      "now": "Now",
+      "minutesAgo": "{{count}}m",
+      "hoursAgo": "{{count}}h",
+      "daysAgo": "{{count}}d"
+    },
+    "center": {
+      "title": "Notification Center",
+      "search": "Search notifications...",
+      "allCategories": "All",
+      "export": "Export",
+      "exportCSV": "Export CSV",
+      "noResults": "No notifications found",
+      "noResultsDesc": "Try different filters or search terms",
+      "showing": "Showing {{count}} of {{total}}",
+      "loadMore": "Load more"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -3227,7 +3321,8 @@
       "evaluations": "Evaluations",
       "loans": "Loans",
       "profile": "My Data",
-      "requests": "My Requests"
+      "requests": "My Requests",
+      "notifications": "Notifications"
     },
     "swipe": {
       "hint": "Swipe to navigate"
@@ -3374,6 +3469,19 @@
         "announcement": "Announcement",
         "document": "Document",
         "general": "General"
+      },
+      "center": {
+        "title": "Notification Center",
+        "search": "Search notifications...",
+        "allCategories": "All",
+        "export": "Export CSV",
+        "noResults": "No notifications found",
+        "noResultsDesc": "Try different filters or search terms",
+        "showing": "Showing",
+        "of": "of",
+        "loadMore": "Load more",
+        "markAllRead": "Mark all as read",
+        "pushEnable": "Enable push to receive real-time alerts"
       }
     },
     "announcements": {

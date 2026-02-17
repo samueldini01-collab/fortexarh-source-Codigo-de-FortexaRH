@@ -2278,7 +2278,101 @@
     "notificarConAnticipacionDe": "Notificar con anticipación de",
     "elMismoDia": "El mismo día",
     "noHayCumpleanosProximos": "No hay cumpleaños próximos en los siguientes 30 días",
-    "noHayNotificacionesEnviadas": "No hay notificaciones enviadas aún"
+    "noHayNotificacionesEnviadas": "No hay notificaciones enviadas aún",
+    "tabs": {
+      "preferences": "Preferencias",
+      "schedule": "Horarios",
+      "reminders": "Recordatorios",
+      "history": "Historial"
+    },
+    "push": {
+      "title": "Push Notifications",
+      "desc": "Recibe notificaciones directamente en tu navegador, incluso cuando no tienes la app abierta.",
+      "enabled": "Activado",
+      "disabled": "Desactivado",
+      "notSupported": "Tu navegador no soporta push notifications.",
+      "activated": "Push notifications activadas",
+      "deactivated": "Push notifications desactivadas",
+      "permissionDenied": "Permiso de notificaciones denegado",
+      "vapidError": "VAPID key no configurada en el servidor",
+      "toggleError": "Error al cambiar push notifications",
+      "enable": "Activar",
+      "pushNotifications": "Push notifications"
+    },
+    "events": {
+      "configureByEvent": "Configurar por Evento",
+      "saveChanges": "Guardar Cambios",
+      "event": "Evento",
+      "toggleAll": "Todos"
+    },
+    "quietHours": {
+      "title": "Horas de Silencio",
+      "desc": "Durante estas horas no recibiras notificaciones push ni email. Las notificaciones in-app se seguiran acumulando.",
+      "enable": "Activar Horas de Silencio",
+      "startTime": "Hora de inicio (No Molestar)",
+      "endTime": "Hora de fin",
+      "timezone": "Zona Horaria",
+      "silenceWeekends": "Silenciar Fines de Semana"
+    },
+    "digest": {
+      "title": "Resumen por Email (Digest)",
+      "desc": "Recibe un resumen con todas las notificaciones acumuladas en lugar de emails individuales.",
+      "enable": "Activar Digest",
+      "frequency": "Frecuencia",
+      "daily": "Diario",
+      "weekly": "Semanal",
+      "dayOfWeek": "Dia de la semana",
+      "sendTime": "Hora de envio",
+      "saveConfig": "Guardar Configuracion"
+    },
+    "days": {
+      "monday": "Lunes",
+      "tuesday": "Martes",
+      "wednesday": "Miercoles",
+      "thursday": "Jueves",
+      "friday": "Viernes",
+      "saturday": "Sabado",
+      "sunday": "Domingo"
+    },
+    "reminders": {
+      "payrollReminders": "Recordatorios de Nomina",
+      "payrollRemindersDesc": "Recibe notificaciones antes de la fecha de pago",
+      "payDay": "Dia de pago",
+      "dayOfMonth": "Dia {{day}} de cada mes",
+      "advance": "Anticipacion",
+      "daysBefore": "{{count}} dia antes",
+      "daysBefore_plural": "{{count}} dias antes",
+      "sendReminder": "Enviar recordatorio ahora",
+      "birthdayReminders": "Cumpleanos de Empleados",
+      "birthdayRemindersDesc": "Recibe alertas de cumpleanos proximos",
+      "sendBirthdayNotifs": "Notificar cumpleanos de hoy",
+      "errorSendingReminder": "Error al enviar recordatorio",
+      "errorSendingNotifs": "Error al enviar notificaciones"
+    },
+    "bell": {
+      "title": "Notificaciones",
+      "markAll": "Marcar todas",
+      "viewAll": "Ver todas las notificaciones",
+      "allMarked": "Todas las notificaciones marcadas como leidas",
+      "noNotifications": "No tienes notificaciones"
+    },
+    "time": {
+      "now": "Ahora",
+      "minutesAgo": "{{count}}m",
+      "hoursAgo": "{{count}}h",
+      "daysAgo": "{{count}}d"
+    },
+    "center": {
+      "title": "Centro de Notificaciones",
+      "search": "Buscar notificaciones...",
+      "allCategories": "Todas",
+      "export": "Exportar",
+      "exportCSV": "Exportar CSV",
+      "noResults": "No se encontraron notificaciones",
+      "noResultsDesc": "Intenta con otros filtros o terminos de busqueda",
+      "showing": "Mostrando {{count}} de {{total}}",
+      "loadMore": "Cargar mas"
+    }
   },
   "settings": {
     "title": "Configuración",
@@ -3229,7 +3323,8 @@
       "evaluations": "Evaluaciones",
       "loans": "Préstamos",
       "profile": "Mis Datos",
-      "requests": "Mis Solicitudes"
+      "requests": "Mis Solicitudes",
+      "notifications": "Notificaciones"
     },
     "swipe": {
       "hint": "Desliza para navegar"
@@ -3376,6 +3471,19 @@
         "announcement": "Anuncio",
         "document": "Documento",
         "general": "General"
+      },
+      "center": {
+        "title": "Centro de Notificaciones",
+        "search": "Buscar notificaciones...",
+        "allCategories": "Todas",
+        "export": "Exportar CSV",
+        "noResults": "No se encontraron notificaciones",
+        "noResultsDesc": "Intenta con otros filtros o terminos de busqueda",
+        "showing": "Mostrando",
+        "of": "de",
+        "loadMore": "Cargar mas",
+        "markAllRead": "Marcar todas como leidas",
+        "pushEnable": "Activa push para recibir alertas en tiempo real"
       }
     },
     "announcements": {
