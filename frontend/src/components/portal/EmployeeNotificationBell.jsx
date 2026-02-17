@@ -137,18 +137,18 @@ export function EmployeeNotificationBell() {
           await sub.unsubscribe();
         }
         setPushSubscribed(false);
-        toast.success("Push notifications desactivadas");
+        toast.success(t("notifications.push.deactivated"));
       } else {
         const permission = await Notification.requestPermission();
         if (permission !== "granted") {
-          toast.error("Permiso de notificaciones denegado");
+          toast.error(t("notifications.push.permissionDenied"));
           setPushToggling(false);
           return;
         }
         const vapidRes = await axios.get(`${API}/employee-portal/push/vapid-key`);
         const vapidKey = vapidRes.data.vapid_public_key;
         if (!vapidKey) {
-          toast.error("VAPID key no configurada");
+          toast.error(t("notifications.push.vapidError"));
           setPushToggling(false);
           return;
         }
@@ -165,11 +165,11 @@ export function EmployeeNotificationBell() {
         );
         setPushSubscribed(true);
         setShowPushBanner(false);
-        toast.success("Push notifications activadas");
+        toast.success(t("notifications.push.activated"));
       }
     } catch (err) {
       console.error("Push toggle error:", err);
-      toast.error("Error al cambiar push notifications");
+      toast.error(t("notifications.push.toggleError"));
     } finally {
       setPushToggling(false);
     }
