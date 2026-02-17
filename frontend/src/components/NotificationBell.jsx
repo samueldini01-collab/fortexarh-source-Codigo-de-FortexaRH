@@ -267,7 +267,7 @@ export default function NotificationBell() {
               navigate('/notifications');
             }}
           >
-            Ver todas las notificaciones
+            {t("notifications.bell.viewAll")}
           </Button>
         </div>
       </DropdownMenuContent>
