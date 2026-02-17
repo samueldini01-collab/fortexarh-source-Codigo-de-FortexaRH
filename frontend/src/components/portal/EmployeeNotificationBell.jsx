@@ -190,12 +190,12 @@ export function EmployeeNotificationBell() {
     const now = new Date();
     const diff = now - d;
     const mins = Math.floor(diff / 60000);
-    if (mins < 1) return "Ahora";
-    if (mins < 60) return `${mins}m`;
+    if (mins < 1) return t("notifications.time.now");
+    if (mins < 60) return t("notifications.time.minutesAgo", { count: mins });
     const hrs = Math.floor(diff / 3600000);
-    if (hrs < 24) return `${hrs}h`;
+    if (hrs < 24) return t("notifications.time.hoursAgo", { count: hrs });
     const days = Math.floor(diff / 86400000);
-    if (days < 7) return `${days}d`;
+    if (days < 7) return t("notifications.time.daysAgo", { count: days });
     return d.toLocaleDateString("es-DO", { day: "numeric", month: "short" });
   };
 
@@ -250,7 +250,7 @@ export function EmployeeNotificationBell() {
               <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100">
                 <div className="flex items-center gap-2 text-xs text-slate-600">
                   <Smartphone className="w-3.5 h-3.5" />
-                  <span>Push notifications</span>
+                  <span>{t("notifications.push.pushNotifications")}</span>
                 </div>
                 <Switch
                   checked={pushSubscribed}
@@ -266,7 +266,7 @@ export function EmployeeNotificationBell() {
           {showPushBanner && !pushSubscribed && (
             <div className="mx-3 mt-2 p-2.5 bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-2">
               <Smartphone className="w-4 h-4 text-blue-600 shrink-0" />
-              <p className="text-xs text-blue-700 flex-1">Activa push para recibir alertas en tiempo real</p>
+              <p className="text-xs text-blue-700 flex-1">{t("employeePortal.notifications.center.pushEnable")}</p>
               <Button
                 size="sm"
                 variant="outline"
@@ -275,7 +275,7 @@ export function EmployeeNotificationBell() {
                 disabled={pushToggling}
                 data-testid="employee-push-enable-btn"
               >
-                {pushToggling ? <Loader2 className="w-3 h-3 animate-spin" /> : "Activar"}
+                {pushToggling ? <Loader2 className="w-3 h-3 animate-spin" /> : t("notifications.push.enable")}
               </Button>
               <button onClick={() => setShowPushBanner(false)} className="text-blue-400 hover:text-blue-600">
                 <X className="w-3 h-3" />
