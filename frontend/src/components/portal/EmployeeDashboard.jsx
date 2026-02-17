@@ -23,6 +23,7 @@ import {
 import { toast } from "sonner";
 import { useEmployeeAuth } from "./EmployeeAuthContext";
 import { EmployeeNotificationBell } from "./EmployeeNotificationBell";
+import { EmployeeNotificationCenter } from "./EmployeeNotificationCenter";
 import LanguageSelector from "@/components/LanguageSelector";
 
 const API = process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND_URL}/api` : '/api';
