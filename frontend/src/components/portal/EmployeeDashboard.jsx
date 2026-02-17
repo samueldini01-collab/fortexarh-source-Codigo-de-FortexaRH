@@ -235,20 +235,6 @@ function EmployeeDashboard() {
     }
   };
 
-  // Notification handlers
-  const fetchNotifications = async () => {
-    setLoadingNotifications(true);
-    try {
-      const response = await axios.get(`${API}/employee-portal/notifications`, { headers: getAuthHeaders() });
-      setNotifications(response.data.notifications || []);
-      setUnreadCount(response.data.unread_count || 0);
-    } catch (error) {
-      console.error("Error fetching notifications");
-    } finally {
-      setLoadingNotifications(false);
-    }
-  };
-
   const handleMarkAsRead = async (notificationId) => {
     try {
       await axios.post(`${API}/employee-portal/notifications/${notificationId}/read`, {}, { headers: getAuthHeaders() });
