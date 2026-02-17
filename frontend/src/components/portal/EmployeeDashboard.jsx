@@ -1147,6 +1147,22 @@ function EmployeeDashboard() {
             </div>
           </TabsContent>
 
+          {/* Notifications Center Tab */}
+          <TabsContent value="notifications">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Bell className="w-5 h-5 text-blue-600" />
+                  {t('employeePortal.notifications.center.title')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <EmployeeNotificationCenter />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+
           {/* Profile Tab */}
           <TabsContent value="profile">
             <Card>
