@@ -12,7 +12,7 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 ## User Personas
 - **Company Admin**: Manages employees, payroll, org chart
 - **Partner (Accountant)**: Manages referred clients, earns commissions
-- **Employee**: Self-service portal for payslips, time-off requests
+- **Employee**: Self-service portal for payslips, time-off requests, notifications
 
 ## Tech Stack
 - **Frontend**: React + Tailwind CSS + Shadcn/UI + react-i18next
@@ -22,7 +22,7 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 
 ## What's Been Implemented
 
-### Core Modules
+### Core Modules (Complete)
 - User auth (JWT + Google OAuth), 2FA with recovery codes
 - Dashboard, org chart, payroll, accounting modules
 - Compliance reporting (DR-specific: TSS, DGII, ISR)
@@ -33,29 +33,44 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - AI-powered search (Gemini)
 - Employee self-service portal
 
-### Configurable Notifications - Phase 1 (Feb 15, 2026)
-- **20 event types** across 8 categories (payroll, vacations, evaluations, contracts, employees, attendance, partner, system)
-- **Per-event, per-channel config**: In-App / Email / Push toggles for each event
-- **Quiet Hours**: Start/end time, timezone, weekend silence
-- **Digest system**: Daily or weekly email summary with configurable send time
-- **Multi-portal bells**: NotificationBell on admin dashboard and partner dashboard
-- **4-tab UI**: Preferencias, Horarios, Recordatorios, Historial
+### Configurable Notifications - Phase 1 (Feb 15, 2026) DONE
+- 20 event types across 8 categories
+- Per-event, per-channel config: In-App / Email / Push
+- Quiet Hours with timezone support
+- Digest system: Daily/weekly email summary
+- Multi-portal bells: Admin + Partner dashboards
+- 4-tab UI: Preferencias, Horarios, Recordatorios, Historial
 
-### Configurable Notifications - Phase 2: Push (PWA) + Employee Bell (Feb 17, 2026)
-- **VAPID key infrastructure**: Generated VAPID keys, stored in backend/.env, served via API endpoints
-- **Push notification service**: `backend/services/push_service.py` with `pywebpush` for sending push to users/roles
-- **Service worker registration**: Registered in `frontend/src/index.js` for PWA push support
-- **VAPID key fetch**: NotificationsPage now fetches VAPID public key from backend for push subscriptions (replaces `null`)
-- **Employee portal push endpoints**: subscribe, unsubscribe, status check at `/api/employee-portal/push/*`
-- **Employee portal notification bell**: New `EmployeeNotificationBell` component with:
-  - Notification list with mark-read/delete
-  - Push notification toggle (subscribe/unsubscribe)
-  - First-time push enable banner
-- **Admin push test endpoint**: `POST /api/notification-preferences/push/test`
-- **Backend**: Handles expired push subscriptions (auto-cleanup on 404/410)
+### Configurable Notifications - Phase 2: Push (PWA) + Employee Bell (Feb 17, 2026) DONE
+- VAPID key infrastructure with pywebpush
+- Push notification service (send_push_to_user, send_push_to_role)
+- Service worker registration for PWA push
+- Employee portal push endpoints (subscribe, unsubscribe, status)
+- EmployeeNotificationBell component with push toggle + enable banner
+- Admin push test endpoint
 
-### System Analysis Fixes (Feb 15, 2026)
-- P0: ObjectId serialization fix in `partner_payments.py`, `partners.py`
+### i18n for All Notification Components (Feb 17, 2026) DONE
+- All 20 notification event types now have label, label_en, label_fr
+- All 8 notification categories have label_fr
+- NotificationsPage.jsx: All hardcoded strings replaced with t() calls (tabs, push, quiet hours, digest, reminders, history)
+- NotificationBell.jsx (admin/partner): All strings translated (title, mark all, view all, time labels)
+- EmployeeNotificationBell.jsx: Push toggle text, toast messages, time labels translated
+- EmployeeNotificationCenter.jsx: All UI labels translated
+- Translation version bumped to 1.1.0 for cache invalidation
+
+### Backend API Error Standardization (Feb 17, 2026) DONE
+- Created utils/errors.py with AppError base class
+- Subclasses: NotFoundError, AuthenticationError, AuthorizationError, ValidationError, ConflictError, RateLimitError
+- Global exception handler registered in server.py returns {error, detail, status_code, path}
+
+### Employee Notification Center (Feb 17, 2026) DONE
+- New "Notifications" tab in employee portal with Bell icon
+- Backend: /center (paginated, filterable), /categories (distinct), /export (CSV)
+- Frontend: EmployeeNotificationCenter with search bar, category filter, export CSV, mark all as read, load more pagination
+- Integrated as 8th tab in EmployeeDashboard
+
+### System Analysis Fixes (Feb 15, 2026) DONE
+- P0: ObjectId serialization fix in partner_payments.py, partners.py
 - P0: data-testid attributes on all interactive elements
 - P1: i18n hardcoded strings replaced with translation calls
 - P1: EN/FR translations added (131+ partner.dashboard keys)
@@ -70,63 +85,39 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 ```
 /app/
 ├── backend/
-│   ├── models/system.py (UserNotificationPreferences, PushSubscription, QuietHours, Digest)
+│   ├── models/system.py
 │   ├── routes/
-│   │   ├── notification_preferences.py (20 events, 8 categories, prefs CRUD, push, VAPID key, test push)
-│   │   ├── notifications.py (legacy email reminders)
-│   │   ├── notifications_system.py (in-app notification triggers)
-│   │   ├── employee_portal.py (push subscribe/unsubscribe/status for employees)
-│   │   ├── partner_payments.py
-│   │   └── partners.py
+│   │   ├── notification_preferences.py (20 events, 8 categories, VAPID, push, test push)
+│   │   ├── employee_portal.py (push subscribe/unsubscribe, notification center/categories/export)
+│   │   └── ...
 │   ├── services/
-│   │   ├── push_service.py (NEW - pywebpush send_push_to_user, send_push_to_role)
-│   │   └── employee_notifications.py (SSE)
-│   └── server.py
+│   │   └── push_service.py (pywebpush)
+│   └── utils/
+│       └── errors.py (AppError, NotFoundError, AuthenticationError, etc.)
 ├── frontend/
 │   └── src/
 │       ├── components/
-│       │   ├── NotificationBell.jsx (bell dropdown, used in admin + partner)
+│       │   ├── NotificationBell.jsx (admin/partner, i18n)
 │       │   ├── portal/
-│       │   │   ├── EmployeeNotificationBell.jsx (NEW - bell + push toggle for employee portal)
-│       │   │   ├── EmployeeDashboard.jsx (MODIFIED - uses EmployeeNotificationBell)
-│       │   │   ├── EmployeeAuthContext.jsx
-│       │   │   └── EmployeeLogin.jsx
-│       │   └── partner/ (extracted dialog components)
+│       │   │   ├── EmployeeNotificationBell.jsx (push toggle, i18n)
+│       │   │   ├── EmployeeNotificationCenter.jsx (NEW - search, filter, export)
+│       │   │   └── EmployeeDashboard.jsx (notifications tab added)
+│       │   └── partner/
 │       ├── pages/
-│       │   ├── NotificationsPage.jsx (MODIFIED - fetches VAPID key for push subscription)
-│       │   └── PartnerDashboardPage.jsx (added NotificationBell)
-│       ├── index.js (MODIFIED - service worker registration)
-│       └── i18n/locales/ (ES, EN, FR)
-│   └── public/
-│       └── service-worker.js (push event handlers + notification click)
+│       │   └── NotificationsPage.jsx (fully i18n-ized)
+│       ├── i18n/
+│       │   ├── index.js (version 1.1.0)
+│       │   └── locales/ (es.json, en.json, fr.json)
+│       └── public/locales/ (synced copies for HttpBackend)
 ```
-
-## Key API Endpoints
-
-### Notification Preferences (Admin)
-- `GET /api/notification-preferences/events` - List all event types with categories
-- `GET /api/notification-preferences` - Get user's notification preferences
-- `PUT /api/notification-preferences` - Save preferences (events, quiet_hours, digest)
-- `GET /api/notification-preferences/push/vapid-key` - Get VAPID public key
-- `GET /api/notification-preferences/push/status` - Check push subscription status
-- `POST /api/notification-preferences/push/subscribe` - Register push subscription
-- `POST /api/notification-preferences/push/unsubscribe` - Remove push subscription
-- `POST /api/notification-preferences/push/test` - Send test push notification
-
-### Employee Portal Push
-- `GET /api/employee-portal/push/vapid-key` - Get VAPID public key
-- `POST /api/employee-portal/push/subscribe` - Register employee push subscription
-- `POST /api/employee-portal/push/unsubscribe` - Remove employee push subscription
-- `GET /api/employee-portal/push/status` - Check employee push status
 
 ## Prioritized Backlog
 
 ### P0 (Known Issues)
 - `/company-config` page shows error on initial load (works after refresh)
-- Inconsistent API error handling patterns in backend
 
 ### P1 (Upcoming)
-- Notifications Phase 3: Digest system (daily/weekly email summaries)
+- Notifications Phase 3: Digest system (daily/weekly email summaries via cron/scheduler)
 - ACH Bank Integration (Dominican Republic: BHD, Popular, Banreservas)
 - E-signature for contracts and payroll receipts
 
@@ -141,7 +132,5 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - SAP, Oracle, Dynamics (enterprise connectors)
 
 ## Test Reports
-- `/app/test_reports/iteration_193.json` - P0 verification
-- `/app/test_reports/iteration_194.json` - Full P0+P1+P2 verification
-- `/app/test_reports/iteration_195.json` - Configurable Notifications Phase 1
-- `/app/test_reports/iteration_196.json` - Push Notifications Phase 2 (17/17 backend, 100% frontend)
+- `/app/test_reports/iteration_196.json` - Push Notifications Phase 2 (17/17 backend)
+- `/app/test_reports/iteration_197.json` - i18n + Error Standardization + Notification Center (93% backend, 100% frontend)
