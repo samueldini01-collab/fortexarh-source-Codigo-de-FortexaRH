@@ -157,6 +157,7 @@ const PartnerRegisterPage = lazy(() => import("@/pages/PartnerRegisterPage"));
 const AccountantsSoftwarePage = lazy(() => import("@/pages/AccountantsSoftwarePage"));
 const SupportPage = lazy(() => import("@/pages/SupportPage"));
 const SupportAdminPage = lazy(() => import("@/pages/SupportAdminPage"));
+const HelpCenterPage = lazy(() => import("@/pages/HelpCenterPage"));
 
 // Static Pages - Lazy loaded
 const TermsPage = lazy(() => import("@/pages/TermsPage"));
