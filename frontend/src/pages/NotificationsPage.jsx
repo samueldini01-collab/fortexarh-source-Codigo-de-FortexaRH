@@ -285,7 +285,7 @@ export default function NotificationsPage() {
         fetchAll();
       }
     } catch {
-      toast.error("Error al enviar recordatorio");
+      toast.error(t("notifications.reminders.errorSendingReminder"));
     }
     setSendingNotification(false);
   };
@@ -304,7 +304,7 @@ export default function NotificationsPage() {
         fetchAll();
       }
     } catch {
-      toast.error("Error al enviar notificaciones");
+      toast.error(t("notifications.reminders.errorSendingNotifs"));
     }
     setSendingNotification(false);
   };
