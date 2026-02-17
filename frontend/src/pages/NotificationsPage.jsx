@@ -378,10 +378,10 @@ export default function NotificationsPage() {
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Smartphone className="w-5 h-5 text-emerald-500" />
-                  Push Notifications
+                  {t("notifications.push.title")}
                 </CardTitle>
                 <CardDescription>
-                  Recibe notificaciones directamente en tu navegador, incluso cuando no tienes la app abierta.
+                  {t("notifications.push.desc")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -389,11 +389,11 @@ export default function NotificationsPage() {
                   <div className="flex items-center gap-3">
                     {pushSubscribed ? (
                       <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-200">
-                        <CheckCircle2 className="w-3 h-3 mr-1" /> Activado
+                        <CheckCircle2 className="w-3 h-3 mr-1" /> {t("notifications.push.enabled")}
                       </Badge>
                     ) : (
                       <Badge variant="outline" className="text-slate-500">
-                        <BellOff className="w-3 h-3 mr-1" /> Desactivado
+                        <BellOff className="w-3 h-3 mr-1" /> {t("notifications.push.disabled")}
                       </Badge>
                     )}
                   </div>
@@ -405,7 +405,7 @@ export default function NotificationsPage() {
                   />
                 </div>
                 {!pushSupported && (
-                  <p className="text-xs text-amber-500 mt-2">Tu navegador no soporta push notifications.</p>
+                  <p className="text-xs text-amber-500 mt-2">{t("notifications.push.notSupported")}</p>
                 )}
               </CardContent>
             </Card>
@@ -414,11 +414,11 @@ export default function NotificationsPage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                  Configurar por Evento
+                  {t("notifications.events.configureByEvent")}
                 </h2>
                 <Button onClick={savePreferences} disabled={saving} size="sm" data-testid="save-preferences-btn">
                   {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
-                  Guardar Cambios
+                  {t("notifications.events.saveChanges")}
                 </Button>
               </div>
 
