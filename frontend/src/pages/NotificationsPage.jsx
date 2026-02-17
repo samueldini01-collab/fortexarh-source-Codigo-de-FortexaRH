@@ -211,10 +211,28 @@ export default function NotificationsPage() {
           toast.error("Permiso de notificaciones denegado");
           return;
         }
+        // Fetch VAPID public key from backend
+        const vapidRes = await fetch(`${API}/notification-preferences/push/vapid-key`, {
+          headers: { Authorization: `Bearer ${token}` },
+          credentials: "include",
+        });
+        const vapidData = await vapidRes.json();
+        const vapidKey = vapidData.vapid_public_key;
+        if (!vapidKey) {
+          toast.error("VAPID key no configurada en el servidor");
+          return;
+        }
+        // Convert base64url to Uint8Array
+        const padding = "=".repeat((4 - (vapidKey.length % 4)) % 4);
+        const base64 = (vapidKey + padding).replace(/-/g, "+").replace(/_/g, "/");
+        const rawData = atob(base64);
+        const applicationServerKey = new Uint8Array(rawData.length);
+        for (let i = 0; i < rawData.length; i++) applicationServerKey[i] = rawData.charCodeAt(i);
+
         const reg = await navigator.serviceWorker.ready;
         const sub = await reg.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: null,
+          applicationServerKey,
         });
         const subJSON = sub.toJSON();
         await fetch(`${API}/notification-preferences/push/subscribe`, {
