@@ -172,7 +172,8 @@
       "reports": "Reportes",
       "talent": "Talento",
       "administration": "Administración"
-    }
+    },
+    "helpCenter": "Centro de Ayuda"
   },
   "checkout": {
     "header": {
