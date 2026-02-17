@@ -18,6 +18,7 @@ NOTIFICATION_EVENTS = {
         "category": "payroll",
         "label": "Nómina pendiente de aprobación",
         "label_en": "Payroll pending approval",
+        "label_fr": "Paie en attente d'approbation",
         "default": {"in_app": True, "email": True, "push": True},
         "roles": ["admin", "hr_manager", "finance_manager"]
     },
@@ -25,6 +26,7 @@ NOTIFICATION_EVENTS = {
         "category": "payroll",
         "label": "Nómina aprobada",
         "label_en": "Payroll approved",
+        "label_fr": "Paie approuvée",
         "default": {"in_app": True, "email": False, "push": False},
         "roles": ["admin", "hr_manager"]
     },
@@ -32,6 +34,7 @@ NOTIFICATION_EVENTS = {
         "category": "payroll",
         "label": "Nómina rechazada",
         "label_en": "Payroll rejected",
+        "label_fr": "Paie rejetée",
         "default": {"in_app": True, "email": True, "push": True},
         "roles": ["admin", "hr_manager"]
     },
@@ -39,6 +42,7 @@ NOTIFICATION_EVENTS = {
         "category": "payroll",
         "label": "Recibo de nómina disponible",
         "label_en": "Payslip available",
+        "label_fr": "Bulletin de paie disponible",
         "default": {"in_app": True, "email": False, "push": True},
         "roles": ["all"]
     },
@@ -46,6 +50,7 @@ NOTIFICATION_EVENTS = {
         "category": "vacations",
         "label": "Nueva solicitud de vacaciones",
         "label_en": "New vacation request",
+        "label_fr": "Nouvelle demande de vacances",
         "default": {"in_app": True, "email": True, "push": True},
         "roles": ["admin", "hr_manager"]
     },
@@ -53,6 +58,7 @@ NOTIFICATION_EVENTS = {
         "category": "vacations",
         "label": "Vacaciones aprobadas",
         "label_en": "Vacation approved",
+        "label_fr": "Vacances approuvées",
         "default": {"in_app": True, "email": True, "push": True},
         "roles": ["employee", "all"]
     },
@@ -60,6 +66,7 @@ NOTIFICATION_EVENTS = {
         "category": "vacations",
         "label": "Vacaciones rechazadas",
         "label_en": "Vacation rejected",
+        "label_fr": "Vacances refusées",
         "default": {"in_app": True, "email": True, "push": True},
         "roles": ["employee", "all"]
     },
@@ -67,6 +74,7 @@ NOTIFICATION_EVENTS = {
         "category": "evaluations",
         "label": "Evaluación programada",
         "label_en": "Evaluation scheduled",
+        "label_fr": "Évaluation programmée",
         "default": {"in_app": True, "email": True, "push": False},
         "roles": ["employee", "all"]
     },
@@ -74,6 +82,7 @@ NOTIFICATION_EVENTS = {
         "category": "evaluations",
         "label": "Evaluación completada",
         "label_en": "Evaluation completed",
+        "label_fr": "Évaluation terminée",
         "default": {"in_app": True, "email": False, "push": False},
         "roles": ["admin", "hr_manager"]
     },
@@ -81,6 +90,7 @@ NOTIFICATION_EVENTS = {
         "category": "contracts",
         "label": "Contrato próximo a vencer",
         "label_en": "Contract expiring soon",
+        "label_fr": "Contrat expirant bientôt",
         "default": {"in_app": True, "email": True, "push": True},
         "roles": ["admin", "hr_manager"]
     },
@@ -88,6 +98,7 @@ NOTIFICATION_EVENTS = {
         "category": "contracts",
         "label": "Documento por vencer",
         "label_en": "Document expiring soon",
+        "label_fr": "Document expirant bientôt",
         "default": {"in_app": True, "email": False, "push": False},
         "roles": ["admin", "hr_manager"]
     },
@@ -95,6 +106,7 @@ NOTIFICATION_EVENTS = {
         "category": "employees",
         "label": "Nuevo empleado agregado",
         "label_en": "New employee added",
+        "label_fr": "Nouvel employé ajouté",
         "default": {"in_app": True, "email": False, "push": False},
         "roles": ["admin", "hr_manager"]
     },
@@ -102,6 +114,7 @@ NOTIFICATION_EVENTS = {
         "category": "employees",
         "label": "Cumpleaños de empleado",
         "label_en": "Employee birthday",
+        "label_fr": "Anniversaire d'employé",
         "default": {"in_app": True, "email": True, "push": False},
         "roles": ["admin", "hr_manager"]
     },
@@ -109,6 +122,7 @@ NOTIFICATION_EVENTS = {
         "category": "attendance",
         "label": "Recordatorio de entrada",
         "label_en": "Check-in reminder",
+        "label_fr": "Rappel de pointage d'entrée",
         "default": {"in_app": True, "email": False, "push": True},
         "roles": ["employee", "all"]
     },
@@ -116,6 +130,7 @@ NOTIFICATION_EVENTS = {
         "category": "attendance",
         "label": "Recordatorio de salida",
         "label_en": "Check-out reminder",
+        "label_fr": "Rappel de pointage de sortie",
         "default": {"in_app": True, "email": False, "push": True},
         "roles": ["employee", "all"]
     },
@@ -123,6 +138,7 @@ NOTIFICATION_EVENTS = {
         "category": "partner",
         "label": "Nuevo cliente referido",
         "label_en": "New referred client",
+        "label_fr": "Nouveau client référé",
         "default": {"in_app": True, "email": True, "push": True},
         "roles": ["partner_admin"]
     },
@@ -130,6 +146,7 @@ NOTIFICATION_EVENTS = {
         "category": "partner",
         "label": "Comisión recibida",
         "label_en": "Commission received",
+        "label_fr": "Commission reçue",
         "default": {"in_app": True, "email": True, "push": False},
         "roles": ["partner_admin"]
     },
@@ -137,6 +154,7 @@ NOTIFICATION_EVENTS = {
         "category": "partner",
         "label": "Retiro procesado",
         "label_en": "Payout processed",
+        "label_fr": "Retrait traité",
         "default": {"in_app": True, "email": True, "push": True},
         "roles": ["partner_admin"]
     },
@@ -144,6 +162,7 @@ NOTIFICATION_EVENTS = {
         "category": "system",
         "label": "Alerta del sistema",
         "label_en": "System alert",
+        "label_fr": "Alerte système",
         "default": {"in_app": True, "email": False, "push": False},
         "roles": ["admin"]
     },
@@ -151,20 +170,21 @@ NOTIFICATION_EVENTS = {
         "category": "system",
         "label": "Cambio en suscripción",
         "label_en": "Subscription change",
+        "label_fr": "Changement d'abonnement",
         "default": {"in_app": True, "email": True, "push": False},
         "roles": ["admin"]
     }
 }
 
 NOTIFICATION_CATEGORIES = {
-    "payroll": {"label": "Nómina", "label_en": "Payroll", "icon": "DollarSign"},
-    "vacations": {"label": "Vacaciones", "label_en": "Vacations", "icon": "Calendar"},
-    "evaluations": {"label": "Evaluaciones", "label_en": "Evaluations", "icon": "Target"},
-    "contracts": {"label": "Contratos", "label_en": "Contracts", "icon": "FileText"},
-    "employees": {"label": "Empleados", "label_en": "Employees", "icon": "Users"},
-    "attendance": {"label": "Asistencia", "label_en": "Attendance", "icon": "Clock"},
-    "partner": {"label": "Partner", "label_en": "Partner", "icon": "Briefcase"},
-    "system": {"label": "Sistema", "label_en": "System", "icon": "Settings"}
+    "payroll": {"label": "Nómina", "label_en": "Payroll", "label_fr": "Paie", "icon": "DollarSign"},
+    "vacations": {"label": "Vacaciones", "label_en": "Vacations", "label_fr": "Vacances", "icon": "Calendar"},
+    "evaluations": {"label": "Evaluaciones", "label_en": "Evaluations", "label_fr": "Évaluations", "icon": "Target"},
+    "contracts": {"label": "Contratos", "label_en": "Contracts", "label_fr": "Contrats", "icon": "FileText"},
+    "employees": {"label": "Empleados", "label_en": "Employees", "label_fr": "Employés", "icon": "Users"},
+    "attendance": {"label": "Asistencia", "label_en": "Attendance", "label_fr": "Présence", "icon": "Clock"},
+    "partner": {"label": "Partner", "label_en": "Partner", "label_fr": "Partenaire", "icon": "Briefcase"},
+    "system": {"label": "Sistema", "label_en": "System", "label_fr": "Système", "icon": "Settings"}
 }
 
 
