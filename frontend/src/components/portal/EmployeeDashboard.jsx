@@ -594,7 +594,10 @@ function EmployeeDashboard() {
                       {t('employeePortal.notifications.recentNotifications')}
                       <Badge variant="secondary" className="bg-blue-100 text-blue-700">{unreadCount} {t('employeePortal.notifications.new')}</Badge>
                     </CardTitle>
-                    <Button variant="ghost" size="sm" onClick={() => setShowNotifications(true)}>
+                    <Button variant="ghost" size="sm" onClick={() => {
+                      const bell = document.querySelector('[data-testid="employee-notification-bell"]');
+                      if (bell) bell.click();
+                    }}>
                       {t('employeePortal.notifications.viewAll')}
                     </Button>
                   </div>
