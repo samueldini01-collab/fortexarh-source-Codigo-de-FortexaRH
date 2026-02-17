@@ -210,6 +210,7 @@ async def get_notification_event_types(current_user: dict = Depends(get_current_
                 "category": event_meta["category"],
                 "label": event_meta["label"],
                 "label_en": event_meta["label_en"],
+                "label_fr": event_meta.get("label_fr", event_meta["label_en"]),
                 "default": event_meta["default"]
             }
     return {
