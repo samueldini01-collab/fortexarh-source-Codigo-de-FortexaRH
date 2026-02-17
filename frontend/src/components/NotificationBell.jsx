@@ -63,6 +63,7 @@ const PRIORITY_STYLES = {
 export default function NotificationBell() {
   const { getAuthHeaders, user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
