@@ -355,15 +355,15 @@ export default function NotificationsPage() {
           <TabsList className="grid w-full grid-cols-4 lg:w-[600px]">
             <TabsTrigger value="preferences" className="flex items-center gap-2" data-testid="tab-preferences">
               <BellRing className="w-4 h-4" />
-              <span className="hidden sm:inline">Preferencias</span>
+              <span className="hidden sm:inline">{t("notifications.tabs.preferences")}</span>
             </TabsTrigger>
             <TabsTrigger value="schedule" className="flex items-center gap-2" data-testid="tab-schedule">
               <Moon className="w-4 h-4" />
-              <span className="hidden sm:inline">Horarios</span>
+              <span className="hidden sm:inline">{t("notifications.tabs.schedule")}</span>
             </TabsTrigger>
             <TabsTrigger value="reminders" className="flex items-center gap-2" data-testid="tab-reminders">
               <Send className="w-4 h-4" />
-              <span className="hidden sm:inline">Recordatorios</span>
+              <span className="hidden sm:inline">{t("notifications.tabs.reminders")}</span>
             </TabsTrigger>
             <TabsTrigger value="history" className="flex items-center gap-2" data-testid="tab-history">
               <History className="w-4 h-4" />
