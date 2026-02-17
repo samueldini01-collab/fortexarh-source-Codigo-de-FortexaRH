@@ -96,7 +96,12 @@ app.add_middleware(
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy"}
+    return {"status": "healthy", "service": "fortexarh-api"}
+
+
+@api_router.get("/health")
+async def api_health_check():
+    return {"status": "healthy", "service": "fortexarh-api"}
 
 @app.get("/health/db")
 async def health_check_db():
