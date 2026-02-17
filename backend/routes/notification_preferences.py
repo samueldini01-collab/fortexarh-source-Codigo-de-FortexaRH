@@ -365,3 +365,30 @@ async def should_notify_user(user_id: str, event_type: str, channel: str = "in_a
                 pass
 
     return True
+
+
+# ============== VAPID PUBLIC KEY ==============
+
+@router.get("/push/vapid-key")
+async def get_vapid_public_key():
+    """Return the VAPID public key for push subscription on the frontend."""
+    key = os.environ.get("VAPID_PUBLIC_KEY", "")
+    return {"vapid_public_key": key}
+
+
+# ============== TEST PUSH ==============
+
+@router.post("/push/test")
+async def test_push_notification(current_user: dict = Depends(get_current_user)):
+    """Send a test push notification to the current user."""
+    user_id = current_user.get("user_id")
+    sent = await send_push_to_user(
+        user_id=user_id,
+        title="FortexaRH - Test",
+        body="Las notificaciones push estan funcionando correctamente.",
+        url="/notifications"
+    )
+    if sent == 0:
+        raise HTTPException(status_code=404, detail="No hay suscripciones push activas para este usuario")
+    return {"message": f"Notificacion de prueba enviada a {sent} dispositivo(s)"}
+
