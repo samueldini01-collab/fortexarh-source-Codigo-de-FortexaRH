@@ -1273,3 +1273,63 @@ async def get_company_announcements(request: Request):
     ).sort("created_at", -1).limit(20).to_list(20)
     
     return {"announcements": announcements}
+
+
+# ===================== PUSH NOTIFICATIONS =====================
+
+@router.get("/push/vapid-key")
+async def get_portal_vapid_key():
+    """Return the VAPID public key for employee portal push subscription."""
+    import os
+    key = os.environ.get("VAPID_PUBLIC_KEY", "")
+    return {"vapid_public_key": key}
+
+
+@router.post("/push/subscribe")
+async def portal_push_subscribe(request: Request):
+    """Register a push subscription for an employee."""
+    emp_data = await get_employee_from_token(request)
+    body = await request.json()
+
+    sub_data = {
+        "user_id": f"emp_{emp_data['employee_id']}",
+        "company_id": emp_data.get("company_id"),
+        "endpoint": body.get("endpoint"),
+        "keys": body.get("keys", {}),
+        "portal": "employee",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+
+    await db.push_subscriptions.update_one(
+        {"user_id": sub_data["user_id"], "endpoint": sub_data["endpoint"]},
+        {"$set": sub_data},
+        upsert=True
+    )
+
+    return {"message": "Suscripcion push registrada"}
+
+
+@router.post("/push/unsubscribe")
+async def portal_push_unsubscribe(request: Request):
+    """Remove a push subscription for an employee."""
+    emp_data = await get_employee_from_token(request)
+    body = await request.json()
+    endpoint = body.get("endpoint")
+
+    await db.push_subscriptions.delete_one(
+        {"user_id": f"emp_{emp_data['employee_id']}", "endpoint": endpoint}
+    )
+
+    return {"message": "Suscripcion push eliminada"}
+
+
+@router.get("/push/status")
+async def portal_push_status(request: Request):
+    """Check if employee has active push subscriptions."""
+    emp_data = await get_employee_from_token(request)
+
+    count = await db.push_subscriptions.count_documents(
+        {"user_id": f"emp_{emp_data['employee_id']}"}
+    )
+    return {"subscribed": count > 0, "subscription_count": count}
+
