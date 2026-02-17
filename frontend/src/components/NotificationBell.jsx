@@ -124,7 +124,7 @@ export default function NotificationBell() {
       
       setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
       setUnreadCount(0);
-      toast.success("Todas las notificaciones marcadas como leídas");
+      toast.success(t("notifications.bell.allMarked"));
     } catch (error) {
       console.error("Error marking all as read:", error);
     }
