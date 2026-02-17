@@ -209,7 +209,7 @@ export default function NotificationsPage() {
       try {
         const permission = await Notification.requestPermission();
         if (permission !== "granted") {
-          toast.error("Permiso de notificaciones denegado");
+          toast.error(t("notifications.push.permissionDenied"));
           return;
         }
         // Fetch VAPID public key from backend
@@ -220,7 +220,7 @@ export default function NotificationsPage() {
         const vapidData = await vapidRes.json();
         const vapidKey = vapidData.vapid_public_key;
         if (!vapidKey) {
-          toast.error("VAPID key no configurada en el servidor");
+          toast.error(t("notifications.push.vapidError"));
           return;
         }
         // Convert base64url to Uint8Array
@@ -805,9 +805,9 @@ export default function NotificationsPage() {
                   <div>
                     <CardTitle className="flex items-center gap-2">
                       <History className="w-5 h-5" />
-                      Historial de Notificaciones
+                      {t("notifications.historial")}
                     </CardTitle>
-                    <CardDescription>Ultimas notificaciones enviadas</CardDescription>
+                    <CardDescription>{t("notifications.noHayNotificacionesEnviadas")}</CardDescription>
                   </div>
                   <Button variant="outline" size="sm" onClick={fetchAll}>
                     <RefreshCw className="w-4 h-4 mr-2" />
