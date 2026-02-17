@@ -508,15 +508,15 @@ export default function NotificationsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Moon className="w-5 h-5 text-indigo-500" />
-                  Horas de Silencio
+                  {t("notifications.quietHours.title")}
                 </CardTitle>
                 <CardDescription>
-                  Durante estas horas no recibirás notificaciones push ni email. Las notificaciones in-app se seguirán acumulando.
+                  {t("notifications.quietHours.desc")}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <Label>Activar Horas de Silencio</Label>
+                  <Label>{t("notifications.quietHours.enable")}</Label>
                   <Switch
                     checked={quietHours.enabled}
                     onCheckedChange={(checked) => setQuietHours((p) => ({ ...p, enabled: checked }))}
@@ -527,7 +527,7 @@ export default function NotificationsPage() {
                 {quietHours.enabled && (
                   <div className="grid sm:grid-cols-2 gap-4 pt-2">
                     <div className="space-y-2">
-                      <Label>Hora de inicio (No Molestar)</Label>
+                      <Label>{t("notifications.quietHours.startTime")}</Label>
                       <Input
                         type="time"
                         value={quietHours.start_time}
@@ -536,7 +536,7 @@ export default function NotificationsPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Hora de fin</Label>
+                      <Label>{t("notifications.quietHours.endTime")}</Label>
                       <Input
                         type="time"
                         value={quietHours.end_time}
@@ -545,7 +545,7 @@ export default function NotificationsPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Zona Horaria</Label>
+                      <Label>{t("notifications.quietHours.timezone")}</Label>
                       <Select
                         value={quietHours.timezone}
                         onValueChange={(v) => setQuietHours((p) => ({ ...p, timezone: v }))}
@@ -564,7 +564,7 @@ export default function NotificationsPage() {
                       </Select>
                     </div>
                     <div className="flex items-center justify-between sm:flex-col sm:items-start sm:gap-2">
-                      <Label>Silenciar Fines de Semana</Label>
+                      <Label>{t("notifications.quietHours.silenceWeekends")}</Label>
                       <Switch
                         checked={quietHours.skip_weekends}
                         onCheckedChange={(checked) => setQuietHours((p) => ({ ...p, skip_weekends: checked }))}
@@ -581,15 +581,15 @@ export default function NotificationsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Mail className="w-5 h-5 text-blue-500" />
-                  Resumen por Email (Digest)
+                  {t("notifications.digest.title")}
                 </CardTitle>
                 <CardDescription>
-                  Recibe un resumen con todas las notificaciones acumuladas en lugar de emails individuales.
+                  {t("notifications.digest.desc")}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <Label>Activar Digest</Label>
+                  <Label>{t("notifications.digest.enable")}</Label>
                   <Switch
                     checked={digest.enabled}
                     onCheckedChange={(checked) => setDigest((p) => ({ ...p, enabled: checked }))}
@@ -600,7 +600,7 @@ export default function NotificationsPage() {
                 {digest.enabled && (
                   <div className="grid sm:grid-cols-3 gap-4 pt-2">
                     <div className="space-y-2">
-                      <Label>Frecuencia</Label>
+                      <Label>{t("notifications.digest.frequency")}</Label>
                       <Select
                         value={digest.frequency}
                         onValueChange={(v) => setDigest((p) => ({ ...p, frequency: v }))}
@@ -609,14 +609,14 @@ export default function NotificationsPage() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="daily">Diario</SelectItem>
-                          <SelectItem value="weekly">Semanal</SelectItem>
+                          <SelectItem value="daily">{t("notifications.digest.daily")}</SelectItem>
+                          <SelectItem value="weekly">{t("notifications.digest.weekly")}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     {digest.frequency === "weekly" && (
                       <div className="space-y-2">
-                        <Label>Dia de la semana</Label>
+                        <Label>{t("notifications.digest.dayOfWeek")}</Label>
                         <Select
                           value={String(digest.day_of_week)}
                           onValueChange={(v) => setDigest((p) => ({ ...p, day_of_week: parseInt(v) }))}
@@ -625,19 +625,19 @@ export default function NotificationsPage() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="0">Lunes</SelectItem>
-                            <SelectItem value="1">Martes</SelectItem>
-                            <SelectItem value="2">Miercoles</SelectItem>
-                            <SelectItem value="3">Jueves</SelectItem>
-                            <SelectItem value="4">Viernes</SelectItem>
-                            <SelectItem value="5">Sabado</SelectItem>
-                            <SelectItem value="6">Domingo</SelectItem>
+                            <SelectItem value="0">{t("notifications.days.monday")}</SelectItem>
+                            <SelectItem value="1">{t("notifications.days.tuesday")}</SelectItem>
+                            <SelectItem value="2">{t("notifications.days.wednesday")}</SelectItem>
+                            <SelectItem value="3">{t("notifications.days.thursday")}</SelectItem>
+                            <SelectItem value="4">{t("notifications.days.friday")}</SelectItem>
+                            <SelectItem value="5">{t("notifications.days.saturday")}</SelectItem>
+                            <SelectItem value="6">{t("notifications.days.sunday")}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                     )}
                     <div className="space-y-2">
-                      <Label>Hora de envio</Label>
+                      <Label>{t("notifications.digest.sendTime")}</Label>
                       <Input
                         type="time"
                         value={digest.send_time}
@@ -653,7 +653,7 @@ export default function NotificationsPage() {
             <div className="flex justify-end">
               <Button onClick={savePreferences} disabled={saving} data-testid="save-schedule-btn">
                 {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
-                Guardar Configuracion
+                {t("notifications.digest.saveConfig")}
               </Button>
             </div>
           </TabsContent>
