@@ -1388,7 +1388,7 @@ async def portal_push_subscribe(request: Request):
     body = await request.json()
 
     sub_data = {
-        "user_id": f"emp_{emp_data['employee_id']}",
+        "user_id": emp_data['employee_id'],
         "company_id": emp_data.get("company_id"),
         "endpoint": body.get("endpoint"),
         "keys": body.get("keys", {}),
@@ -1413,7 +1413,7 @@ async def portal_push_unsubscribe(request: Request):
     endpoint = body.get("endpoint")
 
     await db.push_subscriptions.delete_one(
-        {"user_id": f"emp_{emp_data['employee_id']}", "endpoint": endpoint}
+        {"user_id": emp_data['employee_id'], "endpoint": endpoint}
     )
 
     return {"message": "Suscripcion push eliminada"}
@@ -1425,7 +1425,7 @@ async def portal_push_status(request: Request):
     emp_data = await get_employee_from_token(request)
 
     count = await db.push_subscriptions.count_documents(
-        {"user_id": f"emp_{emp_data['employee_id']}"}
+        {"user_id": emp_data['employee_id']}
     )
     return {"subscribed": count > 0, "subscription_count": count}
 
