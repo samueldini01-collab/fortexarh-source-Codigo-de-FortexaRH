@@ -5693,5 +5693,241 @@
     "privacidad": "Privacidad",
     "soporte": "Soporte",
     "inicio": "Inicio"
+  },
+  "helpCenter": {
+    "title": "Help Center",
+    "subtitle": "Guides, updates and answers to your frequently asked questions",
+    "searchPlaceholder": "Search guides, updates and FAQ...",
+    "noResults": "No results found for your search",
+    "tabs": {
+      "guides": "Guides",
+      "updates": "Updates",
+      "faq": "FAQ"
+    },
+    "badge": {
+      "feature": "New feature",
+      "improvement": "Improvement",
+      "fix": "Fix"
+    },
+    "modules": {
+      "payroll": {
+        "title": "Payroll",
+        "desc": "Periods, payslips, approvals and reports"
+      },
+      "vacations": {
+        "title": "Vacations & Leaves",
+        "desc": "Requests, approvals and policies"
+      },
+      "employees": {
+        "title": "Employees",
+        "desc": "Management, portal and org chart"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "desc": "Settings, push, center and digest"
+      },
+      "attendance": {
+        "title": "Attendance",
+        "desc": "Check-in/out, geolocation and reports"
+      },
+      "evaluations": {
+        "title": "Evaluations",
+        "desc": "Performance, templates and scheduling"
+      },
+      "partner": {
+        "title": "Partner Portal",
+        "desc": "Clients, commissions and payouts"
+      },
+      "settings": {
+        "title": "Settings",
+        "desc": "Company, security, language and integrations"
+      }
+    },
+    "articles": {
+      "payroll-create": {
+        "title": "Create a payroll period",
+        "body": "Go to Payroll > New Period. Select the month, year and type (biweekly/monthly). The system will automatically calculate salaries, TSS deductions, ISR and AFP for all active employees."
+      },
+      "payroll-approve": {
+        "title": "Payroll approval workflow",
+        "body": "Once created, the period must be submitted for approval. An approver can approve or reject. Approving makes payslips ready for payment. Rejecting returns to draft with comments."
+      },
+      "payroll-pay": {
+        "title": "Process payroll payment",
+        "body": "After approval, click 'Mark as Paid'. Each employee receives a push notification in their portal with their payslip available. Payslips are automatically generated as PDF."
+      },
+      "payroll-export": {
+        "title": "Export compliance reports",
+        "body": "Generate TSS, DGII and ISR reports from the Reports section. You can export in Excel or PDF format for Dominican Republic regulatory authorities."
+      },
+      "vacation-request": {
+        "title": "Request vacation",
+        "body": "Employees can request vacation from their portal, or an administrator can create them. Select the leave type, dates and add an optional reason."
+      },
+      "vacation-approve": {
+        "title": "Approve or reject requests",
+        "body": "Pending requests appear in the dashboard. When approved or rejected, the employee receives an instant push notification in their browser and an in-app notification."
+      },
+      "vacation-policy": {
+        "title": "Configure vacation policy",
+        "body": "Define available days per year of service, accrual policy, maximum day cap and special rules according to Dominican legislation."
+      },
+      "leave-types": {
+        "title": "Leave types",
+        "body": "The system supports: Vacation, Maternity/Paternity Leave, Medical Leave, Personal Leave, Bereavement, and custom leave types."
+      },
+      "employee-add": {
+        "title": "Add a new employee",
+        "body": "Go to Employees > New. Fill in personal data, ID number, position, department, salary and hire date. The employee will automatically receive access to the self-service portal."
+      },
+      "employee-portal": {
+        "title": "Employee Self-Service Portal",
+        "body": "Employees log in with their ID number and password. They can view payslips, request vacation, record attendance, view evaluations and manage their notifications."
+      },
+      "org-chart": {
+        "title": "Company org chart",
+        "body": "Visualize your company's organizational structure. Drag and drop employees to reorganize departments and reporting lines."
+      },
+      "employee-docs": {
+        "title": "Documents and contracts",
+        "body": "Generate employment contracts, work letters and other documents from the employee profile. Supports electronic signatures for validation."
+      },
+      "notif-config": {
+        "title": "Configure notification preferences",
+        "body": "Go to Settings > Notifications. Enable or disable channels (In-App, Email, Push) for each of the 20 event types. Customize what alerts you receive and how."
+      },
+      "notif-push": {
+        "title": "Enable Push notifications",
+        "body": "Push notifications alert you even when the app is not open. Toggle 'Push Notifications' on and accept the browser permission. Works on Chrome, Edge and Firefox."
+      },
+      "notif-center": {
+        "title": "Employee Notification Center",
+        "body": "Employees have a dedicated 'Notifications' tab in their portal with search, category filter, mark as read and export history to CSV."
+      },
+      "notif-quiet": {
+        "title": "Quiet hours and Digest",
+        "body": "Set quiet hours to pause push/email during nights or weekends. Enable Digest to receive a daily or weekly summary instead of individual emails."
+      },
+      "attendance-checkin": {
+        "title": "Record check-in and check-out",
+        "body": "Employees record their entry and exit from the portal. The system automatically calculates hours worked, overtime and tardiness."
+      },
+      "attendance-geo": {
+        "title": "Geolocation attendance",
+        "body": "Configure allowed zones for attendance. The system validates the employee is at the authorized location when recording check-in/out."
+      },
+      "attendance-report": {
+        "title": "Attendance reports",
+        "body": "Generate reports by employee, department or period. Includes hours worked, tardiness, absences and overtime."
+      },
+      "eval-create": {
+        "title": "Create performance evaluations",
+        "body": "Schedule evaluations for individual employees or groups. Define criteria, rating scales and measurable objectives."
+      },
+      "eval-templates": {
+        "title": "Evaluation templates",
+        "body": "Create reusable templates with predefined criteria. Save time when evaluating multiple employees with the same parameters."
+      },
+      "partner-dashboard": {
+        "title": "Partner Dashboard",
+        "body": "View KPIs of your referred clients: recurring revenue, pending commissions, processed payouts and growth metrics."
+      },
+      "partner-clients": {
+        "title": "Manage referred clients",
+        "body": "Add new clients from your panel. Each client who registers through your link automatically generates commissions on their subscription."
+      },
+      "partner-payouts": {
+        "title": "Request commission payouts",
+        "body": "Request payouts via PayPal or Stripe when your balance reaches the minimum. Payments are processed within 24-48 business hours."
+      },
+      "settings-company": {
+        "title": "Configure company settings",
+        "body": "Customize name, logo, brand colors, address and tax info (RNC). This data appears on generated documents and the portal."
+      },
+      "settings-2fa": {
+        "title": "Enable two-factor authentication",
+        "body": "Add an extra security layer. Scan the QR code with Google Authenticator or Authy. Save your recovery codes in a safe place."
+      },
+      "settings-language": {
+        "title": "Change system language",
+        "body": "FortexaRH is available in Spanish, English and French. Change the language from the language selector (globe icon) in the top bar."
+      },
+      "settings-integrations": {
+        "title": "Available integrations",
+        "body": "Connect with Stripe and PayPal for payments, QuickBooks for accounting, and enable Google Auth for social login. Enterprise integrations (SAP, Oracle) are available on the Enterprise plan."
+      }
+    },
+    "updates": {
+      "update-push-auto": {
+        "title": "Automatic Push for Payroll and Vacations",
+        "body": "Employees now receive automatic push notifications when their payroll is processed or a vacation request is approved/rejected. No additional configuration needed."
+      },
+      "update-notif-center": {
+        "title": "Notification Center for Employees",
+        "body": "New 'Notifications' tab in the employee portal with text search, category filter, mark all as read and export full history to CSV."
+      },
+      "update-i18n-notif": {
+        "title": "Notifications in your language",
+        "body": "All notifications, events and categories now display in the user's configured language (Spanish, English or French). Includes the bell, center and settings page."
+      },
+      "update-error-std": {
+        "title": "Improved API error responses",
+        "body": "API error responses now follow a standardized format with error type, detail, status code and path. This improves the debugging experience."
+      },
+      "update-push-pwa": {
+        "title": "Push Notifications and Bell in Employee Portal",
+        "body": "Employees can now enable push notifications from their portal to receive real-time alerts. The notification bell shows a panel with push toggle and activation banner."
+      },
+      "update-notif-phase1": {
+        "title": "Configurable Notification System",
+        "body": "20 configurable event types per channel (In-App, Email, Push). Quiet hours with timezone support. Digest system for daily or weekly summaries."
+      },
+      "update-tech-debt": {
+        "title": "Stability and performance improvements",
+        "body": "Fixed serialization errors, improved testability with data-testid on interactive components, partner portal internationalization and large component refactoring."
+      }
+    },
+    "faq": {
+      "faq-reset-password": {
+        "q": "How do I reset my password?",
+        "a": "On the login screen, click 'Forgot your password?'. Enter your email and you'll receive a link to create a new password. If you have 2FA enabled, you'll also need your verification code."
+      },
+      "faq-portal-access": {
+        "q": "How does an employee access their portal?",
+        "a": "Employees access from /employee-portal using their ID number as username. The first time, the password is their ID number. It's recommended to change it immediately."
+      },
+      "faq-push-enable": {
+        "q": "How do I enable push notifications?",
+        "a": "Go to Settings > Notifications and toggle Push Notifications on. Your browser will ask for permission. In the employee portal, the notification bell has a built-in push toggle."
+      },
+      "faq-export-data": {
+        "q": "How do I export data from the system?",
+        "a": "Each module has export options. Payroll: export TSS/DGII reports in Excel. Employees: export list in CSV. Notifications: use the 'Export CSV' button in the Notification Center."
+      },
+      "faq-language-change": {
+        "q": "How do I change the system language?",
+        "a": "Click the globe icon in the top bar and select Spanish, English or French. The change is immediate and applies to the entire system, including notifications."
+      },
+      "faq-vacation-balance": {
+        "q": "How do I see my available vacation days?",
+        "a": "In the employee portal, the 'Available Vacations' card shows your current balance. You can also see the full breakdown in the Vacations tab: accrued, used and available days."
+      },
+      "faq-payslip-view": {
+        "q": "Where do I view my payslips?",
+        "a": "In the employee portal, go to the 'Payslips' tab. You'll find all your payslips sorted by date. You can view details and download as PDF."
+      },
+      "faq-2fa-setup": {
+        "q": "How do I set up two-factor authentication?",
+        "a": "Go to Settings > Security > Enable 2FA. Scan the QR code with an app like Google Authenticator or Authy. Save the generated recovery codes - they're your only way to access if you lose your device."
+      },
+      "faq-partner-join": {
+        "q": "How do I become a FortexaRH Partner?",
+        "a": "Contact us through the form at /soporte selecting 'Enterprise Plan' category or email us at info@fortexarh.com. We'll send you the partner program and commission details."
+      },
+      "faq-quiet-hours": {
+        "q": "What are Quiet Hours?",
+        "a": "Quiet Hours let you pause push and email notifications during specific times (e.g., 10pm to 7am). In-app notifications continue to accumulate for you to check when you want. Configure them in Notifications > Schedule."
+      }
+    }
   }
 }
