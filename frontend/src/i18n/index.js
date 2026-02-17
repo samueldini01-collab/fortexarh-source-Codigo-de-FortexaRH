@@ -52,7 +52,7 @@ const getInitialLanguage = () => {
 const initialLang = getInitialLanguage();
 
 // Cache version - increment this to force translation reload
-const TRANSLATION_VERSION = '1.0.9';
+const TRANSLATION_VERSION = '1.1.0';
 
 i18n
   .use(HttpBackend)
