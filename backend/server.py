@@ -67,6 +67,7 @@ app = FastAPI(title="FortexaRH SaaS API")
 limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(AppError, app_error_handler)
 
 api_router = APIRouter(prefix="/api")
 
