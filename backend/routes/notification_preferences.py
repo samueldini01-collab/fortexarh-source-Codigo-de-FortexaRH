@@ -4,11 +4,13 @@ Per-user, per-event, per-channel notification configuration with quiet hours and
 """
 from fastapi import APIRouter, Depends, HTTPException
 from datetime import datetime, timezone
+import os
 import uuid
 
 router = APIRouter(prefix="/notification-preferences", tags=["Notification Preferences"])
 from config import db
 from utils.auth import get_current_user
+from services.push_service import send_push_to_user
 
 # All notification event types with metadata
 NOTIFICATION_EVENTS = {
