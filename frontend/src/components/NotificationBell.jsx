@@ -153,10 +153,10 @@ export default function NotificationBell() {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
     
-    if (diffMins < 1) return "Ahora";
-    if (diffMins < 60) return `${diffMins}m`;
-    if (diffHours < 24) return `${diffHours}h`;
-    if (diffDays < 7) return `${diffDays}d`;
+    if (diffMins < 1) return t("notifications.time.now");
+    if (diffMins < 60) return t("notifications.time.minutesAgo", { count: diffMins });
+    if (diffHours < 24) return t("notifications.time.hoursAgo", { count: diffHours });
+    if (diffDays < 7) return t("notifications.time.daysAgo", { count: diffDays });
     return date.toLocaleDateString('es-DO', { day: 'numeric', month: 'short' });
   };
 
@@ -187,7 +187,7 @@ export default function NotificationBell() {
         data-testid="notification-dropdown"
       >
         <div className="flex items-center justify-between px-4 py-3 border-b">
-          <h3 className="font-semibold text-sm">Notificaciones</h3>
+          <h3 className="font-semibold text-sm">{t("notifications.bell.title")}</h3>
           {unreadCount > 0 && (
             <Button 
               variant="ghost" 
@@ -196,7 +196,7 @@ export default function NotificationBell() {
               onClick={handleMarkAllRead}
             >
               <CheckCheck className="h-3 w-3 mr-1" />
-              Marcar todas
+              {t("notifications.bell.markAll")}
             </Button>
           )}
         </div>
