@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="14" time="5.850" timestamp="2026-02-17T05:42:08.145299+00:00" hostname="agent-env-32aa9cba-1bb2-449d-9bd5-262ae79a9250"><testcase classname="backend.tests.test_i18n_notifications_center.TestBackendHealth" name="test_health_check" time="0.131"><failure message="requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)">/root/.venv/lib/python3.11/site-packages/requests/models.py:976: in json
+    return complexjson.loads(self.text, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/__init__.py:346: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:337: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:355: in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+E   json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+backend/tests/test_i18n_notifications_center.py:24: in test_health_check
+    print(f"Health check: {response.json()}")
+                           ^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/requests/models.py:980: in json
+    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)
+E   requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)</failure></testcase><testcase classname="backend.tests.test_i18n_notifications_center.TestErrorStandardization" name="test_app_error_format_404" time="0.479" /><testcase classname="backend.tests.test_i18n_notifications_center.TestErrorStandardization" name="test_error_response_has_json_format" time="0.207" /><testcase classname="backend.tests.test_i18n_notifications_center.TestAdminAuth" name="test_admin_login" time="0.401" /><testcase classname="backend.tests.test_i18n_notifications_center.TestEmployeePortalAuth" name="test_employee_login" time="0.391" /><testcase classname="backend.tests.test_i18n_notifications_center.TestVAPIDKeyEndpoint" name="test_vapid_key_endpoint" time="0.208" /><testcase classname="backend.tests.test_i18n_notifications_center.TestNotificationEventsI18n" name="test_notification_events_has_label_fr" time="0.471" /><testcase classname="backend.tests.test_i18n_notifications_center.TestEmployeeNotificationCenter" name="test_notification_center_endpoint" time="0.462" /><testcase classname="backend.tests.test_i18n_notifications_center.TestEmployeeNotificationCenter" name="test_notification_center_category_filter" time="0.564" /><testcase classname="backend.tests.test_i18n_notifications_center.TestEmployeeNotificationCenter" name="test_notification_center_search" time="0.473" /><testcase classname="backend.tests.test_i18n_notifications_center.TestEmployeeNotificationCenter" name="test_notification_categories_endpoint" time="0.476" /><testcase classname="backend.tests.test_i18n_notifications_center.TestEmployeeNotificationCenter" name="test_notification_export_csv" time="0.442" /><testcase classname="backend.tests.test_i18n_notifications_center.TestEmployeeNotificationCenter" name="test_mark_all_read_endpoint" time="0.541" /><testcase classname="backend.tests.test_i18n_notifications_center.TestEmployeeNotifications" name="test_notifications_list" time="0.501" /></testsuite></testsuites>
