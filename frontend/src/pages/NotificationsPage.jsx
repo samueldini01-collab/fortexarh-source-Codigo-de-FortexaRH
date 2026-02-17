@@ -692,13 +692,13 @@ export default function NotificationsPage() {
                       </SelectTrigger>
                       <SelectContent>
                         {[1, 5, 10, 15, 20, 25, 28, 30].map((day) => (
-                          <SelectItem key={day} value={String(day)}>Dia {day} de cada mes</SelectItem>
+                          <SelectItem key={day} value={String(day)}>{t("notifications.reminders.dayOfMonth", { day })}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>Anticipacion</Label>
+                    <Label>{t("notifications.reminders.advance")}</Label>
                     <Select
                       value={String(notificationSettings.payroll_reminder_days || 3)}
                       onValueChange={(v) => {
@@ -710,7 +710,7 @@ export default function NotificationsPage() {
                       </SelectTrigger>
                       <SelectContent>
                         {[1, 2, 3, 5, 7].map((d) => (
-                          <SelectItem key={d} value={String(d)}>{d} dia{d > 1 ? "s" : ""} antes</SelectItem>
+                          <SelectItem key={d} value={String(d)}>{t("notifications.reminders.daysBefore", { count: d })}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -723,7 +723,7 @@ export default function NotificationsPage() {
                     data-testid="send-payroll-reminder-btn"
                   >
                     <Send className="w-4 h-4 mr-2" />
-                    Enviar Recordatorio Ahora
+                    {t("notifications.reminders.sendReminder")}
                   </Button>
                 </CardContent>
               </Card>
@@ -732,9 +732,9 @@ export default function NotificationsPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Cake className="w-5 h-5 text-pink-500" />
-                    Cumpleanos
+                    {t("notifications.reminders.birthdayReminders")}
                   </CardTitle>
-                  <CardDescription>Alertas de cumpleanos de empleados</CardDescription>
+                  <CardDescription>{t("notifications.reminders.birthdayRemindersDesc")}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -747,7 +747,7 @@ export default function NotificationsPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Anticipacion</Label>
+                    <Label>{t("notifications.reminders.advance")}</Label>
                     <Select
                       value={String(notificationSettings.birthday_notification_days || 1)}
                       onValueChange={(v) => {
@@ -758,10 +758,10 @@ export default function NotificationsPage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="0">El mismo dia</SelectItem>
-                        <SelectItem value="1">1 dia antes</SelectItem>
-                        <SelectItem value="3">3 dias antes</SelectItem>
-                        <SelectItem value="7">7 dias antes</SelectItem>
+                        <SelectItem value="0">{t("notifications.elMismoDia")}</SelectItem>
+                        <SelectItem value="1">{t("notifications.reminders.daysBefore", { count: 1 })}</SelectItem>
+                        <SelectItem value="3">{t("notifications.reminders.daysBefore", { count: 3 })}</SelectItem>
+                        <SelectItem value="7">{t("notifications.reminders.daysBefore", { count: 7 })}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -790,7 +790,7 @@ export default function NotificationsPage() {
                     data-testid="send-birthday-notif-btn"
                   >
                     <Send className="w-4 h-4 mr-2" />
-                    Enviar Notificacion de Cumpleanos
+                    {t("notifications.reminders.sendBirthdayNotifs")}
                   </Button>
                 </CardContent>
               </Card>
