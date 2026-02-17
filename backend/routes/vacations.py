@@ -538,6 +538,14 @@ async def approve_leave_request(
         category="vacation",
         action_url="/vacations",
     )
+
+    # Web push notification
+    await send_push_to_user(
+        user_id=f"emp_{request['employee_id']}",
+        title="Vacaciones Aprobadas",
+        body=f"Tu solicitud de {request['leave_type']} del {request['start_date']} al {request['end_date']} ha sido aprobada.",
+        url="/employee-portal",
+    )
     
     return {"message": "Solicitud aprobada exitosamente"}
 
