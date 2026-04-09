@@ -503,6 +503,12 @@ async def execute_import(file: UploadFile = File(...), current_user: dict = Depe
                 "afp_discount": True,
                 "sfs_discount": True,
                 "isr_discount": True,
+                "sfs_manual_override": False,
+                "sfs_manual_amount": 0,
+                "afp_manual_override": False,
+                "afp_manual_amount": 0,
+                "isr_manual_override": False,
+                "isr_manual_amount": 0,
                 "additional_deductions": [],
                 "payment_method": row_data.get("payment_method", "Transferencia Bancaria") or "Transferencia Bancaria",
                 "payment_frequency": row_data.get("payment_frequency", "Quincenal") or "Quincenal",
@@ -688,7 +694,10 @@ async def bulk_edit_employees(data: BulkEditRequest, current_user: dict = Depend
         "department", "position", "status", "salary", "contract_type",
         "supervisor", "work_schedule", "payment_method", "payment_frequency",
         "bank_name", "account_type", "city", "nationality", "marital_status",
-        "afp_discount", "sfs_discount", "isr_discount", "exclude_from_payroll"
+        "afp_discount", "sfs_discount", "isr_discount", "exclude_from_payroll",
+        "sfs_manual_override", "sfs_manual_amount",
+        "afp_manual_override", "afp_manual_amount",
+        "isr_manual_override", "isr_manual_amount"
     }
     
     update_fields = {k: v for k, v in data.fields_to_update.items() if k in allowed_fields}

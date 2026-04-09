@@ -102,7 +102,10 @@ export default function EmployeesPage() {
     try {
       const data = {
         ...formData,
-        salary: parseFloat(formData.salary) || 0
+        salary: parseFloat(formData.salary) || 0,
+        sfs_manual_amount: parseFloat(formData.sfs_manual_amount) || 0,
+        afp_manual_amount: parseFloat(formData.afp_manual_amount) || 0,
+        isr_manual_amount: parseFloat(formData.isr_manual_amount) || 0,
       };
 
       if (editingEmployee) {

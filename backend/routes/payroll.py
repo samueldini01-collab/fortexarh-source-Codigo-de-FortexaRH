@@ -293,8 +293,8 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
                 "commissions": 0,
                 "other_income": 0,
                 "gross_salary": salary,
-                "sfs_employee": round(salary * SFS_EMPLOYEE_RATE, 2),
-                "afp_employee": round(salary * AFP_EMPLOYEE_RATE, 2),
+                "sfs_employee": round(salary * SFS_EMPLOYEE_RATE, 2) if emp.get("sfs_discount", True) and not emp.get("sfs_manual_override") else (float(emp.get("sfs_manual_amount", 0)) if emp.get("sfs_manual_override") and emp.get("sfs_discount", True) else 0),
+                "afp_employee": round(salary * AFP_EMPLOYEE_RATE, 2) if emp.get("afp_discount", True) and not emp.get("afp_manual_override") else (float(emp.get("afp_manual_amount", 0)) if emp.get("afp_manual_override") and emp.get("afp_discount", True) else 0),
                 "isr": 0,
                 "additional_deductions": emp.get("additional_deductions", []),
                 "total_additional_deductions": sum(d.get("amount", 0) for d in emp.get("additional_deductions", []) if not d.get("is_percentage")),
@@ -310,7 +310,13 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
             }
             
             isr_result = calculate_isr_monthly(salary)
-            entry["isr"] = isr_result["isr_monthly"]
+            if emp.get("isr_discount", True):
+                if emp.get("isr_manual_override"):
+                    entry["isr"] = round(float(emp.get("isr_manual_amount", 0)), 2)
+                else:
+                    entry["isr"] = isr_result["isr_monthly"]
+            else:
+                entry["isr"] = 0
             
             # Get loan deductions
             loan_deduction = 0
@@ -390,10 +396,33 @@ async def update_payroll_entry(entry_id: str, data: PayrollEntryCreate, current_
     
     gross_salary = data.base_salary + overtime_day_amount + overtime_night_amount + overtime_weekend_amount + overtime_holiday_amount + data.bonuses + data.commissions + data.other_income
     
-    sfs_employee = round(gross_salary * SFS_EMPLOYEE_RATE, 2)
-    afp_employee = round(gross_salary * AFP_EMPLOYEE_RATE, 2)
+    # Get employee data for manual override settings
+    emp = await db.employees.find_one(
+        {"employee_id": entry["employee_id"], "company_id": company_id},
+        {"_id": 0, "sfs_discount": 1, "afp_discount": 1, "isr_discount": 1,
+         "sfs_manual_override": 1, "sfs_manual_amount": 1,
+         "afp_manual_override": 1, "afp_manual_amount": 1,
+         "isr_manual_override": 1, "isr_manual_amount": 1}
+    ) or {}
+
+    # SFS: respect override
+    if emp.get("sfs_discount", True):
+        sfs_employee = round(float(emp.get("sfs_manual_amount", 0)), 2) if emp.get("sfs_manual_override") else round(gross_salary * SFS_EMPLOYEE_RATE, 2)
+    else:
+        sfs_employee = 0
+
+    # AFP: respect override
+    if emp.get("afp_discount", True):
+        afp_employee = round(float(emp.get("afp_manual_amount", 0)), 2) if emp.get("afp_manual_override") else round(gross_salary * AFP_EMPLOYEE_RATE, 2)
+    else:
+        afp_employee = 0
+
+    # ISR: respect override
     isr_result = calculate_isr_monthly(gross_salary)
-    isr = isr_result["isr_monthly"]
+    if emp.get("isr_discount", True):
+        isr = round(float(emp.get("isr_manual_amount", 0)), 2) if emp.get("isr_manual_override") else isr_result["isr_monthly"]
+    else:
+        isr = 0
     
     total_additional = sum(d.get("amount", 0) for d in (data.additional_deductions or []) if not d.get("is_percentage"))
     for d in (data.additional_deductions or []):

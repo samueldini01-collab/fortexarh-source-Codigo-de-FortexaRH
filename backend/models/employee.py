@@ -35,6 +35,12 @@ class EmployeeCreate(BaseModel):
     afp_discount: bool = True
     sfs_discount: bool = True
     isr_discount: bool = True
+    sfs_manual_override: bool = False
+    sfs_manual_amount: float = 0
+    afp_manual_override: bool = False
+    afp_manual_amount: float = 0
+    isr_manual_override: bool = False
+    isr_manual_amount: float = 0
     additional_deductions: Optional[List[Dict[str, Any]]] = []
     payment_method: Optional[str] = "Transferencia Bancaria"
     payment_frequency: Optional[str] = "Quincenal"
