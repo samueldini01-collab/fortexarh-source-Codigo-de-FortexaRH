@@ -14,8 +14,34 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  User, FileText, CreditCard, Camera, Percent, Phone, X, Lock
+  User, FileText, CreditCard, Camera, Percent, Phone, X, Lock, Calculator
 } from "lucide-react";
+
+const SFS_RATE = 0.0304;
+const AFP_RATE = 0.0287;
+
+// DR ISR monthly calculation
+function calculateISRMonthly(grossSalary) {
+  const sfs = grossSalary * SFS_RATE;
+  const afp = grossSalary * AFP_RATE;
+  const taxableMonthly = grossSalary - sfs - afp;
+  const annualTaxable = taxableMonthly * 12;
+  let isrAnnual = 0;
+  if (annualTaxable <= 416220) {
+    isrAnnual = 0;
+  } else if (annualTaxable <= 624329) {
+    isrAnnual = (annualTaxable - 416220) * 0.15;
+  } else if (annualTaxable <= 867123) {
+    isrAnnual = 31216 + (annualTaxable - 624329) * 0.20;
+  } else {
+    isrAnnual = 79776 + (annualTaxable - 867123) * 0.25;
+  }
+  return Math.round((isrAnnual / 12) * 100) / 100;
+}
+
+function formatRD(amount) {
+  return new Intl.NumberFormat("es-DO", { style: "currency", currency: "DOP", minimumFractionDigits: 2 }).format(amount);
+}
 import { toast } from "sonner";
 import {
   departments, documentTypes, genders, maritalStatuses, contractTypes,
@@ -505,59 +531,206 @@ export function EmployeeFormDialog({
                 {/* Tab 3: Descuentos */}
                 <TabsContent value="descuentos" className="space-y-4">
                   <div>
-                    <h4 className="font-semibold text-slate-700 mb-4">{t('employees.deduccionesDeLey')}</h4>
+                    <h4 className="font-semibold text-slate-700 mb-2">{t('employees.deduccionesDeLey')}</h4>
                     <p className="text-sm text-slate-500 mb-4">
-                      Active o desactive las deducciones de ley para este empleado. Las deducciones desactivadas no se aplicarán en la nómina.
+                      {t('employees.deduccionesDesc') || "Active o desactive las deducciones de ley. Puede usar el calculo automatico o ingresar un monto manual."}
                     </p>
-                    <div className="space-y-2 bg-slate-50 rounded-lg border border-slate-200">
-                      <div className="flex items-center justify-between p-4 border-b border-slate-200">
-                        <div className="flex-1">
-                          <p className="font-medium text-slate-700">{t('employees.sfs')}</p>
-                          <p className="text-sm text-slate-500">{t('employees.seguroFamiliarDeSalud')}</p>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <span className={`text-sm font-mono ${formData.sfs_discount ? 'text-emerald-600' : 'text-slate-400 line-through'}`}>3.04%</span>
-                          <Switch
-                            checked={formData.sfs_discount}
-                            onCheckedChange={(checked) => setFormData({...formData, sfs_discount: checked})}
-                            data-testid="toggle-sfs"
-                          />
-                        </div>
+
+                    {/* Salary reference */}
+                    {formData.salary ? (
+                      <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-2">
+                        <Calculator className="w-4 h-4 text-blue-600 shrink-0" />
+                        <p className="text-sm text-blue-700">
+                          {t('employees.salarioBase') || "Salario base"}: <strong>{formatRD(parseFloat(formData.salary) || 0)}</strong>
+                        </p>
                       </div>
-                      <div className="flex items-center justify-between p-4 border-b border-slate-200">
-                        <div className="flex-1">
-                          <p className="font-medium text-slate-700">{t('employees.afp')}</p>
-                          <p className="text-sm text-slate-500">{t('employees.administradoraFondosDePensiones')}</p>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <span className={`text-sm font-mono ${formData.afp_discount ? 'text-emerald-600' : 'text-slate-400 line-through'}`}>2.87%</span>
-                          <Switch
-                            checked={formData.afp_discount}
-                            onCheckedChange={(checked) => setFormData({...formData, afp_discount: checked})}
-                            data-testid="toggle-afp"
-                          />
-                        </div>
+                    ) : (
+                      <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                        <p className="text-sm text-amber-700">
+                          {t('employees.ingreseSalario') || "Ingrese el Salario Mensual Bruto en la pestana 'Forma de Pago' para ver los calculos automaticos."}
+                        </p>
                       </div>
-                      <div className="flex items-center justify-between p-4">
-                        <div className="flex-1">
-                          <p className="font-medium text-slate-700">{t('employees.isr')}</p>
-                          <p className="text-sm text-slate-500">{t('employees.impuestoSobreLaRenta')}</p>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <span className={`text-sm font-mono ${formData.isr_discount ? 'text-emerald-600' : 'text-slate-400 line-through'}`}>{t('employees.calculado')}</span>
-                          <Switch
-                            checked={formData.isr_discount}
-                            onCheckedChange={(checked) => setFormData({...formData, isr_discount: checked})}
-                            data-testid="toggle-isr"
-                          />
-                        </div>
-                      </div>
-                    </div>
+                    )}
+
+                    {(() => {
+                      const salary = parseFloat(formData.salary) || 0;
+                      const calcSFS = Math.round(salary * SFS_RATE * 100) / 100;
+                      const calcAFP = Math.round(salary * AFP_RATE * 100) / 100;
+                      const calcISR = calculateISRMonthly(salary);
+                      const effectiveSFS = formData.sfs_discount ? (formData.sfs_manual_override ? (parseFloat(formData.sfs_manual_amount) || 0) : calcSFS) : 0;
+                      const effectiveAFP = formData.afp_discount ? (formData.afp_manual_override ? (parseFloat(formData.afp_manual_amount) || 0) : calcAFP) : 0;
+                      const effectiveISR = formData.isr_discount ? (formData.isr_manual_override ? (parseFloat(formData.isr_manual_amount) || 0) : calcISR) : 0;
+                      const totalLegal = effectiveSFS + effectiveAFP + effectiveISR;
+
+                      return (
+                        <>
+                          <div className="space-y-0 bg-slate-50 rounded-lg border border-slate-200 overflow-hidden">
+                            {/* SFS Row */}
+                            <div className="p-4 border-b border-slate-200">
+                              <div className="flex items-center justify-between">
+                                <div className="flex-1">
+                                  <p className="font-medium text-slate-700">{t('employees.sfs')}</p>
+                                  <p className="text-sm text-slate-500">{t('employees.seguroFamiliarDeSalud')}</p>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                  <span className={`text-sm font-mono ${formData.sfs_discount ? 'text-emerald-600' : 'text-slate-400 line-through'}`}>3.04%</span>
+                                  <Switch
+                                    checked={formData.sfs_discount}
+                                    onCheckedChange={(checked) => setFormData({...formData, sfs_discount: checked})}
+                                    data-testid="toggle-sfs"
+                                  />
+                                </div>
+                              </div>
+                              {formData.sfs_discount && salary > 0 && (
+                                <div className="mt-3 pt-3 border-t border-slate-200 flex items-center gap-3 flex-wrap">
+                                  <div className="flex items-center gap-2">
+                                    <Checkbox
+                                      checked={formData.sfs_manual_override}
+                                      onCheckedChange={(checked) => setFormData({...formData, sfs_manual_override: checked})}
+                                      data-testid="sfs-manual-toggle"
+                                    />
+                                    <span className="text-xs text-slate-600">{t('employees.valorManual') || "Valor manual"}</span>
+                                  </div>
+                                  {formData.sfs_manual_override ? (
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-xs text-slate-500">RD$</span>
+                                      <Input
+                                        type="number"
+                                        step="0.01"
+                                        value={formData.sfs_manual_amount}
+                                        onChange={(e) => setFormData({...formData, sfs_manual_amount: e.target.value})}
+                                        className="w-32 h-8 text-sm"
+                                        placeholder={calcSFS.toFixed(2)}
+                                        data-testid="sfs-manual-input"
+                                      />
+                                      <span className="text-xs text-slate-400">({t('employees.autoCalc') || "Auto"}: {formatRD(calcSFS)})</span>
+                                    </div>
+                                  ) : (
+                                    <Badge variant="secondary" className="font-mono text-emerald-700 bg-emerald-50">{formatRD(calcSFS)}</Badge>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+
+                            {/* AFP Row */}
+                            <div className="p-4 border-b border-slate-200">
+                              <div className="flex items-center justify-between">
+                                <div className="flex-1">
+                                  <p className="font-medium text-slate-700">{t('employees.afp')}</p>
+                                  <p className="text-sm text-slate-500">{t('employees.administradoraFondosDePensiones')}</p>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                  <span className={`text-sm font-mono ${formData.afp_discount ? 'text-emerald-600' : 'text-slate-400 line-through'}`}>2.87%</span>
+                                  <Switch
+                                    checked={formData.afp_discount}
+                                    onCheckedChange={(checked) => setFormData({...formData, afp_discount: checked})}
+                                    data-testid="toggle-afp"
+                                  />
+                                </div>
+                              </div>
+                              {formData.afp_discount && salary > 0 && (
+                                <div className="mt-3 pt-3 border-t border-slate-200 flex items-center gap-3 flex-wrap">
+                                  <div className="flex items-center gap-2">
+                                    <Checkbox
+                                      checked={formData.afp_manual_override}
+                                      onCheckedChange={(checked) => setFormData({...formData, afp_manual_override: checked})}
+                                      data-testid="afp-manual-toggle"
+                                    />
+                                    <span className="text-xs text-slate-600">{t('employees.valorManual') || "Valor manual"}</span>
+                                  </div>
+                                  {formData.afp_manual_override ? (
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-xs text-slate-500">RD$</span>
+                                      <Input
+                                        type="number"
+                                        step="0.01"
+                                        value={formData.afp_manual_amount}
+                                        onChange={(e) => setFormData({...formData, afp_manual_amount: e.target.value})}
+                                        className="w-32 h-8 text-sm"
+                                        placeholder={calcAFP.toFixed(2)}
+                                        data-testid="afp-manual-input"
+                                      />
+                                      <span className="text-xs text-slate-400">({t('employees.autoCalc') || "Auto"}: {formatRD(calcAFP)})</span>
+                                    </div>
+                                  ) : (
+                                    <Badge variant="secondary" className="font-mono text-emerald-700 bg-emerald-50">{formatRD(calcAFP)}</Badge>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+
+                            {/* ISR Row */}
+                            <div className="p-4">
+                              <div className="flex items-center justify-between">
+                                <div className="flex-1">
+                                  <p className="font-medium text-slate-700">{t('employees.isr')}</p>
+                                  <p className="text-sm text-slate-500">{t('employees.impuestoSobreLaRenta')}</p>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                  <span className={`text-sm font-mono ${formData.isr_discount ? 'text-emerald-600' : 'text-slate-400 line-through'}`}>{t('employees.calculado')}</span>
+                                  <Switch
+                                    checked={formData.isr_discount}
+                                    onCheckedChange={(checked) => setFormData({...formData, isr_discount: checked})}
+                                    data-testid="toggle-isr"
+                                  />
+                                </div>
+                              </div>
+                              {formData.isr_discount && salary > 0 && (
+                                <div className="mt-3 pt-3 border-t border-slate-200 flex items-center gap-3 flex-wrap">
+                                  <div className="flex items-center gap-2">
+                                    <Checkbox
+                                      checked={formData.isr_manual_override}
+                                      onCheckedChange={(checked) => setFormData({...formData, isr_manual_override: checked})}
+                                      data-testid="isr-manual-toggle"
+                                    />
+                                    <span className="text-xs text-slate-600">{t('employees.valorManual') || "Valor manual"}</span>
+                                  </div>
+                                  {formData.isr_manual_override ? (
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-xs text-slate-500">RD$</span>
+                                      <Input
+                                        type="number"
+                                        step="0.01"
+                                        value={formData.isr_manual_amount}
+                                        onChange={(e) => setFormData({...formData, isr_manual_amount: e.target.value})}
+                                        className="w-32 h-8 text-sm"
+                                        placeholder={calcISR.toFixed(2)}
+                                        data-testid="isr-manual-input"
+                                      />
+                                      <span className="text-xs text-slate-400">({t('employees.autoCalc') || "Auto"}: {formatRD(calcISR)})</span>
+                                    </div>
+                                  ) : (
+                                    <Badge variant="secondary" className={`font-mono ${calcISR > 0 ? 'text-emerald-700 bg-emerald-50' : 'text-slate-500 bg-slate-100'}`}>
+                                      {calcISR > 0 ? formatRD(calcISR) : (t('employees.exento') || "Exento")}
+                                    </Badge>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Totals summary */}
+                          {salary > 0 && (
+                            <div className="mt-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm font-medium text-emerald-800">{t('employees.totalDeduccionesLey') || "Total Deducciones de Ley"}</span>
+                                <span className="text-sm font-bold font-mono text-emerald-800">{formatRD(totalLegal)}</span>
+                              </div>
+                              <div className="flex items-center justify-between mt-1">
+                                <span className="text-xs text-emerald-600">{t('employees.salarioNeto') || "Salario Neto Estimado"}</span>
+                                <span className="text-xs font-mono text-emerald-700">{formatRD(salary - totalLegal)}</span>
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      );
+                    })()}
+
                     {(!formData.sfs_discount || !formData.afp_discount || !formData.isr_discount) && (
                       <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                         <p className="text-sm text-amber-700 flex items-center gap-2">
-                          <span className="text-amber-500">⚠️</span>
-                          Algunas deducciones de ley están desactivadas para este empleado. Asegúrese de cumplir con las regulaciones aplicables.
+                          <span className="text-amber-500">&#9888;</span>
+                          {t('employees.deduccionesDesactivadasWarning') || "Algunas deducciones de ley estan desactivadas para este empleado. Asegurese de cumplir con las regulaciones aplicables."}
                         </p>
                       </div>
                     )}

@@ -126,7 +126,9 @@ async def calculate_payroll(data: PayrollCalculatorInput, current_user: dict = D
     afp_employer = round(total_earnings * AFP_EMPLOYER_RATE, 2)
     srl_employer = round(total_earnings * SRL_EMPLOYER_RATE, 2)
     infotep_employer = round(total_earnings * INFOTEP_EMPLOYER_RATE, 2)
+    total_tss_employer = round(sfs_employer + afp_employer, 2)
     total_employer_contributions = round(sfs_employer + afp_employer + srl_employer + infotep_employer, 2)
+    total_cost_employer = round(total_earnings + total_employer_contributions, 2)
 
     result = PayrollCalculatorResult(
         employee_name=data.employee_name,
@@ -157,6 +159,8 @@ async def calculate_payroll(data: PayrollCalculatorInput, current_user: dict = D
         afp_employer=afp_employer,
         srl_employer=srl_employer,
         infotep_employer=infotep_employer,
+        total_tss_employer=total_tss_employer,
+        total_cost_employer=total_cost_employer,
         total_employer_contributions=total_employer_contributions,
         breakdown={
             "ingresos": {
