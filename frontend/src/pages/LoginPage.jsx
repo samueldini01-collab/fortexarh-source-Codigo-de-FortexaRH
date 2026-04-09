@@ -77,7 +77,7 @@ export default function LoginPage() {
     } catch (err) {
       const detail = err.response?.data?.detail;
       if (detail === "Invalid credentials") {
-        setError(t('auth.login.invalidCredentials', 'Credenciales inválidas'));
+        setError(t('auth.login.invalidCredentials'));
       } else {
         setError(detail || t('errors.generic'));
       }
