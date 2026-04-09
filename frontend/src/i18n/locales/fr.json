@@ -604,7 +604,8 @@
       "googleLogin": "Continuer avec Google",
       "partnerPortal": "Portail Comptable",
       "partnerSubtitle": "Accédez au portail de votre cabinet comptable",
-      "partnerSubmit": "Entrer au Portail Comptable"
+      "partnerSubmit": "Entrer au Portail Comptable",
+      "invalidCredentials": "Identifiants invalides. Veuillez vérifier votre e-mail et mot de passe."
     },
     "register": {
       "title": "Créer un compte",

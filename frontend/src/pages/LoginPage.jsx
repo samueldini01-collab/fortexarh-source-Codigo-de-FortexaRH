@@ -75,8 +75,12 @@ export default function LoginPage() {
       localStorage.setItem("user", JSON.stringify(userData));
       window.location.href = userData?.is_partner ? "/partner-dashboard" : "/dashboard";
     } catch (err) {
-      setError(err.response?.data?.detail || t('errors.generic'));
-      toast.error(t('errors.generic'));
+      const detail = err.response?.data?.detail;
+      if (detail === "Invalid credentials") {
+        setError(t('auth.login.invalidCredentials', 'Credenciales inválidas'));
+      } else {
+        setError(detail || t('errors.generic'));
+      }
     } finally {
       setLoading(false);
     }

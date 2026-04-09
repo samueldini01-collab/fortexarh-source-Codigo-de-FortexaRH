@@ -73,6 +73,7 @@ export default function CompanyConfigPage() {
   const [activeTab, setActiveTab] = useState("general");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [fetchError, setFetchError] = useState(false);
   
   // Get translated tabs and options
   const TABS = getCompanyConfigTabs(t);
@@ -156,7 +157,20 @@ export default function CompanyConfigPage() {
 
   const fetchCompanyData = useCallback(async () => {
     setLoading(true);
+    setFetchError(false);
     try {
+      const headers = getAuthHeaders();
+      if (!headers.Authorization) {
+        // Token not yet available, wait and retry once
+        await new Promise(r => setTimeout(r, 500));
+        const retryHeaders = getAuthHeaders();
+        if (!retryHeaders.Authorization) {
+          setFetchError(true);
+          setLoading(false);
+          return;
+        }
+      }
+      
       // Fetch QuickBooks status in parallel
       fetchQuickbooksStatus();
       
@@ -168,7 +182,6 @@ export default function CompanyConfigPage() {
       const data = response.data;
       if (data.company) {
         setCompany(data.company);
-        // Load logo from company data
         if (data.company.logo) {
           setLogoPreview(data.company.logo);
         }
@@ -185,7 +198,10 @@ export default function CompanyConfigPage() {
       if (data.notifications) setNotifications(prev => ({...prev, ...data.notifications}));
       if (data.auditLog) setAuditLog(data.auditLog);
     } catch (error) {
-      // Initialize with defaults
+      console.error("Error fetching company data:", error);
+      if (error.response?.status === 401) {
+        setFetchError(true);
+      }
     } finally {
       setLoading(false);
     }
@@ -877,7 +893,7 @@ export default function CompanyConfigPage() {
                     <Badge variant="outline" className="text-xs text-amber-600">{t('companyConfig.proximamente')}</Badge>
                   )}
                 </div>
-                <p className="text-sm text-slate-500 dark:text-slate-400">{integration.description}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{integration.descKey ? t(integration.descKey) : integration.description}</p>
                 {integration.connected && integration.companyName && (
                   <p className="text-xs text-emerald-600 mt-1">
                     ✓ Conectado a: {integration.companyName}
@@ -965,7 +981,7 @@ export default function CompanyConfigPage() {
   // ===================== MAIN RENDER =====================
   if (loading) {
     return (
-      <DashboardLayout title="Configuración de Empresa">
+      <DashboardLayout title={t('companyConfig.configuracionDeEmpresa')}>
         <div className="flex items-center justify-center h-64">
           <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
         </div>
@@ -973,8 +989,23 @@ export default function CompanyConfigPage() {
     );
   }
 
+  if (fetchError) {
+    return (
+      <DashboardLayout title={t('companyConfig.configuracionDeEmpresa')}>
+        <div className="flex flex-col items-center justify-center h-64 gap-4">
+          <AlertCircle className="w-12 h-12 text-amber-500" />
+          <p className="text-slate-600 dark:text-slate-400">{t('errors.generic', 'Error al cargar los datos')}</p>
+          <Button onClick={fetchCompanyData} variant="outline">
+            <RefreshCw className="w-4 h-4 mr-2" />
+            {t('common.retry', 'Reintentar')}
+          </Button>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
-    <DashboardLayout title="Configuración de Empresa">
+    <DashboardLayout title={t('companyConfig.configuracionDeEmpresa')}>
       <div className="space-y-6" data-testid="company-config-page">
         {/* Header */}
         <div>
