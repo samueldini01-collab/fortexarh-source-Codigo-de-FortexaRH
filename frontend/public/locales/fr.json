@@ -1392,7 +1392,16 @@
     "relacionParentesco": "Relation / Parenté",
     "telefonoPrincipal": "Téléphone Principal",
     "whatsappOpcional": "WhatsApp (Optional)",
-    "direccionFisicaOpcional": "Physical Address (Optional)"
+    "direccionFisicaOpcional": "Physical Address (Optional)",
+    "ingreseSalario": "Entrez le salaire mensuel brut dans l'onglet 'Mode de paiement' pour voir les calculs automatiques.",
+    "salarioBase": "Salaire de base",
+    "valorManual": "Valeur manuelle",
+    "autoCalc": "Auto",
+    "exento": "Exonere",
+    "totalDeduccionesLey": "Total deductions legales",
+    "salarioNeto": "Salaire net estime",
+    "deduccionesDesc": "Activez ou desactivez les deductions legales. Vous pouvez utiliser le calcul automatique ou entrer un montant manuel.",
+    "deduccionesDesactivadasWarning": "Certaines deductions legales sont desactivees pour cet employe. Assurez-vous de respecter les reglementations applicables."
   },
   "payroll": {
     "title": "Paie",

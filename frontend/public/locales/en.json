@@ -1395,7 +1395,16 @@
     "relacionParentesco": "Relationship",
     "telefonoPrincipal": "Main Phone",
     "whatsappOpcional": "WhatsApp (Optional)",
-    "direccionFisicaOpcional": "Physical Address (Optional)"
+    "direccionFisicaOpcional": "Physical Address (Optional)",
+    "ingreseSalario": "Enter the Gross Monthly Salary in the 'Payment Method' tab to see automatic calculations.",
+    "salarioBase": "Base salary",
+    "valorManual": "Manual value",
+    "autoCalc": "Auto",
+    "exento": "Exempt",
+    "totalDeduccionesLey": "Total Legal Deductions",
+    "salarioNeto": "Estimated Net Salary",
+    "deduccionesDesc": "Enable or disable legal deductions. You can use automatic calculation or enter a manual amount.",
+    "deduccionesDesactivadasWarning": "Some legal deductions are disabled for this employee. Make sure to comply with applicable regulations."
   },
   "payroll": {
     "title": "Payroll",

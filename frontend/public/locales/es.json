@@ -1392,7 +1392,16 @@
     "relacionParentesco": "Relación / Parentesco",
     "telefonoPrincipal": "Teléfono Principal",
     "whatsappOpcional": "WhatsApp (Opcional)",
-    "direccionFisicaOpcional": "Dirección Física (Opcional)"
+    "direccionFisicaOpcional": "Dirección Física (Opcional)",
+    "ingreseSalario": "Ingrese el Salario Mensual Bruto en la pestana 'Forma de Pago' para ver los calculos automaticos.",
+    "salarioBase": "Salario base",
+    "valorManual": "Valor manual",
+    "autoCalc": "Auto",
+    "exento": "Exento",
+    "totalDeduccionesLey": "Total Deducciones de Ley",
+    "salarioNeto": "Salario Neto Estimado",
+    "deduccionesDesc": "Active o desactive las deducciones de ley. Puede usar el calculo automatico o ingresar un monto manual.",
+    "deduccionesDesactivadasWarning": "Algunas deducciones de ley estan desactivadas para este empleado. Asegurese de cumplir con las regulaciones aplicables."
   },
   "payroll": {
     "title": "Nómina",
