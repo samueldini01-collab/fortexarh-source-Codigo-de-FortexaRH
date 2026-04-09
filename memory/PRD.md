@@ -27,18 +27,14 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 ### Backend API Error Standardization (Complete)
 - AppError + 6 subclasses, global exception handler
 
-### Help Center (Feb 17, 2026) DONE
-- **Route**: `/help-center` (protected, requires login)
-- **Guides tab**: 8 module cards (Payroll, Vacations, Employees, Notifications, Attendance, Evaluations, Partner, Settings) with 30+ expandable articles
-- **Updates tab**: 7 recent system updates with type badges (New feature, Improvement, Fix)
-- **FAQ tab**: 10 expandable Q&A items covering common user questions
-- **Search**: Real-time filtering across all 3 tabs
-- **i18n**: Full Spanish, English, French translations
-- **Navigation**: Accessible from sidebar (Administration group) and Support page link card
-- **data-testid**: help-center-page, help-center-search, help-tab-*, help-module-*, help-article-*, help-update-*, faq-*
+### Help Center (Complete)
+- /help-center with 3 tabs: Guides (8 modules, 30+ articles), Updates (7), FAQ (10)
+- Search, i18n (ES/EN/FR), sidebar navigation
 
-### System Analysis Fixes (Feb 15, 2026) DONE
-- ObjectId serialization, data-testid, i18n, PartnerDashboard refactor
+### Accountants Software Page - i18n Fix (Feb 17, 2026) DONE
+- Added all missing `accountants.*` translation keys (60+ keys) to ES, EN, FR
+- Page `/accountants-software` now renders all text correctly in all 3 languages
+- Covers: hero, benefits (6), features (6), how it works (3 steps), earnings projection, comparison table (9 rows), CTA, footer
 
 ## Key Credentials
 - **Admin**: test_refactor@fortexa.com / test123
