@@ -7,34 +7,33 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - **Frontend**: React + Tailwind CSS + Shadcn/UI + react-i18next
 - **Backend**: FastAPI + Motor (async MongoDB)
 - **Database**: MongoDB
-- **Integrations**: Stripe, PayPal, Resend, QuickBooks, Google Auth, Gemini AI, pyotp, qrcode, pytz, pywebpush
+- **Integrations**: Stripe, PayPal, Resend, QuickBooks Online, Google Auth, Gemini AI, pyotp, qrcode, pytz, pywebpush
 
 ## What's Been Implemented
 
 ### Core Modules (Complete)
 - User auth (JWT + Google OAuth), 2FA, Dashboard, org chart, payroll, accounting, compliance
-- Partner portal, subscription management, document generation, e-signature, AI search
-- Employee self-service portal with notification center
+- Partner portal, subscription management, document generation, AI search
+- Employee self-service portal with notification center, Help Center
 
-### Configurable Notifications (Phase 1 + 2 Complete)
-- 20 event types, push (PWA), employee bell + center, auto push on payroll/vacation, full i18n
-
-### Help Center (Complete)
-- /help-center with Guides, Updates, FAQ, search, i18n
+### QuickBooks Online Integration (Complete)
+- OAuth 2.0 connection flow with CCAGE GROUP, S.R.L.
+- **Account Mapping UI** — 8-account mapping (Payroll Expense, Employer Contributions, SFS/AFP/ISR/SRL/INFOTEP Payable, Bank) in /company-config Integrations tab
+- **Consolidated JE per Period** — POST /api/quickbooks/sync/payroll creates one Journal Entry with all employees:
+  - Debit: Gasto Nómina (bruto) + Aportes Patronales
+  - Credit: SFS/AFP/ISR/SRL/INFOTEP por Pagar + Banco (neto)
+- **Manual "Enviar a QBO" button** on paid periods in /payroll-v2
+- Duplicate sync prevention (qb_journal_entry_id stored on period)
+- Placeholder credential detection + user-friendly errors
 
 ### Payroll System
 - Full payroll calculation with DR tax compliance (SFS, AFP, ISR)
 - Manual employee-level deduction overrides (SFS, AFP, ISR)
-- **ISR inline editing in payroll sheet** (Apr 10, 2026) — Users can click the ISR column in Hoja de Nómina to override the calculated value per entry
-- Payroll calculator with all fields
-
-### Bug Fixes (Apr 9-10, 2026)
-- Login page double error toast removed
-- Login i18n for invalid credentials (ES/EN/FR)
-- CompanyConfigPage robustness (error state, retry, defensive auth)
-- CompanyConfigPage integration descriptions fixed (descKey → t())
+- ISR inline editing in payroll sheet
 - Employee tabs reordered: Datos → Contrato → Forma de Pago → Descuentos → Documentos → Emergencia
-- QuickBooks OAuth: placeholder credential detection + user-friendly error
+
+### Notifications (Phase 1 + 2 Complete)
+- 20 event types, push (PWA), employee bell + center, auto push on payroll/vacation, full i18n
 
 ## Key Credentials
 - **Admin**: test_refactor@fortexa.com / test123
@@ -57,4 +56,11 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 
 ## Test Reports
 - `/app/test_reports/iteration_202.json` - Login + CompanyConfig fixes (100%)
-- `/app/test_reports/iteration_203.json` - ISR Override feature (100%, 6/6 BE + FE verified)
+- `/app/test_reports/iteration_203.json` - ISR Override feature (100%)
+- `/app/test_reports/iteration_204.json` - QuickBooks Payroll Sync (100%, 7/7 BE + FE)
+
+## Key API Endpoints (New)
+- `GET /api/quickbooks/accounts` — Fetch QBO chart of accounts
+- `GET /api/quickbooks/account-mapping` — Get saved account mapping
+- `PUT /api/quickbooks/account-mapping` — Save account mapping
+- `POST /api/quickbooks/sync/payroll` — Send consolidated JE for a period (requires period_id)
