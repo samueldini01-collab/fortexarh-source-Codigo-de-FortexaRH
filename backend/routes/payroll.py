@@ -62,6 +62,143 @@ async def update_period_totals(period_id: str, company_id: str):
         }}
     )
 
+    # Auto-update linked journal entry if exists
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0, "journal_entry_id": 1, "status": 1}
+    )
+    if period and period.get("journal_entry_id") and period.get("status") in ["approved", "paid"]:
+        await generate_payroll_journal_entry(period_id, company_id, "system", trigger="update")
+
+
+async def generate_payroll_journal_entry(period_id: str, company_id: str, user_id: str, trigger: str = "manual"):
+    """Generate or update a journal entry for a payroll period.
+    
+    Args:
+        trigger: 'approve', 'pay', 'manual', or 'update' (when entries change)
+    Returns:
+        entry_id or None
+    """
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id}, {"_id": 0}
+    )
+    if not period:
+        return None
+
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id}, {"_id": 0}
+    ).to_list(1000)
+    if not entries:
+        return None
+
+    # Calculate totals
+    total_gross = round(sum(e.get("gross_salary", 0) for e in entries), 2)
+    total_sfs_emp = round(sum(e.get("sfs_employee", 0) for e in entries), 2)
+    total_afp_emp = round(sum(e.get("afp_employee", 0) for e in entries), 2)
+    total_isr = round(sum(e.get("isr", 0) for e in entries), 2)
+    total_net = round(sum(e.get("net_salary", 0) for e in entries), 2)
+    total_sfs_employer = round(sum(e.get("sfs_employer", 0) for e in entries), 2)
+    total_afp_employer = round(sum(e.get("afp_employer", 0) for e in entries), 2)
+    total_srl = round(sum(e.get("srl_employer", 0) for e in entries), 2)
+    total_infotep = round(sum(e.get("infotep_employer", 0) for e in entries), 2)
+    total_employer = round(total_sfs_employer + total_afp_employer + total_srl + total_infotep, 2)
+    total_otros = round(sum(e.get("otros_descuentos", 0) for e in entries), 2)
+
+    period_desc = period.get("description") or period.get("name") or f"Nómina {period.get('month','')}/{period.get('year','')}"
+    entry_date = period.get("payment_date") or period.get("end_date") or now_iso()[:10]
+
+    # Build journal lines
+    lines = []
+    # DEBITS
+    if total_gross > 0:
+        lines.append({"account_code": "6100", "account_name": "Gasto de Nómina (Sueldos y Salarios)", "debit": total_gross, "credit": 0, "description": period_desc})
+    if total_employer > 0:
+        lines.append({"account_code": "6200", "account_name": "Aportes Patronales TSS", "debit": total_employer, "credit": 0, "description": f"{period_desc} - TSS Patronal"})
+
+    # CREDITS
+    total_sfs = round(total_sfs_emp + total_sfs_employer, 2)
+    if total_sfs > 0:
+        lines.append({"account_code": "2110", "account_name": "SFS por Pagar", "debit": 0, "credit": total_sfs, "description": f"{period_desc} - SFS"})
+    total_afp = round(total_afp_emp + total_afp_employer, 2)
+    if total_afp > 0:
+        lines.append({"account_code": "2120", "account_name": "AFP por Pagar", "debit": 0, "credit": total_afp, "description": f"{period_desc} - AFP"})
+    if total_isr > 0:
+        lines.append({"account_code": "2130", "account_name": "ISR por Pagar", "debit": 0, "credit": total_isr, "description": f"{period_desc} - ISR"})
+    if total_srl > 0:
+        lines.append({"account_code": "2140", "account_name": "SRL por Pagar", "debit": 0, "credit": total_srl, "description": f"{period_desc} - SRL"})
+    if total_infotep > 0:
+        lines.append({"account_code": "2150", "account_name": "INFOTEP por Pagar", "debit": 0, "credit": total_infotep, "description": f"{period_desc} - INFOTEP"})
+    if total_otros > 0:
+        lines.append({"account_code": "2160", "account_name": "Otros Descuentos por Pagar", "debit": 0, "credit": total_otros, "description": f"{period_desc} - Otros"})
+    if total_net > 0:
+        lines.append({"account_code": "1100", "account_name": "Banco / Nómina por Pagar", "debit": 0, "credit": total_net, "description": f"{period_desc} - Neto"})
+
+    total_debits = round(sum(l["debit"] for l in lines), 2)
+    total_credits = round(sum(l["credit"] for l in lines), 2)
+
+    existing_je_id = period.get("journal_entry_id")
+
+    if existing_je_id:
+        # Update existing JE
+        await db.journal_entries.update_one(
+            {"entry_id": existing_je_id, "company_id": company_id},
+            {"$set": {
+                "entry_date": entry_date,
+                "description": f"Asiento de Nómina - {period_desc}",
+                "lines": lines,
+                "total_debits": total_debits,
+                "total_credits": total_credits,
+                "notes": f"Actualizado automáticamente ({trigger}) - {len(entries)} empleados",
+                "updated_at": now_iso()
+            }}
+        )
+        return existing_je_id
+    else:
+        # Create new JE
+        entry_id = f"je_{uuid.uuid4().hex[:12]}"
+        je = {
+            "entry_id": entry_id,
+            "company_id": company_id,
+            "entry_date": entry_date,
+            "reference": f"NOM-{period.get('year','')}{str(period.get('month','')).zfill(2)}-{period_id[-6:]}",
+            "description": f"Asiento de Nómina - {period_desc}",
+            "period": f"{period.get('year','')}-{str(period.get('month','')).zfill(2)}",
+            "entry_type": "payroll",
+            "lines": lines,
+            "payroll_id": period_id,
+            "notes": f"Generado automáticamente ({trigger}) - {len(entries)} empleados",
+            "total_debits": total_debits,
+            "total_credits": total_credits,
+            "status": "posted" if trigger == "pay" else "draft",
+            "created_by": user_id,
+            "created_at": now_iso(),
+            "updated_at": now_iso()
+        }
+        await db.journal_entries.insert_one(je)
+
+        # Link JE to period
+        await db.payroll_periods.update_one(
+            {"period_id": period_id, "company_id": company_id},
+            {"$set": {"journal_entry_id": entry_id}}
+        )
+        return entry_id
+
+
+async def delete_payroll_journal_entry(period_id: str, company_id: str):
+    """Delete the journal entry linked to a payroll period."""
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0, "journal_entry_id": 1}
+    )
+    je_id = period.get("journal_entry_id") if period else None
+    if je_id:
+        await db.journal_entries.delete_one({"entry_id": je_id, "company_id": company_id})
+        await db.payroll_periods.update_one(
+            {"period_id": period_id, "company_id": company_id},
+            {"$unset": {"journal_entry_id": ""}}
+        )
+    return je_id
+
 
 # ===================== PERIOD ENDPOINTS =====================
 
@@ -940,8 +1077,15 @@ async def approve_period(period_id: str, data: ApprovalRequest = None, current_u
             body=f"El periodo de nomina '{period_name}' ha sido aprobado y esta listo para pago.",
             url="/payroll",
         )
-    
-    return {"message": "Período aprobado correctamente", "status": "approved"}
+
+    # Auto-generate journal entry if company setting enabled
+    settings = await db.company_settings.find_one({"company_id": company_id}, {"_id": 0})
+    auto_je = (settings or {}).get("auto_journal_entry", True)
+    je_id = None
+    if auto_je:
+        je_id = await generate_payroll_journal_entry(period_id, company_id, user_id, trigger="approve")
+
+    return {"message": "Período aprobado correctamente", "status": "approved", "journal_entry_id": je_id}
 
 
 @router.post("/periods/{period_id}/reject")
@@ -1140,7 +1284,57 @@ async def pay_period(period_id: str, data: PaymentRequest = None, current_user: 
             url="/employee-portal",
         )
 
-    return {"message": "Nomina pagada correctamente", "status": "paid"}
+    # Auto-generate/update journal entry on payment
+    settings = await db.company_settings.find_one({"company_id": company_id}, {"_id": 0})
+    auto_je = (settings or {}).get("auto_journal_entry", True)
+    je_id = None
+    if auto_je:
+        je_id = await generate_payroll_journal_entry(period_id, company_id, user_id, trigger="pay")
+
+    return {"message": "Nomina pagada correctamente", "status": "paid", "journal_entry_id": je_id}
+
+
+@router.post("/periods/{period_id}/toggle-auto-je")
+async def toggle_auto_journal_entry(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Toggle auto journal entry generation for company"""
+    company_id = current_user.get("company_id")
+    settings = await db.company_settings.find_one({"company_id": company_id}, {"_id": 0})
+    current = (settings or {}).get("auto_journal_entry", True)
+    new_val = not current
+    await db.company_settings.update_one(
+        {"company_id": company_id},
+        {"$set": {"auto_journal_entry": new_val}},
+        upsert=True
+    )
+    return {"auto_journal_entry": new_val, "message": f"Generación automática de asientos {'activada' if new_val else 'desactivada'}"}
+
+
+@router.post("/periods/{period_id}/generate-je")
+async def manual_generate_je(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Manually generate or update a journal entry for a payroll period."""
+    company_id = current_user.get("company_id")
+    user_id = current_user.get("user_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id}, {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    if period.get("status") not in ["approved", "paid"]:
+        raise HTTPException(status_code=400, detail="Solo se pueden generar asientos para períodos aprobados o pagados")
+    
+    je_id = await generate_payroll_journal_entry(period_id, company_id, user_id, trigger="manual")
+    return {"message": "Asiento de diario generado correctamente", "journal_entry_id": je_id}
+
+
+@router.delete("/periods/{period_id}/journal-entry")
+async def delete_period_je(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete the journal entry linked to a payroll period."""
+    company_id = current_user.get("company_id")
+    je_id = await delete_payroll_journal_entry(period_id, company_id)
+    if not je_id:
+        raise HTTPException(status_code=404, detail="No hay asiento vinculado a este período")
+    return {"message": "Asiento de diario eliminado", "deleted_entry_id": je_id}
 
 
 @router.get("/periods/{period_id}/workflow-history")

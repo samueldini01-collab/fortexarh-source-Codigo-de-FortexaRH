@@ -61,7 +61,8 @@ import {
   Building2,
   Shield,
   List,
-  Send
+  Send,
+  BookOpen
 } from "lucide-react";
 import { toast } from "sonner";
 import { DrillDownModal } from "@/components/DrillDown";
@@ -453,6 +454,29 @@ export default function PayrollPage() {
       toast.error(error.response?.data?.detail || "Error al enviar a QuickBooks");
     } finally {
       setQbSyncing(false);
+    }
+  };
+
+  const handleGenerateJE = async (periodId) => {
+    try {
+      const res = await axios.post(`${API}/payroll/periods/${periodId}/generate-je`, {}, { headers: getAuthHeaders(), withCredentials: true });
+      toast.success(res.data.message || "Asiento generado");
+      fetchPeriodDetails(periodId);
+      fetchPeriods();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al generar asiento");
+    }
+  };
+
+  const handleDeleteJE = async (periodId) => {
+    if (!confirm("¿Eliminar el asiento de diario vinculado a este período?")) return;
+    try {
+      const res = await axios.delete(`${API}/payroll/periods/${periodId}/journal-entry`, { headers: getAuthHeaders(), withCredentials: true });
+      toast.success(res.data.message || "Asiento eliminado");
+      fetchPeriodDetails(periodId);
+      fetchPeriods();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al eliminar asiento");
     }
   };
 
@@ -1061,6 +1085,31 @@ export default function PayrollPage() {
                             <Badge className="bg-emerald-100 text-emerald-700 text-xs" data-testid="qb-synced-badge">
                               <Check className="w-3 h-3 mr-1" />QBO JE #{selectedPeriod.qb_journal_entry_id}
                             </Badge>
+                          )}
+                          {/* Journal Entry actions */}
+                          {(selectedPeriod.status === 'approved' || selectedPeriod.status === 'paid') && (
+                            <>
+                              {selectedPeriod.journal_entry_id ? (
+                                <div className="flex items-center gap-1">
+                                  <Badge className="bg-blue-100 text-blue-700 text-xs" data-testid="je-badge">
+                                    <BookOpen className="w-3 h-3 mr-1" />JE: {selectedPeriod.journal_entry_id.slice(-8)}
+                                  </Badge>
+                                  <Button size="sm" variant="ghost" className="h-6 w-6 p-0 text-red-500 hover:text-red-700" onClick={() => handleDeleteJE(selectedPeriod.period_id)} data-testid="btn-delete-je" title="Eliminar asiento">
+                                    <Trash2 className="w-3 h-3" />
+                                  </Button>
+                                </div>
+                              ) : (
+                                <Button 
+                                  size="sm" 
+                                  variant="outline" 
+                                  className="border-blue-300 text-blue-700 hover:bg-blue-50"
+                                  onClick={() => handleGenerateJE(selectedPeriod.period_id)}
+                                  data-testid="btn-generate-je"
+                                >
+                                  <BookOpen className="w-4 h-4 mr-1" />Generar Asiento
+                                </Button>
+                              )}
+                            </>
                           )}
                           {selectedPeriod.status !== 'paid' && (
                             <Button size="sm" variant="destructive" onClick={() => handleDeletePeriod(selectedPeriod.period_id)}><Trash2 className="w-4 h-4" /></Button>
