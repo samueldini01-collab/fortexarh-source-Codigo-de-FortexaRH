@@ -37,6 +37,15 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - Configurable account mapping via company_settings.payroll_account_mapping
 - Service extracted to /app/backend/services/journal_entry_service.py
 
+### Accounting Dashboard - Payroll Summary (Complete - Feb 2026)
+- New "Resumen Nómina" tab in Accounting module with dedicated KPIs
+- KPI cards: Total Payroll, Posted entries, Draft entries, Last Entry date
+- Global balance indicator (green = all balanced, red = attention needed)
+- Detailed payroll JE table with balance check icons, period status badges, preview/export
+- Balance column added to main Journal Entries table (green check / red warning)
+- "Solo Nómina" filter toggle in Journal Entries tab
+- Full i18n (ES, EN, FR) for all new labels
+
 ### Notifications (Phase 1 + 2 Complete)
 - 20 event types, push (PWA), employee bell + center, auto push on payroll/vacation, full i18n
 
@@ -64,6 +73,7 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 
 ## Test Reports
 - `/app/test_reports/iteration_207.json` - Payroll JE Balance fix (100%, 8/8 passed)
+- `/app/test_reports/iteration_208.json` - Accounting Dashboard Enhancements (100%, 9/9 backend + all frontend)
 
 ## Key API Endpoints
 - `POST /api/payroll/periods/{id}/approve` — Auto-generates balanced JE
