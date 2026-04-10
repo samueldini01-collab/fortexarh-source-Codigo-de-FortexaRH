@@ -20,20 +20,21 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - 20 event types, push (PWA), employee bell + center, auto push on payroll/vacation, full i18n
 
 ### Help Center (Complete)
-- /help-center with Guides (8 modules, 30+ articles), Updates (7), FAQ (10), search, i18n
+- /help-center with Guides, Updates, FAQ, search, i18n
 
-### Employee Deductions with Manual Override (DONE)
-- Manual override per deduction (SFS, AFP, ISR) propagates to payroll generation
+### Payroll System
+- Full payroll calculation with DR tax compliance (SFS, AFP, ISR)
+- Manual employee-level deduction overrides (SFS, AFP, ISR)
+- **ISR inline editing in payroll sheet** (Apr 10, 2026) — Users can click the ISR column in Hoja de Nómina to override the calculated value per entry
+- Payroll calculator with all fields
 
-### Backend API Error Standardization (Complete)
-- AppError + 6 subclasses, global exception handler
-
-### Bug Fixes (Apr 9, 2026) DONE
-- **Login page double error**: Removed duplicate toast "Ha ocurrido un error" on invalid login. Now shows only inline translated error message
-- **Login i18n**: Added translated "invalidCredentials" key for ES, EN, FR locales  
-- **CompanyConfigPage robustness**: Added error state with retry button, defensive auth token check before API calls
-- **CompanyConfigPage integrations**: Fixed integration descriptions using `descKey` with `t()` instead of missing `description` property
-- **CompanyConfigPage title**: Now uses i18n translation instead of hardcoded Spanish
+### Bug Fixes (Apr 9-10, 2026)
+- Login page double error toast removed
+- Login i18n for invalid credentials (ES/EN/FR)
+- CompanyConfigPage robustness (error state, retry, defensive auth)
+- CompanyConfigPage integration descriptions fixed (descKey → t())
+- Employee tabs reordered: Datos → Contrato → Forma de Pago → Descuentos → Documentos → Emergencia
+- QuickBooks OAuth: placeholder credential detection + user-friendly error
 
 ## Key Credentials
 - **Admin**: test_refactor@fortexa.com / test123
@@ -55,4 +56,5 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - Complete Audit Trail (CDC logging)
 
 ## Test Reports
-- `/app/test_reports/iteration_202.json` - Login + CompanyConfig bug fixes (100%, 5/5 FE tests)
+- `/app/test_reports/iteration_202.json` - Login + CompanyConfig fixes (100%)
+- `/app/test_reports/iteration_203.json` - ISR Override feature (100%, 6/6 BE + FE verified)
