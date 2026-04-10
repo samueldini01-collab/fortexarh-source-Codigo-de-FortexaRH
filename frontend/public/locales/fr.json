@@ -5797,7 +5797,11 @@
       "settings": {
         "title": "Configuration",
         "desc": "Entreprise, securite, langue et integrations"
-      }
+      },
+      "reports": { "title": "Rapports", "desc": "Rapports DGII, TSS, avances, filtres et export" },
+      "calculator": { "title": "Calculateur de Paie", "desc": "Calcul du salaire net, deductions TSS et ISR" },
+      "documents": { "title": "Documents et Modeles", "desc": "Generation de contrats, lettres et dossiers" },
+      "accounting": { "title": "Comptabilite et Integrations", "desc": "Ecritures comptables, QuickBooks, paiements" }
     },
     "articles": {
       "payroll-create": {
@@ -5911,9 +5915,27 @@
       "settings-integrations": {
         "title": "Integrations disponibles",
         "body": "Connectez Stripe, PayPal, QuickBooks et Google Auth."
-      }
+      },
+      "reports-center": { "title": "Centre de Rapports", "body": "Filtres avances par date, departement et type. Export Excel et PDF." },
+      "reports-dgii": { "title": "Rapports DGII-TSS", "body": "Generez les rapports DGII: IR-3, IR-4, IR-17, IR-6 et TSS." },
+      "reports-advanced": { "title": "Rapports Avances", "body": "Graphiques, tendances et analyse par departement." },
+      "calc-basic": { "title": "Calculateur de Paie", "body": "Calcul du salaire net avec deductions TSS et ISR." },
+      "calc-deductions": { "title": "Deductions TSS et ISR", "body": "Calcul automatique: SFS 3.04%, AFP 2.87% et ISR." },
+      "calc-edit": { "title": "Modifier ISR manuellement", "body": "Cliquez sur ISR pour le modifier. Le salaire net se recalcule." },
+      "docs-templates": { "title": "Modeles de Documents", "body": "Creez des modeles pour contrats et lettres." },
+      "docs-generate": { "title": "Generer des Documents", "body": "Selectionnez un modele et un employe pour generer un PDF." },
+      "docs-employee": { "title": "Dossier Employe", "body": "Dossier numerique avec contrats, evaluations et bulletins." },
+      "accounting-overview": { "title": "Comptabilite Generale", "body": "Ecritures comptables automatiques par periode." },
+      "accounting-quickbooks": { "title": "QuickBooks Online", "body": "Synchronisez la paie avec mappage de 8 comptes." },
+      "accounting-payments": { "title": "Paiements", "body": "Paiements Stripe et PayPal et historique." }
     },
     "updates": {
+      "update-isr-editable": { "title": "ISR Modifiable", "body": "Modifiez ISR dans le calculateur et la feuille de paie." },
+      "update-sfs-afp-editable": { "title": "SFS, AFP et Heures Sup Modifiables", "body": "Colonnes editables dans la feuille de paie." },
+      "update-qb-journal": { "title": "Ecritures vers QuickBooks", "body": "Envoyez des ecritures consolidees en un clic." },
+      "update-dgii-fix": { "title": "Correction Rapports DGII", "body": "Telechargement et details par employe corriges." },
+      "update-sfs-rate": { "title": "Taux SFS corrige a 3.04%", "body": "SFS corrige de 3.07% a 3.04% dans tout le systeme." },
+      "update-qb-mapping": { "title": "Mappage Comptes QuickBooks", "body": "Nouvelle section mappage dans Configuration > Integrations." },
       "update-push-auto": {
         "title": "Push automatique Paie et Vacances",
         "body": "Les employes recoivent des notifications push automatiques lors du traitement de la paie ou de l'approbation des vacances."
@@ -5922,10 +5944,6 @@
         "title": "Centre de notifications pour employes",
         "body": "Nouvel onglet avec recherche, filtre par categorie et export CSV."
       },
-      "update-i18n-notif": {
-        "title": "Notifications dans votre langue",
-        "body": "Toutes les notifications s'affichent dans la langue configuree."
-      },
       "update-error-std": {
         "title": "Reponses d'erreur ameliorees",
         "body": "Format standardise avec type d'erreur, detail et code de statut."
@@ -5933,14 +5951,6 @@
       "update-push-pwa": {
         "title": "Push et cloche dans le portail employe",
         "body": "Les employes peuvent activer les notifications push depuis leur portail."
-      },
-      "update-notif-phase1": {
-        "title": "Systeme de notifications configurables",
-        "body": "20 types d'evenements configurables par canal avec heures de silence."
-      },
-      "update-tech-debt": {
-        "title": "Ameliorations de stabilite",
-        "body": "Correction d'erreurs, amelioration de la testabilite et internationalisation."
       }
     },
     "faq": {
@@ -5983,7 +5993,10 @@
       "faq-quiet-hours": {
         "q": "Que sont les heures de silence?",
         "a": "Les heures de silence pausent les notifications push et email pendant des horaires specifiques."
-      }
+      },
+      "faq-edit-isr": { "q": "Comment modifier l'ISR?", "a": "Cliquez sur la valeur ISR dans le calculateur ou la feuille de paie pour la modifier." },
+      "faq-qb-connect": { "q": "Comment connecter QuickBooks?", "a": "Configuration > Integrations > Connecter QuickBooks. Autorisez puis configurez le mappage de comptes." },
+      "faq-dgii-reports": { "q": "Comment telecharger les rapports DGII?", "a": "Rapports DGII-TSS > selectionnez la periode > cliquez telecharger." }
     }
   }
 }

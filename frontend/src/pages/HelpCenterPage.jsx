@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +11,8 @@ import {
   Search, BookOpen, Sparkles, HelpCircle, ChevronDown, ChevronRight,
   DollarSign, Calendar, Users, Bell, ClipboardList, Clock, Target,
   FileText, Shield, Settings, Briefcase, BarChart3, Globe, Smartphone,
-  Download, Zap, CheckCircle, ArrowRight,
+  Download, Zap, CheckCircle, ArrowRight, ArrowLeft, Calculator, FileSpreadsheet,
+  Building2, CreditCard, Link2,
 } from "lucide-react";
 
 const MODULES = [
@@ -98,9 +100,85 @@ const MODULES = [
       { id: "settings-integrations", tags: ["integraciones", "stripe", "quickbooks"] },
     ],
   },
+  {
+    id: "reports",
+    icon: BarChart3,
+    color: "text-cyan-600 bg-cyan-50",
+    articles: [
+      { id: "reports-center", tags: ["reportes", "centro", "filtros", "exportar"] },
+      { id: "reports-dgii", tags: ["dgii", "tss", "ir3", "ir4", "ir17", "ir6"] },
+      { id: "reports-advanced", tags: ["reportes", "avanzados", "graficos"] },
+    ],
+  },
+  {
+    id: "calculator",
+    icon: Calculator,
+    color: "text-teal-600 bg-teal-50",
+    articles: [
+      { id: "calc-basic", tags: ["calculadora", "nomina", "salario", "neto"] },
+      { id: "calc-deductions", tags: ["deducciones", "sfs", "afp", "isr", "tss"] },
+      { id: "calc-edit", tags: ["editar", "isr", "manual", "override"] },
+    ],
+  },
+  {
+    id: "documents",
+    icon: FileText,
+    color: "text-rose-600 bg-rose-50",
+    articles: [
+      { id: "docs-templates", tags: ["plantillas", "documentos", "contratos"] },
+      { id: "docs-generate", tags: ["generar", "documento", "carta"] },
+      { id: "docs-employee", tags: ["documentos", "empleado", "expediente"] },
+    ],
+  },
+  {
+    id: "accounting",
+    icon: Building2,
+    color: "text-purple-600 bg-purple-50",
+    articles: [
+      { id: "accounting-overview", tags: ["contabilidad", "diario", "asientos"] },
+      { id: "accounting-quickbooks", tags: ["quickbooks", "sincronizar", "journal", "mapeo"] },
+      { id: "accounting-payments", tags: ["pagos", "stripe", "paypal"] },
+    ],
+  },
 ];
 
 const UPDATES = [
+  {
+    id: "update-isr-editable",
+    date: "2026-04-10",
+    type: "feature",
+    tags: ["isr", "editable", "calculadora", "nomina"],
+  },
+  {
+    id: "update-sfs-afp-editable",
+    date: "2026-04-10",
+    type: "feature",
+    tags: ["sfs", "afp", "horas extras", "editable", "nomina"],
+  },
+  {
+    id: "update-qb-journal",
+    date: "2026-04-10",
+    type: "feature",
+    tags: ["quickbooks", "asiento", "diario", "nomina", "sincronizar"],
+  },
+  {
+    id: "update-dgii-fix",
+    date: "2026-04-10",
+    type: "fix",
+    tags: ["dgii", "reportes", "descarga", "desglose"],
+  },
+  {
+    id: "update-sfs-rate",
+    date: "2026-04-10",
+    type: "fix",
+    tags: ["sfs", "3.04%", "porcentaje", "correccion"],
+  },
+  {
+    id: "update-qb-mapping",
+    date: "2026-04-10",
+    type: "feature",
+    tags: ["quickbooks", "mapeo", "cuentas", "integracion"],
+  },
   {
     id: "update-push-auto",
     date: "2026-02-17",
@@ -114,12 +192,6 @@ const UPDATES = [
     tags: ["centro", "notificaciones", "empleado"],
   },
   {
-    id: "update-i18n-notif",
-    date: "2026-02-17",
-    type: "improvement",
-    tags: ["idioma", "notificaciones", "traduccion"],
-  },
-  {
     id: "update-error-std",
     date: "2026-02-17",
     type: "improvement",
@@ -130,18 +202,6 @@ const UPDATES = [
     date: "2026-02-17",
     type: "feature",
     tags: ["push", "pwa", "campana", "empleado"],
-  },
-  {
-    id: "update-notif-phase1",
-    date: "2026-02-15",
-    type: "feature",
-    tags: ["notificaciones", "configurables", "eventos"],
-  },
-  {
-    id: "update-tech-debt",
-    date: "2026-02-15",
-    type: "fix",
-    tags: ["objectid", "i18n", "refactoring"],
   },
 ];
 
@@ -156,6 +216,9 @@ const FAQ_IDS = [
   "faq-2fa-setup",
   "faq-partner-join",
   "faq-quiet-hours",
+  "faq-edit-isr",
+  "faq-qb-connect",
+  "faq-dgii-reports",
 ];
 
 function FaqItem({ id, t }) {
@@ -180,6 +243,7 @@ function FaqItem({ id, t }) {
 
 export default function HelpCenterPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("guides");
   const [expandedModule, setExpandedModule] = useState(null);
@@ -236,12 +300,23 @@ export default function HelpCenterPage() {
     <div className="space-y-6" data-testid="help-center-page">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-            <BookOpen className="w-6 h-6 text-emerald-600" />
-            {t("helpCenter.title")}
-          </h1>
-          <p className="text-slate-500 text-sm mt-1">{t("helpCenter.subtitle")}</p>
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => navigate(-1)} 
+            className="shrink-0"
+            data-testid="btn-back"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+              <BookOpen className="w-6 h-6 text-emerald-600" />
+              {t("helpCenter.title")}
+            </h1>
+            <p className="text-slate-500 text-sm mt-1">{t("helpCenter.subtitle")}</p>
+          </div>
         </div>
       </div>
 

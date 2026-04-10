@@ -5836,6 +5836,22 @@
       "settings": {
         "title": "Settings",
         "desc": "Company, security, language and integrations"
+      },
+      "reports": {
+        "title": "Reports & Report Center",
+        "desc": "DGII reports, TSS, advanced reports, filters and export"
+      },
+      "calculator": {
+        "title": "Payroll Calculator",
+        "desc": "Net salary calculation, TSS deductions and ISR"
+      },
+      "documents": {
+        "title": "Documents & Templates",
+        "desc": "Contract generation, letters and employee files"
+      },
+      "accounting": {
+        "title": "Accounting & Integrations",
+        "desc": "Journal entries, QuickBooks Online, payments"
       }
     },
     "articles": {
@@ -5950,36 +5966,42 @@
       "settings-integrations": {
         "title": "Available integrations",
         "body": "Connect with Stripe and PayPal for payments, QuickBooks for accounting, and enable Google Auth for social login. Enterprise integrations (SAP, Oracle) are available on the Enterprise plan."
-      }
+      },
+      "reports-center": { "title": "Report Center", "body": "Advanced filters by date, department and type. Export to Excel and PDF." },
+      "reports-dgii": { "title": "DGII-TSS Reports", "body": "Generate and download DGII reports: IR-3, IR-4, IR-17, IR-6 and TSS. Includes employee breakdown." },
+      "reports-advanced": { "title": "Advanced Reports", "body": "Comparative charts, payroll trends, turnover analysis and department costs." },
+      "calc-basic": { "title": "Basic Payroll Calculator", "body": "Enter base salary to get net salary with TSS deductions (SFS 3.04%, AFP 2.87%) and ISR." },
+      "calc-deductions": { "title": "TSS and ISR Deductions", "body": "Automatic calculation: SFS 3.04%, AFP 2.87% and ISR per DGII table." },
+      "calc-edit": { "title": "Edit ISR Manually", "body": "Click on Monthly ISR to edit. Total deductions and net salary recalculate automatically." },
+      "docs-templates": { "title": "Document Templates", "body": "Create templates for contracts, letters and certifications with dynamic variables." },
+      "docs-generate": { "title": "Generate Documents", "body": "Select a template and employee to auto-generate PDF documents." },
+      "docs-employee": { "title": "Employee File", "body": "Digital file with contracts, IDs, evaluations and pay stubs." },
+      "accounting-overview": { "title": "General Accounting", "body": "Auto-generated journal entries for each payroll period." },
+      "accounting-quickbooks": { "title": "QuickBooks Online", "body": "Sync payroll with 8-account mapping and one-click consolidated journal entries." },
+      "accounting-payments": { "title": "Payments & Billing", "body": "Stripe and PayPal subscription payments and billing history." }
     },
     "updates": {
+      "update-isr-editable": { "title": "Editable ISR in Calculator and Payroll Sheet", "body": "Edit ISR values directly in calculator results and payroll sheet. Net salary recalculates automatically." },
+      "update-sfs-afp-editable": { "title": "Editable SFS, AFP and Overtime", "body": "SFS, AFP and Overtime columns in payroll sheet are now editable." },
+      "update-qb-journal": { "title": "Journal Entries to QuickBooks", "body": "Send consolidated payroll journal entries to QuickBooks Online with one click." },
+      "update-dgii-fix": { "title": "DGII Reports Fix", "body": "Fixed download and employee breakdown errors in all DGII report formats." },
+      "update-sfs-rate": { "title": "SFS Rate Correction to 3.04%", "body": "Corrected SFS percentage from 3.07% to 3.04% across the entire system." },
+      "update-qb-mapping": { "title": "QuickBooks Account Mapping", "body": "New account mapping section in Settings > Integrations for QuickBooks sync." },
       "update-push-auto": {
         "title": "Automatic Push for Payroll and Vacations",
-        "body": "Employees now receive automatic push notifications when their payroll is processed or a vacation request is approved/rejected. No additional configuration needed."
+        "body": "Employees receive automatic push notifications when payroll is processed or vacation requests are approved/rejected."
       },
       "update-notif-center": {
-        "title": "Notification Center for Employees",
-        "body": "New 'Notifications' tab in the employee portal with text search, category filter, mark all as read and export full history to CSV."
-      },
-      "update-i18n-notif": {
-        "title": "Notifications in your language",
-        "body": "All notifications, events and categories now display in the user's configured language (Spanish, English or French). Includes the bell, center and settings page."
+        "title": "Employee Notification Center",
+        "body": "Notifications tab in employee portal with search, category filter, mark all as read and CSV export."
       },
       "update-error-std": {
-        "title": "Improved API error responses",
-        "body": "API error responses now follow a standardized format with error type, detail, status code and path. This improves the debugging experience."
+        "title": "Standardized API Error Responses",
+        "body": "All API endpoints return errors in standardized format with consistent codes and messages."
       },
       "update-push-pwa": {
-        "title": "Push Notifications and Bell in Employee Portal",
-        "body": "Employees can now enable push notifications from their portal to receive real-time alerts. The notification bell shows a panel with push toggle and activation banner."
-      },
-      "update-notif-phase1": {
-        "title": "Configurable Notification System",
-        "body": "20 configurable event types per channel (In-App, Email, Push). Quiet hours with timezone support. Digest system for daily or weekly summaries."
-      },
-      "update-tech-debt": {
-        "title": "Stability and performance improvements",
-        "body": "Fixed serialization errors, improved testability with data-testid on interactive components, partner portal internationalization and large component refactoring."
+        "title": "PWA Push Notifications",
+        "body": "Full push notification support via service worker. Employees can enable push from their portal."
       }
     },
     "faq": {
@@ -6022,6 +6044,18 @@
       "faq-quiet-hours": {
         "q": "What are Quiet Hours?",
         "a": "Quiet Hours let you pause push and email notifications during specific times (e.g., 10pm to 7am). In-app notifications continue to accumulate for you to check when you want. Configure them in Notifications > Schedule."
+      },
+      "faq-edit-isr": {
+        "q": "How do I edit ISR in the calculator or payroll sheet?",
+        "a": "In the calculator, click on the Monthly ISR value to edit it. In the Payroll Sheet, click any ISR, SFS, AFP or Overtime cell to modify the value. The system recalculates net salary automatically."
+      },
+      "faq-qb-connect": {
+        "q": "How do I connect QuickBooks Online?",
+        "a": "Go to Settings > Integrations and click Connect next to QuickBooks Online. Authorize with your Intuit account, then configure account mapping to send payroll journal entries."
+      },
+      "faq-dgii-reports": {
+        "q": "How do I download DGII reports?",
+        "a": "Go to DGII-TSS Reports, select the payroll period and click the download button for the desired report (IR-3, IR-4, IR-17, IR-6 or TSS). You can also view the employee breakdown before downloading."
       }
     }
   }
