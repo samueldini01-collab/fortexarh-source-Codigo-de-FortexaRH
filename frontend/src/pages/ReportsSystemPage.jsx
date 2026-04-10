@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/App";
 import axios from "axios";
 import { toast } from "sonner";
@@ -18,7 +19,7 @@ import {
   FileText, Download, Eye, Save, Star, Clock, Filter, Search,
   DollarSign, Users, Calendar, Target, Wallet, ChevronRight,
   FileSpreadsheet, FileDown, Trash2, RefreshCw, History, 
-  BarChart3, PieChart, TrendingUp, Building2, Briefcase
+  BarChart3, PieChart, TrendingUp, Building2, Briefcase, ArrowLeft
 } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -46,6 +47,7 @@ const categoryColors = {
 export default function ReportsSystemPage() {
   const { t } = useTranslation();
   const { getAuthHeaders } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [catalog, setCatalog] = useState(null);
   const [selectedReport, setSelectedReport] = useState(null);
@@ -335,13 +337,24 @@ export default function ReportsSystemPage() {
     <div className="space-y-6" data-testid="reports-system-page">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
-            Centro de Reportes
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400">
-            {catalog?.total_reports || 0} reportes disponibles con filtros avanzados y exportación
-          </p>
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => navigate(-1)} 
+            className="shrink-0"
+            data-testid="btn-back"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
+              Centro de Reportes
+            </h1>
+            <p className="text-slate-500 dark:text-slate-400">
+              {catalog?.total_reports || 0} reportes disponibles con filtros avanzados y exportación
+            </p>
+          </div>
         </div>
         
         <div className="flex items-center gap-2">
