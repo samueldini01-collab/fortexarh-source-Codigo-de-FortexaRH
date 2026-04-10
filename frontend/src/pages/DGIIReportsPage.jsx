@@ -15,6 +15,11 @@ import {
 import { toast } from "sonner";
 import { DrillDownModal } from "@/components/DrillDown";
 
+const formatCurrency = (val) => {
+  const num = parseFloat(val) || 0;
+  return `RD$${num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+};
+
 const MONTHLY_REPORTS = [
   {
     id: "ir3",
@@ -186,7 +191,7 @@ export default function DGIIReportsPage() {
           title = `${t('dgiiReports.drillDown.isrBreakdown')} - ${period.description || `${period.month}/${period.year}`}`;
           columns = [
             { header: t('dgiiReports.drillDown.employee'), accessor: "employee_name" },
-            { header: t('dgiiReports.drillDown.cedula'), accessor: "cedula" },
+            { header: t('dgiiReports.drillDown.cedula'), accessor: "employee_document" },
             { header: t('dgiiReports.drillDown.grossSalary'), accessor: "gross_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
             { header: t('dgiiReports.drillDown.isrRetained'), accessor: "isr", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-red-600" }
           ];
@@ -196,7 +201,7 @@ export default function DGIIReportsPage() {
           title = `${t('dgiiReports.drillDown.tssBreakdown')} - ${period.description || `${period.month}/${period.year}`}`;
           columns = [
             { header: t('dgiiReports.drillDown.employee'), accessor: "employee_name" },
-            { header: t('dgiiReports.drillDown.cedula'), accessor: "cedula" },
+            { header: t('dgiiReports.drillDown.cedula'), accessor: "employee_document" },
             { header: t('dgiiReports.drillDown.salary'), accessor: "gross_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
             { header: "SFS", accessor: "sfs_employee", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
             { header: "AFP", accessor: "afp_employee", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
@@ -208,7 +213,7 @@ export default function DGIIReportsPage() {
           title = `${t('dgiiReports.drillDown.breakdown')} ${reportType.toUpperCase()} - ${period.description}`;
           columns = [
             { header: t('dgiiReports.drillDown.employee'), accessor: "employee_name" },
-            { header: t('dgiiReports.drillDown.cedula'), accessor: "cedula" },
+            { header: t('dgiiReports.drillDown.cedula'), accessor: "employee_document" },
             { header: t('dgiiReports.drillDown.netSalary'), accessor: "net_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium" }
           ];
       }

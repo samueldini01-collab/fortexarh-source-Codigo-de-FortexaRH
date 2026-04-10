@@ -2,7 +2,7 @@
 Payroll Export Routes - FortexaRH
 Export endpoints for payroll data: Excel, TSS, DGII (IR3, IR4, IR6, IR17, IR13)
 """
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter, HTTPException, Depends, Request, Response
 from fastapi.security import HTTPBearer
 from datetime import datetime, timezone
 import uuid
@@ -71,8 +71,8 @@ async def export_period_excel(period_id: str, current_user: dict = Depends(get_c
         
         row = {
             "no": idx,
-            "cedula": entry.get("employee_document", ""),
-            "nombre": entry.get("employee_name", ""),
+            "cedula": entry.get("employee_document") or "",
+            "nombre": entry.get("employee_name") or "",
             "cargo": entry.get("position", ""),
             "departamento": entry.get("department", ""),
             "salario_base": round(entry.get("base_salary", 0), 2),
@@ -148,14 +148,14 @@ async def export_tss_autodeterminacion(period_id: str, current_user: dict = Depe
     ])
     
     for entry in entries:
-        cedula = entry.get("employee_document", "").replace("-", "")
-        name_parts = entry.get("employee_name", "").split()
+        cedula = (entry.get("employee_document") or "").replace("-", "")
+        name_parts = (entry.get("employee_name") or "").split()
         first_name = name_parts[0] if len(name_parts) > 0 else ""
         last_name1 = name_parts[-1] if len(name_parts) > 1 else ""
         last_name2 = name_parts[-2] if len(name_parts) > 2 else ""
         
         writer.writerow([
-            rnc.replace("-", ""),
+            (rnc or "").replace("-", ""),
             cedula,
             "C",
             "",
@@ -284,8 +284,8 @@ async def export_ir4(period_id: str, current_user: dict = Depends(get_current_us
     for entry in entries:
         if entry.get("isr", 0) > 0:
             writer.writerow([
-                entry.get("employee_document", ""),
-                entry.get("employee_name", ""),
+                entry.get("employee_document") or "",
+                entry.get("employee_name") or "",
                 entry.get("gross_salary", 0),
                 entry.get("isr", 0)
             ])
@@ -579,8 +579,8 @@ async def export_ir6(period_id: str, current_user: dict = Depends(get_current_us
             f"{period.get('month'):02d}",
             "15",
             "NÓMINA",
-            entry.get("employee_name", ""),
-            entry.get("employee_document", ""),
+            entry.get("employee_name") or "",
+            entry.get("employee_document") or "",
             "",
             18,
             f"{gross:,.2f}",
@@ -727,8 +727,8 @@ async def export_ir13(year: int, current_user: dict = Depends(get_current_user))
         emp_id = entry.get("employee_id")
         if emp_id not in employee_totals:
             employee_totals[emp_id] = {
-                "document": entry.get("employee_document", ""),
-                "name": entry.get("employee_name", ""),
+                "document": entry.get("employee_document") or "",
+                "name": entry.get("employee_name") or "",
                 "total_gross": 0,
                 "total_isr": 0
             }
@@ -814,8 +814,8 @@ async def generate_tss_report(period_id: str, current_user: dict = Depends(get_c
     employee_count = 0
     
     for entry in entries:
-        employee_doc = entry.get("employee_document", "")
-        employee_name = entry.get("employee_name", "")
+        employee_doc = entry.get("employee_document") or ""
+        employee_name = entry.get("employee_name") or ""
         salario_cotizable = entry.get("gross_salary", 0)
         sfs_empleado = entry.get("sfs_employee", 0)
         afp_empleado = entry.get("afp_employee", 0)
@@ -905,8 +905,8 @@ async def preview_tss_report(period_id: str, current_user: dict = Depends(get_cu
     
     for entry in entries:
         emp_data = {
-            "cedula": entry.get("employee_document", ""),
-            "nombre": entry.get("employee_name", ""),
+            "cedula": entry.get("employee_document") or "",
+            "nombre": entry.get("employee_name") or "",
             "salario_cotizable": entry.get("gross_salary", 0),
             "sfs_empleado": entry.get("sfs_employee", 0),
             "afp_empleado": entry.get("afp_employee", 0),
