@@ -142,14 +142,15 @@ export default function CompanyConfigPage() {
         withCredentials: true
       });
       
-      if (response.data.connected) {
-        setIntegrations(prev => 
-          prev.map(i => i.id === "quickbooks" 
-            ? {...i, connected: true, companyName: response.data.company_name, connectedAt: response.data.connected_at} 
-            : i
-          )
-        );
-      }
+      setIntegrations(prev => 
+        prev.map(i => {
+          if (i.id !== "quickbooks") return i;
+          if (response.data.connected) {
+            return {...i, connected: true, configured: true, companyName: response.data.company_name, connectedAt: response.data.connected_at};
+          }
+          return {...i, configured: response.data.configured !== false};
+        })
+      );
     } catch (error) {
       // QuickBooks status check failed silently
     }
@@ -897,6 +898,11 @@ export default function CompanyConfigPage() {
                 {integration.connected && integration.companyName && (
                   <p className="text-xs text-emerald-600 mt-1">
                     ✓ Conectado a: {integration.companyName}
+                  </p>
+                )}
+                {integration.id === "quickbooks" && !integration.connected && integration.configured === false && (
+                  <p className="text-xs text-amber-600 mt-1">
+                    {t('companyConfig.qbNotConfigured', 'Configure las credenciales de QuickBooks en las variables de entorno')}
                   </p>
                 )}
               </div>

@@ -28,6 +28,18 @@ QB_TOKEN_ENDPOINT = "https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer"
 QB_REVOKE_ENDPOINT = "https://developer.api.intuit.com/v2/oauth2/tokens/revoke"
 QB_API_BASE_URL = "https://quickbooks.api.intuit.com/v3/company"
 
+# Placeholder detection
+_QB_PLACEHOLDERS = {'your_client_id_here', 'your_client_id', 'YOUR_CLIENT_ID', ''}
+
+def _qb_configured():
+    """Check if QuickBooks credentials are properly configured (not placeholders)."""
+    return (
+        QB_CLIENT_ID not in _QB_PLACEHOLDERS
+        and QB_CLIENT_SECRET not in {'', 'your_client_secret', 'your_client_secret_here'}
+        and QB_REDIRECT_URI not in {'', 'https://your-domain.com/api/quickbooks/callback'}
+        and 'your-domain' not in QB_REDIRECT_URI
+    )
+
 # For sandbox/development
 QB_SANDBOX_API_URL = "https://sandbox-quickbooks.api.intuit.com/v3/company"
 
@@ -119,8 +131,11 @@ async def initiate_connection(current_user: dict = Depends(get_current_user)):
     Initiate OAuth2 connection to QuickBooks Online.
     Returns the authorization URL for user to authorize the app.
     """
-    if not QB_CLIENT_ID:
-        raise HTTPException(status_code=500, detail="QuickBooks credentials not configured")
+    if not _qb_configured():
+        raise HTTPException(
+            status_code=400,
+            detail="QuickBooks no está configurado. Configure QUICKBOOKS_CLIENT_ID, QUICKBOOKS_CLIENT_SECRET y QUICKBOOKS_REDIRECT_URI en las variables de entorno con las credenciales de su app en developer.intuit.com"
+        )
     
     company_id = current_user.get("company_id")
     user_id = current_user.get("user_id")
@@ -318,6 +333,7 @@ async def get_connection_status(current_user: dict = Depends(get_current_user)):
     if not connection:
         return {
             "connected": False,
+            "configured": _qb_configured(),
             "message": "No QuickBooks connection found"
         }
     
