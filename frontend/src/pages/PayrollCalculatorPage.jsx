@@ -241,7 +241,7 @@ export default function PayrollCalculatorPage() {
     yPos += 7;
     
     const tssDeductions = [
-      ["  SFS (3.07%)", formatCurrency(result.sfs_employee)],
+      ["  SFS (3.04%)", formatCurrency(result.sfs_employee)],
       ["  AFP (2.87%)", formatCurrency(result.afp_employee)],
     ];
     

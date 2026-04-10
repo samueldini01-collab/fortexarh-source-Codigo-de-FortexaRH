@@ -82,7 +82,7 @@ class TestPayrollCalculator:
         assert data["total_earnings"] == 50000
         
         # Employee deductions (3.04% SFS + 2.87% AFP)
-        expected_sfs = round(50000 * 0.0307, 2)  # 3.07% SFS
+        expected_sfs = round(50000 * 0.0304, 2)  # 3.04% SFS
         expected_afp = round(50000 * 0.0287, 2)  # 2.87% AFP
         
         assert data["sfs_employee"] == expected_sfs, f"SFS employee: expected {expected_sfs}, got {data['sfs_employee']}"
@@ -350,7 +350,7 @@ class TestPayrollGenerationWithOverrides:
             
             # The SFS should be 1500 (manual override) not the calculated amount
             # For quincenal, salary is divided by 2, so base would be 25000
-            # Calculated SFS would be 25000 * 0.0307 = 767.50
+            # Calculated SFS would be 25000 * 0.0304 = 767.50
             # But with manual override, it should be 1500
             
             assert sfs_employee == 1500, f"Expected SFS=1500 (manual override), got {sfs_employee}"

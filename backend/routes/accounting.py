@@ -948,7 +948,7 @@ async def generate_payroll_journal_entry(
     if calculation.get("sfs_employee", 0) > 0:
         lines.append({
             "account_code": "2201", "account_name": "Retenciones SFS Empleados",
-            "description": f"Retencion SFS (3.07%) - {calculation.get('employee_name', 'Empleado')}",
+            "description": f"Retencion SFS (3.04%) - {calculation.get('employee_name', 'Empleado')}",
             "debit": 0, "credit": calculation.get("sfs_employee", 0)
         })
     if calculation.get("afp_employee", 0) > 0:

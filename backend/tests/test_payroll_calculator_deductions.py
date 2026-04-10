@@ -205,12 +205,12 @@ class TestPayrollCalculatorCalculations:
         assert response.status_code == 200
         data = response.json()
         
-        # SFS employee = 3.07% (backend uses 0.0307)
+        # SFS employee = 3.04% (backend uses 0.0304)
         # AFP employee = 2.87%
         sfs_employee = data.get("sfs_employee", 0)
         afp_employee = data.get("afp_employee", 0)
         
-        # Allow for slight rate differences (3.04% vs 3.07%)
+        # Allow for slight rate differences (3.04% vs 3.04%)
         assert 1500 <= sfs_employee <= 1550, f"SFS employee out of range: {sfs_employee}"
         assert 1400 <= afp_employee <= 1450, f"AFP employee out of range: {afp_employee}"
         

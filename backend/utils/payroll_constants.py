@@ -9,9 +9,9 @@ import uuid
 # ===================== TSS CONSTANTS (Dominican Republic) =====================
 
 # Employee contributions
-SFS_EMPLOYEE_RATE = 0.0307  # Seguro Familiar de Salud 3.07%
+SFS_EMPLOYEE_RATE = 0.0304  # Seguro Familiar de Salud 3.04%
 AFP_EMPLOYEE_RATE = 0.0287  # Administradora de Fondo de Pensiones 2.87%
-TSS_EMPLOYEE_TOTAL = SFS_EMPLOYEE_RATE + AFP_EMPLOYEE_RATE  # 5.94%
+TSS_EMPLOYEE_TOTAL = SFS_EMPLOYEE_RATE + AFP_EMPLOYEE_RATE  # 5.91%
 
 # Employer contributions
 SFS_EMPLOYER_RATE = 0.0709  # Seguro Familiar de Salud 7.09%
