@@ -21,6 +21,9 @@ class PayrollEntryCreate(BaseModel):
     other_income: float = 0
     additional_deductions: Optional[List[Dict[str, Any]]] = []
     isr_override: Optional[float] = None
+    sfs_override: Optional[float] = None
+    afp_override: Optional[float] = None
+    overtime_override: Optional[float] = None
 
 
 class ApprovalRequest(BaseModel):

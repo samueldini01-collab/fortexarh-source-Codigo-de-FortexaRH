@@ -394,6 +394,13 @@ async def update_payroll_entry(entry_id: str, data: PayrollEntryCreate, current_
     overtime_weekend_amount = round(data.overtime_weekend_hours * hourly_rate * (1 + data.overtime_weekend_rate/100), 2)
     overtime_holiday_amount = round(data.overtime_holiday_hours * hourly_rate * (1 + data.overtime_holiday_rate/100), 2)
     
+    # If overtime override provided, distribute to day_amount for simplicity
+    if data.overtime_override is not None:
+        overtime_day_amount = round(data.overtime_override, 2)
+        overtime_night_amount = 0
+        overtime_weekend_amount = 0
+        overtime_holiday_amount = 0
+    
     gross_salary = data.base_salary + overtime_day_amount + overtime_night_amount + overtime_weekend_amount + overtime_holiday_amount + data.bonuses + data.commissions + data.other_income
     
     # Get employee data for manual override settings
@@ -405,14 +412,18 @@ async def update_payroll_entry(entry_id: str, data: PayrollEntryCreate, current_
          "isr_manual_override": 1, "isr_manual_amount": 1}
     ) or {}
 
-    # SFS: respect override
-    if emp.get("sfs_discount", True):
+    # SFS: respect inline override first, then employee override, then calculation
+    if data.sfs_override is not None:
+        sfs_employee = round(data.sfs_override, 2)
+    elif emp.get("sfs_discount", True):
         sfs_employee = round(float(emp.get("sfs_manual_amount", 0)), 2) if emp.get("sfs_manual_override") else round(gross_salary * SFS_EMPLOYEE_RATE, 2)
     else:
         sfs_employee = 0
 
-    # AFP: respect override
-    if emp.get("afp_discount", True):
+    # AFP: respect inline override first, then employee override, then calculation
+    if data.afp_override is not None:
+        afp_employee = round(data.afp_override, 2)
+    elif emp.get("afp_discount", True):
         afp_employee = round(float(emp.get("afp_manual_amount", 0)), 2) if emp.get("afp_manual_override") else round(gross_salary * AFP_EMPLOYEE_RATE, 2)
     else:
         afp_employee = 0
@@ -462,6 +473,9 @@ async def update_payroll_entry(entry_id: str, data: PayrollEntryCreate, current_
         "afp_employee": afp_employee,
         "isr": isr,
         "isr_manual_override_entry": data.isr_override is not None,
+        "sfs_manual_override_entry": data.sfs_override is not None,
+        "afp_manual_override_entry": data.afp_override is not None,
+        "overtime_manual_override_entry": data.overtime_override is not None,
         "additional_deductions": data.additional_deductions or [],
         "total_additional_deductions": round(total_additional, 2),
         "total_deductions": total_deductions,

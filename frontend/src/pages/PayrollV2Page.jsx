@@ -492,9 +492,15 @@ export default function PayrollPage() {
       };
       const numValue = parseFloat(editValue) || 0;
 
-      // If editing ISR, send as isr_override so backend uses the manual value
+      // Map field to override parameter for backend
       if (editingCell.field === 'isr') {
         updateData.isr_override = numValue;
+      } else if (editingCell.field === 'sfs_employee') {
+        updateData.sfs_override = numValue;
+      } else if (editingCell.field === 'afp_employee') {
+        updateData.afp_override = numValue;
+      } else if (editingCell.field === 'overtime_total') {
+        updateData.overtime_override = numValue;
       } else {
         updateData[editingCell.field] = numValue;
       }
@@ -1126,11 +1132,11 @@ export default function PayrollPage() {
                                 <TableCell className="text-right border-r bg-blue-50/50">{renderEditableCell(entry, 'base_salary', entry.base_salary)}</TableCell>
                                 <TableCell className="text-right border-r bg-emerald-50/50">{renderEditableCell(entry, 'commissions', entry.commissions)}</TableCell>
                                 <TableCell className="text-right border-r bg-emerald-50/50">{renderEditableCell(entry, 'bonuses', entry.bonuses)}</TableCell>
-                                <TableCell className="text-right border-r bg-emerald-50/50 text-emerald-600 dark:text-emerald-400">{formatNumber(totalOvertime)}</TableCell>
+                                <TableCell className="text-right border-r bg-emerald-50/50 text-emerald-600 dark:text-emerald-400">{renderEditableCell(entry, 'overtime_total', totalOvertime)}</TableCell>
                                 <TableCell className="text-right border-r bg-amber-50/50 text-amber-600 dark:text-amber-400">{formatNumber(entry.total_income_novelties || 0)}</TableCell>
                                 <TableCell className="text-right border-r bg-slate-100 font-bold">{formatNumber(entry.gross_salary)}</TableCell>
-                                <TableCell className="text-right border-r bg-red-50/50 text-red-600 dark:text-red-400">{formatNumber(entry.sfs_employee)}</TableCell>
-                                <TableCell className="text-right border-r bg-red-50/50 text-red-600 dark:text-red-400">{formatNumber(entry.afp_employee)}</TableCell>
+                                <TableCell className="text-right border-r bg-red-50/50 text-red-600 dark:text-red-400">{renderEditableCell(entry, 'sfs_employee', entry.sfs_employee)}</TableCell>
+                                <TableCell className="text-right border-r bg-red-50/50 text-red-600 dark:text-red-400">{renderEditableCell(entry, 'afp_employee', entry.afp_employee)}</TableCell>
                                 <TableCell className="text-right border-r bg-red-50/50 text-red-600 dark:text-red-400">{renderEditableCell(entry, 'isr', entry.isr)}</TableCell>
                                 <TableCell className="text-right border-r bg-orange-50/50 text-orange-600">{formatNumber(entry.total_deduction_novelties || 0)}</TableCell>
                                 <TableCell className="text-right border-r bg-red-100/50 font-bold text-red-700 dark:text-red-400">{formatNumber(entry.total_deductions)}</TableCell>
