@@ -25,6 +25,8 @@ export default function PayrollCalculatorPage() {
   const [loading, setLoading] = useState(false);
   const [calculating, setCalculating] = useState(false);
   const [result, setResult] = useState(null);
+  const [isrOverride, setIsrOverride] = useState(null);
+  const [editingIsr, setEditingIsr] = useState(false);
   const [formData, setFormData] = useState({
     employee_id: "",
     employee_name: "",
@@ -101,6 +103,8 @@ export default function PayrollCalculatorPage() {
         withCredentials: true
       });
       setResult(response.data);
+      setIsrOverride(null);
+      setEditingIsr(false);
       toast.success(t("payroll.calculator.messages.calculationSuccess"));
     } catch (error) {
       console.error("Error calculating:", error);
@@ -264,10 +268,10 @@ export default function PayrollCalculatorPage() {
     yPos += 7;
     
     doc.text(`  ISR Mensual (${result.isr_bracket})`, 25, yPos);
-    doc.text(formatCurrency(result.isr_monthly), pageWidth - 50, yPos, { align: "right" });
+    doc.text(formatCurrency(effectiveIsr), pageWidth - 50, yPos, { align: "right" });
     yPos += 6;
     
-    if (result.isr_monthly > 0) {
+    if (effectiveIsr > 0) {
       doc.setFontSize(8);
       doc.setTextColor(100, 100, 100);
       doc.text(`  Base gravable anual: ${formatCurrency(result.isr_annual_taxable)} | ISR anual: ${formatCurrency(result.isr_annual)}`, 25, yPos);
@@ -441,7 +445,16 @@ export default function PayrollCalculatorPage() {
       other_deductions: "0"
     });
     setResult(null);
+    setIsrOverride(null);
+    setEditingIsr(false);
   };
+
+
+  // Computed values with ISR override
+  const effectiveIsr = isrOverride !== null ? isrOverride : (result?.isr_monthly || 0);
+  const isrDiff = result ? effectiveIsr - (result.isr_monthly || 0) : 0;
+  const adjustedTotalDeductions = result ? (result.total_deductions || 0) + isrDiff : 0;
+  const adjustedNetSalary = result ? (result.net_salary || 0) - isrDiff : 0;
 
   return (
     <DashboardLayout title={t("payroll.calculator.title")}>
@@ -701,9 +714,30 @@ export default function PayrollCalculatorPage() {
                       {/* ISR Section */}
                       <Separator className="my-2" />
                       <p className="text-xs text-red-600 font-medium mb-1">{t('payroll.calculator.incomeTax')}</p>
-                      <div className="flex justify-between">
+                      <div className="flex justify-between items-center">
                         <span className="text-slate-600 dark:text-slate-300">{t('payroll.calculator.monthlyIsr')} ({result.isr_bracket})</span>
-                        <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.isr_monthly)}</span>
+                        {editingIsr ? (
+                          <input
+                            type="number"
+                            className="w-28 text-right px-2 py-0.5 text-sm border border-blue-400 rounded bg-white dark:bg-slate-800 text-red-600 font-medium focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            value={isrOverride ?? result.isr_monthly}
+                            autoFocus
+                            onChange={(e) => setIsrOverride(parseFloat(e.target.value) || 0)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') setEditingIsr(false); if (e.key === 'Escape') { setIsrOverride(null); setEditingIsr(false); } }}
+                            onBlur={() => setEditingIsr(false)}
+                            data-testid="isr-override-input"
+                          />
+                        ) : (
+                          <span 
+                            className="font-medium text-red-600 dark:text-red-400 cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20 px-2 py-0.5 rounded transition-colors"
+                            onClick={() => { setIsrOverride(isrOverride !== null ? isrOverride : result.isr_monthly); setEditingIsr(true); }}
+                            title="Click para editar"
+                            data-testid="isr-monthly-value"
+                          >
+                            -{formatCurrency(effectiveIsr)}
+                            {isrOverride !== null && <span className="text-xs ml-1 text-blue-500">(editado)</span>}
+                          </span>
+                        )}
                       </div>
                       {result.isr_monthly > 0 && (
                         <div className="text-xs text-slate-500 mt-1">
@@ -733,7 +767,7 @@ export default function PayrollCalculatorPage() {
                       <Separator className="my-2" />
                       <div className="flex justify-between font-semibold text-red-700">
                         <span>{t('payroll.calculator.totalDeductions')}</span>
-                        <span>-{formatCurrency(result.total_deductions)}</span>
+                        <span>-{formatCurrency(adjustedTotalDeductions)}</span>
                       </div>
                     </div>
                   </div>
@@ -743,7 +777,7 @@ export default function PayrollCalculatorPage() {
                     <div className="flex justify-between items-center">
                       <span className="text-white font-semibold text-lg">{t('payroll.calculator.netSalary')}</span>
                       <span className="text-white font-bold text-2xl" data-testid="net-salary">
-                        {formatCurrency(result.net_salary)}
+                        {formatCurrency(adjustedNetSalary)}
                       </span>
                     </div>
                   </div>
