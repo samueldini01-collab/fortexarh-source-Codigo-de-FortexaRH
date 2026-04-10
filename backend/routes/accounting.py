@@ -417,6 +417,63 @@ async def search_journal_entries(
     return entries
 
 
+@router.get("/payroll-summary")
+async def get_payroll_journal_summary(current_user: dict = Depends(get_current_user)):
+    """Get payroll-specific JE summary with KPIs and enriched period data."""
+    company_id = current_user.get("company_id")
+
+    entries = await db.journal_entries.find(
+        {"company_id": company_id, "entry_type": "payroll"},
+        {"_id": 0}
+    ).sort("entry_date", -1).to_list(200)
+
+    # Enrich with linked period info
+    payroll_ids = [e.get("payroll_id") for e in entries if e.get("payroll_id")]
+    periods = {}
+    if payroll_ids:
+        period_docs = await db.payroll_periods.find(
+            {"period_id": {"$in": payroll_ids}, "company_id": company_id},
+            {"_id": 0, "period_id": 1, "description": 1, "status": 1,
+             "employee_count": 1, "total_gross": 1, "total_net": 1,
+             "payment_date": 1, "paid_at": 1}
+        ).to_list(200)
+        periods = {p["period_id"]: p for p in period_docs}
+
+    enriched = []
+    for e in entries:
+        is_balanced = abs(e.get("total_debits", 0) - e.get("total_credits", 0)) < 0.01
+        period_info = periods.get(e.get("payroll_id"), {})
+        enriched.append({
+            **e,
+            "is_balanced": is_balanced,
+            "period_status": period_info.get("status"),
+            "period_description": period_info.get("description"),
+            "employee_count": period_info.get("employee_count", 0),
+            "period_total_gross": period_info.get("total_gross", 0),
+            "period_total_net": period_info.get("total_net", 0),
+        })
+
+    total_payroll_debits = round(sum(e.get("total_debits", 0) for e in entries), 2)
+    total_payroll_credits = round(sum(e.get("total_credits", 0) for e in entries), 2)
+    all_balanced = all(
+        abs(e.get("total_debits", 0) - e.get("total_credits", 0)) < 0.01
+        for e in entries
+    ) if entries else True
+
+    return {
+        "entries": enriched,
+        "kpis": {
+            "total_entries": len(entries),
+            "total_debits": total_payroll_debits,
+            "total_credits": total_payroll_credits,
+            "all_balanced": all_balanced,
+            "posted_count": sum(1 for e in entries if e.get("status") == "posted"),
+            "draft_count": sum(1 for e in entries if e.get("status") == "draft"),
+            "last_entry_date": entries[0].get("entry_date") if entries else None,
+        },
+    }
+
+
 @router.get("/journal-entries/{entry_id}")
 async def get_journal_entry(entry_id: str, current_user: dict = Depends(get_current_user)):
     """Get a specific journal entry"""

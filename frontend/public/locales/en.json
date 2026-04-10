@@ -3888,7 +3888,8 @@
       "accounts": "Accounts",
       "reports": "Reports",
       "journalEntries": "Journal Entries",
-      "chartOfAccounts": "Chart of Accounts"
+      "chartOfAccounts": "Chart of Accounts",
+      "payrollSummary": "Payroll Summary"
     },
     "stats": {
       "totalEntries": "Total Entries",
@@ -4059,7 +4060,28 @@
     "codigo": "Code",
     "nombreDeCuenta": "Nombre de Account",
     "centroDeCostos": "Centro de Costos",
-    "empleado": "Employee"
+    "empleado": "Employee",
+    "payroll": {
+      "title": "Payroll Journal Entries",
+      "subtitle": "Journal entries automatically generated from payroll periods",
+      "allBalanced": "All entries are balanced",
+      "hasUnbalanced": "There are unbalanced entries requiring attention",
+      "totalPayroll": "Total Payroll",
+      "postedEntries": "Posted",
+      "draftEntries": "Drafts",
+      "lastEntry": "Last Entry",
+      "balanced": "Balanced",
+      "unbalanced": "Unbalanced",
+      "employees": "employees",
+      "noEntries": "No payroll journal entries yet",
+      "noEntriesDesc": "Entries will be automatically generated when a payroll period is approved or paid",
+      "periodStatus": "Period Status",
+      "viewPeriod": "View Period",
+      "grossSalary": "Gross Salary",
+      "netSalary": "Net Salary",
+      "onlyPayroll": "Payroll Only",
+      "balanceStatus": "Balance"
+    }
   },
   "costsByDepartment": {
     "title": "Costs by Department",
@@ -5967,26 +5989,80 @@
         "title": "Available integrations",
         "body": "Connect with Stripe and PayPal for payments, QuickBooks for accounting, and enable Google Auth for social login. Enterprise integrations (SAP, Oracle) are available on the Enterprise plan."
       },
-      "reports-center": { "title": "Report Center", "body": "Advanced filters by date, department and type. Export to Excel and PDF." },
-      "reports-dgii": { "title": "DGII-TSS Reports", "body": "Generate and download DGII reports: IR-3, IR-4, IR-17, IR-6 and TSS. Includes employee breakdown." },
-      "reports-advanced": { "title": "Advanced Reports", "body": "Comparative charts, payroll trends, turnover analysis and department costs." },
-      "calc-basic": { "title": "Basic Payroll Calculator", "body": "Enter base salary to get net salary with TSS deductions (SFS 3.04%, AFP 2.87%) and ISR." },
-      "calc-deductions": { "title": "TSS and ISR Deductions", "body": "Automatic calculation: SFS 3.04%, AFP 2.87% and ISR per DGII table." },
-      "calc-edit": { "title": "Edit ISR Manually", "body": "Click on Monthly ISR to edit. Total deductions and net salary recalculate automatically." },
-      "docs-templates": { "title": "Document Templates", "body": "Create templates for contracts, letters and certifications with dynamic variables." },
-      "docs-generate": { "title": "Generate Documents", "body": "Select a template and employee to auto-generate PDF documents." },
-      "docs-employee": { "title": "Employee File", "body": "Digital file with contracts, IDs, evaluations and pay stubs." },
-      "accounting-overview": { "title": "General Accounting", "body": "Auto-generated journal entries for each payroll period." },
-      "accounting-quickbooks": { "title": "QuickBooks Online", "body": "Sync payroll with 8-account mapping and one-click consolidated journal entries." },
-      "accounting-payments": { "title": "Payments & Billing", "body": "Stripe and PayPal subscription payments and billing history." }
+      "reports-center": {
+        "title": "Report Center",
+        "body": "Advanced filters by date, department and type. Export to Excel and PDF."
+      },
+      "reports-dgii": {
+        "title": "DGII-TSS Reports",
+        "body": "Generate and download DGII reports: IR-3, IR-4, IR-17, IR-6 and TSS. Includes employee breakdown."
+      },
+      "reports-advanced": {
+        "title": "Advanced Reports",
+        "body": "Comparative charts, payroll trends, turnover analysis and department costs."
+      },
+      "calc-basic": {
+        "title": "Basic Payroll Calculator",
+        "body": "Enter base salary to get net salary with TSS deductions (SFS 3.04%, AFP 2.87%) and ISR."
+      },
+      "calc-deductions": {
+        "title": "TSS and ISR Deductions",
+        "body": "Automatic calculation: SFS 3.04%, AFP 2.87% and ISR per DGII table."
+      },
+      "calc-edit": {
+        "title": "Edit ISR Manually",
+        "body": "Click on Monthly ISR to edit. Total deductions and net salary recalculate automatically."
+      },
+      "docs-templates": {
+        "title": "Document Templates",
+        "body": "Create templates for contracts, letters and certifications with dynamic variables."
+      },
+      "docs-generate": {
+        "title": "Generate Documents",
+        "body": "Select a template and employee to auto-generate PDF documents."
+      },
+      "docs-employee": {
+        "title": "Employee File",
+        "body": "Digital file with contracts, IDs, evaluations and pay stubs."
+      },
+      "accounting-overview": {
+        "title": "General Accounting",
+        "body": "Auto-generated journal entries for each payroll period."
+      },
+      "accounting-quickbooks": {
+        "title": "QuickBooks Online",
+        "body": "Sync payroll with 8-account mapping and one-click consolidated journal entries."
+      },
+      "accounting-payments": {
+        "title": "Payments & Billing",
+        "body": "Stripe and PayPal subscription payments and billing history."
+      }
     },
     "updates": {
-      "update-isr-editable": { "title": "Editable ISR in Calculator and Payroll Sheet", "body": "Edit ISR values directly in calculator results and payroll sheet. Net salary recalculates automatically." },
-      "update-sfs-afp-editable": { "title": "Editable SFS, AFP and Overtime", "body": "SFS, AFP and Overtime columns in payroll sheet are now editable." },
-      "update-qb-journal": { "title": "Journal Entries to QuickBooks", "body": "Send consolidated payroll journal entries to QuickBooks Online with one click." },
-      "update-dgii-fix": { "title": "DGII Reports Fix", "body": "Fixed download and employee breakdown errors in all DGII report formats." },
-      "update-sfs-rate": { "title": "SFS Rate Correction to 3.04%", "body": "Corrected SFS percentage from 3.07% to 3.04% across the entire system." },
-      "update-qb-mapping": { "title": "QuickBooks Account Mapping", "body": "New account mapping section in Settings > Integrations for QuickBooks sync." },
+      "update-isr-editable": {
+        "title": "Editable ISR in Calculator and Payroll Sheet",
+        "body": "Edit ISR values directly in calculator results and payroll sheet. Net salary recalculates automatically."
+      },
+      "update-sfs-afp-editable": {
+        "title": "Editable SFS, AFP and Overtime",
+        "body": "SFS, AFP and Overtime columns in payroll sheet are now editable."
+      },
+      "update-qb-journal": {
+        "title": "Journal Entries to QuickBooks",
+        "body": "Send consolidated payroll journal entries to QuickBooks Online with one click."
+      },
+      "update-dgii-fix": {
+        "title": "DGII Reports Fix",
+        "body": "Fixed download and employee breakdown errors in all DGII report formats."
+      },
+      "update-sfs-rate": {
+        "title": "SFS Rate Correction to 3.04%",
+        "body": "Corrected SFS percentage from 3.07% to 3.04% across the entire system."
+      },
+      "update-qb-mapping": {
+        "title": "QuickBooks Account Mapping",
+        "body": "New account mapping section in Settings > Integrations for QuickBooks sync."
+      },
       "update-push-auto": {
         "title": "Automatic Push for Payroll and Vacations",
         "body": "Employees receive automatic push notifications when payroll is processed or vacation requests are approved/rejected."

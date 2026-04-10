@@ -3869,7 +3869,8 @@
       "accounts": "Comptes",
       "reports": "Rapports",
       "journalEntries": "Écritures de Journal",
-      "chartOfAccounts": "Plan Comptable"
+      "chartOfAccounts": "Plan Comptable",
+      "payrollSummary": "Résumé Paie"
     },
     "stats": {
       "totalEntries": "Total Écritures",
@@ -4031,7 +4032,28 @@
     "codigo": "Code",
     "nombreDeCuenta": "Nombre de Compte",
     "centroDeCostos": "Centro de Costos",
-    "empleado": "Employé"
+    "empleado": "Employé",
+    "payroll": {
+      "title": "Écritures de Paie",
+      "subtitle": "Écritures comptables générées automatiquement à partir des périodes de paie",
+      "allBalanced": "Toutes les écritures sont équilibrées",
+      "hasUnbalanced": "Il y a des écritures déséquilibrées nécessitant attention",
+      "totalPayroll": "Total Paie",
+      "postedEntries": "Comptabilisées",
+      "draftEntries": "Brouillons",
+      "lastEntry": "Dernière Écriture",
+      "balanced": "Équilibré",
+      "unbalanced": "Déséquilibré",
+      "employees": "employés",
+      "noEntries": "Aucune écriture de paie générée",
+      "noEntriesDesc": "Les écritures seront générées automatiquement lors de l'approbation ou du paiement d'une période de paie",
+      "periodStatus": "Statut Période",
+      "viewPeriod": "Voir Période",
+      "grossSalary": "Salaire Brut",
+      "netSalary": "Salaire Net",
+      "onlyPayroll": "Paie Uniquement",
+      "balanceStatus": "Solde"
+    }
   },
   "costsByDepartment": {
     "title": "Coûts par Département",
@@ -5798,10 +5820,22 @@
         "title": "Configuration",
         "desc": "Entreprise, securite, langue et integrations"
       },
-      "reports": { "title": "Rapports", "desc": "Rapports DGII, TSS, avances, filtres et export" },
-      "calculator": { "title": "Calculateur de Paie", "desc": "Calcul du salaire net, deductions TSS et ISR" },
-      "documents": { "title": "Documents et Modeles", "desc": "Generation de contrats, lettres et dossiers" },
-      "accounting": { "title": "Comptabilite et Integrations", "desc": "Ecritures comptables, QuickBooks, paiements" }
+      "reports": {
+        "title": "Rapports",
+        "desc": "Rapports DGII, TSS, avances, filtres et export"
+      },
+      "calculator": {
+        "title": "Calculateur de Paie",
+        "desc": "Calcul du salaire net, deductions TSS et ISR"
+      },
+      "documents": {
+        "title": "Documents et Modeles",
+        "desc": "Generation de contrats, lettres et dossiers"
+      },
+      "accounting": {
+        "title": "Comptabilite et Integrations",
+        "desc": "Ecritures comptables, QuickBooks, paiements"
+      }
     },
     "articles": {
       "payroll-create": {
@@ -5916,26 +5950,80 @@
         "title": "Integrations disponibles",
         "body": "Connectez Stripe, PayPal, QuickBooks et Google Auth."
       },
-      "reports-center": { "title": "Centre de Rapports", "body": "Filtres avances par date, departement et type. Export Excel et PDF." },
-      "reports-dgii": { "title": "Rapports DGII-TSS", "body": "Generez les rapports DGII: IR-3, IR-4, IR-17, IR-6 et TSS." },
-      "reports-advanced": { "title": "Rapports Avances", "body": "Graphiques, tendances et analyse par departement." },
-      "calc-basic": { "title": "Calculateur de Paie", "body": "Calcul du salaire net avec deductions TSS et ISR." },
-      "calc-deductions": { "title": "Deductions TSS et ISR", "body": "Calcul automatique: SFS 3.04%, AFP 2.87% et ISR." },
-      "calc-edit": { "title": "Modifier ISR manuellement", "body": "Cliquez sur ISR pour le modifier. Le salaire net se recalcule." },
-      "docs-templates": { "title": "Modeles de Documents", "body": "Creez des modeles pour contrats et lettres." },
-      "docs-generate": { "title": "Generer des Documents", "body": "Selectionnez un modele et un employe pour generer un PDF." },
-      "docs-employee": { "title": "Dossier Employe", "body": "Dossier numerique avec contrats, evaluations et bulletins." },
-      "accounting-overview": { "title": "Comptabilite Generale", "body": "Ecritures comptables automatiques par periode." },
-      "accounting-quickbooks": { "title": "QuickBooks Online", "body": "Synchronisez la paie avec mappage de 8 comptes." },
-      "accounting-payments": { "title": "Paiements", "body": "Paiements Stripe et PayPal et historique." }
+      "reports-center": {
+        "title": "Centre de Rapports",
+        "body": "Filtres avances par date, departement et type. Export Excel et PDF."
+      },
+      "reports-dgii": {
+        "title": "Rapports DGII-TSS",
+        "body": "Generez les rapports DGII: IR-3, IR-4, IR-17, IR-6 et TSS."
+      },
+      "reports-advanced": {
+        "title": "Rapports Avances",
+        "body": "Graphiques, tendances et analyse par departement."
+      },
+      "calc-basic": {
+        "title": "Calculateur de Paie",
+        "body": "Calcul du salaire net avec deductions TSS et ISR."
+      },
+      "calc-deductions": {
+        "title": "Deductions TSS et ISR",
+        "body": "Calcul automatique: SFS 3.04%, AFP 2.87% et ISR."
+      },
+      "calc-edit": {
+        "title": "Modifier ISR manuellement",
+        "body": "Cliquez sur ISR pour le modifier. Le salaire net se recalcule."
+      },
+      "docs-templates": {
+        "title": "Modeles de Documents",
+        "body": "Creez des modeles pour contrats et lettres."
+      },
+      "docs-generate": {
+        "title": "Generer des Documents",
+        "body": "Selectionnez un modele et un employe pour generer un PDF."
+      },
+      "docs-employee": {
+        "title": "Dossier Employe",
+        "body": "Dossier numerique avec contrats, evaluations et bulletins."
+      },
+      "accounting-overview": {
+        "title": "Comptabilite Generale",
+        "body": "Ecritures comptables automatiques par periode."
+      },
+      "accounting-quickbooks": {
+        "title": "QuickBooks Online",
+        "body": "Synchronisez la paie avec mappage de 8 comptes."
+      },
+      "accounting-payments": {
+        "title": "Paiements",
+        "body": "Paiements Stripe et PayPal et historique."
+      }
     },
     "updates": {
-      "update-isr-editable": { "title": "ISR Modifiable", "body": "Modifiez ISR dans le calculateur et la feuille de paie." },
-      "update-sfs-afp-editable": { "title": "SFS, AFP et Heures Sup Modifiables", "body": "Colonnes editables dans la feuille de paie." },
-      "update-qb-journal": { "title": "Ecritures vers QuickBooks", "body": "Envoyez des ecritures consolidees en un clic." },
-      "update-dgii-fix": { "title": "Correction Rapports DGII", "body": "Telechargement et details par employe corriges." },
-      "update-sfs-rate": { "title": "Taux SFS corrige a 3.04%", "body": "SFS corrige de 3.07% a 3.04% dans tout le systeme." },
-      "update-qb-mapping": { "title": "Mappage Comptes QuickBooks", "body": "Nouvelle section mappage dans Configuration > Integrations." },
+      "update-isr-editable": {
+        "title": "ISR Modifiable",
+        "body": "Modifiez ISR dans le calculateur et la feuille de paie."
+      },
+      "update-sfs-afp-editable": {
+        "title": "SFS, AFP et Heures Sup Modifiables",
+        "body": "Colonnes editables dans la feuille de paie."
+      },
+      "update-qb-journal": {
+        "title": "Ecritures vers QuickBooks",
+        "body": "Envoyez des ecritures consolidees en un clic."
+      },
+      "update-dgii-fix": {
+        "title": "Correction Rapports DGII",
+        "body": "Telechargement et details par employe corriges."
+      },
+      "update-sfs-rate": {
+        "title": "Taux SFS corrige a 3.04%",
+        "body": "SFS corrige de 3.07% a 3.04% dans tout le systeme."
+      },
+      "update-qb-mapping": {
+        "title": "Mappage Comptes QuickBooks",
+        "body": "Nouvelle section mappage dans Configuration > Integrations."
+      },
       "update-push-auto": {
         "title": "Push automatique Paie et Vacances",
         "body": "Les employes recoivent des notifications push automatiques lors du traitement de la paie ou de l'approbation des vacances."
@@ -5994,9 +6082,18 @@
         "q": "Que sont les heures de silence?",
         "a": "Les heures de silence pausent les notifications push et email pendant des horaires specifiques."
       },
-      "faq-edit-isr": { "q": "Comment modifier l'ISR?", "a": "Cliquez sur la valeur ISR dans le calculateur ou la feuille de paie pour la modifier." },
-      "faq-qb-connect": { "q": "Comment connecter QuickBooks?", "a": "Configuration > Integrations > Connecter QuickBooks. Autorisez puis configurez le mappage de comptes." },
-      "faq-dgii-reports": { "q": "Comment telecharger les rapports DGII?", "a": "Rapports DGII-TSS > selectionnez la periode > cliquez telecharger." }
+      "faq-edit-isr": {
+        "q": "Comment modifier l'ISR?",
+        "a": "Cliquez sur la valeur ISR dans le calculateur ou la feuille de paie pour la modifier."
+      },
+      "faq-qb-connect": {
+        "q": "Comment connecter QuickBooks?",
+        "a": "Configuration > Integrations > Connecter QuickBooks. Autorisez puis configurez le mappage de comptes."
+      },
+      "faq-dgii-reports": {
+        "q": "Comment telecharger les rapports DGII?",
+        "a": "Rapports DGII-TSS > selectionnez la periode > cliquez telecharger."
+      }
     }
   }
 }

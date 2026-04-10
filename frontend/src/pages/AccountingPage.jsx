@@ -60,12 +60,20 @@ import {
   X,
   FileSpreadsheet,
   List,
-  Eye
+  Eye,
+  CircleCheck,
+  CircleAlert,
+  Users,
+  Calendar,
+  Filter,
+  ClipboardList
 } from "lucide-react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export default function AccountingPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("asientos");
   const [entries, setEntries] = useState([]);
   const [accounts, setAccounts] = useState([]);
@@ -85,6 +93,11 @@ export default function AccountingPage() {
   const [previewFormat, setPreviewFormat] = useState("summary");
   const [previewLoading, setPreviewLoading] = useState(false);
   const [previewEntry, setPreviewEntry] = useState(null);
+  
+  // Payroll summary
+  const [payrollSummary, setPayrollSummary] = useState({ entries: [], kpis: {} });
+  const [payrollLoading, setPayrollLoading] = useState(false);
+  const [onlyPayroll, setOnlyPayroll] = useState(false);
   
   // Filters
   const [searchNumber, setSearchNumber] = useState("");
@@ -145,10 +158,26 @@ export default function AccountingPage() {
     }
   }, [getAuthHeaders]);
 
+  const fetchPayrollSummary = useCallback(async () => {
+    setPayrollLoading(true);
+    try {
+      const response = await axios.get(`${API}/accounting/payroll-summary`, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+      setPayrollSummary(response.data);
+    } catch (error) {
+      console.error("Error fetching payroll summary:", error);
+    } finally {
+      setPayrollLoading(false);
+    }
+  }, [getAuthHeaders]);
+
   useEffect(() => {
     fetchData();
     fetchCatalogTemplates();
-  }, [fetchData, fetchCatalogTemplates]);
+    fetchPayrollSummary();
+  }, [fetchData, fetchCatalogTemplates, fetchPayrollSummary]);
 
   const loadCatalogTemplate = async (catalogId) => {
     if (!window.confirm(t('accounting.messages.confirmLoadCatalog'))) {
@@ -511,11 +540,30 @@ export default function AccountingPage() {
   };
 
   // Stats
+  const filteredEntries = onlyPayroll ? entries.filter(e => e.entry_type === "payroll") : entries;
   const stats = {
     totalEntries: entries.length,
     totalDebits: entries.reduce((sum, e) => sum + (e.total_debits || 0), 0),
     totalCredits: entries.reduce((sum, e) => sum + (e.total_credits || 0), 0),
-    payrollEntries: entries.filter(e => e.payroll_period_id).length
+    payrollEntries: entries.filter(e => e.entry_type === "payroll" || e.payroll_period_id).length
+  };
+
+  const getBalanceIcon = (entry) => {
+    const balanced = Math.abs((entry.total_debits || 0) - (entry.total_credits || 0)) < 0.01;
+    return balanced
+      ? <CircleCheck className="w-4 h-4 text-emerald-500" />
+      : <CircleAlert className="w-4 h-4 text-red-500" />;
+  };
+
+  const getPeriodStatusBadge = (status) => {
+    const map = {
+      draft: { cls: "bg-slate-100 text-slate-600", label: "Borrador" },
+      pending_approval: { cls: "bg-amber-100 text-amber-700", label: "Pendiente" },
+      approved: { cls: "bg-blue-100 text-blue-700", label: "Aprobado" },
+      paid: { cls: "bg-emerald-100 text-emerald-700", label: "Pagado" },
+    };
+    const m = map[status] || { cls: "bg-slate-100 text-slate-600", label: status || "-" };
+    return <Badge className={m.cls}>{m.label}</Badge>;
   };
 
   return (
@@ -583,9 +631,13 @@ export default function AccountingPage() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-2 w-full max-w-md">
-            <TabsTrigger value="asientos">{t('accounting.tabs.journalEntries')}</TabsTrigger>
-            <TabsTrigger value="cuentas">{t('accounting.tabs.chartOfAccounts')}</TabsTrigger>
+          <TabsList className="grid grid-cols-3 w-full max-w-lg">
+            <TabsTrigger value="asientos" data-testid="tab-journal-entries">{t('accounting.tabs.journalEntries')}</TabsTrigger>
+            <TabsTrigger value="nomina" data-testid="tab-payroll-summary">
+              <ClipboardList className="w-4 h-4 mr-1.5" />
+              {t('accounting.tabs.payrollSummary')}
+            </TabsTrigger>
+            <TabsTrigger value="cuentas" data-testid="tab-chart-of-accounts">{t('accounting.tabs.chartOfAccounts')}</TabsTrigger>
           </TabsList>
 
           {/* Asientos Tab */}
@@ -631,6 +683,15 @@ export default function AccountingPage() {
                   <Button variant="outline" onClick={clearSearch}>
                     {t('common.clearFilters')}
                   </Button>
+                  <Button
+                    variant={onlyPayroll ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setOnlyPayroll(!onlyPayroll)}
+                    data-testid="filter-only-payroll"
+                  >
+                    <Filter className="w-4 h-4 mr-1.5" />
+                    {t('accounting.payroll.onlyPayroll')}
+                  </Button>
                   <div className="flex-1" />
                   <Button onClick={() => { resetEntryForm(); setShowNewEntry(true); }}>
                     <Plus className="w-4 h-4 mr-2" />
@@ -667,12 +728,13 @@ export default function AccountingPage() {
                         <TableHead>{t('accounting.entry.description')}</TableHead>
                         <TableHead className="text-right">{t('accounting.entry.debit')}</TableHead>
                         <TableHead className="text-right">{t('accounting.entry.credit')}</TableHead>
+                        <TableHead className="text-center w-20">{t('accounting.payroll.balanceStatus')}</TableHead>
                         <TableHead>{t('accounting.entry.status')}</TableHead>
                         <TableHead className="text-right">{t('common.actions')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {entries.map(entry => (
+                      {filteredEntries.map(entry => (
                         <TableRow key={entry.entry_id}>
                           <TableCell>
                             <span className="font-mono font-bold text-blue-600 dark:text-blue-400">
@@ -683,7 +745,7 @@ export default function AccountingPage() {
                           <TableCell>
                             <div className="flex items-center gap-2">
                               {entry.reference}
-                              {entry.payroll_period_id && (
+                              {(entry.payroll_period_id || entry.entry_type === "payroll") && (
                                 <Badge variant="outline" className="text-xs border-purple-300 text-purple-600">
                                   <Link2 className="w-3 h-3 mr-1" />
                                   {t('accounting.entry.payroll')}
@@ -694,6 +756,7 @@ export default function AccountingPage() {
                           <TableCell className="max-w-xs truncate">{entry.description}</TableCell>
                           <TableCell className="text-right font-mono">{formatCurrency(entry.total_debits)}</TableCell>
                           <TableCell className="text-right font-mono">{formatCurrency(entry.total_credits)}</TableCell>
+                          <TableCell className="text-center">{getBalanceIcon(entry)}</TableCell>
                           <TableCell>{getStatusBadge(entry.status)}</TableCell>
                           <TableCell>
                             <div className="flex justify-end gap-1">
@@ -725,6 +788,174 @@ export default function AccountingPage() {
                               <Button size="icon" variant="ghost" className="text-red-500" onClick={() => handleDeleteEntry(entry)} title={t('common.delete')}>
                                 <Trash2 className="w-4 h-4" />
                               </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Resumen Nómina Tab */}
+          <TabsContent value="nomina" className="space-y-4" data-testid="payroll-summary-tab">
+            {/* Payroll KPIs */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <Card className="border-l-4 border-l-indigo-500">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{t('accounting.payroll.totalPayroll')}</p>
+                      <p className="text-xl font-bold text-indigo-600 dark:text-indigo-400">{formatCurrency(payrollSummary.kpis?.total_debits || 0)}</p>
+                    </div>
+                    <DollarSign className="w-8 h-8 text-indigo-300" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-l-4 border-l-emerald-500">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{t('accounting.payroll.postedEntries')}</p>
+                      <p className="text-2xl font-bold text-emerald-600">{payrollSummary.kpis?.posted_count || 0}</p>
+                    </div>
+                    <CheckCircle className="w-8 h-8 text-emerald-300" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-l-4 border-l-amber-500">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{t('accounting.payroll.draftEntries')}</p>
+                      <p className="text-2xl font-bold text-amber-600">{payrollSummary.kpis?.draft_count || 0}</p>
+                    </div>
+                    <FileText className="w-8 h-8 text-amber-300" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-l-4 border-l-sky-500">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{t('accounting.payroll.lastEntry')}</p>
+                      <p className="text-lg font-bold text-sky-600">{payrollSummary.kpis?.last_entry_date || "-"}</p>
+                    </div>
+                    <Calendar className="w-8 h-8 text-sky-300" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Balance global indicator */}
+            {payrollSummary.entries?.length > 0 && (
+              <div className={`flex items-center gap-3 p-3 rounded-lg ${
+                payrollSummary.kpis?.all_balanced
+                  ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
+                  : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+              }`}>
+                {payrollSummary.kpis?.all_balanced
+                  ? <CircleCheck className="w-5 h-5" />
+                  : <CircleAlert className="w-5 h-5" />
+                }
+                <span className="font-medium">
+                  {payrollSummary.kpis?.all_balanced
+                    ? t('accounting.payroll.allBalanced')
+                    : t('accounting.payroll.hasUnbalanced')
+                  }
+                </span>
+              </div>
+            )}
+
+            {/* Payroll entries table */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <ClipboardList className="w-5 h-5 text-indigo-500" />
+                  {t('accounting.payroll.title')}
+                </CardTitle>
+                <CardDescription>{t('accounting.payroll.subtitle')}</CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                {payrollLoading ? (
+                  <div className="p-8 space-y-4">
+                    {[1, 2, 3].map(i => (
+                      <div key={i} className="h-14 bg-slate-100 dark:bg-slate-800 rounded animate-pulse" />
+                    ))}
+                  </div>
+                ) : payrollSummary.entries?.length === 0 ? (
+                  <div className="text-center py-12 px-4">
+                    <ClipboardList className="w-12 h-12 mx-auto mb-4 text-slate-300" />
+                    <p className="text-slate-500 dark:text-slate-400 font-medium">{t('accounting.payroll.noEntries')}</p>
+                    <p className="text-sm text-slate-400 mt-1">{t('accounting.payroll.noEntriesDesc')}</p>
+                    <Button variant="link" className="mt-3" onClick={() => navigate('/payroll-v2')}>
+                      Ir a Nómina
+                    </Button>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>{t('accounting.entry.date')}</TableHead>
+                        <TableHead>{t('accounting.entry.reference')}</TableHead>
+                        <TableHead>{t('accounting.entry.description')}</TableHead>
+                        <TableHead className="text-center">
+                          <Users className="w-4 h-4 inline mr-1" />
+                          Emp.
+                        </TableHead>
+                        <TableHead className="text-right">{t('accounting.entry.debit')}</TableHead>
+                        <TableHead className="text-right">{t('accounting.entry.credit')}</TableHead>
+                        <TableHead className="text-center w-20">{t('accounting.payroll.balanceStatus')}</TableHead>
+                        <TableHead>{t('accounting.entry.status')}</TableHead>
+                        <TableHead>{t('accounting.payroll.periodStatus')}</TableHead>
+                        <TableHead className="text-right">{t('common.actions')}</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {payrollSummary.entries.map(entry => (
+                        <TableRow key={entry.entry_id}>
+                          <TableCell className="whitespace-nowrap">{entry.entry_date}</TableCell>
+                          <TableCell className="font-mono text-sm">{entry.reference}</TableCell>
+                          <TableCell className="max-w-[200px] truncate">{entry.period_description || entry.description}</TableCell>
+                          <TableCell className="text-center">
+                            <Badge variant="secondary" className="font-mono">{entry.employee_count || 0}</Badge>
+                          </TableCell>
+                          <TableCell className="text-right font-mono">{formatCurrency(entry.total_debits)}</TableCell>
+                          <TableCell className="text-right font-mono">{formatCurrency(entry.total_credits)}</TableCell>
+                          <TableCell className="text-center">
+                            {entry.is_balanced
+                              ? <CircleCheck className="w-5 h-5 text-emerald-500 mx-auto" />
+                              : <CircleAlert className="w-5 h-5 text-red-500 mx-auto" />
+                            }
+                          </TableCell>
+                          <TableCell>{getStatusBadge(entry.status)}</TableCell>
+                          <TableCell>{getPeriodStatusBadge(entry.period_status)}</TableCell>
+                          <TableCell>
+                            <div className="flex justify-end gap-1">
+                              <Button size="icon" variant="ghost" onClick={() => openPreview(entry, "summary")} title={t('accounting.buttons.preview')}>
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button size="icon" variant="ghost" title={t('common.export')}>
+                                    <Download className="w-4 h-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>{t('accounting.preview.exportAs')}</DropdownMenuLabel>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem onClick={() => exportToCSV(entry, "summary")}>
+                                    <FileSpreadsheet className="w-4 h-4 mr-2" />
+                                    {t('accounting.preview.summary')}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => exportToCSV(entry, "detailed")}>
+                                    <List className="w-4 h-4 mr-2" />
+                                    {t('accounting.preview.detailed')}
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
                             </div>
                           </TableCell>
                         </TableRow>
