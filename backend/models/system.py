@@ -299,7 +299,8 @@ class QuickBooksConnection(BaseModel):
 
 
 class QuickBooksSyncRequest(BaseModel):
-    sync_type: str
+    sync_type: str = "payroll"
+    period_id: Optional[str] = None
     start_date: Optional[str] = None
     date_to: Optional[str] = None
 

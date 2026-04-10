@@ -130,6 +130,10 @@ export default function CompanyConfigPage() {
   // Integrations
   const [integrations, setIntegrations] = useState(INTEGRATIONS);
   const [quickbooksLoading, setQuickbooksLoading] = useState(false);
+  const [qbAccounts, setQbAccounts] = useState([]);
+  const [qbAccountMapping, setQbAccountMapping] = useState({});
+  const [showAccountMapping, setShowAccountMapping] = useState(false);
+  const [savingMapping, setSavingMapping] = useState(false);
   
   // Audit log
   const [auditLog, setAuditLog] = useState([]);
@@ -354,6 +358,44 @@ export default function CompanyConfigPage() {
       prev.map(i => i.id === integrationId ? {...i, connected: !i.connected} : i)
     );
     toast.success(t('settings.messages.saved'));
+  };
+
+  // QBO Account Mapping functions
+  const fetchQbAccounts = async () => {
+    try {
+      const [accountsRes, mappingRes] = await Promise.all([
+        axios.get(`${API}/quickbooks/accounts`, { headers: getAuthHeaders(), withCredentials: true }),
+        axios.get(`${API}/quickbooks/account-mapping`, { headers: getAuthHeaders(), withCredentials: true })
+      ]);
+      setQbAccounts(accountsRes.data.accounts || []);
+      setQbAccountMapping(mappingRes.data.accounts || {});
+      setShowAccountMapping(true);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al cargar cuentas de QuickBooks");
+    }
+  };
+
+  const saveAccountMapping = async () => {
+    setSavingMapping(true);
+    try {
+      await axios.put(`${API}/quickbooks/account-mapping`, 
+        { accounts: qbAccountMapping },
+        { headers: getAuthHeaders(), withCredentials: true }
+      );
+      toast.success("Mapeo de cuentas guardado correctamente");
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al guardar");
+    } finally {
+      setSavingMapping(false);
+    }
+  };
+
+  const updateMapping = (key, accountId) => {
+    const account = qbAccounts.find(a => a.id === accountId);
+    setQbAccountMapping(prev => ({
+      ...prev,
+      [key]: account ? { id: account.id, name: account.full_name } : {}
+    }));
   };
 
   // ===================== RENDER TABS =====================
@@ -934,6 +976,74 @@ export default function CompanyConfigPage() {
             </div>
           </div>
         ))}
+        
+        {/* QuickBooks Account Mapping */}
+        {integrations.find(i => i.id === "quickbooks")?.connected && (
+          <Card className="border border-emerald-200 bg-emerald-50/30">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-base">Mapeo de Cuentas QBO</CardTitle>
+                  <CardDescription>Configure qué cuentas de QuickBooks corresponden a cada concepto de nómina</CardDescription>
+                </div>
+                {!showAccountMapping ? (
+                  <Button size="sm" variant="outline" onClick={fetchQbAccounts} data-testid="btn-configure-mapping">
+                    <Link2 className="w-4 h-4 mr-2" />Configurar
+                  </Button>
+                ) : (
+                  <Button size="sm" onClick={saveAccountMapping} disabled={savingMapping} data-testid="btn-save-mapping">
+                    {savingMapping ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                    Guardar Mapeo
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+            {showAccountMapping && (
+              <CardContent className="pt-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {[
+                    { key: "payroll_expense", label: "Gasto de Nómina (Sueldos)", filter: "Expense" },
+                    { key: "employer_contributions", label: "Aportes Patronales TSS", filter: "Expense" },
+                    { key: "sfs_payable", label: "SFS por Pagar", filter: "Liability" },
+                    { key: "afp_payable", label: "AFP por Pagar", filter: "Liability" },
+                    { key: "isr_payable", label: "ISR por Pagar", filter: "Liability" },
+                    { key: "srl_payable", label: "SRL por Pagar", filter: "Liability" },
+                    { key: "infotep_payable", label: "INFOTEP por Pagar", filter: "Liability" },
+                    { key: "bank_account", label: "Banco / Efectivo", filter: "Asset" },
+                  ].map(({ key, label, filter }) => (
+                    <div key={key} className="space-y-1">
+                      <Label className="text-xs font-medium text-slate-600">{label}</Label>
+                      <Select
+                        value={qbAccountMapping[key]?.id || ""}
+                        onValueChange={(v) => updateMapping(key, v)}
+                      >
+                        <SelectTrigger className="h-8 text-xs bg-white" data-testid={`mapping-${key}`}>
+                          <SelectValue placeholder="Seleccionar cuenta..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {qbAccounts
+                            .filter(a => !filter || a.classification === filter || a.type?.includes(filter.replace("Liability", "")) || true)
+                            .map(a => (
+                              <SelectItem key={a.id} value={a.id} className="text-xs">
+                                {a.full_name} ({a.type})
+                              </SelectItem>
+                            ))
+                          }
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ))}
+                </div>
+                {Object.keys(qbAccountMapping).length > 0 && (
+                  <div className="mt-3 p-2 rounded bg-emerald-100/50 text-xs text-emerald-700">
+                    <Check className="w-3 h-3 inline mr-1" />
+                    {Object.values(qbAccountMapping).filter(v => v?.id).length} de 8 cuentas configuradas
+                  </div>
+                )}
+              </CardContent>
+            )}
+          </Card>
+        )}
         
         <div className="p-4 rounded-lg bg-amber-50 border border-amber-200">
           <div className="flex items-start gap-3">

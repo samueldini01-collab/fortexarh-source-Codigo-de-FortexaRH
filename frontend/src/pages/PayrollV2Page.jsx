@@ -60,7 +60,8 @@ import {
   Eye,
   Building2,
   Shield,
-  List
+  List,
+  Send
 } from "lucide-react";
 import { toast } from "sonner";
 import { DrillDownModal } from "@/components/DrillDown";
@@ -131,6 +132,7 @@ export default function PayrollPage() {
   // Inline editing states
   const [editingCell, setEditingCell] = useState(null);
   const [editValue, setEditValue] = useState("");
+  const [qbSyncing, setQbSyncing] = useState(false);
   
   // Quick filter states
   const [quickFilter, setQuickFilter] = useState(null);
@@ -433,6 +435,24 @@ export default function PayrollPage() {
       fetchPeriods();
     } catch (error) {
       toast.error(error.response?.data?.detail || "Error");
+    }
+  };
+
+  const handleSyncToQuickBooks = async (periodId) => {
+    if (!confirm("¿Enviar el asiento de diario de esta nómina a QuickBooks?")) return;
+    setQbSyncing(true);
+    try {
+      const response = await axios.post(`${API}/quickbooks/sync/payroll`, 
+        { sync_type: "payroll", period_id: periodId },
+        { headers: getAuthHeaders(), withCredentials: true }
+      );
+      toast.success(response.data.message || "Asiento enviado a QuickBooks");
+      fetchPeriodDetails(periodId);
+      fetchPeriods();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error al enviar a QuickBooks");
+    } finally {
+      setQbSyncing(false);
     }
   };
 
@@ -1017,6 +1037,25 @@ export default function PayrollPage() {
                             <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={() => openPayDialog(selectedPeriod)}><CreditCard className="w-4 h-4 mr-1" />{t('payrollV2.pagar')}</Button>
                           )}
                           <Button size="sm" variant="secondary" onClick={() => handleExportExcel(selectedPeriod.period_id)}><Download className="w-4 h-4 mr-1" />{t('payrollV2.excel')}</Button>
+                          {/* Send to QuickBooks - only for paid periods */}
+                          {selectedPeriod.status === 'paid' && !selectedPeriod.qb_journal_entry_id && (
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              className="border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+                              onClick={() => handleSyncToQuickBooks(selectedPeriod.period_id)}
+                              disabled={qbSyncing}
+                              data-testid="btn-sync-qbo"
+                            >
+                              {qbSyncing ? <RefreshCw className="w-4 h-4 mr-1 animate-spin" /> : <Send className="w-4 h-4 mr-1" />}
+                              Enviar a QBO
+                            </Button>
+                          )}
+                          {selectedPeriod.qb_journal_entry_id && (
+                            <Badge className="bg-emerald-100 text-emerald-700 text-xs" data-testid="qb-synced-badge">
+                              <Check className="w-3 h-3 mr-1" />QBO JE #{selectedPeriod.qb_journal_entry_id}
+                            </Badge>
+                          )}
                           {selectedPeriod.status !== 'paid' && (
                             <Button size="sm" variant="destructive" onClick={() => handleDeletePeriod(selectedPeriod.period_id)}><Trash2 className="w-4 h-4" /></Button>
                           )}

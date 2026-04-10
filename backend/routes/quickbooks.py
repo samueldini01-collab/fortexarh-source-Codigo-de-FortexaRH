@@ -460,104 +460,315 @@ async def sync_payroll_to_quickbooks(
     current_user: dict = Depends(get_current_user)
 ):
     """
-    Sync payroll data to QuickBooks as Journal Entries.
+    Sync payroll data to QuickBooks as a consolidated Journal Entry per period.
+    Requires a period_id in the request body.
     """
     company_id = current_user.get("company_id")
     user_id = current_user.get("user_id")
-    
+    period_id = request.period_id if hasattr(request, 'period_id') and request.period_id else None
+
+    if not period_id:
+        raise HTTPException(status_code=400, detail="Se requiere period_id")
+
+    # Validate period exists and is paid
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id}, {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    if period.get("status") != "paid":
+        raise HTTPException(status_code=400, detail="Solo se pueden sincronizar períodos pagados")
+    if period.get("qb_journal_entry_id"):
+        raise HTTPException(status_code=400, detail="Este período ya fue enviado a QuickBooks")
+
+    # Get account mapping
+    mapping = await db.quickbooks_account_mappings.find_one(
+        {"company_id": company_id}, {"_id": 0}
+    )
+    if not mapping or not mapping.get("accounts"):
+        raise HTTPException(status_code=400, detail="Configure el mapeo de cuentas de QuickBooks primero")
+
+    accounts = mapping["accounts"]
+    required_keys = ["payroll_expense", "employer_contributions", "sfs_payable", "afp_payable", "isr_payable", "srl_payable", "infotep_payable", "bank_account"]
+    missing = [k for k in required_keys if not accounts.get(k, {}).get("id")]
+    if missing:
+        raise HTTPException(status_code=400, detail=f"Faltan cuentas por mapear: {', '.join(missing)}")
+
     # Get valid token
     access_token = await get_valid_token(company_id, user_id)
     if not access_token:
-        raise HTTPException(status_code=401, detail="QuickBooks connection expired. Please reconnect.")
-    
-    # Get connection for realm_id
+        raise HTTPException(status_code=401, detail="Conexión con QuickBooks expirada. Reconecte.")
+
     connection = await db.quickbooks_connections.find_one({"company_id": company_id, "is_active": True})
     realm_id = connection["realm_id"]
-    
-    # Get payroll entries
-    query = {"company_id": company_id}
-    if request.start_date:
-        query["created_at"] = {"$gte": request.start_date}
-    if request.end_date:
-        query["created_at"] = {**query.get("created_at", {}), "$lte": request.end_date}
-    
-    payroll_entries = await db.payroll_entries.find(query, {"_id": 0}).to_list(500)
-    
-    synced = 0
-    errors = []
-    
-    api_url = QB_SANDBOX_API_URL  # Use sandbox for development
-    
+
+    # Get all entries for this period
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id}, {"_id": 0}
+    ).to_list(1000)
+
+    if not entries:
+        raise HTTPException(status_code=400, detail="El período no tiene entradas")
+
+    # Calculate consolidated totals
+    total_gross = sum(e.get("gross_salary", 0) for e in entries)
+    total_sfs_employee = sum(e.get("sfs_employee", 0) for e in entries)
+    total_afp_employee = sum(e.get("afp_employee", 0) for e in entries)
+    total_isr = sum(e.get("isr", 0) for e in entries)
+    total_net = sum(e.get("net_salary", 0) for e in entries)
+    total_sfs_employer = sum(e.get("sfs_employer", 0) for e in entries)
+    total_afp_employer = sum(e.get("afp_employer", 0) for e in entries)
+    total_srl = sum(e.get("srl_employer", 0) for e in entries)
+    total_infotep = sum(e.get("infotep_employer", 0) for e in entries)
+    total_employer = total_sfs_employer + total_afp_employer + total_srl + total_infotep
+
+    description_base = period.get("description", f"Nómina {period.get('month')}/{period.get('year')}")
+
+    # Build Journal Entry lines
+    lines = []
+
+    # DEBITS
+    if total_gross > 0:
+        lines.append({
+            "Description": f"{description_base} - Sueldos y Salarios",
+            "Amount": round(total_gross, 2),
+            "DetailType": "JournalEntryLineDetail",
+            "JournalEntryLineDetail": {
+                "PostingType": "Debit",
+                "AccountRef": {"value": accounts["payroll_expense"]["id"], "name": accounts["payroll_expense"].get("name", "")}
+            }
+        })
+
+    if total_employer > 0:
+        lines.append({
+            "Description": f"{description_base} - Aportes Patronales TSS",
+            "Amount": round(total_employer, 2),
+            "DetailType": "JournalEntryLineDetail",
+            "JournalEntryLineDetail": {
+                "PostingType": "Debit",
+                "AccountRef": {"value": accounts["employer_contributions"]["id"], "name": accounts["employer_contributions"].get("name", "")}
+            }
+        })
+
+    # CREDITS
+    total_sfs = total_sfs_employee + total_sfs_employer
+    if total_sfs > 0:
+        lines.append({
+            "Description": f"{description_base} - SFS por Pagar",
+            "Amount": round(total_sfs, 2),
+            "DetailType": "JournalEntryLineDetail",
+            "JournalEntryLineDetail": {
+                "PostingType": "Credit",
+                "AccountRef": {"value": accounts["sfs_payable"]["id"], "name": accounts["sfs_payable"].get("name", "")}
+            }
+        })
+
+    total_afp = total_afp_employee + total_afp_employer
+    if total_afp > 0:
+        lines.append({
+            "Description": f"{description_base} - AFP por Pagar",
+            "Amount": round(total_afp, 2),
+            "DetailType": "JournalEntryLineDetail",
+            "JournalEntryLineDetail": {
+                "PostingType": "Credit",
+                "AccountRef": {"value": accounts["afp_payable"]["id"], "name": accounts["afp_payable"].get("name", "")}
+            }
+        })
+
+    if total_isr > 0:
+        lines.append({
+            "Description": f"{description_base} - ISR por Pagar",
+            "Amount": round(total_isr, 2),
+            "DetailType": "JournalEntryLineDetail",
+            "JournalEntryLineDetail": {
+                "PostingType": "Credit",
+                "AccountRef": {"value": accounts["isr_payable"]["id"], "name": accounts["isr_payable"].get("name", "")}
+            }
+        })
+
+    if total_srl > 0:
+        lines.append({
+            "Description": f"{description_base} - SRL por Pagar",
+            "Amount": round(total_srl, 2),
+            "DetailType": "JournalEntryLineDetail",
+            "JournalEntryLineDetail": {
+                "PostingType": "Credit",
+                "AccountRef": {"value": accounts["srl_payable"]["id"], "name": accounts["srl_payable"].get("name", "")}
+            }
+        })
+
+    if total_infotep > 0:
+        lines.append({
+            "Description": f"{description_base} - INFOTEP por Pagar",
+            "Amount": round(total_infotep, 2),
+            "DetailType": "JournalEntryLineDetail",
+            "JournalEntryLineDetail": {
+                "PostingType": "Credit",
+                "AccountRef": {"value": accounts["infotep_payable"]["id"], "name": accounts["infotep_payable"].get("name", "")}
+            }
+        })
+
+    if total_net > 0:
+        lines.append({
+            "Description": f"{description_base} - Neto Pagado",
+            "Amount": round(total_net, 2),
+            "DetailType": "JournalEntryLineDetail",
+            "JournalEntryLineDetail": {
+                "PostingType": "Credit",
+                "AccountRef": {"value": accounts["bank_account"]["id"], "name": accounts["bank_account"].get("name", "")}
+            }
+        })
+
+    payment_date = period.get("payment_date") or period.get("end_date") or datetime.now().strftime("%Y-%m-%d")
+
+    journal_entry_payload = {
+        "Line": lines,
+        "TxnDate": payment_date,
+        "PrivateNote": f"FortexaRH - {description_base} - {len(entries)} empleados"
+    }
+
+    # Send to QuickBooks
+    api_url = QB_API_BASE_URL
     async with httpx.AsyncClient() as client:
         headers = {
             "Authorization": f"Bearer {access_token}",
             "Content-Type": "application/json",
             "Accept": "application/json"
         }
-        
-        for entry in payroll_entries:
-            try:
-                # Create journal entry for payroll
-                journal_entry = {
-                    "Line": [
-                        {
-                            "Description": f"Payroll - {entry.get('employee_name', 'Employee')}",
-                            "Amount": float(entry.get("gross_salary", 0)),
-                            "DetailType": "JournalEntryLineDetail",
-                            "JournalEntryLineDetail": {
-                                "PostingType": "Debit",
-                                "AccountRef": {"value": "1"}  # Would need actual account mapping
-                            }
-                        },
-                        {
-                            "Description": f"Payroll Payable - {entry.get('employee_name', 'Employee')}",
-                            "Amount": float(entry.get("gross_salary", 0)),
-                            "DetailType": "JournalEntryLineDetail",
-                            "JournalEntryLineDetail": {
-                                "PostingType": "Credit",
-                                "AccountRef": {"value": "2"}  # Would need actual account mapping
-                            }
-                        }
-                    ],
-                    "TxnDate": entry.get("payment_date", datetime.now().strftime("%Y-%m-%d"))
-                }
-                
-                response = await client.post(
-                    f"{api_url}/{realm_id}/journalentry",
-                    headers=headers,
-                    json=journal_entry
-                )
-                
-                if response.status_code in [200, 201]:
-                    synced += 1
-                else:
-                    errors.append({
-                        "entry": entry.get("entry_id"),
-                        "error": response.text
-                    })
-            except Exception as e:
-                errors.append({
-                    "entry": entry.get("entry_id"),
-                    "error": str(e)
-                })
-    
-    # Record sync job
-    await db.quickbooks_sync_jobs.insert_one({
-        "company_id": company_id,
-        "user_id": user_id,
-        "job_type": "payroll",
-        "status": "completed",
-        "synced_count": synced,
-        "error_count": len(errors),
-        "completed_at": datetime.now(timezone.utc)
-    })
-    
-    return {
-        "status": "completed",
-        "synced": synced,
-        "errors": len(errors),
-        "error_details": errors[:5] if errors else []
-    }
+
+        response = await client.post(
+            f"{api_url}/{realm_id}/journalentry",
+            headers=headers,
+            json=journal_entry_payload
+        )
+
+        if response.status_code in [200, 201]:
+            qb_data = response.json()
+            qb_je_id = qb_data.get("JournalEntry", {}).get("Id")
+
+            # Update period with QBO reference
+            await db.payroll_periods.update_one(
+                {"period_id": period_id, "company_id": company_id},
+                {"$set": {
+                    "qb_journal_entry_id": qb_je_id,
+                    "qb_synced_at": datetime.now(timezone.utc).isoformat(),
+                    "qb_sync_status": "synced"
+                }}
+            )
+
+            # Record sync job
+            await db.quickbooks_sync_jobs.insert_one({
+                "company_id": company_id,
+                "user_id": user_id,
+                "job_type": "payroll_journal_entry",
+                "period_id": period_id,
+                "qb_journal_entry_id": qb_je_id,
+                "status": "completed",
+                "synced_count": len(entries),
+                "totals": {
+                    "gross": round(total_gross, 2),
+                    "net": round(total_net, 2),
+                    "employer_contributions": round(total_employer, 2)
+                },
+                "completed_at": datetime.now(timezone.utc).isoformat()
+            })
+
+            return {
+                "status": "completed",
+                "qb_journal_entry_id": qb_je_id,
+                "employees": len(entries),
+                "total_gross": round(total_gross, 2),
+                "total_net": round(total_net, 2),
+                "message": f"Asiento de diario creado en QuickBooks (JE #{qb_je_id})"
+            }
+        else:
+            error_detail = response.text
+            await db.quickbooks_sync_jobs.insert_one({
+                "company_id": company_id,
+                "user_id": user_id,
+                "job_type": "payroll_journal_entry",
+                "period_id": period_id,
+                "status": "failed",
+                "error": error_detail,
+                "completed_at": datetime.now(timezone.utc).isoformat()
+            })
+            raise HTTPException(status_code=400, detail=f"Error al crear asiento en QuickBooks: {error_detail}")
+
+
+@router.get("/accounts")
+async def get_quickbooks_accounts(current_user: dict = Depends(get_current_user)):
+    """Fetch chart of accounts from QuickBooks Online"""
+    company_id = current_user.get("company_id")
+    user_id = current_user.get("user_id")
+
+    access_token = await get_valid_token(company_id, user_id)
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Conexión con QuickBooks expirada. Reconecte.")
+
+    connection = await db.quickbooks_connections.find_one({"company_id": company_id, "is_active": True})
+    realm_id = connection["realm_id"]
+
+    api_url = QB_API_BASE_URL
+    async with httpx.AsyncClient() as client:
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Accept": "application/json"
+        }
+
+        response = await client.get(
+            f"{api_url}/{realm_id}/query?query=SELECT * FROM Account WHERE Active = true MAXRESULTS 500",
+            headers=headers
+        )
+
+        if response.status_code == 200:
+            data = response.json()
+            accounts = data.get("QueryResponse", {}).get("Account", [])
+            return {
+                "accounts": [
+                    {
+                        "id": a["Id"],
+                        "name": a["Name"],
+                        "full_name": a.get("FullyQualifiedName", a["Name"]),
+                        "type": a.get("AccountType", ""),
+                        "sub_type": a.get("AccountSubType", ""),
+                        "classification": a.get("Classification", ""),
+                        "currency": a.get("CurrencyRef", {}).get("value", "")
+                    }
+                    for a in accounts
+                ]
+            }
+        else:
+            raise HTTPException(status_code=response.status_code, detail=response.text)
+
+
+@router.get("/account-mapping")
+async def get_account_mapping(current_user: dict = Depends(get_current_user)):
+    """Get the saved QBO account mapping for payroll"""
+    company_id = current_user.get("company_id")
+    mapping = await db.quickbooks_account_mappings.find_one(
+        {"company_id": company_id}, {"_id": 0}
+    )
+    return mapping or {"company_id": company_id, "accounts": {}}
+
+
+@router.put("/account-mapping")
+async def save_account_mapping(data: dict, current_user: dict = Depends(get_current_user)):
+    """Save or update the QBO account mapping for payroll"""
+    company_id = current_user.get("company_id")
+    accounts = data.get("accounts", {})
+
+    await db.quickbooks_account_mappings.update_one(
+        {"company_id": company_id},
+        {"$set": {
+            "company_id": company_id,
+            "accounts": accounts,
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_by": current_user.get("user_id")
+        }},
+        upsert=True
+    )
+
+    return {"message": "Mapeo de cuentas guardado correctamente"}
 
 
 @router.get("/sync/history")
