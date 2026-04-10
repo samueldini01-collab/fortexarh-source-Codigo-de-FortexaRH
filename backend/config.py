@@ -41,7 +41,9 @@ SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
 QB_CLIENT_ID = os.environ.get('QUICKBOOKS_CLIENT_ID', '')
 QB_CLIENT_SECRET = os.environ.get('QUICKBOOKS_CLIENT_SECRET', '')
 QB_REALM_ID = os.environ.get('QUICKBOOKS_REALM_ID', '')
-QB_REDIRECT_URI = os.environ.get('QUICKBOOKS_REDIRECT_URI', '')
+_qb_redirect = os.environ.get('QUICKBOOKS_REDIRECT_URI', '')
+_frontend_url = os.environ.get('FRONTEND_URL', '')
+QB_REDIRECT_URI = _qb_redirect if _qb_redirect else (f"{_frontend_url}/api/quickbooks/callback" if _frontend_url else '')
 
 # Subscription pricing
 ADDITIONAL_USER_PRICE = 2.5

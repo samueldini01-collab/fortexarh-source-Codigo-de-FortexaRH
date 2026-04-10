@@ -19,10 +19,9 @@ from config import db
 from utils.auth import get_current_user
 security = HTTPBearer(auto_error=False)
 
-# QuickBooks Configuration
-QB_CLIENT_ID = os.environ.get('QUICKBOOKS_CLIENT_ID', '')
-QB_CLIENT_SECRET = os.environ.get('QUICKBOOKS_CLIENT_SECRET', '')
-QB_REDIRECT_URI = os.environ.get('QUICKBOOKS_REDIRECT_URI', '')
+# QuickBooks Configuration - import from centralized config
+from config import QB_CLIENT_ID, QB_CLIENT_SECRET, QB_REDIRECT_URI
+
 QB_AUTHORIZATION_URL = "https://appcenter.intuit.com/connect/oauth2"
 QB_TOKEN_ENDPOINT = "https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer"
 QB_REVOKE_ENDPOINT = "https://developer.api.intuit.com/v2/oauth2/tokens/revoke"
