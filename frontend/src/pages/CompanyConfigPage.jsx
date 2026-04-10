@@ -371,7 +371,12 @@ export default function CompanyConfigPage() {
       setQbAccountMapping(mappingRes.data.accounts || {});
       setShowAccountMapping(true);
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Error al cargar cuentas de QuickBooks");
+      const detail = error.response?.data?.detail || "";
+      if (detail.includes("expirada") || error.response?.status === 401) {
+        toast.error("La conexión con QuickBooks ha expirado. Desconecte y vuelva a conectar.");
+      } else {
+        toast.error(detail || "Error al cargar cuentas de QuickBooks");
+      }
     }
   };
 

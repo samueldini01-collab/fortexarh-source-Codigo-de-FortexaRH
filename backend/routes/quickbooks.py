@@ -83,13 +83,11 @@ async def refresh_access_token(refresh_token: str) -> Dict:
         return response.json()
 
 
-async def get_valid_token(company_id: str, user_id: str) -> Optional[str]:
-    """Get a valid access token, refreshing if necessary"""
-    connection = await db.quickbooks_connections.find_one({
-        "company_id": company_id,
-        "user_id": user_id,
-        "is_active": True
-    })
+async def get_valid_token(company_id: str, user_id: str = None) -> Optional[str]:
+    """Get a valid access token, refreshing if necessary. 
+    QB connection is company-wide, not user-specific."""
+    query = {"company_id": company_id, "is_active": True}
+    connection = await db.quickbooks_connections.find_one(query)
     
     if not connection:
         return None
