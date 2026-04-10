@@ -18,22 +18,30 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 
 ### QuickBooks Online Integration (Complete)
 - OAuth 2.0 connection flow with CCAGE GROUP, S.R.L.
-- **Account Mapping UI** — 8-account mapping (Payroll Expense, Employer Contributions, SFS/AFP/ISR/SRL/INFOTEP Payable, Bank) in /company-config Integrations tab
-- **Consolidated JE per Period** — POST /api/quickbooks/sync/payroll creates one Journal Entry with all employees:
-  - Debit: Gasto Nómina (bruto) + Aportes Patronales
-  - Credit: SFS/AFP/ISR/SRL/INFOTEP por Pagar + Banco (neto)
-- **Manual "Enviar a QBO" button** on paid periods in /payroll-v2
+- Account Mapping UI (8-account mapping in /company-config Integrations tab)
+- Consolidated JE per Period with "Enviar a QBO" button
 - Duplicate sync prevention (qb_journal_entry_id stored on period)
-- Placeholder credential detection + user-friendly errors
 
-### Payroll System
+### Payroll System (Complete)
 - Full payroll calculation with DR tax compliance (SFS, AFP, ISR)
-- Manual employee-level deduction overrides (SFS, AFP, ISR)
+- Manual employee-level deduction overrides (SFS, AFP, ISR, Overtime)
 - ISR inline editing in payroll sheet
-- Employee tabs reordered: Datos → Contrato → Forma de Pago → Descuentos → Documentos → Emergencia
+- Employee tabs reordered
+
+### Automated Payroll Journal Entries (Complete - Feb 2026)
+- Auto-generate balanced JE on approve (draft) and pay (posted)
+- Cascade updates: modifying entries auto-updates linked JE
+- Cascade deletes: deleting period deletes linked JE
+- Separate accounting lines for: Gross Salary, Employer TSS, SFS, AFP, ISR, SRL, INFOTEP, Additional Deductions, Loans, Net/Bank
+- Auto-creation of missing accounts in chart of accounts
+- Configurable account mapping via company_settings.payroll_account_mapping
+- Service extracted to /app/backend/services/journal_entry_service.py
 
 ### Notifications (Phase 1 + 2 Complete)
 - 20 event types, push (PWA), employee bell + center, auto push on payroll/vacation, full i18n
+
+### Help Center (Complete)
+- 6 modules, FAQs, "Volver" buttons, ES/EN/FR translations
 
 ## Key Credentials
 - **Admin**: test_refactor@fortexa.com / test123
@@ -55,12 +63,13 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - Complete Audit Trail (CDC logging)
 
 ## Test Reports
-- `/app/test_reports/iteration_202.json` - Login + CompanyConfig fixes (100%)
-- `/app/test_reports/iteration_203.json` - ISR Override feature (100%)
-- `/app/test_reports/iteration_204.json` - QuickBooks Payroll Sync (100%, 7/7 BE + FE)
+- `/app/test_reports/iteration_207.json` - Payroll JE Balance fix (100%, 8/8 passed)
 
-## Key API Endpoints (New)
+## Key API Endpoints
+- `POST /api/payroll/periods/{id}/approve` — Auto-generates balanced JE
+- `POST /api/payroll/periods/{id}/pay` — Updates JE status to "posted"
+- `POST /api/payroll/periods/{id}/generate-je` — Manual JE generation
+- `DELETE /api/payroll/periods/{id}/journal-entry` — Delete linked JE
 - `GET /api/quickbooks/accounts` — Fetch QBO chart of accounts
-- `GET /api/quickbooks/account-mapping` — Get saved account mapping
 - `PUT /api/quickbooks/account-mapping` — Save account mapping
-- `POST /api/quickbooks/sync/payroll` — Send consolidated JE for a period (requires period_id)
+- `POST /api/quickbooks/sync/payroll` — Send consolidated JE to QBO
