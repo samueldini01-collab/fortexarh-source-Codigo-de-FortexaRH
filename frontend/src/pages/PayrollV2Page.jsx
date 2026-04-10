@@ -471,7 +471,13 @@ export default function PayrollPage() {
         commissions: entry.commissions || 0, additional_deductions: entry.additional_deductions || []
       };
       const numValue = parseFloat(editValue) || 0;
-      updateData[editingCell.field] = numValue;
+
+      // If editing ISR, send as isr_override so backend uses the manual value
+      if (editingCell.field === 'isr') {
+        updateData.isr_override = numValue;
+      } else {
+        updateData[editingCell.field] = numValue;
+      }
 
       await axios.put(`${API}/payroll/entries/${entry.entry_id}`, updateData, { headers: getAuthHeaders(), withCredentials: true });
       toast.success(t('payrollV2.messages.updated'));
@@ -1086,7 +1092,7 @@ export default function PayrollPage() {
                                 <TableCell className="text-right border-r bg-slate-100 font-bold">{formatNumber(entry.gross_salary)}</TableCell>
                                 <TableCell className="text-right border-r bg-red-50/50 text-red-600 dark:text-red-400">{formatNumber(entry.sfs_employee)}</TableCell>
                                 <TableCell className="text-right border-r bg-red-50/50 text-red-600 dark:text-red-400">{formatNumber(entry.afp_employee)}</TableCell>
-                                <TableCell className="text-right border-r bg-red-50/50 text-red-600 dark:text-red-400">{formatNumber(entry.isr)}</TableCell>
+                                <TableCell className="text-right border-r bg-red-50/50 text-red-600 dark:text-red-400">{renderEditableCell(entry, 'isr', entry.isr)}</TableCell>
                                 <TableCell className="text-right border-r bg-orange-50/50 text-orange-600">{formatNumber(entry.total_deduction_novelties || 0)}</TableCell>
                                 <TableCell className="text-right border-r bg-red-100/50 font-bold text-red-700 dark:text-red-400">{formatNumber(entry.total_deductions)}</TableCell>
                                 <TableCell className="text-right bg-emerald-100/50 font-bold text-emerald-700 dark:text-emerald-400">{formatNumber(entry.net_salary)}</TableCell>

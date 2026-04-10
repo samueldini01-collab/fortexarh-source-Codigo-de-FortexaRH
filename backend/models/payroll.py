@@ -20,6 +20,7 @@ class PayrollEntryCreate(BaseModel):
     commissions: float = 0
     other_income: float = 0
     additional_deductions: Optional[List[Dict[str, Any]]] = []
+    isr_override: Optional[float] = None
 
 
 class ApprovalRequest(BaseModel):

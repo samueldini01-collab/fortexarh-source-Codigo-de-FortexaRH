@@ -417,9 +417,11 @@ async def update_payroll_entry(entry_id: str, data: PayrollEntryCreate, current_
     else:
         afp_employee = 0
 
-    # ISR: respect override
+    # ISR: respect inline override first, then employee override, then calculation
     isr_result = calculate_isr_monthly(gross_salary)
-    if emp.get("isr_discount", True):
+    if data.isr_override is not None:
+        isr = round(data.isr_override, 2)
+    elif emp.get("isr_discount", True):
         isr = round(float(emp.get("isr_manual_amount", 0)), 2) if emp.get("isr_manual_override") else isr_result["isr_monthly"]
     else:
         isr = 0
@@ -459,6 +461,7 @@ async def update_payroll_entry(entry_id: str, data: PayrollEntryCreate, current_
         "sfs_employee": sfs_employee,
         "afp_employee": afp_employee,
         "isr": isr,
+        "isr_manual_override_entry": data.isr_override is not None,
         "additional_deductions": data.additional_deductions or [],
         "total_additional_deductions": round(total_additional, 2),
         "total_deductions": total_deductions,

@@ -1,0 +1,47 @@
+{
+  "summary": "Tested ISR Override feature for payroll entries. Backend: All 6 tests passed - PUT /api/payroll/entries/{entry_id} with isr_override field correctly updates ISR, sets isr_manual_override_entry flag, and recalculates net_salary/total_deductions. Frontend: ISR column in Hoja de Nómina tab is clickable/editable using renderEditableCell pattern. Successfully edited ISR from 750 to 800, saw input field appear with save/cancel buttons, and verified 'Updated' toast notification.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_isr_override.py",
+    "/app/test_reports/pytest/isr_override_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Backend: ISR override logic at line 420-427 in payroll.py correctly prioritizes isr_override > employee manual override > calculated ISR",
+    "Backend: isr_manual_override_entry flag is correctly set based on whether isr_override was provided (line 464)",
+    "Frontend: saveInlineEdit at line 460-479 correctly sends isr_override when field is 'isr'",
+    "Frontend: renderEditableCell at line 1095 makes ISR column editable like base_salary, commissions, bonuses"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_isr_override.py"
+  ],
+  "success_rate": {
+    "backend": "100% (6/6 tests passed)",
+    "frontend": "100% (ISR edit flow verified)"
+  },
+  "test_credentials": {
+    "admin_user": "test_refactor@fortexa.com / test123"
+  },
+  "seed_data_creation": "Used existing draft period period_0c7fdc679329 with entry pe_321564c774ef (TEST_Loan Employee)",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "ISR Override feature fully tested and working. Backend tests in /app/backend/tests/test_isr_override.py. Frontend ISR column is editable in Payroll Sheet tab - click on ISR value to edit, Enter to save, Escape to cancel.",
+  "tests_executed": {
+    "backend_test_get_entry_with_existing_override": "PASSED - Entry with ISR override shows isr_manual_override_entry: True",
+    "backend_test_update_entry_with_isr_override": "PASSED - PUT with isr_override updates ISR and sets flag",
+    "backend_test_update_entry_without_isr_override": "PASSED - PUT without isr_override calculates ISR normally",
+    "backend_test_isr_override_with_zero_value": "PASSED - ISR can be overridden to 0",
+    "backend_test_restore_original_isr_value": "PASSED - Cleanup successful",
+    "backend_test_model_accepts_isr_override_field": "PASSED - API accepts isr_override in request body",
+    "frontend_isr_column_editable": "PASSED - ISR column clickable, input field appears with save/cancel buttons",
+    "frontend_isr_save_and_refresh": "PASSED - After editing ISR, 'Updated' toast shown and values refreshed"
+  }
+}
