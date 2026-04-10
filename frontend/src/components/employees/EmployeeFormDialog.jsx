@@ -129,9 +129,9 @@ export function EmployeeFormDialog({
                     style={{ 
                       width: activeTab === "datos" ? "16%" : 
                              activeTab === "contrato" ? "33%" :
-                             activeTab === "descuentos" ? "50%" :
-                             activeTab === "documentos" ? "66%" :
-                             activeTab === "pago" ? "83%" : "100%"
+                             activeTab === "pago" ? "50%" :
+                             activeTab === "descuentos" ? "66%" :
+                             activeTab === "documentos" ? "83%" : "100%"
                     }}
                   />
                 </div>
@@ -147,6 +147,10 @@ export function EmployeeFormDialog({
                     <FileText className="w-3 h-3 mr-1" />
                     {t('employees.tabs.contract')}
                   </TabsTrigger>
+                  <TabsTrigger value="pago" className="text-xs" data-testid="tab-pago">
+                    <CreditCard className="w-3 h-3 mr-1" />
+                    {t('employees.tabs.paymentMethod')}
+                  </TabsTrigger>
                   <TabsTrigger value="descuentos" className="text-xs" data-testid="tab-descuentos">
                     <Percent className="w-3 h-3 mr-1" />
                     {t('employees.tabs.deductions')}
@@ -154,10 +158,6 @@ export function EmployeeFormDialog({
                   <TabsTrigger value="documentos" className="text-xs" data-testid="tab-documentos">
                     <FileText className="w-3 h-3 mr-1" />
                     {t('employees.tabs.documents')}
-                  </TabsTrigger>
-                  <TabsTrigger value="pago" className="text-xs" data-testid="tab-pago">
-                    <CreditCard className="w-3 h-3 mr-1" />
-                    {t('employees.tabs.paymentMethod')}
                   </TabsTrigger>
                   <TabsTrigger value="emergencia" className="text-xs" data-testid="tab-emergencia">
                     <Phone className="w-3 h-3 mr-1" />
