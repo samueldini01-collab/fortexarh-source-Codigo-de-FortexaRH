@@ -1,0 +1,81 @@
+{
+  "summary": "QBO Account Mapping UI improvements fully tested. All features working: cached accounts (source='cache'), auto-match (10/10 concepts), mapping UI with 4 groups, save mapping. QBO accounts are MOCKED/CACHED since token is expired in preview.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_qbo_account_mapping.py",
+    "/app/test_reports/pytest/qbo_account_mapping_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "QBO accounts cache fallback working correctly when token is expired",
+    "Auto-match algorithm successfully matches all 10 payroll concepts to QBO accounts",
+    "Mapping UI properly displays 4 groups: GASTOS DE NOMINA, PASIVOS TSS / RETENCIONES, OTRAS DEDUCCIONES, BANCO / EFECTIVO",
+    "Cache indicator shows 'Usando cuentas QBO cacheadas. Reconecte QuickBooks para actualizar.' when using cached data",
+    "All data-testid attributes present: btn-configure-mapping, btn-auto-match, btn-save-mapping, mapping-{key}"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_qbo_account_mapping.py"
+  ],
+  "success_rate": {
+    "backend": "100% (6/6 passed)",
+    "frontend": "100% (all UI features verified)"
+  },
+  "test_credentials": {
+    "admin_email": "test_refactor@fortexa.com",
+    "admin_password": "test123"
+  },
+  "seed_data_creation": "QBO accounts cache seeded with 14 sample accounts for company comp_7bf9f34ab85e",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "QBO Account Mapping features fully tested. QuickBooks is 'connected' but token is expired, so accounts come from cache (source='cache'). Auto-match successfully maps all 10 payroll concepts. Mapping UI shows FortexaRH accounts on left, QBO dropdowns on right, organized in 4 groups.",
+  "mocked_api": {
+    "has_mocked_apis": true,
+    "mocked_apis_list": ["QuickBooks Online API - using cached accounts instead of live API due to expired token"]
+  },
+  "tests_executed": {
+    "backend": [
+      {"test": "test_01_quickbooks_connection_status", "status": "PASSED", "details": "GET /api/quickbooks/status returns connected=true, company_name='CCAGE GROUP, S.R.L.'"},
+      {"test": "test_02_get_cached_accounts", "status": "PASSED", "details": "GET /api/quickbooks/accounts returns 14 accounts with source='cache'"},
+      {"test": "test_03_auto_match_accounts", "status": "PASSED", "details": "POST /api/quickbooks/auto-match returns matched_count=10 of total_concepts=10"},
+      {"test": "test_04_get_account_mapping", "status": "PASSED", "details": "GET /api/quickbooks/account-mapping returns saved mapping"},
+      {"test": "test_05_save_account_mapping", "status": "PASSED", "details": "PUT /api/quickbooks/account-mapping saves mapping successfully"},
+      {"test": "test_06_accounts_have_required_fields", "status": "PASSED", "details": "Accounts have id, name, full_name, type, classification fields"}
+    ],
+    "frontend": [
+      {"test": "Navigate to /company-config", "status": "PASSED", "details": "Company Config page loads successfully"},
+      {"test": "Integrations tab", "status": "PASSED", "details": "Tab accessible, shows QuickBooks Online connected"},
+      {"test": "Mapeo de Cuentas QBO card", "status": "PASSED", "details": "Card visible with 'Configurar' button"},
+      {"test": "Click Configurar", "status": "PASSED", "details": "Mapping UI expands with 4 groups"},
+      {"test": "Mapping groups visible", "status": "PASSED", "details": "GASTOS DE NOMINA, PASIVOS TSS / RETENCIONES, OTRAS DEDUCCIONES, BANCO / EFECTIVO"},
+      {"test": "Cache indicator", "status": "PASSED", "details": "Shows 'Usando cuentas QBO cacheadas. Reconecte QuickBooks para actualizar.'"},
+      {"test": "Click Auto-Mapear", "status": "PASSED", "details": "Toast shows 'Auto-mapeo: 10 de 10 conceptos mapeados. Revise y ajuste.'"},
+      {"test": "All 10 dropdowns populated", "status": "PASSED", "details": "All mapping dropdowns show selected QBO accounts after auto-match"},
+      {"test": "Click Guardar Mapeo", "status": "PASSED", "details": "Toast shows 'Mapeo de cuentas guardado correctamente'"}
+    ]
+  },
+  "features_verified": {
+    "qbo_accounts_cache": {
+      "endpoint": "GET /api/quickbooks/accounts",
+      "returns": "14 accounts with source='cache' when token expired",
+      "fallback": "Uses MongoDB cache when QBO API unavailable"
+    },
+    "auto_match": {
+      "endpoint": "POST /api/quickbooks/auto-match",
+      "returns": "10 of 10 concepts matched with name similarity scoring",
+      "concepts": ["payroll_expense", "employer_contributions", "sfs_payable", "afp_payable", "isr_payable", "srl_payable", "infotep_payable", "additional_deductions", "loans_payable", "bank_account"]
+    },
+    "mapping_ui": {
+      "groups": ["GASTOS DE NOMINA", "PASIVOS TSS / RETENCIONES", "OTRAS DEDUCCIONES", "BANCO / EFECTIVO"],
+      "layout": "FortexaRH accounts on left, QBO dropdowns on right",
+      "buttons": ["Auto-Mapear", "Guardar Mapeo"]
+    }
+  }
+}

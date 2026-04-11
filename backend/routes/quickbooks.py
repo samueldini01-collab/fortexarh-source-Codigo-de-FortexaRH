@@ -93,6 +93,8 @@ async def get_valid_token(company_id: str, user_id: str = None) -> Optional[str]
         return None
     
     expires_at = connection.get("expires_at")
+    if expires_at is None:
+        return None
     if isinstance(expires_at, str):
         expires_at = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
     
@@ -695,48 +697,119 @@ async def sync_payroll_to_quickbooks(
 
 @router.get("/accounts")
 async def get_quickbooks_accounts(current_user: dict = Depends(get_current_user)):
-    """Fetch chart of accounts from QuickBooks Online"""
+    """Fetch chart of accounts from QuickBooks Online (with local cache fallback)"""
     company_id = current_user.get("company_id")
     user_id = current_user.get("user_id")
 
+    # Try fetching live from QBO
     access_token = await get_valid_token(company_id, user_id)
-    if not access_token:
-        raise HTTPException(status_code=401, detail="Conexión con QuickBooks expirada. Reconecte.")
+    if access_token:
+        connection = await db.quickbooks_connections.find_one({"company_id": company_id, "is_active": True})
+        if connection:
+            realm_id = connection["realm_id"]
+            try:
+                async with httpx.AsyncClient(timeout=15) as client:
+                    headers = {"Authorization": f"Bearer {access_token}", "Accept": "application/json"}
+                    response = await client.get(
+                        f"{QB_API_BASE_URL}/{realm_id}/query?query=SELECT * FROM Account WHERE Active = true MAXRESULTS 500",
+                        headers=headers,
+                    )
+                    if response.status_code == 200:
+                        data = response.json()
+                        raw = data.get("QueryResponse", {}).get("Account", [])
+                        accounts = [
+                            {
+                                "id": a["Id"],
+                                "name": a["Name"],
+                                "full_name": a.get("FullyQualifiedName", a["Name"]),
+                                "type": a.get("AccountType", ""),
+                                "sub_type": a.get("AccountSubType", ""),
+                                "classification": a.get("Classification", ""),
+                                "currency": a.get("CurrencyRef", {}).get("value", ""),
+                            }
+                            for a in raw
+                        ]
+                        # Cache locally
+                        await db.quickbooks_accounts_cache.update_one(
+                            {"company_id": company_id},
+                            {"$set": {"company_id": company_id, "accounts": accounts, "cached_at": datetime.now(timezone.utc).isoformat()}},
+                            upsert=True,
+                        )
+                        return {"accounts": accounts, "source": "live"}
+            except Exception:
+                pass  # fall through to cache
 
-    connection = await db.quickbooks_connections.find_one({"company_id": company_id, "is_active": True})
-    realm_id = connection["realm_id"]
+    # Fallback: return cached accounts
+    cached = await db.quickbooks_accounts_cache.find_one({"company_id": company_id}, {"_id": 0})
+    if cached and cached.get("accounts"):
+        return {"accounts": cached["accounts"], "source": "cache", "cached_at": cached.get("cached_at")}
 
-    api_url = QB_API_BASE_URL
-    async with httpx.AsyncClient() as client:
-        headers = {
-            "Authorization": f"Bearer {access_token}",
-            "Accept": "application/json"
-        }
+    raise HTTPException(status_code=401, detail="No hay cuentas de QuickBooks disponibles. Conecte o reconecte QuickBooks.")
 
-        response = await client.get(
-            f"{api_url}/{realm_id}/query?query=SELECT * FROM Account WHERE Active = true MAXRESULTS 500",
-            headers=headers
-        )
 
-        if response.status_code == 200:
-            data = response.json()
-            accounts = data.get("QueryResponse", {}).get("Account", [])
-            return {
-                "accounts": [
-                    {
-                        "id": a["Id"],
-                        "name": a["Name"],
-                        "full_name": a.get("FullyQualifiedName", a["Name"]),
-                        "type": a.get("AccountType", ""),
-                        "sub_type": a.get("AccountSubType", ""),
-                        "classification": a.get("Classification", ""),
-                        "currency": a.get("CurrencyRef", {}).get("value", "")
-                    }
-                    for a in accounts
-                ]
-            }
-        else:
-            raise HTTPException(status_code=response.status_code, detail=response.text)
+@router.post("/auto-match")
+async def auto_match_accounts(current_user: dict = Depends(get_current_user)):
+    """Auto-suggest mappings between FortexaRH payroll concepts and QBO accounts."""
+    company_id = current_user.get("company_id")
+
+    # Get QBO accounts (cached or live)
+    cached = await db.quickbooks_accounts_cache.find_one({"company_id": company_id}, {"_id": 0})
+    qb_accounts = (cached or {}).get("accounts", [])
+    if not qb_accounts:
+        raise HTTPException(status_code=404, detail="No hay cuentas QBO cacheadas. Cargue las cuentas primero.")
+
+    # Get FortexaRH chart of accounts
+    local_accounts = await db.accounts.find(
+        {"company_id": company_id}, {"_id": 0, "code": 1, "name": 1, "account_type": 1}
+    ).to_list(500)
+
+    # Payroll concepts to match
+    concepts = {
+        "payroll_expense": {"keywords": ["nomina", "sueldo", "salario", "payroll", "wage"], "classification": "Expense"},
+        "employer_contributions": {"keywords": ["patronal", "tss", "employer", "aporte"], "classification": "Expense"},
+        "sfs_payable": {"keywords": ["sfs", "salud", "health"], "classification": "Liability"},
+        "afp_payable": {"keywords": ["afp", "pension", "fondo"], "classification": "Liability"},
+        "isr_payable": {"keywords": ["isr", "impuesto", "renta", "tax", "income"], "classification": "Liability"},
+        "srl_payable": {"keywords": ["srl", "riesgo", "risk", "labor"], "classification": "Liability"},
+        "infotep_payable": {"keywords": ["infotep", "capacitacion", "training"], "classification": "Liability"},
+        "additional_deductions": {"keywords": ["descuento", "deduccion", "deduction", "otros"], "classification": "Liability"},
+        "loans_payable": {"keywords": ["prestamo", "loan"], "classification": "Liability"},
+        "bank_account": {"keywords": ["banco", "bank", "efectivo", "cash", "checking"], "classification": "Asset"},
+    }
+
+    def score_match(qb_acct, keywords, classification):
+        name_lower = (qb_acct.get("full_name") or qb_acct.get("name", "")).lower()
+        s = 0
+        for kw in keywords:
+            if kw in name_lower:
+                s += 10
+        if qb_acct.get("classification", "").lower() == classification.lower():
+            s += 3
+        return s
+
+    suggestions = {}
+    used_ids = set()
+    for concept_key, spec in concepts.items():
+        best_score = 0
+        best_acct = None
+        for acct in qb_accounts:
+            if acct["id"] in used_ids:
+                continue
+            sc = score_match(acct, spec["keywords"], spec["classification"])
+            if sc > best_score:
+                best_score = sc
+                best_acct = acct
+        if best_acct and best_score >= 3:
+            suggestions[concept_key] = {"id": best_acct["id"], "name": best_acct.get("full_name", best_acct["name"]), "score": best_score}
+            used_ids.add(best_acct["id"])
+
+    # Also include local FortexaRH accounts for reference
+    return {
+        "suggestions": suggestions,
+        "local_accounts": local_accounts[:50],
+        "matched_count": len(suggestions),
+        "total_concepts": len(concepts),
+    }
 
 
 @router.get("/account-mapping")

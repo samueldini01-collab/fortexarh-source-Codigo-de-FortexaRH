@@ -21,7 +21,8 @@ import {
   Building2, Image, Palette, Type, Bell, Link2, History,
   Save, Upload, Trash2, Sun, Moon, Monitor, Check, AlertCircle,
   Mail, MessageSquare, Smartphone, Users, Globe, Twitter, 
-  Facebook, Linkedin, Instagram, RefreshCw, ExternalLink, Loader2
+  Facebook, Linkedin, Instagram, RefreshCw, ExternalLink, Loader2,
+  Wand2, ArrowRight, Info
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -134,6 +135,9 @@ export default function CompanyConfigPage() {
   const [qbAccountMapping, setQbAccountMapping] = useState({});
   const [showAccountMapping, setShowAccountMapping] = useState(false);
   const [savingMapping, setSavingMapping] = useState(false);
+  const [qbAccountsSource, setQbAccountsSource] = useState(null); // 'live' | 'cache'
+  const [autoMatching, setAutoMatching] = useState(false);
+  const [localAccounts, setLocalAccounts] = useState([]);
   
   // Audit log
   const [auditLog, setAuditLog] = useState([]);
@@ -363,20 +367,54 @@ export default function CompanyConfigPage() {
   // QBO Account Mapping functions
   const fetchQbAccounts = async () => {
     try {
-      const [accountsRes, mappingRes] = await Promise.all([
+      const [accountsRes, mappingRes, localRes] = await Promise.all([
         axios.get(`${API}/quickbooks/accounts`, { headers: getAuthHeaders(), withCredentials: true }),
-        axios.get(`${API}/quickbooks/account-mapping`, { headers: getAuthHeaders(), withCredentials: true })
+        axios.get(`${API}/quickbooks/account-mapping`, { headers: getAuthHeaders(), withCredentials: true }),
+        axios.get(`${API}/accounting/accounts`, { headers: getAuthHeaders(), withCredentials: true }).catch(() => ({ data: [] })),
       ]);
       setQbAccounts(accountsRes.data.accounts || []);
+      setQbAccountsSource(accountsRes.data.source || "live");
       setQbAccountMapping(mappingRes.data.accounts || {});
+      setLocalAccounts(localRes.data || []);
       setShowAccountMapping(true);
+      if (accountsRes.data.source === "cache") {
+        toast.info("Usando cuentas QBO cacheadas. Reconecte QuickBooks para actualizar.", { duration: 5000 });
+      }
     } catch (error) {
       const detail = error.response?.data?.detail || "";
-      if (detail.includes("expirada") || error.response?.status === 401) {
-        toast.error("La conexión con QuickBooks ha expirado. Desconecte y vuelva a conectar.");
+      if (detail.includes("expirada") || detail.includes("disponibles") || error.response?.status === 401) {
+        toast.error("No hay cuentas de QuickBooks disponibles. Conecte o reconecte QuickBooks primero.");
       } else {
         toast.error(detail || "Error al cargar cuentas de QuickBooks");
       }
+    }
+  };
+
+  const handleAutoMatch = async () => {
+    setAutoMatching(true);
+    try {
+      const res = await axios.post(`${API}/quickbooks/auto-match`, {}, {
+        headers: getAuthHeaders(), withCredentials: true
+      });
+      const { suggestions, matched_count, total_concepts } = res.data;
+      if (matched_count > 0) {
+        setQbAccountMapping(prev => {
+          const merged = { ...prev };
+          for (const [key, val] of Object.entries(suggestions)) {
+            if (!merged[key]?.id) {
+              merged[key] = { id: val.id, name: val.name };
+            }
+          }
+          return merged;
+        });
+        toast.success(`Auto-mapeo: ${matched_count} de ${total_concepts} conceptos mapeados. Revise y ajuste.`);
+      } else {
+        toast.info("No se encontraron coincidencias automáticas. Mapee manualmente.");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Error en auto-mapeo");
+    } finally {
+      setAutoMatching(false);
     }
   };
 
@@ -986,65 +1024,147 @@ export default function CompanyConfigPage() {
         {integrations.find(i => i.id === "quickbooks")?.connected && (
           <Card className="border border-emerald-200 bg-emerald-50/30">
             <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-wrap gap-2">
                 <div>
                   <CardTitle className="text-base">Mapeo de Cuentas QBO</CardTitle>
-                  <CardDescription>Configure qué cuentas de QuickBooks corresponden a cada concepto de nómina</CardDescription>
+                  <CardDescription>Vincule las cuentas de FortexaRH con su plan de cuentas en QuickBooks</CardDescription>
                 </div>
-                {!showAccountMapping ? (
-                  <Button size="sm" variant="outline" onClick={fetchQbAccounts} data-testid="btn-configure-mapping">
-                    <Link2 className="w-4 h-4 mr-2" />Configurar
-                  </Button>
-                ) : (
-                  <Button size="sm" onClick={saveAccountMapping} disabled={savingMapping} data-testid="btn-save-mapping">
-                    {savingMapping ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                    Guardar Mapeo
-                  </Button>
-                )}
+                <div className="flex items-center gap-2">
+                  {showAccountMapping && qbAccounts.length > 0 && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleAutoMatch}
+                      disabled={autoMatching}
+                      className="border-indigo-300 text-indigo-700 hover:bg-indigo-50"
+                      data-testid="btn-auto-match"
+                    >
+                      {autoMatching ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Wand2 className="w-4 h-4 mr-1.5" />}
+                      Auto-Mapear
+                    </Button>
+                  )}
+                  {!showAccountMapping ? (
+                    <Button size="sm" variant="outline" onClick={fetchQbAccounts} data-testid="btn-configure-mapping">
+                      <Link2 className="w-4 h-4 mr-2" />Configurar
+                    </Button>
+                  ) : (
+                    <Button size="sm" onClick={saveAccountMapping} disabled={savingMapping} data-testid="btn-save-mapping">
+                      {savingMapping ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                      Guardar Mapeo
+                    </Button>
+                  )}
+                </div>
               </div>
             </CardHeader>
             {showAccountMapping && (
-              <CardContent className="pt-0">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {[
-                    { key: "payroll_expense", label: "Gasto de Nómina (Sueldos)", filter: "Expense" },
-                    { key: "employer_contributions", label: "Aportes Patronales TSS", filter: "Expense" },
-                    { key: "sfs_payable", label: "SFS por Pagar", filter: "Liability" },
-                    { key: "afp_payable", label: "AFP por Pagar", filter: "Liability" },
-                    { key: "isr_payable", label: "ISR por Pagar", filter: "Liability" },
-                    { key: "srl_payable", label: "SRL por Pagar", filter: "Liability" },
-                    { key: "infotep_payable", label: "INFOTEP por Pagar", filter: "Liability" },
-                    { key: "bank_account", label: "Banco / Efectivo", filter: "Asset" },
-                  ].map(({ key, label, filter }) => (
-                    <div key={key} className="space-y-1">
-                      <Label className="text-xs font-medium text-slate-600">{label}</Label>
-                      <Select
-                        value={qbAccountMapping[key]?.id || ""}
-                        onValueChange={(v) => updateMapping(key, v)}
-                      >
-                        <SelectTrigger className="h-8 text-xs bg-white" data-testid={`mapping-${key}`}>
-                          <SelectValue placeholder="Seleccionar cuenta..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {qbAccounts
-                            .filter(a => !filter || a.classification === filter || a.type?.includes(filter.replace("Liability", "")) || true)
-                            .map(a => (
-                              <SelectItem key={a.id} value={a.id} className="text-xs">
-                                {a.full_name} ({a.type})
-                              </SelectItem>
-                            ))
-                          }
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  ))}
-                </div>
-                {Object.keys(qbAccountMapping).length > 0 && (
-                  <div className="mt-3 p-2 rounded bg-emerald-100/50 text-xs text-emerald-700">
-                    <Check className="w-3 h-3 inline mr-1" />
-                    {Object.values(qbAccountMapping).filter(v => v?.id).length} de 8 cuentas configuradas
+              <CardContent className="pt-0 space-y-4">
+                {/* Cache indicator */}
+                {qbAccountsSource === "cache" && (
+                  <div className="flex items-center gap-2 p-2 rounded bg-amber-50 border border-amber-200 text-xs text-amber-700">
+                    <Info className="w-4 h-4 flex-shrink-0" />
+                    Usando cuentas QBO cacheadas. Reconecte QuickBooks para actualizar.
                   </div>
                 )}
+
+                {/* Mapping groups */}
+                {[
+                  {
+                    title: "Gastos de Nomina",
+                    items: [
+                      { key: "payroll_expense", label: "Gasto de Nomina (Sueldos y Salarios)", localCode: "6100", filter: "Expense" },
+                      { key: "employer_contributions", label: "Aportes Patronales TSS", localCode: "6200", filter: "Expense" },
+                    ],
+                  },
+                  {
+                    title: "Pasivos TSS / Retenciones",
+                    items: [
+                      { key: "sfs_payable", label: "SFS por Pagar", localCode: "2110", filter: "Liability" },
+                      { key: "afp_payable", label: "AFP por Pagar", localCode: "2120", filter: "Liability" },
+                      { key: "isr_payable", label: "ISR por Pagar", localCode: "2130", filter: "Liability" },
+                      { key: "srl_payable", label: "SRL por Pagar", localCode: "2140", filter: "Liability" },
+                      { key: "infotep_payable", label: "INFOTEP por Pagar", localCode: "2150", filter: "Liability" },
+                    ],
+                  },
+                  {
+                    title: "Otras Deducciones",
+                    items: [
+                      { key: "additional_deductions", label: "Descuentos Adicionales por Pagar", localCode: "2160", filter: "Liability" },
+                      { key: "loans_payable", label: "Prestamos por Pagar (Nomina)", localCode: "2170", filter: "Liability" },
+                    ],
+                  },
+                  {
+                    title: "Banco / Efectivo",
+                    items: [
+                      { key: "bank_account", label: "Banco / Nomina por Pagar", localCode: "1100", filter: "Asset" },
+                    ],
+                  },
+                ].map((group) => (
+                  <div key={group.title}>
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">{group.title}</p>
+                    <div className="space-y-2">
+                      {group.items.map(({ key, label, localCode, filter }) => {
+                        const localAcct = localAccounts.find(a => a.code === localCode);
+                        return (
+                          <div key={key} className="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200">
+                            {/* FortexaRH side */}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-medium text-slate-700 truncate">{label}</p>
+                              <p className="text-[10px] text-slate-400">
+                                {localAcct ? `${localAcct.code} - ${localAcct.name}` : `Codigo: ${localCode}`}
+                              </p>
+                            </div>
+                            <ArrowRight className="w-4 h-4 text-slate-300 flex-shrink-0" />
+                            {/* QBO side */}
+                            <div className="flex-1 min-w-0">
+                              <Select
+                                key={`${key}-${qbAccountMapping[key]?.id || "none"}`}
+                                value={qbAccountMapping[key]?.id || ""}
+                                onValueChange={(v) => updateMapping(key, v)}
+                              >
+                                <SelectTrigger className="h-8 text-xs bg-white" data-testid={`mapping-${key}`}>
+                                  {qbAccountMapping[key]?.name ? (
+                                    <span className="truncate">{qbAccountMapping[key].name}</span>
+                                  ) : (
+                                    <SelectValue placeholder="Seleccionar cuenta QBO..." />
+                                  )}
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {qbAccounts
+                                    .filter(a => a.classification === filter || !filter)
+                                    .map(a => (
+                                      <SelectItem key={a.id} value={a.id} className="text-xs">
+                                        {a.full_name} ({a.type})
+                                      </SelectItem>
+                                    ))
+                                  }
+                                  {/* Show all if no filtered match */}
+                                  {qbAccounts.filter(a => a.classification === filter).length === 0 &&
+                                    qbAccounts.map(a => (
+                                      <SelectItem key={a.id} value={a.id} className="text-xs">
+                                        {a.full_name} ({a.type})
+                                      </SelectItem>
+                                    ))
+                                  }
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+
+                {/* Status bar */}
+                <div className="flex items-center justify-between p-2 rounded bg-slate-50 border">
+                  <div className="text-xs text-slate-600">
+                    <Check className="w-3 h-3 inline mr-1 text-emerald-500" />
+                    {Object.values(qbAccountMapping).filter(v => v?.id).length} de 10 cuentas configuradas
+                  </div>
+                  <p className="text-[10px] text-slate-400">
+                    {qbAccounts.length} cuentas QBO disponibles
+                  </p>
+                </div>
               </CardContent>
             )}
           </Card>
