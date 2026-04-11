@@ -46,6 +46,13 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - "Solo Nómina" filter toggle in Journal Entries tab
 - Full i18n (ES, EN, FR) for all new labels
 
+### QuickBooks Desktop IIF Export (Complete - Feb 2026)
+- Export payroll journal entries as .IIF files for QB Desktop import
+- Valid IIF format: !TRNS/!SPL/!ENDTRNS headers, GENERAL JOURNAL type, MM/DD/YYYY dates
+- Balanced amounts (sum = 0), positive debits, negative credits
+- Available from: PayrollV2Page (button) and AccountingPage Payroll Summary (dropdown)
+- Error handling: 404 for missing period, 400 for period without JE
+
 ### QuickBooks Account Mapping V2 (Complete - Feb 2026)
 - QBO accounts cache: persists in MongoDB, uses cache when token expires with warning banner
 - Redesigned mapping UI: 4 groups (Gastos, Pasivos TSS, Otras Deducciones, Banco) with FortexaRH accounts left + QBO dropdowns right
