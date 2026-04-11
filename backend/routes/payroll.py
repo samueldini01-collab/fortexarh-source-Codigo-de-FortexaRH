@@ -13,6 +13,7 @@ import io
 import csv
 from services.employee_notifications import create_employee_notification
 from services.push_service import send_push_to_user
+from routes.fortexaerp import auto_sync_to_erp
 from services.journal_entry_service import (
     generate_payroll_journal_entry,
     delete_payroll_journal_entry,
@@ -960,6 +961,8 @@ async def approve_period(period_id: str, data: ApprovalRequest = None, current_u
     je_id = None
     if auto_je:
         je_id = await generate_payroll_journal_entry(period_id, company_id, user_id, trigger="approve")
+        # Auto-sync to FortexaERP if configured
+        await auto_sync_to_erp(company_id, period_id, current_user.get("email", "system"))
 
     return {"message": "Período aprobado correctamente", "status": "approved", "journal_entry_id": je_id}
 
@@ -1166,6 +1169,8 @@ async def pay_period(period_id: str, data: PaymentRequest = None, current_user: 
     je_id = None
     if auto_je:
         je_id = await generate_payroll_journal_entry(period_id, company_id, user_id, trigger="pay")
+        # Auto-sync to FortexaERP if configured
+        await auto_sync_to_erp(company_id, period_id, current_user.get("email", "system"))
 
     return {"message": "Nomina pagada correctamente", "status": "paid", "journal_entry_id": je_id}
 

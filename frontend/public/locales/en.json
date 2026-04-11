@@ -4273,7 +4273,9 @@
         "syncedBy": "User",
         "success": "Success",
         "failed": "Failed",
-        "error": "Error"
+        "error": "Error",
+        "autoSync": "Automatic Sync",
+        "autoSyncDesc": "Send journal entries to ERP automatically when approving or paying payroll"
       },
       "quickbooks": {
         "desc": "Automatically export payroll and journal entries to QBO."

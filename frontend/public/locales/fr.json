@@ -4243,7 +4243,9 @@
         "syncedBy": "Utilisateur",
         "success": "Réussi",
         "failed": "Échoué",
-        "error": "Erreur"
+        "error": "Erreur",
+        "autoSync": "Synchronisation Automatique",
+        "autoSyncDesc": "Envoyer les écritures à l'ERP automatiquement lors de l'approbation ou du paiement de la paie"
       },
       "quickbooks": {
         "desc": "Exportez automatiquement la paie et les écritures comptables vers QBO."

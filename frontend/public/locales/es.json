@@ -4275,7 +4275,9 @@
         "syncedBy": "Usuario",
         "success": "Exitoso",
         "failed": "Fallido",
-        "error": "Error"
+        "error": "Error",
+        "autoSync": "Sincronización Automática",
+        "autoSyncDesc": "Enviar asientos al ERP automáticamente al aprobar o pagar nómina"
       },
       "quickbooks": {
         "desc": "Exporta nómina y asientos contables automáticamente a QBO."

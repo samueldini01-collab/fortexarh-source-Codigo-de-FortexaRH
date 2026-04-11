@@ -26,6 +26,10 @@ class FortexaERPConfig(BaseModel):
     company_id: Optional[str] = None
 
 
+class AutoSyncToggle(BaseModel):
+    enabled: bool
+
+
 class SyncJERequest(BaseModel):
     period_id: str
 
@@ -80,6 +84,7 @@ async def get_config(user=Depends(get_current_user)):
         "company_id": cfg.get("company_id", ""),
         "company_name": cfg.get("company_name", ""),
         "last_sync": cfg.get("last_sync"),
+        "auto_sync": cfg.get("auto_sync", False),
     }
 
 
@@ -99,6 +104,16 @@ async def save_config(body: FortexaERPConfig, user=Depends(get_current_user)):
         upsert=True,
     )
     return {"ok": True}
+
+
+@router.put("/auto-sync")
+async def toggle_auto_sync(body: AutoSyncToggle, user=Depends(get_current_user)):
+    await db.company_settings.update_one(
+        {"company_id": user["company_id"]},
+        {"$set": {"fortexaerp.auto_sync": body.enabled}},
+        upsert=True,
+    )
+    return {"ok": True, "auto_sync": body.enabled}
 
 
 @router.post("/test-connection")
@@ -290,3 +305,99 @@ async def get_sync_log(user=Depends(get_current_user), limit: int = 50):
     ).sort("synced_at", -1).limit(min(limit, 200))
     logs = await cursor.to_list(length=min(limit, 200))
     return logs
+
+
+async def auto_sync_to_erp(company_id: str, period_id: str, user_email: str = "system"):
+    """Auto-sync a payroll journal entry to FortexaERP. Called from payroll approve/pay."""
+    import logging
+    logger = logging.getLogger("fortexaerp")
+
+    cfg = await _get_erp_config(company_id)
+    if not cfg or not cfg.get("auto_sync") or not cfg.get("company_id"):
+        return None
+
+    je = await db.journal_entries.find_one(
+        {"company_id": company_id, "period": period_id},
+        {"_id": 0},
+    )
+    if not je:
+        return None
+
+    try:
+        token = await _get_erp_token(cfg)
+        erp_accounts = await _get_erp_accounts(cfg, token)
+        erp_code_map = {str(a.get("code", "")): a.get("account_id") or a.get("id") for a in erp_accounts}
+
+        lines = []
+        for entry in je.get("entries", []):
+            code = entry.get("account_code", "")
+            line = {
+                "description": entry.get("description", entry.get("account_name", "")),
+                "debit": round(float(entry.get("debit", 0)), 2),
+                "credit": round(float(entry.get("credit", 0)), 2),
+            }
+            erp_id = erp_code_map.get(code)
+            if erp_id:
+                line["account_id"] = erp_id
+            else:
+                line["account_code"] = code
+                line["account_name"] = entry.get("account_name", "")
+            lines.append(line)
+
+        entry_type = "PAYROLL" if je.get("status") != "posted" else "PAYROLL_PAYMENT"
+        je_payload = {
+            "date": je.get("date", datetime.now(timezone.utc).strftime("%Y-%m-%d")),
+            "entry_type": entry_type,
+            "reference": f"FortexaRH-{je.get('entry_id', period_id)}",
+            "description": je.get("description", f"Nomina periodo {period_id}"),
+            "lines": lines,
+        }
+
+        now = datetime.now(timezone.utc).isoformat()
+        log_entry = {
+            "company_id": company_id,
+            "period_id": period_id,
+            "reference": je_payload["reference"],
+            "description": je_payload["description"],
+            "entry_type": entry_type,
+            "lines_count": len(lines),
+            "total_debit": round(sum(ln["debit"] for ln in lines), 2),
+            "total_credit": round(sum(ln["credit"] for ln in lines), 2),
+            "synced_at": now,
+            "synced_by": user_email,
+            "auto": True,
+        }
+
+        async with httpx.AsyncClient(timeout=30) as client:
+            resp = await client.post(
+                f"{cfg['api_url']}/api/journal/{cfg['company_id']}/entries",
+                json=je_payload,
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        if resp.status_code not in (200, 201):
+            log_entry["status"] = "failed"
+            log_entry["error"] = resp.text[:500]
+            await db.fortexaerp_sync_log.insert_one(log_entry)
+            logger.warning(f"Auto-sync failed for {period_id}: {resp.text[:200]}")
+            return None
+
+        erp_response = resp.json()
+        erp_entry_id = erp_response.get("entry_id") or erp_response.get("id", "")
+        log_entry["status"] = "success"
+        log_entry["erp_entry_id"] = erp_entry_id
+        await db.fortexaerp_sync_log.insert_one(log_entry)
+
+        await db.journal_entries.update_one(
+            {"company_id": company_id, "period": period_id},
+            {"$set": {"fortexaerp_entry_id": erp_entry_id, "fortexaerp_synced_at": now}},
+        )
+        await db.company_settings.update_one(
+            {"company_id": company_id},
+            {"$set": {"fortexaerp.last_sync": now}},
+        )
+        logger.info(f"Auto-sync success for {period_id} -> ERP entry {erp_entry_id}")
+        return erp_entry_id
+    except Exception as exc:
+        logger.error(f"Auto-sync exception for {period_id}: {exc}")
+        return None

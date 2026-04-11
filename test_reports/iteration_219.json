@@ -1,0 +1,99 @@
+{
+  "summary": "Company Config features tested successfully. All 3 user-requested changes verified: 1) Company ID read-only field in General tab, 2) SAP/Oracle logos on integration cards, 3) FortexaERP auto-sync toggle. Backend: 9/9 tests passed. Frontend: All UI components verified.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_company_config_features.py",
+    "/app/test_reports/pytest/company_config_features_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_company_config_features.py"
+  ],
+  "success_rate": {
+    "backend": "100% (9/9 tests passed)",
+    "frontend": "100% (all features verified)"
+  },
+  "test_credentials": {
+    "admin_user": "test_refactor@fortexa.com / test123"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Company Config page has 3 new features: 1) Company ID field at top of General tab (read-only, monospace font, grey background), 2) SAP Business One and Oracle NetSuite cards now show their respective logos (/sap-logo.png, /oracle-logo.png), 3) FortexaERP config panel has 'Automatic Sync' toggle that calls PUT /api/fortexaerp/auto-sync. Auto-sync was tested ON and OFF - both work correctly.",
+  "tests_executed": {
+    "backend": [
+      {"test": "GET /api/company/settings returns company_id in company object", "status": "PASSED"},
+      {"test": "GET /api/fortexaerp/config returns auto_sync field", "status": "PASSED"},
+      {"test": "PUT /api/fortexaerp/auto-sync enables auto_sync", "status": "PASSED"},
+      {"test": "PUT /api/fortexaerp/auto-sync disables auto_sync", "status": "PASSED"},
+      {"test": "PUT /api/fortexaerp/auto-sync requires authentication (401)", "status": "PASSED"},
+      {"test": "/sap-logo.png static asset accessible", "status": "PASSED"},
+      {"test": "/oracle-logo.png static asset accessible", "status": "PASSED"},
+      {"test": "/fortexaerp-logo.png static asset accessible", "status": "PASSED"},
+      {"test": "/quickbooks-logo.jpg static asset accessible", "status": "PASSED"}
+    ],
+    "frontend": [
+      {"test": "Company ID field found with data-testid='company-id-field'", "status": "PASSED"},
+      {"test": "Company ID field is read-only", "status": "PASSED"},
+      {"test": "Company ID field has monospace font (font-mono class)", "status": "PASSED"},
+      {"test": "Company ID field has grey background (bg-slate-50)", "status": "PASSED"},
+      {"test": "Company ID value populated: comp_7bf9f34ab85e", "status": "PASSED"},
+      {"test": "SAP Business One integration card found with data-testid", "status": "PASSED"},
+      {"test": "SAP Business One card has SAP logo", "status": "PASSED"},
+      {"test": "Oracle NetSuite integration card found with data-testid", "status": "PASSED"},
+      {"test": "Oracle NetSuite card has Oracle logo", "status": "PASSED"},
+      {"test": "FortexaERP integration card found with custom logo", "status": "PASSED"},
+      {"test": "QuickBooks Desktop card shows 3/3 methods", "status": "PASSED"},
+      {"test": "Auto Sync toggle found with data-testid='erp-auto-sync-toggle'", "status": "PASSED"},
+      {"test": "Auto Sync description text found", "status": "PASSED"}
+    ]
+  },
+  "features_verified": {
+    "company_id_field": {
+      "location": "Company Config > General tab (top of form)",
+      "data_testid": "company-id-field",
+      "read_only": true,
+      "styling": "monospace font (font-mono), grey background (bg-slate-50)",
+      "value_source": "GET /api/company/settings -> company.company_id",
+      "verified": true
+    },
+    "sap_logo": {
+      "location": "Company Config > Integrations > SAP Business One card",
+      "logo_path": "/sap-logo.png",
+      "badge": "Próximamente (Coming Soon)",
+      "verified": true
+    },
+    "oracle_logo": {
+      "location": "Company Config > Integrations > Oracle NetSuite card",
+      "logo_path": "/oracle-logo.png",
+      "badge": "Próximamente (Coming Soon)",
+      "verified": true
+    },
+    "fortexaerp_auto_sync": {
+      "location": "Company Config > Integrations > FortexaERP config panel",
+      "toggle_testid": "erp-auto-sync-toggle",
+      "endpoint": "PUT /api/fortexaerp/auto-sync",
+      "description": "Send journal entries to ERP automatically when approving or paying payroll",
+      "verified": true
+    },
+    "quickbooks_desktop_methods": {
+      "location": "Company Config > Integrations > QuickBooks Desktop card",
+      "methods": ["Web Connector (Próximamente)", "Export IIF (Disponible)", "CSV Manual (Próximamente)"],
+      "verified": true
+    }
+  },
+  "mocked_apis": {
+    "SAP Business One": "MOCKED - Shows 'Próximamente' badge, no real integration",
+    "Oracle NetSuite": "MOCKED - Shows 'Próximamente' badge, no real integration",
+    "FortexaERP": "External API calls will fail - auto_sync_to_erp() silently fails when credentials are not real (expected behavior)"
+  }
+}

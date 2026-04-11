@@ -71,8 +71,8 @@ const INTEGRATIONS = [
   { id: "fortexaerp", name: "FortexaERP", descKey: "companyConfig.integrations.fortexaerp.desc", icon: null, logo: null, connected: false, type: "erp" },
   { id: "quickbooks", name: "QuickBooks Online", descKey: "companyConfig.integrations.quickbooks.desc", icon: null, logo: "/quickbooks-logo.jpg", connected: false, type: "oauth" },
   { id: "quickbooks_desktop", name: "QuickBooks Desktop", descKey: "companyConfig.integrations.qbd.desc", icon: null, logo: "/quickbooks-logo.jpg", connected: false, type: "desktop" },
-  { id: "sap", name: "SAP Business One", descKey: "companyConfig.integrations.sap.desc", icon: null, logo: null, connected: false, type: "mock" },
-  { id: "oracle", name: "Oracle NetSuite", descKey: "companyConfig.integrations.oracle.desc", icon: null, logo: null, connected: false, type: "mock" },
+  { id: "sap", name: "SAP Business One", descKey: "companyConfig.integrations.sap.desc", icon: null, logo: "/sap-logo.png", connected: false, type: "mock" },
+  { id: "oracle", name: "Oracle NetSuite", descKey: "companyConfig.integrations.oracle.desc", icon: null, logo: "/oracle-logo.png", connected: false, type: "mock" },
 ];
 
 export default function CompanyConfigPage() {
@@ -98,6 +98,7 @@ export default function CompanyConfigPage() {
     phone: "",
     email: "",
     website: "",
+    company_id: "",
   });
   
   // Logo
@@ -154,6 +155,7 @@ export default function CompanyConfigPage() {
   const [showErpConfig, setShowErpConfig] = useState(false);
   const [erpTesting, setErpTesting] = useState(false);
   const [erpSaving, setErpSaving] = useState(false);
+  const [erpAutoSync, setErpAutoSync] = useState(false);
   // Audit log
   const [auditLog, setAuditLog] = useState([]);
   
@@ -193,6 +195,7 @@ export default function CompanyConfigPage() {
         setErpConfig(prev => ({ ...prev, api_url: res.data.api_url || prev.api_url, email: res.data.email || "", company_id: res.data.company_id || "" }));
         setErpCompanyName(res.data.company_name || "");
         setErpLastSync(res.data.last_sync || null);
+        setErpAutoSync(res.data.auto_sync || false);
         setIntegrations(prev => prev.map(i => i.id === "fortexaerp" ? { ...i, connected: true, companyName: res.data.company_name } : i));
       }
     } catch (e) { /* silently */ }
@@ -224,6 +227,16 @@ export default function CompanyConfigPage() {
     } catch (e) {
       toast.error(e.response?.data?.detail || "Error al guardar configuración");
     } finally { setErpSaving(false); }
+  };
+
+  const handleErpAutoSyncToggle = async (checked) => {
+    try {
+      await axios.put(`${API}/fortexaerp/auto-sync`, { enabled: checked }, { headers: getAuthHeaders(), withCredentials: true });
+      setErpAutoSync(checked);
+      toast.success(checked ? "Sincronización automática activada" : "Sincronización automática desactivada");
+    } catch (e) {
+      toast.error(e.response?.data?.detail || "Error al cambiar configuración");
+    }
   };
 
   const fetchSyncLog = async () => {
@@ -527,6 +540,15 @@ export default function CompanyConfigPage() {
         <CardDescription>{t('settings.general.subtitle')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Label>Company ID</Label>
+          <Input
+            data-testid="company-id-field"
+            value={company.company_id}
+            readOnly
+            className="bg-slate-50 font-mono text-sm cursor-default"
+          />
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label>{t('settings.general.name')}</Label>
@@ -1196,6 +1218,19 @@ export default function CompanyConfigPage() {
                   </Button>
                 )}
               </div>
+              {erpConfigured && (
+                <div className="flex items-center justify-between pt-2 mt-2 border-t border-slate-100">
+                  <div>
+                    <p className="text-sm font-medium">{t('companyConfig.integrations.fortexaerp.autoSync')}</p>
+                    <p className="text-xs text-slate-500">{t('companyConfig.integrations.fortexaerp.autoSyncDesc')}</p>
+                  </div>
+                  <Switch
+                    data-testid="erp-auto-sync-toggle"
+                    checked={erpAutoSync}
+                    onCheckedChange={handleErpAutoSyncToggle}
+                  />
+                </div>
+              )}
             </div>
           )}
         </div>
