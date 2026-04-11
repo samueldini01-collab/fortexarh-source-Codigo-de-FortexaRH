@@ -541,7 +541,11 @@ export default function GeoLocationsPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
+          <Card
+            className={`cursor-pointer transition-all hover:shadow-md ${activeTab === "locations" ? "ring-2 ring-blue-400" : ""}`}
+            onClick={() => setActiveTab("locations")}
+            data-testid="kpi-geo-locations"
+          >
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
@@ -555,7 +559,11 @@ export default function GeoLocationsPage() {
             </CardContent>
           </Card>
           
-          <Card>
+          <Card
+            className={`cursor-pointer transition-all hover:shadow-md ${activeTab === "today" && mapFilters.status === "all" ? "ring-2 ring-emerald-400" : ""}`}
+            onClick={() => { setActiveTab("today"); setMapFilters(p => ({...p, status: "all"})); }}
+            data-testid="kpi-geo-marked-today"
+          >
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
@@ -569,7 +577,11 @@ export default function GeoLocationsPage() {
             </CardContent>
           </Card>
           
-          <Card>
+          <Card
+            className={`cursor-pointer transition-all hover:shadow-md ${activeTab === "today" && mapFilters.status === "pending_review" ? "ring-2 ring-amber-400" : ""}`}
+            onClick={() => { setActiveTab("today"); setMapFilters(p => ({...p, status: p.status === "pending_review" ? "all" : "pending_review"})); }}
+            data-testid="kpi-geo-pending"
+          >
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
@@ -583,7 +595,11 @@ export default function GeoLocationsPage() {
             </CardContent>
           </Card>
           
-          <Card>
+          <Card
+            className={`cursor-pointer transition-all hover:shadow-md ${activeTab === "today" && mapFilters.status === "outside_zone" ? "ring-2 ring-red-400" : ""}`}
+            onClick={() => { setActiveTab("today"); setMapFilters(p => ({...p, status: p.status === "outside_zone" ? "all" : "outside_zone"})); }}
+            data-testid="kpi-geo-outside-zone"
+          >
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center">

@@ -98,6 +98,7 @@ export default function AccountingPage() {
   const [payrollSummary, setPayrollSummary] = useState({ entries: [], kpis: {} });
   const [payrollLoading, setPayrollLoading] = useState(false);
   const [onlyPayroll, setOnlyPayroll] = useState(false);
+  const [payrollStatusFilter, setPayrollStatusFilter] = useState("all"); // all | posted | draft
   
   // Filters
   const [searchNumber, setSearchNumber] = useState("");
@@ -583,7 +584,11 @@ export default function AccountingPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="border-l-4 border-l-blue-500">
+          <Card
+            className={`border-l-4 border-l-blue-500 cursor-pointer transition-all hover:shadow-md ${!onlyPayroll && activeTab === 'asientos' ? '' : ''}`}
+            onClick={() => { setOnlyPayroll(false); setActiveTab("asientos"); }}
+            data-testid="kpi-total-entries"
+          >
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -616,7 +621,11 @@ export default function AccountingPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="border-l-4 border-l-purple-500">
+          <Card
+            className={`border-l-4 border-l-purple-500 cursor-pointer transition-all hover:shadow-md ${activeTab === 'nomina' ? 'ring-2 ring-purple-400' : ''}`}
+            onClick={() => { setActiveTab("nomina"); }}
+            data-testid="kpi-payroll-entries"
+          >
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -803,7 +812,11 @@ export default function AccountingPage() {
           <TabsContent value="nomina" className="space-y-4" data-testid="payroll-summary-tab">
             {/* Payroll KPIs */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <Card className="border-l-4 border-l-indigo-500">
+              <Card
+                className={`border-l-4 border-l-indigo-500 cursor-pointer transition-all hover:shadow-md ${payrollStatusFilter === "all" ? "ring-2 ring-indigo-400" : ""}`}
+                onClick={() => setPayrollStatusFilter("all")}
+                data-testid="kpi-payroll-total"
+              >
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
@@ -814,7 +827,11 @@ export default function AccountingPage() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="border-l-4 border-l-emerald-500">
+              <Card
+                className={`border-l-4 border-l-emerald-500 cursor-pointer transition-all hover:shadow-md ${payrollStatusFilter === "posted" ? "ring-2 ring-emerald-400" : ""}`}
+                onClick={() => setPayrollStatusFilter(payrollStatusFilter === "posted" ? "all" : "posted")}
+                data-testid="kpi-payroll-posted"
+              >
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
@@ -825,7 +842,11 @@ export default function AccountingPage() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="border-l-4 border-l-amber-500">
+              <Card
+                className={`border-l-4 border-l-amber-500 cursor-pointer transition-all hover:shadow-md ${payrollStatusFilter === "draft" ? "ring-2 ring-amber-400" : ""}`}
+                onClick={() => setPayrollStatusFilter(payrollStatusFilter === "draft" ? "all" : "draft")}
+                data-testid="kpi-payroll-draft"
+              >
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
@@ -914,7 +935,9 @@ export default function AccountingPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {payrollSummary.entries.map(entry => (
+                      {payrollSummary.entries
+                        .filter(e => payrollStatusFilter === "all" || e.status === payrollStatusFilter)
+                        .map(entry => (
                         <TableRow key={entry.entry_id}>
                           <TableCell className="whitespace-nowrap">{entry.entry_date}</TableCell>
                           <TableCell className="font-mono text-sm">{entry.reference}</TableCell>

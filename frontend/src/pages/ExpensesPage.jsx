@@ -358,7 +358,11 @@ export default function ExpensesPage() {
         {/* Header Stats */}
         {isManager && summary && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="border-0 shadow-sm bg-gradient-to-br from-blue-50 to-white">
+            <Card
+              className={`border-0 shadow-sm bg-gradient-to-br from-blue-50 to-white cursor-pointer transition-all hover:shadow-md ${statusFilter === "all" ? "ring-2 ring-blue-400" : ""}`}
+              onClick={() => setStatusFilter("all")}
+              data-testid="kpi-total-requested"
+            >
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -372,7 +376,11 @@ export default function ExpensesPage() {
               </CardContent>
             </Card>
             
-            <Card className="border-0 shadow-sm bg-gradient-to-br from-amber-50 to-white">
+            <Card
+              className={`border-0 shadow-sm bg-gradient-to-br from-amber-50 to-white cursor-pointer transition-all hover:shadow-md ${statusFilter === "pending" ? "ring-2 ring-amber-400" : ""}`}
+              onClick={() => setStatusFilter(statusFilter === "pending" ? "all" : "pending")}
+              data-testid="kpi-pending-approval"
+            >
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -386,7 +394,11 @@ export default function ExpensesPage() {
               </CardContent>
             </Card>
             
-            <Card className="border-0 shadow-sm bg-gradient-to-br from-emerald-50 to-white">
+            <Card
+              className={`border-0 shadow-sm bg-gradient-to-br from-emerald-50 to-white cursor-pointer transition-all hover:shadow-md ${statusFilter === "approved" ? "ring-2 ring-emerald-400" : ""}`}
+              onClick={() => setStatusFilter(statusFilter === "approved" ? "all" : "approved")}
+              data-testid="kpi-total-approved"
+            >
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -400,7 +412,11 @@ export default function ExpensesPage() {
               </CardContent>
             </Card>
             
-            <Card className="border-0 shadow-sm bg-gradient-to-br from-purple-50 to-white">
+            <Card
+              className={`border-0 shadow-sm bg-gradient-to-br from-purple-50 to-white cursor-pointer transition-all hover:shadow-md ${statusFilter === "paid" ? "ring-2 ring-purple-400" : ""}`}
+              onClick={() => setStatusFilter(statusFilter === "paid" ? "all" : "paid")}
+              data-testid="kpi-pending-payment"
+            >
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
