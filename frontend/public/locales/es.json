@@ -3526,6 +3526,22 @@
       "errorClockout": "Error al registrar salida",
       "errorLoadingData": "Error al cargar datos",
       "logout": "Salir"
+    },
+    "password": {
+      "title": "Cambiar Contraseña",
+      "subtitle": "Actualiza tu contraseña de acceso al portal",
+      "current": "Contraseña Actual",
+      "currentPlaceholder": "Ingresa tu contraseña actual",
+      "new": "Nueva Contraseña",
+      "newPlaceholder": "Ingresa tu nueva contraseña",
+      "confirm": "Confirmar Nueva Contraseña",
+      "confirmPlaceholder": "Confirma tu nueva contraseña",
+      "changeBtn": "Cambiar Contraseña",
+      "fillAll": "Completa todos los campos",
+      "minLength": "La contraseña debe tener al menos 6 caracteres",
+      "noMatch": "Las contraseñas no coinciden",
+      "updated": "Contraseña actualizada correctamente",
+      "error": "Error al cambiar la contraseña"
     }
   },
   "geoAttendance": {

@@ -513,15 +513,25 @@ async def download_payslip_pdf(payslip_id: str, request: Request):
     """Download payslip as PDF"""
     emp_data = await get_employee_from_token(request)
     
-    # Get payslip
-    payslip = await db.payroll_entries.find_one(
+    # Get payslip - try payroll_v2 first, then legacy payroll_entries
+    payslip = await db.payroll_v2.find_one(
         {
-            "entry_id": payslip_id,
+            "payroll_id": payslip_id,
             "employee_id": emp_data["employee_id"],
             "company_id": emp_data["company_id"]
         },
         {"_id": 0}
     )
+    
+    if not payslip:
+        payslip = await db.payroll_entries.find_one(
+            {
+                "entry_id": payslip_id,
+                "employee_id": emp_data["employee_id"],
+                "company_id": emp_data["company_id"]
+            },
+            {"_id": 0}
+        )
     
     if not payslip:
         raise HTTPException(status_code=404, detail="Recibo no encontrado")
@@ -660,7 +670,7 @@ async def download_payslip_pdf(payslip_id: str, request: Request):
     
     # Footer
     elements.append(Spacer(1, 30))
-    footer_text = f"Generado el {datetime.now().strftime('%d/%m/%Y %H:%M')} desde Portal de Empleados"
+    footer_text = f"Generado el {datetime.now().strftime('%d/%m/%Y %H:%M')} desde Portal de Empleados - http://fortexarh.com"
     elements.append(Paragraph(footer_text, ParagraphStyle('Footer', fontSize=8, alignment=TA_CENTER, textColor=colors.grey)))
     
     # Build PDF

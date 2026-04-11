@@ -632,9 +632,9 @@ function EmployeeDashboard() {
                 </CardHeader>
                 <CardContent>
                   {payslips.slice(0, 3).map(slip => (
-                    <div key={slip.entry_id} className="flex items-center justify-between py-3 border-b last:border-0">
+                    <div key={slip.payroll_id || slip.entry_id} className="flex items-center justify-between py-3 border-b last:border-0">
                       <div>
-                        <p className="font-medium">{slip.period_name}</p>
+                        <p className="font-medium">{slip.period_name || slip.period}</p>
                         <p className="text-sm text-slate-500">{formatCurrency(slip.net_salary)}</p>
                       </div>
                       <Button variant="ghost" size="sm" onClick={() => setShowPayslipDetail(slip)}>
@@ -827,15 +827,17 @@ function EmployeeDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {payslips.map(slip => (
-                    <div key={slip.entry_id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                  {payslips.map(slip => {
+                    const slipId = slip.payroll_id || slip.entry_id;
+                    return (
+                    <div key={slipId} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
                           <FileText className="w-5 h-5 text-emerald-600" />
                         </div>
                         <div>
-                          <p className="font-medium">{slip.period_name}</p>
-                          <p className="text-sm text-slate-500">{slip.created_at?.split('T')[0]}</p>
+                          <p className="font-medium">{slip.period_name || slip.period}</p>
+                          <p className="text-sm text-slate-500">{(slip.paid_at || slip.created_at)?.split('T')[0]}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
@@ -849,11 +851,11 @@ function EmployeeDashboard() {
                         <Button 
                           variant="default" 
                           size="sm" 
-                          onClick={() => handleDownloadPayslip(slip.entry_id)}
-                          disabled={downloadingPdf === slip.entry_id}
+                          onClick={() => handleDownloadPayslip(slipId)}
+                          disabled={downloadingPdf === slipId}
                           className="bg-blue-600 hover:bg-blue-700"
                         >
-                          {downloadingPdf === slip.entry_id ? (
+                          {downloadingPdf === slipId ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
                           ) : (
                             <Download className="w-4 h-4" />
@@ -861,7 +863,8 @@ function EmployeeDashboard() {
                         </Button>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                   {payslips.length === 0 && (
                     <p className="text-center text-slate-500 py-8">{t('employeePortal.payslips.noPayslips')}</p>
                   )}
