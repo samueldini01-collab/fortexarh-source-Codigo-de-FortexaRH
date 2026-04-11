@@ -1076,8 +1076,8 @@ export default function CompanyConfigPage() {
         <div data-testid="integration-card-fortexaerp" className={`rounded-lg border ${erpConfigured ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-slate-200'}`}>
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
-              <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${erpConfigured ? 'bg-emerald-100' : 'bg-blue-50'}`}>
-                <Building2 className={`w-6 h-6 ${erpConfigured ? 'text-emerald-600' : 'text-blue-600'}`} />
+              <div className={`w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden ${erpConfigured ? 'bg-emerald-100' : 'bg-blue-50'}`}>
+                <img src="/fortexaerp-logo.png" alt="FortexaERP" className="w-10 h-10 object-contain" />
               </div>
               <div>
                 <div className="flex items-center gap-2">

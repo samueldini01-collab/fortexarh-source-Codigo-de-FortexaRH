@@ -111,6 +111,7 @@ export default function AccountingPage() {
   // FortexaERP sync
   const [erpConfigured, setErpConfigured] = useState(false);
   const [erpSyncing, setErpSyncing] = useState(null); // period_id being synced
+  const [erpSyncedPeriods, setErpSyncedPeriods] = useState({}); // {period_id: {synced, synced_at}}
   
   // Entry form
   const [entryForm, setEntryForm] = useState({
@@ -195,10 +196,30 @@ export default function AccountingPage() {
     try {
       const res = await axios.post(`${API}/fortexaerp/sync-journal-entries`, { period_id: periodId }, { headers: getAuthHeaders(), withCredentials: true });
       toast.success(`Asiento sincronizado con FortexaERP (${res.data.lines_sent} líneas)`);
+      setErpSyncedPeriods(prev => ({ ...prev, [periodId]: { synced: true, synced_at: res.data.synced_at } }));
     } catch (e) {
       toast.error(e.response?.data?.detail || "Error al sincronizar con FortexaERP");
     } finally { setErpSyncing(null); }
   };
+
+  // Fetch ERP sync status for all payroll entries
+  useEffect(() => {
+    if (!erpConfigured || !payrollSummary.entries?.length) return;
+    const fetchSyncStatuses = async () => {
+      const headers = getAuthHeaders();
+      const statuses = {};
+      await Promise.all(
+        payrollSummary.entries.map(async (entry) => {
+          try {
+            const res = await axios.get(`${API}/fortexaerp/sync-status/${entry.period}`, { headers, withCredentials: true });
+            if (res.data.synced) statuses[entry.period] = { synced: true, synced_at: res.data.synced_at };
+          } catch {}
+        })
+      );
+      if (Object.keys(statuses).length > 0) setErpSyncedPeriods(prev => ({ ...prev, ...statuses }));
+    };
+    fetchSyncStatuses();
+  }, [erpConfigured, payrollSummary.entries, getAuthHeaders]);
 
   const loadCatalogTemplate = async (catalogId) => {
     if (!window.confirm(t('accounting.messages.confirmLoadCatalog'))) {
@@ -786,7 +807,17 @@ export default function AccountingPage() {
                           <TableCell className="text-right font-mono">{formatCurrency(entry.total_debits)}</TableCell>
                           <TableCell className="text-right font-mono">{formatCurrency(entry.total_credits)}</TableCell>
                           <TableCell className="text-center">{getBalanceIcon(entry)}</TableCell>
-                          <TableCell>{getStatusBadge(entry.status)}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1.5">
+                              {getStatusBadge(entry.status)}
+                              {entry.period && erpSyncedPeriods[entry.period]?.synced && (
+                                <span title={`FortexaERP: ${new Date(erpSyncedPeriods[entry.period].synced_at).toLocaleString()}`} data-testid={`erp-synced-je-${entry.entry_id}`} className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-[10px] font-medium text-emerald-700">
+                                  <img src="/fortexaerp-logo.png" alt="ERP" className="w-3.5 h-3.5 rounded-sm" />
+                                  ERP
+                                </span>
+                              )}
+                            </div>
+                          </TableCell>
                           <TableCell>
                             <div className="flex justify-end gap-1">
                               <Button size="icon" variant="ghost" onClick={() => openPreview(entry, "summary")} title={t('accounting.buttons.preview')}>
@@ -991,7 +1022,17 @@ export default function AccountingPage() {
                             }
                           </TableCell>
                           <TableCell>{getStatusBadge(entry.status)}</TableCell>
-                          <TableCell>{getPeriodStatusBadge(entry.period_status)}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1.5">
+                              {getPeriodStatusBadge(entry.period_status)}
+                              {erpSyncedPeriods[entry.period]?.synced && (
+                                <span title={`FortexaERP: ${new Date(erpSyncedPeriods[entry.period].synced_at).toLocaleString()}`} data-testid={`erp-synced-${entry.period}`} className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-[10px] font-medium text-emerald-700">
+                                  <img src="/fortexaerp-logo.png" alt="ERP" className="w-3.5 h-3.5 rounded-sm" />
+                                  ERP
+                                </span>
+                              )}
+                            </div>
+                          </TableCell>
                           <TableCell>
                             <div className="flex justify-end gap-1">
                               <Button size="icon" variant="ghost" onClick={() => openPreview(entry, "summary")} title={t('accounting.buttons.preview')}>
