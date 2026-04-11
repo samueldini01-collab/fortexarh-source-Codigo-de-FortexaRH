@@ -206,7 +206,7 @@
     "footer": {
       "securePayment": "Pago seguro procesado por Stripe. Después del pago podrás crear tu cuenta.",
       "tryFirst": "¿Prefieres probar primero?",
-      "freeTrial": "Prueba gratis por 5 días"
+      "freeTrial": "Prueba gratis por 3 días"
     },
     "errors": {
       "paymentError": "Error al iniciar el proceso de pago",
@@ -610,7 +610,7 @@
     "register": {
       "title": "Crear Cuenta",
       "completeTitle": "Complete su Registro",
-      "subtitle": "Comienza tu prueba gratuita de 5 días",
+      "subtitle": "Comienza tu prueba gratuita de 3 días",
       "subtitlePaid": "Ingrese sus datos para activar su cuenta",
       "companyName": "Nombre de la empresa",
       "companyPlaceholder": "Mi Empresa S.A.",
@@ -631,7 +631,7 @@
       "privacyLink": "Política de Privacidad",
       "googleSignup": "Registrarse con Google",
       "benefits": {
-        "freeTrial": "5 días de prueba gratuita",
+        "freeTrial": "3 días de prueba gratuita",
         "noCard": "Sin tarjeta de crédito",
         "freeEmployees": "Hasta 5 empleados gratis"
       },

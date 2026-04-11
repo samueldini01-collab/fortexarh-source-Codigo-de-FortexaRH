@@ -41,8 +41,14 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - **Auto-Sync on Payroll Approve/Pay** - Configurable toggle in ERP config panel. When enabled, JEs auto-sent to FortexaERP on payroll approve or pay. Failed syncs logged silently.
 - **SAP Business One & Oracle NetSuite logos** - Custom favicons on integration cards (/sap-logo.png, /oracle-logo.png)
 
-### Company Configuration (Updated - Feb 2026)
-- **Company ID field** - Read-only, monospace, displayed at top of General tab for easy identification
+### Trial System (New - Feb 2026)
+- **3-day free trial** - Registration creates trial subscription expiring in 3 days
+- **Total block on expiry** - ProtectedRoute redirects expired trials to /trial-expired
+- **Trial Expired Page** - Logo, warning, "View Plans" + "Contact Support" + Logout buttons
+- **Login response includes trial info** - on_trial, trial_expired, days_left, trial_ends_at
+- **GET /api/auth/trial-status** - Endpoint to check current trial/subscription status
+- **No free trial in pricing cards** - Only "Buy Plan" buttons; trial entry only via top nav "Start Free"
+- **Paid users unaffected** - Pro/Enterprise/Partner plans bypass trial check entirely
 
 ### Payroll System (Complete)
 - Full payroll calculation with DR tax compliance (SFS, AFP, ISR)
@@ -52,6 +58,9 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 ### Automated Payroll Journal Entries (Complete)
 - Auto-generate balanced JE on approve (draft) and pay (posted)
 - Cascade updates/deletes, auto-creation of missing accounts
+
+### Company Configuration (Updated - Feb 2026)
+- **Company ID field** - Read-only, monospace, displayed at top of General tab for easy identification
 - Service extracted to /app/backend/services/journal_entry_service.py
 
 ### Accounting Dashboard (Complete)

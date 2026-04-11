@@ -206,7 +206,7 @@
     "footer": {
       "securePayment": "Secure payment processed by Stripe. After payment you can create your account.",
       "tryFirst": "Prefer to try first?",
-      "freeTrial": "Free trial for 5 days"
+      "freeTrial": "Free trial for 3 days"
     },
     "errors": {
       "paymentError": "Error starting payment process",
@@ -618,7 +618,7 @@
     "register": {
       "title": "Create Account",
       "completeTitle": "Complete your Registration",
-      "subtitle": "Start your free 5-day trial",
+      "subtitle": "Start your free 3-day trial",
       "subtitlePaid": "Enter your details to activate your account",
       "companyName": "Company name",
       "companyPlaceholder": "My Company Inc.",
@@ -639,7 +639,7 @@
       "privacyLink": "Privacy Policy",
       "googleSignup": "Sign up with Google",
       "benefits": {
-        "freeTrial": "5-day free trial",
+        "freeTrial": "3-day free trial",
         "noCard": "No credit card required",
         "freeEmployees": "Up to 5 employees free"
       },
