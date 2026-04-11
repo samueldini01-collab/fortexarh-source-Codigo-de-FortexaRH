@@ -210,19 +210,39 @@ async def sync_journal_entries(body: SyncJERequest, user=Depends(get_current_use
             headers={"Authorization": f"Bearer {token}"},
         )
 
+    now = datetime.now(timezone.utc).isoformat()
+    log_entry = {
+        "company_id": user["company_id"],
+        "period_id": body.period_id,
+        "reference": je_payload["reference"],
+        "description": je_payload["description"],
+        "entry_type": entry_type,
+        "lines_count": len(lines),
+        "total_debit": round(sum(ln["debit"] for ln in lines), 2),
+        "total_credit": round(sum(ln["credit"] for ln in lines), 2),
+        "synced_at": now,
+        "synced_by": user.get("email", ""),
+    }
+
     if resp.status_code not in (200, 201):
         error_detail = resp.text
         try:
             error_detail = resp.json().get("detail", resp.text)
         except Exception:
             pass
+        log_entry["status"] = "failed"
+        log_entry["error"] = str(error_detail)[:500]
+        await db.fortexaerp_sync_log.insert_one(log_entry)
         raise AppError(f"Error al enviar JE a FortexaERP: {error_detail}", status_code=resp.status_code)
 
     erp_response = resp.json()
     erp_entry_id = erp_response.get("entry_id") or erp_response.get("id", "")
 
+    log_entry["status"] = "success"
+    log_entry["erp_entry_id"] = erp_entry_id
+    await db.fortexaerp_sync_log.insert_one(log_entry)
+
     # Store sync reference on the journal entry
-    now = datetime.now(timezone.utc).isoformat()
     await db.journal_entries.update_one(
         {"company_id": user["company_id"], "period": body.period_id},
         {"$set": {
@@ -259,3 +279,14 @@ async def get_sync_status(period_id: str, user=Depends(get_current_user)):
         "erp_entry_id": je.get("fortexaerp_entry_id"),
         "synced_at": je.get("fortexaerp_synced_at"),
     }
+
+
+@router.get("/sync-log")
+async def get_sync_log(user=Depends(get_current_user), limit: int = 50):
+    """Get the sync history log for the current company."""
+    cursor = db.fortexaerp_sync_log.find(
+        {"company_id": user["company_id"]},
+        {"_id": 0},
+    ).sort("synced_at", -1).limit(min(limit, 200))
+    logs = await cursor.to_list(length=min(limit, 200))
+    return logs

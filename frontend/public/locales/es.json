@@ -4261,7 +4261,21 @@
         "saveConfig": "Guardar Configuración",
         "syncJe": "Sincronizar Asientos",
         "lastSync": "Última sincronización",
-        "connectedTo": "Conectado a"
+        "connectedTo": "Conectado a",
+        "syncLog": "Historial de Sincronización",
+        "syncLogDesc": "Registro de todas las sincronizaciones con FortexaERP",
+        "noSyncHistory": "No hay sincronizaciones registradas",
+        "viewHistory": "Ver Historial",
+        "period": "Periodo",
+        "reference": "Referencia",
+        "lines": "Líneas",
+        "amount": "Monto",
+        "date": "Fecha",
+        "status": "Estado",
+        "syncedBy": "Usuario",
+        "success": "Exitoso",
+        "failed": "Fallido",
+        "error": "Error"
       },
       "quickbooks": {
         "desc": "Exporta nómina y asientos contables automáticamente a QBO."

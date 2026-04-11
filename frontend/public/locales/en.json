@@ -4259,7 +4259,21 @@
         "saveConfig": "Save Configuration",
         "syncJe": "Sync Journal Entries",
         "lastSync": "Last sync",
-        "connectedTo": "Connected to"
+        "connectedTo": "Connected to",
+        "syncLog": "Sync History",
+        "syncLogDesc": "Log of all synchronizations with FortexaERP",
+        "noSyncHistory": "No sync history recorded",
+        "viewHistory": "View History",
+        "period": "Period",
+        "reference": "Reference",
+        "lines": "Lines",
+        "amount": "Amount",
+        "date": "Date",
+        "status": "Status",
+        "syncedBy": "User",
+        "success": "Success",
+        "failed": "Failed",
+        "error": "Error"
       },
       "quickbooks": {
         "desc": "Automatically export payroll and journal entries to QBO."

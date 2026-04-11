@@ -4229,7 +4229,21 @@
         "saveConfig": "Enregistrer la configuration",
         "syncJe": "Synchroniser les écritures",
         "lastSync": "Dernière synchronisation",
-        "connectedTo": "Connecté à"
+        "connectedTo": "Connecté à",
+        "syncLog": "Historique de synchronisation",
+        "syncLogDesc": "Journal de toutes les synchronisations avec FortexaERP",
+        "noSyncHistory": "Aucun historique de synchronisation",
+        "viewHistory": "Voir l'historique",
+        "period": "Période",
+        "reference": "Référence",
+        "lines": "Lignes",
+        "amount": "Montant",
+        "date": "Date",
+        "status": "Statut",
+        "syncedBy": "Utilisateur",
+        "success": "Réussi",
+        "failed": "Échoué",
+        "error": "Erreur"
       },
       "quickbooks": {
         "desc": "Exportez automatiquement la paie et les écritures comptables vers QBO."

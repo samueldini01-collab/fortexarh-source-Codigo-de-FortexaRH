@@ -25,6 +25,12 @@ import {
   Wand2, ArrowRight, Info, Download, FileSpreadsheet, Settings, Wifi
 } from "lucide-react";
 import { toast } from "sonner";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from "@/components/ui/table";
 
 // Dynamic tabs - will be replaced inside component to use translations
 const getCompanyConfigTabs = (t) => [
@@ -151,6 +157,11 @@ export default function CompanyConfigPage() {
   // Audit log
   const [auditLog, setAuditLog] = useState([]);
   
+  // FortexaERP sync log
+  const [showSyncLog, setShowSyncLog] = useState(false);
+  const [syncLog, setSyncLog] = useState([]);
+  const [syncLogLoading, setSyncLogLoading] = useState(false);
+  
   // Fetch QuickBooks status
   const fetchQuickbooksStatus = useCallback(async () => {
     try {
@@ -213,7 +224,24 @@ export default function CompanyConfigPage() {
     } catch (e) {
       toast.error(e.response?.data?.detail || "Error al guardar configuración");
     } finally { setErpSaving(false); }
-  };  const fetchCompanyData = useCallback(async () => {
+  };
+
+  const fetchSyncLog = async () => {
+    setSyncLogLoading(true);
+    try {
+      const res = await axios.get(`${API}/fortexaerp/sync-log`, { headers: getAuthHeaders(), withCredentials: true });
+      setSyncLog(res.data || []);
+    } catch (e) {
+      toast.error("Error al cargar historial de sincronización");
+    } finally { setSyncLogLoading(false); }
+  };
+
+  const openSyncLog = () => {
+    setShowSyncLog(true);
+    fetchSyncLog();
+  };
+
+  const fetchCompanyData = useCallback(async () => {
     setLoading(true);
     setFetchError(false);
     try {
@@ -1161,6 +1189,12 @@ export default function CompanyConfigPage() {
                     <ExternalLink className="w-4 h-4 mr-1.5" />Docs
                   </Button>
                 </a>
+                {erpConfigured && (
+                  <Button size="sm" variant="ghost" onClick={openSyncLog} data-testid="btn-erp-sync-log">
+                    <History className="w-4 h-4 mr-1.5" />
+                    {t('companyConfig.integrations.fortexaerp.viewHistory')}
+                  </Button>
+                )}
               </div>
             </div>
           )}
@@ -1486,6 +1520,72 @@ export default function CompanyConfigPage() {
           {activeTab === "auditoria" && renderAuditTab()}
         </div>
       </div>
+
+      {/* FortexaERP Sync History Dialog */}
+      <Dialog open={showSyncLog} onOpenChange={setShowSyncLog}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <img src="/fortexaerp-logo.png" alt="ERP" className="w-6 h-6" />
+              {t('companyConfig.integrations.fortexaerp.syncLog')}
+            </DialogTitle>
+            <DialogDescription>{t('companyConfig.integrations.fortexaerp.syncLogDesc')}</DialogDescription>
+          </DialogHeader>
+          {syncLogLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+            </div>
+          ) : syncLog.length === 0 ? (
+            <div className="text-center py-8 text-slate-500">
+              <History className="w-10 h-10 mx-auto mb-2 text-slate-300" />
+              <p>{t('companyConfig.integrations.fortexaerp.noSyncHistory')}</p>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('companyConfig.integrations.fortexaerp.date')}</TableHead>
+                  <TableHead>{t('companyConfig.integrations.fortexaerp.reference')}</TableHead>
+                  <TableHead className="text-center">{t('companyConfig.integrations.fortexaerp.lines')}</TableHead>
+                  <TableHead className="text-right">{t('companyConfig.integrations.fortexaerp.amount')}</TableHead>
+                  <TableHead>{t('companyConfig.integrations.fortexaerp.status')}</TableHead>
+                  <TableHead>{t('companyConfig.integrations.fortexaerp.syncedBy')}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {syncLog.map((log, idx) => (
+                  <TableRow key={idx} data-testid={`sync-log-row-${idx}`}>
+                    <TableCell className="whitespace-nowrap text-sm">
+                      {new Date(log.synced_at).toLocaleString()}
+                    </TableCell>
+                    <TableCell className="font-mono text-sm">{log.reference}</TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="secondary">{log.lines_count}</Badge>
+                    </TableCell>
+                    <TableCell className="text-right font-mono text-sm">
+                      {new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'DOP' }).format(log.total_debit)}
+                    </TableCell>
+                    <TableCell>
+                      {log.status === "success" ? (
+                        <Badge className="bg-emerald-100 text-emerald-700 border border-emerald-200">
+                          <Check className="w-3 h-3 mr-1" />
+                          {t('companyConfig.integrations.fortexaerp.success')}
+                        </Badge>
+                      ) : (
+                        <Badge variant="destructive" className="text-xs" title={log.error || ''}>
+                          <AlertCircle className="w-3 h-3 mr-1" />
+                          {t('companyConfig.integrations.fortexaerp.failed')}
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-sm text-slate-500">{log.synced_by}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }
