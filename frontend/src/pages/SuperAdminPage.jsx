@@ -94,6 +94,18 @@ const PAYMENT_METHODS = {
   sin_definir: { label: "Sin definir", icon: AlertTriangle, color: "text-slate-400 bg-slate-50" },
 };
 
+const PLAN_BADGES = {
+  basico:     { label: "Basico",     color: "bg-sky-500/20 text-sky-400" },
+  pro:        { label: "Pro",        color: "bg-indigo-500/20 text-indigo-400" },
+  enterprise: { label: "Enterprise", color: "bg-amber-500/20 text-amber-400" },
+  partner_basico:    { label: "Partner Basico",    color: "bg-teal-500/20 text-teal-400" },
+  partner_pro:       { label: "Partner Pro",       color: "bg-teal-500/20 text-teal-400" },
+  partner_enterprise: { label: "Partner Enterprise", color: "bg-teal-500/20 text-teal-400" },
+  partner:    { label: "Partner",    color: "bg-teal-500/20 text-teal-400" },
+  trial:      { label: "Prueba",     color: "bg-orange-500/20 text-orange-400" },
+  free:       { label: "Gratuito",   color: "bg-slate-500/20 text-slate-400" },
+};
+
 function getPaymentBadge(method) {
   const m = PAYMENT_METHODS[method] || PAYMENT_METHODS.sin_definir;
   const Icon = m.icon;
@@ -101,6 +113,16 @@ function getPaymentBadge(method) {
     <Badge variant="outline" className={`${m.color} border-0 gap-1`}>
       <Icon className="w-3 h-3" /> {m.label}
     </Badge>
+  );
+}
+
+function getPlanBadge(plan, monthlyPrice) {
+  const p = PLAN_BADGES[plan] || PLAN_BADGES.free;
+  return (
+    <div className="flex flex-col gap-0.5">
+      <Badge className={`${p.color} border-0 text-xs`}>{p.label}</Badge>
+      {monthlyPrice > 0 && <span className="text-[10px] text-slate-500">RD${monthlyPrice.toLocaleString()}/mes</span>}
+    </div>
   );
 }
 
@@ -118,6 +140,7 @@ function SuperAdminDashboard({ token, onLogout }) {
   const [planDialog, setPlanDialog] = useState(null);
   const [planForm, setPlanForm] = useState({ plan_id: "basico", custom_price: null });
   const [actionLoading, setActionLoading] = useState(false);
+  const [syncLoading, setSyncLoading] = useState(false);
 
   const headers = { Authorization: `Bearer ${token}` };
 
@@ -189,6 +212,19 @@ function SuperAdminDashboard({ token, onLogout }) {
     }
   };
 
+  const handleSyncStatuses = async () => {
+    setSyncLoading(true);
+    try {
+      const res = await axios.post(`${API}/sync-statuses`, {}, { headers });
+      toast.success(`Sincronizado: ${res.data.activated} activadas, ${res.data.deactivated} desactivadas`);
+      fetchData();
+    } catch (err) {
+      toast.error(err.response?.data?.detail || "Error sincronizando");
+    } finally {
+      setSyncLoading(false);
+    }
+  };
+
   const filtered = companies.filter(c => {
     const matchSearch = !search || (c.name || "").toLowerCase().includes(search.toLowerCase()) || (c.rnc || "").includes(search);
     const matchStatus = statusFilter === "all" || (statusFilter === "active" ? c.status === "active" : c.status !== "active");
@@ -207,6 +243,10 @@ function SuperAdminDashboard({ token, onLogout }) {
             <span className="font-bold text-lg">FortexaRH <span className="text-indigo-400 text-sm font-normal">Super Admin</span></span>
           </div>
           <div className="flex items-center gap-3">
+            <Button size="sm" variant="ghost" onClick={handleSyncStatuses} disabled={syncLoading} className="text-slate-400 hover:text-indigo-400" data-testid="btn-sync-statuses" title="Sincronizar estados">
+              {syncLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+              <span className="ml-1 hidden sm:inline">Sync</span>
+            </Button>
             <Button size="sm" variant="ghost" onClick={fetchData} className="text-slate-400 hover:text-white">
               <RefreshCw className="w-4 h-4" />
             </Button>
@@ -324,7 +364,7 @@ function SuperAdminDashboard({ token, onLogout }) {
                           <Badge className="bg-red-500/20 text-red-400 border-0">Inactiva</Badge>
                         )}
                       </TableCell>
-                      <TableCell>{getPaymentBadge(c.payment_method || "sin_definir")}</TableCell>
+                      <TableCell>{getPlanBadge(c.subscription_plan || "free", c.monthly_price || 0)}</TableCell>
                       <TableCell className="text-center text-slate-300">{c.employee_count}</TableCell>
                       <TableCell className="text-center text-slate-300">{c.user_count}</TableCell>
                       <TableCell className="text-slate-400 text-sm">{(c.created_at || "").split("T")[0]}</TableCell>

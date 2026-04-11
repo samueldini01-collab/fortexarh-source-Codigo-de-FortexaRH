@@ -326,6 +326,119 @@ class TestSuperAdminActivations:
             print(f"✓ First activation: {activation.get('action')} for {activation.get('company_name', activation.get('company_id'))}")
 
 
+# ---------- Sync Statuses Tests (New in iteration 220) ----------
+
+class TestSuperAdminSyncStatuses:
+    """Super Admin sync-statuses endpoint tests - smart status detection"""
+    
+    def test_sync_statuses_endpoint_exists(self, sa_headers):
+        """POST /api/super-admin/sync-statuses should be accessible"""
+        response = requests.post(f"{BASE_URL}/api/super-admin/sync-statuses", headers=sa_headers)
+        assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
+        
+        data = response.json()
+        assert "activated" in data, "Response should have 'activated' count"
+        assert "deactivated" in data, "Response should have 'deactivated' count"
+        assert "total" in data, "Response should have 'total' count"
+        
+        print(f"✓ Sync statuses: {data['activated']} activated, {data['deactivated']} deactivated, {data['total']} total")
+    
+    def test_sync_statuses_unauthenticated(self):
+        """POST /api/super-admin/sync-statuses without token should return 401"""
+        response = requests.post(f"{BASE_URL}/api/super-admin/sync-statuses")
+        assert response.status_code == 401, f"Expected 401, got {response.status_code}"
+        print("✓ Unauthenticated sync-statuses request correctly rejected")
+
+
+class TestSuperAdminCompaniesEnrichedFields:
+    """Tests for enriched company fields: subscription_plan, plan_name, monthly_price"""
+    
+    def test_companies_have_subscription_plan(self, sa_headers):
+        """GET /api/super-admin/companies should return subscription_plan for each company"""
+        response = requests.get(f"{BASE_URL}/api/super-admin/companies", headers=sa_headers)
+        assert response.status_code == 200
+        
+        companies = response.json()
+        if len(companies) == 0:
+            pytest.skip("No companies available")
+        
+        for company in companies[:5]:  # Check first 5
+            assert "subscription_plan" in company, f"Company {company.get('company_id')} should have subscription_plan"
+            print(f"✓ Company '{company.get('name', company.get('company_id'))}' has subscription_plan: {company.get('subscription_plan')}")
+    
+    def test_companies_have_plan_name(self, sa_headers):
+        """GET /api/super-admin/companies should return plan_name for each company"""
+        response = requests.get(f"{BASE_URL}/api/super-admin/companies", headers=sa_headers)
+        assert response.status_code == 200
+        
+        companies = response.json()
+        if len(companies) == 0:
+            pytest.skip("No companies available")
+        
+        for company in companies[:5]:  # Check first 5
+            assert "plan_name" in company, f"Company {company.get('company_id')} should have plan_name"
+            print(f"✓ Company '{company.get('name', company.get('company_id'))}' has plan_name: {company.get('plan_name')}")
+    
+    def test_companies_have_monthly_price(self, sa_headers):
+        """GET /api/super-admin/companies should return monthly_price for each company"""
+        response = requests.get(f"{BASE_URL}/api/super-admin/companies", headers=sa_headers)
+        assert response.status_code == 200
+        
+        companies = response.json()
+        if len(companies) == 0:
+            pytest.skip("No companies available")
+        
+        for company in companies[:5]:  # Check first 5
+            assert "monthly_price" in company, f"Company {company.get('company_id')} should have monthly_price"
+            assert isinstance(company["monthly_price"], (int, float)), "monthly_price should be a number"
+            print(f"✓ Company '{company.get('name', company.get('company_id'))}' has monthly_price: RD${company.get('monthly_price')}")
+
+
+class TestSuperAdminSmartStatusDetection:
+    """Tests for smart status detection - companies with data should be active"""
+    
+    def test_stats_has_active_companies(self, sa_headers):
+        """GET /api/super-admin/stats should return active_companies > 0 if companies have data"""
+        response = requests.get(f"{BASE_URL}/api/super-admin/stats", headers=sa_headers)
+        assert response.status_code == 200
+        
+        data = response.json()
+        active = data.get("active_companies", 0)
+        inactive = data.get("inactive_companies", 0)
+        total = data.get("total_companies", 0)
+        
+        print(f"✓ Stats: {active} active, {inactive} inactive, {total} total")
+        
+        # If there are companies with employees/users, at least some should be active
+        if data.get("total_employees", 0) > 0 or data.get("total_users", 0) > 0:
+            assert active > 0, f"Expected active_companies > 0 when there are employees/users, got {active}"
+            print(f"✓ Active companies count is > 0 as expected (smart status detection working)")
+    
+    def test_companies_with_users_are_active(self, sa_headers):
+        """Companies with users and employees should show as active"""
+        response = requests.get(f"{BASE_URL}/api/super-admin/companies", headers=sa_headers)
+        assert response.status_code == 200
+        
+        companies = response.json()
+        
+        # Find companies with users and employees
+        companies_with_data = [c for c in companies if c.get("user_count", 0) > 0 and c.get("employee_count", 0) > 0]
+        
+        if len(companies_with_data) == 0:
+            pytest.skip("No companies with both users and employees")
+        
+        for company in companies_with_data[:3]:  # Check first 3
+            status = company.get("status")
+            plan = company.get("subscription_plan", "free")
+            
+            # Companies with users AND employees should be active (unless plan is free/trial with no explicit status)
+            if plan not in ("free", "trial"):
+                assert status == "active", f"Company '{company.get('name')}' with {company.get('user_count')} users and {company.get('employee_count')} employees should be active, got {status}"
+                print(f"✓ Company '{company.get('name')}' with users+employees is correctly marked as 'active'")
+            else:
+                print(f"✓ Company '{company.get('name')}' has plan '{plan}', status: {status}")
+
+
 # ---------- Revenue Metrics Tests (New in iteration 214) ----------
 
 class TestSuperAdminRevenue:

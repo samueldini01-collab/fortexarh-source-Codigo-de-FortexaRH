@@ -62,6 +62,10 @@ async def super_admin_login(req: LoginRequest):
 @router.get("/companies")
 async def list_companies(admin=Depends(get_super_admin)):
     companies = await db.companies.find({}, {"_id": 0}).sort("created_at", -1).to_list(500)
+    # Fetch all subscriptions in one go
+    subs = await db.subscriptions.find({}, {"_id": 0}).to_list(500)
+    sub_map = {s["company_id"]: s for s in subs if "company_id" in s}
+
     enriched = []
     for c in companies:
         cid = c.get("company_id")
@@ -72,8 +76,34 @@ async def list_companies(admin=Depends(get_super_admin)):
             {"_id": 0, "timestamp": 1},
             sort=[("timestamp", -1)],
         )
+
+        # Derive effective status
+        explicit_status = c.get("status")
+        sub = sub_map.get(cid, {})
+        sub_status = sub.get("status")
+        plan = c.get("subscription_plan") or sub.get("plan_id") or "free"
+        plan_info = PLAN_PRICES.get(plan, {"name": plan, "monthly": 0})
+        monthly = sub.get("total_monthly") or plan_info.get("monthly", 0)
+
+        # Active if: explicitly active, or has active subscription, or has users+employees and plan != free
+        if explicit_status == "active":
+            effective_status = "active"
+        elif sub_status in ("active", "trialing"):
+            effective_status = "active"
+        elif user_count > 0 and (emp_count > 0 or plan not in ("free", "trial")):
+            effective_status = "active"
+        elif explicit_status == "inactive":
+            effective_status = "inactive"
+        else:
+            effective_status = "inactive"
+
         enriched.append({
             **c,
+            "status": effective_status,
+            "subscription_plan": plan,
+            "plan_name": plan_info.get("name", plan),
+            "monthly_price": monthly,
+            "sub_status": sub_status,
             "employee_count": emp_count,
             "user_count": user_count,
             "last_login": last_login.get("timestamp") if last_login else None,
@@ -83,9 +113,28 @@ async def list_companies(admin=Depends(get_super_admin)):
 
 @router.get("/stats")
 async def get_platform_stats(admin=Depends(get_super_admin)):
-    total = await db.companies.count_documents({})
-    active = await db.companies.count_documents({"status": "active"})
-    inactive = await db.companies.count_documents({"status": {"$ne": "active"}})
+    # Use the same enriched logic to count active/inactive
+    companies = await db.companies.find({}, {"_id": 0}).to_list(500)
+    subs = await db.subscriptions.find({}, {"_id": 0}).to_list(500)
+    sub_map = {s["company_id"]: s for s in subs if "company_id" in s}
+
+    active = 0
+    inactive = 0
+    for c in companies:
+        cid = c.get("company_id")
+        sub = sub_map.get(cid, {})
+        sub_status = sub.get("status")
+        plan = c.get("subscription_plan") or sub.get("plan_id") or "free"
+        explicit_status = c.get("status")
+        emp_count = await db.employees.count_documents({"company_id": cid})
+        user_count = await db.users.count_documents({"company_id": cid})
+
+        if explicit_status == "active" or sub_status in ("active", "trialing") or (user_count > 0 and (emp_count > 0 or plan not in ("free", "trial"))):
+            active += 1
+        else:
+            inactive += 1
+
+    total = len(companies)
     total_employees = await db.employees.count_documents({})
     total_users = await db.users.count_documents({})
 
@@ -125,6 +174,45 @@ PLAN_PRICES = {
     "free":       {"name": "Gratuito",              "monthly": 0,     "type": "free"},
     "partner":    {"name": "Partner (legacy)",      "monthly": 0,     "type": "partner"},
 }
+
+
+@router.post("/sync-statuses")
+async def sync_company_statuses(admin=Depends(get_super_admin)):
+    """Re-compute and persist active/inactive status for all companies based on real data."""
+    companies = await db.companies.find({}, {"_id": 0}).to_list(500)
+    subs = await db.subscriptions.find({}, {"_id": 0}).to_list(500)
+    sub_map = {s["company_id"]: s for s in subs if "company_id" in s}
+
+    activated = 0
+    deactivated = 0
+    for c in companies:
+        cid = c.get("company_id")
+        sub = sub_map.get(cid, {})
+        sub_status = sub.get("status")
+        plan = c.get("subscription_plan") or sub.get("plan_id") or "free"
+        explicit_status = c.get("status")
+        emp_count = await db.employees.count_documents({"company_id": cid})
+        user_count = await db.users.count_documents({"company_id": cid})
+
+        if explicit_status == "active" or sub_status in ("active", "trialing") or (user_count > 0 and (emp_count > 0 or plan not in ("free", "trial"))):
+            new_status = "active"
+        else:
+            new_status = "inactive"
+
+        if explicit_status != new_status:
+            await db.companies.update_one(
+                {"company_id": cid},
+                {"$set": {"status": new_status, "updated_at": _now()}},
+            )
+            if new_status == "active":
+                activated += 1
+            else:
+                deactivated += 1
+
+    await _log_event("system", "bulk_status_sync", f"Sync completado: {activated} activadas, {deactivated} desactivadas")
+    return {"activated": activated, "deactivated": deactivated, "total": len(companies)}
+
+
 
 
 @router.get("/revenue")

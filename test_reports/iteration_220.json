@@ -1,0 +1,108 @@
+{
+  "summary": "Super Admin smart status detection fix verified. All features working: login, KPI cards (10 active, 11 inactive), plan badges (Gratuito, Partner, Pro, Prueba), Sync button, Activar/Inactivar buttons. Backend: 36/36 tests passed. Frontend: All UI components verified.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_super_admin.py",
+    "/app/test_reports/pytest/super_admin_smart_status_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_super_admin.py"
+  ],
+  "success_rate": {
+    "backend": "100% (36/36 tests passed)",
+    "frontend": "100% (all features verified)"
+  },
+  "test_credentials": {
+    "super_admin": "fortexa2026rd / FortexaAdmin2026!"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Super Admin panel at /admin is fully functional. Smart status detection working - companies with users/employees show as 'Activa'. Plan badges (Gratuito, Partner, Pro, Prueba, Enterprise) display correctly in Modalidad column. Pro plan shows monthly price (RD$5,000/mes). Sync button calls POST /api/super-admin/sync-statuses and shows toast notification. Active companies have 'Inactivar' button, inactive have 'Activar' button.",
+  "tests_executed": {
+    "backend": [
+      {"test": "Super Admin login with correct credentials", "status": "PASSED"},
+      {"test": "Super Admin login with wrong credentials (401)", "status": "PASSED"},
+      {"test": "GET /api/super-admin/companies returns enriched data", "status": "PASSED"},
+      {"test": "GET /api/super-admin/companies returns subscription_plan", "status": "PASSED"},
+      {"test": "GET /api/super-admin/companies returns plan_name", "status": "PASSED"},
+      {"test": "GET /api/super-admin/companies returns monthly_price", "status": "PASSED"},
+      {"test": "GET /api/super-admin/stats returns active_companies > 0", "status": "PASSED"},
+      {"test": "POST /api/super-admin/sync-statuses works", "status": "PASSED"},
+      {"test": "POST /api/super-admin/sync-statuses requires auth (401)", "status": "PASSED"},
+      {"test": "Companies with users+employees are marked active", "status": "PASSED"},
+      {"test": "Activate/Deactivate company flows", "status": "PASSED"},
+      {"test": "Plan change endpoint works", "status": "PASSED"},
+      {"test": "Revenue metrics endpoint", "status": "PASSED"}
+    ],
+    "frontend": [
+      {"test": "Super Admin login page loads", "status": "PASSED"},
+      {"test": "Login with fortexa2026rd / FortexaAdmin2026!", "status": "PASSED"},
+      {"test": "KPI cards visible: Total=21, Activas=10, Inactivas=11", "status": "PASSED"},
+      {"test": "Empleados=10, Usuarios=21 KPIs visible", "status": "PASSED"},
+      {"test": "Sync button visible in header", "status": "PASSED"},
+      {"test": "Sync button calls sync-statuses endpoint", "status": "PASSED"},
+      {"test": "Toast notification after sync", "status": "PASSED"},
+      {"test": "Plan badges: Gratuito (9), Partner (4), Pro (1), Prueba (7)", "status": "PASSED"},
+      {"test": "No 'Sin definir' text in Modalidad column", "status": "PASSED"},
+      {"test": "Pro plan shows RD$5,000/mes price", "status": "PASSED"},
+      {"test": "Active companies show 'Inactivar' button", "status": "PASSED"},
+      {"test": "Inactive companies show 'Activar' button", "status": "PASSED"},
+      {"test": "'Activa' status badges (green) visible", "status": "PASSED"},
+      {"test": "'Inactiva' status badges (red) visible", "status": "PASSED"}
+    ]
+  },
+  "features_verified": {
+    "smart_status_detection": {
+      "description": "Companies with users AND employees (or active subscription) show as 'Activa'",
+      "active_count": 10,
+      "inactive_count": 11,
+      "verified": true
+    },
+    "plan_badges": {
+      "location": "Modalidad column in companies table",
+      "badges_found": ["Gratuito", "Partner", "Pro", "Prueba"],
+      "sin_definir_found": false,
+      "verified": true
+    },
+    "monthly_price_display": {
+      "description": "Pro plan shows RD$5,000/mes under the badge",
+      "verified": true
+    },
+    "sync_button": {
+      "location": "Header bar, labeled 'Sync'",
+      "data_testid": "btn-sync-statuses",
+      "endpoint": "POST /api/super-admin/sync-statuses",
+      "toast_message": "Sincronizado: X activadas, Y desactivadas",
+      "verified": true
+    },
+    "activar_inactivar_buttons": {
+      "description": "Active companies show 'Inactivar', inactive show 'Activar'",
+      "inactivar_buttons": 10,
+      "activar_buttons": 11,
+      "verified": true
+    },
+    "kpi_cards": {
+      "total_empresas": 21,
+      "activas": 10,
+      "inactivas": 11,
+      "empleados": 10,
+      "usuarios": 21,
+      "verified": true
+    }
+  },
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": []
+  }
+}
