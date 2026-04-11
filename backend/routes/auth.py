@@ -95,7 +95,7 @@ async def register(request: Request, user_data: UserCreate, response: Response):
         now = datetime.now(timezone.utc)
         
         if subscription_status == "trial":
-            trial_ends_at = (now + timedelta(days=5)).isoformat()
+            trial_ends_at = (now + timedelta(days=3)).isoformat()
             period_end = trial_ends_at
         else:
             trial_ends_at = None
@@ -223,6 +223,37 @@ async def login(request: Request, credentials: UserLogin, response: Response):
         {"$set": {"last_activity": now}},
     )
 
+    # Check trial/subscription status
+    company = None
+    trial_info = None
+    if user.get("company_id"):
+        company = await db.companies.find_one({"company_id": user["company_id"]}, {"_id": 0})
+        if company:
+            sub = await db.subscriptions.find_one({"company_id": user["company_id"]}, {"_id": 0})
+            plan = company.get("subscription_plan", "free")
+            trial_ends = company.get("trial_ends_at") or (sub or {}).get("trial_ends_at")
+            sub_status = (sub or {}).get("status", "trial")
+            
+            if plan == "trial" or sub_status == "trial":
+                if trial_ends:
+                    try:
+                        ends_dt = datetime.fromisoformat(trial_ends.replace("Z", "+00:00"))
+                        remaining = (ends_dt - datetime.now(timezone.utc)).total_seconds()
+                        days_left = max(0, remaining / 86400)
+                        trial_info = {
+                            "on_trial": True,
+                            "trial_expired": days_left <= 0,
+                            "days_left": round(days_left, 1),
+                            "trial_ends_at": trial_ends,
+                        }
+                    except Exception:
+                        trial_info = {"on_trial": True, "trial_expired": False, "days_left": 3}
+                else:
+                    trial_info = {"on_trial": True, "trial_expired": False, "days_left": 3}
+            elif plan in ("free",) and sub_status not in ("active", "trialing"):
+                # Free plan without paid subscription - treat as expired trial
+                trial_info = {"on_trial": True, "trial_expired": True, "days_left": 0}
+
     return {
         "token": token,
         "user": {
@@ -234,8 +265,49 @@ async def login(request: Request, credentials: UserLogin, response: Response):
             "role": user.get("role", "admin"),
             "is_partner": user.get("is_partner", False),
             "partner_id": user.get("partner_id")
-        }
+        },
+        "trial": trial_info,
     }
+
+
+@router.get("/trial-status")
+async def get_trial_status(user=Depends(get_current_user)):
+    """Check the current user's trial/subscription status."""
+    company = await db.companies.find_one({"company_id": user["company_id"]}, {"_id": 0})
+    if not company:
+        return {"on_trial": False, "trial_expired": False, "plan": "free"}
+    
+    sub = await db.subscriptions.find_one({"company_id": user["company_id"]}, {"_id": 0})
+    plan = company.get("subscription_plan", "free")
+    sub_status = (sub or {}).get("status", "trial")
+    trial_ends = company.get("trial_ends_at") or (sub or {}).get("trial_ends_at")
+    
+    if sub_status == "active" and plan not in ("trial", "free"):
+        return {"on_trial": False, "trial_expired": False, "plan": plan, "plan_name": (sub or {}).get("plan_name", plan)}
+    
+    if plan == "trial" or sub_status == "trial":
+        if trial_ends:
+            try:
+                ends_dt = datetime.fromisoformat(trial_ends.replace("Z", "+00:00"))
+                remaining = (ends_dt - datetime.now(timezone.utc)).total_seconds()
+                days_left = max(0, remaining / 86400)
+                return {
+                    "on_trial": True,
+                    "trial_expired": days_left <= 0,
+                    "days_left": round(days_left, 1),
+                    "trial_ends_at": trial_ends,
+                    "plan": plan,
+                }
+            except Exception:
+                pass
+        return {"on_trial": True, "trial_expired": False, "days_left": 3, "plan": plan}
+    
+    # Free plan with no active sub
+    if plan == "free" and sub_status not in ("active",):
+        return {"on_trial": True, "trial_expired": True, "days_left": 0, "plan": "free"}
+    
+    return {"on_trial": False, "trial_expired": False, "plan": plan}
+
 
 
 @router.post("/session")
@@ -262,12 +334,28 @@ async def exchange_session(request: Request, response: Response):
         user_id = f"user_{uuid.uuid4().hex[:12]}"
         company_id = f"comp_{uuid.uuid4().hex[:12]}"
         
+        now_iso = datetime.now(timezone.utc).isoformat()
+        trial_ends_at = (datetime.now(timezone.utc) + timedelta(days=3)).isoformat()
+        
         await db.companies.insert_one({
             "company_id": company_id,
             "name": f"Empresa de {auth_data['name']}",
-            "subscription_plan": "free",
+            "subscription_plan": "trial",
             "employee_count": 0,
-            "created_at": datetime.now(timezone.utc).isoformat()
+            "trial_ends_at": trial_ends_at,
+            "created_at": now_iso,
+        })
+        
+        await db.subscriptions.insert_one({
+            "subscription_id": f"sub_{uuid.uuid4().hex[:12]}",
+            "company_id": company_id,
+            "plan_id": "trial",
+            "plan_name": "Prueba Gratuita (3 días)",
+            "status": "trial",
+            "trial_ends_at": trial_ends_at,
+            "current_period_start": now_iso,
+            "current_period_end": trial_ends_at,
+            "created_at": now_iso,
         })
         
         user = {

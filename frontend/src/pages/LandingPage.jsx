@@ -235,7 +235,7 @@ export default function LandingPage() {
                         className="flex items-center justify-center gap-2 w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
                         onClick={() => setOpenDropdown(null)}
                       >
-                        {t('landing.pricing.tryFree')}
+                        {t('landing.pricing.freeTrial')}
                         <ArrowRight className="w-4 h-4" />
                       </Link>
                     </div>
@@ -456,7 +456,7 @@ export default function LandingPage() {
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-6 mt-6 sm:mt-8 text-xs sm:text-sm text-slate-500">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" />
-                  {t('landing.pricing.tryFree')}
+                  {t('landing.pricing.freeTrial')}
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" />
@@ -635,7 +635,7 @@ export default function LandingPage() {
             </p>
             <Link to="/register">
               <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white">
-                {t('landing.geolocation.tryFree')}
+                {t('landing.pricing.freeTrial')}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
@@ -749,9 +749,6 @@ export default function LandingPage() {
                 <Link to="/checkout?plan=basic">
                   <Button className="w-full bg-blue-600 hover:bg-blue-700 text-sm sm:text-base" data-testid="buy-basic-btn">{t('landing.pricing.buyPlan')}</Button>
                 </Link>
-                <Link to="/register">
-                  <Button className="w-full text-sm sm:text-base" variant="outline" data-testid="trial-basic-btn">{t('landing.pricing.tryFree')}</Button>
-                </Link>
               </div>
             </div>
             
@@ -793,9 +790,6 @@ export default function LandingPage() {
                 <Link to="/checkout?plan=pro">
                   <Button className="w-full bg-purple-600 hover:bg-purple-700 text-sm sm:text-base" data-testid="buy-pro-btn">{t('landing.pricing.buyPlan')}</Button>
                 </Link>
-                <Link to="/register">
-                  <Button className="w-full text-sm sm:text-base" variant="outline" data-testid="trial-pro-btn">{t('landing.pricing.tryFree')}</Button>
-                </Link>
               </div>
             </div>
             
@@ -832,9 +826,6 @@ export default function LandingPage() {
               <div className="space-y-2">
                 <Link to="/checkout?plan=enterprise">
                   <Button className="w-full bg-amber-600 hover:bg-amber-700 text-sm sm:text-base" data-testid="buy-enterprise-btn">{t('landing.pricing.buyPlan')}</Button>
-                </Link>
-                <Link to="/register">
-                  <Button className="w-full text-sm sm:text-base" variant="outline" data-testid="trial-enterprise-btn">{t('landing.pricing.tryFree')}</Button>
                 </Link>
               </div>
             </div>

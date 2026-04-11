@@ -104,8 +104,9 @@ import LoginPage from "@/pages/LoginPage";
 import Dashboard from "@/pages/Dashboard";
 
 // Auth & Onboarding - Lazy loaded
-const RegisterPage = lazy(() => import("@/pages/RegisterPage"));
+const TrialExpiredPage = lazy(() => import("@/pages/TrialExpiredPage"));
 const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPasswordPage"));
+const RegisterPage = lazy(() => import("@/pages/RegisterPage"));
 const ResetPasswordPage = lazy(() => import("@/pages/ResetPasswordPage"));
 const CheckoutPage = lazy(() => import("@/pages/CheckoutPage"));
 const PricingPage = lazy(() => import("@/pages/PricingPage"));
@@ -254,6 +255,17 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
+  // Check trial expiration
+  const trialStr = localStorage.getItem("trial");
+  if (trialStr) {
+    try {
+      const trial = JSON.parse(trialStr);
+      if (trial.on_trial && trial.trial_expired) {
+        return <Navigate to="/trial-expired" replace />;
+      }
+    } catch {}
+  }
+
   return children;
 };
 
@@ -297,9 +309,11 @@ const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const response = await axios.post(`${API}/auth/login`, { email, password });
-    const { token: newToken, user: userData } = response.data;
+    const { token: newToken, user: userData, trial: trialData } = response.data;
     localStorage.setItem("token", newToken);
     localStorage.setItem("user", JSON.stringify(userData));
+    if (trialData) localStorage.setItem("trial", JSON.stringify(trialData));
+    else localStorage.removeItem("trial");
     setToken(newToken);
     setUser(userData);
     return userData;
@@ -444,6 +458,7 @@ function AppRouter() {
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       
       {/* Auth routes - Lazy loaded */}
+      <Route path="/trial-expired" element={<LazyRoute><TrialExpiredPage /></LazyRoute>} />
       <Route path="/register" element={<LazyRoute><RegisterPage /></LazyRoute>} />
       <Route path="/checkout" element={<LazyRoute><CheckoutPage /></LazyRoute>} />
       <Route path="/pricing" element={<LazyRoute><PricingPage /></LazyRoute>} />

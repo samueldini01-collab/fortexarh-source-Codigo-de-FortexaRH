@@ -261,7 +261,7 @@
     "hero": {
       "title": "Système RH et Paie pour la République Dominicaine",
       "subtitle": "Gérez votre capital humain avec la plateforme la plus complète. Paie, TSS, DGII, et plus.",
-      "cta": "Commencer Gratuitement",
+      "cta": "Essai Gratuit 3 Jours",
       "demo": "Voir la Démo",
       "brochure": "Brochure"
     },
@@ -552,7 +552,10 @@
         "allBasic": "Tout du plan Basique",
         "allPro": "Tout du plan Pro",
         "unlimitedEmployees": "Employés illimités"
-      }
+      },
+      "freeTrial": "Essai gratuit de 3 jours",
+      "startTrial": "Commencer l'essai (3 jours)",
+      "trialNote": "Essai gratuit de 3 jours. Aucune carte de crédit requise."
     },
     "contact": {
       "title": "Contact et Support",
@@ -5383,7 +5386,7 @@
       "perEmployee": "par employé",
       "employees": "employés",
       "usersIncluded": "utilisateurs inclus",
-      "trialNote": "* Tous les plans incluent 14 jours d'essai gratuit. Sans carte de crédit requise.",
+      "trialNote": "Essai gratuit de 3 jours. Aucune carte de crédit requise.",
       "basic": {
         "name": "Basique",
         "target": "Pour petites entreprises",
@@ -6152,6 +6155,19 @@
         "q": "Comment telecharger les rapports DGII?",
         "a": "Rapports DGII-TSS > selectionnez la periode > cliquez telecharger."
       }
+    }
+  },
+  "trial": {
+    "expired": {
+      "title": "Votre période d'essai a expiré",
+      "subtitle": "Pour continuer à utiliser FortexaRH, sélectionnez un plan.",
+      "selectPlan": "Voir les Plans",
+      "contact": "Contacter le Support"
+    },
+    "banner": {
+      "daysLeft": "jours d'essai restants",
+      "lastDay": "Dernier jour d'essai",
+      "upgrade": "Mettre à Niveau"
     }
   }
 }

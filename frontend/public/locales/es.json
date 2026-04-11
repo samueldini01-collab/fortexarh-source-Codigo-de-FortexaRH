@@ -261,7 +261,7 @@
     "hero": {
       "title": "Sistema de RRHH y Nómina para República Dominicana",
       "subtitle": "Gestiona tu capital humano con la plataforma más completa. Nómina, TSS, DGII, y más.",
-      "cta": "Comenzar Gratis",
+      "cta": "Prueba Gratis 3 Días",
       "demo": "Ver Demo",
       "brochure": "Brochure"
     },
@@ -552,7 +552,10 @@
         "allBasic": "Todo lo del plan Básico",
         "allPro": "Todo lo del plan Pro",
         "unlimitedEmployees": "Empleados ilimitados"
-      }
+      },
+      "freeTrial": "Prueba gratis por 3 días",
+      "startTrial": "Comenzar Prueba (3 Días)",
+      "trialNote": "Prueba gratuita de 3 días. No se requiere tarjeta de crédito."
     },
     "contact": {
       "title": "Contacto y Soporte",
@@ -5418,7 +5421,7 @@
       "perEmployee": "por empleado",
       "employees": "empleados",
       "usersIncluded": "usuarios incluidos",
-      "trialNote": "* Todos los planes incluyen 14 días de prueba gratis. Sin tarjeta de crédito requerida.",
+      "trialNote": "Prueba gratuita de 3 días. No se requiere tarjeta de crédito.",
       "basic": {
         "name": "Básico",
         "target": "Para pequeñas empresas",
@@ -6187,6 +6190,19 @@
         "q": "Como descargar los reportes DGII?",
         "a": "Vaya a Reportes DGII-TSS, seleccione el periodo de nomina y haga clic en el boton de descarga del reporte deseado (IR-3, IR-4, IR-17, IR-6 o TSS). Tambien puede ver el desglose por empleado antes de descargar."
       }
+    }
+  },
+  "trial": {
+    "expired": {
+      "title": "Tu período de prueba ha expirado",
+      "subtitle": "Para continuar usando FortexaRH, selecciona un plan de suscripción.",
+      "selectPlan": "Ver Planes Disponibles",
+      "contact": "Contactar Soporte"
+    },
+    "banner": {
+      "daysLeft": "días restantes de prueba",
+      "lastDay": "Último día de prueba",
+      "upgrade": "Actualizar Plan"
     }
   }
 }

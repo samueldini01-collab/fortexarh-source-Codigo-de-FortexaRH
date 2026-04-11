@@ -261,7 +261,7 @@
     "hero": {
       "title": "HR & Payroll System for the Dominican Republic",
       "subtitle": "Manage your human capital with the most complete platform. Payroll, TSS, DGII, and more.",
-      "cta": "Start Free",
+      "cta": "Free Trial 3 Days",
       "demo": "Watch Demo",
       "brochure": "Brochure"
     },
@@ -553,7 +553,10 @@
         "allBasic": "Everything in Basic plan",
         "allPro": "Everything in Pro plan",
         "unlimitedEmployees": "Unlimited employees"
-      }
+      },
+      "freeTrial": "Free 3-day trial",
+      "startTrial": "Start Trial (3 Days)",
+      "trialNote": "3-day free trial. No credit card required."
     },
     "contact": {
       "title": "Contact & Support",
@@ -5422,7 +5425,7 @@
       "perEmployee": "per employee",
       "employees": "employees",
       "usersIncluded": "users included",
-      "trialNote": "* All plans include 14 days free trial. No credit card required.",
+      "trialNote": "3-day free trial. No credit card required.",
       "basic": {
         "name": "Basic",
         "target": "For small businesses",
@@ -6191,6 +6194,19 @@
         "q": "How do I download DGII reports?",
         "a": "Go to DGII-TSS Reports, select the payroll period and click the download button for the desired report (IR-3, IR-4, IR-17, IR-6 or TSS). You can also view the employee breakdown before downloading."
       }
+    }
+  },
+  "trial": {
+    "expired": {
+      "title": "Your trial period has expired",
+      "subtitle": "To continue using FortexaRH, select a subscription plan.",
+      "selectPlan": "View Available Plans",
+      "contact": "Contact Support"
+    },
+    "banner": {
+      "daysLeft": "trial days remaining",
+      "lastDay": "Last day of trial",
+      "upgrade": "Upgrade Plan"
     }
   }
 }
