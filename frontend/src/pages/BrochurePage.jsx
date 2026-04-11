@@ -183,10 +183,13 @@ export default function BrochurePage() {
       {/* Action Bar */}
       <div className="sticky top-0 z-50 bg-white border-b shadow-sm">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Button variant="ghost" onClick={() => navigate(-1)}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            {t('brochure.back')}
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" onClick={() => navigate(-1)}>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              {t('brochure.back')}
+            </Button>
+            <img src="/fortexarh-logo.png" alt="FortexaRH" className="h-8 w-auto hidden sm:block" />
+          </div>
           <Button 
             onClick={handleDownloadPDF} 
             disabled={downloading}
@@ -206,13 +209,8 @@ export default function BrochurePage() {
           <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 text-white p-12 min-h-[700px] flex flex-col justify-between">
             <div>
               {/* Logo */}
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-14 h-14 bg-emerald-500 rounded-xl flex items-center justify-center">
-                  <Building2 className="w-8 h-8 text-white" />
-                </div>
-                <span className="text-4xl font-bold">
-                  Fortexa<span className="text-emerald-400">RH</span>
-                </span>
+              <div className="flex items-center gap-4 mb-8">
+                <img src="/fortexarh-logo.png" alt="FortexaRH" className="h-16 w-auto" />
               </div>
               
               <h1 className="text-5xl font-bold leading-tight mb-6">
@@ -377,6 +375,8 @@ export default function BrochurePage() {
                 <div className="space-y-3">
                   {[
                     t('brochure.integrations.quickbooks'),
+                    "QuickBooks Desktop (IIF, Web Connector)",
+                    "FortexaERP (API REST)",
                     t('brochure.integrations.sap'),
                     t('brochure.integrations.oracle'),
                     t('brochure.integrations.dynamics'),
@@ -471,12 +471,7 @@ export default function BrochurePage() {
             <div className="text-center mb-10">
               {/* Logo */}
               <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center">
-                  <Building2 className="w-7 h-7 text-white" />
-                </div>
-                <span className="text-3xl font-bold">
-                  Fortexa<span className="text-emerald-400">RH</span>
-                </span>
+                <img src="/fortexarh-logo.png" alt="FortexaRH" className="h-14 w-auto" />
               </div>
               
               <h2 className="text-3xl font-bold mb-4">{t('brochure.contact.title')}</h2>
