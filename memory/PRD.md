@@ -38,6 +38,11 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - **Custom FortexaERP logo** on integration card (uploaded favicon at /fortexaerp-logo.png)
 - **Visual sync indicator** - Green "ERP" badge with FortexaERP logo next to Status column for synced entries
 - **Sync History Log** - Dialog with full audit trail: date, reference, lines, amount, status (success/failed), user. Accessible from "View History" button in config panel
+- **Auto-Sync on Payroll Approve/Pay** - Configurable toggle in ERP config panel. When enabled, JEs auto-sent to FortexaERP on payroll approve or pay. Failed syncs logged silently.
+- **SAP Business One & Oracle NetSuite logos** - Custom favicons on integration cards (/sap-logo.png, /oracle-logo.png)
+
+### Company Configuration (Updated - Feb 2026)
+- **Company ID field** - Read-only, monospace, displayed at top of General tab for easy identification
 
 ### Payroll System (Complete)
 - Full payroll calculation with DR tax compliance (SFS, AFP, ISR)
