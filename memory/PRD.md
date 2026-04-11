@@ -70,6 +70,13 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - **Login Tracking** - Auth routes now track `last_login` on users and `last_activity` on companies for accurate monitoring
 - **Actividad Column** - Shows last activity date + red/amber inactivity badges (e.g. "81d") in companies table
 
+### Super Admin Table Improvements (Feb 2026)
+- **USD Pricing** - All prices in USD: Basico $5, Pro $10, Enterprise $20, $1.50/employee
+- **Monthly Billing Column** - Calculated: base plan + (active_employees × $1.50) + (extra_users × extra_user_cost)
+- **New Columns** - Activation date, Next payment, Payment method (Stripe/PayPal/Tarjeta/Transferencia/Manual), Active employees, Contact person (name + email)
+- **Customizable Columns** - "Columnas" dropdown to show/hide any column, saved to localStorage
+- **Drill-down Dialog** - Click company row to see all registered users (name, email, role, last login) and employees (name, cédula, position, department, status)
+
 ### KPI Drill-Down (Complete)
 - Clickable KPI cards across 5 pages (Accounting, Expenses, GeoLocations, Attendance, Loans)
 
