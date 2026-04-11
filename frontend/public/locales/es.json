@@ -587,7 +587,12 @@
     "fortexarhEnterprise": "FortexaRH Enterprise",
     "avGeorgeWashington503": "Av. George Washington #503, Gazcue",
     "santoDomingoDistritoNacional": "Santo Domingo, Distrito Nacional",
-    "santoDomingoDn": "Santo Domingo, D.N."
+    "santoDomingoDn": "Santo Domingo, D.N.",
+    "accountantDropdown": {
+      "commission": "Comisión por gestión de nómina",
+      "multiClient": "Multi-Cliente",
+      "dashboard": "Panel centralizado para todos tus clientes"
+    }
   },
   "auth": {
     "login": {
@@ -4244,7 +4249,19 @@
       "disconnect": "Desconectar",
       "comingSoon": "Próximamente",
       "fortexaerp": {
-        "desc": "Sincronización nativa completa con el ecosistema Fortexa."
+        "desc": "Sincronización nativa completa con el ecosistema Fortexa.",
+        "sync": "Sincronizar",
+        "configure": "Configurar",
+        "configured": "Configurado",
+        "apiUrl": "URL del API",
+        "email": "Email",
+        "password": "Contraseña",
+        "companyId": "ID de Empresa",
+        "testConnection": "Probar Conexión",
+        "saveConfig": "Guardar Configuración",
+        "syncJe": "Sincronizar Asientos",
+        "lastSync": "Última sincronización",
+        "connectedTo": "Conectado a"
       },
       "quickbooks": {
         "desc": "Exporta nómina y asientos contables automáticamente a QBO."
@@ -4254,6 +4271,15 @@
       },
       "oracle": {
         "desc": "Conectividad en la nube para gestión financiera avanzada."
+      },
+      "qbd": {
+        "desc": "Sincronización con QuickBooks Desktop vía Web Connector, IIF o CSV manual.",
+        "webConnector": "Web Connector",
+        "webConnectorDesc": "Sincronización automática",
+        "iif": "Exportar IIF",
+        "iifDesc": "Archivo de importación directa",
+        "csv": "CSV Manual",
+        "csvDesc": "Exportar datos en CSV"
       }
     },
     "messages": {

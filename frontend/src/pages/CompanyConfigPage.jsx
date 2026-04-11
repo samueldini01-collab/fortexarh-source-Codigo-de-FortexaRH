@@ -22,7 +22,7 @@ import {
   Save, Upload, Trash2, Sun, Moon, Monitor, Check, AlertCircle,
   Mail, MessageSquare, Smartphone, Users, Globe, Twitter, 
   Facebook, Linkedin, Instagram, RefreshCw, ExternalLink, Loader2,
-  Wand2, ArrowRight, Info
+  Wand2, ArrowRight, Info, Download, FileSpreadsheet, Settings, Wifi
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -62,10 +62,11 @@ const getThemes = (t) => [
 
 // Integration descriptions will use translations inside component
 const INTEGRATIONS = [
-  { id: "fortexaerp", name: "FortexaERP", descKey: "companyConfig.integrations.fortexaerp.desc", icon: "🏢", logo: null, connected: false, type: "mock" },
+  { id: "fortexaerp", name: "FortexaERP", descKey: "companyConfig.integrations.fortexaerp.desc", icon: null, logo: null, connected: false, type: "erp" },
   { id: "quickbooks", name: "QuickBooks Online", descKey: "companyConfig.integrations.quickbooks.desc", icon: null, logo: "/quickbooks-logo.jpg", connected: false, type: "oauth" },
-  { id: "sap", name: "SAP Business One", descKey: "companyConfig.integrations.sap.desc", icon: "🔷", logo: null, connected: false, type: "mock" },
-  { id: "oracle", name: "Oracle NetSuite", descKey: "companyConfig.integrations.oracle.desc", icon: "🌐", logo: null, connected: false, type: "mock" },
+  { id: "quickbooks_desktop", name: "QuickBooks Desktop", descKey: "companyConfig.integrations.qbd.desc", icon: null, logo: "/quickbooks-logo.jpg", connected: false, type: "desktop" },
+  { id: "sap", name: "SAP Business One", descKey: "companyConfig.integrations.sap.desc", icon: null, logo: null, connected: false, type: "mock" },
+  { id: "oracle", name: "Oracle NetSuite", descKey: "companyConfig.integrations.oracle.desc", icon: null, logo: null, connected: false, type: "mock" },
 ];
 
 export default function CompanyConfigPage() {
@@ -139,6 +140,14 @@ export default function CompanyConfigPage() {
   const [autoMatching, setAutoMatching] = useState(false);
   const [localAccounts, setLocalAccounts] = useState([]);
   
+  // FortexaERP config
+  const [erpConfig, setErpConfig] = useState({ api_url: "https://fortexaerp.com", email: "", password: "", company_id: "" });
+  const [erpConfigured, setErpConfigured] = useState(false);
+  const [erpCompanyName, setErpCompanyName] = useState("");
+  const [erpLastSync, setErpLastSync] = useState(null);
+  const [showErpConfig, setShowErpConfig] = useState(false);
+  const [erpTesting, setErpTesting] = useState(false);
+  const [erpSaving, setErpSaving] = useState(false);
   // Audit log
   const [auditLog, setAuditLog] = useState([]);
   
@@ -164,7 +173,47 @@ export default function CompanyConfigPage() {
     }
   }, [getAuthHeaders]);
 
-  const fetchCompanyData = useCallback(async () => {
+  // Fetch FortexaERP config
+  const fetchErpConfig = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API}/fortexaerp/config`, { headers: getAuthHeaders(), withCredentials: true });
+      if (res.data.configured) {
+        setErpConfigured(true);
+        setErpConfig(prev => ({ ...prev, api_url: res.data.api_url || prev.api_url, email: res.data.email || "", company_id: res.data.company_id || "" }));
+        setErpCompanyName(res.data.company_name || "");
+        setErpLastSync(res.data.last_sync || null);
+        setIntegrations(prev => prev.map(i => i.id === "fortexaerp" ? { ...i, connected: true, companyName: res.data.company_name } : i));
+      }
+    } catch (e) { /* silently */ }
+  }, [getAuthHeaders]);
+
+  const handleErpTestConnection = async () => {
+    setErpTesting(true);
+    try {
+      const res = await axios.post(`${API}/fortexaerp/test-connection`, {}, { headers: getAuthHeaders(), withCredentials: true });
+      if (res.data.ok) {
+        toast.success(res.data.company_name ? `Conexión exitosa: ${res.data.company_name}` : "Conexión exitosa con FortexaERP");
+        if (res.data.company_name) {
+          setErpCompanyName(res.data.company_name);
+          setErpConfigured(true);
+          setIntegrations(prev => prev.map(i => i.id === "fortexaerp" ? { ...i, connected: true, companyName: res.data.company_name } : i));
+        }
+      }
+    } catch (e) {
+      toast.error(e.response?.data?.detail || "Error al conectar con FortexaERP");
+    } finally { setErpTesting(false); }
+  };
+
+  const handleErpSaveConfig = async () => {
+    setErpSaving(true);
+    try {
+      await axios.put(`${API}/fortexaerp/config`, erpConfig, { headers: getAuthHeaders(), withCredentials: true });
+      toast.success("Configuración de FortexaERP guardada");
+      setErpConfigured(true);
+    } catch (e) {
+      toast.error(e.response?.data?.detail || "Error al guardar configuración");
+    } finally { setErpSaving(false); }
+  };  const fetchCompanyData = useCallback(async () => {
     setLoading(true);
     setFetchError(false);
     try {
@@ -180,8 +229,9 @@ export default function CompanyConfigPage() {
         }
       }
       
-      // Fetch QuickBooks status in parallel
+      // Fetch QuickBooks status and FortexaERP config in parallel
       fetchQuickbooksStatus();
+      fetchErpConfig();
       
       const response = await axios.get(`${API}/company/settings`, {
         headers: getAuthHeaders(),
@@ -214,7 +264,7 @@ export default function CompanyConfigPage() {
     } finally {
       setLoading(false);
     }
-  }, [getAuthHeaders, fetchQuickbooksStatus]);
+  }, [getAuthHeaders, fetchQuickbooksStatus, fetchErpConfig]);
 
   useEffect(() => {
     fetchCompanyData();
@@ -952,73 +1002,222 @@ export default function CompanyConfigPage() {
     </Card>
   );
 
-  const renderIntegrationsTab = () => (
+  const renderIntegrationsTab = () => {
+    const renderIntegrationCard = (integration) => {
+      // Skip QBD and FortexaERP - they have special renders below
+      if (integration.id === "quickbooks_desktop" || integration.id === "fortexaerp") return null;
+
+      return (
+        <div key={integration.id} data-testid={`integration-card-${integration.id}`} className={`flex items-center justify-between p-4 rounded-lg border ${integration.connected ? 'bg-emerald-50 border-emerald-200' : 'bg-white'}`}>
+          <div className="flex items-center gap-3">
+            <div className={`w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden ${integration.connected ? 'bg-emerald-100' : 'bg-slate-100'}`}>
+              {integration.logo ? (
+                <img src={integration.logo} alt={integration.name} className="w-full h-full object-contain p-1" />
+              ) : (
+                <span className="text-2xl">{integration.icon}</span>
+              )}
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h4 className="font-medium">{integration.name}</h4>
+                {integration.id === "quickbooks" && integration.type === "oauth" && (
+                  <Badge variant="secondary" className="text-xs">{t('companyConfig.oauth20')}</Badge>
+                )}
+                {integration.type === "mock" && (
+                  <Badge variant="outline" className="text-xs text-amber-600">{t('companyConfig.proximamente')}</Badge>
+                )}
+              </div>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{integration.descKey ? t(integration.descKey) : integration.description}</p>
+              {integration.connected && integration.companyName && (
+                <p className="text-xs text-emerald-600 mt-1">
+                  ✓ Conectado a: {integration.companyName}
+                </p>
+              )}
+              {integration.id === "quickbooks" && !integration.connected && integration.configured === false && (
+                <p className="text-xs text-amber-600 mt-1">
+                  {t('companyConfig.qbNotConfigured', 'Configure las credenciales de QuickBooks en las variables de entorno')}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {integration.connected && integration.id === "quickbooks" && (
+              <Button variant="ghost" size="sm" onClick={() => window.open("https://app.qbo.intuit.com", "_blank")}>
+                <ExternalLink className="w-4 h-4" />
+              </Button>
+            )}
+            <Button 
+              variant={integration.connected ? "outline" : "default"}
+              onClick={() => connectIntegration(integration.id)}
+              className={integration.connected ? "text-emerald-600 border-emerald-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200" : ""}
+              disabled={integration.id === "quickbooks" && quickbooksLoading}
+            >
+              {integration.id === "quickbooks" && quickbooksLoading ? (
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t('companyConfig.procesando')}</>
+              ) : integration.connected ? (
+                <><Check className="w-4 h-4 mr-2" />{t('companyConfig.desconectar')}</>
+              ) : (
+                "Conectar"
+              )}
+            </Button>
+          </div>
+        </div>
+      );
+    };
+
+    return (
     <Card className="border-l-4 border-l-cyan-500">
       <CardHeader>
         <CardTitle>{t('companyConfig.integraciones')}</CardTitle>
         <CardDescription>{t('companyConfig.conectaFortexarhConTus')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {integrations.map(integration => (
-          <div key={integration.id} className={`flex items-center justify-between p-4 rounded-lg border ${integration.connected ? 'bg-emerald-50 border-emerald-200' : 'bg-white'}`}>
+        {/* FortexaERP - Special card with config panel */}
+        <div data-testid="integration-card-fortexaerp" className={`rounded-lg border ${erpConfigured ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-slate-200'}`}>
+          <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
-              <div className={`w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden ${integration.connected ? 'bg-emerald-100' : 'bg-slate-100'}`}>
-                {integration.logo ? (
-                  <img src={integration.logo} alt={integration.name} className="w-full h-full object-contain p-1" />
-                ) : (
-                  <span className="text-2xl">{integration.icon}</span>
-                )}
+              <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${erpConfigured ? 'bg-emerald-100' : 'bg-blue-50'}`}>
+                <Building2 className={`w-6 h-6 ${erpConfigured ? 'text-emerald-600' : 'text-blue-600'}`} />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h4 className="font-medium">{integration.name}</h4>
-                  {integration.id === "quickbooks" && integration.type === "oauth" && (
-                    <Badge variant="secondary" className="text-xs">{t('companyConfig.oauth20')}</Badge>
-                  )}
-                  {integration.type === "mock" && (
-                    <Badge variant="outline" className="text-xs text-amber-600">{t('companyConfig.proximamente')}</Badge>
-                  )}
+                  <h4 className="font-medium">FortexaERP</h4>
+                  <Badge variant="secondary" className="text-xs">API REST</Badge>
                 </div>
-                <p className="text-sm text-slate-500 dark:text-slate-400">{integration.descKey ? t(integration.descKey) : integration.description}</p>
-                {integration.connected && integration.companyName && (
-                  <p className="text-xs text-emerald-600 mt-1">
-                    ✓ Conectado a: {integration.companyName}
-                  </p>
+                <p className="text-sm text-slate-500">{t('companyConfig.integrations.fortexaerp.desc')}</p>
+                {erpConfigured && erpCompanyName && (
+                  <p className="text-xs text-emerald-600 mt-1">✓ {t('companyConfig.integrations.fortexaerp.connectedTo')}: {erpCompanyName}</p>
                 )}
-                {integration.id === "quickbooks" && !integration.connected && integration.configured === false && (
-                  <p className="text-xs text-amber-600 mt-1">
-                    {t('companyConfig.qbNotConfigured', 'Configure las credenciales de QuickBooks en las variables de entorno')}
-                  </p>
+                {erpLastSync && (
+                  <p className="text-xs text-slate-400 mt-0.5">{t('companyConfig.integrations.fortexaerp.lastSync')}: {new Date(erpLastSync).toLocaleString()}</p>
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              {integration.connected && integration.id === "quickbooks" && (
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => window.open("https://app.qbo.intuit.com", "_blank")}
-                >
-                  <ExternalLink className="w-4 h-4" />
+            <Button
+              variant={showErpConfig ? "secondary" : erpConfigured ? "outline" : "default"}
+              onClick={() => setShowErpConfig(!showErpConfig)}
+              data-testid="btn-erp-configure"
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              {erpConfigured ? t('companyConfig.integrations.fortexaerp.configured') : t('companyConfig.integrations.fortexaerp.configure')}
+            </Button>
+          </div>
+          {showErpConfig && (
+            <div className="px-4 pb-4 pt-0 border-t border-slate-200 space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3">
+                <div className="space-y-1">
+                  <Label className="text-xs">{t('companyConfig.integrations.fortexaerp.apiUrl')}</Label>
+                  <Input
+                    data-testid="erp-api-url"
+                    value={erpConfig.api_url}
+                    onChange={e => setErpConfig(p => ({...p, api_url: e.target.value}))}
+                    placeholder="https://fortexaerp.com"
+                    className="h-8 text-sm"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">{t('companyConfig.integrations.fortexaerp.companyId')}</Label>
+                  <Input
+                    data-testid="erp-company-id"
+                    value={erpConfig.company_id}
+                    onChange={e => setErpConfig(p => ({...p, company_id: e.target.value}))}
+                    placeholder="ID de empresa en FortexaERP"
+                    className="h-8 text-sm"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">{t('companyConfig.integrations.fortexaerp.email')}</Label>
+                  <Input
+                    data-testid="erp-email"
+                    value={erpConfig.email}
+                    onChange={e => setErpConfig(p => ({...p, email: e.target.value}))}
+                    placeholder="usuario@empresa.com"
+                    className="h-8 text-sm"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">{t('companyConfig.integrations.fortexaerp.password')}</Label>
+                  <Input
+                    data-testid="erp-password"
+                    type="password"
+                    value={erpConfig.password}
+                    onChange={e => setErpConfig(p => ({...p, password: e.target.value}))}
+                    placeholder="••••••••"
+                    className="h-8 text-sm"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center gap-2 pt-1">
+                <Button size="sm" variant="outline" onClick={handleErpTestConnection} disabled={erpTesting} data-testid="btn-erp-test">
+                  {erpTesting ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Wifi className="w-4 h-4 mr-1.5" />}
+                  {t('companyConfig.integrations.fortexaerp.testConnection')}
                 </Button>
-              )}
-              <Button 
-                variant={integration.connected ? "outline" : "default"}
-                onClick={() => connectIntegration(integration.id)}
-                className={integration.connected ? "text-emerald-600 border-emerald-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200" : ""}
-                disabled={integration.id === "quickbooks" && quickbooksLoading}
-              >
-                {integration.id === "quickbooks" && quickbooksLoading ? (
-                  <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t('companyConfig.procesando')}</>
-                ) : integration.connected ? (
-                  <><Check className="w-4 h-4 mr-2" />{t('companyConfig.desconectar')}</>
-                ) : (
-                  "Conectar"
-                )}
-              </Button>
+                <Button size="sm" onClick={handleErpSaveConfig} disabled={erpSaving} data-testid="btn-erp-save">
+                  {erpSaving ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Save className="w-4 h-4 mr-1.5" />}
+                  {t('companyConfig.integrations.fortexaerp.saveConfig')}
+                </Button>
+                <a href="https://fortexaerp.com/developer-docs" target="_blank" rel="noreferrer" className="ml-auto">
+                  <Button size="sm" variant="ghost">
+                    <ExternalLink className="w-4 h-4 mr-1.5" />Docs
+                  </Button>
+                </a>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Standard integration cards (QBO, SAP, Oracle) */}
+        {integrations.filter(i => i.id !== "quickbooks_desktop" && i.id !== "fortexaerp").map(renderIntegrationCard)}
+        
+        {/* QuickBooks Desktop - Special card with 3 methods */}
+        <div data-testid="integration-card-qbd" className="rounded-lg border bg-white border-slate-200">
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden bg-slate-100">
+                <img src="/quickbooks-logo.jpg" alt="QuickBooks Desktop" className="w-full h-full object-contain p-1" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h4 className="font-medium">QuickBooks Desktop</h4>
+                  <Badge variant="secondary" className="text-xs">Desktop</Badge>
+                </div>
+                <p className="text-sm text-slate-500">{t('companyConfig.integrations.qbd.desc')}</p>
+              </div>
             </div>
           </div>
-        ))}
+          <div className="px-4 pb-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="flex items-center gap-3 p-3 rounded-lg border border-amber-200 bg-amber-50/50">
+              <div className="w-9 h-9 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+                <Wifi className="w-4 h-4 text-amber-700" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-slate-800">{t('companyConfig.integrations.qbd.webConnector')}</p>
+                <p className="text-xs text-slate-500">{t('companyConfig.integrations.qbd.webConnectorDesc')}</p>
+                <Badge variant="outline" className="text-[10px] mt-1 text-amber-600">{t('companyConfig.proximamente')}</Badge>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-3 rounded-lg border border-emerald-200 bg-emerald-50/50">
+              <div className="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                <Download className="w-4 h-4 text-emerald-700" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-slate-800">{t('companyConfig.integrations.qbd.iif')}</p>
+                <p className="text-xs text-slate-500">{t('companyConfig.integrations.qbd.iifDesc')}</p>
+                <Badge variant="default" className="text-[10px] mt-1 bg-emerald-600">Disponible</Badge>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50/50">
+              <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
+                <FileSpreadsheet className="w-4 h-4 text-slate-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-slate-800">{t('companyConfig.integrations.qbd.csv')}</p>
+                <p className="text-xs text-slate-500">{t('companyConfig.integrations.qbd.csvDesc')}</p>
+                <Badge variant="outline" className="text-[10px] mt-1 text-amber-600">{t('companyConfig.proximamente')}</Badge>
+              </div>
+            </div>
+          </div>
+        </div>
         
         {/* QuickBooks Account Mapping */}
         {integrations.find(i => i.id === "quickbooks")?.connected && (
@@ -1181,7 +1380,8 @@ export default function CompanyConfigPage() {
         </div>
       </CardContent>
     </Card>
-  );
+    );
+  };
 
   const renderAuditTab = () => (
     <Card className="border-l-4 border-l-slate-500">

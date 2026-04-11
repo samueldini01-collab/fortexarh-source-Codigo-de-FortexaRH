@@ -587,7 +587,12 @@
     "fortexarhEnterprise": "FortexaRH Enterprise",
     "avGeorgeWashington503": "Av. George Washington #503, Gazcue",
     "santoDomingoDistritoNacional": "Santo Domingo, Distrito Nacional",
-    "santoDomingoDn": "Santo Domingo, D.N."
+    "santoDomingoDn": "Santo Domingo, D.N.",
+    "accountantDropdown": {
+      "commission": "Commission pour la gestion de la paie",
+      "multiClient": "Multi-Client",
+      "dashboard": "Tableau de bord centralisé pour tous vos clients"
+    }
   },
   "auth": {
     "login": {
@@ -4212,7 +4217,19 @@
       "disconnect": "Déconnecter",
       "comingSoon": "Bientôt Disponible",
       "fortexaerp": {
-        "desc": "Synchronisation native complète avec l'écosystème Fortexa."
+        "desc": "Synchronisation native complète avec l'écosystème Fortexa.",
+        "sync": "Synchroniser",
+        "configure": "Configurer",
+        "configured": "Configuré",
+        "apiUrl": "URL de l'API",
+        "email": "Email",
+        "password": "Mot de passe",
+        "companyId": "ID de l'entreprise",
+        "testConnection": "Tester la connexion",
+        "saveConfig": "Enregistrer la configuration",
+        "syncJe": "Synchroniser les écritures",
+        "lastSync": "Dernière synchronisation",
+        "connectedTo": "Connecté à"
       },
       "quickbooks": {
         "desc": "Exportez automatiquement la paie et les écritures comptables vers QBO."
@@ -4222,6 +4239,15 @@
       },
       "oracle": {
         "desc": "Connectivité cloud pour la gestion financière avancée."
+      },
+      "qbd": {
+        "desc": "Synchronisation avec QuickBooks Desktop via Web Connector, IIF ou CSV manuel.",
+        "webConnector": "Web Connector",
+        "webConnectorDesc": "Synchronisation automatique",
+        "iif": "Exporter IIF",
+        "iifDesc": "Fichier d'importation directe",
+        "csv": "CSV Manuel",
+        "csvDesc": "Exporter les données en CSV"
       }
     },
     "messages": {

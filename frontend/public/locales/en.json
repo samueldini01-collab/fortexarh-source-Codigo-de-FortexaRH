@@ -588,7 +588,12 @@
     "fortexarhEnterprise": "FortexaRH Enterprise",
     "avGeorgeWashington503": "Av. George Washington #503, Gazcue",
     "santoDomingoDistritoNacional": "Santo Domingo, Distrito Nacional",
-    "santoDomingoDn": "Santo Domingo, D.N."
+    "santoDomingoDn": "Santo Domingo, D.N.",
+    "accountantDropdown": {
+      "commission": "Commission for payroll management",
+      "multiClient": "Multi-Client",
+      "dashboard": "Centralized dashboard for all your clients"
+    }
   },
   "auth": {
     "login": {
@@ -4242,7 +4247,19 @@
       "disconnect": "Disconnect",
       "comingSoon": "Coming Soon",
       "fortexaerp": {
-        "desc": "Complete native synchronization with the Fortexa ecosystem."
+        "desc": "Complete native synchronization with the Fortexa ecosystem.",
+        "sync": "Sync",
+        "configure": "Configure",
+        "configured": "Configured",
+        "apiUrl": "API URL",
+        "email": "Email",
+        "password": "Password",
+        "companyId": "Company ID",
+        "testConnection": "Test Connection",
+        "saveConfig": "Save Configuration",
+        "syncJe": "Sync Journal Entries",
+        "lastSync": "Last sync",
+        "connectedTo": "Connected to"
       },
       "quickbooks": {
         "desc": "Automatically export payroll and journal entries to QBO."
@@ -4252,6 +4269,15 @@
       },
       "oracle": {
         "desc": "Cloud connectivity for advanced financial management."
+      },
+      "qbd": {
+        "desc": "Sync with QuickBooks Desktop via Web Connector, IIF or manual CSV.",
+        "webConnector": "Web Connector",
+        "webConnectorDesc": "Automatic sync",
+        "iif": "Export IIF",
+        "iifDesc": "Direct import file",
+        "csv": "CSV Manual",
+        "csvDesc": "Export data as CSV"
       }
     },
     "messages": {
