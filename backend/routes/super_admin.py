@@ -70,6 +70,7 @@ async def list_companies(admin=Depends(get_super_admin)):
     for c in companies:
         cid = c.get("company_id")
         emp_count = await db.employees.count_documents({"company_id": cid})
+        active_emp_count = await db.employees.count_documents({"company_id": cid, "status": {"$nin": ["inactive", "terminated", "fired"]}})
         user_count = await db.users.count_documents({"company_id": cid})
         last_login = await db.audit_log.find_one(
             {"company_id": cid, "action": {"$regex": "login"}},
@@ -77,20 +78,45 @@ async def list_companies(admin=Depends(get_super_admin)):
             sort=[("timestamp", -1)],
         )
 
+        # Contact person: first admin user
+        contact = await db.users.find_one(
+            {"company_id": cid, "role": {"$in": ["admin", "super_admin", "owner"]}},
+            {"_id": 0, "name": 1, "email": 1},
+        )
+        if not contact:
+            contact = await db.users.find_one(
+                {"company_id": cid},
+                {"_id": 0, "name": 1, "email": 1},
+            )
+
         # Derive effective status
         explicit_status = c.get("status")
         sub = sub_map.get(cid, {})
         sub_status = sub.get("status")
         plan = c.get("subscription_plan") or sub.get("plan_id") or "free"
-        plan_info = PLAN_PRICES.get(plan, {"name": plan, "monthly": 0})
-        monthly = sub.get("total_monthly") or plan_info.get("monthly", 0)
+        plan_info = PLAN_PRICES.get(plan, {"name": plan, "monthly": 0, "per_employee": 0, "included_users": 99, "extra_user": 0})
+        base_monthly = plan_info.get("monthly", 0)
+
+        # Calculate monthly billing: base + (active_employees * per_employee) + extra_users
+        per_emp = plan_info.get("per_employee", 0)
+        included_users = plan_info.get("included_users", 99)
+        extra_user_cost = plan_info.get("extra_user", 0)
+        extra_users = max(0, user_count - included_users)
+        monthly_billing = round(base_monthly + (active_emp_count * per_emp) + (extra_users * extra_user_cost), 2)
+
+        # Payment method
+        payment_method = c.get("payment_method") or sub.get("payment_method") or ""
+
+        # Activation & next payment dates
+        activation_date = c.get("activated_at") or sub.get("start_date") or c.get("created_at")
+        next_payment_date = sub.get("next_payment_date") or sub.get("current_period_end")
 
         # Active if: explicitly active, or has active subscription, or has users+employees and plan != free
         if explicit_status == "active":
             effective_status = "active"
         elif sub_status in ("active", "trialing"):
             effective_status = "active"
-        elif user_count > 0 and (emp_count > 0 or plan not in ("free", "trial")):
+        elif user_count > 0 and (active_emp_count > 0 or plan not in ("free", "trial")):
             effective_status = "active"
         elif explicit_status == "inactive":
             effective_status = "inactive"
@@ -112,10 +138,19 @@ async def list_companies(admin=Depends(get_super_admin)):
             "status": effective_status,
             "subscription_plan": plan,
             "plan_name": plan_info.get("name", plan),
-            "monthly_price": monthly,
+            "monthly_price": base_monthly,
+            "monthly_billing": monthly_billing,
+            "per_employee_rate": per_emp,
+            "extra_users": extra_users,
+            "payment_method": payment_method,
+            "activation_date": activation_date,
+            "next_payment_date": next_payment_date,
             "sub_status": sub_status,
             "employee_count": emp_count,
+            "active_employee_count": active_emp_count,
             "user_count": user_count,
+            "contact_name": (contact or {}).get("name", ""),
+            "contact_email": (contact or {}).get("email", ""),
             "last_login": last_login.get("timestamp") if last_login else None,
             "last_activity": last_activity_str,
             "days_inactive": days_inactive,
@@ -157,6 +192,21 @@ async def get_inactivity_alerts(admin=Depends(get_super_admin)):
             })
     alerts.sort(key=lambda x: x["days_inactive"], reverse=True)
     return alerts
+
+
+
+@router.get("/companies/{company_id}/users")
+async def get_company_users(company_id: str, admin=Depends(get_super_admin)):
+    """Drill-down: get all users for a specific company."""
+    users = await db.users.find(
+        {"company_id": company_id},
+        {"_id": 0, "password": 0, "password_hash": 0},
+    ).to_list(200)
+    employees = await db.employees.find(
+        {"company_id": company_id},
+        {"_id": 0, "employee_id": 1, "first_name": 1, "last_name": 1, "position": 1, "department": 1, "status": 1, "email": 1, "cedula": 1, "hire_date": 1},
+    ).to_list(500)
+    return {"users": users, "employees": employees}
 
 
 @router.get("/stats")
@@ -212,15 +262,15 @@ async def get_platform_stats(admin=Depends(get_super_admin)):
 # ---------- Revenue Metrics ----------
 
 PLAN_PRICES = {
-    "basico":     {"name": "FortexaRH Basico",     "monthly": 2500,  "type": "direct"},
-    "pro":        {"name": "FortexaRH Pro",         "monthly": 5000,  "type": "direct"},
-    "enterprise": {"name": "FortexaRH Enterprise",  "monthly": 12000, "type": "direct"},
-    "partner_basico":    {"name": "Partner Basico",    "monthly": 1800, "type": "partner"},
-    "partner_pro":       {"name": "Partner Pro",       "monthly": 3500, "type": "partner"},
-    "partner_enterprise": {"name": "Partner Enterprise", "monthly": 9000, "type": "partner"},
-    "trial":      {"name": "Prueba Gratuita",       "monthly": 0,     "type": "trial"},
-    "free":       {"name": "Gratuito",              "monthly": 0,     "type": "free"},
-    "partner":    {"name": "Partner (legacy)",      "monthly": 0,     "type": "partner"},
+    "basico":     {"name": "FortexaRH Basico",     "monthly": 5,    "per_employee": 1.50, "included_users": 3, "extra_user": 2, "type": "direct"},
+    "pro":        {"name": "FortexaRH Pro",         "monthly": 10,   "per_employee": 1.50, "included_users": 5, "extra_user": 2, "type": "direct"},
+    "enterprise": {"name": "FortexaRH Enterprise",  "monthly": 20,   "per_employee": 1.50, "included_users": 7, "extra_user": 2, "type": "direct"},
+    "partner_basico":    {"name": "Partner Basico",    "monthly": 3.50, "per_employee": 1.00, "included_users": 3, "extra_user": 1.50, "type": "partner"},
+    "partner_pro":       {"name": "Partner Pro",       "monthly": 7,    "per_employee": 1.00, "included_users": 5, "extra_user": 1.50, "type": "partner"},
+    "partner_enterprise": {"name": "Partner Enterprise", "monthly": 15, "per_employee": 1.00, "included_users": 7, "extra_user": 1.50, "type": "partner"},
+    "trial":      {"name": "Prueba Gratuita",       "monthly": 0,    "per_employee": 0, "included_users": 99, "extra_user": 0, "type": "trial"},
+    "free":       {"name": "Gratuito",              "monthly": 0,    "per_employee": 0, "included_users": 99, "extra_user": 0, "type": "free"},
+    "partner":    {"name": "Partner (legacy)",      "monthly": 0,    "per_employee": 0, "included_users": 99, "extra_user": 0, "type": "partner"},
 }
 
 

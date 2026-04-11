@@ -5,7 +5,8 @@ import {
   Building2, Users, DollarSign, Shield, LogOut, Search,
   CheckCircle, XCircle, Activity, CreditCard, Banknote,
   Gift, ArrowUpDown, Eye, Power, PowerOff, Clock,
-  TrendingUp, ChevronDown, RefreshCw, AlertTriangle
+  TrendingUp, ChevronDown, RefreshCw, AlertTriangle,
+  Mail, Phone, Settings2, Columns3, ChevronRight, Loader2, Receipt
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
 import { Button } from "../components/ui/button";
@@ -18,6 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "../components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Toaster } from "../components/ui/sonner";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api/super-admin";
 
@@ -121,10 +123,25 @@ function getPlanBadge(plan, monthlyPrice) {
   return (
     <div className="flex flex-col gap-0.5">
       <Badge className={`${p.color} border-0 text-xs`}>{p.label}</Badge>
-      {monthlyPrice > 0 && <span className="text-[10px] text-slate-500">RD${monthlyPrice.toLocaleString()}/mes</span>}
+      {monthlyPrice > 0 && <span className="text-[10px] text-slate-500">${monthlyPrice}/mes</span>}
     </div>
   );
 }
+
+const ALL_COLUMNS = [
+  { key: "name", label: "Empresa", default: true, locked: true },
+  { key: "status", label: "Estado", default: true },
+  { key: "plan", label: "Plan", default: true },
+  { key: "monthly_billing", label: "Facturación", default: true },
+  { key: "active_employees", label: "Empl. Activos", default: true },
+  { key: "users", label: "Usuarios", default: true },
+  { key: "contact", label: "Contacto", default: true },
+  { key: "payment_method", label: "Método Pago", default: true },
+  { key: "activation_date", label: "F. Activación", default: false },
+  { key: "next_payment", label: "Próx. Pago", default: false },
+  { key: "activity", label: "Actividad", default: true },
+  { key: "actions", label: "Acciones", default: true, locked: true },
+];
 
 function SuperAdminDashboard({ token, onLogout }) {
   const [companies, setCompanies] = useState([]);
@@ -143,6 +160,14 @@ function SuperAdminDashboard({ token, onLogout }) {
   const [syncLoading, setSyncLoading] = useState(false);
   const [alerts, setAlerts] = useState([]);
   const [alertsLoading, setAlertsLoading] = useState(false);
+  const [visibleCols, setVisibleCols] = useState(() => {
+    const saved = localStorage.getItem("sa_columns");
+    if (saved) try { return JSON.parse(saved); } catch {}
+    return ALL_COLUMNS.filter(c => c.default).map(c => c.key);
+  });
+  const [drillCompany, setDrillCompany] = useState(null);
+  const [drillData, setDrillData] = useState(null);
+  const [drillLoading, setDrillLoading] = useState(false);
 
   const headers = { Authorization: `Bearer ${token}` };
 
@@ -228,6 +253,32 @@ function SuperAdminDashboard({ token, onLogout }) {
       setSyncLoading(false);
     }
   };
+
+  const handleDrillDown = async (company) => {
+    setDrillCompany(company);
+    setDrillLoading(true);
+    setDrillData(null);
+    try {
+      const res = await axios.get(`${API}/companies/${company.company_id}/users`, { headers });
+      setDrillData(res.data);
+    } catch (err) {
+      toast.error("Error cargando datos de la empresa");
+    } finally {
+      setDrillLoading(false);
+    }
+  };
+
+  const toggleColumn = (key) => {
+    const col = ALL_COLUMNS.find(c => c.key === key);
+    if (col?.locked) return;
+    setVisibleCols(prev => {
+      const next = prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key];
+      localStorage.setItem("sa_columns", JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const isColVisible = (key) => visibleCols.includes(key);
 
   const filtered = companies.filter(c => {
     const matchSearch = !search || (c.name || "").toLowerCase().includes(search.toLowerCase()) || (c.rnc || "").includes(search);
@@ -333,73 +384,133 @@ function SuperAdminDashboard({ token, onLogout }) {
               <Badge variant="outline" className="text-slate-400 border-slate-700">
                 {filtered.length} de {companies.length}
               </Badge>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="sm" variant="ghost" className="text-slate-400 hover:text-white" data-testid="btn-column-config">
+                    <Columns3 className="w-4 h-4 mr-1" /> Columnas
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-slate-900 border-slate-700">
+                  {ALL_COLUMNS.map(col => (
+                    <DropdownMenuCheckboxItem
+                      key={col.key}
+                      checked={visibleCols.includes(col.key)}
+                      disabled={col.locked}
+                      onCheckedChange={() => toggleColumn(col.key)}
+                      className="text-slate-300"
+                    >
+                      {col.label}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
-            <Card className="bg-slate-900 border-slate-800 overflow-hidden">
+            <Card className="bg-slate-900 border-slate-800 overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow className="border-slate-800 hover:bg-slate-800/50">
-                    <TableHead className="text-slate-400">Empresa</TableHead>
-                    <TableHead className="text-slate-400">RNC</TableHead>
-                    <TableHead className="text-slate-400">Estado</TableHead>
-                    <TableHead className="text-slate-400">Modalidad</TableHead>
-                    <TableHead className="text-slate-400 text-center">Emp.</TableHead>
-                    <TableHead className="text-slate-400 text-center">Users</TableHead>
-                    <TableHead className="text-slate-400">Actividad</TableHead>
-                    <TableHead className="text-slate-400 text-right">Acciones</TableHead>
+                    {isColVisible("name") && <TableHead className="text-slate-400">Empresa</TableHead>}
+                    {isColVisible("status") && <TableHead className="text-slate-400">Estado</TableHead>}
+                    {isColVisible("plan") && <TableHead className="text-slate-400">Plan</TableHead>}
+                    {isColVisible("monthly_billing") && <TableHead className="text-slate-400 text-right">Facturación</TableHead>}
+                    {isColVisible("active_employees") && <TableHead className="text-slate-400 text-center">Empl.</TableHead>}
+                    {isColVisible("users") && <TableHead className="text-slate-400 text-center">Users</TableHead>}
+                    {isColVisible("contact") && <TableHead className="text-slate-400">Contacto</TableHead>}
+                    {isColVisible("payment_method") && <TableHead className="text-slate-400">Método Pago</TableHead>}
+                    {isColVisible("activation_date") && <TableHead className="text-slate-400">F. Activación</TableHead>}
+                    {isColVisible("next_payment") && <TableHead className="text-slate-400">Próx. Pago</TableHead>}
+                    {isColVisible("activity") && <TableHead className="text-slate-400">Actividad</TableHead>}
+                    {isColVisible("actions") && <TableHead className="text-slate-400 text-right">Acciones</TableHead>}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {loading ? (
                     Array.from({ length: 5 }).map((_, i) => (
                       <TableRow key={i} className="border-slate-800">
-                        <TableCell colSpan={8}><div className="h-8 bg-slate-800 rounded animate-pulse" /></TableCell>
+                        <TableCell colSpan={visibleCols.length}><div className="h-8 bg-slate-800 rounded animate-pulse" /></TableCell>
                       </TableRow>
                     ))
                   ) : filtered.length === 0 ? (
                     <TableRow className="border-slate-800">
-                      <TableCell colSpan={8} className="text-center py-8 text-slate-500">No se encontraron empresas</TableCell>
+                      <TableCell colSpan={visibleCols.length} className="text-center py-8 text-slate-500">No se encontraron empresas</TableCell>
                     </TableRow>
                   ) : filtered.map(c => (
-                    <TableRow key={c.company_id} className="border-slate-800 hover:bg-slate-800/30">
-                      <TableCell className="font-medium text-white max-w-[200px] truncate">{c.name || c.company_id}</TableCell>
-                      <TableCell className="text-slate-400 font-mono text-sm">{c.rnc || "-"}</TableCell>
-                      <TableCell>
-                        {c.status === "active" ? (
-                          <Badge className="bg-emerald-500/20 text-emerald-400 border-0">Activa</Badge>
-                        ) : (
-                          <Badge className="bg-red-500/20 text-red-400 border-0">Inactiva</Badge>
-                        )}
-                      </TableCell>
-                      <TableCell>{getPlanBadge(c.subscription_plan || "free", c.monthly_price || 0)}</TableCell>
-                      <TableCell className="text-center text-slate-300">{c.employee_count}</TableCell>
-                      <TableCell className="text-center text-slate-300">{c.user_count}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-slate-400 text-sm">{(c.last_activity || c.created_at || "").split("T")[0]}</span>
-                          {c.days_inactive != null && c.days_inactive >= 30 && (
-                            <Badge className={`text-[10px] px-1.5 py-0 border-0 ${c.days_inactive >= 60 ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'}`}>
-                              {c.days_inactive}d
-                            </Badge>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex justify-end gap-1">
-                          <Button size="sm" variant="ghost" className="text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10" onClick={() => { setPlanDialog(c); setPlanForm({ plan_id: c.subscription_plan || "basico", custom_price: null }); }} data-testid={`btn-plan-${c.company_id}`}>
-                            <ArrowUpDown className="w-4 h-4 mr-1" /> Plan
-                          </Button>
+                    <TableRow key={c.company_id} className="border-slate-800 hover:bg-slate-800/30 cursor-pointer" onClick={() => handleDrillDown(c)}>
+                      {isColVisible("name") && (
+                        <TableCell className="font-medium text-white max-w-[200px]">
+                          <div className="flex items-center gap-1.5">
+                            <span className="truncate">{c.name || c.company_id}</span>
+                            <ChevronRight className="w-3.5 h-3.5 text-slate-600 flex-shrink-0" />
+                          </div>
+                          {c.rnc && <p className="text-[10px] text-slate-500 font-mono">{c.rnc}</p>}
+                        </TableCell>
+                      )}
+                      {isColVisible("status") && (
+                        <TableCell>
                           {c.status === "active" ? (
-                            <Button size="sm" variant="ghost" className="text-red-400 hover:text-red-300 hover:bg-red-500/10" onClick={() => setDeactivateDialog(c)} data-testid={`btn-deactivate-${c.company_id}`}>
-                              <PowerOff className="w-4 h-4 mr-1" /> Inactivar
-                            </Button>
+                            <Badge className="bg-emerald-500/20 text-emerald-400 border-0">Activa</Badge>
                           ) : (
-                            <Button size="sm" variant="ghost" className="text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10" onClick={() => setActivateDialog(c)} data-testid={`btn-activate-${c.company_id}`}>
-                              <Power className="w-4 h-4 mr-1" /> Activar
-                            </Button>
+                            <Badge className="bg-red-500/20 text-red-400 border-0">Inactiva</Badge>
                           )}
-                        </div>
-                      </TableCell>
+                        </TableCell>
+                      )}
+                      {isColVisible("plan") && <TableCell>{getPlanBadge(c.subscription_plan || "free", c.monthly_price || 0)}</TableCell>}
+                      {isColVisible("monthly_billing") && (
+                        <TableCell className="text-right">
+                          <span className="text-emerald-400 font-bold">${(c.monthly_billing || 0).toFixed(2)}</span>
+                          {c.monthly_billing > 0 && <p className="text-[10px] text-slate-500">/mes</p>}
+                        </TableCell>
+                      )}
+                      {isColVisible("active_employees") && <TableCell className="text-center text-slate-300">{c.active_employee_count || 0}</TableCell>}
+                      {isColVisible("users") && <TableCell className="text-center text-slate-300">{c.user_count}</TableCell>}
+                      {isColVisible("contact") && (
+                        <TableCell>
+                          {c.contact_name || c.contact_email ? (
+                            <div>
+                              {c.contact_name && <p className="text-sm text-slate-300">{c.contact_name}</p>}
+                              {c.contact_email && <p className="text-[10px] text-slate-500">{c.contact_email}</p>}
+                            </div>
+                          ) : <span className="text-slate-600">—</span>}
+                        </TableCell>
+                      )}
+                      {isColVisible("payment_method") && <TableCell>{getPaymentBadge(c.payment_method || "sin_definir")}</TableCell>}
+                      {isColVisible("activation_date") && (
+                        <TableCell className="text-sm text-slate-400">{c.activation_date ? c.activation_date.split("T")[0] : "—"}</TableCell>
+                      )}
+                      {isColVisible("next_payment") && (
+                        <TableCell className="text-sm text-slate-400">{c.next_payment_date ? c.next_payment_date.split("T")[0] : "—"}</TableCell>
+                      )}
+                      {isColVisible("activity") && (
+                        <TableCell>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-slate-400 text-sm">{(c.last_activity || c.created_at || "").split("T")[0]}</span>
+                            {c.days_inactive != null && c.days_inactive >= 30 && (
+                              <Badge className={`text-[10px] px-1.5 py-0 border-0 ${c.days_inactive >= 60 ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'}`}>
+                                {c.days_inactive}d
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                      )}
+                      {isColVisible("actions") && (
+                        <TableCell onClick={e => e.stopPropagation()}>
+                          <div className="flex justify-end gap-1">
+                            <Button size="sm" variant="ghost" className="text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10" onClick={() => { setPlanDialog(c); setPlanForm({ plan_id: c.subscription_plan || "basico", custom_price: null }); }} data-testid={`btn-plan-${c.company_id}`}>
+                              <ArrowUpDown className="w-4 h-4 mr-1" /> Plan
+                            </Button>
+                            {c.status === "active" ? (
+                              <Button size="sm" variant="ghost" className="text-red-400 hover:text-red-300 hover:bg-red-500/10" onClick={() => setDeactivateDialog(c)} data-testid={`btn-deactivate-${c.company_id}`}>
+                                <PowerOff className="w-4 h-4 mr-1" /> Inactivar
+                              </Button>
+                            ) : (
+                              <Button size="sm" variant="ghost" className="text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10" onClick={() => setActivateDialog(c)} data-testid={`btn-activate-${c.company_id}`}>
+                                <Power className="w-4 h-4 mr-1" /> Activar
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>
@@ -414,14 +525,14 @@ function SuperAdminDashboard({ token, onLogout }) {
               <Card className="bg-gradient-to-br from-emerald-900/40 to-slate-900 border-emerald-800">
                 <CardContent className="p-4">
                   <p className="text-xs text-emerald-400 uppercase tracking-wider">MRR</p>
-                  <p className="text-2xl font-bold text-emerald-300 mt-1">RD${(revenue.mrr || 0).toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-emerald-300 mt-1">${(revenue.mrr || 0).toLocaleString()}</p>
                   <p className="text-[10px] text-slate-500 mt-1">Monthly Recurring Revenue</p>
                 </CardContent>
               </Card>
               <Card className="bg-gradient-to-br from-sky-900/40 to-slate-900 border-sky-800">
                 <CardContent className="p-4">
                   <p className="text-xs text-sky-400 uppercase tracking-wider">ARR</p>
-                  <p className="text-2xl font-bold text-sky-300 mt-1">RD${(revenue.arr || 0).toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-sky-300 mt-1">${(revenue.arr || 0).toLocaleString()}</p>
                   <p className="text-[10px] text-slate-500 mt-1">Annual Recurring Revenue</p>
                 </CardContent>
               </Card>
@@ -429,7 +540,7 @@ function SuperAdminDashboard({ token, onLogout }) {
                 <CardContent className="p-4">
                   <p className="text-xs text-purple-400 uppercase tracking-wider">Partners</p>
                   <p className="text-2xl font-bold text-purple-300 mt-1">{revenue.partner_companies || 0}</p>
-                  <p className="text-[10px] text-slate-500 mt-1">MRR: RD${(revenue.partner_mrr || 0).toLocaleString()}</p>
+                  <p className="text-[10px] text-slate-500 mt-1">MRR: ${(revenue.partner_mrr || 0).toLocaleString()}</p>
                 </CardContent>
               </Card>
               <Card className={`bg-gradient-to-br ${(revenue.overdue_count || 0) > 0 ? 'from-red-900/40 border-red-800' : 'from-slate-800/40 border-slate-700'} to-slate-900`}>
@@ -458,7 +569,7 @@ function SuperAdminDashboard({ token, onLogout }) {
                       </div>
                       <div className="flex items-center gap-4">
                         <span className="text-sm text-slate-400">{val.count} empresas</span>
-                        <span className="text-sm font-medium text-emerald-400 w-28 text-right">RD${val.mrr.toLocaleString()}/mes</span>
+                        <span className="text-sm font-medium text-emerald-400 w-28 text-right">${val.mrr.toLocaleString()}/mes</span>
                       </div>
                     </div>
                   ))}
@@ -487,7 +598,7 @@ function SuperAdminDashboard({ token, onLogout }) {
                             <span className="text-sm font-medium text-white">{alert.company_name || alert.company_id}</span>
                             <Badge className="bg-red-500/20 text-red-400 border-0">{alert.days_overdue}d vencido</Badge>
                           </div>
-                          <p className="text-xs text-slate-400 mt-1">{alert.plan} - RD${(alert.monthly || 0).toLocaleString()}/mes</p>
+                          <p className="text-xs text-slate-400 mt-1">{alert.plan} - ${(alert.monthly || 0).toLocaleString()}/mes</p>
                         </div>
                       ))}
                     </div>
@@ -523,7 +634,7 @@ function SuperAdminDashboard({ token, onLogout }) {
                           <TableCell className="text-slate-300 text-sm">{(p.created_at || "").split("T")[0]}</TableCell>
                           <TableCell className="text-white text-sm">{p.company_name || p.company_id}</TableCell>
                           <TableCell>{getPaymentBadge(p.payment_method || "sin_definir")}</TableCell>
-                          <TableCell className="text-right text-emerald-400 font-mono">RD${(p.amount || 0).toLocaleString()}</TableCell>
+                          <TableCell className="text-right text-emerald-400 font-mono">${(p.amount || 0).toLocaleString()}</TableCell>
                           <TableCell className="text-slate-500 text-sm max-w-[200px] truncate">{p.notes || "-"}</TableCell>
                         </TableRow>
                       ))}
@@ -766,6 +877,94 @@ function SuperAdminDashboard({ token, onLogout }) {
               {actionLoading ? "Guardando..." : "Guardar Plan"}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Toaster position="top-right" richColors />
+
+      {/* Drill-down Dialog */}
+      <Dialog open={!!drillCompany} onOpenChange={() => setDrillCompany(null)}>
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto bg-slate-950 border-slate-800 text-white">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Building2 className="w-5 h-5 text-indigo-400" />
+              {drillCompany?.name || drillCompany?.company_id}
+            </DialogTitle>
+            <DialogDescription className="text-slate-400">
+              {drillCompany?.rnc && <span className="font-mono">RNC: {drillCompany.rnc} | </span>}
+              Plan: {drillCompany?.plan_name} | Facturación: ${(drillCompany?.monthly_billing || 0).toFixed(2)}/mes
+            </DialogDescription>
+          </DialogHeader>
+          {drillLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-6 h-6 animate-spin text-indigo-400" />
+            </div>
+          ) : drillData ? (
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-sm font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
+                  <Users className="w-4 h-4" /> Usuarios Registrados ({drillData.users?.length || 0})
+                </h3>
+                {drillData.users?.length > 0 ? (
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-slate-800 hover:bg-transparent">
+                        <TableHead className="text-slate-500">Nombre</TableHead>
+                        <TableHead className="text-slate-500">Email</TableHead>
+                        <TableHead className="text-slate-500">Rol</TableHead>
+                        <TableHead className="text-slate-500">Último Login</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {drillData.users.map((u, i) => (
+                        <TableRow key={i} className="border-slate-800/50" data-testid={`drill-user-${i}`}>
+                          <TableCell className="text-slate-300">{u.name || "—"}</TableCell>
+                          <TableCell><span className="text-indigo-400 text-sm">{u.email}</span></TableCell>
+                          <TableCell><Badge variant="outline" className="text-[10px] border-slate-700 text-slate-400">{u.role || "user"}</Badge></TableCell>
+                          <TableCell className="text-slate-500 text-sm">{u.last_login ? new Date(u.last_login).toLocaleDateString() : "—"}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                ) : <p className="text-sm text-slate-500 py-2">Sin usuarios registrados</p>}
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
+                  <Shield className="w-4 h-4" /> Empleados ({drillData.employees?.length || 0})
+                </h3>
+                {drillData.employees?.length > 0 ? (
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-slate-800 hover:bg-transparent">
+                        <TableHead className="text-slate-500">Nombre</TableHead>
+                        <TableHead className="text-slate-500">Cédula</TableHead>
+                        <TableHead className="text-slate-500">Posición</TableHead>
+                        <TableHead className="text-slate-500">Dept.</TableHead>
+                        <TableHead className="text-slate-500">Estado</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {drillData.employees.map((e, i) => (
+                        <TableRow key={i} className="border-slate-800/50" data-testid={`drill-emp-${i}`}>
+                          <TableCell className="text-slate-300">{e.first_name} {e.last_name}</TableCell>
+                          <TableCell className="text-slate-400 font-mono text-sm">{e.cedula || "—"}</TableCell>
+                          <TableCell className="text-slate-400 text-sm">{e.position || "—"}</TableCell>
+                          <TableCell className="text-slate-400 text-sm">{e.department || "—"}</TableCell>
+                          <TableCell>
+                            {e.status === "active" ? (
+                              <Badge className="bg-emerald-500/20 text-emerald-400 border-0 text-[10px]">Activo</Badge>
+                            ) : (
+                              <Badge className="bg-slate-500/20 text-slate-400 border-0 text-[10px]">{e.status || "—"}</Badge>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                ) : <p className="text-sm text-slate-500 py-2">Sin empleados registrados</p>}
+              </div>
+            </div>
+          ) : null}
         </DialogContent>
       </Dialog>
 

@@ -1,0 +1,126 @@
+{
+  "summary": "Super Admin Improvements fully verified. All new features working: USD pricing ($5/$10/$20), new columns (monthly_billing, active_employee_count, contact, payment_method, activation_date, next_payment_date, per_employee_rate, extra_users), column customization, drill-down endpoint. Fixed RD$ to $ in Revenue tab. Backend: 18/18 tests passed. Frontend: All UI components verified.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_super_admin_improvements.py",
+    "/app/test_reports/pytest/super_admin_improvements_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_super_admin_improvements.py",
+    "/app/frontend/src/pages/SuperAdminPage.jsx"
+  ],
+  "success_rate": {
+    "backend": "100% (18/18 tests passed)",
+    "frontend": "100% (all features verified)"
+  },
+  "test_credentials": {
+    "super_admin": "fortexa2026rd / FortexaAdmin2026!"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Super Admin Improvements at /admin fully functional. All prices now in USD (not RD$). FortexaRH Demo Corp shows $19.00/mes billing (Pro $10 + 6 employees × $1.50). Drill-down endpoint GET /api/super-admin/companies/{company_id}/users returns users and employees arrays. Column customization saves to localStorage key 'sa_columns'. Revenue tab MRR=$30, ARR=$360.",
+  "tests_executed": {
+    "backend": [
+      {"test": "GET /api/super-admin/companies returns monthly_billing", "status": "PASSED"},
+      {"test": "GET /api/super-admin/companies returns active_employee_count", "status": "PASSED"},
+      {"test": "GET /api/super-admin/companies returns contact_name and contact_email", "status": "PASSED"},
+      {"test": "GET /api/super-admin/companies returns payment_method", "status": "PASSED"},
+      {"test": "GET /api/super-admin/companies returns activation_date", "status": "PASSED"},
+      {"test": "GET /api/super-admin/companies returns next_payment_date", "status": "PASSED"},
+      {"test": "GET /api/super-admin/companies returns per_employee_rate", "status": "PASSED"},
+      {"test": "GET /api/super-admin/companies returns extra_users", "status": "PASSED"},
+      {"test": "Plan prices are USD: Basico=$5, Pro=$10, Enterprise=$20", "status": "PASSED"},
+      {"test": "Per employee rate is $1.50 USD", "status": "PASSED"},
+      {"test": "Monthly billing calculation: base + (active_employees × per_employee_rate) + (extra_users × extra_user_cost)", "status": "PASSED"},
+      {"test": "FortexaRH Demo Corp billing = $19.00 (Pro $10 + 6 × $1.50)", "status": "PASSED"},
+      {"test": "GET /api/super-admin/companies/{company_id}/users returns users and employees arrays", "status": "PASSED"},
+      {"test": "Users array includes name, email, role, last_login (excludes password)", "status": "PASSED"},
+      {"test": "Employees array includes first_name, last_name, position, department, status", "status": "PASSED"},
+      {"test": "Drill-down endpoint requires authentication (401)", "status": "PASSED"},
+      {"test": "Drill-down for nonexistent company returns empty arrays", "status": "PASSED"},
+      {"test": "Revenue MRR/ARR in USD", "status": "PASSED"}
+    ],
+    "frontend": [
+      {"test": "Super Admin login page loads", "status": "PASSED"},
+      {"test": "Login with fortexa2026rd / FortexaAdmin2026!", "status": "PASSED"},
+      {"test": "KPI cards visible: Total=21, Activas=12, Inactivas=9", "status": "PASSED"},
+      {"test": "Companies table shows all new columns: Empresa, Estado, Plan, Facturación, Empl., Users, Contacto, Método Pago, Actividad, Acciones", "status": "PASSED"},
+      {"test": "Column customization dropdown works", "status": "PASSED"},
+      {"test": "FortexaRH Demo Corp shows $19.00/mes billing", "status": "PASSED"},
+      {"test": "Clicking company row opens drill-down dialog", "status": "PASSED"},
+      {"test": "Drill-down dialog shows company name, RNC, plan, billing amount", "status": "PASSED"},
+      {"test": "Drill-down dialog shows users table (1 user)", "status": "PASSED"},
+      {"test": "Drill-down dialog shows employees table (6 employees)", "status": "PASSED"},
+      {"test": "Revenue tab MRR/ARR display with $ (USD)", "status": "PASSED"},
+      {"test": "Plan distribution shows $ (USD) not RD$", "status": "PASSED"},
+      {"test": "Alerts tab shows 14 inactive companies", "status": "PASSED"}
+    ]
+  },
+  "features_verified": {
+    "usd_pricing": {
+      "basico": "$5/mes",
+      "pro": "$10/mes",
+      "enterprise": "$20/mes",
+      "per_employee": "$1.50",
+      "verified": true
+    },
+    "new_columns": {
+      "monthly_billing": "Calculated: base + (active_employees × per_employee_rate) + (extra_users × extra_user_cost)",
+      "active_employee_count": "Count of non-inactive/terminated employees",
+      "contact_name": "First admin user name",
+      "contact_email": "First admin user email",
+      "payment_method": "tarjeta, transferencia, efectivo, regalia, sin_definir",
+      "activation_date": "From activated_at or subscription start_date",
+      "next_payment_date": "From subscription next_payment_date",
+      "per_employee_rate": "$1.50 for direct plans",
+      "extra_users": "max(0, user_count - included_users)",
+      "verified": true
+    },
+    "column_customization": {
+      "dropdown": "Columnas button opens dropdown",
+      "localStorage_key": "sa_columns",
+      "locked_columns": ["name", "actions"],
+      "verified": true
+    },
+    "drill_down": {
+      "endpoint": "GET /api/super-admin/companies/{company_id}/users",
+      "returns": {"users": "array with name, email, role, last_login", "employees": "array with first_name, last_name, position, department, status, cedula"},
+      "dialog_shows": ["company name", "RNC", "plan", "billing amount", "users table", "employees table"],
+      "verified": true
+    },
+    "billing_calculation_example": {
+      "company": "FortexaRH Demo Corp",
+      "plan": "pro",
+      "base_price": 10,
+      "active_employees": 6,
+      "per_employee_rate": 1.5,
+      "extra_users": 0,
+      "monthly_billing": 19,
+      "formula": "$10 + (6 × $1.50) + (0 × $2) = $19.00",
+      "verified": true
+    }
+  },
+  "fixes_applied": [
+    {
+      "file": "/app/frontend/src/pages/SuperAdminPage.jsx",
+      "issue": "Revenue tab showed RD$ instead of $ (USD)",
+      "fix": "Changed RD$ to $ in plan distribution, overdue alerts, partners card, and payment history sections",
+      "lines_changed": [543, 572, 601, 637]
+    }
+  ],
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": []
+  }
+}
