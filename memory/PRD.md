@@ -34,6 +34,7 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - Journal Entry sync: POST /api/fortexaerp/sync-journal-entries
 - Sync status tracking per period
 - API docs link to fortexaerp.com/developer-docs
+- **One-click sync from Accounting module** - "FortexaERP" option in export dropdowns of both Journal Entries and Payroll Summary tables
 
 ### Payroll System (Complete)
 - Full payroll calculation with DR tax compliance (SFS, AFP, ISR)
