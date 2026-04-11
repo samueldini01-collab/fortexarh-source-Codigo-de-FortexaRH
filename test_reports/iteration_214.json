@@ -1,0 +1,90 @@
+{
+  "summary": "Super Admin Revenue Metrics feature fully tested - all backend APIs (29/29 tests) and frontend UI working correctly. MRR/ARR calculation, plan distribution, overdue alerts, payment history, and plan change functionality all verified.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_super_admin.py",
+    "/app/test_reports/pytest/super_admin_revenue_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Revenue endpoint correctly calculates MRR from active subscriptions with total_monthly > 0",
+    "Plan distribution properly categorizes plans by type (direct/partner/trial/free)",
+    "Overdue alerts correctly identify companies with expired subscription periods",
+    "Plan change endpoint validates plan_id against PLAN_PRICES dictionary and returns 400 for invalid plans"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_super_admin.py"
+  ],
+  "success_rate": {
+    "backend": "100% (29/29 tests passed)",
+    "frontend": "100% (all UI flows working)"
+  },
+  "test_credentials": {
+    "super_admin_username": "fortexa2026rd",
+    "super_admin_password": "FortexaAdmin2026!"
+  },
+  "seed_data_creation": "None - used existing 21 companies in database",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Super Admin Revenue features at /admin route fully functional. Revenue tab (data-testid='tab-revenue') shows MRR, ARR, Partners, Vencidos KPIs. Plan distribution shows all plan types with company counts and MRR. Overdue alerts show companies with expired subscriptions. Plan change dialog (data-testid='plan-select', 'confirm-plan-change') works for all 8 plan types. Current MRR: RD$17,000, ARR: RD$204,000, 4 partner companies, 4 overdue alerts.",
+  "tests_executed": {
+    "backend": [
+      {"test": "GET /api/super-admin/revenue returns all required fields", "status": "PASSED"},
+      {"test": "Revenue MRR is a number >= 0", "status": "PASSED"},
+      {"test": "Revenue ARR equals MRR * 12", "status": "PASSED"},
+      {"test": "plan_distribution has plan_name, count, mrr, type fields", "status": "PASSED"},
+      {"test": "overdue_alerts structure with company_id, company_name, days_overdue", "status": "PASSED"},
+      {"test": "partner_companies and partner_mrr are valid numbers", "status": "PASSED"},
+      {"test": "payment_history is a list", "status": "PASSED"},
+      {"test": "GET /api/super-admin/revenue unauthenticated returns 401", "status": "PASSED"},
+      {"test": "POST /api/super-admin/companies/{id}/plan changes plan successfully", "status": "PASSED"},
+      {"test": "POST /api/super-admin/companies/{id}/plan with invalid plan_id returns 400", "status": "PASSED"},
+      {"test": "POST /api/super-admin/companies/{id}/plan with nonexistent company returns 404", "status": "PASSED"},
+      {"test": "POST /api/super-admin/companies/{id}/plan with custom_price uses custom price", "status": "PASSED"},
+      {"test": "All 8 valid plan types can be set (basico, pro, enterprise, partner_*, trial, free)", "status": "PASSED"},
+      {"test": "POST /api/super-admin/companies/{id}/plan unauthenticated returns 401", "status": "PASSED"}
+    ],
+    "frontend": [
+      {"test": "Navigate to /admin, login with super admin credentials", "status": "PASSED"},
+      {"test": "Click Revenue tab - tab content loads", "status": "PASSED"},
+      {"test": "Revenue tab shows MRR KPI (RD$17,000)", "status": "PASSED"},
+      {"test": "Revenue tab shows ARR KPI (RD$204,000)", "status": "PASSED"},
+      {"test": "Revenue tab shows Partners KPI (4)", "status": "PASSED"},
+      {"test": "Revenue tab shows Vencidos KPI (4)", "status": "PASSED"},
+      {"test": "Revenue tab shows 'Distribucion por Plan' section with plan names and MRR", "status": "PASSED"},
+      {"test": "Revenue tab shows 'Alertas de Pago' section with overdue companies", "status": "PASSED"},
+      {"test": "In Empresas tab, click Plan button opens plan change dialog", "status": "PASSED"},
+      {"test": "Plan dialog shows plan dropdown with all plan options", "status": "PASSED"},
+      {"test": "Select Pro plan and save - shows 'Plan actualizado' toast", "status": "PASSED"}
+    ]
+  },
+  "features_verified": {
+    "revenue_metrics": {
+      "endpoint": "GET /api/super-admin/revenue",
+      "fields": ["mrr", "arr", "active_paying", "plan_distribution", "overdue_alerts", "overdue_count", "partner_companies", "partner_mrr", "payment_history"],
+      "mrr_calculation": "Sum of total_monthly from active subscriptions",
+      "arr_calculation": "MRR * 12"
+    },
+    "plan_distribution": {
+      "structure": {"plan_name": "string", "count": "int", "mrr": "float", "type": "direct|partner|trial|free"},
+      "plans_available": ["basico", "pro", "enterprise", "partner_basico", "partner_pro", "partner_enterprise", "trial", "free"]
+    },
+    "overdue_alerts": {
+      "structure": {"company_id": "string", "company_name": "string", "plan": "string", "period_end": "string", "monthly": "float", "days_overdue": "int"},
+      "sorted_by": "days_overdue descending"
+    },
+    "plan_change": {
+      "endpoint": "POST /api/super-admin/companies/{id}/plan",
+      "body": {"plan_id": "string", "custom_price": "optional float"},
+      "updates": ["companies.subscription_plan", "subscriptions.plan_id", "subscriptions.plan_name", "subscriptions.total_monthly"]
+    }
+  }
+}

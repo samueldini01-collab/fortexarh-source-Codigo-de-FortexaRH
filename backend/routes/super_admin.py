@@ -112,6 +112,158 @@ async def get_platform_stats(admin=Depends(get_super_admin)):
     }
 
 
+# ---------- Revenue Metrics ----------
+
+PLAN_PRICES = {
+    "basico":     {"name": "FortexaRH Basico",     "monthly": 2500,  "type": "direct"},
+    "pro":        {"name": "FortexaRH Pro",         "monthly": 5000,  "type": "direct"},
+    "enterprise": {"name": "FortexaRH Enterprise",  "monthly": 12000, "type": "direct"},
+    "partner_basico":    {"name": "Partner Basico",    "monthly": 1800, "type": "partner"},
+    "partner_pro":       {"name": "Partner Pro",       "monthly": 3500, "type": "partner"},
+    "partner_enterprise": {"name": "Partner Enterprise", "monthly": 9000, "type": "partner"},
+    "trial":      {"name": "Prueba Gratuita",       "monthly": 0,     "type": "trial"},
+    "free":       {"name": "Gratuito",              "monthly": 0,     "type": "free"},
+    "partner":    {"name": "Partner (legacy)",      "monthly": 0,     "type": "partner"},
+}
+
+
+@router.get("/revenue")
+async def get_revenue_metrics(admin=Depends(get_super_admin)):
+    """Revenue dashboard: MRR, plan distribution, overdue alerts, partner revenue."""
+    subs = await db.subscriptions.find({}, {"_id": 0}).to_list(500)
+    companies = await db.companies.find({}, {"_id": 0}).to_list(500)
+    company_map = {c["company_id"]: c for c in companies}
+
+    # MRR calculation
+    mrr = 0.0
+    plan_distribution = {}
+    active_paying = 0
+
+    for s in subs:
+        plan_id = s.get("plan_id", "trial")
+        plan_info = PLAN_PRICES.get(plan_id, {"name": plan_id, "monthly": 0, "type": "direct"})
+        monthly = s.get("total_monthly") or plan_info["monthly"]
+
+        comp = company_map.get(s.get("company_id"), {})
+        sub_plan = comp.get("subscription_plan", plan_id)
+        is_active = s.get("status") in ("active", "trialing") or comp.get("status") == "active"
+
+        if is_active and monthly > 0:
+            mrr += monthly
+            active_paying += 1
+
+        label = plan_info["name"]
+        if sub_plan and sub_plan not in plan_distribution:
+            label = PLAN_PRICES.get(sub_plan, {"name": sub_plan}).get("name", sub_plan)
+
+        dist_key = plan_id
+        if dist_key not in plan_distribution:
+            plan_distribution[dist_key] = {
+                "plan_name": label,
+                "count": 0,
+                "mrr": 0.0,
+                "type": plan_info.get("type", "direct"),
+            }
+        plan_distribution[dist_key]["count"] += 1
+        if is_active:
+            plan_distribution[dist_key]["mrr"] += monthly
+
+    # Companies without subscriptions but with plan
+    for c in companies:
+        cid = c["company_id"]
+        if not any(s.get("company_id") == cid for s in subs):
+            plan = c.get("subscription_plan", "free")
+            plan_info = PLAN_PRICES.get(plan, {"name": plan, "monthly": 0, "type": "direct"})
+            if plan not in plan_distribution:
+                plan_distribution[plan] = {
+                    "plan_name": plan_info["name"],
+                    "count": 0,
+                    "mrr": 0.0,
+                    "type": plan_info.get("type", "direct"),
+                }
+            plan_distribution[plan]["count"] += 1
+
+    # Overdue alerts
+    overdue = []
+    for s in subs:
+        end = s.get("current_period_end", "")
+        if end and str(end) < _now():
+            comp = company_map.get(s.get("company_id"), {})
+            if comp.get("status") == "active" or s.get("status") == "active":
+                overdue.append({
+                    "company_id": s.get("company_id"),
+                    "company_name": comp.get("name", ""),
+                    "plan": s.get("plan_name", s.get("plan_id", "")),
+                    "period_end": end,
+                    "monthly": s.get("total_monthly", 0),
+                    "days_overdue": max(0, (datetime.now(timezone.utc) - datetime.fromisoformat(str(end).replace("Z", "+00:00"))).days) if end else 0,
+                })
+    overdue.sort(key=lambda x: x.get("days_overdue", 0), reverse=True)
+
+    # Partner revenue
+    partner_companies = [c for c in companies if c.get("subscription_plan") == "partner" or "partner" in (c.get("subscription_plan") or "")]
+    partner_mrr = sum(
+        plan_distribution.get(k, {}).get("mrr", 0)
+        for k in plan_distribution
+        if plan_distribution[k].get("type") == "partner"
+    )
+
+    # Payment history
+    payments = await db.company_activations.find(
+        {"action": "activate"}, {"_id": 0}
+    ).sort("created_at", -1).to_list(50)
+
+    return {
+        "mrr": round(mrr, 2),
+        "arr": round(mrr * 12, 2),
+        "active_paying": active_paying,
+        "plan_distribution": plan_distribution,
+        "overdue_alerts": overdue,
+        "overdue_count": len(overdue),
+        "partner_companies": len(partner_companies),
+        "partner_mrr": round(partner_mrr, 2),
+        "payment_history": payments,
+    }
+
+
+@router.post("/companies/{company_id}/plan")
+async def update_company_plan(company_id: str, request: Request, admin=Depends(get_super_admin)):
+    """Update a company's subscription plan and pricing."""
+    body = await request.json()
+    plan_id = body.get("plan_id")
+    custom_price = body.get("custom_price")
+
+    if plan_id not in PLAN_PRICES:
+        raise HTTPException(status_code=400, detail=f"Plan invalido. Opciones: {', '.join(PLAN_PRICES.keys())}")
+
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    if not company:
+        raise HTTPException(status_code=404, detail="Empresa no encontrada")
+
+    plan_info = PLAN_PRICES[plan_id]
+    monthly = custom_price if custom_price is not None else plan_info["monthly"]
+
+    await db.companies.update_one(
+        {"company_id": company_id},
+        {"$set": {"subscription_plan": plan_id, "updated_at": _now()}},
+    )
+
+    await db.subscriptions.update_one(
+        {"company_id": company_id},
+        {"$set": {
+            "plan_id": plan_id,
+            "plan_name": plan_info["name"],
+            "total_monthly": monthly,
+            "updated_at": _now(),
+        }},
+        upsert=True,
+    )
+
+    await _log_event(company_id, "plan_changed", f"Plan cambiado a {plan_info['name']} (RD${monthly}/mes)")
+
+    return {"message": f"Plan actualizado a {plan_info['name']}", "monthly": monthly}
+
+
 @router.post("/companies/{company_id}/activate")
 async def activate_company(company_id: str, req: ActivationRequest, admin=Depends(get_super_admin)):
     company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})

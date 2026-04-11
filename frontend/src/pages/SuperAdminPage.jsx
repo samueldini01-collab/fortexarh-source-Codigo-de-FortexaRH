@@ -108,12 +108,15 @@ function SuperAdminDashboard({ token, onLogout }) {
   const [companies, setCompanies] = useState([]);
   const [stats, setStats] = useState({});
   const [events, setEvents] = useState([]);
+  const [revenue, setRevenue] = useState({});
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [activateDialog, setActivateDialog] = useState(null);
   const [activateForm, setActivateForm] = useState({ payment_method: "transferencia", notes: "", amount: 0 });
   const [deactivateDialog, setDeactivateDialog] = useState(null);
+  const [planDialog, setPlanDialog] = useState(null);
+  const [planForm, setPlanForm] = useState({ plan_id: "basico", custom_price: null });
   const [actionLoading, setActionLoading] = useState(false);
 
   const headers = { Authorization: `Bearer ${token}` };
@@ -121,14 +124,16 @@ function SuperAdminDashboard({ token, onLogout }) {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [compRes, statsRes, eventsRes] = await Promise.all([
+      const [compRes, statsRes, eventsRes, revRes] = await Promise.all([
         axios.get(`${API}/companies`, { headers }),
         axios.get(`${API}/stats`, { headers }),
         axios.get(`${API}/events?limit=50`, { headers }),
+        axios.get(`${API}/revenue`, { headers }),
       ]);
       setCompanies(compRes.data);
       setStats(statsRes.data);
       setEvents(eventsRes.data);
+      setRevenue(revRes.data);
     } catch (err) {
       if (err.response?.status === 401) onLogout();
       else toast.error("Error cargando datos");
@@ -161,6 +166,21 @@ function SuperAdminDashboard({ token, onLogout }) {
       await axios.post(`${API}/companies/${deactivateDialog.company_id}/deactivate`, {}, { headers });
       toast.success(`${deactivateDialog.name} desactivada`);
       setDeactivateDialog(null);
+      fetchData();
+    } catch (err) {
+      toast.error(err.response?.data?.detail || "Error");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handlePlanChange = async () => {
+    if (!planDialog) return;
+    setActionLoading(true);
+    try {
+      await axios.post(`${API}/companies/${planDialog.company_id}/plan`, planForm, { headers });
+      toast.success("Plan actualizado");
+      setPlanDialog(null);
       fetchData();
     } catch (err) {
       toast.error(err.response?.data?.detail || "Error");
@@ -242,6 +262,9 @@ function SuperAdminDashboard({ token, onLogout }) {
             <TabsTrigger value="companies" className="data-[state=active]:bg-indigo-600" data-testid="tab-companies">
               <Building2 className="w-4 h-4 mr-1.5" /> Empresas
             </TabsTrigger>
+            <TabsTrigger value="revenue" className="data-[state=active]:bg-indigo-600" data-testid="tab-revenue">
+              <DollarSign className="w-4 h-4 mr-1.5" /> Revenue
+            </TabsTrigger>
             <TabsTrigger value="events" className="data-[state=active]:bg-indigo-600" data-testid="tab-events">
               <Activity className="w-4 h-4 mr-1.5" /> Eventos
             </TabsTrigger>
@@ -307,6 +330,9 @@ function SuperAdminDashboard({ token, onLogout }) {
                       <TableCell className="text-slate-400 text-sm">{(c.created_at || "").split("T")[0]}</TableCell>
                       <TableCell>
                         <div className="flex justify-end gap-1">
+                          <Button size="sm" variant="ghost" className="text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10" onClick={() => { setPlanDialog(c); setPlanForm({ plan_id: c.subscription_plan || "basico", custom_price: null }); }} data-testid={`btn-plan-${c.company_id}`}>
+                            <ArrowUpDown className="w-4 h-4 mr-1" /> Plan
+                          </Button>
                           {c.status === "active" ? (
                             <Button size="sm" variant="ghost" className="text-red-400 hover:text-red-300 hover:bg-red-500/10" onClick={() => setDeactivateDialog(c)} data-testid={`btn-deactivate-${c.company_id}`}>
                               <PowerOff className="w-4 h-4 mr-1" /> Inactivar
@@ -322,6 +348,133 @@ function SuperAdminDashboard({ token, onLogout }) {
                   ))}
                 </TableBody>
               </Table>
+            </Card>
+          </TabsContent>
+
+          {/* Revenue Tab */}
+          <TabsContent value="revenue" className="space-y-4" data-testid="revenue-tab">
+            {/* Revenue KPIs */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Card className="bg-gradient-to-br from-emerald-900/40 to-slate-900 border-emerald-800">
+                <CardContent className="p-4">
+                  <p className="text-xs text-emerald-400 uppercase tracking-wider">MRR</p>
+                  <p className="text-2xl font-bold text-emerald-300 mt-1">RD${(revenue.mrr || 0).toLocaleString()}</p>
+                  <p className="text-[10px] text-slate-500 mt-1">Monthly Recurring Revenue</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-to-br from-sky-900/40 to-slate-900 border-sky-800">
+                <CardContent className="p-4">
+                  <p className="text-xs text-sky-400 uppercase tracking-wider">ARR</p>
+                  <p className="text-2xl font-bold text-sky-300 mt-1">RD${(revenue.arr || 0).toLocaleString()}</p>
+                  <p className="text-[10px] text-slate-500 mt-1">Annual Recurring Revenue</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-to-br from-purple-900/40 to-slate-900 border-purple-800">
+                <CardContent className="p-4">
+                  <p className="text-xs text-purple-400 uppercase tracking-wider">Partners</p>
+                  <p className="text-2xl font-bold text-purple-300 mt-1">{revenue.partner_companies || 0}</p>
+                  <p className="text-[10px] text-slate-500 mt-1">MRR: RD${(revenue.partner_mrr || 0).toLocaleString()}</p>
+                </CardContent>
+              </Card>
+              <Card className={`bg-gradient-to-br ${(revenue.overdue_count || 0) > 0 ? 'from-red-900/40 border-red-800' : 'from-slate-800/40 border-slate-700'} to-slate-900`}>
+                <CardContent className="p-4">
+                  <p className={`text-xs uppercase tracking-wider ${(revenue.overdue_count || 0) > 0 ? 'text-red-400' : 'text-slate-400'}`}>Vencidos</p>
+                  <p className={`text-2xl font-bold mt-1 ${(revenue.overdue_count || 0) > 0 ? 'text-red-300' : 'text-slate-300'}`}>{revenue.overdue_count || 0}</p>
+                  <p className="text-[10px] text-slate-500 mt-1">Pagos pendientes</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Plan Distribution */}
+              <Card className="bg-slate-900 border-slate-800">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base text-white">Distribucion por Plan</CardTitle>
+                  <CardDescription className="text-slate-500">Empresas por tipo de plan</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {Object.entries(revenue.plan_distribution || {}).map(([key, val]) => (
+                    <div key={key} className="flex items-center justify-between p-2 rounded-lg bg-slate-800/50">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${val.type === 'partner' ? 'bg-purple-400' : val.type === 'trial' || val.type === 'free' ? 'bg-slate-500' : 'bg-emerald-400'}`} />
+                        <span className="text-sm text-white">{val.plan_name}</span>
+                        {val.type === "partner" && <Badge className="bg-purple-500/20 text-purple-400 border-0 text-[10px]">Partner</Badge>}
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span className="text-sm text-slate-400">{val.count} empresas</span>
+                        <span className="text-sm font-medium text-emerald-400 w-28 text-right">RD${val.mrr.toLocaleString()}/mes</span>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              {/* Overdue Alerts */}
+              <Card className="bg-slate-900 border-slate-800">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base text-white flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5 text-amber-400" /> Alertas de Pago
+                  </CardTitle>
+                  <CardDescription className="text-slate-500">Empresas con pago vencido</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {(revenue.overdue_alerts || []).length === 0 ? (
+                    <div className="text-center py-8 text-slate-500">
+                      <CheckCircle className="w-8 h-8 mx-auto mb-2 text-emerald-600" />
+                      <p className="text-sm">No hay pagos vencidos</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {revenue.overdue_alerts.map((alert, i) => (
+                        <div key={i} className="p-3 rounded-lg bg-red-500/10 border border-red-800/50">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-white">{alert.company_name || alert.company_id}</span>
+                            <Badge className="bg-red-500/20 text-red-400 border-0">{alert.days_overdue}d vencido</Badge>
+                          </div>
+                          <p className="text-xs text-slate-400 mt-1">{alert.plan} - RD${(alert.monthly || 0).toLocaleString()}/mes</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Payment History */}
+            <Card className="bg-slate-900 border-slate-800">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base text-white flex items-center gap-2">
+                  <CreditCard className="w-5 h-5 text-indigo-400" /> Historial de Activaciones / Pagos
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                {(revenue.payment_history || []).length === 0 ? (
+                  <div className="text-center py-8 text-slate-500">No hay registros de pago</div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-slate-800">
+                        <TableHead className="text-slate-400">Fecha</TableHead>
+                        <TableHead className="text-slate-400">Empresa</TableHead>
+                        <TableHead className="text-slate-400">Modalidad</TableHead>
+                        <TableHead className="text-slate-400 text-right">Monto</TableHead>
+                        <TableHead className="text-slate-400">Notas</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {(revenue.payment_history || []).map((p, i) => (
+                        <TableRow key={p.activation_id || i} className="border-slate-800">
+                          <TableCell className="text-slate-300 text-sm">{(p.created_at || "").split("T")[0]}</TableCell>
+                          <TableCell className="text-white text-sm">{p.company_name || p.company_id}</TableCell>
+                          <TableCell>{getPaymentBadge(p.payment_method || "sin_definir")}</TableCell>
+                          <TableCell className="text-right text-emerald-400 font-mono">RD${(p.amount || 0).toLocaleString()}</TableCell>
+                          <TableCell className="text-slate-500 text-sm max-w-[200px] truncate">{p.notes || "-"}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
             </Card>
           </TabsContent>
 
@@ -438,6 +591,55 @@ function SuperAdminDashboard({ token, onLogout }) {
             <Button variant="ghost" onClick={() => setDeactivateDialog(null)} className="text-slate-400">Cancelar</Button>
             <Button onClick={handleDeactivate} disabled={actionLoading} className="bg-red-600 hover:bg-red-700" data-testid="confirm-deactivate">
               {actionLoading ? "Desactivando..." : "Confirmar Inactivacion"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Plan Change Dialog */}
+      <Dialog open={!!planDialog} onOpenChange={() => setPlanDialog(null)}>
+        <DialogContent className="bg-slate-900 border-slate-700 text-white">
+          <DialogHeader>
+            <DialogTitle>Cambiar Plan</DialogTitle>
+            <DialogDescription className="text-slate-400">
+              {planDialog?.name} - Plan actual: {planDialog?.subscription_plan || "Sin definir"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-slate-300">Plan</Label>
+              <Select value={planForm.plan_id} onValueChange={(v) => setPlanForm(p => ({ ...p, plan_id: v }))}>
+                <SelectTrigger className="bg-slate-800 border-slate-700 text-white" data-testid="plan-select">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="basico">FortexaRH Basico (RD$2,500/mes)</SelectItem>
+                  <SelectItem value="pro">FortexaRH Pro (RD$5,000/mes)</SelectItem>
+                  <SelectItem value="enterprise">FortexaRH Enterprise (RD$12,000/mes)</SelectItem>
+                  <SelectItem value="partner_basico">Partner Basico (RD$1,800/mes)</SelectItem>
+                  <SelectItem value="partner_pro">Partner Pro (RD$3,500/mes)</SelectItem>
+                  <SelectItem value="partner_enterprise">Partner Enterprise (RD$9,000/mes)</SelectItem>
+                  <SelectItem value="trial">Prueba Gratuita</SelectItem>
+                  <SelectItem value="free">Gratuito</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-slate-300">Precio personalizado (opcional, RD$/mes)</Label>
+              <Input
+                type="number"
+                placeholder="Dejar vacio para usar precio del plan"
+                value={planForm.custom_price ?? ""}
+                onChange={(e) => setPlanForm(p => ({ ...p, custom_price: e.target.value ? parseFloat(e.target.value) : null }))}
+                className="bg-slate-800 border-slate-700 text-white"
+                data-testid="plan-custom-price"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setPlanDialog(null)} className="text-slate-400">Cancelar</Button>
+            <Button onClick={handlePlanChange} disabled={actionLoading} className="bg-indigo-600 hover:bg-indigo-700" data-testid="confirm-plan-change">
+              {actionLoading ? "Guardando..." : "Guardar Plan"}
             </Button>
           </DialogFooter>
         </DialogContent>
