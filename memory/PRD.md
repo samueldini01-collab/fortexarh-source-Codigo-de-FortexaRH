@@ -46,6 +46,13 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - "Solo Nómina" filter toggle in Journal Entries tab
 - Full i18n (ES, EN, FR) for all new labels
 
+### QuickBooks Account Mapping V2 (Complete - Feb 2026)
+- QBO accounts cache: persists in MongoDB, uses cache when token expires with warning banner
+- Redesigned mapping UI: 4 groups (Gastos, Pasivos TSS, Otras Deducciones, Banco) with FortexaRH accounts left + QBO dropdowns right
+- Auto-Match: one-click mapping by name similarity and account type (10/10 accuracy)
+- Handles expired QBO tokens gracefully
+- 10 payroll concepts: Sueldos, TSS Patronal, SFS, AFP, ISR, SRL, INFOTEP, Desc. Adicionales, Préstamos, Banco
+
 ### Employee Portal Fixes (Complete - Feb 2026)
 - Fixed missing password change translations (ES, EN, FR) that showed raw i18n keys
 - Added domain http://fortexarh.com to payslip PDF footer
