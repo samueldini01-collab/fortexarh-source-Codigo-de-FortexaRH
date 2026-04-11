@@ -66,6 +66,9 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - **Smart Status Detection** - Companies auto-classified as active/inactive based on real data (employees, users, subscriptions)
 - **Plan Badges** - Modalidad column shows colored badges (Gratuito, Partner, Pro, Prueba, Enterprise) with monthly price
 - **Sync Statuses** - One-click button to re-compute and persist all company statuses
+- **Inactivity Alerts Tab** - Shows companies 30+ days inactive with risk levels (Alto/Medio), days count, last activity date
+- **Login Tracking** - Auth routes now track `last_login` on users and `last_activity` on companies for accurate monitoring
+- **Actividad Column** - Shows last activity date + red/amber inactivity badges (e.g. "81d") in companies table
 
 ### KPI Drill-Down (Complete)
 - Clickable KPI cards across 5 pages (Accounting, Expenses, GeoLocations, Attendance, Loans)
