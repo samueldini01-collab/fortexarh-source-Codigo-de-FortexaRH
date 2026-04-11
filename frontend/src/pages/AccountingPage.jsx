@@ -66,7 +66,9 @@ import {
   Users,
   Calendar,
   Filter,
-  ClipboardList
+  ClipboardList,
+  Send,
+  Loader2
 } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -105,6 +107,10 @@ export default function AccountingPage() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
+  
+  // FortexaERP sync
+  const [erpConfigured, setErpConfigured] = useState(false);
+  const [erpSyncing, setErpSyncing] = useState(null); // period_id being synced
   
   // Entry form
   const [entryForm, setEntryForm] = useState({
@@ -178,7 +184,21 @@ export default function AccountingPage() {
     fetchData();
     fetchCatalogTemplates();
     fetchPayrollSummary();
+    // Check FortexaERP config
+    axios.get(`${API}/fortexaerp/config`, { headers: getAuthHeaders(), withCredentials: true })
+      .then(r => { if (r.data.configured) setErpConfigured(true); })
+      .catch(() => {});
   }, [fetchData, fetchCatalogTemplates, fetchPayrollSummary]);
+
+  const handleErpSync = async (periodId) => {
+    setErpSyncing(periodId);
+    try {
+      const res = await axios.post(`${API}/fortexaerp/sync-journal-entries`, { period_id: periodId }, { headers: getAuthHeaders(), withCredentials: true });
+      toast.success(`Asiento sincronizado con FortexaERP (${res.data.lines_sent} líneas)`);
+    } catch (e) {
+      toast.error(e.response?.data?.detail || "Error al sincronizar con FortexaERP");
+    } finally { setErpSyncing(null); }
+  };
 
   const loadCatalogTemplate = async (catalogId) => {
     if (!window.confirm(t('accounting.messages.confirmLoadCatalog'))) {
@@ -789,6 +809,23 @@ export default function AccountingPage() {
                                     <List className="w-4 h-4 mr-2" />
                                     {t('accounting.preview.detailed')}
                                   </DropdownMenuItem>
+                                  {erpConfigured && entry.period && (
+                                    <>
+                                      <DropdownMenuSeparator />
+                                      <DropdownMenuItem
+                                        data-testid={`btn-erp-sync-je-${entry.entry_id}`}
+                                        disabled={erpSyncing === entry.period}
+                                        onClick={() => handleErpSync(entry.period)}
+                                      >
+                                        {erpSyncing === entry.period ? (
+                                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                        ) : (
+                                          <Send className="w-4 h-4 mr-2" />
+                                        )}
+                                        FortexaERP
+                                      </DropdownMenuItem>
+                                    </>
+                                  )}
                                 </DropdownMenuContent>
                               </DropdownMenu>
                               <Button size="icon" variant="ghost" onClick={() => openEditEntry(entry)} title={t('common.edit')}>
@@ -1001,6 +1038,23 @@ export default function AccountingPage() {
                                         <Download className="w-4 h-4 mr-2" />
                                         IIF (QB Desktop)
                                       </DropdownMenuItem>
+                                      {erpConfigured && (
+                                        <>
+                                          <DropdownMenuSeparator />
+                                          <DropdownMenuItem
+                                            data-testid={`btn-erp-sync-${entry.period}`}
+                                            disabled={erpSyncing === entry.period}
+                                            onClick={() => handleErpSync(entry.period)}
+                                          >
+                                            {erpSyncing === entry.period ? (
+                                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                            ) : (
+                                              <Send className="w-4 h-4 mr-2" />
+                                            )}
+                                            FortexaERP
+                                          </DropdownMenuItem>
+                                        </>
+                                      )}
                                     </>
                                   )}
                                 </DropdownMenuContent>
