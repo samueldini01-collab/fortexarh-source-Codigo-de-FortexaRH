@@ -125,4 +125,4 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - `GET /api/super-admin/stats` & `/api/super-admin/revenue` — SaaS metrics
 
 ## Test Reports
-- `/app/test_reports/iteration_215.json` - i18n fixes + FortexaERP + QBD (100% pass)
+- `/app/test_reports/iteration_223.json` - Brochure logo + integrations (100% pass)
