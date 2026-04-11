@@ -212,6 +212,17 @@ async def login(request: Request, credentials: UserLogin, response: Response):
     
     token = create_jwt_token(user["user_id"], user["email"])
     
+    # Track last login for company activity monitoring
+    now = datetime.now(timezone.utc).isoformat()
+    await db.users.update_one(
+        {"user_id": user["user_id"]},
+        {"$set": {"last_login": now}},
+    )
+    await db.companies.update_one(
+        {"company_id": user.get("company_id")},
+        {"$set": {"last_activity": now}},
+    )
+
     return {
         "token": token,
         "user": {
@@ -273,11 +284,17 @@ async def exchange_session(request: Request, response: Response):
         user_id = user["user_id"]
         await db.users.update_one(
             {"user_id": user_id},
-            {"$set": {"name": auth_data["name"], "picture": auth_data.get("picture")}}
+            {"$set": {"name": auth_data["name"], "picture": auth_data.get("picture"), "last_login": datetime.now(timezone.utc).isoformat()}}
         )
         user["name"] = auth_data["name"]
         user["picture"] = auth_data.get("picture")
     
+    # Track company activity
+    await db.companies.update_one(
+        {"company_id": user.get("company_id")},
+        {"$set": {"last_activity": datetime.now(timezone.utc).isoformat()}},
+    )
+
     expires_at = datetime.now(timezone.utc) + timedelta(days=7)
     await db.user_sessions.insert_one({
         "user_id": user["user_id"],

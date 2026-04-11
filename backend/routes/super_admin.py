@@ -97,6 +97,16 @@ async def list_companies(admin=Depends(get_super_admin)):
         else:
             effective_status = "inactive"
 
+        # Compute days since last activity
+        last_activity_str = c.get("last_activity") or (last_login.get("timestamp") if last_login else None) or c.get("created_at")
+        days_inactive = None
+        if last_activity_str:
+            try:
+                last_dt = datetime.fromisoformat(last_activity_str.replace("Z", "+00:00"))
+                days_inactive = (datetime.now(timezone.utc) - last_dt).days
+            except Exception:
+                days_inactive = None
+
         enriched.append({
             **c,
             "status": effective_status,
@@ -107,8 +117,46 @@ async def list_companies(admin=Depends(get_super_admin)):
             "employee_count": emp_count,
             "user_count": user_count,
             "last_login": last_login.get("timestamp") if last_login else None,
+            "last_activity": last_activity_str,
+            "days_inactive": days_inactive,
         })
     return enriched
+
+
+
+@router.get("/alerts")
+async def get_inactivity_alerts(admin=Depends(get_super_admin)):
+    """Return companies that have been inactive for 30+ days."""
+    companies = await db.companies.find({}, {"_id": 0}).to_list(500)
+    now = datetime.now(timezone.utc)
+    alerts = []
+    for c in companies:
+        cid = c.get("company_id")
+        last_activity_str = c.get("last_activity") or c.get("created_at")
+        if not last_activity_str:
+            continue
+        try:
+            last_dt = datetime.fromisoformat(last_activity_str.replace("Z", "+00:00"))
+            days = (now - last_dt).days
+        except Exception:
+            continue
+
+        if days >= 30:
+            user_count = await db.users.count_documents({"company_id": cid})
+            emp_count = await db.employees.count_documents({"company_id": cid})
+            alerts.append({
+                "company_id": cid,
+                "name": c.get("name", "?"),
+                "subscription_plan": c.get("subscription_plan", "free"),
+                "days_inactive": days,
+                "last_activity": last_activity_str,
+                "user_count": user_count,
+                "employee_count": emp_count,
+                "status": c.get("status", "inactive"),
+                "risk": "high" if days >= 60 else "medium",
+            })
+    alerts.sort(key=lambda x: x["days_inactive"], reverse=True)
+    return alerts
 
 
 @router.get("/stats")
