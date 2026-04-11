@@ -37,6 +37,7 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - **One-click sync from Accounting module** - "FortexaERP" option in export dropdowns of both Journal Entries and Payroll Summary tables
 - **Custom FortexaERP logo** on integration card (uploaded favicon at /fortexaerp-logo.png)
 - **Visual sync indicator** - Green "ERP" badge with FortexaERP logo next to Status column for synced entries
+- **Sync History Log** - Dialog with full audit trail: date, reference, lines, amount, status (success/failed), user. Accessible from "View History" button in config panel
 
 ### Payroll System (Complete)
 - Full payroll calculation with DR tax compliance (SFS, AFP, ISR)
