@@ -1300,3 +1300,73 @@ async def delete_payroll_template(template_id: str, current_user: dict = Depends
     return {"message": "Plantilla eliminada"}
 
 
+@router.get("/periods/{period_id}/export/iif")
+async def export_period_iif(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Export payroll journal entry as IIF file for QuickBooks Desktop import."""
+    company_id = current_user.get("company_id")
+
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id}, {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Periodo no encontrado")
+
+    je_id = period.get("journal_entry_id")
+    je = None
+    if je_id:
+        je = await db.journal_entries.find_one(
+            {"entry_id": je_id, "company_id": company_id}, {"_id": 0}
+        )
+
+    if not je or not je.get("lines"):
+        raise HTTPException(status_code=400, detail="No hay asiento contable generado para este periodo. Apruebe o pague la nomina primero.")
+
+    # Parse entry_date -> MM/DD/YYYY for IIF
+    raw_date = je.get("entry_date", "")
+    try:
+        if "T" in str(raw_date):
+            raw_date = str(raw_date).split("T")[0]
+        parts = str(raw_date).split("-")
+        iif_date = f"{parts[1]}/{parts[2]}/{parts[0]}" if len(parts) == 3 else raw_date
+    except Exception:
+        iif_date = raw_date
+
+    reference = je.get("reference", f"NOM-{period_id[-6:]}")
+    memo_base = je.get("description", "Asiento de Nomina")
+
+    # Build IIF content
+    lines_out = []
+    # Header rows
+    lines_out.append("!TRNS\tTRNSID\tTRNSTYPE\tDATE\tACCNT\tNAME\tCLASS\tAMOUNT\tDOCNUM\tMEMO")
+    lines_out.append("!SPL\tSPLID\tTRNSTYPE\tDATE\tACCNT\tNAME\tCLASS\tAMOUNT\tDOCNUM\tMEMO")
+    lines_out.append("!ENDTRNS")
+
+    je_lines = je["lines"]
+    first = True
+    for jl in je_lines:
+        debit = jl.get("debit", 0)
+        credit = jl.get("credit", 0)
+        if debit == 0 and credit == 0:
+            continue
+        amount = round(debit - credit, 2)
+        acct_name = jl.get("account_name", "")
+        line_memo = jl.get("description", memo_base)
+        row_type = "TRNS" if first else "SPL"
+        lines_out.append(f"{row_type}\t\tGENERAL JOURNAL\t{iif_date}\t{acct_name}\t\t\t{amount}\t{reference}\t{line_memo}")
+        first = False
+
+    lines_out.append("ENDTRNS")
+
+    iif_content = "\r\n".join(lines_out) + "\r\n"
+
+    period_desc = period.get("description", period_id)
+    safe_name = "".join(c if c.isalnum() or c in "-_ " else "" for c in period_desc).strip().replace(" ", "_")
+    filename = f"FortexaRH_JE_{safe_name}.iif"
+
+    return Response(
+        content=iif_content,
+        media_type="application/octet-stream",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+

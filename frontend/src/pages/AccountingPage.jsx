@@ -954,6 +954,32 @@ export default function AccountingPage() {
                                     <List className="w-4 h-4 mr-2" />
                                     {t('accounting.preview.detailed')}
                                   </DropdownMenuItem>
+                                  {entry.payroll_id && (
+                                    <>
+                                      <DropdownMenuSeparator />
+                                      <DropdownMenuItem onClick={() => {
+                                        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+                                        fetch(`${API}/payroll/periods/${entry.payroll_id}/export/iif`, {
+                                          headers: { Authorization: `Bearer ${token}` },
+                                          credentials: "include"
+                                        }).then(r => {
+                                          if (!r.ok) throw new Error("Error");
+                                          return r.blob();
+                                        }).then(blob => {
+                                          const url = URL.createObjectURL(blob);
+                                          const a = document.createElement("a");
+                                          a.href = url;
+                                          a.download = `FortexaRH_JE_${entry.payroll_id}.iif`;
+                                          a.click();
+                                          URL.revokeObjectURL(url);
+                                          toast.success("Archivo IIF descargado para QuickBooks Desktop");
+                                        }).catch(() => toast.error("Error al exportar IIF"));
+                                      }}>
+                                        <Download className="w-4 h-4 mr-2" />
+                                        IIF (QB Desktop)
+                                      </DropdownMenuItem>
+                                    </>
+                                  )}
                                 </DropdownMenuContent>
                               </DropdownMenu>
                             </div>

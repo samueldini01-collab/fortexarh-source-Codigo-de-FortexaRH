@@ -1097,6 +1097,36 @@ export default function PayrollPage() {
                                   <Button size="sm" variant="ghost" className="h-6 w-6 p-0 text-red-500 hover:text-red-700" onClick={() => handleDeleteJE(selectedPeriod.period_id)} data-testid="btn-delete-je" title="Eliminar asiento">
                                     <Trash2 className="w-3 h-3" />
                                   </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-6 px-2 text-xs border-violet-300 text-violet-700 hover:bg-violet-50"
+                                    onClick={() => {
+                                      const link = document.createElement("a");
+                                      link.href = `${API}/payroll/periods/${selectedPeriod.period_id}/export/iif`;
+                                      link.download = "";
+                                      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+                                      fetch(`${API}/payroll/periods/${selectedPeriod.period_id}/export/iif`, {
+                                        headers: { Authorization: `Bearer ${token}` },
+                                        credentials: "include"
+                                      }).then(r => {
+                                        if (!r.ok) throw new Error("Error");
+                                        return r.blob();
+                                      }).then(blob => {
+                                        const url = URL.createObjectURL(blob);
+                                        const a = document.createElement("a");
+                                        a.href = url;
+                                        a.download = `FortexaRH_JE_${selectedPeriod.period_id}.iif`;
+                                        a.click();
+                                        URL.revokeObjectURL(url);
+                                        toast.success("Archivo IIF descargado para QuickBooks Desktop");
+                                      }).catch(() => toast.error("Error al exportar IIF"));
+                                    }}
+                                    data-testid="btn-export-iif"
+                                    title="Exportar IIF para QuickBooks Desktop"
+                                  >
+                                    IIF
+                                  </Button>
                                 </div>
                               ) : (
                                 <Button 
