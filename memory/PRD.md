@@ -46,6 +46,16 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - "Solo Nómina" filter toggle in Journal Entries tab
 - Full i18n (ES, EN, FR) for all new labels
 
+### Super Admin Panel (Complete - Feb 2026)
+- Protected route `/admin` with exclusive credentials (separate from main system)
+- Dashboard: KPIs (total companies, active, inactive, employees, users) with drill-down
+- Companies table: name, RNC, status, payment method, employee/user count, registration date
+- Activate companies with payment method (Tarjeta/Transferencia/Efectivo/Regalia sin pago)
+- Deactivate companies with confirmation dialog
+- Events timeline: all platform activity across all companies
+- Search by company name or RNC
+- Dark theme UI, separate JWT auth, sessionStorage token
+
 ### KPI Drill-Down Across Pages (Complete - Feb 2026)
 - Clickable KPI cards with visual ring indicators on 5 pages
 - AccountingPage: Filter entries by type (payroll/all), filter payroll by status (posted/draft)
