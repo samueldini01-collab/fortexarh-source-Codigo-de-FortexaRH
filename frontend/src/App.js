@@ -163,6 +163,7 @@ const HelpCenterPage = lazy(() => import("@/pages/HelpCenterPage"));
 const TermsPage = lazy(() => import("@/pages/TermsPage"));
 const PrivacyPage = lazy(() => import("@/pages/PrivacyPage"));
 const BrochurePage = lazy(() => import("@/pages/BrochurePage"));
+const SuperAdminPage = lazy(() => import("@/pages/SuperAdminPage"));
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
@@ -502,6 +503,7 @@ function AppRouter() {
       <Route path="/terms" element={<LazyRoute><TermsPage /></LazyRoute>} />
       <Route path="/privacy" element={<LazyRoute><PrivacyPage /></LazyRoute>} />
       <Route path="/brochure" element={<LazyRoute><BrochurePage /></LazyRoute>} />
+      <Route path="/admin" element={<LazyRoute><SuperAdminPage /></LazyRoute>} />
       
       {/* Catch all */}
       <Route path="*" element={<Navigate to="/" replace />} />
