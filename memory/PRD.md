@@ -59,10 +59,13 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - Balance column in Journal Entries table
 - "Solo Nómina" filter toggle
 
-### Super Admin Panel (Complete)
+### Super Admin Panel (Updated - Feb 2026)
 - Protected route `/admin` with exclusive credentials
 - Revenue Tab: MRR, ARR, plan distribution, overdue alerts
 - Companies management: activate/deactivate, plan changes
+- **Smart Status Detection** - Companies auto-classified as active/inactive based on real data (employees, users, subscriptions)
+- **Plan Badges** - Modalidad column shows colored badges (Gratuito, Partner, Pro, Prueba, Enterprise) with monthly price
+- **Sync Statuses** - One-click button to re-compute and persist all company statuses
 
 ### KPI Drill-Down (Complete)
 - Clickable KPI cards across 5 pages (Accounting, Expenses, GeoLocations, Attendance, Loans)
