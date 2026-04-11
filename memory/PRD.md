@@ -46,6 +46,12 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - "Solo Nómina" filter toggle in Journal Entries tab
 - Full i18n (ES, EN, FR) for all new labels
 
+### Employee Portal Fixes (Complete - Feb 2026)
+- Fixed missing password change translations (ES, EN, FR) that showed raw i18n keys
+- Added domain http://fortexarh.com to payslip PDF footer
+- Fixed payslip PDF download 404 bug (now searches payroll_v2 first, fallback to payroll_entries)
+- Fixed frontend payslip ID compatibility (payroll_id || entry_id)
+
 ### Notifications (Phase 1 + 2 Complete)
 - 20 event types, push (PWA), employee bell + center, auto push on payroll/vacation, full i18n
 
