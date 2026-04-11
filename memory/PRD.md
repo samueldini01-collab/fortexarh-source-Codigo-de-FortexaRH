@@ -7,7 +7,7 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - **Frontend**: React + Tailwind CSS + Shadcn/UI + react-i18next
 - **Backend**: FastAPI + Motor (async MongoDB)
 - **Database**: MongoDB
-- **Integrations**: Stripe, PayPal, Resend, QuickBooks Online, Google Auth, Gemini AI, pyotp, qrcode, pytz, pywebpush
+- **Integrations**: Stripe, PayPal, Resend, QuickBooks Online, QuickBooks Desktop (IIF), FortexaERP, Google Auth, Gemini AI, pyotp, qrcode, pytz, pywebpush
 
 ## What's Been Implemented
 
@@ -18,81 +18,57 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 
 ### QuickBooks Online Integration (Complete)
 - OAuth 2.0 connection flow with CCAGE GROUP, S.R.L.
-- Account Mapping UI (8-account mapping in /company-config Integrations tab)
+- Account Mapping UI (10-account mapping in /company-config Integrations tab)
+- Auto-Match via difflib string similarity
 - Consolidated JE per Period with "Enviar a QBO" button
-- Duplicate sync prevention (qb_journal_entry_id stored on period)
+- Duplicate sync prevention, QBO account caching
+
+### QuickBooks Desktop Integration (Complete)
+- IIF export for payroll journal entries (available from PayrollV2 and Accounting pages)
+- Visual card in Integrations tab showing 3 methods: Web Connector (próximamente), IIF (disponible), CSV Manual (próximamente)
+
+### FortexaERP Integration (Complete - Feb 2026)
+- REST API integration with fortexaerp.com
+- Configuration panel: API URL, Company ID, Email, Password
+- Test Connection functionality
+- Journal Entry sync: POST /api/fortexaerp/sync-journal-entries
+- Sync status tracking per period
+- API docs link to fortexaerp.com/developer-docs
 
 ### Payroll System (Complete)
 - Full payroll calculation with DR tax compliance (SFS, AFP, ISR)
 - Manual employee-level deduction overrides (SFS, AFP, ISR, Overtime)
 - ISR inline editing in payroll sheet
-- Employee tabs reordered
 
-### Automated Payroll Journal Entries (Complete - Feb 2026)
+### Automated Payroll Journal Entries (Complete)
 - Auto-generate balanced JE on approve (draft) and pay (posted)
-- Cascade updates: modifying entries auto-updates linked JE
-- Cascade deletes: deleting period deletes linked JE
-- Separate accounting lines for: Gross Salary, Employer TSS, SFS, AFP, ISR, SRL, INFOTEP, Additional Deductions, Loans, Net/Bank
-- Auto-creation of missing accounts in chart of accounts
-- Configurable account mapping via company_settings.payroll_account_mapping
+- Cascade updates/deletes, auto-creation of missing accounts
 - Service extracted to /app/backend/services/journal_entry_service.py
 
-### Accounting Dashboard - Payroll Summary (Complete - Feb 2026)
-- New "Resumen Nómina" tab in Accounting module with dedicated KPIs
-- KPI cards: Total Payroll, Posted entries, Draft entries, Last Entry date
-- Global balance indicator (green = all balanced, red = attention needed)
-- Detailed payroll JE table with balance check icons, period status badges, preview/export
-- Balance column added to main Journal Entries table (green check / red warning)
-- "Solo Nómina" filter toggle in Journal Entries tab
-- Full i18n (ES, EN, FR) for all new labels
+### Accounting Dashboard (Complete)
+- "Resumen Nómina" tab with KPIs, balance indicators
+- Balance column in Journal Entries table
+- "Solo Nómina" filter toggle
 
-### Super Admin Panel (Complete - Feb 2026)
-- Protected route `/admin` with exclusive credentials (separate from main system)
-- Dashboard: KPIs (total companies, active, inactive, employees, users) with drill-down
-- Companies table: name, RNC, status, payment method, employee/user count, registration date
-- Activate companies with payment method (Tarjeta/Transferencia/Efectivo/Regalia sin pago)
-- Deactivate companies with confirmation dialog
-- Events timeline: all platform activity across all companies
-- Search by company name or RNC
-- **Revenue Tab**: MRR, ARR, plan distribution (Basico/Pro/Enterprise + Partner plans), overdue alerts, payment history
-- **Plan Management**: Change company plan with 8 options (3 direct + 3 partner + trial + free), custom pricing
-- Dark theme UI, separate JWT auth, sessionStorage token
+### Super Admin Panel (Complete)
+- Protected route `/admin` with exclusive credentials
+- Revenue Tab: MRR, ARR, plan distribution, overdue alerts
+- Companies management: activate/deactivate, plan changes
 
-### KPI Drill-Down Across Pages (Complete - Feb 2026)
-- Clickable KPI cards with visual ring indicators on 5 pages
-- AccountingPage: Filter entries by type (payroll/all), filter payroll by status (posted/draft)
-- ExpensesPage: Filter by status (all/pending/approved/paid)
-- GeoLocationsPage: Switch tabs + filter (locations/marked/pending/outside zone)
-- AttendancePage & LoansPage: Already had drill-down (verified)
-
-### QuickBooks Desktop IIF Export (Complete - Feb 2026)
-- Export payroll journal entries as .IIF files for QB Desktop import
-- Valid IIF format: !TRNS/!SPL/!ENDTRNS headers, GENERAL JOURNAL type, MM/DD/YYYY dates
-- Balanced amounts (sum = 0), positive debits, negative credits
-- Available from: PayrollV2Page (button) and AccountingPage Payroll Summary (dropdown)
-- Error handling: 404 for missing period, 400 for period without JE
-
-### QuickBooks Account Mapping V2 (Complete - Feb 2026)
-- QBO accounts cache: persists in MongoDB, uses cache when token expires with warning banner
-- Redesigned mapping UI: 4 groups (Gastos, Pasivos TSS, Otras Deducciones, Banco) with FortexaRH accounts left + QBO dropdowns right
-- Auto-Match: one-click mapping by name similarity and account type (10/10 accuracy)
-- Handles expired QBO tokens gracefully
-- 10 payroll concepts: Sueldos, TSS Patronal, SFS, AFP, ISR, SRL, INFOTEP, Desc. Adicionales, Préstamos, Banco
-
-### Employee Portal Fixes (Complete - Feb 2026)
-- Fixed missing password change translations (ES, EN, FR) that showed raw i18n keys
-- Added domain http://fortexarh.com to payslip PDF footer
-- Fixed payslip PDF download 404 bug (now searches payroll_v2 first, fallback to payroll_entries)
-- Fixed frontend payslip ID compatibility (payroll_id || entry_id)
+### KPI Drill-Down (Complete)
+- Clickable KPI cards across 5 pages (Accounting, Expenses, GeoLocations, Attendance, Loans)
 
 ### Notifications (Phase 1 + 2 Complete)
 - 20 event types, push (PWA), employee bell + center, auto push on payroll/vacation, full i18n
 
-### Help Center (Complete)
-- 6 modules, FAQs, "Volver" buttons, ES/EN/FR translations
+### i18n Fixes (Complete - Feb 2026)
+- Fixed landing page footer raw key: `landing.footer.allRightsReserved` → uses `landing.footer.rights`
+- Fixed accountant dropdown raw keys: added `landing.accountantDropdown.commission`, `.multiClient`, `.dashboard`
+- All translations in ES, EN, FR
 
 ## Key Credentials
 - **Admin**: test_refactor@fortexa.com / test123
+- **Super Admin**: fortexa2026rd / FortexaAdmin2026!
 - **Partner**: testpartner@test.com / test123
 - **Employee Portal**: 001-0000001-1 / portal123
 
@@ -101,6 +77,7 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 ### P1 (Upcoming)
 - Notifications Phase 3: Digest system (daily/weekly email summaries)
 - ACH Bank Integration (DR: BHD, Popular, Banreservas)
+- QuickBooks Desktop Web Connector (automated XML sync)
 - E-signature for contracts and payroll receipts
 
 ### P2 (Future)
@@ -109,16 +86,21 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - Documented Public API
 - Backup/Export of all company data
 - Complete Audit Trail (CDC logging)
-
-## Test Reports
-- `/app/test_reports/iteration_207.json` - Payroll JE Balance fix (100%, 8/8 passed)
-- `/app/test_reports/iteration_208.json` - Accounting Dashboard Enhancements (100%, 9/9 backend + all frontend)
+- Standardize API error handling across backend
 
 ## Key API Endpoints
 - `POST /api/payroll/periods/{id}/approve` — Auto-generates balanced JE
 - `POST /api/payroll/periods/{id}/pay` — Updates JE status to "posted"
-- `POST /api/payroll/periods/{id}/generate-je` — Manual JE generation
-- `DELETE /api/payroll/periods/{id}/journal-entry` — Delete linked JE
+- `POST /api/payroll/periods/{id}/export-iif` — Export IIF for QB Desktop
 - `GET /api/quickbooks/accounts` — Fetch QBO chart of accounts
 - `PUT /api/quickbooks/account-mapping` — Save account mapping
 - `POST /api/quickbooks/sync/payroll` — Send consolidated JE to QBO
+- `GET /api/fortexaerp/config` — Get FortexaERP configuration
+- `PUT /api/fortexaerp/config` — Save FortexaERP configuration
+- `POST /api/fortexaerp/test-connection` — Test FortexaERP connection
+- `POST /api/fortexaerp/sync-journal-entries` — Sync JE to FortexaERP
+- `GET /api/fortexaerp/sync-status/{period_id}` — Check sync status
+- `GET /api/super-admin/stats` & `/api/super-admin/revenue` — SaaS metrics
+
+## Test Reports
+- `/app/test_reports/iteration_215.json` - i18n fixes + FortexaERP + QBD (100% pass)
