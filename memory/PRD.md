@@ -46,6 +46,13 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - "Solo Nómina" filter toggle in Journal Entries tab
 - Full i18n (ES, EN, FR) for all new labels
 
+### KPI Drill-Down Across Pages (Complete - Feb 2026)
+- Clickable KPI cards with visual ring indicators on 5 pages
+- AccountingPage: Filter entries by type (payroll/all), filter payroll by status (posted/draft)
+- ExpensesPage: Filter by status (all/pending/approved/paid)
+- GeoLocationsPage: Switch tabs + filter (locations/marked/pending/outside zone)
+- AttendancePage & LoansPage: Already had drill-down (verified)
+
 ### QuickBooks Desktop IIF Export (Complete - Feb 2026)
 - Export payroll journal entries as .IIF files for QB Desktop import
 - Valid IIF format: !TRNS/!SPL/!ENDTRNS headers, GENERAL JOURNAL type, MM/DD/YYYY dates
