@@ -54,6 +54,8 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - Deactivate companies with confirmation dialog
 - Events timeline: all platform activity across all companies
 - Search by company name or RNC
+- **Revenue Tab**: MRR, ARR, plan distribution (Basico/Pro/Enterprise + Partner plans), overdue alerts, payment history
+- **Plan Management**: Change company plan with 8 options (3 direct + 3 partner + trial + free), custom pricing
 - Dark theme UI, separate JWT auth, sessionStorage token
 
 ### KPI Drill-Down Across Pages (Complete - Feb 2026)
