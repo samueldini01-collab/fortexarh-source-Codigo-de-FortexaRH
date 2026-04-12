@@ -49,6 +49,7 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system targeting the
 - **GET /api/auth/trial-status** - Endpoint to check current trial/subscription status
 - **No free trial in pricing cards** - Only "Buy Plan" buttons; trial entry only via top nav "Start Free"
 - **Paid users unaffected** - Pro/Enterprise/Partner plans bypass trial check entirely
+- **Dashboard trial banner** - Amber-to-orange gradient banner at top showing "X días restantes de prueba" with "Actualizar Plan" button; hidden for paid plans
 
 ### Payroll System (Complete)
 - Full payroll calculation with DR tax compliance (SFS, AFP, ISR)
