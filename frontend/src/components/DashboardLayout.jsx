@@ -125,7 +125,6 @@ const DEFAULT_NAVIGATION = [
   { id: "payroll-config", nameKey: "payrollConfig", href: "/payroll-config", icon: Settings2, visible: true, featureKey: "employees" },
   { id: "support-admin", nameKey: "support", href: "/support-admin", icon: HelpCircle, visible: true, featureKey: "settings" },
   { id: "help-center", nameKey: "helpCenter", href: "/help-center", icon: BookOpen, visible: true, featureKey: "settings" },
-  { id: "cdc-audit", nameKey: "cdcAudit", href: "/cdc-audit", icon: Activity, visible: true, featureKey: "settings" },
   { id: "company-config", nameKey: "settings", href: "/company-config", icon: Building2, visible: true, featureKey: "settings" },
 ];
 
@@ -226,7 +225,6 @@ const getMenuGroups = (t) => [
       { id: "subscriptions", nameKey: "subscriptions", href: "/subscriptions", icon: CreditCard, featureKey: "subscriptions" },
       { id: "support-admin", nameKey: "support", href: "/support-admin", icon: HelpCircle, featureKey: "settings" },
       { id: "help-center", nameKey: "helpCenter", href: "/help-center", icon: BookOpen, featureKey: "settings" },
-      { id: "cdc-audit", nameKey: "cdcAudit", href: "/cdc-audit", icon: Activity, featureKey: "settings" },
       { id: "company-config", nameKey: "settings", href: "/company-config", icon: Building2, featureKey: "settings" },
     ]
   },

@@ -504,7 +504,7 @@ function AppRouter() {
       <Route path="/users-management" element={<ProtectedRoute><LazyRoute><UsersManagementPage /></LazyRoute></ProtectedRoute>} />
       <Route path="/roles" element={<ProtectedRoute><LazyRoute><RolesPage /></LazyRoute></ProtectedRoute>} />
       <Route path="/notifications" element={<ProtectedRoute><LazyRoute><NotificationsPage /></LazyRoute></ProtectedRoute>} />
-      <Route path="/cdc-audit" element={<ProtectedRoute><LazyRoute><CDCAuditPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/cdc-audit" element={<Navigate to="/dashboard" replace />} />
       <Route path="/support-admin" element={<ProtectedRoute><LazyRoute><SupportAdminPage /></LazyRoute></ProtectedRoute>} />
       <Route path="/help-center" element={<ProtectedRoute><LazyRoute><HelpCenterPage /></LazyRoute></ProtectedRoute>} />
       
