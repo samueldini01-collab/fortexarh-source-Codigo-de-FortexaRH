@@ -5,7 +5,7 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -14,8 +14,8 @@ import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  Plus, Trash2, Check, ArrowDown, Shield, User, Save, Edit, Power, GripVertical,
-  ChevronRight, Users, AlertCircle, CheckCircle
+  Plus, Trash2, Check, Shield, User, Save, Edit, Power, GripVertical,
+  ChevronRight, Crown, CheckCircle, Sparkles, ArrowRight, Loader2, X
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -31,6 +31,7 @@ export default function WorkflowsPage() {
   const { getAuthHeaders } = useAuth();
   const [workflows, setWorkflows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isEnterprise, setIsEnterprise] = useState(false);
   const [roles, setRoles] = useState([]);
   const [users, setUsers] = useState([]);
   const [showEditor, setShowEditor] = useState(false);
@@ -38,12 +39,14 @@ export default function WorkflowsPage() {
   const [workflowName, setWorkflowName] = useState("");
   const [steps, setSteps] = useState([]);
   const [saving, setSaving] = useState(false);
+  const [showAnnouncement, setShowAnnouncement] = useState(false);
 
   const fetchWorkflows = useCallback(async () => {
     setLoading(true);
     try {
       const res = await axios.get(`${API}/workflows`, { headers: getAuthHeaders(), withCredentials: true });
       setWorkflows(res.data.workflows || []);
+      setIsEnterprise(res.data.is_enterprise !== false);
     } catch (error) {
       toast.error("Error al cargar workflows");
     } finally {
@@ -64,10 +67,29 @@ export default function WorkflowsPage() {
     }
   }, [getAuthHeaders]);
 
+  const checkAnnouncement = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API}/workflows/announcement`, { headers: getAuthHeaders(), withCredentials: true });
+      setShowAnnouncement(res.data.show);
+    } catch (_) {
+      // silent
+    }
+  }, [getAuthHeaders]);
+
   useEffect(() => {
     fetchWorkflows();
     fetchRolesAndUsers();
-  }, [fetchWorkflows, fetchRolesAndUsers]);
+    checkAnnouncement();
+  }, [fetchWorkflows, fetchRolesAndUsers, checkAnnouncement]);
+
+  const dismissAnnouncement = async () => {
+    setShowAnnouncement(false);
+    try {
+      await axios.post(`${API}/workflows/announcement/dismiss`, {}, { headers: getAuthHeaders(), withCredentials: true });
+    } catch (_) {
+      // silent
+    }
+  };
 
   const openNewWorkflow = () => {
     setEditingWorkflow(null);
@@ -112,7 +134,6 @@ export default function WorkflowsPage() {
 
   const handleSave = async () => {
     if (!workflowName.trim()) { toast.error("Ingrese un nombre"); return; }
-    
     for (const step of steps) {
       if (step.approver_type === "role" && !step.approver_role) {
         toast.error(`Paso ${step.step_number}: Seleccione un rol`); return;
@@ -121,11 +142,9 @@ export default function WorkflowsPage() {
         toast.error(`Paso ${step.step_number}: Seleccione un usuario`); return;
       }
     }
-
     setSaving(true);
     try {
       const payload = { name: workflowName, steps };
-      
       if (editingWorkflow) {
         await axios.put(`${API}/workflows/${editingWorkflow.workflow_id}`, payload, { headers: getAuthHeaders(), withCredentials: true });
         toast.success("Workflow actualizado");
@@ -133,7 +152,6 @@ export default function WorkflowsPage() {
         await axios.post(`${API}/workflows`, payload, { headers: getAuthHeaders(), withCredentials: true });
         toast.success("Workflow creado y activado");
       }
-      
       setShowEditor(false);
       fetchWorkflows();
     } catch (error) {
@@ -164,9 +182,91 @@ export default function WorkflowsPage() {
     }
   };
 
+  // Loading
+  if (loading) {
+    return (
+      <DashboardLayout title="Workflows">
+        <div className="flex items-center justify-center h-[60vh]">
+          <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // Not Enterprise - Show upgrade prompt
+  if (!isEnterprise) {
+    return (
+      <DashboardLayout title="Workflows">
+        <div className="flex flex-col items-center justify-center h-[60vh]" data-testid="workflows-enterprise-prompt">
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-8 max-w-lg text-center">
+            <Crown className="w-16 h-16 text-amber-500 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-slate-800 mb-2">Plan Enterprise Requerido</h2>
+            <p className="text-slate-600 mb-4">
+              Los Workflows de Aprobación permiten configurar niveles de autorización para la nómina, asignando aprobadores específicos por rol o usuario.
+            </p>
+            <div className="bg-white rounded-lg p-4 mb-6 text-left space-y-2">
+              <p className="text-sm text-slate-700 flex items-center gap-2"><CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" /> Hasta 5 niveles de aprobación configurables</p>
+              <p className="text-sm text-slate-700 flex items-center gap-2"><CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" /> Aprobadores por rol o usuario específico</p>
+              <p className="text-sm text-slate-700 flex items-center gap-2"><CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" /> Progreso visual de aprobación en nómina</p>
+              <p className="text-sm text-slate-700 flex items-center gap-2"><CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" /> Control de permisos por paso</p>
+            </div>
+            <Button 
+              className="bg-amber-500 hover:bg-amber-600 text-white"
+              onClick={() => window.location.href = '/subscriptions'}
+              data-testid="btn-upgrade-enterprise"
+            >
+              <Crown className="w-4 h-4 mr-2" />
+              Ver Plan Enterprise
+            </Button>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout title="Workflows">
       <div className="space-y-6" data-testid="workflows-page">
+        {/* New Module Announcement Banner */}
+        {showAnnouncement && (
+          <div className="relative bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl p-5 overflow-hidden" data-testid="workflow-announcement">
+            <button onClick={dismissAnnouncement} className="absolute top-3 right-3 p-1 hover:bg-white/20 rounded-full" data-testid="dismiss-announcement">
+              <X className="w-4 h-4" />
+            </button>
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-white/20 rounded-xl shrink-0">
+                <Sparkles className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold mb-1">Nuevo Módulo: Workflows de Aprobación</h3>
+                <p className="text-sm text-emerald-100 mb-3">
+                  Ahora puedes definir niveles de aprobación para tus nóminas. Configura quién debe revisar y aprobar cada nómina antes de procesarla.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 text-sm">
+                  <div className="bg-white/10 rounded-lg px-3 py-2">
+                    <p className="font-medium mb-1">Cómo empezar:</p>
+                    <div className="space-y-1 text-emerald-100">
+                      <p className="flex items-center gap-1.5"><span className="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center text-xs font-bold">1</span> Clic en "Nuevo Workflow"</p>
+                      <p className="flex items-center gap-1.5"><span className="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center text-xs font-bold">2</span> Define los niveles (ej: RRHH, luego Gerencia)</p>
+                      <p className="flex items-center gap-1.5"><span className="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center text-xs font-bold">3</span> Asigna aprobadores por rol o usuario</p>
+                      <p className="flex items-center gap-1.5"><span className="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center text-xs font-bold">4</span> Guarda y el workflow se aplica automáticamente</p>
+                    </div>
+                  </div>
+                  <div className="bg-white/10 rounded-lg px-3 py-2">
+                    <p className="font-medium mb-1">En la nómina verás:</p>
+                    <div className="space-y-1 text-emerald-100">
+                      <p className="flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5" /> Indicador de progreso paso a paso</p>
+                      <p className="flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5" /> Quién aprobó y cuándo</p>
+                      <p className="flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5" /> Quién necesita aprobar el siguiente paso</p>
+                      <p className="flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5" /> Solo el aprobador designado puede avanzar</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -178,8 +278,8 @@ export default function WorkflowsPage() {
           </Button>
         </div>
 
-        {/* Info Card */}
-        {workflows.length === 0 && !loading && (
+        {/* Empty State */}
+        {workflows.length === 0 && (
           <Card className="border-dashed border-2">
             <CardContent className="py-10 text-center">
               <Shield className="w-12 h-12 mx-auto mb-4 text-slate-300" />
@@ -223,7 +323,6 @@ export default function WorkflowsPage() {
               </div>
             </CardHeader>
             <CardContent>
-              {/* Visual workflow steps */}
               <div className="flex items-center gap-2 flex-wrap">
                 {wf.steps.map((step, idx) => (
                   <div key={idx} className="flex items-center gap-2">
@@ -367,10 +466,10 @@ export default function WorkflowsPage() {
                       <Badge variant="outline" className="text-xs py-1">
                         {step.step_number}. {step.name || `Paso ${step.step_number}`}
                       </Badge>
-                      {idx < steps.length - 1 && <ArrowDown className="w-3 h-3 text-slate-400 rotate-[-90deg]" />}
+                      {idx < steps.length - 1 && <ArrowRight className="w-3 h-3 text-slate-400" />}
                     </div>
                   ))}
-                  <ArrowDown className="w-3 h-3 text-slate-400 rotate-[-90deg]" />
+                  <ArrowRight className="w-3 h-3 text-slate-400" />
                   <Badge className="bg-green-100 text-green-700 text-xs py-1">
                     <CheckCircle className="w-3 h-3 mr-1" /> Aprobada
                   </Badge>

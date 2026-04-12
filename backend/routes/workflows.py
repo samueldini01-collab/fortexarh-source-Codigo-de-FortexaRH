@@ -46,15 +46,63 @@ APPROVER_ROLES = [
 
 @router.get("")
 async def get_workflows(current_user: dict = Depends(get_current_user)):
-    """Get all workflows for the company"""
+    """Get all workflows for the company (Enterprise only)"""
     company_id = current_user.get("company_id")
+    
+    # Check if company has Enterprise plan
+    company = await db.companies.find_one(
+        {"company_id": company_id},
+        {"_id": 0, "subscription_plan": 1}
+    )
+    plan = (company or {}).get("subscription_plan", "")
+    is_enterprise = plan in ["enterprise", "Enterprise"]
+    
+    if not is_enterprise:
+        return {"workflows": [], "is_enterprise": False}
     
     workflows = await db.workflows.find(
         {"company_id": company_id},
         {"_id": 0}
     ).sort("created_at", -1).to_list(20)
     
-    return {"workflows": workflows}
+    return {"workflows": workflows, "is_enterprise": True}
+
+
+@router.get("/announcement")
+async def get_workflow_announcement(current_user: dict = Depends(get_current_user)):
+    """Check if user should see the new Workflows module announcement"""
+    company_id = current_user.get("company_id")
+    user_id = current_user.get("user_id")
+    
+    # Only for Enterprise companies
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0, "subscription_plan": 1})
+    plan = (company or {}).get("subscription_plan", "")
+    if plan not in ["enterprise", "Enterprise"]:
+        return {"show": False}
+    
+    # Check if user already dismissed it
+    dismissed = await db.workflow_announcements.find_one(
+        {"user_id": user_id, "dismissed": True},
+        {"_id": 0}
+    )
+    if dismissed:
+        return {"show": False}
+    
+    return {"show": True}
+
+
+@router.post("/announcement/dismiss")
+async def dismiss_workflow_announcement(current_user: dict = Depends(get_current_user)):
+    """Dismiss the new Workflows module announcement"""
+    user_id = current_user.get("user_id")
+    
+    await db.workflow_announcements.update_one(
+        {"user_id": user_id},
+        {"$set": {"user_id": user_id, "dismissed": True, "dismissed_at": datetime.now(timezone.utc).isoformat()}},
+        upsert=True
+    )
+    
+    return {"success": True}
 
 
 @router.get("/active")
@@ -99,12 +147,18 @@ async def get_available_users(current_user: dict = Depends(get_current_user)):
 
 @router.post("")
 async def create_workflow(data: WorkflowCreate, current_user: dict = Depends(get_current_user)):
-    """Create a new payroll approval workflow"""
+    """Create a new payroll approval workflow (Enterprise only)"""
     company_id = current_user.get("company_id")
     user_role = current_user.get("role", "")
     
     if user_role not in ["admin", "hr_manager"]:
         raise HTTPException(status_code=403, detail="Solo administradores pueden crear workflows")
+    
+    # Check Enterprise plan
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0, "subscription_plan": 1})
+    plan = (company or {}).get("subscription_plan", "")
+    if plan not in ["enterprise", "Enterprise"]:
+        raise HTTPException(status_code=403, detail="Workflows de aprobación solo disponible en plan Enterprise")
     
     if not data.steps or len(data.steps) == 0:
         raise HTTPException(status_code=400, detail="El workflow debe tener al menos un paso de aprobación")
