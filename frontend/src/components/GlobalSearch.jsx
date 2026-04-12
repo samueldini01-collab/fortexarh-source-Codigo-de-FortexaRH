@@ -14,9 +14,10 @@ import {
   Search, User, Calendar, DollarSign, Clock, Wallet, Loader2, Sparkles,
   ArrowRight, Command, X, Target, Check, AlertCircle, Play,
   CheckCircle, XCircle, Zap, FileText, Calculator, LayoutDashboard,
-  UserPlus, Info, History, ChevronRight, Users
+  UserPlus, Info, History, ChevronRight, Users, BarChart3
 } from "lucide-react";
 import { toast } from "sonner";
+import PayrollSummaryPanel from "./PayrollSummaryPanel";
 
 const CATEGORY_KEYS = {
   employees: { icon: User, labelKey: "globalSearch.categories.employees", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400" },
@@ -42,7 +43,8 @@ const ACTION_ICONS = {
   wallet: Wallet,
   "layout-dashboard": LayoutDashboard,
   info: Info,
-  zap: Zap
+  zap: Zap,
+  "bar-chart": BarChart3
 };
 
 export default function GlobalSearch() {
@@ -61,6 +63,7 @@ export default function GlobalSearch() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [recentActions, setRecentActions] = useState([]);
   const [showDisambiguation, setShowDisambiguation] = useState(false);
+  const [showPayrollSummary, setShowPayrollSummary] = useState(false);
   const { getAuthHeaders, token } = useAuth();
   const navigate = useNavigate();
   const inputRef = useRef(null);
@@ -95,6 +98,7 @@ export default function GlobalSearch() {
       setExecutionResult(null);
       setSelectedIndex(0);
       setShowDisambiguation(false);
+      setShowPayrollSummary(false);
     }
   }, [open]);
 
@@ -173,6 +177,12 @@ export default function GlobalSearch() {
       } else {
         setDetectedAction(null);
         setShowDisambiguation(false);
+      }
+      
+      // Check for payroll summary trigger
+      if (response.data.show_payroll_summary) {
+        setShowPayrollSummary(true);
+        setDetectedAction(null);
       }
       
       if (response.data.ai_answer) {
@@ -254,6 +264,12 @@ export default function GlobalSearch() {
       });
       
       setExecutionResult(response.data);
+      
+      if (response.data.show_payroll_summary) {
+        setShowPayrollSummary(true);
+        setExecutionResult(null);
+        return;
+      }
       
       if (response.data.success) {
         toast.success(response.data.message);
@@ -599,8 +615,13 @@ export default function GlobalSearch() {
             </div>
           )}
 
+          {/* Payroll Summary Panel */}
+          {showPayrollSummary && !executionResult && (
+            <PayrollSummaryPanel onClose={() => setShowPayrollSummary(false)} />
+          )}
+
           {/* Results Area */}
-          <div className="max-h-[350px] overflow-y-auto">
+          <div className={`overflow-y-auto ${showPayrollSummary ? 'max-h-0 hidden' : 'max-h-[350px]'}`}>
             {/* Recent Actions (when no query) */}
             {!query && recentActions.length > 0 && !executionResult && (
               <div className="p-3 border-b border-slate-100 dark:border-slate-800">

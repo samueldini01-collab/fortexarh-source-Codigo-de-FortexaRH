@@ -146,6 +146,14 @@ ACTION_TYPES = {
         "route": None,
         "icon": "info",
         "category": "consulta"
+    },
+    "resumen_nomina": {
+        "name": "Resumen Ejecutivo de Nómina",
+        "required": [],
+        "optional": ["period", "months", "compare_periods"],
+        "route": "/payroll",
+        "icon": "bar-chart",
+        "category": "reportes"
     }
 }
 
@@ -165,6 +173,8 @@ QUICK_PATTERNS = [
     (r"aprobar\s+(?:todas?\s+)?(?:las?\s+)?vacaciones?\s+pendientes?", "aprobar_vacaciones", {}),
     (r"(?:ver|mostrar)\s+(?:el\s+)?resumen", "resumen_dashboard", {}),
     (r"calcular\s+n[oó]mina", "calcular_nomina", {}),
+    (r"(?:resumen|gastos?|reporte)\s+(?:de\s+)?n[oó]mina", "resumen_nomina", {}),
+    (r"comparar\s+n[oó]mina", "resumen_nomina", {"compare": True}),
 ]
 
 
@@ -357,6 +367,7 @@ ACCIONES DISPONIBLES:
 - resumen_dashboard: Ver el resumen del dashboard principal
 - navegar: Ir a una sección específica del sistema
 - consultar_info: Responder preguntas informativas sobre datos del sistema
+- resumen_nomina: Generar resumen ejecutivo de nómina con gráficos (activar cuando pidan resumen, gastos, reporte o comparar nóminas)
 
 REGLAS DE INTERPRETACIÓN:
 1. Si el usuario pregunta "quién", "cuántos", "cuáles", "lista de", "estadísticas" = consultar_info
@@ -625,6 +636,10 @@ async def ai_assisted_search(data: AISearchRequest, current_user: dict = Depends
             response["action"] = action
             response["ai_suggestion"] = ai_result.get("message")
             response["missing_params"] = missing
+            
+            # Flag for payroll summary panel
+            if action_type == "resumen_nomina":
+                response["show_payroll_summary"] = True
     
     return response
 
@@ -955,6 +970,15 @@ async def execute_action(data: AIActionRequest, current_user: dict = Depends(get
                 "redirect": route
             }
             
+        elif action_type == "resumen_nomina":
+            result = {
+                "success": True,
+                "action": action_type,
+                "message": "Generando resumen ejecutivo de nómina...",
+                "show_payroll_summary": True,
+                "redirect": None
+            }
+            
         else:
             result = {
                 "success": False,
@@ -1029,6 +1053,7 @@ async def get_search_suggestions(q: str = "", current_user: dict = Depends(get_c
         {"text": "Ver nómina de este mes", "type": "action", "icon": "dollar", "action": "ver_nomina"},
         {"text": "Generar reporte de nómina", "type": "action", "icon": "file-text", "action": "generar_reporte"},
         {"text": "Calcular nómina del período", "type": "action", "icon": "calculator", "action": "calcular_nomina"},
+        {"text": "Resumen ejecutivo de nómina", "type": "action", "icon": "bar-chart", "action": "resumen_nomina"},
         {"text": "Crear préstamo para...", "type": "action", "icon": "wallet", "action": "crear_prestamo"},
         {"text": "Ver resumen del dashboard", "type": "action", "icon": "layout-dashboard", "action": "resumen_dashboard"},
     ]
@@ -1055,7 +1080,7 @@ async def get_search_suggestions(q: str = "", current_user: dict = Depends(get_c
     default_examples = [
         {"text": "¿Quién tiene vacaciones esta semana?", "type": "example"},
         {"text": "Crear vacaciones para Juan del 1 al 5 de febrero", "type": "example"},
-        {"text": "Registrar entrada de María", "type": "example"},
+        {"text": "Resumen de nómina del último trimestre", "type": "example"},
         {"text": "Empleados del departamento de TI", "type": "example"},
         {"text": "Aprobar vacaciones pendientes", "type": "example"},
     ]
@@ -1205,3 +1230,168 @@ async def get_recent_actions(current_user: dict = Depends(get_current_user)):
         return {"actions": enriched}
     except Exception:
         return {"actions": []}
+
+
+
+class PayrollSummaryRequest(BaseModel):
+    months: Optional[int] = 3
+    period_ids: Optional[List[str]] = None
+    compare: Optional[bool] = False
+
+
+@router.post("/search/payroll-summary")
+async def get_payroll_summary(data: PayrollSummaryRequest, current_user: dict = Depends(get_current_user)):
+    """Generate executive payroll summary with department breakdown and period comparison"""
+    if db is None:
+        return {"error": "Router not initialized"}
+    
+    company_id = current_user.get("company_id")
+    
+    # Get payroll periods (last N months or specific ones)
+    query = {"company_id": company_id, "status": {"$in": ["approved", "paid"]}}
+    
+    periods = await db.payroll_periods.find(
+        query, {"_id": 0}
+    ).sort("year", -1).sort("month", -1).limit(data.months * 2 + 4).to_list(50)
+    
+    if not periods:
+        return {
+            "summary": None,
+            "message": "No hay períodos de nómina procesados"
+        }
+    
+    # Build period summaries
+    period_summaries = []
+    all_departments = set()
+    
+    for period in periods:
+        pid = period.get("period_id")
+        
+        # Get entries for department breakdown
+        entries = await db.payroll_entries.find(
+            {"period_id": pid, "company_id": company_id},
+            {"_id": 0, "department": 1, "gross_salary": 1, "net_salary": 1, "total_deductions": 1,
+             "sfs_employee": 1, "afp_employee": 1, "isr": 1, "employee_name": 1}
+        ).to_list(500)
+        
+        # Department breakdown
+        dept_data = {}
+        for entry in entries:
+            dept = entry.get("department", "Sin Departamento")
+            all_departments.add(dept)
+            if dept not in dept_data:
+                dept_data[dept] = {"gross": 0, "net": 0, "deductions": 0, "employees": 0}
+            dept_data[dept]["gross"] += entry.get("gross_salary", 0)
+            dept_data[dept]["net"] += entry.get("net_salary", 0)
+            dept_data[dept]["deductions"] += entry.get("total_deductions", 0)
+            dept_data[dept]["employees"] += 1
+        
+        year = period.get("year", 0)
+        month = period.get("month", 0)
+        period_label = f"{year}-{month:02d}"
+        period_type = period.get("period_type", "")
+        if "quincenal_1" in period_type or "1" in period_type:
+            period_label += " Q1"
+        elif "quincenal_2" in period_type or "2" in period_type:
+            period_label += " Q2"
+        
+        period_summaries.append({
+            "period_id": pid,
+            "label": period_label,
+            "description": period.get("description", ""),
+            "year": year,
+            "month": month,
+            "status": period.get("status"),
+            "total_gross": round(period.get("total_gross", 0), 2),
+            "total_deductions": round(period.get("total_deductions", 0), 2),
+            "total_net": round(period.get("total_net", 0), 2),
+            "employee_count": period.get("employee_count", len(entries)),
+            "departments": {
+                dept: {
+                    "gross": round(v["gross"], 2),
+                    "net": round(v["net"], 2),
+                    "deductions": round(v["deductions"], 2),
+                    "employees": v["employees"]
+                }
+                for dept, v in dept_data.items()
+            }
+        })
+    
+    # Sort by date
+    period_summaries.sort(key=lambda x: (x["year"], x["month"]))
+    
+    # Aggregate totals
+    total_gross = sum(p["total_gross"] for p in period_summaries)
+    total_deductions = sum(p["total_deductions"] for p in period_summaries)
+    total_net = sum(p["total_net"] for p in period_summaries)
+    
+    # Department totals across all periods
+    dept_totals = {}
+    for ps in period_summaries:
+        for dept, vals in ps["departments"].items():
+            if dept not in dept_totals:
+                dept_totals[dept] = {"gross": 0, "net": 0, "deductions": 0, "employees": 0}
+            dept_totals[dept]["gross"] += vals["gross"]
+            dept_totals[dept]["net"] += vals["net"]
+            dept_totals[dept]["deductions"] += vals["deductions"]
+            dept_totals[dept]["employees"] = max(dept_totals[dept]["employees"], vals["employees"])
+    
+    # Round department totals
+    for dept in dept_totals:
+        dept_totals[dept]["gross"] = round(dept_totals[dept]["gross"], 2)
+        dept_totals[dept]["net"] = round(dept_totals[dept]["net"], 2)
+        dept_totals[dept]["deductions"] = round(dept_totals[dept]["deductions"], 2)
+    
+    # Period-over-period change
+    comparison = None
+    if len(period_summaries) >= 2:
+        current = period_summaries[-1]
+        previous = period_summaries[-2]
+        if previous["total_gross"] > 0:
+            gross_change = ((current["total_gross"] - previous["total_gross"]) / previous["total_gross"]) * 100
+        else:
+            gross_change = 0
+        comparison = {
+            "current_period": current["label"],
+            "previous_period": previous["label"],
+            "gross_change_pct": round(gross_change, 1),
+            "gross_diff": round(current["total_gross"] - previous["total_gross"], 2),
+            "deductions_diff": round(current["total_deductions"] - previous["total_deductions"], 2),
+            "net_diff": round(current["total_net"] - previous["total_net"], 2)
+        }
+    
+    # Chart data: period trends
+    chart_trend = [
+        {
+            "period": p["label"],
+            "bruto": p["total_gross"],
+            "deducciones": p["total_deductions"],
+            "neto": p["total_net"]
+        }
+        for p in period_summaries
+    ]
+    
+    # Chart data: department pie
+    chart_departments = [
+        {"name": dept, "value": round(vals["gross"], 2)}
+        for dept, vals in sorted(dept_totals.items(), key=lambda x: x[1]["gross"], reverse=True)
+    ]
+    
+    return {
+        "summary": {
+            "total_periods": len(period_summaries),
+            "total_gross": round(total_gross, 2),
+            "total_deductions": round(total_deductions, 2),
+            "total_net": round(total_net, 2),
+            "currency": periods[0].get("currency", "DOP") if periods else "DOP",
+            "avg_per_period": round(total_gross / len(period_summaries), 2) if period_summaries else 0,
+            "avg_employees": round(sum(p["employee_count"] for p in period_summaries) / len(period_summaries)) if period_summaries else 0
+        },
+        "periods": period_summaries,
+        "department_totals": dept_totals,
+        "comparison": comparison,
+        "charts": {
+            "trend": chart_trend,
+            "departments": chart_departments
+        }
+    }
