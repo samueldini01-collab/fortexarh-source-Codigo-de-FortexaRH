@@ -147,6 +147,12 @@ export default function PayrollPage() {
   // Drill-down state for period details
   const [drillDown, setDrillDown] = useState({ open: false, title: "", data: [], columns: [] });
   const [drillDownLoading, setDrillDownLoading] = useState(false);
+
+  // ACH Bank File states
+  const [showAchDialog, setShowAchDialog] = useState(false);
+  const [achBank, setAchBank] = useState("banreservas");
+  const [achPreview, setAchPreview] = useState(null);
+  const [achLoading, setAchLoading] = useState(false);
   
   // Form states
   const [newPeriodForm, setNewPeriodForm] = useState({
@@ -457,11 +463,77 @@ export default function PayrollPage() {
     }
   };
 
+  // ACH Bank File functions
+  const openAchDialog = async (period) => {
+    setSelectedPeriod(period);
+    setShowAchDialog(true);
+    setAchLoading(true);
+    try {
+      const response = await axios.get(
+        `${API}/bank-files/preview/${period.period_id}/${achBank}`,
+        { headers: getAuthHeaders(), withCredentials: true }
+      );
+      setAchPreview(response.data);
+    } catch (error) {
+      toast.error("Error al cargar vista previa ACH");
+    } finally {
+      setAchLoading(false);
+    }
+  };
+
+  const handleAchBankChange = async (bankId) => {
+    setAchBank(bankId);
+    if (!selectedPeriod) return;
+    setAchLoading(true);
+    try {
+      const response = await axios.get(
+        `${API}/bank-files/preview/${selectedPeriod.period_id}/${bankId}`,
+        { headers: getAuthHeaders(), withCredentials: true }
+      );
+      setAchPreview(response.data);
+    } catch (error) {
+      toast.error("Error al cargar vista previa");
+    } finally {
+      setAchLoading(false);
+    }
+  };
+
+  const handleDownloadAch = async () => {
+    if (!selectedPeriod) return;
+    try {
+      const response = await axios.get(
+        `${API}/bank-files/generate/${selectedPeriod.period_id}/${achBank}`,
+        { headers: getAuthHeaders(), withCredentials: true, responseType: 'blob' }
+      );
+      const ext = achBank === 'banreservas' ? 'csv' : 'txt';
+      const blob = new Blob([response.data]);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `ACH_${achBank}_${selectedPeriod.description || selectedPeriod.period_id}.${ext}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      toast.success(`Archivo ACH ${achBank} descargado`);
+      setShowAchDialog(false);
+    } catch (error) {
+      const detail = error.response?.data;
+      if (detail instanceof Blob) {
+        const text = await detail.text();
+        try { toast.error(JSON.parse(text).detail); } catch { toast.error("Error al generar archivo ACH"); }
+      } else {
+        toast.error(error.response?.data?.detail || "Error al generar archivo ACH");
+      }
+    }
+  };
+
   const handleGenerateJE = async (periodId) => {
     try {
       const res = await axios.post(`${API}/payroll/periods/${periodId}/generate-je`, {}, { headers: getAuthHeaders(), withCredentials: true });
       toast.success(res.data.message || "Asiento generado");
       fetchPeriodDetails(periodId);
+
       fetchPeriods();
     } catch (error) {
       toast.error(error.response?.data?.detail || "Error al generar asiento");
@@ -1127,6 +1199,16 @@ export default function PayrollPage() {
                                   >
                                     IIF
                                   </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-6 px-2 text-xs border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+                                    onClick={() => openAchDialog(selectedPeriod)}
+                                    data-testid="btn-generate-ach"
+                                    title="Generar archivo ACH bancario"
+                                  >
+                                    <Download className="w-3 h-3 mr-1" />ACH
+                                  </Button>
                                 </div>
                               ) : (
                                 <Button 
@@ -1764,6 +1846,119 @@ export default function PayrollPage() {
           columns={drillDown.columns}
           loading={drillDownLoading}
         />
+
+        {/* ACH Bank File Dialog */}
+        <Dialog open={showAchDialog} onOpenChange={setShowAchDialog}>
+          <DialogContent className="sm:max-w-lg">
+            <DialogHeader>
+              <DialogTitle>Generar Archivo ACH</DialogTitle>
+              <DialogDescription>
+                {selectedPeriod?.description || "Período seleccionado"} - Archivo de pago bancario
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label>Banco</Label>
+                <Select value={achBank} onValueChange={handleAchBankChange}>
+                  <SelectTrigger data-testid="ach-bank-select"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="banreservas">Banreservas</SelectItem>
+                    <SelectItem value="popular">Banco Popular Dominicano</SelectItem>
+                    <SelectItem value="bhd">BHD León</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {achLoading ? (
+                <div className="py-6 text-center text-sm text-slate-500">Cargando vista previa...</div>
+              ) : achPreview ? (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-3 text-center">
+                      <p className="text-xs text-slate-500">Listos</p>
+                      <p className="text-lg font-bold text-emerald-700" data-testid="ach-ready-count">{achPreview.ready_count}</p>
+                    </div>
+                    <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-3 text-center">
+                      <p className="text-xs text-slate-500">Sin banco</p>
+                      <p className="text-lg font-bold text-amber-700" data-testid="ach-missing-count">{achPreview.missing_count}</p>
+                    </div>
+                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 text-center">
+                      <p className="text-xs text-slate-500">Total</p>
+                      <p className="text-sm font-bold text-blue-700" data-testid="ach-total-amount">
+                        RD${achPreview.total_amount?.toLocaleString('es-DO', {minimumFractionDigits: 2})}
+                      </p>
+                    </div>
+                  </div>
+
+                  {achPreview.missing_count > 0 && (
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                      <p className="text-xs font-medium text-amber-800 mb-1 flex items-center gap-1">
+                        <AlertCircle className="w-3.5 h-3.5" /> Empleados sin datos bancarios:
+                      </p>
+                      <div className="space-y-0.5">
+                        {achPreview.missing?.slice(0, 5).map((m, i) => (
+                          <p key={i} className="text-xs text-amber-700">
+                            {m.employee_name} - RD${m.amount?.toLocaleString('es-DO', {minimumFractionDigits: 2})}
+                          </p>
+                        ))}
+                      </div>
+                      <p className="text-[10px] text-amber-600 mt-1">
+                        Configura los datos bancarios en el perfil de cada empleado
+                      </p>
+                    </div>
+                  )}
+
+                  {achPreview.ready_count > 0 && (
+                    <div className="max-h-[150px] overflow-y-auto border rounded-lg">
+                      <table className="w-full text-xs">
+                        <thead className="bg-slate-50 sticky top-0">
+                          <tr>
+                            <th className="text-left px-2 py-1.5 font-medium text-slate-500">Empleado</th>
+                            <th className="text-left px-2 py-1.5 font-medium text-slate-500">Cuenta</th>
+                            <th className="text-right px-2 py-1.5 font-medium text-slate-500">Monto</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {achPreview.ready?.map((r, i) => (
+                            <tr key={i} className="border-t">
+                              <td className="px-2 py-1 text-slate-700">{r.employee_name}</td>
+                              <td className="px-2 py-1 text-slate-500 font-mono text-[10px]">{r.account}</td>
+                              <td className="px-2 py-1 text-right text-emerald-700 font-medium">
+                                RD${r.amount?.toLocaleString('es-DO', {minimumFractionDigits: 2})}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {!achPreview.company_account && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                      <p className="text-xs text-red-700 flex items-center gap-1">
+                        <AlertCircle className="w-3.5 h-3.5" />
+                        No hay cuenta bancaria de empresa configurada para {achBank}. 
+                        Ve a Configuración para agregarla.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ) : null}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowAchDialog(false)}>Cancelar</Button>
+              <Button
+                onClick={handleDownloadAch}
+                disabled={!achPreview || achPreview.ready_count === 0}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                data-testid="btn-download-ach"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Descargar ACH ({achPreview?.ready_count || 0} registros)
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );

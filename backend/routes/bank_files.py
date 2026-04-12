@@ -1,9 +1,11 @@
 """
 Bank File Generation Routes for FortexaRH
-Generates payment files for Dominican Republic banks (Popular, BHD, Banreservas)
+Generates ACH payment files for Dominican Republic banks (Popular, BHD, Banreservas)
+Format verified with real bank templates.
 """
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, Depends
 from fastapi.responses import StreamingResponse
+from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timezone
 import io
@@ -16,22 +18,52 @@ from utils.auth import get_current_user, get_user_from_request
 logger = logging.getLogger(__name__)
 
 
+class CompanyBankConfig(BaseModel):
+    bank_id: str
+    account_number: str
+    account_type: str = "CC"
+    currency: str = "DOP"
+
+
+# Account type mapping
+ACCOUNT_TYPE_MAP = {
+    "corriente": "CC",
+    "ahorros": "CA",
+    "ahorro": "CA",
+    "cc": "CC",
+    "ca": "CA",
+}
+
+
+def normalize_account_type(account_type: str) -> str:
+    """Normalize account type to CC or CA"""
+    if not account_type:
+        return "CC"
+    return ACCOUNT_TYPE_MAP.get(account_type.lower().strip(), "CC")
+
+
+def format_banreservas_line(
+    company_account_type: str, currency: str, company_account: str,
+    emp_account_type: str, emp_currency: str, emp_account: str,
+    amount: float, concept: str
+) -> str:
+    """
+    Banreservas ACH format (verified from real bank template):
+    CC,DOP,0130850482,CC,DOP,9608649339,9409.00,AUXILIAR DE CONTABILIDAD
+    Fields: TipoCuentaEmpresa,Moneda,CuentaEmpresa,TipoCuentaEmpleado,Moneda,CuentaEmpleado,Monto,Concepto
+    """
+    concept_clean = concept.upper().replace(",", " ").strip()[:50]
+    return f"{company_account_type},{currency},{company_account},{emp_account_type},{emp_currency},{emp_account},{amount:.2f},{concept_clean}\n"
+
+
 def format_popular_line(seq: int, account: str, amount: float, name: str, doc_type: str, doc_number: str) -> str:
     """Format a line for Banco Popular file"""
-    # Popular format: Sequence|AccountType|Account|Amount|Name|DocType|DocNumber|Email
     return f"{seq:06d}|22|{account}|{amount:.2f}|{name[:40]}|{doc_type}|{doc_number}|\n"
 
 
-def format_bhd_line(seq: int, account: str, amount: float, name: str, doc_number: str) -> str:
+def format_bhd_line(account: str, amount: float, name: str, doc_number: str) -> str:
     """Format a line for BHD León file"""
-    # BHD format: fixed width - Account(20) Amount(15) Name(40) Document(15)
     return f"{account:<20}{amount:>15.2f}{name:<40}{doc_number:<15}\n"
-
-
-def format_banreservas_line(seq: int, account: str, amount: float, name: str, doc_number: str) -> str:
-    """Format a line for Banreservas file"""
-    # Banreservas CSV format
-    return f"{seq},{account},{amount:.2f},{name},{doc_number}\n"
 
 
 @router.get("/banks")
@@ -39,15 +71,51 @@ async def get_available_banks(request: Request):
     """Get list of available banks for file generation"""
     await get_user_from_request(request)
     return [
-        {"id": "popular", "name": "Banco Popular Dominicano", "format": "TXT (Pipe delimited)"},
-        {"id": "bhd", "name": "BHD León", "format": "TXT (Fixed width)"},
-        {"id": "banreservas", "name": "Banreservas", "format": "CSV"},
+        {"id": "banreservas", "name": "Banreservas", "format": "CSV", "description": "Formato ACH Banreservas"},
+        {"id": "popular", "name": "Banco Popular Dominicano", "format": "TXT", "description": "Formato Nómina Popular"},
+        {"id": "bhd", "name": "BHD León", "format": "TXT", "description": "Formato ACH BHD"},
     ]
+
+
+@router.get("/company-bank-config")
+async def get_company_bank_config(request: Request):
+    """Get company bank configuration for ACH generation"""
+    current_user = await get_user_from_request(request)
+    company_id = current_user.get("company_id")
+    
+    config = await db.company_bank_config.find_one(
+        {"company_id": company_id},
+        {"_id": 0}
+    )
+    
+    return config or {"company_id": company_id, "accounts": []}
+
+
+@router.put("/company-bank-config")
+async def save_company_bank_config(data: CompanyBankConfig, request: Request):
+    """Save company bank account for ACH file generation"""
+    current_user = await get_user_from_request(request)
+    company_id = current_user.get("company_id")
+    
+    await db.company_bank_config.update_one(
+        {"company_id": company_id, "bank_id": data.bank_id},
+        {"$set": {
+            "company_id": company_id,
+            "bank_id": data.bank_id,
+            "account_number": data.account_number,
+            "account_type": data.account_type,
+            "currency": data.currency,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }},
+        upsert=True
+    )
+    
+    return {"success": True, "message": "Configuración bancaria guardada"}
 
 
 @router.get("/generate/{period_id}/{bank_id}")
 async def generate_bank_file(period_id: str, bank_id: str, request: Request):
-    """Generate bank payment file for a payroll period"""
+    """Generate ACH bank payment file for a payroll period"""
     current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
@@ -60,9 +128,18 @@ async def generate_bank_file(period_id: str, bank_id: str, request: Request):
     if not period:
         raise HTTPException(status_code=404, detail="Período no encontrado")
     
-    # Allow generating bank files for approved or paid periods
     if period.get("status") not in ["approved", "paid", "processed"]:
-        raise HTTPException(status_code=400, detail="El período debe estar aprobado o pagado")
+        raise HTTPException(status_code=400, detail="El período debe estar aprobado o pagado para generar archivo ACH")
+    
+    # Get company bank config for this bank
+    company_bank = await db.company_bank_config.find_one(
+        {"company_id": company_id, "bank_id": bank_id},
+        {"_id": 0}
+    )
+    
+    company_account = company_bank.get("account_number", "") if company_bank else ""
+    company_account_type = company_bank.get("account_type", "CC") if company_bank else "CC"
+    company_currency = company_bank.get("currency", "DOP") if company_bank else "DOP"
     
     # Get payroll entries
     payrolls = await db.payroll_entries.find(
@@ -77,53 +154,83 @@ async def generate_bank_file(period_id: str, bank_id: str, request: Request):
     employee_ids = [p.get("employee_id") for p in payrolls]
     employees = await db.employees.find(
         {"employee_id": {"$in": employee_ids}, "company_id": company_id},
-        {"_id": 0, "employee_id": 1, "first_name": 1, "last_name": 1, 
-         "document_number": 1, "bank_account": 1, "bank_name": 1}
+        {"_id": 0, "employee_id": 1, "first_name": 1, "last_name": 1,
+         "document_number": 1, "account_number": 1, "account_type": 1, "bank_name": 1, "position": 1}
     ).to_list(1000)
     
     emp_map = {e["employee_id"]: e for e in employees}
     
-    # Generate file content
-    output = io.StringIO()
+    # Track employees without bank info
+    missing_bank = []
     
-    if bank_id == "popular":
-        # Header for Popular
-        output.write(f"H|{company_id}|{datetime.now().strftime('%Y%m%d')}|NOMINA\n")
+    output = io.StringIO()
+    record_count = 0
+    total_amount = 0.0
+    
+    if bank_id == "banreservas":
+        # Banreservas ACH format (verified from real template):
+        # CC,DOP,{CuentaEmpresa},CC,DOP,{CuentaEmpleado},{Monto},{Concepto}
+        for payroll in payrolls:
+            emp = emp_map.get(payroll.get("employee_id"), {})
+            emp_account = emp.get("account_number", "")
+            emp_account_type = normalize_account_type(emp.get("account_type", "CC"))
+            amount = payroll.get("net_salary", 0)
+            concept = emp.get("position", payroll.get("position", "PAGO NOMINA"))
+            
+            if not emp_account:
+                missing_bank.append(f"{emp.get('first_name', '')} {emp.get('last_name', '')}")
+                continue
+            
+            if amount > 0:
+                output.write(format_banreservas_line(
+                    company_account_type, company_currency, company_account,
+                    emp_account_type, company_currency, emp_account,
+                    amount, concept
+                ))
+                record_count += 1
+                total_amount += amount
+        
+        filename = f"ACH_Banreservas_{period.get('description', period_id).replace(' ', '_')}.csv"
+        
+    elif bank_id == "popular":
+        output.write(f"H|{company_account}|{datetime.now().strftime('%Y%m%d')}|NOMINA\n")
         for i, payroll in enumerate(payrolls, 1):
             emp = emp_map.get(payroll.get("employee_id"), {})
-            account = emp.get("bank_account", "0000000000000000")
-            name = f"{emp.get('first_name', '')} {emp.get('last_name', '')}".strip()
-            doc = emp.get("document_number", "00000000000")
+            account = emp.get("account_number", "")
+            name = f"{emp.get('last_name', '')},{emp.get('first_name', '')}".strip()
+            doc = emp.get("document_number", "")
             amount = payroll.get("net_salary", 0)
+            
+            if not account:
+                missing_bank.append(f"{emp.get('first_name', '')} {emp.get('last_name', '')}")
+                continue
+            
             if amount > 0:
                 output.write(format_popular_line(i, account, amount, name, "C", doc))
-        output.write(f"T|{len(payrolls)}|{sum(p.get('net_salary', 0) for p in payrolls):.2f}\n")
-        filename = f"nomina_popular_{period_id}.txt"
+                record_count += 1
+                total_amount += amount
+        
+        output.write(f"T|{record_count}|{total_amount:.2f}\n")
+        filename = f"ACH_Popular_{period.get('description', period_id).replace(' ', '_')}.txt"
         
     elif bank_id == "bhd":
-        # BHD León format
-        for i, payroll in enumerate(payrolls, 1):
+        for payroll in payrolls:
             emp = emp_map.get(payroll.get("employee_id"), {})
-            account = emp.get("bank_account", "0000000000000000")
-            name = f"{emp.get('first_name', '')} {emp.get('last_name', '')}".strip()
-            doc = emp.get("document_number", "00000000000")
+            account = emp.get("account_number", "")
+            name = f"{emp.get('last_name', '')},{emp.get('first_name', '')}".strip()
+            doc = emp.get("document_number", "")
             amount = payroll.get("net_salary", 0)
+            
+            if not account:
+                missing_bank.append(f"{emp.get('first_name', '')} {emp.get('last_name', '')}")
+                continue
+            
             if amount > 0:
-                output.write(format_bhd_line(i, account, amount, name, doc))
-        filename = f"nomina_bhd_{period_id}.txt"
+                output.write(format_bhd_line(account, amount, name, doc))
+                record_count += 1
+                total_amount += amount
         
-    elif bank_id == "banreservas":
-        # Banreservas CSV format
-        output.write("Secuencia,Cuenta,Monto,Nombre,Documento\n")
-        for i, payroll in enumerate(payrolls, 1):
-            emp = emp_map.get(payroll.get("employee_id"), {})
-            account = emp.get("bank_account", "0000000000000000")
-            name = f"{emp.get('first_name', '')} {emp.get('last_name', '')}".strip()
-            doc = emp.get("document_number", "00000000000")
-            amount = payroll.get("net_salary", 0)
-            if amount > 0:
-                output.write(format_banreservas_line(i, account, amount, name, doc))
-        filename = f"nomina_banreservas_{period_id}.csv"
+        filename = f"ACH_BHD_{period.get('description', period_id).replace(' ', '_')}.txt"
     else:
         raise HTTPException(status_code=400, detail="Banco no soportado")
     
@@ -132,20 +239,102 @@ async def generate_bank_file(period_id: str, bank_id: str, request: Request):
         "company_id": company_id,
         "period_id": period_id,
         "bank_id": bank_id,
-        "record_count": len(payrolls),
-        "total_amount": sum(p.get("net_salary", 0) for p in payrolls),
+        "record_count": record_count,
+        "missing_bank_info": missing_bank,
+        "total_amount": round(total_amount, 2),
         "generated_by": current_user.get("user_id"),
-        "generated_at": datetime.now(timezone.utc).isoformat()
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "filename": filename
     })
     
     content = output.getvalue()
     output.close()
     
+    if not content.strip():
+        raise HTTPException(
+            status_code=400,
+            detail=f"No se generaron registros. {len(missing_bank)} empleados sin datos bancarios: {', '.join(missing_bank[:5])}"
+        )
+    
     return StreamingResponse(
         io.BytesIO(content.encode('utf-8')),
-        media_type="text/plain",
-        headers={"Content-Disposition": f"attachment; filename={filename}"}
+        media_type="text/plain; charset=utf-8",
+        headers={
+            "Content-Disposition": f"attachment; filename={filename}",
+            "X-Record-Count": str(record_count),
+            "X-Total-Amount": f"{total_amount:.2f}",
+            "X-Missing-Bank": str(len(missing_bank))
+        }
     )
+
+
+@router.get("/preview/{period_id}/{bank_id}")
+async def preview_bank_file(period_id: str, bank_id: str, request: Request):
+    """Preview bank file data before generating (shows which employees are ready and which are missing bank info)"""
+    current_user = await get_user_from_request(request)
+    company_id = current_user.get("company_id")
+    
+    period = await db.payroll_periods.find_one(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    
+    payrolls = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    employee_ids = [p.get("employee_id") for p in payrolls]
+    employees = await db.employees.find(
+        {"employee_id": {"$in": employee_ids}, "company_id": company_id},
+        {"_id": 0, "employee_id": 1, "first_name": 1, "last_name": 1,
+         "account_number": 1, "account_type": 1, "bank_name": 1, "position": 1}
+    ).to_list(1000)
+    
+    emp_map = {e["employee_id"]: e for e in employees}
+    
+    ready = []
+    missing = []
+    total_amount = 0.0
+    
+    for payroll in payrolls:
+        emp = emp_map.get(payroll.get("employee_id"), {})
+        name = f"{emp.get('first_name', '')} {emp.get('last_name', '')}".strip()
+        amount = payroll.get("net_salary", 0)
+        
+        if emp.get("account_number"):
+            ready.append({
+                "employee_name": name,
+                "account": emp.get("account_number"),
+                "account_type": emp.get("account_type", "Corriente"),
+                "amount": round(amount, 2),
+                "position": emp.get("position", "")
+            })
+            total_amount += amount
+        else:
+            missing.append({
+                "employee_name": name,
+                "employee_id": payroll.get("employee_id"),
+                "amount": round(amount, 2)
+            })
+    
+    company_bank = await db.company_bank_config.find_one(
+        {"company_id": company_id, "bank_id": bank_id},
+        {"_id": 0}
+    )
+    
+    return {
+        "period": period.get("description", period_id),
+        "bank_id": bank_id,
+        "company_account": company_bank.get("account_number", "") if company_bank else "",
+        "ready_count": len(ready),
+        "missing_count": len(missing),
+        "total_amount": round(total_amount, 2),
+        "ready": ready,
+        "missing": missing
+    }
 
 
 @router.get("/history")
