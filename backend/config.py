@@ -85,7 +85,7 @@ SUBSCRIPTION_PLANS = {
         "max_users": 5,
         "included_users": 5,
         "trial_days": 0,
-        "features": ["Hasta 200 empleados", "5 usuarios incluidos", "Todo lo del plan Básico", "Evaluaciones de desempeño", "Módulo de reclutamiento", "Portal autoservicio empleados", "Organigrama intuitivo", "Reportes avanzados", "Integración QuickBooks", "Soporte prioritario"],
+        "features": ["Hasta 200 empleados", "5 usuarios incluidos", "Todo lo del plan Básico", "Evaluaciones de desempeño", "Módulo de reclutamiento", "Portal autoservicio empleados", "Organigrama intuitivo", "Reportes avanzados", "Integración QuickBooks", "QuickBooks Desktop (IIF)", "Pagos ACH bancarios", "Soporte prioritario"],
         "allowed_features": ["all_pro"],
         "restricted_features": ["custom_roles", "api", "advanced_workflows", "integrations_enterprise"]
     },
@@ -98,7 +98,7 @@ SUBSCRIPTION_PLANS = {
         "max_users": 7,
         "included_users": 7,
         "trial_days": 0,
-        "features": ["Empleados ilimitados", "7 usuarios incluidos", "Todo lo del plan Pro", "Roles personalizados", "Múltiples administradores", "API personalizada", "Flujos de trabajo avanzados", "Integración SAP/Oracle/Dynamics", "Soporte 24/7", "Gerente de cuenta dedicado"],
+        "features": ["Empleados ilimitados", "7 usuarios incluidos", "Todo lo del plan Pro", "Roles personalizados", "Múltiples administradores", "Contratos laborales", "Firma electrónica", "Workflows de aprobación", "API personalizada", "Integración SAP/Oracle/Dynamics", "Soporte 24/7", "Gerente de cuenta dedicado"],
         "allowed_features": ["all"],
         "restricted_features": []
     }

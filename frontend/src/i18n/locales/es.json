@@ -274,7 +274,8 @@
       "pricing": "Precios",
       "contact": "Contacto",
       "login": "Iniciar Sesión",
-      "startFree": "Comenzar Gratis"
+      "startFree": "Comenzar Gratis",
+      "getStarted": "Comenzar"
     },
     "features": {
       "title": "Todo lo que necesitas para gestionar tu equipo",
@@ -925,7 +926,12 @@
       "advancedWorkflows": "Flujos de trabajo avanzados",
       "sapOracleIntegration": "Integración SAP/Oracle/Dynamics",
       "support247": "Soporte 24/7",
-      "dedicatedManager": "Gerente de cuenta dedicado"
+      "dedicatedManager": "Gerente de cuenta dedicado",
+      "qbDesktop": "QuickBooks Desktop (IIF)",
+      "achPayments": "Pagos ACH bancarios",
+      "contracts": "Contratos laborales",
+      "eSignature": "Firma electrónica",
+      "approvalWorkflows": "Workflows de aprobación"
     }
   },
   "payrollV2": {

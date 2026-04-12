@@ -89,6 +89,8 @@ export default function PricingPage() {
     "Organigrama intuitivo": "pricing.features.orgChart",
     "Reportes avanzados": "pricing.features.advancedReports",
     "Integración QuickBooks": "pricing.features.quickbooks",
+    "QuickBooks Desktop (IIF)": "pricing.features.qbDesktop",
+    "Pagos ACH bancarios": "pricing.features.achPayments",
     "Soporte prioritario": "pricing.features.prioritySupport",
     // Enterprise plan features
     "Empleados ilimitados": "pricing.features.unlimitedEmployees",
@@ -96,6 +98,9 @@ export default function PricingPage() {
     "Todo lo del plan Pro": "pricing.features.allPro",
     "Roles personalizados": "pricing.features.customRoles",
     "Múltiples administradores": "pricing.features.multiAdmin",
+    "Contratos laborales": "pricing.features.contracts",
+    "Firma electrónica": "pricing.features.eSignature",
+    "Workflows de aprobación": "pricing.features.approvalWorkflows",
     "API personalizada": "pricing.features.customAPI",
     "Flujos de trabajo avanzados": "pricing.features.advancedWorkflows",
     "Integración SAP/Oracle/Dynamics": "pricing.features.sapOracleIntegration",

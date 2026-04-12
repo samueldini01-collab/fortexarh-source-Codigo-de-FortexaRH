@@ -926,7 +926,12 @@
       "advancedWorkflows": "Advanced workflows",
       "sapOracleIntegration": "SAP/Oracle/Dynamics integration",
       "support247": "24/7 Support",
-      "dedicatedManager": "Dedicated account manager"
+      "dedicatedManager": "Dedicated account manager",
+      "qbDesktop": "QuickBooks Desktop (IIF)",
+      "achPayments": "ACH bank payments",
+      "contracts": "Labor contracts",
+      "eSignature": "Electronic signature",
+      "approvalWorkflows": "Approval workflows"
     }
   },
   "payrollV2": {
