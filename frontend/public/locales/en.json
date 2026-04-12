@@ -397,7 +397,12 @@
       "dedicated247": "24/7 + Dedicated manager",
       "reports30": "30 reports",
       "reports58": "58 reports",
-      "additionalUsers": "* Additional users available at $2.50/month per user"
+      "additionalUsers": "* Additional users available at $2.50/month per user",
+      "contracts": "Labor contracts",
+      "eSignature": "Electronic signature",
+      "workflows": "Approval workflows",
+      "achBank": "ACH bank payments",
+      "qbDesktop": "QuickBooks Desktop (IIF)"
     },
     "testimonials": {
       "badge": "Customer Testimonials",
@@ -562,7 +567,8 @@
         "allBasic": "Everything in Basic plan",
         "allPro": "Everything in Pro plan",
         "unlimitedEmployees": "Unlimited employees"
-      }
+      },
+      "freeTrial": "3-day free trial"
     },
     "contact": {
       "title": "Contact & Support",
@@ -597,7 +603,12 @@
     "fortexarhEnterprise": "FortexaRH Enterprise",
     "avGeorgeWashington503": "Av. George Washington #503, Gazcue",
     "santoDomingoDistritoNacional": "Santo Domingo, Distrito Nacional",
-    "santoDomingoDn": "Santo Domingo, D.N."
+    "santoDomingoDn": "Santo Domingo, D.N.",
+    "accountantDropdown": {
+      "commission": "Commission per referred company",
+      "multiClient": "Multi-Client",
+      "dashboard": "Client management dashboard"
+    }
   },
   "auth": {
     "login": {
@@ -5303,7 +5314,17 @@
       "rolesPermissions": "Roles & Permissions",
       "rolesPermissionsDesc": "Granular access control by module and action",
       "complianceTitle": "Guaranteed Legal Compliance",
-      "complianceDescription": "FortexaRH is specifically designed to comply with all labor regulations of the Dominican Republic: TSS (Social Security Treasury), DGII (Internal Revenue), Labor Code, General Norm 07-2007 for Construction Workers, and more."
+      "complianceDescription": "FortexaRH is specifically designed to comply with all labor regulations of the Dominican Republic: TSS (Social Security Treasury), DGII (Internal Revenue), Labor Code, General Norm 07-2007 for Construction Workers, and more.",
+      "contracts": "Labor Contracts",
+      "contractsDesc": "WYSIWYG editor, DR templates, automatic variables and contract management by type",
+      "eSignature": "Electronic Signature",
+      "eSignatureDesc": "Digital on-screen signature with SHA-256 verification, timestamp and multi-party",
+      "approvalWorkflows": "Approval Workflows",
+      "approvalWorkflowsDesc": "Configurable approval levels for payroll with role or user-based control",
+      "achPayments": "ACH Bank Payments",
+      "achPaymentsDesc": "ACH file generation for Banreservas, Popular and BHD León from payroll",
+      "qbDesktop": "QuickBooks Desktop",
+      "qbDesktopDesc": "IIF export for QuickBooks Desktop integration"
     },
     "benefits": {
       "sectionTitle": "BENEFITS",

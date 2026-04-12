@@ -828,6 +828,9 @@ export default function LandingPage() {
                 <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />{t('landing.pricing.features.api')}</li>
                 <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />{t('landing.pricing.features.integrations')}</li>
                 <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />{t('landing.pricing.features.workflows')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />{t('landing.comparison.contracts')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />{t('landing.comparison.eSignature')}</li>
+                <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />{t('landing.comparison.achBank')}</li>
                 <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-amber-500 flex-shrink-0" />{t('landing.pricing.features.branches')}</li>
                 <li className="flex items-center gap-2 text-xs sm:text-sm text-slate-700"><Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />{t('landing.pricing.features.support247')}</li>
               </ul>
@@ -992,6 +995,36 @@ export default function LandingPage() {
                   <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
+                  <td className="py-3 px-4 font-medium text-emerald-700">{t('landing.comparison.contracts')}</td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50">
+                  <td className="py-3 px-4 font-medium text-emerald-700">{t('landing.comparison.eSignature')}</td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100">
+                  <td className="py-3 px-4 font-medium text-emerald-700">{t('landing.comparison.workflows')}</td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50">
+                  <td className="py-3 px-4 font-medium text-emerald-700">{t('landing.comparison.achBank')}</td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100">
+                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.qbDesktop')}</td>
+                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50">
                   <td className="py-3 px-4 text-slate-700">{t('landing.comparison.support')}</td>
                   <td className="py-3 px-4 text-center text-slate-700">{t('landing.comparison.email')}</td>
                   <td className="py-3 px-4 text-center text-slate-700">{t('landing.comparison.priority')}</td>

@@ -36,7 +36,11 @@ import {
   MapPin,
   AlertTriangle,
   Mail,
-  Map
+  Map,
+  FileSignature,
+  Pen,
+  GitBranch,
+  Landmark
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -91,6 +95,11 @@ export default function BrochurePage() {
     { icon: Brain, titleKey: "brochure.features.aiSearch", descKey: "brochure.features.aiSearchDesc" },
     { icon: Bell, titleKey: "brochure.features.notifications", descKey: "brochure.features.notificationsDesc" },
     { icon: Shield, titleKey: "brochure.features.rolesPermissions", descKey: "brochure.features.rolesPermissionsDesc" },
+    { icon: FileSignature, titleKey: "brochure.features.contracts", descKey: "brochure.features.contractsDesc", isNew: true },
+    { icon: Pen, titleKey: "brochure.features.eSignature", descKey: "brochure.features.eSignatureDesc", isNew: true },
+    { icon: GitBranch, titleKey: "brochure.features.approvalWorkflows", descKey: "brochure.features.approvalWorkflowsDesc", isNew: true },
+    { icon: Landmark, titleKey: "brochure.features.achPayments", descKey: "brochure.features.achPaymentsDesc", isNew: true },
+    { icon: FileText, titleKey: "brochure.features.qbDesktop", descKey: "brochure.features.qbDesktopDesc", isNew: true },
   ];
 
   // Benefits using translation keys

@@ -396,7 +396,12 @@
       "dedicated247": "24/7 + Gerente dedicado",
       "reports30": "30 reportes",
       "reports58": "58 reportes",
-      "additionalUsers": "* Usuarios adicionales disponibles a $2.50/mes por usuario"
+      "additionalUsers": "* Usuarios adicionales disponibles a $2.50/mes por usuario",
+      "contracts": "Contratos laborales",
+      "eSignature": "Firma electrónica",
+      "workflows": "Workflows de aprobación",
+      "achBank": "Pagos ACH bancarios",
+      "qbDesktop": "QuickBooks Desktop (IIF)"
     },
     "testimonials": {
       "badge": "Testimonios de Clientes",
@@ -561,7 +566,8 @@
         "allBasic": "Todo lo del plan Básico",
         "allPro": "Todo lo del plan Pro",
         "unlimitedEmployees": "Empleados ilimitados"
-      }
+      },
+      "freeTrial": "Prueba gratis por 3 días"
     },
     "contact": {
       "title": "Contacto y Soporte",
@@ -596,7 +602,12 @@
     "fortexarhEnterprise": "FortexaRH Enterprise",
     "avGeorgeWashington503": "Av. George Washington #503, Gazcue",
     "santoDomingoDistritoNacional": "Santo Domingo, Distrito Nacional",
-    "santoDomingoDn": "Santo Domingo, D.N."
+    "santoDomingoDn": "Santo Domingo, D.N.",
+    "accountantDropdown": {
+      "commission": "Comisión por cada empresa referida",
+      "multiClient": "Multi-Cliente",
+      "dashboard": "Dashboard de gestión de clientes"
+    }
   },
   "auth": {
     "login": {
@@ -5299,7 +5310,17 @@
       "rolesPermissions": "Roles y Permisos",
       "rolesPermissionsDesc": "Control de acceso granular por módulo y acción",
       "complianceTitle": "Cumplimiento Legal Garantizado",
-      "complianceDescription": "FortexaRH está diseñado específicamente para cumplir con todas las regulaciones laborales de República Dominicana: TSS (Tesorería de Seguridad Social), DGII (Dirección General de Impuestos Internos), Código de Trabajo, Norma General 07-2007 para Obreros de Construcción, y más."
+      "complianceDescription": "FortexaRH está diseñado específicamente para cumplir con todas las regulaciones laborales de República Dominicana: TSS (Tesorería de Seguridad Social), DGII (Dirección General de Impuestos Internos), Código de Trabajo, Norma General 07-2007 para Obreros de Construcción, y más.",
+      "contracts": "Contratos Laborales",
+      "contractsDesc": "Editor WYSIWYG, plantillas RD, variables automáticas y gestión de contratos por tipo",
+      "eSignature": "Firma Electrónica",
+      "eSignatureDesc": "Firma digital en pantalla con verificación SHA-256, timestamp y multi-partes",
+      "approvalWorkflows": "Workflows de Aprobación",
+      "approvalWorkflowsDesc": "Niveles configurables de aprobación para nóminas con control por rol o usuario",
+      "achPayments": "Pagos ACH Bancarios",
+      "achPaymentsDesc": "Generación de archivos ACH para Banreservas, Popular y BHD León desde la nómina",
+      "qbDesktop": "QuickBooks Desktop",
+      "qbDesktopDesc": "Exportación IIF para integración con QuickBooks Desktop"
     },
     "benefits": {
       "sectionTitle": "BENEFICIOS",
