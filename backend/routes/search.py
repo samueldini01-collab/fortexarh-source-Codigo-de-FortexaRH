@@ -8,7 +8,9 @@ from fastapi.security import HTTPBearer
 from pydantic import BaseModel
 from typing import Callable, Optional, List, Dict, Any
 import os
+import re
 import json
+import uuid
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 
@@ -30,122 +32,183 @@ ACTION_TYPES = {
         "required": ["employee_id", "start_date", "end_date"],
         "optional": ["leave_type", "reason"],
         "route": "/vacations",
-        "icon": "calendar"
+        "icon": "calendar",
+        "category": "rrhh"
     },
     "registrar_entrada": {
         "name": "Registrar Entrada",
         "required": ["employee_id"],
         "optional": ["timestamp"],
         "route": "/attendance",
-        "icon": "clock"
+        "icon": "clock",
+        "category": "asistencia"
     },
     "registrar_salida": {
         "name": "Registrar Salida",
         "required": ["employee_id"],
         "optional": ["timestamp"],
         "route": "/attendance",
-        "icon": "clock"
+        "icon": "clock",
+        "category": "asistencia"
     },
     "crear_evaluacion": {
         "name": "Crear Evaluación",
         "required": ["employee_id"],
         "optional": ["period", "evaluation_type"],
         "route": "/evaluations",
-        "icon": "target"
+        "icon": "target",
+        "category": "rrhh"
     },
     "crear_objetivo": {
         "name": "Crear Objetivo/KPI",
         "required": ["employee_id", "title"],
         "optional": ["target_value", "due_date"],
         "route": "/evaluations",
-        "icon": "target"
+        "icon": "target",
+        "category": "rrhh"
     },
     "aprobar_vacaciones": {
         "name": "Aprobar Vacaciones Pendientes",
         "required": [],
         "optional": ["employee_id"],
         "route": "/vacations",
-        "icon": "check"
+        "icon": "check",
+        "category": "rrhh"
     },
     "ver_empleado": {
         "name": "Ver Empleado",
         "required": ["employee_id"],
         "optional": [],
         "route": "/employees",
-        "icon": "user"
+        "icon": "user",
+        "category": "consulta"
     },
     "ver_nomina": {
         "name": "Ver Nómina",
         "required": [],
         "optional": ["period"],
         "route": "/payroll",
-        "icon": "dollar"
+        "icon": "dollar",
+        "category": "nomina"
     },
     "crear_empleado": {
         "name": "Crear Nuevo Empleado",
         "required": ["first_name", "last_name"],
         "optional": ["email", "department", "position"],
         "route": "/employees",
-        "icon": "user-plus"
+        "icon": "user-plus",
+        "category": "rrhh"
     },
     "generar_reporte": {
         "name": "Generar Reporte",
         "required": ["report_type"],
         "optional": ["start_date", "end_date"],
         "route": "/reports-advanced",
-        "icon": "file-text"
+        "icon": "file-text",
+        "category": "reportes"
     },
     "calcular_nomina": {
         "name": "Calcular Nómina",
         "required": [],
         "optional": ["period", "department"],
         "route": "/payroll",
-        "icon": "calculator"
+        "icon": "calculator",
+        "category": "nomina"
     },
     "crear_prestamo": {
         "name": "Crear Préstamo",
         "required": ["employee_id", "amount"],
         "optional": ["installments", "reason"],
         "route": "/loans",
-        "icon": "wallet"
+        "icon": "wallet",
+        "category": "rrhh"
     },
     "resumen_dashboard": {
         "name": "Ver Resumen del Dashboard",
         "required": [],
         "optional": [],
         "route": "/dashboard",
-        "icon": "layout-dashboard"
+        "icon": "layout-dashboard",
+        "category": "consulta"
     },
     "navegar": {
         "name": "Navegación",
         "required": ["destination"],
         "optional": [],
         "route": None,
-        "icon": "arrow-right"
+        "icon": "arrow-right",
+        "category": "navegacion"
+    },
+    "consultar_info": {
+        "name": "Consultar Información",
+        "required": [],
+        "optional": ["topic"],
+        "route": None,
+        "icon": "info",
+        "category": "consulta"
     }
 }
 
+# Fast pattern matching rules (skip AI call for obvious commands)
+QUICK_PATTERNS = [
+    (r"(?:ir\s+a|abrir|mostrar|ver)\s+(?:el\s+)?dashboard", "navegar", {"destination": "dashboard"}),
+    (r"(?:ir\s+a|abrir|mostrar|ver)\s+(?:los?\s+)?empleados?", "navegar", {"destination": "empleados"}),
+    (r"(?:ir\s+a|abrir|mostrar|ver)\s+(?:la\s+)?n[oó]mina", "navegar", {"destination": "nomina"}),
+    (r"(?:ir\s+a|abrir|mostrar|ver)\s+(?:las?\s+)?vacaciones", "navegar", {"destination": "vacaciones"}),
+    (r"(?:ir\s+a|abrir|mostrar|ver)\s+(?:la\s+)?asistencia", "navegar", {"destination": "asistencia"}),
+    (r"(?:ir\s+a|abrir|mostrar|ver)\s+(?:las?\s+)?evaluaciones", "navegar", {"destination": "evaluaciones"}),
+    (r"(?:ir\s+a|abrir|mostrar|ver)\s+(?:los?\s+)?pr[eé]stamos", "navegar", {"destination": "prestamos"}),
+    (r"(?:ir\s+a|abrir|mostrar|ver)\s+(?:la\s+)?contabilidad", "navegar", {"destination": "contabilidad"}),
+    (r"(?:ir\s+a|abrir|mostrar|ver)\s+(?:el\s+)?organigrama", "navegar", {"destination": "organigrama"}),
+    (r"(?:ir\s+a|abrir|mostrar|ver)\s+(?:los?\s+)?documentos", "navegar", {"destination": "documentos"}),
+    (r"(?:ir\s+a|abrir|mostrar|ver)\s+(?:el\s+)?reclutamiento", "navegar", {"destination": "reclutamiento"}),
+    (r"aprobar\s+(?:todas?\s+)?(?:las?\s+)?vacaciones?\s+pendientes?", "aprobar_vacaciones", {}),
+    (r"(?:ver|mostrar)\s+(?:el\s+)?resumen", "resumen_dashboard", {}),
+    (r"calcular\s+n[oó]mina", "calcular_nomina", {}),
+]
+
 
 async def find_employee_by_name(company_id: str, name: str) -> Optional[Dict]:
-    """Find employee by partial name match"""
+    """Find employee by partial name match or cédula"""
     if not name or db is None:
         return None
     
-    name_parts = name.lower().split()
+    name_stripped = name.strip()
     
-    # Try exact match first
+    # Check if it looks like a cédula (digits and dashes)
+    cedula_pattern = re.match(r'^[\d\-]+$', name_stripped)
+    if cedula_pattern:
+        employee = await db.employees.find_one(
+            {"company_id": company_id, "cedula": {"$regex": name_stripped.replace("-", ""), "$options": "i"}},
+            {"_id": 0}
+        )
+        if employee:
+            return employee
+    
+    name_parts = name_stripped.lower().split()
+    
+    # Try full name match (first + last combined)
+    if len(name_parts) >= 2:
+        employee = await db.employees.find_one({
+            "company_id": company_id,
+            "first_name": {"$regex": name_parts[0], "$options": "i"},
+            "last_name": {"$regex": name_parts[-1], "$options": "i"}
+        }, {"_id": 0})
+        if employee:
+            return employee
+    
+    # Try single field match
     employee = await db.employees.find_one({
         "company_id": company_id,
         "$or": [
-            {"first_name": {"$regex": name, "$options": "i"}},
-            {"last_name": {"$regex": name, "$options": "i"}}
+            {"first_name": {"$regex": name_stripped, "$options": "i"}},
+            {"last_name": {"$regex": name_stripped, "$options": "i"}}
         ]
     }, {"_id": 0})
-    
     if employee:
         return employee
     
-    # Try each name part
+    # Try each name part individually
     for part in name_parts:
         if len(part) >= 2:
             employee = await db.employees.find_one({
@@ -161,12 +224,30 @@ async def find_employee_by_name(company_id: str, name: str) -> Optional[Dict]:
     return None
 
 
-async def parse_date_from_text(text: str) -> Optional[str]:
+async def find_employees_matching(company_id: str, name: str, limit: int = 5) -> List[Dict]:
+    """Find multiple employees matching a name (for disambiguation)"""
+    if not name or db is None:
+        return []
+    
+    employees = await db.employees.find(
+        {
+            "company_id": company_id,
+            "status": "active",
+            "$or": [
+                {"first_name": {"$regex": name, "$options": "i"}},
+                {"last_name": {"$regex": name, "$options": "i"}}
+            ]
+        },
+        {"_id": 0, "employee_id": 1, "first_name": 1, "last_name": 1, "department": 1, "position": 1}
+    ).limit(limit).to_list(limit)
+    return employees
+
+
+def parse_date_from_text(text: str) -> Optional[str]:
     """Parse date from natural language text"""
     text_lower = text.lower()
     today = datetime.now()
     
-    # Common date patterns
     if "hoy" in text_lower:
         return today.strftime("%Y-%m-%d")
     elif "mañana" in text_lower:
@@ -180,14 +261,12 @@ async def parse_date_from_text(text: str) -> Optional[str]:
             days_until_monday = 7
         return (today + timedelta(days=days_until_monday)).strftime("%Y-%m-%d")
     
-    # Try to find dates like "1 de febrero", "5 de marzo"
     months = {
         "enero": 1, "febrero": 2, "marzo": 3, "abril": 4,
         "mayo": 5, "junio": 6, "julio": 7, "agosto": 8,
         "septiembre": 9, "octubre": 10, "noviembre": 11, "diciembre": 12
     }
     
-    import re
     date_pattern = r'(\d{1,2})\s*(?:de\s*)?(' + '|'.join(months.keys()) + r')'
     match = re.search(date_pattern, text_lower)
     if match:
@@ -198,15 +277,30 @@ async def parse_date_from_text(text: str) -> Optional[str]:
             year += 1
         try:
             return f"{year}-{month:02d}-{day:02d}"
-        except:
+        except Exception:
             pass
     
-    # Try ISO format
     iso_pattern = r'(\d{4}-\d{2}-\d{2})'
     match = re.search(iso_pattern, text)
     if match:
         return match.group(1)
     
+    return None
+
+
+def try_quick_pattern(query: str) -> Optional[Dict]:
+    """Try fast regex matching before calling AI. Returns action dict or None."""
+    query_lower = query.lower().strip()
+    for pattern, action_type, params in QUICK_PATTERNS:
+        if re.search(pattern, query_lower):
+            return {
+                "action": action_type,
+                "confidence": 0.95,
+                "parameters": params,
+                "message": ACTION_TYPES[action_type]["name"],
+                "confirmation_needed": action_type not in ("navegar", "resumen_dashboard", "ver_nomina"),
+                "source": "pattern"
+            }
     return None
 
 
@@ -217,20 +311,35 @@ async def get_ai_action_interpretation(query: str, company_id: str) -> Dict:
         
         api_key = os.environ.get("EMERGENT_LLM_KEY")
         if not api_key:
-            return {"action": None, "error": "No API key"}
+            return {"action": None, "error": "No API key configured"}
         
         # Get list of employees for context
-        employees = await db.employees.find(
-            {"company_id": company_id, "status": "active"},
-            {"_id": 0, "employee_id": 1, "first_name": 1, "last_name": 1}
-        ).limit(50).to_list(50)
+        employees_list = []
+        if db is not None:
+            employees_list = await db.employees.find(
+                {"company_id": company_id, "status": "active"},
+                {"_id": 0, "employee_id": 1, "first_name": 1, "last_name": 1, "department": 1, "cedula": 1}
+            ).limit(50).to_list(50)
         
-        employee_names = [f"{e['first_name']} {e['last_name']}" for e in employees]
+        employee_context = "\n".join([
+            f"- {e.get('first_name','')} {e.get('last_name','')} (Depto: {e.get('department','N/A')}, ID: {e.get('employee_id','')}, Cédula: {e.get('cedula','N/A')})"
+            for e in employees_list[:25]
+        ])
+        
+        # Get some company stats for informational queries
+        stats_context = ""
+        if db is not None:
+            try:
+                total_emp = await db.employees.count_documents({"company_id": company_id, "status": "active"})
+                pending_vac = await db.vacations.count_documents({"company_id": company_id, "status": "pending"})
+                stats_context = f"\nEstadísticas actuales: {total_emp} empleados activos, {pending_vac} vacaciones pendientes."
+            except Exception:
+                pass
         
         chat = LlmChat(
             api_key=api_key,
             session_id=f"action_{datetime.now().strftime('%Y%m%d%H%M%S')}",
-            system_message="""Eres el asistente de IA de FortexaRH, un sistema de Recursos Humanos y Nómina. Tu tarea es interpretar comandos en lenguaje natural y extraer la acción e información necesaria.
+            system_message="""Eres el asistente de IA de FortexaRH, un sistema de Recursos Humanos y Nómina para República Dominicana. Tu tarea es interpretar comandos en lenguaje natural y extraer la acción e información necesaria.
 
 ACCIONES DISPONIBLES:
 - crear_vacacion: Crear solicitud de vacaciones/permiso para un empleado
@@ -247,52 +356,78 @@ ACCIONES DISPONIBLES:
 - crear_prestamo: Crear un préstamo para un empleado
 - resumen_dashboard: Ver el resumen del dashboard principal
 - navegar: Ir a una sección específica del sistema
-- buscar: Solo buscar información sin ejecutar acción
+- consultar_info: Responder preguntas informativas sobre datos del sistema
 
-INTERPRETACIÓN:
-- Si el usuario pregunta "quién", "cuántos", "lista de" = buscar
-- Si el usuario dice "crear", "agregar", "registrar", "aprobar", "generar" = acción correspondiente
-- Identifica nombres de empleados en la consulta
-- Extrae fechas cuando se mencionen (hoy, mañana, próxima semana, 15 de enero, etc.)
-- Para vacaciones detecta: inicio y fin del período
+REGLAS DE INTERPRETACIÓN:
+1. Si el usuario pregunta "quién", "cuántos", "cuáles", "lista de", "estadísticas" = consultar_info
+2. Si dice "crear", "agregar", "nueva/nuevo", "registrar", "aprobar", "generar" = acción correspondiente
+3. Si dice "ir a", "abrir", "mostrar" + módulo = navegar
+4. Identifica nombres de empleados comparando con la lista proporcionada
+5. Extrae fechas: hoy, mañana, próxima semana, 15 de enero, etc.
+6. Para vacaciones detecta: inicio y fin del período
+7. Si faltan datos obligatorios, indica qué campos necesitas en "missing_params"
 
-Responde SIEMPRE con JSON válido:
+IMPORTANTE: Para "consultar_info", genera una respuesta directa y útil en "answer" basada en los datos proporcionados.
+
+Responde SIEMPRE con JSON válido (sin markdown, sin backticks):
 {
-  "action": "nombre_accion" o null si es solo búsqueda,
+  "action": "nombre_accion",
   "confidence": 0.0 a 1.0,
   "employee_name": "nombre extraído" o null,
   "dates": {"start": "YYYY-MM-DD", "end": "YYYY-MM-DD"} o null,
-  "parameters": {parámetros adicionales relevantes},
-  "message": "descripción clara en español de lo que se hará",
-  "confirmation_needed": true si es una acción que modifica datos
+  "parameters": {},
+  "message": "descripción clara de lo que se hará",
+  "confirmation_needed": true/false,
+  "missing_params": ["param1", "param2"] o [],
+  "answer": "respuesta directa si es consultar_info" o null
 }"""
         ).with_model("gemini", "gemini-3-flash-preview")
         
         prompt = f"""Interpreta este comando: "{query}"
 
-Empleados disponibles: {', '.join(employee_names[:20])}
+Empleados del sistema:
+{employee_context if employee_context else "No hay empleados registrados aún."}
+{stats_context}
 
-Fecha actual: {datetime.now().strftime('%Y-%m-%d')}
+Fecha actual: {datetime.now().strftime('%Y-%m-%d %A')}
 
-Responde SOLO con JSON válido:"""
+Responde SOLO con JSON válido, sin backticks ni markdown:"""
         
         response = await chat.send_message(UserMessage(text=prompt))
         
-        # Parse response
+        # Robust JSON parsing
+        json_str = response.strip()
+        # Remove markdown code blocks if present
+        if "```" in json_str:
+            parts = json_str.split("```")
+            for part in parts:
+                cleaned = part.strip()
+                if cleaned.startswith("json"):
+                    cleaned = cleaned[4:].strip()
+                if cleaned.startswith("{"):
+                    json_str = cleaned
+                    break
+        # Find JSON object boundaries
+        start_idx = json_str.find("{")
+        end_idx = json_str.rfind("}")
+        if start_idx != -1 and end_idx != -1:
+            json_str = json_str[start_idx:end_idx + 1]
+        
         try:
-            json_str = response.strip()
-            if json_str.startswith("```"):
-                json_str = json_str.split("```")[1]
-                if json_str.startswith("json"):
-                    json_str = json_str[4:]
-            json_str = json_str.strip()
-            return json.loads(json_str)
-        except:
-            return {"action": None, "error": "Parse error"}
+            parsed = json.loads(json_str)
+            # Ensure required fields
+            parsed.setdefault("action", None)
+            parsed.setdefault("confidence", 0.5)
+            parsed.setdefault("missing_params", [])
+            parsed.setdefault("answer", None)
+            parsed.setdefault("source", "ai")
+            return parsed
+        except json.JSONDecodeError:
+            return {"action": None, "error": "No se pudo interpretar la respuesta", "raw": json_str[:200], "source": "ai"}
             
     except Exception as e:
         print(f"AI action error: {e}")
-        return {"action": None, "error": str(e)}
+        return {"action": None, "error": str(e), "source": "ai"}
 
 
 @router.get("/search")
@@ -343,7 +478,7 @@ async def global_search(q: str, current_user: dict = Depends(get_current_user)):
                 "type": "vacations",
                 "title": f"Permiso - {vac.get('employee_name', '')}",
                 "subtitle": f"{vac.get('start_date', '')} al {vac.get('end_date', '')}",
-                "href": f"/vacations",
+                "href": "/vacations",
                 "badge": vac.get('status'),
                 "data": {"vacation_id": vac.get('vacation_id')}
             })
@@ -385,17 +520,23 @@ async def global_search(q: str, current_user: dict = Depends(get_current_user)):
 
 @router.post("/search/ai")
 async def ai_assisted_search(data: AISearchRequest, current_user: dict = Depends(get_current_user)):
-    """AI-assisted search with action detection"""
+    """AI-assisted search with action detection and informational answers"""
     if db is None:
         return {"error": "Router not initialized"}
     
     company_id = current_user.get("company_id")
     query = data.query.strip()
     
-    # Get AI interpretation
-    ai_result = await get_ai_action_interpretation(query, company_id)
+    # Try fast pattern matching first (no AI call needed)
+    quick_result = try_quick_pattern(query)
     
-    # Perform standard search
+    if quick_result:
+        ai_result = quick_result
+    else:
+        # Fall back to AI interpretation
+        ai_result = await get_ai_action_interpretation(query, company_id)
+    
+    # Perform standard search in parallel context
     standard_results = await global_search(query, current_user)
     
     response = {
@@ -403,22 +544,47 @@ async def ai_assisted_search(data: AISearchRequest, current_user: dict = Depends
         "results": standard_results.get("results", []),
         "ai_interpretation": ai_result,
         "action": None,
-        "suggestions": []
+        "suggestions": [],
+        "ai_answer": None,
+        "missing_params": []
     }
     
+    # Handle informational queries with direct answer
+    if ai_result and ai_result.get("action") == "consultar_info":
+        answer = ai_result.get("answer") or ai_result.get("message", "")
+        response["ai_answer"] = answer
+        response["ai_suggestion"] = answer
+        return response
+    
     # If AI detected an action
-    if ai_result and ai_result.get("action") and ai_result.get("action") != "buscar":
+    if ai_result and ai_result.get("action") and ai_result.get("action") not in ("buscar", "consultar_info"):
         action_type = ai_result.get("action")
         confidence = ai_result.get("confidence", 0)
         
-        if confidence >= 0.7 and action_type in ACTION_TYPES:
+        if confidence >= 0.6 and action_type in ACTION_TYPES:
             action_config = ACTION_TYPES[action_type]
             
             # Try to resolve employee
             employee = None
             employee_name = ai_result.get("employee_name")
+            matching_employees = []
             if employee_name:
                 employee = await find_employee_by_name(company_id, employee_name)
+                if not employee:
+                    matching_employees = await find_employees_matching(company_id, employee_name)
+            
+            # Check for missing required parameters
+            missing = list(ai_result.get("missing_params", []))
+            if action_config["required"]:
+                if "employee_id" in action_config["required"] and not employee and not matching_employees:
+                    if "employee_id" not in missing:
+                        missing.append("employee_id")
+                if "start_date" in action_config["required"] and not ai_result.get("dates", {}).get("start"):
+                    if "start_date" not in missing:
+                        missing.append("start_date")
+                if "end_date" in action_config["required"] and not ai_result.get("dates", {}).get("end"):
+                    if "end_date" not in missing:
+                        missing.append("end_date")
             
             # Build action object
             action = {
@@ -426,15 +592,29 @@ async def ai_assisted_search(data: AISearchRequest, current_user: dict = Depends
                 "name": action_config["name"],
                 "icon": action_config["icon"],
                 "route": action_config["route"],
+                "category": action_config.get("category", "general"),
                 "confidence": confidence,
-                "message": ai_result.get("message", ""),
+                "message": ai_result.get("message", action_config["name"]),
                 "confirmation_needed": ai_result.get("confirmation_needed", True),
+                "missing_params": missing,
                 "parameters": {
                     "employee_id": employee.get("employee_id") if employee else None,
                     "employee_name": f"{employee.get('first_name', '')} {employee.get('last_name', '')}" if employee else employee_name,
                     **ai_result.get("parameters", {})
                 }
             }
+            
+            # Add matching employees for disambiguation
+            if matching_employees and not employee:
+                action["matching_employees"] = [
+                    {
+                        "employee_id": e["employee_id"],
+                        "name": f"{e['first_name']} {e['last_name']}",
+                        "department": e.get("department", ""),
+                        "position": e.get("position", "")
+                    }
+                    for e in matching_employees
+                ]
             
             # Add dates if available
             dates = ai_result.get("dates")
@@ -444,6 +624,7 @@ async def ai_assisted_search(data: AISearchRequest, current_user: dict = Depends
             
             response["action"] = action
             response["ai_suggestion"] = ai_result.get("message")
+            response["missing_params"] = missing
     
     return response
 
@@ -465,39 +646,16 @@ async def execute_action(data: AIActionRequest, current_user: dict = Depends(get
     
     try:
         if action_type == "crear_vacacion":
-            # Create vacation request
-            from .vacations import create_leave_request, LeaveRequestCreate
-            
-            leave_data = LeaveRequestCreate(
-                employee_id=params.get("employee_id"),
-                leave_type=params.get("leave_type", "vacation"),
-                start_date=params.get("start_date"),
-                end_date=params.get("end_date"),
-                reason=params.get("reason", "Creado desde búsqueda con IA")
-            )
-            
-            # We need to call the actual function with current_user
-            import uuid
-            from datetime import timezone
-            
             employee = await db.employees.find_one(
                 {"employee_id": params.get("employee_id"), "company_id": company_id},
                 {"_id": 0}
             )
-            
             if not employee:
                 raise HTTPException(status_code=404, detail="Empleado no encontrado")
             
-            # Calculate days
-            from datetime import datetime
             start = datetime.strptime(params.get("start_date"), "%Y-%m-%d")
             end = datetime.strptime(params.get("end_date"), "%Y-%m-%d")
-            days = 0
-            current = start
-            while current <= end:
-                if current.weekday() < 5:
-                    days += 1
-                current += timedelta(days=1)
+            days = sum(1 for i in range((end - start).days + 1) if (start + timedelta(days=i)).weekday() < 5)
             
             vacation_id = f"vac_{uuid.uuid4().hex[:12]}"
             vacation = {
@@ -520,21 +678,16 @@ async def execute_action(data: AIActionRequest, current_user: dict = Depends(get
             result = {
                 "success": True,
                 "action": action_type,
-                "message": f"Solicitud de vacaciones creada para {employee['first_name']} {employee['last_name']} ({days} días)",
+                "message": f"Solicitud de vacaciones creada para {employee['first_name']} {employee['last_name']} ({days} días hábiles)",
                 "data": {"vacation_id": vacation_id, "days": days},
                 "redirect": "/vacations"
             }
             
         elif action_type == "registrar_entrada":
-            # Register check-in
-            import uuid
-            from datetime import timezone
-            
             employee = await db.employees.find_one(
                 {"employee_id": params.get("employee_id"), "company_id": company_id},
                 {"_id": 0}
             )
-            
             if not employee:
                 raise HTTPException(status_code=404, detail="Empleado no encontrado")
             
@@ -542,7 +695,6 @@ async def execute_action(data: AIActionRequest, current_user: dict = Depends(get
             date_str = now.strftime("%Y-%m-%d")
             time_str = now.strftime("%H:%M")
             
-            # Check if already checked in
             existing = await db.attendances.find_one({
                 "company_id": company_id,
                 "employee_id": params.get("employee_id"),
@@ -581,14 +733,10 @@ async def execute_action(data: AIActionRequest, current_user: dict = Depends(get
                 }
                 
         elif action_type == "registrar_salida":
-            # Register check-out
-            from datetime import timezone
-            
             employee = await db.employees.find_one(
                 {"employee_id": params.get("employee_id"), "company_id": company_id},
                 {"_id": 0}
             )
-            
             if not employee:
                 raise HTTPException(status_code=404, detail="Empleado no encontrado")
             
@@ -596,7 +744,6 @@ async def execute_action(data: AIActionRequest, current_user: dict = Depends(get
             date_str = now.strftime("%Y-%m-%d")
             time_str = now.strftime("%H:%M")
             
-            # Find today's attendance
             existing = await db.attendances.find_one({
                 "company_id": company_id,
                 "employee_id": params.get("employee_id"),
@@ -618,7 +765,6 @@ async def execute_action(data: AIActionRequest, current_user: dict = Depends(get
                     "redirect": "/attendance"
                 }
             else:
-                # Calculate hours
                 check_in = datetime.strptime(existing["check_in"], "%H:%M")
                 check_out = datetime.strptime(time_str, "%H:%M")
                 hours = (check_out - check_in).seconds / 3600
@@ -641,14 +787,11 @@ async def execute_action(data: AIActionRequest, current_user: dict = Depends(get
                 }
                 
         elif action_type == "aprobar_vacaciones":
-            # Approve pending vacations
-            from datetime import timezone
-            
-            query = {"company_id": company_id, "status": "pending"}
+            vac_query = {"company_id": company_id, "status": "pending"}
             if params.get("employee_id"):
-                query["employee_id"] = params.get("employee_id")
+                vac_query["employee_id"] = params.get("employee_id")
             
-            pending = await db.vacations.find(query, {"_id": 0}).to_list(100)
+            pending = await db.vacations.find(vac_query, {"_id": 0}).to_list(100)
             
             if not pending:
                 result = {
@@ -657,33 +800,33 @@ async def execute_action(data: AIActionRequest, current_user: dict = Depends(get
                     "message": "No hay solicitudes de vacaciones pendientes",
                     "redirect": "/vacations"
                 }
+            elif len(pending) == 1 or params.get("employee_id"):
+                vac = pending[0]
+                await db.vacations.update_one(
+                    {"vacation_id": vac["vacation_id"]},
+                    {"$set": {
+                        "status": "approved",
+                        "approved_at": datetime.now(timezone.utc).isoformat(),
+                        "approved_via": "ai_search"
+                    }}
+                )
+                result = {
+                    "success": True,
+                    "action": action_type,
+                    "message": f"Vacaciones aprobadas para {vac.get('employee_name')} ({vac.get('start_date')} - {vac.get('end_date')})",
+                    "redirect": "/vacations"
+                }
             else:
-                # Approve first pending if no specific employee
-                if len(pending) == 1 or params.get("employee_id"):
-                    vac = pending[0]
-                    await db.vacations.update_one(
-                        {"vacation_id": vac["vacation_id"]},
-                        {"$set": {
-                            "status": "approved",
-                            "approved_at": datetime.now(timezone.utc).isoformat(),
-                            "approved_via": "ai_search"
-                        }}
-                    )
-                    result = {
-                        "success": True,
-                        "action": action_type,
-                        "message": f"Vacaciones aprobadas para {vac.get('employee_name')} ({vac.get('start_date')} - {vac.get('end_date')})",
-                        "redirect": "/vacations"
-                    }
-                else:
-                    # Multiple pending - need confirmation
-                    result = {
-                        "success": False,
-                        "action": action_type,
-                        "message": f"Hay {len(pending)} solicitudes pendientes. Especifica el empleado o aprueba desde el módulo de vacaciones.",
-                        "data": {"pending_count": len(pending)},
-                        "redirect": "/vacations?status=pending"
-                    }
+                result = {
+                    "success": False,
+                    "action": action_type,
+                    "message": f"Hay {len(pending)} solicitudes pendientes. Especifica el empleado o aprueba desde el módulo de vacaciones.",
+                    "data": {"pending_count": len(pending), "pending_list": [
+                        {"name": v.get("employee_name"), "dates": f"{v.get('start_date')} - {v.get('end_date')}"}
+                        for v in pending[:5]
+                    ]},
+                    "redirect": "/vacations?status=pending"
+                }
                     
         elif action_type == "ver_empleado":
             employee = await db.employees.find_one(
@@ -698,10 +841,90 @@ async def execute_action(data: AIActionRequest, current_user: dict = Depends(get
                     "redirect": f"/employees?id={params.get('employee_id')}"
                 }
             else:
+                result = {"success": False, "action": action_type, "message": "Empleado no encontrado"}
+        
+        elif action_type == "ver_nomina":
+            result = {
+                "success": True,
+                "action": action_type,
+                "message": "Abriendo módulo de nómina",
+                "redirect": "/payroll"
+            }
+        
+        elif action_type == "calcular_nomina":
+            result = {
+                "success": True,
+                "action": action_type,
+                "message": "Abriendo módulo de nómina para calcular",
+                "redirect": "/payroll"
+            }
+        
+        elif action_type == "crear_empleado":
+            result = {
+                "success": True,
+                "action": action_type,
+                "message": f"Abriendo formulario para crear empleado: {params.get('first_name', '')} {params.get('last_name', '')}".strip(),
+                "redirect": "/employees?action=new",
+                "data": {
+                    "prefill": {
+                        "first_name": params.get("first_name"),
+                        "last_name": params.get("last_name"),
+                        "email": params.get("email"),
+                        "department": params.get("department"),
+                        "position": params.get("position")
+                    }
+                }
+            }
+        
+        elif action_type == "generar_reporte":
+            report_type = params.get("report_type", "nomina")
+            result = {
+                "success": True,
+                "action": action_type,
+                "message": f"Abriendo generador de reportes ({report_type})",
+                "redirect": "/reports-advanced"
+            }
+        
+        elif action_type == "crear_prestamo":
+            if not params.get("employee_id"):
                 result = {
                     "success": False,
                     "action": action_type,
-                    "message": "Empleado no encontrado"
+                    "message": "Debes especificar el empleado para crear el préstamo",
+                    "redirect": "/loans"
+                }
+            else:
+                result = {
+                    "success": True,
+                    "action": action_type,
+                    "message": "Abriendo módulo de préstamos",
+                    "redirect": "/loans",
+                    "data": {
+                        "prefill": {
+                            "employee_id": params.get("employee_id"),
+                            "amount": params.get("amount"),
+                            "installments": params.get("installments")
+                        }
+                    }
+                }
+        
+        elif action_type == "crear_evaluacion":
+            if not params.get("employee_id"):
+                result = {
+                    "success": False,
+                    "action": action_type,
+                    "message": "Debes especificar el empleado para crear la evaluación",
+                    "redirect": "/evaluations"
+                }
+            else:
+                result = {
+                    "success": True,
+                    "action": action_type,
+                    "message": "Abriendo módulo de evaluaciones",
+                    "redirect": "/evaluations",
+                    "data": {
+                        "prefill": {"employee_id": params.get("employee_id")}
+                    }
                 }
                 
         elif action_type == "navegar":
@@ -716,7 +939,10 @@ async def execute_action(data: AIActionRequest, current_user: dict = Depends(get
                 "contabilidad": "/accounting",
                 "documentos": "/documents",
                 "reclutamiento": "/recruitment",
-                "organigrama": "/organigrama"
+                "organigrama": "/organigrama",
+                "configuracion": "/company-config",
+                "reportes": "/reports-advanced",
+                "notificaciones": "/notifications"
             }
             
             dest = params.get("destination", "").lower()
@@ -733,24 +959,16 @@ async def execute_action(data: AIActionRequest, current_user: dict = Depends(get
             result = {
                 "success": False,
                 "action": action_type,
-                "message": "Acción no implementada",
-                "redirect": None
+                "message": "Acción disponible pero debe ejecutarse desde el módulo correspondiente",
+                "redirect": ACTION_TYPES.get(action_type, {}).get("route", "/dashboard")
             }
             
     except HTTPException as e:
-        result = {
-            "success": False,
-            "action": action_type,
-            "message": e.detail
-        }
+        result = {"success": False, "action": action_type, "message": e.detail}
     except Exception as e:
-        result = {
-            "success": False,
-            "action": action_type,
-            "message": f"Error: {str(e)}"
-        }
+        result = {"success": False, "action": action_type, "message": f"Error: {str(e)}"}
     
-    # Record the action execution for learning (regardless of success)
+    # Log the action execution
     if db is not None:
         try:
             await db.search_history.insert_one({
@@ -759,9 +977,10 @@ async def execute_action(data: AIActionRequest, current_user: dict = Depends(get
                 "action_type": action_type,
                 "parameters": params,
                 "success": result.get("success", False),
+                "message": result.get("message", ""),
                 "timestamp": datetime.now(timezone.utc).isoformat()
             })
-        except:
+        except Exception:
             pass
     
     return result
@@ -772,7 +991,6 @@ async def get_search_suggestions(q: str = "", current_user: dict = Depends(get_c
     """Get smart search suggestions including action commands based on user history"""
     suggestions = []
     query_lower = q.lower()
-    company_id = current_user.get("company_id")
     user_id = current_user.get("user_id")
     
     # Get user's frequently used actions
@@ -786,7 +1004,7 @@ async def get_search_suggestions(q: str = "", current_user: dict = Depends(get_c
                 {"$limit": 5}
             ]
             frequent_actions = await db.search_history.aggregate(freq_pipeline).to_list(5)
-        except:
+        except Exception:
             pass
     
     # Get recent searches
@@ -798,7 +1016,7 @@ async def get_search_suggestions(q: str = "", current_user: dict = Depends(get_c
                 {"_id": 0, "query": 1, "timestamp": 1}
             ).sort("timestamp", -1).limit(5).to_list(5)
             recent_searches = [r["query"] for r in recent]
-        except:
+        except Exception:
             pass
     
     # Action suggestions - expanded
@@ -956,3 +1174,34 @@ async def get_user_search_stats(current_user: dict = Depends(get_current_user)):
         "total_queries": total_queries,
         "top_queries": top_queries
     }
+
+
+@router.get("/search/recent-actions")
+async def get_recent_actions(current_user: dict = Depends(get_current_user)):
+    """Get user's recent successful AI actions"""
+    if db is None:
+        return {"actions": []}
+    
+    user_id = current_user.get("user_id")
+    
+    try:
+        actions = await db.search_history.find(
+            {"user_id": user_id, "success": True},
+            {"_id": 0, "action_type": 1, "parameters": 1, "message": 1, "timestamp": 1}
+        ).sort("timestamp", -1).limit(5).to_list(5)
+        
+        enriched = []
+        for a in actions:
+            action_type = a.get("action_type", "")
+            config = ACTION_TYPES.get(action_type, {})
+            enriched.append({
+                "action_type": action_type,
+                "name": config.get("name", action_type),
+                "icon": config.get("icon", "zap"),
+                "message": a.get("message", ""),
+                "timestamp": a.get("timestamp", "")
+            })
+        
+        return {"actions": enriched}
+    except Exception:
+        return {"actions": []}
