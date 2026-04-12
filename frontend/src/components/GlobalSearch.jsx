@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { 
   Search, User, Calendar, DollarSign, Clock, Wallet, Loader2, Sparkles,
@@ -357,7 +358,8 @@ export default function GlobalSearch() {
 
       {/* Search Dialog */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden bg-white dark:bg-slate-900 border dark:border-slate-700">
+        <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden bg-white dark:bg-slate-900 border dark:border-slate-700" aria-describedby={undefined}>
+          <DialogTitle className="sr-only">Búsqueda global con IA</DialogTitle>
           {/* Search Input */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-200 dark:border-slate-700">
             <Search className="w-5 h-5 text-slate-400 shrink-0" />
