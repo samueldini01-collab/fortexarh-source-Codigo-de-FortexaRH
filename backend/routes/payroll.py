@@ -914,6 +914,37 @@ async def approve_period(period_id: str, data: ApprovalRequest = None, current_u
     if period.get("status") not in ["pending_approval", "calculated", "open"]:
         raise HTTPException(status_code=400, detail=f"No se puede aprobar desde estado: {period.get('status')}")
     
+    # Check for employees missing bank information
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0, "employee_id": 1}
+    ).to_list(1000)
+    
+    employee_ids = [e.get("employee_id") for e in entries]
+    employees_with_bank = await db.employees.find(
+        {
+            "employee_id": {"$in": employee_ids},
+            "company_id": company_id,
+            "account_number": {"$exists": True, "$nin": [None, ""]}
+        },
+        {"_id": 0, "employee_id": 1}
+    ).to_list(1000)
+    
+    bank_ids = {e["employee_id"] for e in employees_with_bank}
+    missing_bank_count = len(employee_ids) - len(bank_ids)
+    
+    # Get names of employees missing bank info
+    missing_bank_names = []
+    if missing_bank_count > 0:
+        missing_emps = await db.employees.find(
+            {
+                "employee_id": {"$in": [eid for eid in employee_ids if eid not in bank_ids]},
+                "company_id": company_id
+            },
+            {"_id": 0, "first_name": 1, "last_name": 1}
+        ).to_list(100)
+        missing_bank_names = [f"{e.get('first_name', '')} {e.get('last_name', '')}" for e in missing_emps]
+    
     workflow_entry = {
         "action": "approve",
         "from_status": period.get("status"),
@@ -964,7 +995,61 @@ async def approve_period(period_id: str, data: ApprovalRequest = None, current_u
         # Auto-sync to FortexaERP if configured
         await auto_sync_to_erp(company_id, period_id, current_user.get("email", "system"))
 
-    return {"message": "Período aprobado correctamente", "status": "approved", "journal_entry_id": je_id}
+    response = {"message": "Período aprobado correctamente", "status": "approved", "journal_entry_id": je_id}
+    
+    if missing_bank_count > 0:
+        response["bank_warning"] = {
+            "missing_count": missing_bank_count,
+            "total_employees": len(employee_ids),
+            "missing_names": missing_bank_names[:10],
+            "message": f"{missing_bank_count} de {len(employee_ids)} empleados no tienen datos bancarios configurados"
+        }
+    
+    return response
+
+
+
+@router.get("/periods/{period_id}/bank-check")
+async def check_bank_info(period_id: str, current_user: dict = Depends(get_current_user)):
+    """Check which employees are missing bank information for a payroll period"""
+    company_id = current_user.get("company_id")
+    
+    entries = await db.payroll_entries.find(
+        {"period_id": period_id, "company_id": company_id},
+        {"_id": 0, "employee_id": 1, "employee_name": 1, "net_salary": 1}
+    ).to_list(1000)
+    
+    if not entries:
+        return {"total": 0, "with_bank": 0, "missing": []}
+    
+    employee_ids = [e.get("employee_id") for e in entries]
+    employees = await db.employees.find(
+        {"employee_id": {"$in": employee_ids}, "company_id": company_id},
+        {"_id": 0, "employee_id": 1, "first_name": 1, "last_name": 1,
+         "account_number": 1, "bank_name": 1, "account_type": 1}
+    ).to_list(1000)
+    
+    emp_map = {e["employee_id"]: e for e in employees}
+    
+    missing = []
+    with_bank = 0
+    for entry in entries:
+        emp = emp_map.get(entry.get("employee_id"), {})
+        if emp.get("account_number"):
+            with_bank += 1
+        else:
+            missing.append({
+                "employee_id": entry.get("employee_id"),
+                "name": entry.get("employee_name", f"{emp.get('first_name', '')} {emp.get('last_name', '')}"),
+                "amount": round(entry.get("net_salary", 0), 2)
+            })
+    
+    return {
+        "total": len(entries),
+        "with_bank": with_bank,
+        "missing_count": len(missing),
+        "missing": missing
+    }
 
 
 @router.post("/periods/{period_id}/reject")
