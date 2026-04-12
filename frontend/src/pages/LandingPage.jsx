@@ -69,7 +69,10 @@ export default function LandingPage() {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
-  const [showComparison, setShowComparison] = useState(false);
+  const [expandedSections, setExpandedSections] = useState({
+    pricing: true, hr: true, payroll: true, talent: true, integrations: true, admin: true
+  });
+  const toggleSection = (key) => setExpandedSections(prev => ({ ...prev, [key]: !prev[key] }));
   
   // Generate features array using translations
   const features = [
@@ -844,17 +847,9 @@ export default function LandingPage() {
             </div>
           </div>
           
-          {/* Comparison Table - Collapsible */}
+          {/* Comparison Table with Collapsible Sections */}
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-            <button 
-              onClick={() => setShowComparison(!showComparison)}
-              className="w-full flex items-center justify-center gap-2 mb-4 py-3 px-6 rounded-lg bg-slate-100 hover:bg-slate-200 transition-colors mx-auto"
-              data-testid="toggle-comparison"
-            >
-              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 heading">{t('landing.comparison.title')}</h3>
-              <ChevronDown className={`w-5 h-5 text-slate-500 transition-transform ${showComparison ? 'rotate-180' : ''}`} />
-            </button>
-            {showComparison && (
+            <h3 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8 text-slate-900 heading">{t('landing.comparison.title')}</h3>
             <table className="w-full border-collapse min-w-[600px] bg-white">
               <thead>
                 <tr className="border-b-2 border-slate-200">
@@ -865,183 +860,256 @@ export default function LandingPage() {
                 </tr>
               </thead>
               <tbody className="text-sm text-slate-700">
+
+                {/* SECTION: Precios y Capacidad - Always open */}
+                <tr className="bg-slate-100 border-b border-slate-200 cursor-pointer hover:bg-slate-200 transition-colors" onClick={() => toggleSection('pricing')} data-testid="section-pricing">
+                  <td colSpan={4} className="py-2.5 px-4 font-bold text-slate-800 text-sm">
+                    <div className="flex items-center gap-2">
+                      <ChevronDown className={`w-4 h-4 transition-transform ${expandedSections.pricing ? 'rotate-0' : '-rotate-90'}`} />
+                      {t('landing.comparison.sectionPricing')}
+                    </div>
+                  </td>
+                </tr>
+                {expandedSections.pricing && (<>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.basePrice')}</td>
-                  <td className="py-3 px-4 text-center text-slate-700">$5</td>
-                  <td className="py-3 px-4 text-center text-slate-700">$10</td>
-                  <td className="py-3 px-4 text-center text-slate-700">$20</td>
+                  <td className="py-2.5 px-4 pl-8 text-slate-700">{t('landing.comparison.basePrice')}</td>
+                  <td className="py-2.5 px-4 text-center">$5</td>
+                  <td className="py-2.5 px-4 text-center">$10</td>
+                  <td className="py-2.5 px-4 text-center">$20</td>
                 </tr>
-                <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.pricePerEmployee')}</td>
-                  <td className="py-3 px-4 text-center text-slate-700">$1.50</td>
-                  <td className="py-3 px-4 text-center text-slate-700">$1.50</td>
-                  <td className="py-3 px-4 text-center text-slate-700">$1.50</td>
-                </tr>
-                <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.usersIncluded')}</td>
-                  <td className="py-3 px-4 text-center text-slate-700">3</td>
-                  <td className="py-3 px-4 text-center text-slate-700">5</td>
-                  <td className="py-3 px-4 text-center text-slate-700">7</td>
-                </tr>
-                <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.maxEmployees')}</td>
-                  <td className="py-3 px-4 text-center text-slate-700">50</td>
-                  <td className="py-3 px-4 text-center text-slate-700">200</td>
-                  <td className="py-3 px-4 text-center text-slate-700">{t('landing.comparison.unlimited')}</td>
-                </tr>
-                <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.employeeManagement')}</td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                </tr>
-                <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.payrollTSS')}</td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                <tr className="border-b border-slate-100 bg-slate-50/50">
+                  <td className="py-2.5 px-4 pl-8 text-slate-700">{t('landing.comparison.pricePerEmployee')}</td>
+                  <td className="py-2.5 px-4 text-center">$1.50</td>
+                  <td className="py-2.5 px-4 text-center">$1.50</td>
+                  <td className="py-2.5 px-4 text-center">$1.50</td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.attendanceVacations')}</td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 pl-8 text-slate-700">{t('landing.comparison.usersIncluded')}</td>
+                  <td className="py-2.5 px-4 text-center">3</td>
+                  <td className="py-2.5 px-4 text-center">5</td>
+                  <td className="py-2.5 px-4 text-center">7</td>
                 </tr>
-                <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.loansModule')}</td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                <tr className="border-b border-slate-100 bg-slate-50/50">
+                  <td className="py-2.5 px-4 pl-8 text-slate-700">{t('landing.comparison.maxEmployees')}</td>
+                  <td className="py-2.5 px-4 text-center">50</td>
+                  <td className="py-2.5 px-4 text-center">200</td>
+                  <td className="py-2.5 px-4 text-center">{t('landing.comparison.unlimited')}</td>
+                </tr>
+                </>)}
+
+                {/* SECTION: Gestión de RRHH */}
+                <tr className="bg-slate-100 border-b border-slate-200 cursor-pointer hover:bg-slate-200 transition-colors" onClick={() => toggleSection('hr')} data-testid="section-hr">
+                  <td colSpan={4} className="py-2.5 px-4 font-bold text-slate-800 text-sm">
+                    <div className="flex items-center gap-2">
+                      <ChevronDown className={`w-4 h-4 transition-transform ${expandedSections.hr ? 'rotate-0' : '-rotate-90'}`} />
+                      {t('landing.comparison.sectionHR')}
+                    </div>
+                  </td>
+                </tr>
+                {expandedSections.hr && (<>
+                <tr className="border-b border-slate-100">
+                  <td className="py-2.5 px-4 pl-8">{t('landing.comparison.employeeManagement')}</td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50/50">
+                  <td className="py-2.5 px-4 pl-8">{t('landing.comparison.attendanceVacations')}</td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.accountingNIIF')}</td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 pl-8">{t('landing.comparison.loansModule')}</td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
                 </tr>
-                <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.dgiiReports')}</td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                </tr>
-                <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 font-medium text-green-700">{t('landing.features.quickbooks')}</td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                </tr>
-                <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 font-medium text-purple-700">{t('landing.comparison.expensesDouble')}</td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-purple-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-purple-500 mx-auto" /></td>
-                </tr>
-                <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.evaluations')}</td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                <tr className="border-b border-slate-100 bg-slate-50/50">
+                  <td className="py-2.5 px-4 pl-8">{t('landing.comparison.orgChart')}</td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.recruitment')}</td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 pl-8">{t('landing.comparison.selfServicePortal')}</td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
                 </tr>
-                <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.selfServicePortal')}</td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                </tr>
-                <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.orgChart')}</td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                </tr>
-                <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.autoNotifications')}</td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
+                <tr className="border-b border-slate-100 bg-slate-50/50">
+                  <td className="py-2.5 px-4 pl-8 font-medium text-emerald-700">{t('landing.comparison.contracts')}</td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-amber-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 font-medium text-blue-700">{t('landing.comparison.advancedReportsCenter')}</td>
-                  <td className="py-3 px-4 text-center text-sm text-slate-700">{t('landing.comparison.basic')}</td>
-                  <td className="py-3 px-4 text-center text-sm font-medium text-purple-600">{t('landing.comparison.reports30')}</td>
-                  <td className="py-3 px-4 text-center text-sm font-medium text-amber-600">{t('landing.comparison.reports58')}</td>
+                  <td className="py-2.5 px-4 pl-8 font-medium text-emerald-700">{t('landing.comparison.eSignature')}</td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-amber-500 mx-auto" /></td>
                 </tr>
-                <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.aiSearch')}</td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-purple-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
+                </>)}
+
+                {/* SECTION: Nómina y Finanzas */}
+                <tr className="bg-slate-100 border-b border-slate-200 cursor-pointer hover:bg-slate-200 transition-colors" onClick={() => toggleSection('payroll')} data-testid="section-payroll">
+                  <td colSpan={4} className="py-2.5 px-4 font-bold text-slate-800 text-sm">
+                    <div className="flex items-center gap-2">
+                      <ChevronDown className={`w-4 h-4 transition-transform ${expandedSections.payroll ? 'rotate-0' : '-rotate-90'}`} />
+                      {t('landing.comparison.sectionPayroll')}
+                    </div>
+                  </td>
+                </tr>
+                {expandedSections.payroll && (<>
+                <tr className="border-b border-slate-100">
+                  <td className="py-2.5 px-4 pl-8">{t('landing.comparison.payrollTSS')}</td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50/50">
+                  <td className="py-2.5 px-4 pl-8">{t('landing.comparison.accountingNIIF')}</td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.customSavedReports')}</td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 pl-8">{t('landing.comparison.dgiiReports')}</td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
                 </tr>
-                <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.customRoles')}</td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
-                </tr>
-                <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.customAPI')}</td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
-                </tr>
-                <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.sapOracleDynamics')}</td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
+                <tr className="border-b border-slate-100 bg-slate-50/50">
+                  <td className="py-2.5 px-4 pl-8 font-medium text-purple-700">{t('landing.comparison.expensesDouble')}</td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-purple-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-purple-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 font-medium text-emerald-700">{t('landing.comparison.contracts')}</td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 pl-8 font-medium text-emerald-700">{t('landing.comparison.achBank')}</td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-amber-500 mx-auto" /></td>
                 </tr>
-                <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 font-medium text-emerald-700">{t('landing.comparison.eSignature')}</td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
+                <tr className="border-b border-slate-100 bg-slate-50/50">
+                  <td className="py-2.5 px-4 pl-8 font-medium text-emerald-700">{t('landing.comparison.workflows')}</td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-amber-500 mx-auto" /></td>
+                </tr>
+                </>)}
+
+                {/* SECTION: Talento y Evaluaciones */}
+                <tr className="bg-slate-100 border-b border-slate-200 cursor-pointer hover:bg-slate-200 transition-colors" onClick={() => toggleSection('talent')} data-testid="section-talent">
+                  <td colSpan={4} className="py-2.5 px-4 font-bold text-slate-800 text-sm">
+                    <div className="flex items-center gap-2">
+                      <ChevronDown className={`w-4 h-4 transition-transform ${expandedSections.talent ? 'rotate-0' : '-rotate-90'}`} />
+                      {t('landing.comparison.sectionTalent')}
+                    </div>
+                  </td>
+                </tr>
+                {expandedSections.talent && (<>
+                <tr className="border-b border-slate-100">
+                  <td className="py-2.5 px-4 pl-8">{t('landing.comparison.evaluations')}</td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50/50">
+                  <td className="py-2.5 px-4 pl-8">{t('landing.comparison.recruitment')}</td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 font-medium text-emerald-700">{t('landing.comparison.workflows')}</td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 pl-8">{t('landing.comparison.autoNotifications')}</td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
                 </tr>
-                <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 font-medium text-emerald-700">{t('landing.comparison.achBank')}</td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
+                </>)}
+
+                {/* SECTION: Integraciones y Reportes */}
+                <tr className="bg-slate-100 border-b border-slate-200 cursor-pointer hover:bg-slate-200 transition-colors" onClick={() => toggleSection('integrations')} data-testid="section-integrations">
+                  <td colSpan={4} className="py-2.5 px-4 font-bold text-slate-800 text-sm">
+                    <div className="flex items-center gap-2">
+                      <ChevronDown className={`w-4 h-4 transition-transform ${expandedSections.integrations ? 'rotate-0' : '-rotate-90'}`} />
+                      {t('landing.comparison.sectionIntegrations')}
+                    </div>
+                  </td>
+                </tr>
+                {expandedSections.integrations && (<>
+                <tr className="border-b border-slate-100">
+                  <td className="py-2.5 px-4 pl-8">{t('landing.features.quickbooks')}</td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50/50">
+                  <td className="py-2.5 px-4 pl-8">{t('landing.comparison.qbDesktop')}</td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-amber-500 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.qbDesktop')}</td>
-                  <td className="py-3 px-4 text-center"><X className="w-5 h-5 text-slate-300 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-emerald-500 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-5 h-5 text-amber-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 pl-8">{t('landing.comparison.sapOracleDynamics')}</td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-amber-500 mx-auto" /></td>
                 </tr>
-                <tr className="border-b border-slate-100 bg-slate-50">
-                  <td className="py-3 px-4 text-slate-700">{t('landing.comparison.support')}</td>
-                  <td className="py-3 px-4 text-center text-slate-700">{t('landing.comparison.email')}</td>
-                  <td className="py-3 px-4 text-center text-slate-700">{t('landing.comparison.priority')}</td>
-                  <td className="py-3 px-4 text-center text-slate-700">{t('landing.comparison.dedicated247')}</td>
+                <tr className="border-b border-slate-100 bg-slate-50/50">
+                  <td className="py-2.5 px-4 pl-8">{t('landing.comparison.aiSearch')}</td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-purple-500 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-amber-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100">
+                  <td className="py-2.5 px-4 pl-8 font-medium text-blue-700">{t('landing.comparison.advancedReportsCenter')}</td>
+                  <td className="py-2.5 px-4 text-center text-xs text-slate-500">{t('landing.comparison.basic')}</td>
+                  <td className="py-2.5 px-4 text-center text-xs font-medium text-purple-600">{t('landing.comparison.reports30')}</td>
+                  <td className="py-2.5 px-4 text-center text-xs font-medium text-amber-600">{t('landing.comparison.reports58')}</td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50/50">
+                  <td className="py-2.5 px-4 pl-8">{t('landing.comparison.customSavedReports')}</td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-amber-500 mx-auto" /></td>
+                </tr>
+                </>)}
+
+                {/* SECTION: Administración Avanzada */}
+                <tr className="bg-slate-100 border-b border-slate-200 cursor-pointer hover:bg-slate-200 transition-colors" onClick={() => toggleSection('admin')} data-testid="section-admin">
+                  <td colSpan={4} className="py-2.5 px-4 font-bold text-slate-800 text-sm">
+                    <div className="flex items-center gap-2">
+                      <ChevronDown className={`w-4 h-4 transition-transform ${expandedSections.admin ? 'rotate-0' : '-rotate-90'}`} />
+                      {t('landing.comparison.sectionAdmin')}
+                    </div>
+                  </td>
+                </tr>
+                {expandedSections.admin && (<>
+                <tr className="border-b border-slate-100">
+                  <td className="py-2.5 px-4 pl-8">{t('landing.comparison.customRoles')}</td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-amber-500 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-slate-100 bg-slate-50/50">
+                  <td className="py-2.5 px-4 pl-8">{t('landing.comparison.customAPI')}</td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                  <td className="py-2.5 px-4 text-center"><Check className="w-4 h-4 text-amber-500 mx-auto" /></td>
+                </tr>
+                </>)}
+
+                {/* Soporte - Always visible */}
+                <tr className="border-t-2 border-slate-200">
+                  <td className="py-3 px-4 font-medium text-slate-800">{t('landing.comparison.support')}</td>
+                  <td className="py-3 px-4 text-center text-sm text-slate-700">{t('landing.comparison.email')}</td>
+                  <td className="py-3 px-4 text-center text-sm text-slate-700">{t('landing.comparison.priority')}</td>
+                  <td className="py-3 px-4 text-center text-sm text-slate-700">{t('landing.comparison.dedicated247')}</td>
                 </tr>
               </tbody>
             </table>
-            )}
           </div>
           
           <p className="text-center text-slate-600 mt-8 text-sm">

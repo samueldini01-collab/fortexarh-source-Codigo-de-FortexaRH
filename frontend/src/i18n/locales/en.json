@@ -402,7 +402,13 @@
       "eSignature": "Electronic signature",
       "workflows": "Approval workflows",
       "achBank": "ACH bank payments",
-      "qbDesktop": "QuickBooks Desktop (IIF)"
+      "qbDesktop": "QuickBooks Desktop (IIF)",
+      "sectionPricing": "Pricing & Capacity",
+      "sectionHR": "HR Management",
+      "sectionPayroll": "Payroll & Finance",
+      "sectionTalent": "Talent & Evaluations",
+      "sectionIntegrations": "Integrations & Reports",
+      "sectionAdmin": "Advanced Administration"
     },
     "testimonials": {
       "badge": "Customer Testimonials",
