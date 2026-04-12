@@ -153,6 +153,9 @@
     "orgChart": "Organigrama",
     "users": "Usuarios",
     "roles": "Roles",
+    "workflows": "Workflows",
+    "automation": "Automatización",
+    "contracts": "Contratos",
     "company": "Empresa",
     "subscriptions": "Suscripción",
     "support": "Centro Soporte",
@@ -261,7 +264,7 @@
     "hero": {
       "title": "Sistema de RRHH y Nómina para República Dominicana",
       "subtitle": "Gestiona tu capital humano con la plataforma más completa. Nómina, TSS, DGII, y más.",
-      "cta": "Prueba Gratis 3 Días",
+      "cta": "Comenzar Gratis",
       "demo": "Ver Demo",
       "brochure": "Brochure"
     },
@@ -317,7 +320,13 @@
       "dgii": "Reportes DGII",
       "dgiiDesc": "Genera automáticamente IR-3, IR-4, IR-13, IR-17 y TSS según normativa vigente.",
       "customization": "Personalización",
-      "customizationDesc": "Branding personalizado con colores y logo de tu empresa en toda la plataforma."
+      "customizationDesc": "Branding personalizado con colores y logo de tu empresa en toda la plataforma.",
+      "contracts": "Contratos y Firma Electrónica",
+      "contractsDesc": "Crea contratos laborales con editor WYSIWYG, plantillas RD y firma electrónica digital.",
+      "workflows": "Workflows de Aprobación",
+      "workflowsDesc": "Define niveles de aprobación para nóminas: quién revisa y aprueba en cada paso.",
+      "achBank": "Pagos ACH Bancarios",
+      "achBankDesc": "Genera archivos ACH para Banreservas, Popular y BHD León directamente desde la nómina."
     },
     "video": {
       "title": "Mira FortexaRH en Acción",
@@ -552,10 +561,7 @@
         "allBasic": "Todo lo del plan Básico",
         "allPro": "Todo lo del plan Pro",
         "unlimitedEmployees": "Empleados ilimitados"
-      },
-      "freeTrial": "Prueba gratis por 3 días",
-      "startTrial": "Comenzar Prueba (3 Días)",
-      "trialNote": "Prueba gratuita de 3 días. No se requiere tarjeta de crédito."
+      }
     },
     "contact": {
       "title": "Contacto y Soporte",
@@ -590,12 +596,7 @@
     "fortexarhEnterprise": "FortexaRH Enterprise",
     "avGeorgeWashington503": "Av. George Washington #503, Gazcue",
     "santoDomingoDistritoNacional": "Santo Domingo, Distrito Nacional",
-    "santoDomingoDn": "Santo Domingo, D.N.",
-    "accountantDropdown": {
-      "commission": "Comisión por gestión de nómina",
-      "multiClient": "Multi-Cliente",
-      "dashboard": "Panel centralizado para todos tus clientes"
-    }
+    "santoDomingoDn": "Santo Domingo, D.N."
   },
   "auth": {
     "login": {
@@ -612,7 +613,8 @@
       "googleLogin": "Continuar con Google",
       "partnerPortal": "Portal de Contadores",
       "partnerSubtitle": "Accede al portal de tu firma contable",
-      "partnerSubmit": "Entrar al Portal de Contadores"
+      "partnerSubmit": "Entrar al Portal de Contadores",
+      "invalidCredentials": "Credenciales inválidas. Verifica tu correo y contraseña."
     },
     "register": {
       "title": "Crear Cuenta",
@@ -3534,22 +3536,6 @@
       "errorClockout": "Error al registrar salida",
       "errorLoadingData": "Error al cargar datos",
       "logout": "Salir"
-    },
-    "password": {
-      "title": "Cambiar Contraseña",
-      "subtitle": "Actualiza tu contraseña de acceso al portal",
-      "current": "Contraseña Actual",
-      "currentPlaceholder": "Ingresa tu contraseña actual",
-      "new": "Nueva Contraseña",
-      "newPlaceholder": "Ingresa tu nueva contraseña",
-      "confirm": "Confirmar Nueva Contraseña",
-      "confirmPlaceholder": "Confirma tu nueva contraseña",
-      "changeBtn": "Cambiar Contraseña",
-      "fillAll": "Completa todos los campos",
-      "minLength": "La contraseña debe tener al menos 6 caracteres",
-      "noMatch": "Las contraseñas no coinciden",
-      "updated": "Contraseña actualizada correctamente",
-      "error": "Error al cambiar la contraseña"
     }
   },
   "geoAttendance": {
@@ -3914,8 +3900,7 @@
       "accounts": "Cuentas",
       "reports": "Reportes",
       "journalEntries": "Asientos de Diario",
-      "chartOfAccounts": "Catálogo de Cuentas",
-      "payrollSummary": "Resumen Nómina"
+      "chartOfAccounts": "Catálogo de Cuentas"
     },
     "stats": {
       "totalEntries": "Total Asientos",
@@ -4086,28 +4071,7 @@
     "codigo": "Código",
     "nombreDeCuenta": "Nombre de Cuenta",
     "centroDeCostos": "Centro de Costos",
-    "empleado": "Empleado",
-    "payroll": {
-      "title": "Asientos de Nómina",
-      "subtitle": "Asientos de diario generados automáticamente desde períodos de nómina",
-      "allBalanced": "Todos los asientos están balanceados",
-      "hasUnbalanced": "Hay asientos desbalanceados que requieren atención",
-      "totalPayroll": "Total Nómina",
-      "postedEntries": "Contabilizados",
-      "draftEntries": "Borradores",
-      "lastEntry": "Último Asiento",
-      "balanced": "Balanceado",
-      "unbalanced": "Desbalanceado",
-      "employees": "empleados",
-      "noEntries": "No hay asientos de nómina generados aún",
-      "noEntriesDesc": "Los asientos se generarán automáticamente al aprobar o pagar un período de nómina",
-      "periodStatus": "Estado Período",
-      "viewPeriod": "Ver Período",
-      "grossSalary": "Salario Bruto",
-      "netSalary": "Salario Neto",
-      "onlyPayroll": "Solo Nómina",
-      "balanceStatus": "Balance"
-    }
+    "empleado": "Empleado"
   },
   "costsByDepartment": {
     "title": "Costos por Departamento",
@@ -4252,35 +4216,7 @@
       "disconnect": "Desconectar",
       "comingSoon": "Próximamente",
       "fortexaerp": {
-        "desc": "Sincronización nativa completa con el ecosistema Fortexa.",
-        "sync": "Sincronizar",
-        "configure": "Configurar",
-        "configured": "Configurado",
-        "apiUrl": "URL del API",
-        "email": "Email",
-        "password": "Contraseña",
-        "companyId": "ID de Empresa",
-        "testConnection": "Probar Conexión",
-        "saveConfig": "Guardar Configuración",
-        "syncJe": "Sincronizar Asientos",
-        "lastSync": "Última sincronización",
-        "connectedTo": "Conectado a",
-        "syncLog": "Historial de Sincronización",
-        "syncLogDesc": "Registro de todas las sincronizaciones con FortexaERP",
-        "noSyncHistory": "No hay sincronizaciones registradas",
-        "viewHistory": "Ver Historial",
-        "period": "Periodo",
-        "reference": "Referencia",
-        "lines": "Líneas",
-        "amount": "Monto",
-        "date": "Fecha",
-        "status": "Estado",
-        "syncedBy": "Usuario",
-        "success": "Exitoso",
-        "failed": "Fallido",
-        "error": "Error",
-        "autoSync": "Sincronización Automática",
-        "autoSyncDesc": "Enviar asientos al ERP automáticamente al aprobar o pagar nómina"
+        "desc": "Sincronización nativa completa con el ecosistema Fortexa."
       },
       "quickbooks": {
         "desc": "Exporta nómina y asientos contables automáticamente a QBO."
@@ -4290,15 +4226,6 @@
       },
       "oracle": {
         "desc": "Conectividad en la nube para gestión financiera avanzada."
-      },
-      "qbd": {
-        "desc": "Sincronización con QuickBooks Desktop vía Web Connector, IIF o CSV manual.",
-        "webConnector": "Web Connector",
-        "webConnectorDesc": "Sincronización automática",
-        "iif": "Exportar IIF",
-        "iifDesc": "Archivo de importación directa",
-        "csv": "CSV Manual",
-        "csvDesc": "Exportar datos en CSV"
       }
     },
     "messages": {
@@ -5421,7 +5348,7 @@
       "perEmployee": "por empleado",
       "employees": "empleados",
       "usersIncluded": "usuarios incluidos",
-      "trialNote": "Prueba gratuita de 3 días. No se requiere tarjeta de crédito.",
+      "trialNote": "* Todos los planes incluyen 14 días de prueba gratis. Sin tarjeta de crédito requerida.",
       "basic": {
         "name": "Básico",
         "target": "Para pequeñas empresas",
@@ -5915,22 +5842,6 @@
       "settings": {
         "title": "Configuracion",
         "desc": "Empresa, seguridad, idioma e integraciones"
-      },
-      "reports": {
-        "title": "Reportes y Centro de Reportes",
-        "desc": "Reportes DGII, TSS, avanzados, filtros y exportacion"
-      },
-      "calculator": {
-        "title": "Calculadora de Nomina",
-        "desc": "Calculo de salario neto, deducciones TSS y ISR"
-      },
-      "documents": {
-        "title": "Documentos y Plantillas",
-        "desc": "Generacion de contratos, cartas y expedientes"
-      },
-      "accounting": {
-        "title": "Contabilidad e Integraciones",
-        "desc": "Asientos contables, QuickBooks Online, pagos"
       }
     },
     "articles": {
@@ -6045,96 +5956,36 @@
       "settings-integrations": {
         "title": "Integraciones disponibles",
         "body": "Conecta con Stripe y PayPal para pagos, QuickBooks para contabilidad, y habilita Google Auth para inicio de sesion social. Las integraciones enterprise (SAP, Oracle) estan disponibles en el plan Enterprise."
-      },
-      "reports-center": {
-        "title": "Centro de Reportes",
-        "body": "El Centro de Reportes ofrece filtros avanzados por fecha, departamento y tipo. Puede exportar a Excel y PDF. Incluye reportes de nomina, asistencia, vacaciones, evaluaciones y mas."
-      },
-      "reports-dgii": {
-        "title": "Reportes DGII-TSS",
-        "body": "Genera y descarga los reportes obligatorios para la DGII: IR-3 (Retenciones ISR), IR-4 (Retencion Remuneraciones), IR-17 (Retenciones), IR-6 (Asalariados) y TSS Autodeterminacion. Incluye desglose por empleado."
-      },
-      "reports-advanced": {
-        "title": "Reportes Avanzados",
-        "body": "Acceda a graficos comparativos, tendencias de nomina, analisis de rotacion y costos por departamento. Los reportes se pueden filtrar y exportar en multiples formatos."
-      },
-      "calc-basic": {
-        "title": "Calculadora de Nomina Basica",
-        "body": "Ingrese el salario base, horas extras, bonos y comisiones para obtener un calculo detallado del salario neto con todas las deducciones TSS (SFS 3.04%, AFP 2.87%) e ISR aplicables."
-      },
-      "calc-deductions": {
-        "title": "Deducciones TSS e ISR",
-        "body": "El sistema calcula automaticamente: SFS al 3.04%, AFP al 2.87% y el ISR segun la tabla de la DGII. Los topes salariales de la TSS se aplican automaticamente."
-      },
-      "calc-edit": {
-        "title": "Editar ISR manualmente",
-        "body": "En los resultados de la calculadora, haga clic en el valor del ISR Mensual para editarlo. El total de deducciones y salario neto se recalculan automaticamente. Tambien puede editar ISR, SFS, AFP y horas extras directamente en la Hoja de Nomina."
-      },
-      "docs-templates": {
-        "title": "Plantillas de Documentos",
-        "body": "Cree y administre plantillas para contratos laborales, cartas de trabajo, certificaciones y otros documentos. Las plantillas soportan variables dinamicas como nombre, puesto, salario y fecha."
-      },
-      "docs-generate": {
-        "title": "Generar Documentos",
-        "body": "Seleccione una plantilla y un empleado para generar documentos automaticamente. Los documentos se generan en PDF y se pueden descargar o enviar por email al empleado."
-      },
-      "docs-employee": {
-        "title": "Expediente del Empleado",
-        "body": "Cada empleado tiene un expediente digital con sus documentos: contrato, cedula, evaluaciones, recibos de nomina y mas. Los documentos se pueden subir y organizar por tipo."
-      },
-      "accounting-overview": {
-        "title": "Contabilidad General",
-        "body": "El modulo de contabilidad genera automaticamente asientos de diario para cada periodo de nomina. Los asientos incluyen debitos por gastos de nomina y creditos por deducciones y pagos."
-      },
-      "accounting-quickbooks": {
-        "title": "Integracion QuickBooks Online",
-        "body": "Conecte su cuenta de QuickBooks para sincronizar asientos de nomina. Configure el mapeo de 8 cuentas (Gastos, SFS, AFP, ISR, SRL, INFOTEP, Aportes Patronales, Banco) y envie JEs consolidados por periodo con un clic."
-      },
-      "accounting-payments": {
-        "title": "Pagos y Facturacion",
-        "body": "Procese pagos de suscripciones mediante Stripe o PayPal. Gestione la facturacion y vea el historial de transacciones desde el panel de administracion."
       }
     },
     "updates": {
-      "update-isr-editable": {
-        "title": "ISR Editable en Calculadora y Hoja de Nomina",
-        "body": "Ahora puede editar el valor del ISR directamente en los resultados de la calculadora y en la Hoja de Nomina. El total de deducciones y salario neto se recalculan automaticamente."
-      },
-      "update-sfs-afp-editable": {
-        "title": "SFS, AFP y Horas Extras Editables en Nomina",
-        "body": "Las columnas de SFS, AFP y Horas Extras en la Hoja de Nomina ahora son editables. Haga clic en cualquier valor para modificarlo manualmente."
-      },
-      "update-qb-journal": {
-        "title": "Asientos de Diario a QuickBooks",
-        "body": "Envie asientos contables consolidados de nomina a QuickBooks Online con un solo clic. Un JE por periodo con desglose completo de debitos y creditos."
-      },
-      "update-dgii-fix": {
-        "title": "Correccion de Reportes DGII-TSS",
-        "body": "Se corrigieron los errores de descarga y desglose por empleado en los reportes DGII. Todos los formatos (IR-3, IR-4, IR-17, IR-6, TSS) se descargan correctamente."
-      },
-      "update-sfs-rate": {
-        "title": "Correccion Tasa SFS a 3.04%",
-        "body": "Se corrigio el porcentaje del SFS de 3.07% a 3.04% en todo el sistema: calculadora, hoja de nomina, reportes y generacion de periodos."
-      },
-      "update-qb-mapping": {
-        "title": "Mapeo de Cuentas QuickBooks",
-        "body": "Nueva seccion de mapeo de cuentas en Configuracion > Integraciones. Configure las 8 cuentas necesarias para sincronizar nomina con QuickBooks."
-      },
       "update-push-auto": {
         "title": "Push automatico en Nomina y Vacaciones",
-        "body": "Los empleados reciben notificaciones push automaticas cuando se procesa su nomina o se aprueba/rechaza una solicitud de vacaciones."
+        "body": "Ahora los empleados reciben notificaciones push automaticas cuando se procesa su nomina o se aprueba/rechaza una solicitud de vacaciones. No requiere configuracion adicional."
       },
       "update-notif-center": {
-        "title": "Centro de Notificaciones del Empleado",
-        "body": "Los empleados tienen un centro de notificaciones con filtros, busqueda y exportacion CSV en su portal."
+        "title": "Centro de Notificaciones para Empleados",
+        "body": "Nuevo tab 'Notificaciones' en el portal de empleados con busqueda por texto, filtro por categoria, marcar todas como leidas y exportar historial completo a CSV."
+      },
+      "update-i18n-notif": {
+        "title": "Notificaciones en tu idioma",
+        "body": "Todas las notificaciones, eventos y categorias ahora se muestran en el idioma configurado del usuario (Espanol, Ingles o Frances). Incluye la campana, el centro y la pagina de configuracion."
       },
       "update-error-std": {
-        "title": "Estandarizacion de Errores API",
-        "body": "Todos los endpoints del API ahora retornan errores en formato estandarizado con codigos y mensajes consistentes."
+        "title": "Respuestas de error mejoradas en la API",
+        "body": "Las respuestas de error de la API ahora siguen un formato estandarizado con tipo de error, detalle, codigo de estado y ruta. Esto mejora la experiencia al depurar problemas."
       },
       "update-push-pwa": {
-        "title": "Notificaciones Push PWA",
-        "body": "Soporte completo de notificaciones push via service worker. Los empleados pueden activar push desde su portal."
+        "title": "Notificaciones Push y Campana en Portal de Empleados",
+        "body": "Los empleados ahora pueden activar push notifications desde su portal para recibir alertas en tiempo real. La campana de notificaciones muestra un panel con toggle de push y banner de activacion."
+      },
+      "update-notif-phase1": {
+        "title": "Sistema de Notificaciones Configurables",
+        "body": "20 tipos de evento configurables por canal (In-App, Email, Push). Horas de silencio con soporte de zona horaria. Sistema de digest para resumenes diarios o semanales."
+      },
+      "update-tech-debt": {
+        "title": "Mejoras de estabilidad y rendimiento",
+        "body": "Correccion de errores de serializacion, mejora de testabilidad con data-testid en componentes interactivos, internacionalizacion del portal de partner y refactorizacion de componentes grandes."
       }
     },
     "faq": {
@@ -6177,32 +6028,7 @@
       "faq-quiet-hours": {
         "q": "Que son las Horas de Silencio?",
         "a": "Las Horas de Silencio te permiten pausar las notificaciones push y email durante horarios especificos (ej: 10pm a 7am). Las notificaciones in-app siguen acumulandose para que las veas cuando quieras. Puedes configurarlas en Notificaciones > Horarios."
-      },
-      "faq-edit-isr": {
-        "q": "Como editar el ISR en la calculadora o la hoja de nomina?",
-        "a": "En la calculadora, haga clic en el valor del ISR Mensual en los resultados para editarlo. En la Hoja de Nomina, haga clic en cualquier celda de ISR, SFS, AFP o H.Extras para modificar el valor. El sistema recalcula automaticamente el salario neto."
-      },
-      "faq-qb-connect": {
-        "q": "Como conectar QuickBooks Online?",
-        "a": "Vaya a Configuracion > Integraciones y haga clic en Conectar junto a QuickBooks Online. Autorice la conexion con su cuenta de Intuit. Luego configure el mapeo de cuentas para poder enviar asientos de nomina."
-      },
-      "faq-dgii-reports": {
-        "q": "Como descargar los reportes DGII?",
-        "a": "Vaya a Reportes DGII-TSS, seleccione el periodo de nomina y haga clic en el boton de descarga del reporte deseado (IR-3, IR-4, IR-17, IR-6 o TSS). Tambien puede ver el desglose por empleado antes de descargar."
       }
-    }
-  },
-  "trial": {
-    "expired": {
-      "title": "Tu período de prueba ha expirado",
-      "subtitle": "Para continuar usando FortexaRH, selecciona un plan de suscripción.",
-      "selectPlan": "Ver Planes Disponibles",
-      "contact": "Contactar Soporte"
-    },
-    "banner": {
-      "daysLeft": "días restantes de prueba",
-      "lastDay": "Último día de prueba",
-      "upgrade": "Actualizar Plan"
     }
   }
 }

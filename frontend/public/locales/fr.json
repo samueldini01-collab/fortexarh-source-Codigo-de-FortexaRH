@@ -261,7 +261,7 @@
     "hero": {
       "title": "Système RH et Paie pour la République Dominicaine",
       "subtitle": "Gérez votre capital humain avec la plateforme la plus complète. Paie, TSS, DGII, et plus.",
-      "cta": "Essai Gratuit 3 Jours",
+      "cta": "Commencer Gratuitement",
       "demo": "Voir la Démo",
       "brochure": "Brochure"
     },
@@ -552,10 +552,7 @@
         "allBasic": "Tout du plan Basique",
         "allPro": "Tout du plan Pro",
         "unlimitedEmployees": "Employés illimités"
-      },
-      "freeTrial": "Essai gratuit de 3 jours",
-      "startTrial": "Commencer l'essai (3 jours)",
-      "trialNote": "Essai gratuit de 3 jours. Aucune carte de crédit requise."
+      }
     },
     "contact": {
       "title": "Contact et Support",
@@ -590,12 +587,7 @@
     "fortexarhEnterprise": "FortexaRH Enterprise",
     "avGeorgeWashington503": "Av. George Washington #503, Gazcue",
     "santoDomingoDistritoNacional": "Santo Domingo, Distrito Nacional",
-    "santoDomingoDn": "Santo Domingo, D.N.",
-    "accountantDropdown": {
-      "commission": "Commission pour la gestion de la paie",
-      "multiClient": "Multi-Client",
-      "dashboard": "Tableau de bord centralisé pour tous vos clients"
-    }
+    "santoDomingoDn": "Santo Domingo, D.N."
   },
   "auth": {
     "login": {
@@ -612,7 +604,8 @@
       "googleLogin": "Continuer avec Google",
       "partnerPortal": "Portail Comptable",
       "partnerSubtitle": "Accédez au portail de votre cabinet comptable",
-      "partnerSubmit": "Entrer au Portail Comptable"
+      "partnerSubmit": "Entrer au Portail Comptable",
+      "invalidCredentials": "Identifiants invalides. Veuillez vérifier votre e-mail et mot de passe."
     },
     "register": {
       "title": "Créer un compte",
@@ -3521,22 +3514,6 @@
       "errorClockout": "Erreur d'enregistrement de sortie",
       "errorLoadingData": "Erreur de chargement des données",
       "logout": "Déconnexion"
-    },
-    "password": {
-      "title": "Changer le Mot de Passe",
-      "subtitle": "Mettez a jour votre mot de passe d'acces au portail",
-      "current": "Mot de Passe Actuel",
-      "currentPlaceholder": "Entrez votre mot de passe actuel",
-      "new": "Nouveau Mot de Passe",
-      "newPlaceholder": "Entrez votre nouveau mot de passe",
-      "confirm": "Confirmer le Nouveau Mot de Passe",
-      "confirmPlaceholder": "Confirmez votre nouveau mot de passe",
-      "changeBtn": "Changer le Mot de Passe",
-      "fillAll": "Veuillez remplir tous les champs",
-      "minLength": "Le mot de passe doit contenir au moins 6 caracteres",
-      "noMatch": "Les mots de passe ne correspondent pas",
-      "updated": "Mot de passe mis a jour avec succes",
-      "error": "Erreur lors du changement de mot de passe"
     }
   },
   "geoAttendance": {
@@ -3893,8 +3870,7 @@
       "accounts": "Comptes",
       "reports": "Rapports",
       "journalEntries": "Écritures de Journal",
-      "chartOfAccounts": "Plan Comptable",
-      "payrollSummary": "Résumé Paie"
+      "chartOfAccounts": "Plan Comptable"
     },
     "stats": {
       "totalEntries": "Total Écritures",
@@ -4056,28 +4032,7 @@
     "codigo": "Code",
     "nombreDeCuenta": "Nombre de Compte",
     "centroDeCostos": "Centro de Costos",
-    "empleado": "Employé",
-    "payroll": {
-      "title": "Écritures de Paie",
-      "subtitle": "Écritures comptables générées automatiquement à partir des périodes de paie",
-      "allBalanced": "Toutes les écritures sont équilibrées",
-      "hasUnbalanced": "Il y a des écritures déséquilibrées nécessitant attention",
-      "totalPayroll": "Total Paie",
-      "postedEntries": "Comptabilisées",
-      "draftEntries": "Brouillons",
-      "lastEntry": "Dernière Écriture",
-      "balanced": "Équilibré",
-      "unbalanced": "Déséquilibré",
-      "employees": "employés",
-      "noEntries": "Aucune écriture de paie générée",
-      "noEntriesDesc": "Les écritures seront générées automatiquement lors de l'approbation ou du paiement d'une période de paie",
-      "periodStatus": "Statut Période",
-      "viewPeriod": "Voir Période",
-      "grossSalary": "Salaire Brut",
-      "netSalary": "Salaire Net",
-      "onlyPayroll": "Paie Uniquement",
-      "balanceStatus": "Solde"
-    }
+    "empleado": "Employé"
   },
   "costsByDepartment": {
     "title": "Coûts par Département",
@@ -4220,35 +4175,7 @@
       "disconnect": "Déconnecter",
       "comingSoon": "Bientôt Disponible",
       "fortexaerp": {
-        "desc": "Synchronisation native complète avec l'écosystème Fortexa.",
-        "sync": "Synchroniser",
-        "configure": "Configurer",
-        "configured": "Configuré",
-        "apiUrl": "URL de l'API",
-        "email": "Email",
-        "password": "Mot de passe",
-        "companyId": "ID de l'entreprise",
-        "testConnection": "Tester la connexion",
-        "saveConfig": "Enregistrer la configuration",
-        "syncJe": "Synchroniser les écritures",
-        "lastSync": "Dernière synchronisation",
-        "connectedTo": "Connecté à",
-        "syncLog": "Historique de synchronisation",
-        "syncLogDesc": "Journal de toutes les synchronisations avec FortexaERP",
-        "noSyncHistory": "Aucun historique de synchronisation",
-        "viewHistory": "Voir l'historique",
-        "period": "Période",
-        "reference": "Référence",
-        "lines": "Lignes",
-        "amount": "Montant",
-        "date": "Date",
-        "status": "Statut",
-        "syncedBy": "Utilisateur",
-        "success": "Réussi",
-        "failed": "Échoué",
-        "error": "Erreur",
-        "autoSync": "Synchronisation Automatique",
-        "autoSyncDesc": "Envoyer les écritures à l'ERP automatiquement lors de l'approbation ou du paiement de la paie"
+        "desc": "Synchronisation native complète avec l'écosystème Fortexa."
       },
       "quickbooks": {
         "desc": "Exportez automatiquement la paie et les écritures comptables vers QBO."
@@ -4258,15 +4185,6 @@
       },
       "oracle": {
         "desc": "Connectivité cloud pour la gestion financière avancée."
-      },
-      "qbd": {
-        "desc": "Synchronisation avec QuickBooks Desktop via Web Connector, IIF ou CSV manuel.",
-        "webConnector": "Web Connector",
-        "webConnectorDesc": "Synchronisation automatique",
-        "iif": "Exporter IIF",
-        "iifDesc": "Fichier d'importation directe",
-        "csv": "CSV Manuel",
-        "csvDesc": "Exporter les données en CSV"
       }
     },
     "messages": {
@@ -5386,7 +5304,7 @@
       "perEmployee": "par employé",
       "employees": "employés",
       "usersIncluded": "utilisateurs inclus",
-      "trialNote": "Essai gratuit de 3 jours. Aucune carte de crédit requise.",
+      "trialNote": "* Tous les plans incluent 14 jours d'essai gratuit. Sans carte de crédit requise.",
       "basic": {
         "name": "Basique",
         "target": "Pour petites entreprises",
@@ -5880,22 +5798,6 @@
       "settings": {
         "title": "Configuration",
         "desc": "Entreprise, securite, langue et integrations"
-      },
-      "reports": {
-        "title": "Rapports",
-        "desc": "Rapports DGII, TSS, avances, filtres et export"
-      },
-      "calculator": {
-        "title": "Calculateur de Paie",
-        "desc": "Calcul du salaire net, deductions TSS et ISR"
-      },
-      "documents": {
-        "title": "Documents et Modeles",
-        "desc": "Generation de contrats, lettres et dossiers"
-      },
-      "accounting": {
-        "title": "Comptabilite et Integrations",
-        "desc": "Ecritures comptables, QuickBooks, paiements"
       }
     },
     "articles": {
@@ -6010,81 +5912,9 @@
       "settings-integrations": {
         "title": "Integrations disponibles",
         "body": "Connectez Stripe, PayPal, QuickBooks et Google Auth."
-      },
-      "reports-center": {
-        "title": "Centre de Rapports",
-        "body": "Filtres avances par date, departement et type. Export Excel et PDF."
-      },
-      "reports-dgii": {
-        "title": "Rapports DGII-TSS",
-        "body": "Generez les rapports DGII: IR-3, IR-4, IR-17, IR-6 et TSS."
-      },
-      "reports-advanced": {
-        "title": "Rapports Avances",
-        "body": "Graphiques, tendances et analyse par departement."
-      },
-      "calc-basic": {
-        "title": "Calculateur de Paie",
-        "body": "Calcul du salaire net avec deductions TSS et ISR."
-      },
-      "calc-deductions": {
-        "title": "Deductions TSS et ISR",
-        "body": "Calcul automatique: SFS 3.04%, AFP 2.87% et ISR."
-      },
-      "calc-edit": {
-        "title": "Modifier ISR manuellement",
-        "body": "Cliquez sur ISR pour le modifier. Le salaire net se recalcule."
-      },
-      "docs-templates": {
-        "title": "Modeles de Documents",
-        "body": "Creez des modeles pour contrats et lettres."
-      },
-      "docs-generate": {
-        "title": "Generer des Documents",
-        "body": "Selectionnez un modele et un employe pour generer un PDF."
-      },
-      "docs-employee": {
-        "title": "Dossier Employe",
-        "body": "Dossier numerique avec contrats, evaluations et bulletins."
-      },
-      "accounting-overview": {
-        "title": "Comptabilite Generale",
-        "body": "Ecritures comptables automatiques par periode."
-      },
-      "accounting-quickbooks": {
-        "title": "QuickBooks Online",
-        "body": "Synchronisez la paie avec mappage de 8 comptes."
-      },
-      "accounting-payments": {
-        "title": "Paiements",
-        "body": "Paiements Stripe et PayPal et historique."
       }
     },
     "updates": {
-      "update-isr-editable": {
-        "title": "ISR Modifiable",
-        "body": "Modifiez ISR dans le calculateur et la feuille de paie."
-      },
-      "update-sfs-afp-editable": {
-        "title": "SFS, AFP et Heures Sup Modifiables",
-        "body": "Colonnes editables dans la feuille de paie."
-      },
-      "update-qb-journal": {
-        "title": "Ecritures vers QuickBooks",
-        "body": "Envoyez des ecritures consolidees en un clic."
-      },
-      "update-dgii-fix": {
-        "title": "Correction Rapports DGII",
-        "body": "Telechargement et details par employe corriges."
-      },
-      "update-sfs-rate": {
-        "title": "Taux SFS corrige a 3.04%",
-        "body": "SFS corrige de 3.07% a 3.04% dans tout le systeme."
-      },
-      "update-qb-mapping": {
-        "title": "Mappage Comptes QuickBooks",
-        "body": "Nouvelle section mappage dans Configuration > Integrations."
-      },
       "update-push-auto": {
         "title": "Push automatique Paie et Vacances",
         "body": "Les employes recoivent des notifications push automatiques lors du traitement de la paie ou de l'approbation des vacances."
@@ -6093,6 +5923,10 @@
         "title": "Centre de notifications pour employes",
         "body": "Nouvel onglet avec recherche, filtre par categorie et export CSV."
       },
+      "update-i18n-notif": {
+        "title": "Notifications dans votre langue",
+        "body": "Toutes les notifications s'affichent dans la langue configuree."
+      },
       "update-error-std": {
         "title": "Reponses d'erreur ameliorees",
         "body": "Format standardise avec type d'erreur, detail et code de statut."
@@ -6100,6 +5934,14 @@
       "update-push-pwa": {
         "title": "Push et cloche dans le portail employe",
         "body": "Les employes peuvent activer les notifications push depuis leur portail."
+      },
+      "update-notif-phase1": {
+        "title": "Systeme de notifications configurables",
+        "body": "20 types d'evenements configurables par canal avec heures de silence."
+      },
+      "update-tech-debt": {
+        "title": "Ameliorations de stabilite",
+        "body": "Correction d'erreurs, amelioration de la testabilite et internationalisation."
       }
     },
     "faq": {
@@ -6142,32 +5984,7 @@
       "faq-quiet-hours": {
         "q": "Que sont les heures de silence?",
         "a": "Les heures de silence pausent les notifications push et email pendant des horaires specifiques."
-      },
-      "faq-edit-isr": {
-        "q": "Comment modifier l'ISR?",
-        "a": "Cliquez sur la valeur ISR dans le calculateur ou la feuille de paie pour la modifier."
-      },
-      "faq-qb-connect": {
-        "q": "Comment connecter QuickBooks?",
-        "a": "Configuration > Integrations > Connecter QuickBooks. Autorisez puis configurez le mappage de comptes."
-      },
-      "faq-dgii-reports": {
-        "q": "Comment telecharger les rapports DGII?",
-        "a": "Rapports DGII-TSS > selectionnez la periode > cliquez telecharger."
       }
-    }
-  },
-  "trial": {
-    "expired": {
-      "title": "Votre période d'essai a expiré",
-      "subtitle": "Pour continuer à utiliser FortexaRH, sélectionnez un plan.",
-      "selectPlan": "Voir les Plans",
-      "contact": "Contacter le Support"
-    },
-    "banner": {
-      "daysLeft": "jours d'essai restants",
-      "lastDay": "Dernier jour d'essai",
-      "upgrade": "Mettre à Niveau"
     }
   }
 }

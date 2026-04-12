@@ -131,6 +131,18 @@ DEFAULT_MODULES = [
         "description": "Tickets de soporte",
         "permissions": ["view", "create", "respond", "manage"]
     },
+    {
+        "id": "contracts", 
+        "name": "Contratos", 
+        "description": "Contratos laborales y firma electrónica",
+        "permissions": ["view", "create", "edit", "delete", "sign", "send_for_signature"]
+    },
+    {
+        "id": "workflows", 
+        "name": "Automatización", 
+        "description": "Workflows de aprobación de nómina",
+        "permissions": ["view", "create", "edit", "delete"]
+    },
 ]
 
 # Permission type labels in Spanish
@@ -152,7 +164,8 @@ PERMISSION_LABELS = {
     "sign": "Firmar",
     "manage": "Gestionar",
     "assign_roles": "Asignar Roles",
-    "respond": "Responder"
+    "respond": "Responder",
+    "send_for_signature": "Enviar a Firma"
 }
 
 # All possible permission types

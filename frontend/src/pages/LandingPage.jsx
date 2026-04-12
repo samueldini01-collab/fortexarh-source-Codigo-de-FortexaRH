@@ -55,7 +55,10 @@ import {
   CheckCircle,
   Sparkles,
   Cloud as CloudIcon,
-  Palette
+  Palette,
+  FileSignature,
+  GitBranch,
+  Landmark
 } from "lucide-react";
 
 // Icons will be used dynamically in the component
@@ -89,6 +92,9 @@ export default function LandingPage() {
     { icon: CloudIcon, titleKey: "quickbooks", descKey: "quickbooksDesc" },
     { icon: FileText, titleKey: "dgii", descKey: "dgiiDesc" },
     { icon: Palette, titleKey: "customization", descKey: "customizationDesc" },
+    { icon: FileSignature, titleKey: "contracts", descKey: "contractsDesc", isNew: true },
+    { icon: GitBranch, titleKey: "workflows", descKey: "workflowsDesc", isNew: true },
+    { icon: Landmark, titleKey: "achBank", descKey: "achBankDesc", isNew: true },
   ];
   
   // Generate testimonials array using translations
@@ -119,7 +125,10 @@ export default function LandingPage() {
     { icon: Target, title: t('landing.features.evaluations'), desc: t('landing.features.evaluationsDesc').substring(0, 40) + "..." },
     { icon: FileBarChart, title: t('landing.features.advancedReports'), desc: t('landing.features.advancedReportsDesc').substring(0, 40) + "..." },
     { icon: Brain, title: t('landing.features.aiSearch'), desc: t('landing.features.aiSearchDesc').substring(0, 40) + "..." },
-    { icon: Smartphone, title: t('landing.features.portal'), desc: t('landing.features.portalDesc').substring(0, 40) + "..." }
+    { icon: Smartphone, title: t('landing.features.portal'), desc: t('landing.features.portalDesc').substring(0, 40) + "..." },
+    { icon: FileSignature, title: t('landing.features.contracts'), desc: t('landing.features.contractsDesc').substring(0, 40) + "..." },
+    { icon: GitBranch, title: t('landing.features.workflows'), desc: t('landing.features.workflowsDesc').substring(0, 40) + "..." },
+    { icon: Landmark, title: t('landing.features.achBank'), desc: t('landing.features.achBankDesc').substring(0, 40) + "..." }
   ];
 
   const contadoresFeatures = [

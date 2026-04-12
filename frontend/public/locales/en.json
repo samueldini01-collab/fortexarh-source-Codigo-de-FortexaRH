@@ -153,6 +153,9 @@
     "orgChart": "Org Chart",
     "users": "Users",
     "roles": "Rolees",
+    "workflows": "Workflows",
+    "automation": "Automation",
+    "contracts": "Contracts",
     "company": "Company",
     "subscriptions": "Subscription",
     "support": "Support Center",
@@ -261,7 +264,7 @@
     "hero": {
       "title": "HR & Payroll System for the Dominican Republic",
       "subtitle": "Manage your human capital with the most complete platform. Payroll, TSS, DGII, and more.",
-      "cta": "Free Trial 3 Days",
+      "cta": "Start Free",
       "demo": "Watch Demo",
       "brochure": "Brochure"
     },
@@ -318,7 +321,13 @@
       "dgii": "DGII Reports",
       "dgiiDesc": "Automatically generate IR-3, IR-4, IR-13, IR-17 and TSS according to current regulations.",
       "customization": "Customization",
-      "customizationDesc": "Custom branding with your company colors and logo throughout the platform."
+      "customizationDesc": "Custom branding with your company colors and logo throughout the platform.",
+      "contracts": "Contracts & E-Signature",
+      "contractsDesc": "Create labor contracts with WYSIWYG editor, DR templates and digital electronic signature.",
+      "workflows": "Approval Workflows",
+      "workflowsDesc": "Define approval levels for payroll: who reviews and approves at each step.",
+      "achBank": "ACH Bank Payments",
+      "achBankDesc": "Generate ACH files for Banreservas, Popular and BHD León directly from payroll."
     },
     "video": {
       "title": "See FortexaRH in Action",
@@ -553,10 +562,7 @@
         "allBasic": "Everything in Basic plan",
         "allPro": "Everything in Pro plan",
         "unlimitedEmployees": "Unlimited employees"
-      },
-      "freeTrial": "Free 3-day trial",
-      "startTrial": "Start Trial (3 Days)",
-      "trialNote": "3-day free trial. No credit card required."
+      }
     },
     "contact": {
       "title": "Contact & Support",
@@ -591,12 +597,7 @@
     "fortexarhEnterprise": "FortexaRH Enterprise",
     "avGeorgeWashington503": "Av. George Washington #503, Gazcue",
     "santoDomingoDistritoNacional": "Santo Domingo, Distrito Nacional",
-    "santoDomingoDn": "Santo Domingo, D.N.",
-    "accountantDropdown": {
-      "commission": "Commission for payroll management",
-      "multiClient": "Multi-Client",
-      "dashboard": "Centralized dashboard for all your clients"
-    }
+    "santoDomingoDn": "Santo Domingo, D.N."
   },
   "auth": {
     "login": {
@@ -613,7 +614,8 @@
       "googleLogin": "Continue with Google",
       "partnerPortal": "Accountants Portal",
       "partnerSubtitle": "Access your accounting firm portal",
-      "partnerSubmit": "Enter Accountants Portal"
+      "partnerSubmit": "Enter Accountants Portal",
+      "invalidCredentials": "Invalid credentials. Please check your email and password."
     },
     "register": {
       "title": "Create Account",
@@ -3532,22 +3534,6 @@
       "errorClockout": "Error clocking out",
       "errorLoadingData": "Error loading data",
       "logout": "Log out"
-    },
-    "password": {
-      "title": "Change Password",
-      "subtitle": "Update your portal access password",
-      "current": "Current Password",
-      "currentPlaceholder": "Enter your current password",
-      "new": "New Password",
-      "newPlaceholder": "Enter your new password",
-      "confirm": "Confirm New Password",
-      "confirmPlaceholder": "Confirm your new password",
-      "changeBtn": "Change Password",
-      "fillAll": "Please fill in all fields",
-      "minLength": "Password must be at least 6 characters",
-      "noMatch": "Passwords do not match",
-      "updated": "Password updated successfully",
-      "error": "Error changing password"
     }
   },
   "geoAttendance": {
@@ -3912,8 +3898,7 @@
       "accounts": "Accounts",
       "reports": "Reports",
       "journalEntries": "Journal Entries",
-      "chartOfAccounts": "Chart of Accounts",
-      "payrollSummary": "Payroll Summary"
+      "chartOfAccounts": "Chart of Accounts"
     },
     "stats": {
       "totalEntries": "Total Entries",
@@ -4084,28 +4069,7 @@
     "codigo": "Code",
     "nombreDeCuenta": "Nombre de Account",
     "centroDeCostos": "Centro de Costos",
-    "empleado": "Employee",
-    "payroll": {
-      "title": "Payroll Journal Entries",
-      "subtitle": "Journal entries automatically generated from payroll periods",
-      "allBalanced": "All entries are balanced",
-      "hasUnbalanced": "There are unbalanced entries requiring attention",
-      "totalPayroll": "Total Payroll",
-      "postedEntries": "Posted",
-      "draftEntries": "Drafts",
-      "lastEntry": "Last Entry",
-      "balanced": "Balanced",
-      "unbalanced": "Unbalanced",
-      "employees": "employees",
-      "noEntries": "No payroll journal entries yet",
-      "noEntriesDesc": "Entries will be automatically generated when a payroll period is approved or paid",
-      "periodStatus": "Period Status",
-      "viewPeriod": "View Period",
-      "grossSalary": "Gross Salary",
-      "netSalary": "Net Salary",
-      "onlyPayroll": "Payroll Only",
-      "balanceStatus": "Balance"
-    }
+    "empleado": "Employee"
   },
   "costsByDepartment": {
     "title": "Costs by Department",
@@ -4250,35 +4214,7 @@
       "disconnect": "Disconnect",
       "comingSoon": "Coming Soon",
       "fortexaerp": {
-        "desc": "Complete native synchronization with the Fortexa ecosystem.",
-        "sync": "Sync",
-        "configure": "Configure",
-        "configured": "Configured",
-        "apiUrl": "API URL",
-        "email": "Email",
-        "password": "Password",
-        "companyId": "Company ID",
-        "testConnection": "Test Connection",
-        "saveConfig": "Save Configuration",
-        "syncJe": "Sync Journal Entries",
-        "lastSync": "Last sync",
-        "connectedTo": "Connected to",
-        "syncLog": "Sync History",
-        "syncLogDesc": "Log of all synchronizations with FortexaERP",
-        "noSyncHistory": "No sync history recorded",
-        "viewHistory": "View History",
-        "period": "Period",
-        "reference": "Reference",
-        "lines": "Lines",
-        "amount": "Amount",
-        "date": "Date",
-        "status": "Status",
-        "syncedBy": "User",
-        "success": "Success",
-        "failed": "Failed",
-        "error": "Error",
-        "autoSync": "Automatic Sync",
-        "autoSyncDesc": "Send journal entries to ERP automatically when approving or paying payroll"
+        "desc": "Complete native synchronization with the Fortexa ecosystem."
       },
       "quickbooks": {
         "desc": "Automatically export payroll and journal entries to QBO."
@@ -4288,15 +4224,6 @@
       },
       "oracle": {
         "desc": "Cloud connectivity for advanced financial management."
-      },
-      "qbd": {
-        "desc": "Sync with QuickBooks Desktop via Web Connector, IIF or manual CSV.",
-        "webConnector": "Web Connector",
-        "webConnectorDesc": "Automatic sync",
-        "iif": "Export IIF",
-        "iifDesc": "Direct import file",
-        "csv": "CSV Manual",
-        "csvDesc": "Export data as CSV"
       }
     },
     "messages": {
@@ -5425,7 +5352,7 @@
       "perEmployee": "per employee",
       "employees": "employees",
       "usersIncluded": "users included",
-      "trialNote": "3-day free trial. No credit card required.",
+      "trialNote": "* All plans include 14 days free trial. No credit card required.",
       "basic": {
         "name": "Basic",
         "target": "For small businesses",
@@ -5919,22 +5846,6 @@
       "settings": {
         "title": "Settings",
         "desc": "Company, security, language and integrations"
-      },
-      "reports": {
-        "title": "Reports & Report Center",
-        "desc": "DGII reports, TSS, advanced reports, filters and export"
-      },
-      "calculator": {
-        "title": "Payroll Calculator",
-        "desc": "Net salary calculation, TSS deductions and ISR"
-      },
-      "documents": {
-        "title": "Documents & Templates",
-        "desc": "Contract generation, letters and employee files"
-      },
-      "accounting": {
-        "title": "Accounting & Integrations",
-        "desc": "Journal entries, QuickBooks Online, payments"
       }
     },
     "articles": {
@@ -6049,96 +5960,36 @@
       "settings-integrations": {
         "title": "Available integrations",
         "body": "Connect with Stripe and PayPal for payments, QuickBooks for accounting, and enable Google Auth for social login. Enterprise integrations (SAP, Oracle) are available on the Enterprise plan."
-      },
-      "reports-center": {
-        "title": "Report Center",
-        "body": "Advanced filters by date, department and type. Export to Excel and PDF."
-      },
-      "reports-dgii": {
-        "title": "DGII-TSS Reports",
-        "body": "Generate and download DGII reports: IR-3, IR-4, IR-17, IR-6 and TSS. Includes employee breakdown."
-      },
-      "reports-advanced": {
-        "title": "Advanced Reports",
-        "body": "Comparative charts, payroll trends, turnover analysis and department costs."
-      },
-      "calc-basic": {
-        "title": "Basic Payroll Calculator",
-        "body": "Enter base salary to get net salary with TSS deductions (SFS 3.04%, AFP 2.87%) and ISR."
-      },
-      "calc-deductions": {
-        "title": "TSS and ISR Deductions",
-        "body": "Automatic calculation: SFS 3.04%, AFP 2.87% and ISR per DGII table."
-      },
-      "calc-edit": {
-        "title": "Edit ISR Manually",
-        "body": "Click on Monthly ISR to edit. Total deductions and net salary recalculate automatically."
-      },
-      "docs-templates": {
-        "title": "Document Templates",
-        "body": "Create templates for contracts, letters and certifications with dynamic variables."
-      },
-      "docs-generate": {
-        "title": "Generate Documents",
-        "body": "Select a template and employee to auto-generate PDF documents."
-      },
-      "docs-employee": {
-        "title": "Employee File",
-        "body": "Digital file with contracts, IDs, evaluations and pay stubs."
-      },
-      "accounting-overview": {
-        "title": "General Accounting",
-        "body": "Auto-generated journal entries for each payroll period."
-      },
-      "accounting-quickbooks": {
-        "title": "QuickBooks Online",
-        "body": "Sync payroll with 8-account mapping and one-click consolidated journal entries."
-      },
-      "accounting-payments": {
-        "title": "Payments & Billing",
-        "body": "Stripe and PayPal subscription payments and billing history."
       }
     },
     "updates": {
-      "update-isr-editable": {
-        "title": "Editable ISR in Calculator and Payroll Sheet",
-        "body": "Edit ISR values directly in calculator results and payroll sheet. Net salary recalculates automatically."
-      },
-      "update-sfs-afp-editable": {
-        "title": "Editable SFS, AFP and Overtime",
-        "body": "SFS, AFP and Overtime columns in payroll sheet are now editable."
-      },
-      "update-qb-journal": {
-        "title": "Journal Entries to QuickBooks",
-        "body": "Send consolidated payroll journal entries to QuickBooks Online with one click."
-      },
-      "update-dgii-fix": {
-        "title": "DGII Reports Fix",
-        "body": "Fixed download and employee breakdown errors in all DGII report formats."
-      },
-      "update-sfs-rate": {
-        "title": "SFS Rate Correction to 3.04%",
-        "body": "Corrected SFS percentage from 3.07% to 3.04% across the entire system."
-      },
-      "update-qb-mapping": {
-        "title": "QuickBooks Account Mapping",
-        "body": "New account mapping section in Settings > Integrations for QuickBooks sync."
-      },
       "update-push-auto": {
         "title": "Automatic Push for Payroll and Vacations",
-        "body": "Employees receive automatic push notifications when payroll is processed or vacation requests are approved/rejected."
+        "body": "Employees now receive automatic push notifications when their payroll is processed or a vacation request is approved/rejected. No additional configuration needed."
       },
       "update-notif-center": {
-        "title": "Employee Notification Center",
-        "body": "Notifications tab in employee portal with search, category filter, mark all as read and CSV export."
+        "title": "Notification Center for Employees",
+        "body": "New 'Notifications' tab in the employee portal with text search, category filter, mark all as read and export full history to CSV."
+      },
+      "update-i18n-notif": {
+        "title": "Notifications in your language",
+        "body": "All notifications, events and categories now display in the user's configured language (Spanish, English or French). Includes the bell, center and settings page."
       },
       "update-error-std": {
-        "title": "Standardized API Error Responses",
-        "body": "All API endpoints return errors in standardized format with consistent codes and messages."
+        "title": "Improved API error responses",
+        "body": "API error responses now follow a standardized format with error type, detail, status code and path. This improves the debugging experience."
       },
       "update-push-pwa": {
-        "title": "PWA Push Notifications",
-        "body": "Full push notification support via service worker. Employees can enable push from their portal."
+        "title": "Push Notifications and Bell in Employee Portal",
+        "body": "Employees can now enable push notifications from their portal to receive real-time alerts. The notification bell shows a panel with push toggle and activation banner."
+      },
+      "update-notif-phase1": {
+        "title": "Configurable Notification System",
+        "body": "20 configurable event types per channel (In-App, Email, Push). Quiet hours with timezone support. Digest system for daily or weekly summaries."
+      },
+      "update-tech-debt": {
+        "title": "Stability and performance improvements",
+        "body": "Fixed serialization errors, improved testability with data-testid on interactive components, partner portal internationalization and large component refactoring."
       }
     },
     "faq": {
@@ -6181,32 +6032,7 @@
       "faq-quiet-hours": {
         "q": "What are Quiet Hours?",
         "a": "Quiet Hours let you pause push and email notifications during specific times (e.g., 10pm to 7am). In-app notifications continue to accumulate for you to check when you want. Configure them in Notifications > Schedule."
-      },
-      "faq-edit-isr": {
-        "q": "How do I edit ISR in the calculator or payroll sheet?",
-        "a": "In the calculator, click on the Monthly ISR value to edit it. In the Payroll Sheet, click any ISR, SFS, AFP or Overtime cell to modify the value. The system recalculates net salary automatically."
-      },
-      "faq-qb-connect": {
-        "q": "How do I connect QuickBooks Online?",
-        "a": "Go to Settings > Integrations and click Connect next to QuickBooks Online. Authorize with your Intuit account, then configure account mapping to send payroll journal entries."
-      },
-      "faq-dgii-reports": {
-        "q": "How do I download DGII reports?",
-        "a": "Go to DGII-TSS Reports, select the payroll period and click the download button for the desired report (IR-3, IR-4, IR-17, IR-6 or TSS). You can also view the employee breakdown before downloading."
       }
-    }
-  },
-  "trial": {
-    "expired": {
-      "title": "Your trial period has expired",
-      "subtitle": "To continue using FortexaRH, select a subscription plan.",
-      "selectPlan": "View Available Plans",
-      "contact": "Contact Support"
-    },
-    "banner": {
-      "daysLeft": "trial days remaining",
-      "lastDay": "Last day of trial",
-      "upgrade": "Upgrade Plan"
     }
   }
 }

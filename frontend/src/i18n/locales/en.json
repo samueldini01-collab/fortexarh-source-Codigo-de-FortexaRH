@@ -154,6 +154,7 @@
     "users": "Users",
     "roles": "Rolees",
     "workflows": "Workflows",
+    "automation": "Automation",
     "contracts": "Contracts",
     "company": "Company",
     "subscriptions": "Subscription",
@@ -320,7 +321,13 @@
       "dgii": "DGII Reports",
       "dgiiDesc": "Automatically generate IR-3, IR-4, IR-13, IR-17 and TSS according to current regulations.",
       "customization": "Customization",
-      "customizationDesc": "Custom branding with your company colors and logo throughout the platform."
+      "customizationDesc": "Custom branding with your company colors and logo throughout the platform.",
+      "contracts": "Contracts & E-Signature",
+      "contractsDesc": "Create labor contracts with WYSIWYG editor, DR templates and digital electronic signature.",
+      "workflows": "Approval Workflows",
+      "workflowsDesc": "Define approval levels for payroll: who reviews and approves at each step.",
+      "achBank": "ACH Bank Payments",
+      "achBankDesc": "Generate ACH files for Banreservas, Popular and BHD León directly from payroll."
     },
     "video": {
       "title": "See FortexaRH in Action",

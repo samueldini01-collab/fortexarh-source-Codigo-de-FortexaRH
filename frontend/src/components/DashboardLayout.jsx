@@ -122,7 +122,7 @@ const DEFAULT_NAVIGATION = [
   { id: "documents", nameKey: "documents", href: "/documents", icon: FileCheck, visible: true, featureKey: "employees" },
   { id: "templates", nameKey: "templates", href: "/templates", icon: FileText, visible: true, featureKey: "employees" },
   { id: "roles", nameKey: "roles", href: "/roles", icon: Shield, visible: true, featureKey: "custom_roles" },
-  { id: "workflows", nameKey: "workflows", href: "/workflows", icon: GitBranch, visible: true, featureKey: "settings" },
+  { id: "workflows", nameKey: "automation", href: "/workflows", icon: GitBranch, visible: true, featureKey: "settings" },
   { id: "contracts", nameKey: "contracts", href: "/contracts", icon: FileSignature, visible: true, featureKey: "settings" },
   { id: "users-management", nameKey: "users", href: "/users-management", icon: UserCog, visible: true, featureKey: "settings" },
   { id: "subscriptions", nameKey: "subscriptions", href: "/subscriptions", icon: CreditCard, visible: true, featureKey: "subscriptions" },
@@ -165,6 +165,7 @@ const getMenuGroups = (t) => [
       { id: "evaluations", nameKey: "evaluations", href: "/evaluations", icon: Target, featureKey: "evaluations" },
       { id: "documents", nameKey: "documents", href: "/documents", icon: FileCheck, featureKey: "employees" },
       { id: "templates", nameKey: "templates", href: "/templates", icon: FileText, featureKey: "employees" },
+      { id: "contracts", nameKey: "contracts", href: "/contracts", icon: FileSignature, featureKey: "settings" },
       { id: "notifications", nameKey: "notifications", href: "/notifications", icon: Bell, featureKey: "settings" },
     ]
   },
@@ -225,8 +226,7 @@ const getMenuGroups = (t) => [
     defaultOpen: false,
     items: [
       { id: "roles", nameKey: "roles", href: "/roles", icon: Shield, featureKey: "custom_roles" },
-      { id: "workflows", nameKey: "workflows", href: "/workflows", icon: GitBranch, featureKey: "settings" },
-      { id: "contracts", nameKey: "contracts", href: "/contracts", icon: FileSignature, featureKey: "settings" },
+      { id: "workflows", nameKey: "automation", href: "/workflows", icon: GitBranch, featureKey: "settings" },
       { id: "users-management", nameKey: "users", href: "/users-management", icon: UserCog, featureKey: "settings" },
       { id: "subscriptions", nameKey: "subscriptions", href: "/subscriptions", icon: CreditCard, featureKey: "subscriptions" },
       { id: "support-admin", nameKey: "support", href: "/support-admin", icon: HelpCircle, featureKey: "settings" },
@@ -991,7 +991,7 @@ export default function DashboardLayout({ children, title }) {
                     <span className={`flex-1 font-medium text-sm ${
                       item.visible ? 'text-slate-700' : 'text-slate-400'
                     }`}>
-                      {item.name}
+                      {t(`nav.${item.nameKey}`)}
                     </span>
                     
                     <button

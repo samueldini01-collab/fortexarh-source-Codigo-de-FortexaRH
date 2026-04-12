@@ -154,6 +154,7 @@
     "users": "Usuarios",
     "roles": "Roles",
     "workflows": "Workflows",
+    "automation": "Automatización",
     "contracts": "Contratos",
     "company": "Empresa",
     "subscriptions": "Suscripción",
@@ -319,7 +320,13 @@
       "dgii": "Reportes DGII",
       "dgiiDesc": "Genera automáticamente IR-3, IR-4, IR-13, IR-17 y TSS según normativa vigente.",
       "customization": "Personalización",
-      "customizationDesc": "Branding personalizado con colores y logo de tu empresa en toda la plataforma."
+      "customizationDesc": "Branding personalizado con colores y logo de tu empresa en toda la plataforma.",
+      "contracts": "Contratos y Firma Electrónica",
+      "contractsDesc": "Crea contratos laborales con editor WYSIWYG, plantillas RD y firma electrónica digital.",
+      "workflows": "Workflows de Aprobación",
+      "workflowsDesc": "Define niveles de aprobación para nóminas: quién revisa y aprueba en cada paso.",
+      "achBank": "Pagos ACH Bancarios",
+      "achBankDesc": "Genera archivos ACH para Banreservas, Popular y BHD León directamente desde la nómina."
     },
     "video": {
       "title": "Mira FortexaRH en Acción",
