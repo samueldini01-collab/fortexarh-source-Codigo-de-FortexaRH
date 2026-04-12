@@ -61,7 +61,7 @@ from routes.notification_preferences import router as notification_preferences_r
 from routes.super_admin import router as super_admin_router
 from routes.fortexaerp import router as fortexaerp_router
 from routes.workflows import router as workflows_router
-from routes.contracts import router as contracts_router
+from routes.contracts import router as contracts_router, seed_system_templates
 
 # ===================== APP SETUP =====================
 
@@ -188,6 +188,7 @@ async def startup_db_client():
         logger.info("Database connection established successfully")
         await create_cdc_indexes()
         await create_performance_indexes()
+        await seed_system_templates()
     except asyncio.TimeoutError:
         logger.warning("Database connection timeout during startup - will retry on first request")
     except Exception as e:
@@ -220,6 +221,8 @@ async def create_performance_indexes():
         await db.user_sessions.create_index([("expires_at", 1)], expireAfterSeconds=0)
         await db.templates.create_index([("company_id", 1)])
         await db.generated_documents.create_index([("company_id", 1)])
+        await db.contract_templates.create_index([("template_id", 1)], unique=True)
+        await db.contract_templates.create_index([("company_id", 1)])
         await db.evaluations.create_index([("company_id", 1), ("employee_id", 1)])
         await db.expenses.create_index([("company_id", 1), ("status", 1)])
         await db.employee_notifications.create_index([("employee_id", 1), ("company_id", 1), ("created_at", -1)])

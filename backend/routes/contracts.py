@@ -313,11 +313,18 @@ async def get_contract_templates(current_user: dict = Depends(get_current_user))
         {"_id": 0}
     ).to_list(50)
     
-    # Default system templates
+    # Default system templates (seed on-demand if missing)
     defaults = await db.contract_templates.find(
         {"company_id": "__system__"},
         {"_id": 0}
     ).to_list(10)
+    
+    if not defaults:
+        await seed_system_templates()
+        defaults = await db.contract_templates.find(
+            {"company_id": "__system__"},
+            {"_id": 0}
+        ).to_list(10)
     
     return {"templates": custom + defaults, "variables": TEMPLATE_VARIABLES}
 
