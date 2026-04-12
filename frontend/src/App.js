@@ -166,6 +166,7 @@ const PrivacyPage = lazy(() => import("@/pages/PrivacyPage"));
 const BrochurePage = lazy(() => import("@/pages/BrochurePage"));
 const SuperAdminPage = lazy(() => import("@/pages/SuperAdminPage"));
 const WorkflowsPage = lazy(() => import("@/pages/WorkflowsPage"));
+const ContractsPage = lazy(() => import("@/pages/ContractsPage"));
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
@@ -507,6 +508,7 @@ function AppRouter() {
       <Route path="/notifications" element={<ProtectedRoute><LazyRoute><NotificationsPage /></LazyRoute></ProtectedRoute>} />
       <Route path="/cdc-audit" element={<Navigate to="/dashboard" replace />} />
       <Route path="/workflows" element={<ProtectedRoute><LazyRoute><WorkflowsPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/contracts" element={<ProtectedRoute><LazyRoute><ContractsPage /></LazyRoute></ProtectedRoute>} />
       <Route path="/support-admin" element={<ProtectedRoute><LazyRoute><SupportAdminPage /></LazyRoute></ProtectedRoute>} />
       <Route path="/help-center" element={<ProtectedRoute><LazyRoute><HelpCenterPage /></LazyRoute></ProtectedRoute>} />
       

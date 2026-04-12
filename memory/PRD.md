@@ -4,30 +4,30 @@
 FortexaRH is a comprehensive SaaS HR and Payroll management system for the Dominican Republic.
 
 ## Tech Stack
-- **Frontend**: React + Tailwind CSS + Shadcn/UI + react-i18next + Recharts
-- **Backend**: FastAPI + Motor (async MongoDB)
+- **Frontend**: React + Tailwind CSS + Shadcn/UI + react-i18next + Recharts + react-quill-new (WYSIWYG)
+- **Backend**: FastAPI + Motor (async MongoDB) + reportlab
 - **Database**: MongoDB
-- **Integrations**: Stripe, PayPal, Resend, QuickBooks Online/Desktop, FortexaERP, Google Auth, Gemini AI
+- **Integrations**: Stripe, PayPal, Resend, QBO, QBD, FortexaERP, Google Auth, Gemini AI
 
 ## What's Been Implemented
 
-### Core Modules (Complete)
-- User auth (JWT + Google OAuth), 2FA, Dashboard, org chart, payroll, accounting, compliance
-- Partner portal, subscription management, document generation, AI search
-- Employee self-service portal with notification center, Help Center
+### Contracts & E-Signature Module - Enterprise Only (NEW - Apr 2026)
+- **Contract CRUD**: Create, edit, view, delete contracts
+- **WYSIWYG Editor**: react-quill-new with full toolbar (headings, bold, italic, lists, align, colors, links)
+- **Template System**: 4 default templates (Indefinido, Temporal, Obra, Pasantía) with 15 template variables
+- **Variable Resolution**: Auto-replaces {{employee_name}}, {{salary}}, {{company_name}}, etc.
+- **Status Workflow**: Draft → Pending Signature → Signed (or Cancelled)
+- **E-Signature Canvas Pad**: HTML5 canvas for drawing signatures (mouse + touch support)
+- **Multi-party Signing**: Employer and Employee signatures tracked separately
+- **Signature Verification**: SHA-256 document hash, timestamp, signer details
+- **Enterprise Gating**: Non-enterprise companies see Crown upgrade prompt
+- **Sidebar**: "Contratos" (FileSignature icon) in navigation
 
-### Approval Workflows - Enterprise Only (NEW - Apr 2026)
-- **Plan gating**: Only Enterprise plan companies can access. Non-Enterprise see upgrade prompt with Crown icon and feature list
-- **New module announcement**: Enterprise companies see a green gradient banner with step-by-step guide on first visit, dismissible per user
-- **Configurable multi-step**: 1 to 5 levels of approval
-- **Approver types**: By role (admin, hr_manager, etc.) or specific user
-- **Visual workflow builder**: /workflows page with step editor
-- **Progress indicator in Payroll**: Current step, who approved, who's next
-- **Permission enforcement**: Only designated approver for current step can approve
-- **Bank data validation**: Warning dialog before approval
-- **Backward compatible**: No workflow = legacy behavior
+### Approval Workflows - Enterprise Only (Apr 2026)
+- Configurable 1-5 level approval, by role or specific user
+- Progress indicator in Payroll, Enterprise gating, announcement banner
 
-### AI Search (Enhanced), ACH Bank Integration, QBO/QBD, FortexaERP, Trial System, Super Admin (Complete)
+### AI Search, ACH Bank Integration, QBO/QBD, FortexaERP, Trial System, Super Admin (Complete)
 
 ## Key Credentials
 - **Admin**: test_refactor@fortexa.com / test123 (plan: enterprise)
@@ -36,13 +36,15 @@ FortexaRH is a comprehensive SaaS HR and Payroll management system for the Domin
 - **Employee Portal**: 001-0000001-1 / portal123
 
 ## Prioritized Backlog
-### P1: Notifications Phase 3, QBD Web Connector, E-signature
+### P1: Notifications Phase 3, QBD Web Connector
 ### P2: Excel import, Public API, Backup/Export, Standardize API errors
 
 ## Key API Endpoints
-- `GET /api/workflows` — List workflows (returns is_enterprise flag)
-- `POST /api/workflows` — Create (Enterprise only)
-- `GET /api/workflows/announcement` — Check new module banner visibility
-- `POST /api/workflows/announcement/dismiss` — Dismiss banner
-- `GET /api/payroll/periods/{id}/workflow-status` — Approval progress
-- `POST /api/payroll/periods/{id}/approve` — Approve current step
+- `GET /api/contracts` — List contracts
+- `POST /api/contracts` — Create (with variable resolution)
+- `PUT /api/contracts/{id}` — Update (draft only)
+- `POST /api/contracts/{id}/send-for-signature` — Send for signing
+- `POST /api/contracts/{id}/sign` — Add signature (employer/employee/witness)
+- `GET /api/contracts/templates` — Get templates + variables
+- `POST /api/contracts/templates` — Create custom template
+- `GET /api/contracts/types` — Available contract types
