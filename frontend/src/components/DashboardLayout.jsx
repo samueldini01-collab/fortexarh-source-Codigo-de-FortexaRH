@@ -83,7 +83,8 @@ import {
   Award,
   MapPin,
   UserCircle,
-  FolderOpen
+  FolderOpen,
+  GitBranch
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
@@ -120,6 +121,7 @@ const DEFAULT_NAVIGATION = [
   { id: "documents", nameKey: "documents", href: "/documents", icon: FileCheck, visible: true, featureKey: "employees" },
   { id: "templates", nameKey: "templates", href: "/templates", icon: FileText, visible: true, featureKey: "employees" },
   { id: "roles", nameKey: "roles", href: "/roles", icon: Shield, visible: true, featureKey: "custom_roles" },
+  { id: "workflows", nameKey: "workflows", href: "/workflows", icon: GitBranch, visible: true, featureKey: "settings" },
   { id: "users-management", nameKey: "users", href: "/users-management", icon: UserCog, visible: true, featureKey: "settings" },
   { id: "subscriptions", nameKey: "subscriptions", href: "/subscriptions", icon: CreditCard, visible: true, featureKey: "subscriptions" },
   { id: "payroll-config", nameKey: "payrollConfig", href: "/payroll-config", icon: Settings2, visible: true, featureKey: "employees" },
@@ -221,6 +223,7 @@ const getMenuGroups = (t) => [
     defaultOpen: false,
     items: [
       { id: "roles", nameKey: "roles", href: "/roles", icon: Shield, featureKey: "custom_roles" },
+      { id: "workflows", nameKey: "workflows", href: "/workflows", icon: GitBranch, featureKey: "settings" },
       { id: "users-management", nameKey: "users", href: "/users-management", icon: UserCog, featureKey: "settings" },
       { id: "subscriptions", nameKey: "subscriptions", href: "/subscriptions", icon: CreditCard, featureKey: "subscriptions" },
       { id: "support-admin", nameKey: "support", href: "/support-admin", icon: HelpCircle, featureKey: "settings" },

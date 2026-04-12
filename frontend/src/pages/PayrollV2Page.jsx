@@ -62,7 +62,8 @@ import {
   Shield,
   List,
   Send,
-  BookOpen
+  BookOpen,
+  GitBranch
 } from "lucide-react";
 import { toast } from "sonner";
 import { DrillDownModal } from "@/components/DrillDown";
@@ -153,6 +154,9 @@ export default function PayrollPage() {
   const [achBank, setAchBank] = useState("banreservas");
   const [achPreview, setAchPreview] = useState(null);
   const [achLoading, setAchLoading] = useState(false);
+
+  // Workflow status for selected period
+  const [workflowStatus, setWorkflowStatus] = useState(null);
   
   // Form states
   const [newPeriodForm, setNewPeriodForm] = useState({
@@ -212,6 +216,14 @@ export default function PayrollPage() {
     try {
       const response = await axios.get(`${API}/payroll/periods/${periodId}`, { headers: getAuthHeaders(), withCredentials: true });
       setPeriodEntries(response.data.entries || []);
+      
+      // Fetch workflow status for this period
+      try {
+        const wfRes = await axios.get(`${API}/payroll/periods/${periodId}/workflow-status`, { headers: getAuthHeaders(), withCredentials: true });
+        setWorkflowStatus(wfRes.data);
+      } catch (_) {
+        setWorkflowStatus(null);
+      }
     } catch (_error) {
       console.error("Error fetching period details");
     }
@@ -397,17 +409,28 @@ export default function PayrollPage() {
   const executeApproval = async (periodId) => {
     try {
       const res = await axios.post(`${API}/payroll/periods/${periodId}/approve`, {}, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success(t('payrollV2.messages.periodApproved'));
       
-      if (res.data.bank_warning) {
-        const w = res.data.bank_warning;
-        toast.warning(`${w.missing_count} empleados sin datos bancarios`, { duration: 5000 });
+      if (res.data.status === "workflow_pending") {
+        // Intermediate step approved, not final
+        toast.success(res.data.message);
+        fetchPeriods();
+        if (selectedPeriod?.period_id === periodId) {
+          setSelectedPeriod(prev => ({ ...prev, status: 'workflow_pending' }));
+          fetchPeriodDetails(periodId);
+        }
+      } else {
+        toast.success(t('payrollV2.messages.periodApproved'));
+        if (res.data.bank_warning) {
+          const w = res.data.bank_warning;
+          toast.warning(`${w.missing_count} empleados sin datos bancarios`, { duration: 5000 });
+        }
+        fetchPeriods();
+        if (selectedPeriod?.period_id === periodId) {
+          setSelectedPeriod(prev => ({ ...prev, status: 'approved' }));
+          fetchPeriodDetails(periodId);
+        }
       }
       
-      fetchPeriods();
-      if (selectedPeriod?.period_id === periodId) {
-        setSelectedPeriod(prev => ({ ...prev, status: 'approved' }));
-      }
       setShowBankWarningDialog(false);
       setBankCheckWarning(null);
     } catch (error) {
@@ -848,6 +871,7 @@ export default function PayrollPage() {
       'calculated': <Badge className="bg-amber-100 text-amber-700 dark:text-amber-400">{t('payrollV2.statuses.calculated')}</Badge>,
       'approved': <Badge className="bg-emerald-100 text-emerald-700 dark:text-emerald-400">{t('payrollV2.statuses.approved')}</Badge>,
       'paid': <Badge className="bg-purple-100 text-purple-700 dark:text-purple-400">{t('payrollV2.statuses.paid')}</Badge>,
+      'workflow_pending': <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">Aprobación en Curso</Badge>,
     };
     return badges[status] || <Badge variant="secondary">{status}</Badge>;
   };
@@ -1148,7 +1172,7 @@ export default function PayrollPage() {
                             </>
                           )}
                           {/* Pending Approval: Approve or Reject */}
-                          {selectedPeriod.status === 'pending_approval' && (
+                          {(selectedPeriod.status === 'pending_approval' || selectedPeriod.status === 'workflow_pending') && (
                             <>
                               <Button size="sm" variant="secondary" onClick={() => {
                                 const reason = prompt("Motivo del rechazo:");
@@ -1262,6 +1286,65 @@ export default function PayrollPage() {
                     </div>
                   </CardContent>
                 </Card>
+
+                {/* Workflow Progress Indicator */}
+                {workflowStatus?.has_workflow && (selectedPeriod.status === 'pending_approval' || selectedPeriod.status === 'workflow_pending') && (
+                  <Card className="border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/10" data-testid="workflow-progress">
+                    <CardContent className="py-3 px-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <GitBranch className="w-4 h-4 text-blue-600" />
+                          <span className="text-xs font-semibold text-blue-800 dark:text-blue-300 uppercase tracking-wider">
+                            {workflowStatus.workflow_name}
+                          </span>
+                        </div>
+                        <Badge variant="outline" className="text-xs">
+                          Paso {workflowStatus.current_step} de {workflowStatus.total_steps}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {workflowStatus.all_steps?.map((step, idx) => {
+                          const isCompleted = workflowStatus.approvals?.some(a => a.step_number === step.step_number);
+                          const isCurrent = step.step_number === workflowStatus.current_step;
+                          return (
+                            <div key={idx} className="flex items-center gap-2">
+                              <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                                isCompleted ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                                isCurrent ? 'bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200 ring-2 ring-blue-400' :
+                                'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                              }`}>
+                                {isCompleted ? <CheckCircle className="w-3.5 h-3.5" /> : 
+                                 isCurrent ? <AlertCircle className="w-3.5 h-3.5" /> : 
+                                 <span className="w-3.5 h-3.5 rounded-full border-2 border-current inline-block" />}
+                                <span>{step.name}</span>
+                                {isCompleted && (
+                                  <span className="text-[10px] opacity-70">
+                                    ({workflowStatus.approvals?.find(a => a.step_number === step.step_number)?.approved_by_name})
+                                  </span>
+                                )}
+                              </div>
+                              {idx < workflowStatus.all_steps.length - 1 && (
+                                <ChevronRight className="w-4 h-4 text-slate-300 shrink-0" />
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                      {workflowStatus.current_step_info && !workflowStatus.can_current_user_approve && (
+                        <p className="text-xs text-amber-700 dark:text-amber-400 mt-2 flex items-center gap-1">
+                          <AlertCircle className="w-3.5 h-3.5" />
+                          Pendiente de aprobación por: <strong>{workflowStatus.current_step_info.approver_name}</strong>
+                        </p>
+                      )}
+                      {workflowStatus.can_current_user_approve && (
+                        <p className="text-xs text-emerald-700 dark:text-emerald-400 mt-2 flex items-center gap-1">
+                          <CheckCircle className="w-3.5 h-3.5" />
+                          Tu aprobación es requerida para este paso
+                        </p>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
 
                 {/* Payroll Sheet */}
                 {periodEntries.length === 0 ? (

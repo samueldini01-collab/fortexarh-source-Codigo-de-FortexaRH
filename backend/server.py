@@ -60,6 +60,7 @@ from routes.two_factor import router as two_factor_router
 from routes.notification_preferences import router as notification_preferences_router
 from routes.super_admin import router as super_admin_router
 from routes.fortexaerp import router as fortexaerp_router
+from routes.workflows import router as workflows_router
 
 # ===================== APP SETUP =====================
 
@@ -164,6 +165,7 @@ for r in [
     notification_preferences_router,
     super_admin_router,
     fortexaerp_router,
+    workflows_router,
 ]:
     api_router.include_router(r)
 
