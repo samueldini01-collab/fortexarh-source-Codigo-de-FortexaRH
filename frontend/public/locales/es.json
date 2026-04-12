@@ -5603,7 +5603,13 @@
     "noHayDocumentosGenerados": "No hay documentos generados",
     "seleccionarEmpleado": "Seleccionar Empleado",
     "firmaElectronica": "Firma Electrónica",
-    "firmaEnElRecuadro": "Firma en el recuadro de abajo con tu mouse o dedo:"
+    "firmaEnElRecuadro": "Firma en el recuadro de abajo con tu mouse o dedo:",
+    "types": {
+      "contract": "Contrato",
+      "letter": "Carta",
+      "certificate": "Certificación",
+      "policy": "Política"
+    }
   },
   "payrollCalc": {
     "tss": "TSS:",

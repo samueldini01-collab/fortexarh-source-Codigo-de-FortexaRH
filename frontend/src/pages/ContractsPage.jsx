@@ -342,23 +342,37 @@ export default function ContractsPage() {
           </Button>
         </div>
 
-        {/* Templates Cards */}
-        {contracts.length === 0 && (
-          <div>
-            <h3 className="text-sm font-medium text-slate-500 mb-3">Plantillas Disponibles</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              {templates.map(t => (
-                <Card key={t.template_id} className="hover:border-emerald-300 cursor-pointer transition-colors" onClick={() => openNewContract(t)} data-testid={`template-${t.template_id}`}>
-                  <CardContent className="py-4">
-                    <FileText className="w-8 h-8 text-emerald-500 mb-2" />
-                    <p className="text-sm font-medium text-slate-800">{t.name}</p>
-                    <Badge variant="outline" className="mt-1 text-[10px]">{t.contract_type}</Badge>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+        {/* Templates Cards - Always visible */}
+        <div>
+          <h3 className="text-sm font-medium text-slate-500 mb-3">Plantillas Predefinidas</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {templates.map(t => (
+              <Card key={t.template_id} className="hover:border-emerald-300 cursor-pointer transition-colors group" onClick={() => openNewContract(t)} data-testid={`template-${t.template_id}`}>
+                <CardContent className="py-4">
+                  <div className="flex items-center gap-3">
+                    <FileText className="w-8 h-8 text-emerald-500 shrink-0 group-hover:scale-110 transition-transform" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">{t.name}</p>
+                      <Badge variant="outline" className="mt-1 text-[10px]">{t.contract_type}</Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+            {/* New blank contract */}
+            <Card className="hover:border-blue-300 cursor-pointer transition-colors border-dashed group" onClick={() => openNewContract()} data-testid="template-blank">
+              <CardContent className="py-4">
+                <div className="flex items-center gap-3">
+                  <Plus className="w-8 h-8 text-blue-400 shrink-0 group-hover:scale-110 transition-transform" />
+                  <div>
+                    <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Contrato en blanco</p>
+                    <p className="text-[10px] text-slate-400">Crear desde cero</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-        )}
+        </div>
 
         {/* Filters */}
         {contracts.length > 0 && (
@@ -421,20 +435,6 @@ export default function ContractsPage() {
             );
           })}
         </div>
-
-        {/* Templates section when contracts exist */}
-        {contracts.length > 0 && (
-          <div>
-            <h3 className="text-sm font-medium text-slate-500 mb-2">Crear desde plantilla</h3>
-            <div className="flex gap-2 flex-wrap">
-              {templates.map(t => (
-                <Button key={t.template_id} size="sm" variant="outline" onClick={() => openNewContract(t)}>
-                  <FileText className="w-3.5 h-3.5 mr-1" /> {t.name}
-                </Button>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Contract Editor Dialog */}
         <Dialog open={showEditor} onOpenChange={setShowEditor}>
