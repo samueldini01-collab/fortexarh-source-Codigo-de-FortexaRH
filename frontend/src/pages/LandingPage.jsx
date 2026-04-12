@@ -69,6 +69,7 @@ export default function LandingPage() {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
+  const [showComparison, setShowComparison] = useState(false);
   
   // Generate features array using translations
   const features = [
@@ -843,9 +844,17 @@ export default function LandingPage() {
             </div>
           </div>
           
-          {/* Comparison Table */}
+          {/* Comparison Table - Collapsible */}
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-            <h3 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8 text-slate-900 heading">{t('landing.comparison.title')}</h3>
+            <button 
+              onClick={() => setShowComparison(!showComparison)}
+              className="w-full flex items-center justify-center gap-2 mb-4 py-3 px-6 rounded-lg bg-slate-100 hover:bg-slate-200 transition-colors mx-auto"
+              data-testid="toggle-comparison"
+            >
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 heading">{t('landing.comparison.title')}</h3>
+              <ChevronDown className={`w-5 h-5 text-slate-500 transition-transform ${showComparison ? 'rotate-180' : ''}`} />
+            </button>
+            {showComparison && (
             <table className="w-full border-collapse min-w-[600px] bg-white">
               <thead>
                 <tr className="border-b-2 border-slate-200">
@@ -1032,6 +1041,7 @@ export default function LandingPage() {
                 </tr>
               </tbody>
             </table>
+            )}
           </div>
           
           <p className="text-center text-slate-600 mt-8 text-sm">

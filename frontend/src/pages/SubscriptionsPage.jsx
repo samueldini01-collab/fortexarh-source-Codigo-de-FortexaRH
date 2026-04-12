@@ -820,16 +820,13 @@ export default function SubscriptionsPage() {
                       <p className="text-sm text-slate-500 dark:text-slate-400">{plan.included_users} usuarios incluidos</p>
                     </div>
 
-                    <div className="space-y-2 mb-6 max-h-48 overflow-y-auto">
-                      {(plan.features || []).slice(0, 8).map((feature, idx) => (
+                    <div className="space-y-2 mb-6 max-h-64 overflow-y-auto">
+                      {(plan.features || []).map((feature, idx) => (
                         <div key={idx} className="flex items-start gap-2 text-sm">
                           <Check className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
                           <span className="text-slate-600 dark:text-slate-300">{feature}</span>
                         </div>
                       ))}
-                      {(plan.features || []).length > 8 && (
-                        <p className="text-xs text-slate-400">+ {plan.features.length - 8} más...</p>
-                      )}
                     </div>
 
                     <Button 
