@@ -925,6 +925,28 @@ export default function DashboardLayout({ children, title }) {
 
         {/* Page content */}
         <main className="p-3 sm:p-4 md:p-6 min-h-screen bg-slate-50 dark:bg-slate-950">
+          {/* Trial countdown banner */}
+          {isOnTrial() && !isTrialExpired() && (
+            <div className="mb-4 -mt-1 flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm" data-testid="trial-top-banner">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                <span className="text-sm font-medium">
+                  {getTrialDaysRemaining() <= 1
+                    ? t('trial.banner.lastDay')
+                    : `${getTrialDaysRemaining()} ${t('trial.banner.daysLeft')}`
+                  }
+                </span>
+              </div>
+              <Button
+                size="sm"
+                className="bg-white/20 hover:bg-white/30 text-white border-white/30 border text-xs h-7 px-3"
+                onClick={() => navigate('/subscriptions')}
+                data-testid="trial-banner-upgrade"
+              >
+                {t('trial.banner.upgrade')}
+              </Button>
+            </div>
+          )}
           {children}
         </main>
       </div>

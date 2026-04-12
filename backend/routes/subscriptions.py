@@ -51,13 +51,13 @@ async def get_company_subscription(request: Request):
     )
     
     if not subscription:
-        # Create default trial subscription (5 days, 1 employee max)
-        trial_ends_at = (datetime.now(timezone.utc) + timedelta(days=5)).isoformat()
+        # Create default trial subscription (3 days)
+        trial_ends_at = (datetime.now(timezone.utc) + timedelta(days=3)).isoformat()
         subscription = {
             "subscription_id": f"sub_{uuid.uuid4().hex[:12]}",
             "company_id": company_id,
             "plan_id": "trial",
-            "plan_name": "Prueba Gratuita",
+            "plan_name": "Prueba Gratuita (3 días)",
             "status": "trial",
             "employee_count": 1,
             "additional_users": 0,
