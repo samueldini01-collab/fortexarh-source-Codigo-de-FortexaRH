@@ -128,7 +128,7 @@ ACTION_TYPES = {
 
 async def find_employee_by_name(company_id: str, name: str) -> Optional[Dict]:
     """Find employee by partial name match"""
-    if not name or not db:
+    if not name or db is None:
         return None
     
     name_parts = name.lower().split()
@@ -751,7 +751,7 @@ async def execute_action(data: AIActionRequest, current_user: dict = Depends(get
         }
     
     # Record the action execution for learning (regardless of success)
-    if db:
+    if db is not None:
         try:
             await db.search_history.insert_one({
                 "company_id": company_id,
@@ -925,7 +925,7 @@ async def log_search_query(data: AISearchRequest, current_user: dict = Depends(g
 @router.get("/search/user-stats")
 async def get_user_search_stats(current_user: dict = Depends(get_current_user)):
     """Get user's search and action statistics"""
-    if not db:
+    if db is None:
         return {"stats": None}
     
     user_id = current_user.get("user_id")
