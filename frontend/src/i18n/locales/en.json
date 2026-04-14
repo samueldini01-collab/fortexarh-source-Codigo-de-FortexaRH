@@ -3920,7 +3920,8 @@
       "accounts": "Accounts",
       "reports": "Reports",
       "journalEntries": "Journal Entries",
-      "chartOfAccounts": "Chart of Accounts"
+      "chartOfAccounts": "Chart of Accounts",
+      "payrollSummary": "Payroll Summary"
     },
     "stats": {
       "totalEntries": "Total Entries",
@@ -4091,7 +4092,22 @@
     "codigo": "Code",
     "nombreDeCuenta": "Nombre de Account",
     "centroDeCostos": "Centro de Costos",
-    "empleado": "Employee"
+    "empleado": "Employee",
+    "payroll": {
+      "totalPayroll": "Total Payroll",
+      "postedEntries": "Posted Entries",
+      "draftEntries": "Draft Entries",
+      "lastEntry": "Last Entry",
+      "allBalanced": "All entries are balanced",
+      "hasUnbalanced": "There are unbalanced entries",
+      "title": "Payroll Journal Entries",
+      "subtitle": "Journal entries automatically generated from payroll",
+      "noEntries": "No payroll entries",
+      "noEntriesDesc": "Entries are automatically generated when processing payroll",
+      "balanceStatus": "Balance",
+      "periodStatus": "Period Status",
+      "onlyPayroll": "Payroll Only"
+    }
   },
   "costsByDepartment": {
     "title": "Costs by Department",

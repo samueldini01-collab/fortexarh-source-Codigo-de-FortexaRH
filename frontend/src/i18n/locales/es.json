@@ -3923,7 +3923,8 @@
       "accounts": "Cuentas",
       "reports": "Reportes",
       "journalEntries": "Asientos de Diario",
-      "chartOfAccounts": "Catálogo de Cuentas"
+      "chartOfAccounts": "Catálogo de Cuentas",
+      "payrollSummary": "Resumen Nómina"
     },
     "stats": {
       "totalEntries": "Total Asientos",
@@ -4094,7 +4095,22 @@
     "codigo": "Código",
     "nombreDeCuenta": "Nombre de Cuenta",
     "centroDeCostos": "Centro de Costos",
-    "empleado": "Empleado"
+    "empleado": "Empleado",
+    "payroll": {
+      "totalPayroll": "Total Nómina",
+      "postedEntries": "Contabilizados",
+      "draftEntries": "Borradores",
+      "lastEntry": "Último Asiento",
+      "allBalanced": "Todos los asientos están balanceados",
+      "hasUnbalanced": "Hay asientos desbalanceados",
+      "title": "Asientos de Nómina",
+      "subtitle": "Asientos contables generados automáticamente desde nómina",
+      "noEntries": "No hay asientos de nómina",
+      "noEntriesDesc": "Los asientos se generan automáticamente al procesar una nómina",
+      "balanceStatus": "Balance",
+      "periodStatus": "Estado Período",
+      "onlyPayroll": "Solo Nómina"
+    }
   },
   "costsByDepartment": {
     "title": "Costos por Departamento",
