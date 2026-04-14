@@ -607,10 +607,21 @@ export default function PayrollPage() {
   };
 
   const handleDeletePeriod = async (periodId) => {
-    if (!confirm("¿Eliminar este período y su asiento asociado?")) return;
+    const period = periods.find(p => p.period_id === periodId) || selectedPeriod;
+    const isPaid = period?.status === 'paid';
+    const hasJE = !!period?.journal_entry_id;
+    
+    let msg = t('payrollV2.confirmDeletePeriod');
+    if (isPaid && hasJE) {
+      msg = t('payrollV2.confirmDeletePaidWithJE');
+    } else if (isPaid) {
+      msg = t('payrollV2.confirmDeletePaid');
+    }
+    
+    if (!confirm(msg)) return;
     try {
       await axios.delete(`${API}/payroll/periods/${periodId}`, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success(t('payrollV2.messages.periodDeleted'));
+      toast.success(isPaid && hasJE ? t('payrollV2.messages.periodAndJEDeleted') : t('payrollV2.messages.periodDeleted'));
       setSelectedPeriod(null);
       fetchPeriods();
     } catch (error) {
@@ -1278,8 +1289,12 @@ export default function PayrollPage() {
                               )}
                             </>
                           )}
-                          {selectedPeriod.status !== 'paid' && (
-                            <Button size="sm" variant="destructive" onClick={() => handleDeletePeriod(selectedPeriod.period_id)}><Trash2 className="w-4 h-4" /></Button>
+                          {selectedPeriod.status === 'paid' ? (
+                            <Button size="sm" variant="destructive" className="bg-red-600 hover:bg-red-700" onClick={() => handleDeletePeriod(selectedPeriod.period_id)} data-testid="btn-delete-paid-period">
+                              <Trash2 className="w-4 h-4 mr-1" />{t('payrollV2.deletePeriod')}
+                            </Button>
+                          ) : (
+                            <Button size="sm" variant="destructive" onClick={() => handleDeletePeriod(selectedPeriod.period_id)} data-testid="btn-delete-period"><Trash2 className="w-4 h-4" /></Button>
                           )}
                         </div>
                       </div>

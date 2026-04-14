@@ -1012,7 +1012,8 @@
       "errorDownloadingIr17": "Error al descargar IR-17",
       "errorExportingTss": "Error al exportar TSS",
       "errorLoadingBreakdown": "Error al cargar desglose",
-      "baseSalary": "Salario Base"
+      "baseSalary": "Salario Base",
+      "periodAndJEDeleted": "Nómina y asiento contable eliminados correctamente"
     },
     "todosLosDepartamentos": "Todos los departamentos",
     "noHayPeriodosDe": "No hay períodos de nómina",
@@ -1105,7 +1106,11 @@
     "totalAportesPatronal": "Total Aportes Patronal",
     "totalAPagarTss": "Total a Pagar TSS",
     "archivo": "Archivo",
-    "agregueUnIngresoODeduccion": "Agregue un ingreso o deducción adicional a {{name}}"
+    "agregueUnIngresoODeduccion": "Agregue un ingreso o deducción adicional a {{name}}",
+    "deletePeriod": "Eliminar",
+    "confirmDeletePeriod": "¿Eliminar este período y su asiento asociado?",
+    "confirmDeletePaid": "⚠️ Esta nómina está PAGADA. ¿Está seguro de que desea eliminarla? Esta acción no se puede deshacer.",
+    "confirmDeletePaidWithJE": "⚠️ Esta nómina está PAGADA y tiene un asiento de diario vinculado. Al eliminarla, también se eliminará automáticamente el asiento contable asociado. ¿Está seguro de que desea continuar? Esta acción no se puede deshacer."
   },
   "globalSearch": {
     "placeholder": "Buscar o ejecutar acciones con IA...",
