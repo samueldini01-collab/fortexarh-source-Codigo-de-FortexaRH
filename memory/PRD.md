@@ -24,7 +24,8 @@
 - Landing page: 3 new features (Contracts, Workflows, ACH Bank)
 - i18n: Added nav.automation, nav.contracts keys + public/locales sync fix
 - Contract Templates Auto-seeding: 4 DR system templates seeded on startup + fallback in GET /templates (Apr 12, 2026)
-- i18n fix: Added 14 missing accounting.payroll.* and accounting.tabs.payrollSummary keys to es.json and en.json (Apr 14, 2026)
+- i18n fix: Added 14 missing accounting.payroll.* keys (Apr 14, 2026)
+- ACH Bank Config UI: New "Bank ACH" tab in /company-config with per-bank account setup (Banreservas, Popular, BHD) (Apr 14, 2026)
 
 ## IMPORTANT: i18n Sync
 When modifying locale files in src/i18n/locales/, ALWAYS copy to public/locales/ too:
@@ -32,7 +33,7 @@ When modifying locale files in src/i18n/locales/, ALWAYS copy to public/locales/
 cp src/i18n/locales/en.json public/locales/en.json
 cp src/i18n/locales/es.json public/locales/es.json
 ```
-And bump TRANSLATION_VERSION in src/i18n/index.js (currently 2.1.0)
+And bump TRANSLATION_VERSION in src/i18n/index.js (currently 2.2.0)
 
 ## Backlog
 - P1: Notifications Phase 3 (Digest Email)

@@ -4170,7 +4170,8 @@
       "branding": "Branding & Text",
       "notifications": "Notifications",
       "integrations": "Integrations",
-      "audit": "Audit"
+      "audit": "Audit",
+      "bank": "Bank ACH"
     },
     "fontSizes": {
       "small": "Small",
@@ -4321,7 +4322,28 @@
     "actualizar": "Update",
     "noHayRegistrosDe": "No hay registros de auditoría",
     "configuracionDeEmpresa": "Settings de Empresa",
-    "administraLaIdentidadApariencia": "Administra la identidad, apariencia e integraciones de tu organización."
+    "administraLaIdentidadApariencia": "Administra la identidad, apariencia e integraciones de tu organización.",
+    "bank": {
+      "title": "ACH Bank Configuration",
+      "description": "Configure company bank accounts to generate ACH payroll payment files.",
+      "infoTitle": "What is this configuration for?",
+      "infoDesc": "When generating an ACH file from the Payroll module, the system needs the company bank account as the payment source. Configure the account here for each bank you use.",
+      "configuredAccounts": "Configured Accounts",
+      "addAnother": "Add Another Bank",
+      "addFirst": "Configure Bank Account",
+      "accountNumber": "Account Number",
+      "accountType": "Account Type",
+      "currency": "Currency",
+      "checking": "Checking",
+      "savings": "Savings",
+      "account": "Account",
+      "configured": "Configured",
+      "clickToConfigure": "Click to configure",
+      "saveAccount": "Save Account",
+      "saved": "Bank configuration saved",
+      "errorSaving": "Error saving bank configuration",
+      "allConfigured": "All available banks are configured. You can now generate ACH files for any bank."
+    }
   },
   "errors": {
     "generic": "An error occurred",

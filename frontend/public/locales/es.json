@@ -4173,7 +4173,8 @@
       "branding": "Marca y Textos",
       "notifications": "Notificaciones",
       "integrations": "Integraciones",
-      "audit": "Auditoría"
+      "audit": "Auditoría",
+      "bank": "Banco ACH"
     },
     "fontSizes": {
       "small": "Pequeño",
@@ -4324,7 +4325,28 @@
     "actualizar": "Actualizar",
     "noHayRegistrosDe": "No hay registros de auditoría",
     "configuracionDeEmpresa": "Configuración de Empresa",
-    "administraLaIdentidadApariencia": "Administra la identidad, apariencia e integraciones de tu organización."
+    "administraLaIdentidadApariencia": "Administra la identidad, apariencia e integraciones de tu organización.",
+    "bank": {
+      "title": "Configuración Bancaria ACH",
+      "description": "Configura las cuentas bancarias de la empresa para generar archivos ACH de pago de nómina.",
+      "infoTitle": "¿Para qué sirve esta configuración?",
+      "infoDesc": "Al generar un archivo ACH desde el módulo de Nómina, el sistema necesita la cuenta bancaria de la empresa como cuenta origen de los pagos. Configure aquí la cuenta para cada banco que utilice.",
+      "configuredAccounts": "Cuentas Configuradas",
+      "addAnother": "Agregar Otro Banco",
+      "addFirst": "Configurar Cuenta Bancaria",
+      "accountNumber": "Número de Cuenta",
+      "accountType": "Tipo de Cuenta",
+      "currency": "Moneda",
+      "checking": "Corriente",
+      "savings": "Ahorros",
+      "account": "Cuenta",
+      "configured": "Configurado",
+      "clickToConfigure": "Clic para configurar",
+      "saveAccount": "Guardar Cuenta",
+      "saved": "Configuración bancaria guardada",
+      "errorSaving": "Error al guardar configuración bancaria",
+      "allConfigured": "Todos los bancos disponibles están configurados. Ya puede generar archivos ACH para cualquier banco."
+    }
   },
   "errors": {
     "generic": "Ha ocurrido un error",

@@ -78,17 +78,24 @@ async def get_available_banks(request: Request):
 
 
 @router.get("/company-bank-config")
-async def get_company_bank_config(request: Request):
+async def get_company_bank_config(request: Request, bank_id: Optional[str] = None):
     """Get company bank configuration for ACH generation"""
     current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
-    config = await db.company_bank_config.find_one(
+    if bank_id:
+        config = await db.company_bank_config.find_one(
+            {"company_id": company_id, "bank_id": bank_id},
+            {"_id": 0}
+        )
+        return config or {"company_id": company_id, "bank_id": bank_id}
+    
+    configs = await db.company_bank_config.find(
         {"company_id": company_id},
         {"_id": 0}
-    )
+    ).to_list(10)
     
-    return config or {"company_id": company_id, "accounts": []}
+    return {"company_id": company_id, "accounts": configs}
 
 
 @router.put("/company-bank-config")

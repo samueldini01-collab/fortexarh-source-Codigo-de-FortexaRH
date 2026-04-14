@@ -22,7 +22,8 @@ import {
   Save, Upload, Trash2, Sun, Moon, Monitor, Check, AlertCircle,
   Mail, MessageSquare, Smartphone, Users, Globe, Twitter, 
   Facebook, Linkedin, Instagram, RefreshCw, ExternalLink, Loader2,
-  Wand2, ArrowRight, Info, Download, FileSpreadsheet, Settings, Wifi
+  Wand2, ArrowRight, Info, Download, FileSpreadsheet, Settings, Wifi,
+  Landmark, Plus, Pencil, X
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -36,6 +37,7 @@ import {
 const getCompanyConfigTabs = (t) => [
   { id: "general", label: t('companyConfig.tabs.general'), icon: Building2 },
   { id: "logo", label: t('companyConfig.tabs.logo'), icon: Image },
+  { id: "banco", label: t('companyConfig.tabs.bank'), icon: Landmark },
   { id: "apariencia", label: t('companyConfig.tabs.appearance'), icon: Palette },
   { id: "marca", label: t('companyConfig.tabs.branding'), icon: Type },
   { id: "notificaciones", label: t('companyConfig.tabs.notifications'), icon: Bell },
@@ -159,6 +161,17 @@ export default function CompanyConfigPage() {
   // Audit log
   const [auditLog, setAuditLog] = useState([]);
   
+  // Bank ACH Config
+  const [bankAccounts, setBankAccounts] = useState([]);
+  const [bankLoading, setBankLoading] = useState(false);
+  const [bankSaving, setBankSaving] = useState(false);
+  const [editingBank, setEditingBank] = useState(null); // null | { bank_id, account_number, account_type, currency }
+  const [availableBanks] = useState([
+    { id: "banreservas", name: "Banreservas" },
+    { id: "popular", name: "Banco Popular Dominicano" },
+    { id: "bhd", name: "BHD León" },
+  ]);
+  
   // FortexaERP sync log
   const [showSyncLog, setShowSyncLog] = useState(false);
   const [syncLog, setSyncLog] = useState([]);
@@ -200,6 +213,27 @@ export default function CompanyConfigPage() {
       }
     } catch (e) { /* silently */ }
   }, [getAuthHeaders]);
+
+  // Fetch Bank ACH config
+  const fetchBankConfig = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API}/bank-files/company-bank-config`, { headers: getAuthHeaders(), withCredentials: true });
+      const data = res.data;
+      setBankAccounts(data.accounts || []);
+    } catch { /* silently */ }
+  }, [getAuthHeaders]);
+
+  const handleSaveBankConfig = async (bankData) => {
+    setBankSaving(true);
+    try {
+      await axios.put(`${API}/bank-files/company-bank-config`, bankData, { headers: getAuthHeaders(), withCredentials: true });
+      toast.success(t('companyConfig.bank.saved'));
+      setEditingBank(null);
+      fetchBankConfig();
+    } catch (e) {
+      toast.error(e.response?.data?.detail || t('companyConfig.bank.errorSaving'));
+    } finally { setBankSaving(false); }
+  };
 
   const handleErpTestConnection = async () => {
     setErpTesting(true);
@@ -273,6 +307,7 @@ export default function CompanyConfigPage() {
       // Fetch QuickBooks status and FortexaERP config in parallel
       fetchQuickbooksStatus();
       fetchErpConfig();
+      fetchBankConfig();
       
       const response = await axios.get(`${API}/company/settings`, {
         headers: getAuthHeaders(),
@@ -305,7 +340,7 @@ export default function CompanyConfigPage() {
     } finally {
       setLoading(false);
     }
-  }, [getAuthHeaders, fetchQuickbooksStatus, fetchErpConfig]);
+  }, [getAuthHeaders, fetchQuickbooksStatus, fetchErpConfig, fetchBankConfig]);
 
   useEffect(() => {
     fetchCompanyData();
@@ -703,6 +738,231 @@ export default function CompanyConfigPage() {
       </CardContent>
     </Card>
   );
+
+  const renderBankTab = () => {
+    const configuredBankIds = bankAccounts.map(a => a.bank_id);
+    const unconfiguredBanks = availableBanks.filter(b => !configuredBankIds.includes(b.id));
+
+    return (
+      <Card className="border-l-4 border-l-teal-500">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Landmark className="w-5 h-5 text-teal-600" />
+            {t('companyConfig.bank.title')}
+          </CardTitle>
+          <CardDescription>{t('companyConfig.bank.description')}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Info banner */}
+          <div className="bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-lg p-4 flex gap-3">
+            <Info className="w-5 h-5 text-teal-600 mt-0.5 shrink-0" />
+            <div className="text-sm text-teal-800 dark:text-teal-300">
+              <p className="font-medium mb-1">{t('companyConfig.bank.infoTitle')}</p>
+              <p>{t('companyConfig.bank.infoDesc')}</p>
+            </div>
+          </div>
+
+          {/* Configured accounts */}
+          {bankAccounts.length > 0 && (
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('companyConfig.bank.configuredAccounts')}</h3>
+              {bankAccounts.map((acc) => {
+                const bankInfo = availableBanks.find(b => b.id === acc.bank_id);
+                const isEditing = editingBank?.bank_id === acc.bank_id;
+                
+                if (isEditing) {
+                  return (
+                    <div key={acc.bank_id} className="border-2 border-teal-300 rounded-lg p-4 bg-teal-50/50 dark:bg-teal-900/10 space-y-4" data-testid={`bank-edit-${acc.bank_id}`}>
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-medium text-teal-700 dark:text-teal-400">{bankInfo?.name || acc.bank_id}</h4>
+                        <Button variant="ghost" size="sm" onClick={() => setEditingBank(null)}>
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                          <Label>{t('companyConfig.bank.accountNumber')}</Label>
+                          <Input
+                            data-testid={`bank-account-number-${acc.bank_id}`}
+                            value={editingBank.account_number}
+                            onChange={(e) => setEditingBank({...editingBank, account_number: e.target.value})}
+                            placeholder="Ej: 0130850482"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>{t('companyConfig.bank.accountType')}</Label>
+                          <Select value={editingBank.account_type} onValueChange={(v) => setEditingBank({...editingBank, account_type: v})}>
+                            <SelectTrigger data-testid={`bank-account-type-${acc.bank_id}`}>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="CC">{t('companyConfig.bank.checking')}</SelectItem>
+                              <SelectItem value="CA">{t('companyConfig.bank.savings')}</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>{t('companyConfig.bank.currency')}</Label>
+                          <Select value={editingBank.currency} onValueChange={(v) => setEditingBank({...editingBank, currency: v})}>
+                            <SelectTrigger data-testid={`bank-currency-${acc.bank_id}`}>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="DOP">DOP (Peso Dominicano)</SelectItem>
+                              <SelectItem value="USD">USD (Dólar)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div className="flex justify-end gap-2 pt-2">
+                        <Button variant="outline" onClick={() => setEditingBank(null)}>{t('common.cancel')}</Button>
+                        <Button
+                          data-testid={`bank-save-${acc.bank_id}`}
+                          onClick={() => handleSaveBankConfig(editingBank)}
+                          disabled={bankSaving || !editingBank.account_number}
+                          className="bg-teal-600 hover:bg-teal-700"
+                        >
+                          {bankSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                          {t('companyConfig.bank.saveAccount')}
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div key={acc.bank_id} className="border rounded-lg p-4 flex items-center justify-between bg-white dark:bg-slate-800" data-testid={`bank-configured-${acc.bank_id}`}>
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center">
+                        <Landmark className="w-5 h-5 text-teal-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium">{bankInfo?.name || acc.bank_id}</p>
+                        <div className="flex items-center gap-3 text-sm text-slate-500">
+                          <span>{t('companyConfig.bank.account')}: <span className="font-mono">{acc.account_number}</span></span>
+                          <Badge variant="outline" className="text-xs">{acc.account_type === "CC" ? t('companyConfig.bank.checking') : t('companyConfig.bank.savings')}</Badge>
+                          <Badge variant="outline" className="text-xs">{acc.currency || "DOP"}</Badge>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">
+                        <Check className="w-3 h-3 mr-1" />{t('companyConfig.bank.configured')}
+                      </Badge>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        data-testid={`bank-edit-btn-${acc.bank_id}`}
+                        onClick={() => setEditingBank({
+                          bank_id: acc.bank_id,
+                          account_number: acc.account_number,
+                          account_type: acc.account_type || "CC",
+                          currency: acc.currency || "DOP"
+                        })}
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Add new bank account */}
+          {unconfiguredBanks.length > 0 && (
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                {bankAccounts.length > 0 ? t('companyConfig.bank.addAnother') : t('companyConfig.bank.addFirst')}
+              </h3>
+              {editingBank && !configuredBankIds.includes(editingBank.bank_id) ? (
+                <div className="border-2 border-teal-300 rounded-lg p-4 bg-teal-50/50 dark:bg-teal-900/10 space-y-4" data-testid="bank-new-form">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-medium text-teal-700 dark:text-teal-400">
+                      {availableBanks.find(b => b.id === editingBank.bank_id)?.name}
+                    </h4>
+                    <Button variant="ghost" size="sm" onClick={() => setEditingBank(null)}>
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label>{t('companyConfig.bank.accountNumber')}</Label>
+                      <Input
+                        data-testid="bank-new-account-number"
+                        value={editingBank.account_number}
+                        onChange={(e) => setEditingBank({...editingBank, account_number: e.target.value})}
+                        placeholder="Ej: 0130850482"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{t('companyConfig.bank.accountType')}</Label>
+                      <Select value={editingBank.account_type} onValueChange={(v) => setEditingBank({...editingBank, account_type: v})}>
+                        <SelectTrigger data-testid="bank-new-account-type">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="CC">{t('companyConfig.bank.checking')}</SelectItem>
+                          <SelectItem value="CA">{t('companyConfig.bank.savings')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{t('companyConfig.bank.currency')}</Label>
+                      <Select value={editingBank.currency} onValueChange={(v) => setEditingBank({...editingBank, currency: v})}>
+                        <SelectTrigger data-testid="bank-new-currency">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="DOP">DOP (Peso Dominicano)</SelectItem>
+                          <SelectItem value="USD">USD (Dólar)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-2 pt-2">
+                    <Button variant="outline" onClick={() => setEditingBank(null)}>{t('common.cancel')}</Button>
+                    <Button
+                      data-testid="bank-new-save"
+                      onClick={() => handleSaveBankConfig(editingBank)}
+                      disabled={bankSaving || !editingBank.account_number}
+                      className="bg-teal-600 hover:bg-teal-700"
+                    >
+                      {bankSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                      {t('companyConfig.bank.saveAccount')}
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {unconfiguredBanks.map((bank) => (
+                    <button
+                      key={bank.id}
+                      data-testid={`bank-add-${bank.id}`}
+                      onClick={() => setEditingBank({ bank_id: bank.id, account_number: "", account_type: "CC", currency: "DOP" })}
+                      className="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-4 text-center hover:border-teal-400 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 transition-colors"
+                    >
+                      <Plus className="w-5 h-5 mx-auto mb-2 text-slate-400" />
+                      <p className="text-sm font-medium">{bank.name}</p>
+                      <p className="text-xs text-slate-400 mt-1">{t('companyConfig.bank.clickToConfigure')}</p>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* All configured message */}
+          {unconfiguredBanks.length === 0 && bankAccounts.length === 3 && (
+            <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-4 flex gap-3">
+              <Check className="w-5 h-5 text-emerald-600 mt-0.5 shrink-0" />
+              <p className="text-sm text-emerald-700 dark:text-emerald-300">{t('companyConfig.bank.allConfigured')}</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    );
+  };
 
   const renderAppearanceTab = () => (
     <Card className="border-l-4 border-l-pink-500">
@@ -1548,6 +1808,7 @@ export default function CompanyConfigPage() {
         <div className="max-w-4xl">
           {activeTab === "general" && renderGeneralTab()}
           {activeTab === "logo" && renderLogoTab()}
+          {activeTab === "banco" && renderBankTab()}
           {activeTab === "apariencia" && renderAppearanceTab()}
           {activeTab === "marca" && renderBrandingTab()}
           {activeTab === "notificaciones" && renderNotificationsTab()}
