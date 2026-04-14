@@ -4253,7 +4253,31 @@
       "disconnect": "Disconnect",
       "comingSoon": "Coming Soon",
       "fortexaerp": {
-        "desc": "Complete native synchronization with the Fortexa ecosystem."
+        "desc": "Complete native synchronization with the Fortexa ecosystem.",
+        "configured": "Configured",
+        "configure": "Configure",
+        "connectedTo": "Connected to:",
+        "testConnection": "Test Connection",
+        "saveConfig": "Save Configuration",
+        "apiUrl": "API URL",
+        "email": "Email",
+        "password": "Password",
+        "companyId": "Company ID",
+        "autoSync": "Auto Sync",
+        "autoSyncDesc": "Automatically sync when processing payroll",
+        "lastSync": "Last sync",
+        "viewHistory": "View History",
+        "syncLog": "FortexaERP Sync History",
+        "syncLogDesc": "Log of all synchronizations performed",
+        "noSyncHistory": "No sync history available",
+        "date": "Date",
+        "reference": "Reference",
+        "lines": "Lines",
+        "amount": "Amount",
+        "status": "Status",
+        "syncedBy": "Synced by",
+        "success": "Success",
+        "failed": "Failed"
       },
       "quickbooks": {
         "desc": "Automatically export payroll and journal entries to QBO."
@@ -4263,6 +4287,15 @@
       },
       "oracle": {
         "desc": "Cloud connectivity for advanced financial management."
+      },
+      "qbd": {
+        "desc": "Export payroll data to QuickBooks Desktop.",
+        "webConnector": "Web Connector",
+        "webConnectorDesc": "Automatic sync via Intuit Web Connector.",
+        "iif": "IIF File",
+        "iifDesc": "Download IIF files to manually import into QBD.",
+        "csv": "CSV File",
+        "csvDesc": "Export data in CSV format compatible with QBD."
       }
     },
     "messages": {

@@ -23,9 +23,10 @@
 - Roles module: Added "contracts" and "workflows" modules with permissions
 - Landing page: 3 new features (Contracts, Workflows, ACH Bank)
 - i18n: Added nav.automation, nav.contracts keys + public/locales sync fix
-- Contract Templates Auto-seeding: 4 DR system templates seeded on startup + fallback in GET /templates (Apr 12, 2026)
-- i18n fix: Added 14 missing accounting.payroll.* keys (Apr 14, 2026)
-- ACH Bank Config UI: New "Bank ACH" tab in /company-config with per-bank account setup (Banreservas, Popular, BHD) (Apr 14, 2026)
+- Contract Templates Auto-seeding: 4 DR system templates seeded on startup + fallback in GET /templates (Apr 12)
+- i18n fix: Added 14 missing accounting.payroll.* keys (Apr 14)
+- ACH Bank Config UI: New "Bank ACH" tab in /company-config with per-bank account setup (Apr 14)
+- i18n fix: Added 31 missing companyConfig.integrations.fortexaerp.* and qbd.* keys (Apr 14)
 
 ## IMPORTANT: i18n Sync
 When modifying locale files in src/i18n/locales/, ALWAYS copy to public/locales/ too:
@@ -33,7 +34,7 @@ When modifying locale files in src/i18n/locales/, ALWAYS copy to public/locales/
 cp src/i18n/locales/en.json public/locales/en.json
 cp src/i18n/locales/es.json public/locales/es.json
 ```
-And bump TRANSLATION_VERSION in src/i18n/index.js (currently 2.2.0)
+And bump TRANSLATION_VERSION in src/i18n/index.js (currently 2.3.0)
 
 ## Backlog
 - P1: Notifications Phase 3 (Digest Email)

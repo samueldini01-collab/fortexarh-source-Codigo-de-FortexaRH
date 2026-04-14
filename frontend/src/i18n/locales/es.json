@@ -4256,7 +4256,31 @@
       "disconnect": "Desconectar",
       "comingSoon": "Próximamente",
       "fortexaerp": {
-        "desc": "Sincronización nativa completa con el ecosistema Fortexa."
+        "desc": "Sincronización nativa completa con el ecosistema Fortexa.",
+        "configured": "Configurado",
+        "configure": "Configurar",
+        "connectedTo": "Conectado a:",
+        "testConnection": "Probar Conexión",
+        "saveConfig": "Guardar Configuración",
+        "apiUrl": "URL del API",
+        "email": "Correo",
+        "password": "Contraseña",
+        "companyId": "ID de Empresa",
+        "autoSync": "Sincronización Automática",
+        "autoSyncDesc": "Sincronizar automáticamente al procesar nómina",
+        "lastSync": "Última sincronización",
+        "viewHistory": "Ver Historial",
+        "syncLog": "Historial de Sincronización FortexaERP",
+        "syncLogDesc": "Registro de todas las sincronizaciones realizadas",
+        "noSyncHistory": "No hay historial de sincronización",
+        "date": "Fecha",
+        "reference": "Referencia",
+        "lines": "Líneas",
+        "amount": "Monto",
+        "status": "Estado",
+        "syncedBy": "Sincronizado por",
+        "success": "Exitoso",
+        "failed": "Fallido"
       },
       "quickbooks": {
         "desc": "Exporta nómina y asientos contables automáticamente a QBO."
@@ -4266,6 +4290,15 @@
       },
       "oracle": {
         "desc": "Conectividad en la nube para gestión financiera avanzada."
+      },
+      "qbd": {
+        "desc": "Exporta datos de nómina a QuickBooks Desktop.",
+        "webConnector": "Web Connector",
+        "webConnectorDesc": "Sincronización automática vía Web Connector de Intuit.",
+        "iif": "Archivo IIF",
+        "iifDesc": "Descarga archivos IIF para importar manualmente en QBD.",
+        "csv": "Archivo CSV",
+        "csvDesc": "Exporta datos en formato CSV compatible con QBD."
       }
     },
     "messages": {
