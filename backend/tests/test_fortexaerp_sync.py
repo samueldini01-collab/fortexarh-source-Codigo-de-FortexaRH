@@ -55,7 +55,7 @@ class TestFortexaERPConfig:
     def test_put_config_saves_settings(self, auth_headers):
         """PUT /api/fortexaerp/config saves API URL, email, password, company_id"""
         config_data = {
-            "api_url": "https://fortexaerp.com",
+            "api_url": "https://fortexarh.com",
             "email": "test@fortexaerp.com",
             "password": "testpassword123",
             "company_id": "test-company-123"
@@ -79,7 +79,7 @@ class TestFortexaERPConfig:
         assert response.status_code == 200
         data = response.json()
         assert data["configured"] == True
-        assert data.get("api_url") == "https://fortexaerp.com"
+        assert data.get("api_url") == "https://fortexarh.com"
         assert data.get("email") == "test@fortexaerp.com"
         assert data.get("company_id") == "test-company-123"
         print(f"FortexaERP config verified: {data}")

@@ -1,7 +1,7 @@
 """
 FortexaERP Integration Router
-Syncs payroll journal entries with FortexaERP (https://fortexaerp.com)
-API Docs: https://fortexaerp.com/developer-docs
+Syncs payroll journal entries with FortexaERP (https://fortexarh.com)
+API Docs: https://fortexarh.com/developer-docs
 """
 
 from fastapi import APIRouter, Depends
@@ -16,7 +16,7 @@ from config import db
 from utils.auth import get_current_user
 from utils.errors import AppError
 
-FORTEXAERP_BASE_URL = "https://fortexaerp.com"
+FORTEXAERP_BASE_URL = "https://fortexarh.com"
 
 
 class FortexaERPConfig(BaseModel):

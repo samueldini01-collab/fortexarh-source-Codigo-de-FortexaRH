@@ -57,7 +57,7 @@ class TestFortexaERPConfig:
     def test_put_config_saves_configuration(self, auth_headers):
         """PUT /api/fortexaerp/config should save configuration"""
         config_data = {
-            "api_url": "https://fortexaerp.com",
+            "api_url": "https://fortexarh.com",
             "email": "test@example.com",
             "password": "testpassword123",
             "company_id": "test-company-123"

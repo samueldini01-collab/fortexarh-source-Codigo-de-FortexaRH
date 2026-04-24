@@ -262,7 +262,7 @@ async def oauth_callback(
         )
         
         # Get frontend URL from environment
-        frontend_url = os.environ.get('FRONTEND_URL', 'https://fortexaerp.com')
+        frontend_url = os.environ.get('FRONTEND_URL', 'https://fortexarh.com')
         
         # Redirect to frontend with success
         return RedirectResponse(
@@ -270,7 +270,7 @@ async def oauth_callback(
         )
         
     except Exception as e:
-        frontend_url = os.environ.get('FRONTEND_URL', 'https://fortexaerp.com')
+        frontend_url = os.environ.get('FRONTEND_URL', 'https://fortexarh.com')
         return RedirectResponse(
             url=f"{frontend_url}/company-config?tab=integraciones&qb_status=error&qb_error={str(e)}"
         )

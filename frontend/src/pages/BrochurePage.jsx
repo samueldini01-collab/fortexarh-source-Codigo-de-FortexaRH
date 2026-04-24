@@ -493,7 +493,7 @@ export default function BrochurePage() {
               <div className="text-center p-6 bg-white/10 rounded-xl backdrop-blur">
                 <Globe className="w-8 h-8 mx-auto mb-3 text-emerald-400" />
                 <h3 className="font-semibold mb-1">{t('brochure.contact.website')}</h3>
-                <p className="text-emerald-300">www.fortexaerp.com</p>
+                <p className="text-emerald-300">www.fortexarh.com</p>
               </div>
               <div className="text-center p-6 bg-white/10 rounded-xl backdrop-blur">
                 <HeadphonesIcon className="w-8 h-8 mx-auto mb-3 text-emerald-400" />

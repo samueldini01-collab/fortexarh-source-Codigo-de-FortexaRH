@@ -670,7 +670,7 @@ async def download_payslip_pdf(payslip_id: str, request: Request):
     
     # Footer
     elements.append(Spacer(1, 30))
-    footer_text = f"Generado el {datetime.now().strftime('%d/%m/%Y %H:%M')} desde Portal de Empleados - http://fortexaerp.com"
+    footer_text = f"Generado el {datetime.now().strftime('%d/%m/%Y %H:%M')} desde Portal de Empleados - http://fortexarh.com"
     elements.append(Paragraph(footer_text, ParagraphStyle('Footer', fontSize=8, alignment=TA_CENTER, textColor=colors.grey)))
     
     # Build PDF

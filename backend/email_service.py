@@ -111,7 +111,7 @@ async def send_payment_confirmation_email(
                 </p>
                 
                 <div style="text-align: center; margin: 30px 0;">
-                    <a href="https://fortexaerp.com/dashboard" style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+                    <a href="https://fortexarh.com/dashboard" style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
                         Ir al Dashboard
                     </a>
                 </div>
@@ -211,7 +211,7 @@ async def send_welcome_email(
                 </div>
                 
                 <div style="text-align: center; margin: 30px 0;">
-                    <a href="https://fortexaerp.com/dashboard" style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+                    <a href="https://fortexarh.com/dashboard" style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
                         Comenzar Ahora
                     </a>
                 </div>
@@ -345,7 +345,7 @@ async def send_invoice_email(
                 </div>
                 
                 <div style="text-align: center; margin: 30px 0;">
-                    <a href="https://fortexaerp.com/subscriptions" style="display: inline-block; background: #f1f5f9; color: #475569; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 500; font-size: 14px;">
+                    <a href="https://fortexarh.com/subscriptions" style="display: inline-block; background: #f1f5f9; color: #475569; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 500; font-size: 14px;">
                         Ver Historial de Facturas
                     </a>
                 </div>

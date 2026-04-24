@@ -249,8 +249,8 @@ export default function SupportPage() {
                   <Globe className="w-5 h-5 text-slate-400 mt-0.5" />
                   <div>
                     <p className="text-sm text-slate-500">Web</p>
-                    <a href="https://fortexaerp.com" className="text-emerald-600 hover:underline">
-                      www.fortexaerp.com
+                    <a href="https://fortexarh.com" className="text-emerald-600 hover:underline">
+                      www.fortexarh.com
                     </a>
                   </div>
                 </div>

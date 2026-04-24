@@ -210,7 +210,7 @@ async def create_support_ticket(ticket: SupportTicketRequest):
                     <div class="footer">
                         <p>FortexaRH - Sistema de RRHH y Nómina</p>
                         <p>Santo Domingo, República Dominicana</p>
-                        <p><a href="https://fortexaerp.com" style="color: #10b981;">www.fortexaerp.com</a></p>
+                        <p><a href="https://fortexarh.com" style="color: #10b981;">www.fortexarh.com</a></p>
                     </div>
                 </div>
             </body>

@@ -150,7 +150,7 @@ export default function CompanyConfigPage() {
   const [localAccounts, setLocalAccounts] = useState([]);
   
   // FortexaERP config
-  const [erpConfig, setErpConfig] = useState({ api_url: "https://fortexaerp.com", email: "", password: "", company_id: "" });
+  const [erpConfig, setErpConfig] = useState({ api_url: "https://fortexarh.com", email: "", password: "", company_id: "" });
   const [erpConfigured, setErpConfigured] = useState(false);
   const [erpCompanyName, setErpCompanyName] = useState("");
   const [erpLastSync, setErpLastSync] = useState(null);
@@ -1421,7 +1421,7 @@ export default function CompanyConfigPage() {
                     data-testid="erp-api-url"
                     value={erpConfig.api_url}
                     onChange={e => setErpConfig(p => ({...p, api_url: e.target.value}))}
-                    placeholder="https://fortexaerp.com"
+                    placeholder="https://fortexarh.com"
                     className="h-8 text-sm"
                   />
                 </div>
@@ -1466,7 +1466,7 @@ export default function CompanyConfigPage() {
                   {erpSaving ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Save className="w-4 h-4 mr-1.5" />}
                   {t('companyConfig.integrations.fortexaerp.saveConfig')}
                 </Button>
-                <a href="https://fortexaerp.com/developer-docs" target="_blank" rel="noreferrer" className="ml-auto">
+                <a href="https://fortexarh.com/developer-docs" target="_blank" rel="noreferrer" className="ml-auto">
                   <Button size="sm" variant="ghost">
                     <ExternalLink className="w-4 h-4 mr-1.5" />Docs
                   </Button>

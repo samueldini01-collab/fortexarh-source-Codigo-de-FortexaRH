@@ -251,7 +251,7 @@ def generate_invoice_pdf(invoice_data: dict, company_data: dict = None) -> bytes
     story.append(Paragraph('Gracias por su preferencia', footer_style))
     story.append(Spacer(1, 0.1*inch))
     story.append(Paragraph('FortexaRH - Sistema de Recursos Humanos y Nómina', footer_style))
-    story.append(Paragraph('www.fortexaerp.com | soporte@fortexaerp.com', footer_style))
+    story.append(Paragraph('www.fortexarh.com | soporte@fortexaerp.com', footer_style))
     
     # Build PDF
     doc.build(story)
