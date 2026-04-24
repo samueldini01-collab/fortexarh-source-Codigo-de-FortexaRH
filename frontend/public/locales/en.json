@@ -6104,6 +6104,30 @@
       "update-tech-debt": {
         "title": "Stability and performance improvements",
         "body": "Fixed serialization errors, improved testability with data-testid on interactive components, partner portal internationalization and large component refactoring."
+      },
+      "update-isr-editable": {
+        "title": "Editable ISR in Payroll",
+        "body": "You can now manually edit the ISR amount per employee directly on the payroll sheet. Useful for special adjustments or employees with exemptions."
+      },
+      "update-sfs-afp-editable": {
+        "title": "Editable SFS and AFP in Payroll",
+        "body": "SFS and AFP amounts are now editable on the payroll sheet. Allows adjusting social security deductions for special cases."
+      },
+      "update-qb-journal": {
+        "title": "Payroll Journal Entries to QuickBooks",
+        "body": "Journal entries generated from payroll can now be synced directly to QuickBooks Online with a single click."
+      },
+      "update-dgii-fix": {
+        "title": "DGII Reports Fix",
+        "body": "Fixed DGII report breakdown and download. Reports now correctly generate files in the required format."
+      },
+      "update-sfs-rate": {
+        "title": "SFS Rate 3.04% Correction",
+        "body": "Corrected the SFS percentage to the correct value of 3.04% according to current TSS rates."
+      },
+      "update-qb-mapping": {
+        "title": "QuickBooks Account Mapping",
+        "body": "New intelligent mapping between FortexaRH chart of accounts and QuickBooks Online account catalog."
       }
     },
     "faq": {

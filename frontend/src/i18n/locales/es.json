@@ -6101,6 +6101,30 @@
       "update-tech-debt": {
         "title": "Mejoras de estabilidad y rendimiento",
         "body": "Correccion de errores de serializacion, mejora de testabilidad con data-testid en componentes interactivos, internacionalizacion del portal de partner y refactorizacion de componentes grandes."
+      },
+      "update-isr-editable": {
+        "title": "ISR editable en Nómina",
+        "body": "Ahora puedes editar manualmente el monto de ISR por empleado directamente en la hoja de nómina. Útil para ajustes especiales o empleados con exenciones."
+      },
+      "update-sfs-afp-editable": {
+        "title": "SFS y AFP editables en Nómina",
+        "body": "Los montos de SFS y AFP ahora son editables en la hoja de nómina. Permite ajustar las deducciones de seguridad social cuando hay casos especiales."
+      },
+      "update-qb-journal": {
+        "title": "Asientos de Nómina a QuickBooks",
+        "body": "Los asientos de diario generados desde nómina ahora se pueden sincronizar directamente a QuickBooks Online con un solo clic."
+      },
+      "update-dgii-fix": {
+        "title": "Corrección reportes DGII",
+        "body": "Se corrigió el desglose y descarga de reportes DGII. Los reportes ahora generan correctamente los archivos con el formato requerido."
+      },
+      "update-sfs-rate": {
+        "title": "Corrección tasa SFS 3.04%",
+        "body": "Se corrigió el porcentaje del SFS al valor correcto de 3.04% según las tasas vigentes de la TSS."
+      },
+      "update-qb-mapping": {
+        "title": "Mapeo de Cuentas QuickBooks",
+        "body": "Nueva funcionalidad de mapeo inteligente entre las cuentas contables de FortexaRH y el catálogo de cuentas de QuickBooks Online."
       }
     },
     "faq": {
