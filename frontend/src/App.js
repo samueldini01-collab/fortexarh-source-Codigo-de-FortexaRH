@@ -509,7 +509,7 @@ function AppRouter() {
       <Route path="/cdc-audit" element={<Navigate to="/dashboard" replace />} />
       <Route path="/workflows" element={<ProtectedRoute><LazyRoute><WorkflowsPage /></LazyRoute></ProtectedRoute>} />
       <Route path="/contracts" element={<ProtectedRoute><LazyRoute><ContractsPage /></LazyRoute></ProtectedRoute>} />
-      <Route path="/support-admin" element={<ProtectedRoute><LazyRoute><SupportAdminPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/support-admin" element={<Navigate to="/dashboard" replace />} />
       <Route path="/help-center" element={<ProtectedRoute><LazyRoute><HelpCenterPage /></LazyRoute></ProtectedRoute>} />
       
       {/* Partner & Support routes - Lazy loaded */}

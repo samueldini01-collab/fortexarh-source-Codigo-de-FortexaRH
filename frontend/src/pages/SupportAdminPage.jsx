@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import DashboardLayout from "@/components/DashboardLayout";
-import { useAuth } from "@/App";
 import axios from "axios";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -175,9 +174,9 @@ const KPICard = ({ title, value, subtitle, icon: Icon, color = "emerald" }) => (
   </Card>
 );
 
-export default function SupportAdminPage() {
+// Standalone support content for embedding in SuperAdmin
+export function SupportContent() {
   const { t } = useTranslation();
-  const { token } = useAuth();
   const [loading, setLoading] = useState(true);
   const [tickets, setTickets] = useState([]);
   const [stats, setStats] = useState(null);
@@ -202,27 +201,23 @@ export default function SupportAdminPage() {
       if (priorityFilter !== "all") params.append("priority", priorityFilter);
       params.append("limit", "100");
       
-      const response = await axios.get(`${API}/support/tickets?${params.toString()}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await axios.get(`${API}/support/tickets?${params.toString()}`);
       setTickets(response.data.tickets || []);
     } catch (error) {
       console.error("Error fetching tickets:", error);
       toast.error(t('supportAdmin.errorLoadingTickets'));
     }
-  }, [token, statusFilter, priorityFilter]);
+  }, [statusFilter, priorityFilter, t]);
 
   // Fetch stats
   const fetchStats = useCallback(async () => {
     try {
-      const response = await axios.get(`${API}/support/stats`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await axios.get(`${API}/support/stats`);
       setStats(response.data);
     } catch (error) {
       console.error("Error fetching stats:", error);
     }
-  }, [token]);
+  }, []);
 
   // Load data
   useEffect(() => {
@@ -231,15 +226,13 @@ export default function SupportAdminPage() {
       await Promise.all([fetchTickets(), fetchStats()]);
       setLoading(false);
     };
-    
-    if (token) loadData();
-  }, [token, fetchTickets, fetchStats]);
+    loadData();
+  }, [fetchTickets, fetchStats]);
 
   // Update ticket status
   const updateStatus = async (ticketId, newStatus) => {
     try {
       await axios.patch(`${API}/support/tickets/${ticketId}/status?status=${newStatus}`, null, {
-        headers: { Authorization: `Bearer ${token}` }
       });
       toast.success(t('supportAdmin.ticketUpdated', { status: STATUS_CONFIG[newStatus]?.label }));
       fetchTickets();
@@ -258,7 +251,6 @@ export default function SupportAdminPage() {
   const updatePriority = async (ticketId, newPriority) => {
     try {
       await axios.patch(`${API}/support/tickets/${ticketId}/priority?priority=${newPriority}`, null, {
-        headers: { Authorization: `Bearer ${token}` }
       });
       toast.success(t('supportAdmin.priorityUpdated', { priority: PRIORITY_CONFIG[newPriority]?.label }));
       fetchTickets();
@@ -284,8 +276,7 @@ export default function SupportAdminPage() {
       await axios.post(`${API}/support/tickets/${selectedTicket.ticket_id}/respond`, {
         message: responseMessage,
         internal_note: isInternalNote
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
+      
       });
       
       toast.success(isInternalNote ? t('supportAdmin.internalNoteAdded') : t('supportAdmin.responseSent'));
@@ -294,7 +285,6 @@ export default function SupportAdminPage() {
       
       // Refresh ticket detail
       const response = await axios.get(`${API}/support/tickets/${selectedTicket.ticket_id}`, {
-        headers: { Authorization: `Bearer ${token}` }
       });
       setSelectedTicket(response.data);
       fetchTickets();
@@ -309,7 +299,6 @@ export default function SupportAdminPage() {
   const openTicketDetail = async (ticket) => {
     try {
       const response = await axios.get(`${API}/support/tickets/${ticket.ticket_id}`, {
-        headers: { Authorization: `Bearer ${token}` }
       });
       setSelectedTicket(response.data);
       setShowDetailModal(true);
@@ -358,16 +347,14 @@ export default function SupportAdminPage() {
 
   if (loading) {
     return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center h-96">
-          <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
-        </div>
-      </DashboardLayout>
+      <div className="flex items-center justify-center h-96">
+        <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
+      </div>
     );
   }
 
   return (
-    <DashboardLayout>
+    <div>
       <div className="space-y-6" data-testid="support-admin-page">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -775,6 +762,15 @@ export default function SupportAdminPage() {
           </DialogContent>
         </Dialog>
       </div>
+    </div>
+  );
+}
+
+// Default export wraps in DashboardLayout (kept for backwards compat but route removed)
+export default function SupportAdminPage() {
+  return (
+    <DashboardLayout>
+      <SupportContent />
     </DashboardLayout>
   );
 }

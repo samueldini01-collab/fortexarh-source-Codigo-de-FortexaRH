@@ -127,7 +127,6 @@ const DEFAULT_NAVIGATION = [
   { id: "users-management", nameKey: "users", href: "/users-management", icon: UserCog, visible: true, featureKey: "settings" },
   { id: "subscriptions", nameKey: "subscriptions", href: "/subscriptions", icon: CreditCard, visible: true, featureKey: "subscriptions" },
   { id: "payroll-config", nameKey: "payrollConfig", href: "/payroll-config", icon: Settings2, visible: true, featureKey: "employees" },
-  { id: "support-admin", nameKey: "support", href: "/support-admin", icon: HelpCircle, visible: true, featureKey: "settings" },
   { id: "help-center", nameKey: "helpCenter", href: "/help-center", icon: BookOpen, visible: true, featureKey: "settings" },
   { id: "company-config", nameKey: "settings", href: "/company-config", icon: Building2, visible: true, featureKey: "settings" },
 ];
@@ -229,7 +228,6 @@ const getMenuGroups = (t) => [
       { id: "workflows", nameKey: "automation", href: "/workflows", icon: GitBranch, featureKey: "settings" },
       { id: "users-management", nameKey: "users", href: "/users-management", icon: UserCog, featureKey: "settings" },
       { id: "subscriptions", nameKey: "subscriptions", href: "/subscriptions", icon: CreditCard, featureKey: "subscriptions" },
-      { id: "support-admin", nameKey: "support", href: "/support-admin", icon: HelpCircle, featureKey: "settings" },
       { id: "help-center", nameKey: "helpCenter", href: "/help-center", icon: BookOpen, featureKey: "settings" },
       { id: "company-config", nameKey: "settings", href: "/company-config", icon: Building2, featureKey: "settings" },
     ]

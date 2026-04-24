@@ -6,7 +6,7 @@ import {
   CheckCircle, XCircle, Activity, CreditCard, Banknote,
   Gift, ArrowUpDown, Eye, Power, PowerOff, Clock,
   TrendingUp, ChevronDown, RefreshCw, AlertTriangle,
-  Mail, Phone, Settings2, Columns3, ChevronRight, Loader2, Receipt
+  Mail, Phone, Settings2, Columns3, ChevronRight, Loader2, Receipt, Ticket
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
 import { Button } from "../components/ui/button";
@@ -20,6 +20,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Toaster } from "../components/ui/sonner";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
+import { SupportContent } from "./SupportAdminPage";
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api/super-admin";
 
@@ -365,6 +366,9 @@ function SuperAdminDashboard({ token, onLogout }) {
             </TabsTrigger>
             <TabsTrigger value="alerts" className="data-[state=active]:bg-amber-600" data-testid="tab-alerts">
               <AlertTriangle className="w-4 h-4 mr-1.5" /> Alertas {alerts.length > 0 && <Badge className="ml-1 bg-red-500/80 text-white text-[10px] px-1.5 py-0">{alerts.length}</Badge>}
+            </TabsTrigger>
+            <TabsTrigger value="support" className="data-[state=active]:bg-emerald-600" data-testid="tab-support">
+              <Ticket className="w-4 h-4 mr-1.5" /> Soporte
             </TabsTrigger>
           </TabsList>
 
@@ -755,6 +759,11 @@ function SuperAdminDashboard({ token, onLogout }) {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Support Tab */}
+          <TabsContent value="support" className="space-y-4" data-testid="support-tab">
+            <SupportContent />
           </TabsContent>
         </Tabs>
       </main>

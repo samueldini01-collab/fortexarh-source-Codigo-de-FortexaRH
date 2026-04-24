@@ -22,10 +22,11 @@
 - Personalizar Menu uses translated names via t(nav.nameKey)
 - Roles module: Added "contracts" and "workflows" modules with permissions
 - Landing page: 3 new features (Contracts, Workflows, ACH Bank)
-- i18n: Multiple fixes (accounting.payroll.*, companyConfig.integrations.*, payrollV2.*)
 - Contract Templates Auto-seeding: 4 DR system templates seeded on startup (Apr 12)
 - ACH Bank Config UI: New "Bank ACH" tab in /company-config (Apr 14)
-- Delete Paid Payroll: Enabled delete button for paid payrolls with cascade JE deletion + reinforced confirmation (Apr 14)
+- Delete Paid Payroll: Enabled delete for paid payrolls with cascade JE deletion (Apr 14)
+- i18n Audit: Fixed ~75 missing keys across common, employeePortal, templates, trial, users, helpCenter, accounting, companyConfig etc (Apr 24)
+- Support Module moved to Super Admin: /support-admin removed from user nav, SupportContent embedded as tab in SuperAdminPage (Apr 24)
 
 ## IMPORTANT: i18n Sync
 When modifying locale files in src/i18n/locales/, ALWAYS copy to public/locales/ too:
@@ -33,7 +34,12 @@ When modifying locale files in src/i18n/locales/, ALWAYS copy to public/locales/
 cp src/i18n/locales/en.json public/locales/en.json
 cp src/i18n/locales/es.json public/locales/es.json
 ```
-And bump TRANSLATION_VERSION in src/i18n/index.js (currently 2.4.0)
+And bump TRANSLATION_VERSION in src/i18n/index.js (currently 2.6.0)
+
+## Architecture Notes
+- SupportAdminPage.jsx: exports `SupportContent` (standalone) + default export with DashboardLayout
+- SuperAdminPage.jsx: imports `SupportContent` as "Soporte" tab
+- Route /support-admin redirects to /dashboard
 
 ## Backlog
 - P1: Notifications Phase 3 (Digest Email)

@@ -115,7 +115,19 @@
     "submit": "Enviar",
     "selectOption": "Seleccionar una opción",
     "lastUpdated": "Última actualización",
-    "days": "días"
+    "days": "días",
+    "accessDenied": "Acceso denegado",
+    "copied": "Copiado",
+    "dashboard": "Panel",
+    "editAccess": "Acceso de edición",
+    "fillRequired": "Complete los campos requeridos",
+    "fillRequiredFields": "Complete todos los campos obligatorios",
+    "fullAccess": "Acceso completo",
+    "invalidEmail": "Correo electrónico inválido",
+    "other": "Otro",
+    "readOnlyAccess": "Solo lectura",
+    "recruitment": "Reclutamiento",
+    "saving": "Guardando..."
   },
   "colors": {
     "red": "Rojo",
@@ -1013,7 +1025,8 @@
       "errorExportingTss": "Error al exportar TSS",
       "errorLoadingBreakdown": "Error al cargar desglose",
       "baseSalary": "Salario Base",
-      "periodAndJEDeleted": "Nómina y asiento contable eliminados correctamente"
+      "periodAndJEDeleted": "Nómina y asiento contable eliminados correctamente",
+      "tssExported": "Archivo TSS exportado correctamente"
     },
     "todosLosDepartamentos": "Todos los departamentos",
     "noHayPeriodosDe": "No hay períodos de nómina",
@@ -1341,7 +1354,8 @@
       "description2": "Descripción",
       "descriptionPlaceholder": "Ej. Cuota 1/10",
       "amount": "Monto / %",
-      "add": "Agregar"
+      "add": "Agregar",
+      "amountRequired": "El monto es requerido"
     },
     "emergencyContacts": {
       "title": "Contactos de Emergencia",
@@ -1439,7 +1453,9 @@
     "totalDeduccionesLey": "Total Deducciones de Ley",
     "salarioNeto": "Salario Neto Estimado",
     "deduccionesDesc": "Active o desactive las deducciones de ley. Puede usar el calculo automatico o ingresar un monto manual.",
-    "deduccionesDesactivadasWarning": "Algunas deducciones de ley estan desactivadas para este empleado. Asegurese de cumplir con las regulaciones aplicables."
+    "deduccionesDesactivadasWarning": "Algunas deducciones de ley estan desactivadas para este empleado. Asegurese de cumplir con las regulaciones aplicables.",
+    "position": "Cargo",
+    "salary": "Salario"
   },
   "payroll": {
     "title": "Nómina",
@@ -2159,7 +2175,8 @@
       "errorGenerating": "Error al generar reporte",
       "errorExporting": "Error al exportar",
       "noData": "No hay datos para el período seleccionado"
-    }
+    },
+    "period": "Período"
   },
   "loans": {
     "title": "Préstamos a Empleados",
@@ -3029,8 +3046,26 @@
       "manager": "Gerente",
       "managerDesc": "Acceso a módulos asignados con permisos de edición",
       "user": "Usuario",
-      "userDesc": "Acceso de solo lectura a módulos asignados"
-    }
+      "userDesc": "Acceso de solo lectura a módulos asignados",
+      "employee": "Empleado"
+    },
+    "messages": {
+      "confirmDelete": "¿Eliminar este usuario?",
+      "errorCreating": "Error al crear usuario",
+      "errorCreatingRole": "Error al crear rol",
+      "errorDeleting": "Error al eliminar usuario",
+      "errorPassword": "Error al actualizar contraseña",
+      "errorUpdating": "Error al actualizar usuario",
+      "fillRequired": "Complete los campos requeridos",
+      "passwordRequired": "La contraseña es requerida",
+      "passwordUpdated": "Contraseña actualizada",
+      "roleCreated": "Rol creado exitosamente",
+      "roleNameRequired": "El nombre del rol es requerido",
+      "userCreated": "Usuario creado exitosamente",
+      "userDeleted": "Usuario eliminado",
+      "userUpdated": "Usuario actualizado"
+    },
+    "title": "Gestión de Usuarios"
   },
   "roles": {
     "title": "Roles y Permisos",
@@ -3564,6 +3599,22 @@
       "errorClockout": "Error al registrar salida",
       "errorLoadingData": "Error al cargar datos",
       "logout": "Salir"
+    },
+    "password": {
+      "changeBtn": "Cambiar Contraseña",
+      "confirm": "Confirmar Contraseña",
+      "confirmPlaceholder": "Confirme su nueva contraseña",
+      "current": "Contraseña Actual",
+      "currentPlaceholder": "Ingrese su contraseña actual",
+      "error": "Error al cambiar contraseña",
+      "fillAll": "Complete todos los campos",
+      "minLength": "La contraseña debe tener al menos 6 caracteres",
+      "new": "Nueva Contraseña",
+      "newPlaceholder": "Ingrese su nueva contraseña",
+      "noMatch": "Las contraseñas no coinciden",
+      "subtitle": "Actualice su contraseña de acceso al portal",
+      "title": "Cambiar Contraseña",
+      "updated": "Contraseña actualizada correctamente"
     }
   },
   "geoAttendance": {
@@ -4770,7 +4821,13 @@
     "alerts": {
       "title": "Marcaciones Fuera de Zona",
       "subtitle": "Marcaciones que requieren revisión",
-      "outsideAuthorized": "fuera de zona autorizada"
+      "outsideAuthorized": "fuera de zona autorizada",
+      "levels": {
+        "critical": "Crítico",
+        "high": "Alto",
+        "low": "Bajo",
+        "medium": "Medio"
+      }
     },
     "dialogs": {
       "newLocation": {
@@ -5054,7 +5111,13 @@
     "descripcion": "Descripción",
     "marcarComoFavorito": "Marcar como favorito",
     "cancelar": "Cancelar",
-    "guardar": "Guardar"
+    "guardar": "Guardar",
+    "configDeleted": "Configuración eliminada",
+    "configLoaded": "Configuración cargada",
+    "configSaved": "Configuración guardada",
+    "enterReportName": "Ingrese el nombre del reporte",
+    "errorDeletingConfig": "Error al eliminar configuración",
+    "errorSavingConfig": "Error al guardar configuración"
   },
   "subscriptions": {
     "errorLoadingData": "Error al cargar datos de suscripción",
@@ -5244,7 +5307,10 @@
     "noHayTickets": "No hay tickets",
     "abierto": "Abierto",
     "resuelto": "Resuelto",
-    "cerrado": "Cerrado"
+    "cerrado": "Cerrado",
+    "internalNoteAdded": "Nota interna agregada",
+    "responseSent": "Respuesta enviada",
+    "writeMessage": "Escribir mensaje..."
   },
   "recruitment": {
     "errorLoading": "Error al cargar datos",
@@ -5685,6 +5751,23 @@
       "letter": "Carta",
       "certificate": "Certificación",
       "policy": "Política"
+    },
+    "messages": {
+      "confirmDelete": "¿Eliminar esta plantilla?",
+      "documentSignedAndSaved": "Documento firmado y guardado",
+      "errorDeleting": "Error al eliminar plantilla",
+      "errorDuplicating": "Error al duplicar plantilla",
+      "errorGeneratingPdf": "Error al generar PDF",
+      "errorLoading": "Error al cargar plantillas",
+      "errorSaving": "Error al guardar plantilla",
+      "generatingPdf": "Generando PDF...",
+      "pdfDownloaded": "PDF descargado",
+      "pleaseSignDocument": "Por favor firme el documento",
+      "selectEmployee": "Seleccione un empleado",
+      "templateCreated": "Plantilla creada exitosamente",
+      "templateDeleted": "Plantilla eliminada",
+      "templateDuplicated": "Plantilla duplicada",
+      "templateUpdated": "Plantilla actualizada"
     }
   },
   "payrollCalc": {
@@ -6168,6 +6251,19 @@
         "q": "Que son las Horas de Silencio?",
         "a": "Las Horas de Silencio te permiten pausar las notificaciones push y email durante horarios especificos (ej: 10pm a 7am). Las notificaciones in-app siguen acumulandose para que las veas cuando quieras. Puedes configurarlas en Notificaciones > Horarios."
       }
+    }
+  },
+  "trial": {
+    "banner": {
+      "daysLeft": "días restantes de prueba",
+      "lastDay": "Último día de prueba",
+      "upgrade": "Actualizar Plan"
+    },
+    "expired": {
+      "contact": "Contactar Soporte",
+      "selectPlan": "Seleccionar Plan",
+      "subtitle": "Su período de prueba ha expirado. Seleccione un plan para continuar.",
+      "title": "Período de Prueba Expirado"
     }
   }
 }

@@ -115,7 +115,19 @@
     "submit": "Submit",
     "selectOption": "Select an option",
     "lastUpdated": "Last updated",
-    "days": "days"
+    "days": "days",
+    "accessDenied": "Access denied",
+    "copied": "Copied",
+    "dashboard": "Dashboard",
+    "editAccess": "Edit access",
+    "fillRequired": "Fill in required fields",
+    "fillRequiredFields": "Fill in all required fields",
+    "fullAccess": "Full access",
+    "invalidEmail": "Invalid email",
+    "other": "Other",
+    "readOnlyAccess": "Read only",
+    "recruitment": "Recruitment",
+    "saving": "Saving..."
   },
   "colors": {
     "red": "Red",
@@ -1441,7 +1453,9 @@
     "totalDeduccionesLey": "Total Legal Deductions",
     "salarioNeto": "Estimated Net Salary",
     "deduccionesDesc": "Enable or disable legal deductions. You can use automatic calculation or enter a manual amount.",
-    "deduccionesDesactivadasWarning": "Some legal deductions are disabled for this employee. Make sure to comply with applicable regulations."
+    "deduccionesDesactivadasWarning": "Some legal deductions are disabled for this employee. Make sure to comply with applicable regulations.",
+    "position": "Position",
+    "salary": "Salary"
   },
   "payroll": {
     "title": "Payroll",
@@ -2161,7 +2175,8 @@
       "errorGenerating": "Error generating report",
       "errorExporting": "Error exporting",
       "noData": "No data for selected period"
-    }
+    },
+    "period": "Period"
   },
   "loans": {
     "title": "Employee Loans",
@@ -3026,8 +3041,26 @@
       "manager": "Manager",
       "managerDesc": "Access to assigned modules with edit permissions",
       "user": "User",
-      "userDesc": "Read-only access to assigned modules"
-    }
+      "userDesc": "Read-only access to assigned modules",
+      "employee": "Employee"
+    },
+    "messages": {
+      "confirmDelete": "Delete this user?",
+      "errorCreating": "Error creating user",
+      "errorCreatingRole": "Error creating role",
+      "errorDeleting": "Error deleting user",
+      "errorPassword": "Error updating password",
+      "errorUpdating": "Error updating user",
+      "fillRequired": "Fill in required fields",
+      "passwordRequired": "Password is required",
+      "passwordUpdated": "Password updated",
+      "roleCreated": "Role created successfully",
+      "roleNameRequired": "Role name is required",
+      "userCreated": "User created successfully",
+      "userDeleted": "User deleted",
+      "userUpdated": "User updated"
+    },
+    "title": "User Management"
   },
   "roles": {
     "title": "Roles and Permissions",
@@ -3561,6 +3594,22 @@
       "errorClockout": "Error clocking out",
       "errorLoadingData": "Error loading data",
       "logout": "Log out"
+    },
+    "password": {
+      "changeBtn": "Change Password",
+      "confirm": "Confirm Password",
+      "confirmPlaceholder": "Confirm your new password",
+      "current": "Current Password",
+      "currentPlaceholder": "Enter your current password",
+      "error": "Error changing password",
+      "fillAll": "Fill in all fields",
+      "minLength": "Password must be at least 6 characters",
+      "new": "New Password",
+      "newPlaceholder": "Enter your new password",
+      "noMatch": "Passwords do not match",
+      "subtitle": "Update your portal access password",
+      "title": "Change Password",
+      "updated": "Password updated successfully"
     }
   },
   "geoAttendance": {
@@ -4764,7 +4813,13 @@
     "alerts": {
       "title": "Out-of-Zone Check-ins",
       "subtitle": "Check-ins that require review",
-      "outsideAuthorized": "outside authorized zone"
+      "outsideAuthorized": "outside authorized zone",
+      "levels": {
+        "critical": "Critical",
+        "high": "High",
+        "low": "Low",
+        "medium": "Medium"
+      }
     },
     "dialogs": {
       "newLocation": {
@@ -5688,6 +5743,23 @@
       "letter": "Letter",
       "certificate": "Certificate",
       "policy": "Policy"
+    },
+    "messages": {
+      "confirmDelete": "Delete this template?",
+      "documentSignedAndSaved": "Document signed and saved",
+      "errorDeleting": "Error deleting template",
+      "errorDuplicating": "Error duplicating template",
+      "errorGeneratingPdf": "Error generating PDF",
+      "errorLoading": "Error loading templates",
+      "errorSaving": "Error saving template",
+      "generatingPdf": "Generating PDF...",
+      "pdfDownloaded": "PDF downloaded",
+      "pleaseSignDocument": "Please sign the document",
+      "selectEmployee": "Select an employee",
+      "templateCreated": "Template created successfully",
+      "templateDeleted": "Template deleted",
+      "templateDuplicated": "Template duplicated",
+      "templateUpdated": "Template updated"
     }
   },
   "payrollCalc": {
@@ -6171,6 +6243,19 @@
         "q": "What are Quiet Hours?",
         "a": "Quiet Hours let you pause push and email notifications during specific times (e.g., 10pm to 7am). In-app notifications continue to accumulate for you to check when you want. Configure them in Notifications > Schedule."
       }
+    }
+  },
+  "trial": {
+    "banner": {
+      "daysLeft": "trial days remaining",
+      "lastDay": "Last day of trial",
+      "upgrade": "Upgrade Plan"
+    },
+    "expired": {
+      "contact": "Contact Support",
+      "selectPlan": "Select Plan",
+      "subtitle": "Your trial period has expired. Select a plan to continue.",
+      "title": "Trial Period Expired"
     }
   }
 }
