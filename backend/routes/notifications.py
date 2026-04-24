@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 # Configure Resend
 resend.api_key = os.environ.get('RESEND_API_KEY')
-SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'noreply@fortexarh.com')
+SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'noreply@fortexaerp.com')
 
 
 # ==================== MODELS ====================
@@ -104,7 +104,7 @@ async def send_payroll_reminder_email(
                 </div>
                 
                 <div style="text-align: center; margin: 25px 0;">
-                    <a href="https://fortexarh.com/payroll" style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                    <a href="https://fortexaerp.com/payroll" style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: 600;">
                         Ir a Nómina
                     </a>
                 </div>
@@ -192,7 +192,7 @@ async def send_birthday_notification_email(
                 </div>
                 
                 <div style="text-align: center; margin: 25px 0;">
-                    <a href="https://fortexarh.com/employees" style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                    <a href="https://fortexaerp.com/employees" style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: 600;">
                         Ver Empleados
                     </a>
                 </div>

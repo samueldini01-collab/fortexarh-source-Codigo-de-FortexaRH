@@ -38,7 +38,7 @@ export default function TrialExpiredPage() {
             <Button
               variant="outline"
               className="w-full border-slate-600 text-slate-300 hover:bg-slate-700 h-11"
-              onClick={() => window.open("mailto:info@fortexarh.com", "_blank")}
+              onClick={() => window.open("mailto:info@fortexaerp.com", "_blank")}
               data-testid="btn-contact-support"
             >
               <Mail className="w-4 h-4 mr-2" />

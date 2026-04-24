@@ -130,8 +130,8 @@ class TestEmployeePortalPayslips:
         
         print(f"PDF downloaded successfully, size: {len(content)} bytes")
     
-    def test_06_verify_pdf_contains_fortexarh_url(self):
-        """Verify PDF footer contains fortexarh.com URL"""
+    def test_06_verify_pdf_contains_fortexaerp_url(self):
+        """Verify PDF footer contains fortexaerp.com URL"""
         if not hasattr(TestEmployeePortalPayslips, 'payslip_id') or not TestEmployeePortalPayslips.payslip_id:
             pytest.skip("No payslip available to test")
         
@@ -147,8 +147,8 @@ class TestEmployeePortalPayslips:
         content = response.content
         # The URL should be embedded in the PDF
         # Note: PDF text is often encoded, so we check for partial matches
-        url_found = b'fortexarh.com' in content or b'fortexarh' in content
-        print(f"PDF contains fortexarh reference: {url_found}")
+        url_found = b'fortexaerp.com' in content or b'fortexaerp' in content
+        print(f"PDF contains fortexaerp reference: {url_found}")
         # This is informational - the URL might be encoded differently in PDF
         
 

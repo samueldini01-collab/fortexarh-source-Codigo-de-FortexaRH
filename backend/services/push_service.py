@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 VAPID_PUBLIC_KEY = os.environ.get("VAPID_PUBLIC_KEY")
 VAPID_PRIVATE_KEY = os.environ.get("VAPID_PRIVATE_KEY")
-VAPID_CLAIMS_EMAIL = os.environ.get("VAPID_CLAIMS_EMAIL", "mailto:noreply@fortexarh.com")
+VAPID_CLAIMS_EMAIL = os.environ.get("VAPID_CLAIMS_EMAIL", "mailto:noreply@fortexaerp.com")
 
 
 async def send_push_to_user(user_id: str, title: str, body: str, url: str = "/", data: dict = None):

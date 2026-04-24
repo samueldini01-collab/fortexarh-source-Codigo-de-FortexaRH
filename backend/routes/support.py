@@ -15,8 +15,8 @@ router = APIRouter(prefix="/support", tags=["Support"])
 from config import db
 # Resend configuration
 resend.api_key = os.environ.get('RESEND_API_KEY', '')
-SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'noreply@fortexarh.com')
-SUPPORT_EMAIL = os.environ.get('INFO_EMAIL', 'soporte@fortexarh.com')
+SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'noreply@fortexaerp.com')
+SUPPORT_EMAIL = os.environ.get('INFO_EMAIL', 'soporte@fortexaerp.com')
 
 
 
@@ -210,7 +210,7 @@ async def create_support_ticket(ticket: SupportTicketRequest):
                     <div class="footer">
                         <p>FortexaRH - Sistema de RRHH y Nómina</p>
                         <p>Santo Domingo, República Dominicana</p>
-                        <p><a href="https://fortexarh.com" style="color: #10b981;">www.fortexarh.com</a></p>
+                        <p><a href="https://fortexaerp.com" style="color: #10b981;">www.fortexaerp.com</a></p>
                     </div>
                 </div>
             </body>

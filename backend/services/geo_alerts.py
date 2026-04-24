@@ -17,7 +17,7 @@ async def send_email_alert(
     to_emails: List[str],
     subject: str,
     html_content: str,
-    from_email: str = "FortexaRH <alertas@fortexarh.com>"
+    from_email: str = "FortexaRH <alertas@fortexaerp.com>"
 ) -> bool:
     """Send email alert using Resend"""
     if not RESEND_API_KEY:

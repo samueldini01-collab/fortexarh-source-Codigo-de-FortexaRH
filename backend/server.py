@@ -77,8 +77,8 @@ api_router = APIRouter(prefix="/api")
 
 # CORS - Production-ready configuration
 allowed_origins = [
-    "https://fortexarh.com",
-    "https://www.fortexarh.com",
+    "https://fortexaerp.com",
+    "https://www.fortexaerp.com",
     "https://staff-genius-2.emergent.host",
     "https://company-config-debug.preview.emergentagent.com",
     "http://localhost:3000",

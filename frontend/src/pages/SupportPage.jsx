@@ -221,8 +221,8 @@ export default function SupportPage() {
                   <Mail className="w-5 h-5 text-slate-400 mt-0.5" />
                   <div>
                     <p className="text-sm text-slate-500">{t('supportPage.contact.email')}</p>
-                    <a href="mailto:info@fortexarh.com" className="text-emerald-600 hover:underline">
-                      info@fortexarh.com
+                    <a href="mailto:info@fortexaerp.com" className="text-emerald-600 hover:underline">
+                      info@fortexaerp.com
                     </a>
                   </div>
                 </div>
@@ -249,8 +249,8 @@ export default function SupportPage() {
                   <Globe className="w-5 h-5 text-slate-400 mt-0.5" />
                   <div>
                     <p className="text-sm text-slate-500">Web</p>
-                    <a href="https://fortexarh.com" className="text-emerald-600 hover:underline">
-                      www.fortexarh.com
+                    <a href="https://fortexaerp.com" className="text-emerald-600 hover:underline">
+                      www.fortexaerp.com
                     </a>
                   </div>
                 </div>

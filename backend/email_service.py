@@ -10,8 +10,8 @@ from datetime import datetime
 
 # Configure Resend
 resend.api_key = os.environ.get('RESEND_API_KEY')
-SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'noreply@fortexarh.com')
-INFO_EMAIL = os.environ.get('INFO_EMAIL', 'info@fortexarh.com')
+SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'noreply@fortexaerp.com')
+INFO_EMAIL = os.environ.get('INFO_EMAIL', 'info@fortexaerp.com')
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +37,7 @@ def get_email_footer():
         </p>
         <p style="color: #94a3b8; font-size: 11px; margin: 0;">
             Av. Winston Churchill, Santo Domingo, República Dominicana<br>
-            Tel: (809) 685-9898 | Email: info@fortexarh.com
+            Tel: (809) 685-9898 | Email: info@fortexaerp.com
         </p>
     </div>
     """
@@ -111,7 +111,7 @@ async def send_payment_confirmation_email(
                 </p>
                 
                 <div style="text-align: center; margin: 30px 0;">
-                    <a href="https://fortexarh.com/dashboard" style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+                    <a href="https://fortexaerp.com/dashboard" style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
                         Ir al Dashboard
                     </a>
                 </div>
@@ -211,13 +211,13 @@ async def send_welcome_email(
                 </div>
                 
                 <div style="text-align: center; margin: 30px 0;">
-                    <a href="https://fortexarh.com/dashboard" style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+                    <a href="https://fortexaerp.com/dashboard" style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
                         Comenzar Ahora
                     </a>
                 </div>
                 
                 <p style="color: #94a3b8; font-size: 13px; line-height: 1.6; margin-top: 30px;">
-                    ¿Necesitas ayuda? Nuestro equipo de soporte está disponible de Lunes a Viernes, 9AM - 4PM. Contáctanos en info@fortexarh.com o al (809) 685-9898.
+                    ¿Necesitas ayuda? Nuestro equipo de soporte está disponible de Lunes a Viernes, 9AM - 4PM. Contáctanos en info@fortexaerp.com o al (809) 685-9898.
                 </p>
             </div>
             
@@ -345,14 +345,14 @@ async def send_invoice_email(
                 </div>
                 
                 <div style="text-align: center; margin: 30px 0;">
-                    <a href="https://fortexarh.com/subscriptions" style="display: inline-block; background: #f1f5f9; color: #475569; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 500; font-size: 14px;">
+                    <a href="https://fortexaerp.com/subscriptions" style="display: inline-block; background: #f1f5f9; color: #475569; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 500; font-size: 14px;">
                         Ver Historial de Facturas
                     </a>
                 </div>
                 
                 <p style="color: #94a3b8; font-size: 12px; line-height: 1.6; margin-top: 30px; text-align: center;">
                     Esta factura fue generada automáticamente y es válida sin firma ni sello.<br>
-                    Para cualquier consulta, contacte a info@fortexarh.com
+                    Para cualquier consulta, contacte a info@fortexaerp.com
                 </p>
             </div>
             

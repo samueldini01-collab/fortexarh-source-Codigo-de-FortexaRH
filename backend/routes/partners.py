@@ -21,7 +21,7 @@ security = HTTPBearer(auto_error=False)
 
 # Resend configuration
 resend.api_key = os.environ.get('RESEND_API_KEY', '')
-SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'noreply@fortexarh.com')
+SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'noreply@fortexaerp.com')
 
 # Stripe configuration for Connect
 stripe.api_key = os.environ.get('STRIPE_API_KEY', '')
@@ -128,7 +128,7 @@ async def send_client_invitation_email(
                 <div class="footer">
                     <p>FortexaRH - Sistema de RRHH y Nómina</p>
                     <p>Santo Domingo, República Dominicana</p>
-                    <p><a href="https://fortexarh.com">www.fortexarh.com</a></p>
+                    <p><a href="https://fortexaerp.com">www.fortexaerp.com</a></p>
                     <p style="margin-top: 15px; font-size: 11px; color: #9ca3af;">
                         Recibiste este correo porque {firm_name} te invitó a usar FortexaRH.
                     </p>
@@ -252,7 +252,7 @@ async def register_accounting_firm(data: PartnerRegistration):
         "city": data.city,
         "website": data.website,
         "referral_code": referral_code,
-        "referral_link": f"https://fortexarh.com/register?ref={referral_code}",
+        "referral_link": f"https://fortexaerp.com/register?ref={referral_code}",
         "status": "active",
         "subscription_status": "trial",
         "subscription_plan": "partner",
@@ -311,7 +311,7 @@ async def register_accounting_firm(data: PartnerRegistration):
         "partner_id": partner_id,
         "company_id": company_id,
         "referral_code": referral_code,
-        "referral_link": f"https://fortexarh.com/register?ref={referral_code}",
+        "referral_link": f"https://fortexaerp.com/register?ref={referral_code}",
         "trial_days": 14
     }
 
@@ -468,7 +468,7 @@ async def add_partner_client(
     
     client_id = f"client_{secrets.token_hex(8)}"
     invitation_code = secrets.token_hex(16)
-    invitation_link = f"https://fortexarh.com/register?ref={referral_code}&invite={invitation_code}"
+    invitation_link = f"https://fortexaerp.com/register?ref={referral_code}&invite={invitation_code}"
     
     client_data = {
         "client_id": client_id,

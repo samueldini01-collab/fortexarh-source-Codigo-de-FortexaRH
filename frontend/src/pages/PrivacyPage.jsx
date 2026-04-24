@@ -128,7 +128,7 @@ export default function PrivacyPage() {
               <li><strong>{t('privacy.oposicion')}</strong> Oponerse al procesamiento de sus datos</li>
             </ul>
             <p className="text-slate-600 mb-4">
-              Para ejercer estos derechos, envíe un correo a: <strong>privacidad@fortexarh.com</strong>
+              Para ejercer estos derechos, envíe un correo a: <strong>privacidad@fortexaerp.com</strong>
             </p>
 
             <h2 className="text-xl font-semibold text-slate-900 mt-8 mb-4">7. Retención de Datos</h2>

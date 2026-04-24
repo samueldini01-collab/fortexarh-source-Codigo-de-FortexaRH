@@ -1235,7 +1235,7 @@ export default function LandingPage() {
                   {t('landing.faq.contactSupport')}
                 </Button>
               </Link>
-              <a href="mailto:info@fortexarh.com">
+              <a href="mailto:info@fortexaerp.com">
                 <Button size="lg" variant="outline" className="border-white text-white hover:bg-emerald-600">
                   <Mail className="w-5 h-5 mr-2" />
                   {t('common.sendEmail')}
@@ -1281,8 +1281,8 @@ export default function LandingPage() {
                 <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
               </div>
               <h3 className="font-semibold text-slate-900 mb-2 text-sm sm:text-base">{t('landing.contact.email')}</h3>
-              <a href="mailto:info@fortexarh.com" className="text-blue-600 hover:text-blue-700 text-xs sm:text-sm">
-                info@fortexarh.com
+              <a href="mailto:info@fortexaerp.com" className="text-blue-600 hover:text-blue-700 text-xs sm:text-sm">
+                info@fortexaerp.com
               </a>
             </div>
             
@@ -1332,7 +1332,7 @@ export default function LandingPage() {
                   <span className="hidden sm:inline">{t('landing.avGeorgeWashington503')}<br />{t('landing.santoDomingoDistritoNacional')}</span>
                   <span className="sm:hidden">{t('landing.santoDomingoDn')}</span>
                 </p>
-                <p className="flex items-center gap-2"><Mail className="w-3 h-3 sm:w-4 sm:h-4" /> info@fortexarh.com</p>
+                <p className="flex items-center gap-2"><Mail className="w-3 h-3 sm:w-4 sm:h-4" /> info@fortexaerp.com</p>
                 <p className="flex items-center gap-2"><Phone className="w-3 h-3 sm:w-4 sm:h-4" /> (809) 685-9898</p>
               </div>
             </div>

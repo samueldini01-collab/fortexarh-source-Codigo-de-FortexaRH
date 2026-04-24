@@ -450,7 +450,7 @@ async def forgot_password(request: Request, data: PasswordResetRequest):
     )
     
     try:
-        frontend_url = os.environ.get('FRONTEND_URL', 'https://fortexarh.com')
+        frontend_url = os.environ.get('FRONTEND_URL', 'https://fortexaerp.com')
         reset_link = f"{frontend_url}/reset-password?token={reset_token}"
         
         if resend.api_key:
