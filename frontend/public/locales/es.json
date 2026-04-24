@@ -6042,6 +6042,22 @@
       "settings": {
         "title": "Configuracion",
         "desc": "Empresa, seguridad, idioma e integraciones"
+      },
+      "reports": {
+        "title": "Reportes",
+        "desc": "Centro de reportes, DGII, TSS y reportes avanzados"
+      },
+      "calculator": {
+        "title": "Calculadora de Nómina",
+        "desc": "Cálculos de salario, deducciones y retenciones"
+      },
+      "documents": {
+        "title": "Documentos",
+        "desc": "Plantillas, generación de documentos y expedientes"
+      },
+      "accounting": {
+        "title": "Contabilidad",
+        "desc": "Asientos de diario, QuickBooks y pagos"
       }
     },
     "articles": {
@@ -6156,6 +6172,54 @@
       "settings-integrations": {
         "title": "Integraciones disponibles",
         "body": "Conecta con Stripe y PayPal para pagos, QuickBooks para contabilidad, y habilita Google Auth para inicio de sesion social. Las integraciones enterprise (SAP, Oracle) estan disponibles en el plan Enterprise."
+      },
+      "reports-center": {
+        "title": "Centro de Reportes",
+        "body": "Acceda al centro de reportes para generar informes filtrados por período, departamento y más."
+      },
+      "reports-dgii": {
+        "title": "Reportes DGII y TSS",
+        "body": "Genere los formatos IR-3, IR-4, IR-17, IR-6 y archivos TSS requeridos por la DGII."
+      },
+      "reports-advanced": {
+        "title": "Reportes Avanzados",
+        "body": "Utilice gráficos y filtros avanzados para analizar datos de nómina y recursos humanos."
+      },
+      "calc-basic": {
+        "title": "Cálculo Básico de Nómina",
+        "body": "Comprenda cómo se calcula el salario neto a partir del salario bruto, deducciones y bonificaciones."
+      },
+      "calc-deductions": {
+        "title": "Deducciones TSS (SFS, AFP, ISR)",
+        "body": "Las deducciones de SFS (3.04%), AFP (2.87%) e ISR se calculan automáticamente según las tasas vigentes."
+      },
+      "calc-edit": {
+        "title": "Editar ISR y Deducciones",
+        "body": "Puede editar manualmente los montos de ISR, SFS y AFP directamente en la hoja de nómina."
+      },
+      "docs-templates": {
+        "title": "Plantillas de Documentos",
+        "body": "Cree y gestione plantillas personalizables para cartas, certificaciones y contratos."
+      },
+      "docs-generate": {
+        "title": "Generar Documentos",
+        "body": "Genere documentos a partir de plantillas seleccionando el empleado y completando las variables."
+      },
+      "docs-employee": {
+        "title": "Expediente del Empleado",
+        "body": "Acceda y gestione los documentos almacenados en el expediente digital de cada empleado."
+      },
+      "accounting-overview": {
+        "title": "Asientos Contables",
+        "body": "Los asientos de diario se generan automáticamente al aprobar o pagar una nómina."
+      },
+      "accounting-quickbooks": {
+        "title": "Integración QuickBooks",
+        "body": "Sincronice asientos contables con QuickBooks Online y mapee cuentas entre ambos sistemas."
+      },
+      "accounting-payments": {
+        "title": "Pagos y Facturación",
+        "body": "Gestione pagos con Stripe o PayPal para la suscripción de su plan FortexaRH."
       }
     },
     "updates": {

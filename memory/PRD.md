@@ -19,14 +19,20 @@
 - Bank validation on payroll approval
 - CDC & Auditoria hidden from users
 - Sidebar: "Contratos" under Gestion Humana, "Automatizacion" under Administracion
-- Personalizar Menu uses translated names via t(nav.nameKey)
 - Roles module: Added "contracts" and "workflows" modules with permissions
 - Landing page: 3 new features (Contracts, Workflows, ACH Bank)
 - Contract Templates Auto-seeding: 4 DR system templates seeded on startup (Apr 12)
 - ACH Bank Config UI: New "Bank ACH" tab in /company-config (Apr 14)
 - Delete Paid Payroll: Enabled delete for paid payrolls with cascade JE deletion (Apr 14)
-- i18n Audit: Fixed ~75 missing keys across common, employeePortal, templates, trial, users, helpCenter, accounting, companyConfig etc (Apr 24)
-- Support Module moved to Super Admin: /support-admin removed from user nav, SupportContent embedded as tab in SuperAdminPage (Apr 24)
+- i18n Audit: Fixed ~120+ missing keys system-wide (Apr 24)
+- Support Module Refactor (Apr 24):
+  - Removed /support-admin from user navigation (redirects to /dashboard)
+  - SupportContent embedded as "Soporte" tab in Super Admin (/admin)
+  - New "Contactar Soporte" tab in Help Center: ticket creation form (Subject, Category, Priority, Message)
+  - New "Mis Tickets" tab in Help Center: ticket list, detail view with conversation thread, reply functionality
+  - Backend: GET/POST /api/support/my-tickets, GET /api/support/my-tickets/{id}, POST /api/support/my-tickets/{id}/reply
+  - Internal notes from super admin are filtered out from user view
+  - Tested: 15/15 backend + 23/23 frontend (iteration_228.json)
 
 ## IMPORTANT: i18n Sync
 When modifying locale files in src/i18n/locales/, ALWAYS copy to public/locales/ too:
@@ -34,11 +40,12 @@ When modifying locale files in src/i18n/locales/, ALWAYS copy to public/locales/
 cp src/i18n/locales/en.json public/locales/en.json
 cp src/i18n/locales/es.json public/locales/es.json
 ```
-And bump TRANSLATION_VERSION in src/i18n/index.js (currently 2.6.0)
+And bump TRANSLATION_VERSION in src/i18n/index.js (currently 2.8.0)
 
 ## Architecture Notes
 - SupportAdminPage.jsx: exports `SupportContent` (standalone) + default export with DashboardLayout
 - SuperAdminPage.jsx: imports `SupportContent` as "Soporte" tab
+- HelpCenterPage.jsx: 5 tabs (Guides, Updates, FAQ, Contact Support, My Tickets)
 - Route /support-admin redirects to /dashboard
 
 ## Backlog

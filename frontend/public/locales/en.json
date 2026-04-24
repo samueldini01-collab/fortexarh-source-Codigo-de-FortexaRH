@@ -6034,6 +6034,22 @@
       "settings": {
         "title": "Settings",
         "desc": "Company, security, language and integrations"
+      },
+      "reports": {
+        "title": "Reports",
+        "desc": "Reports center, DGII, TSS and advanced reports"
+      },
+      "calculator": {
+        "title": "Payroll Calculator",
+        "desc": "Salary calculations, deductions and withholdings"
+      },
+      "documents": {
+        "title": "Documents",
+        "desc": "Templates, document generation and employee files"
+      },
+      "accounting": {
+        "title": "Accounting",
+        "desc": "Journal entries, QuickBooks and payments"
       }
     },
     "articles": {
@@ -6148,6 +6164,54 @@
       "settings-integrations": {
         "title": "Available integrations",
         "body": "Connect with Stripe and PayPal for payments, QuickBooks for accounting, and enable Google Auth for social login. Enterprise integrations (SAP, Oracle) are available on the Enterprise plan."
+      },
+      "reports-center": {
+        "title": "Reports Center",
+        "body": "Access the reports center to generate filtered reports by period, department and more."
+      },
+      "reports-dgii": {
+        "title": "DGII and TSS Reports",
+        "body": "Generate IR-3, IR-4, IR-17, IR-6 formats and TSS files required by the DGII."
+      },
+      "reports-advanced": {
+        "title": "Advanced Reports",
+        "body": "Use advanced charts and filters to analyze payroll and HR data."
+      },
+      "calc-basic": {
+        "title": "Basic Payroll Calculation",
+        "body": "Understand how net salary is calculated from gross salary, deductions and bonuses."
+      },
+      "calc-deductions": {
+        "title": "TSS Deductions (SFS, AFP, ISR)",
+        "body": "SFS (3.04%), AFP (2.87%) and ISR deductions are automatically calculated per current rates."
+      },
+      "calc-edit": {
+        "title": "Edit ISR and Deductions",
+        "body": "You can manually edit ISR, SFS and AFP amounts directly on the payroll sheet."
+      },
+      "docs-templates": {
+        "title": "Document Templates",
+        "body": "Create and manage customizable templates for letters, certifications and contracts."
+      },
+      "docs-generate": {
+        "title": "Generate Documents",
+        "body": "Generate documents from templates by selecting the employee and filling in variables."
+      },
+      "docs-employee": {
+        "title": "Employee File",
+        "body": "Access and manage documents stored in each employee's digital file."
+      },
+      "accounting-overview": {
+        "title": "Journal Entries",
+        "body": "Journal entries are automatically generated when approving or paying a payroll."
+      },
+      "accounting-quickbooks": {
+        "title": "QuickBooks Integration",
+        "body": "Sync journal entries with QuickBooks Online and map accounts between both systems."
+      },
+      "accounting-payments": {
+        "title": "Payments & Billing",
+        "body": "Manage payments with Stripe or PayPal for your FortexaRH subscription plan."
       }
     },
     "updates": {
