@@ -1,19 +1,32 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Search, BookOpen, Sparkles, HelpCircle, ChevronDown, ChevronRight,
   DollarSign, Calendar, Users, Bell, ClipboardList, Clock, Target,
   FileText, Shield, Settings, Briefcase, BarChart3, Globe, Smartphone,
   Download, Zap, CheckCircle, ArrowRight, ArrowLeft, Calculator, FileSpreadsheet,
-  Building2, CreditCard, Link2,
+  Building2, CreditCard, Link2, HeadphonesIcon, Ticket, Send, MessageSquare,
+  Inbox, Loader2, AlertCircle, CheckCheck, Plus
 } from "lucide-react";
+import { useAuth, API } from "@/App";
+import axios from "axios";
+import { toast } from "sonner";
 
 const MODULES = [
   {
@@ -244,9 +257,88 @@ function FaqItem({ id, t }) {
 export default function HelpCenterPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { getAuthHeaders } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("guides");
   const [expandedModule, setExpandedModule] = useState(null);
+
+  // Support ticket states
+  const [myTickets, setMyTickets] = useState([]);
+  const [ticketsLoading, setTicketsLoading] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState(null);
+  const [replyMessage, setReplyMessage] = useState("");
+  const [sendingReply, setSendingReply] = useState(false);
+  const [showNewTicket, setShowNewTicket] = useState(false);
+  const [newTicket, setNewTicket] = useState({ subject: "", message: "", category: "general", priority: "medium" });
+  const [creatingTicket, setCreatingTicket] = useState(false);
+
+  // Fetch user tickets
+  const fetchMyTickets = useCallback(async () => {
+    setTicketsLoading(true);
+    try {
+      const res = await axios.get(`${API}/support/my-tickets`, { headers: getAuthHeaders(), withCredentials: true });
+      setMyTickets(res.data.tickets || []);
+    } catch { /* silently */ }
+    finally { setTicketsLoading(false); }
+  }, [getAuthHeaders]);
+
+  useEffect(() => {
+    if (activeTab === "my-tickets") fetchMyTickets();
+  }, [activeTab, fetchMyTickets]);
+
+  const handleCreateTicket = async () => {
+    if (!newTicket.subject.trim() || !newTicket.message.trim()) {
+      toast.error(t("helpCenter.support.fillRequired"));
+      return;
+    }
+    setCreatingTicket(true);
+    try {
+      const res = await axios.post(`${API}/support/my-tickets`, newTicket, { headers: getAuthHeaders(), withCredentials: true });
+      toast.success(t("helpCenter.support.ticketCreated", { id: res.data.ticket_id }));
+      setNewTicket({ subject: "", message: "", category: "general", priority: "medium" });
+      setShowNewTicket(false);
+      setActiveTab("my-tickets");
+      fetchMyTickets();
+    } catch (e) {
+      toast.error(e.response?.data?.detail || t("helpCenter.support.errorCreating"));
+    } finally { setCreatingTicket(false); }
+  };
+
+  const handleReply = async () => {
+    if (!replyMessage.trim()) return;
+    setSendingReply(true);
+    try {
+      await axios.post(`${API}/support/my-tickets/${selectedTicket.ticket_id}/reply`, { message: replyMessage }, { headers: getAuthHeaders(), withCredentials: true });
+      toast.success(t("helpCenter.support.replySent"));
+      setReplyMessage("");
+      // Refresh ticket detail
+      const res = await axios.get(`${API}/support/my-tickets/${selectedTicket.ticket_id}`, { headers: getAuthHeaders(), withCredentials: true });
+      setSelectedTicket(res.data);
+      fetchMyTickets();
+    } catch (e) {
+      toast.error(e.response?.data?.detail || t("helpCenter.support.errorReplying"));
+    } finally { setSendingReply(false); }
+  };
+
+  const openTicketDetail = async (ticket) => {
+    try {
+      const res = await axios.get(`${API}/support/my-tickets/${ticket.ticket_id}`, { headers: getAuthHeaders(), withCredentials: true });
+      setSelectedTicket(res.data);
+    } catch {
+      setSelectedTicket(ticket);
+    }
+  };
+
+  const ticketStatusBadge = (status) => {
+    const configs = {
+      open: { label: t("helpCenter.support.statusOpen"), cls: "bg-blue-100 text-blue-700 border-blue-200" },
+      in_progress: { label: t("helpCenter.support.statusInProgress"), cls: "bg-amber-100 text-amber-700 border-amber-200" },
+      resolved: { label: t("helpCenter.support.statusResolved"), cls: "bg-emerald-100 text-emerald-700 border-emerald-200" },
+      closed: { label: t("helpCenter.support.statusClosed"), cls: "bg-slate-100 text-slate-600 border-slate-200" },
+    };
+    const c = configs[status] || configs.open;
+    return <Badge variant="outline" className={c.cls}>{c.label}</Badge>;
+  };
 
   const filteredModules = useMemo(() => {
     if (!searchQuery.trim()) return MODULES;
@@ -346,6 +438,17 @@ export default function HelpCenterPage() {
           <TabsTrigger value="faq" className="gap-1.5" data-testid="help-tab-faq">
             <HelpCircle className="w-4 h-4" />
             <span className="hidden sm:inline">{t("helpCenter.tabs.faq")}</span>
+          </TabsTrigger>
+          <TabsTrigger value="contact" className="gap-1.5" data-testid="help-tab-contact">
+            <HeadphonesIcon className="w-4 h-4" />
+            <span className="hidden sm:inline">{t("helpCenter.tabs.contact")}</span>
+          </TabsTrigger>
+          <TabsTrigger value="my-tickets" className="gap-1.5" data-testid="help-tab-my-tickets">
+            <Ticket className="w-4 h-4" />
+            <span className="hidden sm:inline">{t("helpCenter.tabs.myTickets")}</span>
+            {myTickets.filter(t => t.status === "open" || t.status === "in_progress").length > 0 && (
+              <Badge className="ml-1 bg-blue-500 text-white text-[10px] px-1.5 py-0 h-4">{myTickets.filter(t => t.status === "open" || t.status === "in_progress").length}</Badge>
+            )}
           </TabsTrigger>
         </TabsList>
 
@@ -462,6 +565,225 @@ export default function HelpCenterPage() {
               {filteredFaqs.map((id) => (
                 <FaqItem key={id} id={id} t={t} />
               ))}
+            </div>
+          )}
+        </TabsContent>
+
+        {/* ===================== CONTACT SUPPORT ===================== */}
+        <TabsContent value="contact" className="mt-6">
+          <div className="max-w-2xl mx-auto">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <HeadphonesIcon className="w-5 h-5 text-emerald-600" />
+                  {t("helpCenter.support.contactTitle")}
+                </CardTitle>
+                <CardDescription>{t("helpCenter.support.contactDesc")}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>{t("helpCenter.support.subject")}</Label>
+                  <Input
+                    data-testid="support-subject"
+                    placeholder={t("helpCenter.support.subjectPlaceholder")}
+                    value={newTicket.subject}
+                    onChange={(e) => setNewTicket({ ...newTicket, subject: e.target.value })}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>{t("helpCenter.support.category")}</Label>
+                    <Select value={newTicket.category} onValueChange={(v) => setNewTicket({ ...newTicket, category: v })}>
+                      <SelectTrigger data-testid="support-category">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="general">{t("helpCenter.support.catGeneral")}</SelectItem>
+                        <SelectItem value="technical">{t("helpCenter.support.catTechnical")}</SelectItem>
+                        <SelectItem value="bug">{t("helpCenter.support.catBug")}</SelectItem>
+                        <SelectItem value="billing">{t("helpCenter.support.catBilling")}</SelectItem>
+                        <SelectItem value="account">{t("helpCenter.support.catAccount")}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{t("helpCenter.support.priority")}</Label>
+                    <Select value={newTicket.priority} onValueChange={(v) => setNewTicket({ ...newTicket, priority: v })}>
+                      <SelectTrigger data-testid="support-priority">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="low">{t("helpCenter.support.prioLow")}</SelectItem>
+                        <SelectItem value="medium">{t("helpCenter.support.prioMedium")}</SelectItem>
+                        <SelectItem value="high">{t("helpCenter.support.prioHigh")}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>{t("helpCenter.support.message")}</Label>
+                  <Textarea
+                    data-testid="support-message"
+                    placeholder={t("helpCenter.support.messagePlaceholder")}
+                    value={newTicket.message}
+                    onChange={(e) => setNewTicket({ ...newTicket, message: e.target.value })}
+                    rows={5}
+                  />
+                </div>
+                <Button
+                  data-testid="support-send-btn"
+                  onClick={handleCreateTicket}
+                  disabled={creatingTicket || !newTicket.subject.trim() || !newTicket.message.trim()}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700"
+                >
+                  {creatingTicket ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
+                  {t("helpCenter.support.sendTicket")}
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* ===================== MY TICKETS ===================== */}
+        <TabsContent value="my-tickets" className="mt-6">
+          {ticketsLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+            </div>
+          ) : selectedTicket ? (
+            /* Ticket Detail View */
+            <div className="max-w-3xl mx-auto space-y-4">
+              <Button variant="ghost" size="sm" onClick={() => setSelectedTicket(null)} data-testid="back-to-tickets">
+                <ArrowLeft className="w-4 h-4 mr-1" /> {t("helpCenter.support.backToTickets")}
+              </Button>
+
+              <Card>
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <CardTitle className="text-lg">{selectedTicket.subject}</CardTitle>
+                      <CardDescription className="mt-1">
+                        #{selectedTicket.ticket_id} &middot; {new Date(selectedTicket.created_at).toLocaleDateString("es-DO", { day: "numeric", month: "long", year: "numeric" })}
+                      </CardDescription>
+                    </div>
+                    {ticketStatusBadge(selectedTicket.status)}
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Original message */}
+                  <div className="bg-slate-50 rounded-lg p-4 border" data-testid="ticket-original-msg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center">
+                        <MessageSquare className="w-3.5 h-3.5 text-blue-600" />
+                      </div>
+                      <span className="text-sm font-medium">{t("helpCenter.support.you")}</span>
+                      <span className="text-xs text-slate-400">{new Date(selectedTicket.created_at).toLocaleString("es-DO")}</span>
+                    </div>
+                    <p className="text-sm text-slate-700 whitespace-pre-wrap">{selectedTicket.message}</p>
+                  </div>
+
+                  {/* Responses thread */}
+                  {(selectedTicket.responses || []).map((resp, idx) => (
+                    <div
+                      key={idx}
+                      className={`rounded-lg p-4 border ${resp.created_by === "customer" ? "bg-blue-50 border-blue-200" : "bg-emerald-50 border-emerald-200"}`}
+                      data-testid={`ticket-response-${idx}`}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className={`w-7 h-7 rounded-full flex items-center justify-center ${resp.created_by === "customer" ? "bg-blue-100" : "bg-emerald-100"}`}>
+                          {resp.created_by === "customer"
+                            ? <MessageSquare className="w-3.5 h-3.5 text-blue-600" />
+                            : <HeadphonesIcon className="w-3.5 h-3.5 text-emerald-600" />
+                          }
+                        </div>
+                        <span className="text-sm font-medium">
+                          {resp.created_by === "customer" ? t("helpCenter.support.you") : t("helpCenter.support.supportTeam")}
+                        </span>
+                        <span className="text-xs text-slate-400">{new Date(resp.created_at).toLocaleString("es-DO")}</span>
+                      </div>
+                      <p className="text-sm text-slate-700 whitespace-pre-wrap">{resp.message}</p>
+                    </div>
+                  ))}
+
+                  {/* Reply form */}
+                  {selectedTicket.status !== "closed" && (
+                    <div className="border-t pt-4 space-y-3">
+                      <Textarea
+                        data-testid="ticket-reply-input"
+                        placeholder={t("helpCenter.support.replyPlaceholder")}
+                        value={replyMessage}
+                        onChange={(e) => setReplyMessage(e.target.value)}
+                        rows={3}
+                      />
+                      <div className="flex justify-end">
+                        <Button
+                          data-testid="ticket-reply-btn"
+                          onClick={handleReply}
+                          disabled={sendingReply || !replyMessage.trim()}
+                          size="sm"
+                        >
+                          {sendingReply ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Send className="w-4 h-4 mr-1" />}
+                          {t("helpCenter.support.reply")}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            /* Tickets List */
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-slate-500">{t("helpCenter.support.totalTickets", { count: myTickets.length })}</p>
+                <Button size="sm" onClick={() => setActiveTab("contact")} data-testid="btn-new-ticket">
+                  <Plus className="w-4 h-4 mr-1" /> {t("helpCenter.support.newTicket")}
+                </Button>
+              </div>
+
+              {myTickets.length === 0 ? (
+                <div className="text-center py-12">
+                  <Inbox className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                  <p className="text-slate-500 font-medium">{t("helpCenter.support.noTickets")}</p>
+                  <p className="text-slate-400 text-sm mt-1">{t("helpCenter.support.noTicketsDesc")}</p>
+                  <Button className="mt-4" onClick={() => setActiveTab("contact")} data-testid="btn-create-first-ticket">
+                    <HeadphonesIcon className="w-4 h-4 mr-2" /> {t("helpCenter.support.createFirst")}
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {myTickets.map((ticket) => (
+                    <Card
+                      key={ticket.ticket_id}
+                      className="cursor-pointer hover:shadow-md transition-shadow"
+                      onClick={() => openTicketDetail(ticket)}
+                      data-testid={`my-ticket-${ticket.ticket_id}`}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="text-sm font-semibold truncate">{ticket.subject}</h4>
+                              {ticketStatusBadge(ticket.status)}
+                            </div>
+                            <p className="text-xs text-slate-500 line-clamp-1">{ticket.message}</p>
+                            <div className="flex items-center gap-3 mt-2 text-xs text-slate-400">
+                              <span>#{ticket.ticket_id}</span>
+                              <span>{new Date(ticket.created_at).toLocaleDateString("es-DO", { day: "numeric", month: "short" })}</span>
+                              {(ticket.responses || []).length > 0 && (
+                                <span className="flex items-center gap-1">
+                                  <MessageSquare className="w-3 h-3" /> {ticket.responses.length}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-400 shrink-0 mt-1" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </TabsContent>

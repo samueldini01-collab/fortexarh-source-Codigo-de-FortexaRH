@@ -335,7 +335,7 @@ async def add_ticket_response(ticket_id: str, response: TicketResponseCreate):
     }
     
     # Update ticket with new response
-    result = await db.support_tickets.update_one(
+    await db.support_tickets.update_one(
         {"ticket_id": ticket_id},
         {
             "$push": {"responses": response_data},
@@ -523,3 +523,135 @@ async def get_support_stats():
         "priority_labels": PRIORITY_LABELS,
         "category_labels": CATEGORY_LABELS
     }
+
+
+
+# ===================== AUTHENTICATED USER ENDPOINTS =====================
+from utils.auth import get_current_user
+from fastapi import Depends
+
+
+class UserTicketCreate(BaseModel):
+    category: str = "general"
+    priority: str = "medium"
+    subject: str
+    message: str
+
+
+class UserTicketReply(BaseModel):
+    message: str
+
+
+@router.post("/my-tickets")
+async def create_user_ticket(data: UserTicketCreate, current_user: dict = Depends(get_current_user)):
+    """Create a support ticket from an authenticated user"""
+    company = await db.companies.find_one(
+        {"company_id": current_user.get("company_id")},
+        {"_id": 0, "company_name": 1, "name": 1}
+    )
+    company_name = (company or {}).get("company_name", (company or {}).get("name", ""))
+
+    ticket_id = f"TKT-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
+    ticket_data = {
+        "ticket_id": ticket_id,
+        "user_id": current_user.get("user_id"),
+        "company_id": current_user.get("company_id"),
+        "name": current_user.get("name", current_user.get("email", "")),
+        "email": current_user.get("email", ""),
+        "company": company_name,
+        "phone": "",
+        "category": data.category,
+        "category_label": CATEGORY_LABELS.get(data.category, data.category),
+        "priority": data.priority,
+        "priority_label": PRIORITY_LABELS.get(data.priority, data.priority),
+        "subject": data.subject,
+        "message": data.message,
+        "status": "open",
+        "created_at": datetime.now(timezone.utc),
+        "updated_at": datetime.now(timezone.utc),
+        "responses": []
+    }
+
+    await db.support_tickets.insert_one(ticket_data)
+    return {"success": True, "ticket_id": ticket_id}
+
+
+@router.get("/my-tickets")
+async def get_user_tickets(current_user: dict = Depends(get_current_user)):
+    """Get tickets created by the authenticated user"""
+    user_id = current_user.get("user_id")
+    email = current_user.get("email", "")
+
+    tickets = await db.support_tickets.find(
+        {"$or": [{"user_id": user_id}, {"email": email}]},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(50)
+
+    # Filter out internal notes from responses
+    for ticket in tickets:
+        if "responses" in ticket:
+            ticket["responses"] = [
+                r for r in ticket["responses"] if not r.get("internal_note")
+            ]
+
+    return {"tickets": tickets}
+
+
+@router.get("/my-tickets/{ticket_id}")
+async def get_user_ticket_detail(ticket_id: str, current_user: dict = Depends(get_current_user)):
+    """Get a specific ticket for the authenticated user"""
+    user_id = current_user.get("user_id")
+    email = current_user.get("email", "")
+
+    ticket = await db.support_tickets.find_one(
+        {"ticket_id": ticket_id, "$or": [{"user_id": user_id}, {"email": email}]},
+        {"_id": 0}
+    )
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Ticket no encontrado")
+
+    # Filter out internal notes
+    if "responses" in ticket:
+        ticket["responses"] = [
+            r for r in ticket["responses"] if not r.get("internal_note")
+        ]
+
+    return ticket
+
+
+@router.post("/my-tickets/{ticket_id}/reply")
+async def reply_to_user_ticket(ticket_id: str, data: UserTicketReply, current_user: dict = Depends(get_current_user)):
+    """User replies to their own ticket"""
+    user_id = current_user.get("user_id")
+    email = current_user.get("email", "")
+
+    ticket = await db.support_tickets.find_one(
+        {"ticket_id": ticket_id, "$or": [{"user_id": user_id}, {"email": email}]}
+    )
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Ticket no encontrado")
+
+    if ticket.get("status") in ["closed"]:
+        raise HTTPException(status_code=400, detail="No se puede responder a un ticket cerrado")
+
+    response_data = {
+        "response_id": f"RSP-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
+        "message": data.message,
+        "internal_note": False,
+        "created_by": "customer",
+        "created_by_name": current_user.get("name", email),
+        "created_at": datetime.now(timezone.utc)
+    }
+
+    await db.support_tickets.update_one(
+        {"ticket_id": ticket_id},
+        {
+            "$push": {"responses": response_data},
+            "$set": {
+                "updated_at": datetime.now(timezone.utc),
+                "status": "open" if ticket.get("status") == "resolved" else ticket.get("status")
+            }
+        }
+    )
+
+    return {"success": True, "message": "Respuesta enviada"}

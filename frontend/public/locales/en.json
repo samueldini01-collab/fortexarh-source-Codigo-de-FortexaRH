@@ -5993,7 +5993,9 @@
     "tabs": {
       "guides": "Guides",
       "updates": "Updates",
-      "faq": "FAQ"
+      "faq": "FAQ",
+      "contact": "Contact Support",
+      "myTickets": "My Tickets"
     },
     "badge": {
       "feature": "New feature",
@@ -6243,6 +6245,44 @@
         "q": "What are Quiet Hours?",
         "a": "Quiet Hours let you pause push and email notifications during specific times (e.g., 10pm to 7am). In-app notifications continue to accumulate for you to check when you want. Configure them in Notifications > Schedule."
       }
+    },
+    "support": {
+      "contactTitle": "Contact Support",
+      "contactDesc": "Submit a ticket and our team will respond as soon as possible.",
+      "subject": "Subject",
+      "subjectPlaceholder": "How can we help you?",
+      "category": "Category",
+      "priority": "Priority",
+      "message": "Message",
+      "messagePlaceholder": "Describe your query or issue in as much detail as possible...",
+      "catGeneral": "General Inquiry",
+      "catTechnical": "Technical Support",
+      "catBug": "Report Bug",
+      "catBilling": "Billing",
+      "catAccount": "My Account",
+      "prioLow": "Low",
+      "prioMedium": "Medium",
+      "prioHigh": "High",
+      "sendTicket": "Submit Ticket",
+      "fillRequired": "Fill in subject and message",
+      "ticketCreated": "Ticket {{id}} created successfully",
+      "errorCreating": "Error creating ticket",
+      "backToTickets": "Back to my tickets",
+      "you": "You",
+      "supportTeam": "Support Team",
+      "replyPlaceholder": "Write your reply...",
+      "reply": "Reply",
+      "replySent": "Reply sent",
+      "errorReplying": "Error sending reply",
+      "totalTickets": "{{count}} ticket(s)",
+      "newTicket": "New Ticket",
+      "noTickets": "No support tickets",
+      "noTicketsDesc": "When you need help, create a ticket and we'll respond.",
+      "createFirst": "Create Support Ticket",
+      "statusOpen": "Open",
+      "statusInProgress": "In Progress",
+      "statusResolved": "Resolved",
+      "statusClosed": "Closed"
     }
   },
   "trial": {

@@ -6001,7 +6001,9 @@
     "tabs": {
       "guides": "Guias",
       "updates": "Novedades",
-      "faq": "FAQ"
+      "faq": "FAQ",
+      "contact": "Contactar Soporte",
+      "myTickets": "Mis Tickets"
     },
     "badge": {
       "feature": "Nueva funcion",
@@ -6251,6 +6253,44 @@
         "q": "Que son las Horas de Silencio?",
         "a": "Las Horas de Silencio te permiten pausar las notificaciones push y email durante horarios especificos (ej: 10pm a 7am). Las notificaciones in-app siguen acumulandose para que las veas cuando quieras. Puedes configurarlas en Notificaciones > Horarios."
       }
+    },
+    "support": {
+      "contactTitle": "Contactar Soporte",
+      "contactDesc": "Envíe un ticket y nuestro equipo le responderá lo antes posible.",
+      "subject": "Asunto",
+      "subjectPlaceholder": "¿En qué podemos ayudarle?",
+      "category": "Categoría",
+      "priority": "Prioridad",
+      "message": "Mensaje",
+      "messagePlaceholder": "Describa su consulta o problema con el mayor detalle posible...",
+      "catGeneral": "Consulta General",
+      "catTechnical": "Soporte Técnico",
+      "catBug": "Reportar Error",
+      "catBilling": "Facturación",
+      "catAccount": "Mi Cuenta",
+      "prioLow": "Baja",
+      "prioMedium": "Media",
+      "prioHigh": "Alta",
+      "sendTicket": "Enviar Ticket",
+      "fillRequired": "Complete el asunto y el mensaje",
+      "ticketCreated": "Ticket {{id}} creado exitosamente",
+      "errorCreating": "Error al crear el ticket",
+      "backToTickets": "Volver a mis tickets",
+      "you": "Tú",
+      "supportTeam": "Equipo de Soporte",
+      "replyPlaceholder": "Escribe tu respuesta...",
+      "reply": "Responder",
+      "replySent": "Respuesta enviada",
+      "errorReplying": "Error al enviar respuesta",
+      "totalTickets": "{{count}} ticket(s)",
+      "newTicket": "Nuevo Ticket",
+      "noTickets": "No tiene tickets de soporte",
+      "noTicketsDesc": "Cuando necesite ayuda, cree un ticket y le responderemos.",
+      "createFirst": "Crear Ticket de Soporte",
+      "statusOpen": "Abierto",
+      "statusInProgress": "En Progreso",
+      "statusResolved": "Resuelto",
+      "statusClosed": "Cerrado"
     }
   },
   "trial": {
