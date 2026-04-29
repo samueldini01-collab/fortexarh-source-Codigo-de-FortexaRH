@@ -2300,15 +2300,26 @@ export default function PayrollPage() {
                 ) : (
                   <div className="space-y-2">
                     {deductionsForm.additional_deductions.map((ded, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-2 bg-slate-50 rounded-lg border">
-                        <div>
+                      <div key={idx} className="flex items-center justify-between p-2 bg-slate-50 rounded-lg border gap-2">
+                        <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium">{ded.type}</p>
                           {ded.description && <p className="text-xs text-slate-500">{ded.description}</p>}
                         </div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-sm">{ded.is_percentage ? `${ded.amount}%` : formatNumber(ded.amount)}</span>
-                          <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => removePayrollDeduction(idx)}>
-                            <X className="w-3 h-3" />
+                        <div className="flex items-center gap-1">
+                          <Input
+                            type="number"
+                            step="0.01"
+                            value={ded.amount}
+                            onChange={(e) => {
+                              const updated = [...deductionsForm.additional_deductions];
+                              updated[idx] = { ...updated[idx], amount: parseFloat(e.target.value) || 0 };
+                              setDeductionsForm({ ...deductionsForm, additional_deductions: updated });
+                            }}
+                            className="w-28 text-right font-mono text-sm h-8"
+                            data-testid={`ded-amount-${idx}`}
+                          />
+                          <Button type="button" variant="ghost" size="icon" className="h-7 w-7 text-red-500 shrink-0" onClick={() => removePayrollDeduction(idx)}>
+                            <X className="w-3.5 h-3.5" />
                           </Button>
                         </div>
                       </div>
