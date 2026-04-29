@@ -100,12 +100,16 @@ export default function EmployeesPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Build clean data, removing internal fields
+      const { employee_id, company_id, created_at, updated_at, created_by, ...cleanData } = formData;
       const data = {
-        ...formData,
-        salary: parseFloat(formData.salary) || 0,
-        sfs_manual_amount: parseFloat(formData.sfs_manual_amount) || 0,
-        afp_manual_amount: parseFloat(formData.afp_manual_amount) || 0,
-        isr_manual_amount: parseFloat(formData.isr_manual_amount) || 0,
+        ...cleanData,
+        salary: parseFloat(cleanData.salary) || 0,
+        sfs_manual_amount: parseFloat(cleanData.sfs_manual_amount) || 0,
+        afp_manual_amount: parseFloat(cleanData.afp_manual_amount) || 0,
+        isr_manual_amount: parseFloat(cleanData.isr_manual_amount) || 0,
+        weight: cleanData.weight ? parseFloat(cleanData.weight) : null,
+        height: cleanData.height ? parseFloat(cleanData.height) : null,
       };
 
       if (editingEmployee) {
@@ -126,7 +130,11 @@ export default function EmployeesPage() {
       resetForm();
       fetchEmployees();
     } catch (error) {
-      toast.error(error.response?.data?.detail || t('employees.errorSaving'));
+      const detail = error.response?.data?.detail;
+      const msg = typeof detail === 'string' ? detail : 
+                  Array.isArray(detail) ? detail.map(d => d.msg || d).join(', ') :
+                  t('employees.errorSaving');
+      toast.error(msg);
     }
   };
 
@@ -155,9 +163,14 @@ export default function EmployeesPage() {
 
   const openEditDialog = (employee) => {
     setEditingEmployee(employee);
+    // Sanitize null values to empty strings to prevent uncontrolled input warnings
+    const sanitized = {};
+    for (const [key, value] of Object.entries(employee)) {
+      sanitized[key] = value === null || value === undefined ? "" : value;
+    }
     setFormData({
       ...initialFormData,
-      ...employee,
+      ...sanitized,
       additional_deductions: employee.additional_deductions || [],
       emergency_contacts: employee.emergency_contacts || []
     });
