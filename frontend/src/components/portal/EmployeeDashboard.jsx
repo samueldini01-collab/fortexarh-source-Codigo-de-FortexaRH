@@ -18,7 +18,8 @@ import {
   Clock, Download, Eye, EyeOff, Send, Loader2, Lock, ChevronRight,
   Target, ClipboardList, PlayCircle, StopCircle, History, Star,
   FileCheck, RefreshCw, Bell, BellOff, Trash2, X, Megaphone,
-  CheckCircle, Info, AlertTriangle, XCircle, ChevronLeft
+  CheckCircle, Info, AlertTriangle, XCircle, ChevronLeft,
+  FileSignature, Shield, Plus, Briefcase
 } from "lucide-react";
 import { toast } from "sonner";
 import { useEmployeeAuth } from "./EmployeeAuthContext";
@@ -66,6 +67,14 @@ function EmployeeDashboard() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [announcements, setAnnouncements] = useState([]);
 
+  // Documents, Contracts, Permissions states
+  const [myContracts, setMyContracts] = useState([]);
+  const [myPermissions, setMyPermissions] = useState([]);
+  const [showPermissionRequest, setShowPermissionRequest] = useState(false);
+  const [permissionForm, setPermissionForm] = useState({ permission_type: "personal", start_date: "", end_date: "", reason: "", notes: "" });
+  const [submittingPermission, setSubmittingPermission] = useState(false);
+  const [downloadingDoc, setDownloadingDoc] = useState(null);
+
   // Tab navigation with swipe support
   const tabs = useMemo(() => [
     { id: "home", label: t('employeePortal.tabs.home'), icon: Home },
@@ -75,6 +84,9 @@ function EmployeeDashboard() {
     { id: "leaves", label: t('employeePortal.tabs.leaves'), icon: ClipboardList },
     { id: "evaluations", label: t('employeePortal.tabs.evaluations'), icon: Target },
     { id: "loans", label: t('employeePortal.tabs.loans'), icon: Wallet },
+    { id: "documents", label: t('employeePortal.tabs.documents'), icon: FileSignature },
+    { id: "contracts", label: t('employeePortal.tabs.contracts'), icon: FileCheck },
+    { id: "permissions", label: t('employeePortal.tabs.permissions'), icon: Shield },
     { id: "notifications", label: t('employeePortal.tabs.notifications'), icon: Bell },
     { id: "profile", label: t('employeePortal.tabs.profile'), icon: User }
   ], [t]);
@@ -109,7 +121,7 @@ function EmployeeDashboard() {
   const fetchDashboard = useCallback(async () => {
     setLoading(true);
     try {
-      const [dashRes, payRes, loanRes, vacRes, balRes, profRes, evalRes, leaveRes, attRes, notifRes, announceRes] = await Promise.all([
+      const [dashRes, payRes, loanRes, vacRes, balRes, profRes, evalRes, leaveRes, attRes, notifRes, announceRes, contractsRes, permsRes] = await Promise.all([
         axios.get(`${API}/employee-portal/dashboard`, { headers: getAuthHeaders() }),
         axios.get(`${API}/employee-portal/payslips`, { headers: getAuthHeaders() }),
         axios.get(`${API}/employee-portal/loans`, { headers: getAuthHeaders() }),
@@ -120,7 +132,9 @@ function EmployeeDashboard() {
         axios.get(`${API}/employee-portal/leaves`, { headers: getAuthHeaders() }).catch(() => ({ data: { leaves: [], summary: {}, leave_types: {} } })),
         axios.get(`${API}/employee-portal/attendance/today`, { headers: getAuthHeaders() }).catch(() => ({ data: null })),
         axios.get(`${API}/employee-portal/notifications`, { headers: getAuthHeaders() }).catch(() => ({ data: { notifications: [], unread_count: 0 } })),
-        axios.get(`${API}/employee-portal/announcements`, { headers: getAuthHeaders() }).catch(() => ({ data: { announcements: [] } }))
+        axios.get(`${API}/employee-portal/announcements`, { headers: getAuthHeaders() }).catch(() => ({ data: { announcements: [] } })),
+        axios.get(`${API}/employee-portal/contracts`, { headers: getAuthHeaders() }).catch(() => ({ data: { contracts: [] } })),
+        axios.get(`${API}/employee-portal/permissions`, { headers: getAuthHeaders() }).catch(() => ({ data: { permissions: [] } }))
       ]);
       setDashboardData(dashRes.data);
       setPayslips(payRes.data);
@@ -134,6 +148,8 @@ function EmployeeDashboard() {
       setNotifications(notifRes.data.notifications || []);
       setUnreadCount(notifRes.data.unread_count || 0);
       setAnnouncements(announceRes.data.announcements || []);
+      setMyContracts(contractsRes.data.contracts || []);
+      setMyPermissions(permsRes.data.permissions || []);
     } catch (error) {
       toast.error(t('employeePortal.messages.errorLoadingData'));
     } finally {
@@ -316,6 +332,47 @@ function EmployeeDashboard() {
     } finally {
       setDownloadingPdf(null);
     }
+  };
+
+  // Download document (work letter / income certificate)
+  const handleDownloadDocument = async (type) => {
+    setDownloadingDoc(type);
+    try {
+      const endpoint = type === "work-letter" ? "work-letter/pdf" : "income-certificate/pdf";
+      const response = await axios.get(`${API}/employee-portal/${endpoint}`, {
+        headers: getAuthHeaders(),
+        responseType: 'blob'
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${type === "work-letter" ? "carta_trabajo" : "constancia_ingresos"}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success(t('employeePortal.documents.downloaded'));
+    } catch {
+      toast.error(t('common.error'));
+    } finally { setDownloadingDoc(null); }
+  };
+
+  // Permission request
+  const handlePermissionRequest = async () => {
+    if (!permissionForm.start_date || !permissionForm.end_date || !permissionForm.reason) {
+      toast.error(t('employeePortal.permissions.fillRequired'));
+      return;
+    }
+    setSubmittingPermission(true);
+    try {
+      await axios.post(`${API}/employee-portal/permissions/request`, permissionForm, { headers: getAuthHeaders() });
+      toast.success(t('employeePortal.permissions.requestSent'));
+      setShowPermissionRequest(false);
+      setPermissionForm({ permission_type: "personal", start_date: "", end_date: "", reason: "", notes: "" });
+      fetchDashboard();
+    } catch (e) {
+      toast.error(e.response?.data?.detail || t('common.error'));
+    } finally { setSubmittingPermission(false); }
   };
 
   // Leave/Permit request
@@ -1147,6 +1204,182 @@ function EmployeeDashboard() {
                   </div>
                 </CardContent>
               </Card>
+            </div>
+          </TabsContent>
+
+          {/* Documents Tab (Work Letter + Income Certificate) */}
+          <TabsContent value="documents">
+            <div className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileSignature className="w-5 h-5 text-blue-600" />
+                    {t('employeePortal.documents.title')}
+                  </CardTitle>
+                  <CardDescription>{t('employeePortal.documents.subtitle')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="border rounded-lg p-5 space-y-3 hover:shadow-md transition-shadow" data-testid="work-letter-card">
+                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                        <Briefcase className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <h3 className="font-semibold">{t('employeePortal.documents.workLetter')}</h3>
+                      <p className="text-sm text-slate-500">{t('employeePortal.documents.workLetterDesc')}</p>
+                      <Button onClick={() => handleDownloadDocument("work-letter")} disabled={downloadingDoc === "work-letter"} className="w-full bg-blue-600 hover:bg-blue-700" data-testid="download-work-letter">
+                        {downloadingDoc === "work-letter" ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
+                        {t('employeePortal.documents.generate')}
+                      </Button>
+                    </div>
+                    <div className="border rounded-lg p-5 space-y-3 hover:shadow-md transition-shadow" data-testid="income-cert-card">
+                      <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
+                        <DollarSign className="w-5 h-5 text-emerald-600" />
+                      </div>
+                      <h3 className="font-semibold">{t('employeePortal.documents.incomeCertificate')}</h3>
+                      <p className="text-sm text-slate-500">{t('employeePortal.documents.incomeCertificateDesc')}</p>
+                      <Button onClick={() => handleDownloadDocument("income-certificate")} disabled={downloadingDoc === "income-certificate"} className="w-full bg-emerald-600 hover:bg-emerald-700" data-testid="download-income-cert">
+                        {downloadingDoc === "income-certificate" ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
+                        {t('employeePortal.documents.generate')}
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Contracts Tab */}
+          <TabsContent value="contracts">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileCheck className="w-5 h-5 text-purple-600" />
+                  {t('employeePortal.contracts.title')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {myContracts.length === 0 ? (
+                  <div className="text-center py-8 text-slate-400">
+                    <FileCheck className="w-10 h-10 mx-auto mb-2 opacity-30" />
+                    <p>{t('employeePortal.contracts.noContracts')}</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {myContracts.map((contract) => (
+                      <div key={contract.contract_id} className="border rounded-lg p-4 flex items-center justify-between" data-testid={`contract-${contract.contract_id}`}>
+                        <div>
+                          <h4 className="font-semibold text-sm">{contract.title || contract.contract_type || t('employeePortal.contracts.laborContract')}</h4>
+                          <p className="text-xs text-slate-500 mt-1">{contract.created_at ? new Date(contract.created_at).toLocaleDateString("es-DO") : ""}</p>
+                        </div>
+                        <Badge className={
+                          contract.status === "pending_signature" ? "bg-amber-100 text-amber-700" :
+                          contract.status === "fully_signed" || contract.status === "active" ? "bg-emerald-100 text-emerald-700" :
+                          "bg-slate-100 text-slate-600"
+                        }>
+                          {contract.status === "pending_signature" ? t('employeePortal.contracts.pendingSignature') :
+                           contract.status === "fully_signed" || contract.status === "active" ? t('employeePortal.contracts.signed') :
+                           contract.status}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Permissions Tab */}
+          <TabsContent value="permissions">
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold">{t('employeePortal.permissions.title')}</h3>
+                <Button size="sm" onClick={() => setShowPermissionRequest(true)} data-testid="new-permission-btn">
+                  <Plus className="w-4 h-4 mr-1" /> {t('employeePortal.permissions.newRequest')}
+                </Button>
+              </div>
+
+              {/* Permission Request Form */}
+              {showPermissionRequest && (
+                <Card className="border-2 border-blue-200">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">{t('employeePortal.permissions.requestTitle')}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div className="space-y-1">
+                        <Label className="text-xs">{t('employeePortal.permissions.type')}</Label>
+                        <Select value={permissionForm.permission_type} onValueChange={(v) => setPermissionForm({...permissionForm, permission_type: v})}>
+                          <SelectTrigger data-testid="perm-type"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="personal">{t('employeePortal.permissions.types.personal')}</SelectItem>
+                            <SelectItem value="medico">{t('employeePortal.permissions.types.medical')}</SelectItem>
+                            <SelectItem value="duelo">{t('employeePortal.permissions.types.bereavement')}</SelectItem>
+                            <SelectItem value="matrimonio">{t('employeePortal.permissions.types.marriage')}</SelectItem>
+                            <SelectItem value="paternidad">{t('employeePortal.permissions.types.paternity')}</SelectItem>
+                            <SelectItem value="maternidad">{t('employeePortal.permissions.types.maternity')}</SelectItem>
+                            <SelectItem value="otro">{t('employeePortal.permissions.types.other')}</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">{t('employeePortal.permissions.startDate')}</Label>
+                        <Input type="date" value={permissionForm.start_date} onChange={(e) => setPermissionForm({...permissionForm, start_date: e.target.value})} data-testid="perm-start" />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">{t('employeePortal.permissions.endDate')}</Label>
+                        <Input type="date" value={permissionForm.end_date} onChange={(e) => setPermissionForm({...permissionForm, end_date: e.target.value})} data-testid="perm-end" />
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">{t('employeePortal.permissions.reason')}</Label>
+                      <Textarea placeholder={t('employeePortal.permissions.reasonPlaceholder')} value={permissionForm.reason} onChange={(e) => setPermissionForm({...permissionForm, reason: e.target.value})} rows={2} data-testid="perm-reason" />
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <Button variant="outline" size="sm" onClick={() => setShowPermissionRequest(false)}>{t('common.cancel')}</Button>
+                      <Button size="sm" onClick={handlePermissionRequest} disabled={submittingPermission} data-testid="perm-submit">
+                        {submittingPermission ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Send className="w-4 h-4 mr-1" />}
+                        {t('employeePortal.permissions.submit')}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Permissions List */}
+              {myPermissions.length === 0 && !showPermissionRequest ? (
+                <Card>
+                  <CardContent className="py-8 text-center text-slate-400">
+                    <Shield className="w-10 h-10 mx-auto mb-2 opacity-30" />
+                    <p>{t('employeePortal.permissions.noPermissions')}</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="space-y-2">
+                  {myPermissions.map((perm) => (
+                    <Card key={perm.permission_id} data-testid={`permission-${perm.permission_id}`}>
+                      <CardContent className="p-4 flex items-center justify-between">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-sm capitalize">{perm.permission_type}</span>
+                            <Badge className={
+                              perm.status === "pending" ? "bg-amber-100 text-amber-700" :
+                              perm.status === "approved" ? "bg-emerald-100 text-emerald-700" :
+                              "bg-red-100 text-red-700"
+                            }>
+                              {perm.status === "pending" ? t('employeePortal.permissions.statusPending') :
+                               perm.status === "approved" ? t('employeePortal.permissions.statusApproved') :
+                               t('employeePortal.permissions.statusRejected')}
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-slate-500 mt-1">{perm.start_date} → {perm.end_date} ({perm.days} {t('employeePortal.permissions.days')})</p>
+                          <p className="text-xs text-slate-400 mt-0.5">{perm.reason}</p>
+                        </div>
+                        {perm.approved_by && <p className="text-xs text-emerald-600">{t('employeePortal.permissions.approvedBy')}: {perm.approved_by}</p>}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </div>
           </TabsContent>
 

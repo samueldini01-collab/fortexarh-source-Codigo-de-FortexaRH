@@ -65,6 +65,7 @@ from routes.contracts import router as contracts_router, seed_system_templates
 from routes.hr_alerts import router as hr_alerts_router
 from routes.liquidation import router as liquidation_router
 from routes.salary_history import router as salary_history_router
+from routes.admin_permissions import router as admin_permissions_router
 
 # ===================== APP SETUP =====================
 
@@ -174,6 +175,7 @@ for r in [
     hr_alerts_router,
     liquidation_router,
     salary_history_router,
+    admin_permissions_router,
 ]:
     api_router.include_router(r)
 

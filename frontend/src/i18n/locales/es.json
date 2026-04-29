@@ -3435,7 +3435,10 @@
       "loans": "Préstamos",
       "profile": "Mis Datos",
       "requests": "Mis Solicitudes",
-      "notifications": "Notificaciones"
+      "notifications": "Notificaciones",
+      "documents": "Documentos",
+      "contracts": "Contratos",
+      "permissions": "Permisos"
     },
     "swipe": {
       "hint": "Desliza para navegar"
@@ -3643,6 +3646,51 @@
       "subtitle": "Actualice su contraseña de acceso al portal",
       "title": "Cambiar Contraseña",
       "updated": "Contraseña actualizada correctamente"
+    },
+    "documents": {
+      "title": "Documentos y Constancias",
+      "subtitle": "Genere documentos oficiales al instante",
+      "workLetter": "Carta de Trabajo",
+      "workLetterDesc": "Documento oficial que certifica su relación laboral con la empresa.",
+      "incomeCertificate": "Constancia de Ingresos",
+      "incomeCertificateDesc": "Documento que certifica su salario y desglose de ingresos.",
+      "generate": "Generar PDF",
+      "downloaded": "Documento descargado"
+    },
+    "contracts": {
+      "title": "Mis Contratos",
+      "noContracts": "No tiene contratos asignados",
+      "laborContract": "Contrato Laboral",
+      "pendingSignature": "Pendiente de Firma",
+      "signed": "Firmado"
+    },
+    "permissions": {
+      "title": "Permisos y Licencias",
+      "newRequest": "Nueva Solicitud",
+      "requestTitle": "Solicitar Permiso",
+      "type": "Tipo de Permiso",
+      "startDate": "Fecha Inicio",
+      "endDate": "Fecha Fin",
+      "reason": "Motivo",
+      "reasonPlaceholder": "Describa el motivo de su solicitud...",
+      "submit": "Enviar Solicitud",
+      "fillRequired": "Complete tipo, fechas y motivo",
+      "requestSent": "Solicitud de permiso enviada",
+      "noPermissions": "No tiene solicitudes de permisos",
+      "statusPending": "Pendiente",
+      "statusApproved": "Aprobado",
+      "statusRejected": "Rechazado",
+      "days": "días",
+      "approvedBy": "Aprobado por",
+      "types": {
+        "personal": "Personal",
+        "medical": "Médico",
+        "bereavement": "Duelo",
+        "marriage": "Matrimonio",
+        "paternity": "Paternidad",
+        "maternity": "Maternidad",
+        "other": "Otro"
+      }
     }
   },
   "geoAttendance": {

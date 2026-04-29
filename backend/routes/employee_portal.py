@@ -1439,3 +1439,284 @@ async def portal_push_status(request: Request):
     )
     return {"subscribed": count > 0, "subscription_count": count}
 
+
+
+# ===================== WORK LETTER & INCOME CERTIFICATE =====================
+
+@router.get("/work-letter/pdf")
+async def generate_work_letter(request: Request):
+    """Generate a Work Letter (Carta de Trabajo) PDF"""
+    emp_data = await get_employee_from_token(request)
+
+    employee = await db.employees.find_one(
+        {"employee_id": emp_data["employee_id"]}, {"_id": 0}
+    )
+    company = await db.companies.find_one(
+        {"company_id": emp_data["company_id"]},
+        {"_id": 0, "name": 1, "company_name": 1, "rnc": 1, "address": 1}
+    )
+    company_name = (company or {}).get("company_name", (company or {}).get("name", "Empresa"))
+    company_rnc = (company or {}).get("rnc", "")
+    company_addr = (company or {}).get("address", "")
+
+    emp_name = f"{employee.get('first_name', '')} {employee.get('last_name', '')}"
+    hire_date = str(employee.get("hire_date", ""))[:10]
+    position = employee.get("position", "N/A")
+    department = employee.get("department", "N/A")
+    doc_number = employee.get("document_number", "N/A")
+    today = datetime.now(timezone.utc).strftime("%d de %B de %Y")
+
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter, topMargin=1*inch, bottomMargin=1*inch, leftMargin=1*inch, rightMargin=1*inch)
+    elements = []
+    styles = getSampleStyleSheet()
+
+    title_s = ParagraphStyle("T", parent=styles["Heading1"], fontSize=14, alignment=TA_CENTER, spaceAfter=20)
+    body_s = ParagraphStyle("B", parent=styles["Normal"], fontSize=11, leading=18, spaceAfter=12, alignment=TA_LEFT)
+    header_s = ParagraphStyle("H", parent=styles["Normal"], fontSize=11, alignment=TA_CENTER, spaceAfter=4)
+    sign_s = ParagraphStyle("S", parent=styles["Normal"], fontSize=11, alignment=TA_LEFT, spaceBefore=40)
+
+    # Header
+    elements.append(Paragraph(f"<b>{company_name}</b>", header_s))
+    if company_rnc:
+        elements.append(Paragraph(f"RNC: {company_rnc}", header_s))
+    if company_addr:
+        elements.append(Paragraph(company_addr, header_s))
+    elements.append(Spacer(1, 30))
+
+    elements.append(Paragraph("CARTA DE TRABAJO", title_s))
+    elements.append(Spacer(1, 20))
+
+    # Body
+    elements.append(Paragraph("A QUIEN PUEDA INTERESAR:", body_s))
+    elements.append(Spacer(1, 10))
+
+    body_text = (
+        f"Por medio de la presente, hacemos constar que el/la Sr(a). <b>{emp_name}</b>, "
+        f"portador(a) de la cédula de identidad No. <b>{doc_number}</b>, labora en nuestra "
+        f"empresa <b>{company_name}</b> desde el <b>{hire_date}</b>, desempeñando el cargo de "
+        f"<b>{position}</b> en el departamento de <b>{department}</b>."
+    )
+    elements.append(Paragraph(body_text, body_s))
+
+    elements.append(Paragraph(
+        "Esta carta se expide a solicitud de la parte interesada, para los fines que estime conveniente.",
+        body_s
+    ))
+
+    elements.append(Paragraph(f"Dada en la ciudad de Santo Domingo, a los {today}.", body_s))
+    elements.append(Spacer(1, 40))
+
+    elements.append(Paragraph("Atentamente,", sign_s))
+    elements.append(Spacer(1, 30))
+    elements.append(Paragraph("_________________________________", sign_s))
+    elements.append(Paragraph(f"<b>{company_name}</b>", sign_s))
+    elements.append(Paragraph("Departamento de Recursos Humanos", sign_s))
+
+    # Footer
+    elements.append(Spacer(1, 40))
+    elements.append(Paragraph(
+        f"Generado el {datetime.now(timezone.utc).strftime('%d/%m/%Y %H:%M')} — FortexaRH",
+        ParagraphStyle("F", fontSize=8, alignment=TA_CENTER, textColor=colors.grey)
+    ))
+
+    doc.build(elements)
+    buffer.seek(0)
+
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="carta_trabajo_{emp_name.replace(" ","_")}.pdf"'}
+    )
+
+
+@router.get("/income-certificate/pdf")
+async def generate_income_certificate(request: Request):
+    """Generate an Income Certificate (Constancia de Ingresos) PDF"""
+    emp_data = await get_employee_from_token(request)
+
+    employee = await db.employees.find_one(
+        {"employee_id": emp_data["employee_id"]}, {"_id": 0}
+    )
+    company = await db.companies.find_one(
+        {"company_id": emp_data["company_id"]},
+        {"_id": 0, "name": 1, "company_name": 1, "rnc": 1, "address": 1}
+    )
+    company_name = (company or {}).get("company_name", (company or {}).get("name", "Empresa"))
+    company_rnc = (company or {}).get("rnc", "")
+    company_addr = (company or {}).get("address", "")
+
+    emp_name = f"{employee.get('first_name', '')} {employee.get('last_name', '')}"
+    doc_number = employee.get("document_number", "N/A")
+    position = employee.get("position", "N/A")
+    salary = employee.get("salary", 0)
+    hire_date = str(employee.get("hire_date", ""))[:10]
+    today = datetime.now(timezone.utc).strftime("%d de %B de %Y")
+
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter, topMargin=1*inch, bottomMargin=1*inch, leftMargin=1*inch, rightMargin=1*inch)
+    elements = []
+    styles = getSampleStyleSheet()
+
+    title_s = ParagraphStyle("T", parent=styles["Heading1"], fontSize=14, alignment=TA_CENTER, spaceAfter=20)
+    body_s = ParagraphStyle("B", parent=styles["Normal"], fontSize=11, leading=18, spaceAfter=12, alignment=TA_LEFT)
+    header_s = ParagraphStyle("H", parent=styles["Normal"], fontSize=11, alignment=TA_CENTER, spaceAfter=4)
+    sign_s = ParagraphStyle("S", parent=styles["Normal"], fontSize=11, alignment=TA_LEFT, spaceBefore=40)
+
+    elements.append(Paragraph(f"<b>{company_name}</b>", header_s))
+    if company_rnc:
+        elements.append(Paragraph(f"RNC: {company_rnc}", header_s))
+    if company_addr:
+        elements.append(Paragraph(company_addr, header_s))
+    elements.append(Spacer(1, 30))
+
+    elements.append(Paragraph("CONSTANCIA DE INGRESOS", title_s))
+    elements.append(Spacer(1, 20))
+
+    elements.append(Paragraph("A QUIEN PUEDA INTERESAR:", body_s))
+    elements.append(Spacer(1, 10))
+
+    salary_formatted = f"RD${salary:,.2f}"
+    body_text = (
+        f"Por medio de la presente, certificamos que el/la Sr(a). <b>{emp_name}</b>, "
+        f"portador(a) de la cédula de identidad No. <b>{doc_number}</b>, labora en nuestra "
+        f"empresa desde el <b>{hire_date}</b>, desempeñando el cargo de <b>{position}</b>, "
+        f"devengando un salario mensual de <b>{salary_formatted}</b> (pesos dominicanos)."
+    )
+    elements.append(Paragraph(body_text, body_s))
+
+    # Salary breakdown table
+    monthly = salary
+    biweekly = salary / 2
+    daily = salary / 23.83
+    annual = salary * 12
+
+    sal_data = [
+        ["DESGLOSE SALARIAL", "MONTO (RD$)"],
+        ["Salario Mensual", f"{monthly:,.2f}"],
+        ["Salario Quincenal", f"{biweekly:,.2f}"],
+        ["Salario Diario", f"{daily:,.2f}"],
+        ["Salario Anual", f"{annual:,.2f}"],
+    ]
+
+    sal_table = Table(sal_data, colWidths=[3.5*inch, 2*inch])
+    sal_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1e3a5f")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, -1), 10),
+        ("ALIGN", (1, 0), (1, -1), "RIGHT"),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+        ("TOPPADDING", (0, 0), (-1, -1), 6),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(sal_table)
+    elements.append(Spacer(1, 15))
+
+    elements.append(Paragraph(
+        "Esta constancia se expide a solicitud de la parte interesada, para los fines que estime conveniente.",
+        body_s
+    ))
+
+    elements.append(Paragraph(f"Dada en la ciudad de Santo Domingo, a los {today}.", body_s))
+    elements.append(Spacer(1, 40))
+
+    elements.append(Paragraph("Atentamente,", sign_s))
+    elements.append(Spacer(1, 30))
+    elements.append(Paragraph("_________________________________", sign_s))
+    elements.append(Paragraph(f"<b>{company_name}</b>", sign_s))
+    elements.append(Paragraph("Departamento de Recursos Humanos", sign_s))
+
+    elements.append(Spacer(1, 40))
+    elements.append(Paragraph(
+        f"Generado el {datetime.now(timezone.utc).strftime('%d/%m/%Y %H:%M')} — FortexaRH",
+        ParagraphStyle("F", fontSize=8, alignment=TA_CENTER, textColor=colors.grey)
+    ))
+
+    doc.build(elements)
+    buffer.seek(0)
+
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="constancia_ingresos_{emp_name.replace(" ","_")}.pdf"'}
+    )
+
+
+# ===================== EMPLOYEE CONTRACTS =====================
+
+@router.get("/contracts")
+async def get_employee_contracts(request: Request):
+    """Get contracts for the current employee"""
+    emp_data = await get_employee_from_token(request)
+
+    contracts = await db.contracts.find(
+        {"employee_id": emp_data["employee_id"], "company_id": emp_data["company_id"]},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(20)
+
+    return {"contracts": contracts}
+
+
+# ===================== PERMISSIONS / LICENSES =====================
+
+class PermissionRequest(BaseModel):
+    permission_type: str  # "medico", "personal", "duelo", "matrimonio", "paternidad", "maternidad", "otro"
+    start_date: str
+    end_date: str
+    reason: str
+    notes: Optional[str] = ""
+
+
+@router.get("/permissions")
+async def get_employee_permissions(request: Request):
+    """Get permission/license requests for the current employee"""
+    emp_data = await get_employee_from_token(request)
+
+    permissions = await db.employee_permissions.find(
+        {"employee_id": emp_data["employee_id"], "company_id": emp_data["company_id"]},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(50)
+
+    return {"permissions": permissions}
+
+
+@router.post("/permissions/request")
+async def request_permission(data: PermissionRequest, request: Request):
+    """Submit a permission/license request"""
+    emp_data = await get_employee_from_token(request)
+
+    employee = await db.employees.find_one(
+        {"employee_id": emp_data["employee_id"]},
+        {"_id": 0, "first_name": 1, "last_name": 1, "department": 1}
+    )
+    emp_name = f"{(employee or {}).get('first_name', '')} {(employee or {}).get('last_name', '')}"
+
+    # Calculate days
+    try:
+        start = datetime.strptime(data.start_date[:10], "%Y-%m-%d")
+        end = datetime.strptime(data.end_date[:10], "%Y-%m-%d")
+        days = (end - start).days + 1
+    except (ValueError, TypeError):
+        days = 1
+
+    permission = {
+        "permission_id": f"perm_{uuid.uuid4().hex[:12]}",
+        "employee_id": emp_data["employee_id"],
+        "company_id": emp_data["company_id"],
+        "employee_name": emp_name,
+        "department": (employee or {}).get("department", ""),
+        "permission_type": data.permission_type,
+        "start_date": data.start_date,
+        "end_date": data.end_date,
+        "days": days,
+        "reason": data.reason,
+        "notes": data.notes or "",
+        "status": "pending",
+        "created_at": datetime.now(timezone.utc),
+        "updated_at": datetime.now(timezone.utc)
+    }
+
+    await db.employee_permissions.insert_one(permission)
+
+    return {"success": True, "permission_id": permission["permission_id"], "message": "Solicitud enviada"}

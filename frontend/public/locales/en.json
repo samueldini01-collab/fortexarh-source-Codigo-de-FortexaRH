@@ -3430,7 +3430,10 @@
       "loans": "Loans",
       "profile": "My Data",
       "requests": "My Requests",
-      "notifications": "Notifications"
+      "notifications": "Notifications",
+      "documents": "Documents",
+      "contracts": "Contracts",
+      "permissions": "Permissions"
     },
     "swipe": {
       "hint": "Swipe to navigate"
@@ -3638,6 +3641,51 @@
       "subtitle": "Update your portal access password",
       "title": "Change Password",
       "updated": "Password updated successfully"
+    },
+    "documents": {
+      "title": "Documents & Certificates",
+      "subtitle": "Generate official documents instantly",
+      "workLetter": "Work Letter",
+      "workLetterDesc": "Official document certifying your employment with the company.",
+      "incomeCertificate": "Income Certificate",
+      "incomeCertificateDesc": "Document certifying your salary and income breakdown.",
+      "generate": "Generate PDF",
+      "downloaded": "Document downloaded"
+    },
+    "contracts": {
+      "title": "My Contracts",
+      "noContracts": "No contracts assigned",
+      "laborContract": "Labor Contract",
+      "pendingSignature": "Pending Signature",
+      "signed": "Signed"
+    },
+    "permissions": {
+      "title": "Permissions & Licenses",
+      "newRequest": "New Request",
+      "requestTitle": "Request Permission",
+      "type": "Permission Type",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "reason": "Reason",
+      "reasonPlaceholder": "Describe the reason for your request...",
+      "submit": "Submit Request",
+      "fillRequired": "Fill in type, dates and reason",
+      "requestSent": "Permission request sent",
+      "noPermissions": "No permission requests",
+      "statusPending": "Pending",
+      "statusApproved": "Approved",
+      "statusRejected": "Rejected",
+      "days": "days",
+      "approvedBy": "Approved by",
+      "types": {
+        "personal": "Personal",
+        "medical": "Medical",
+        "bereavement": "Bereavement",
+        "marriage": "Marriage",
+        "paternity": "Paternity",
+        "maternity": "Maternity",
+        "other": "Other"
+      }
     }
   },
   "geoAttendance": {
