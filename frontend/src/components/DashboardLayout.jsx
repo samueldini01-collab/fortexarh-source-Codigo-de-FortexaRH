@@ -183,6 +183,7 @@ const getMenuGroups = (t) => [
       { id: "expenses", nameKey: "expenses", href: "/expenses", icon: Receipt, featureKey: "expenses" },
       { id: "accounting", nameKey: "accounting", href: "/accounting", icon: BookOpen, featureKey: "accounting" },
       { id: "payroll-config", nameKey: "payrollConfig", href: "/payroll-config", icon: Settings2, featureKey: "employees" },
+      { id: "liquidation", nameKey: "liquidation", href: "/liquidation", icon: Scale, featureKey: "payroll" },
     ]
   },
   {
