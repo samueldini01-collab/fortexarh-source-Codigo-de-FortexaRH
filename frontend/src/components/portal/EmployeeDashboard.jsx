@@ -430,6 +430,24 @@ function EmployeeDashboard() {
 
   const LOGO_URL = "https://customer-assets.emergentagent.com/job_hrpulse-26/artifacts/ohljcqui_FortexaRH%20Logo.png";
 
+  // Sidebar state
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  const sidebarItems = [
+    { id: "home", label: t('employeePortal.tabs.home'), icon: Home },
+    { id: "attendance", label: t('employeePortal.tabs.attendance'), icon: Clock },
+    { id: "notifications", label: t('employeePortal.tabs.notifications'), icon: Bell, badge: unreadCount > 0 ? unreadCount : null },
+    { id: "payslips", label: t('employeePortal.tabs.payslips'), icon: DollarSign },
+    { id: "loans", label: t('employeePortal.tabs.loans'), icon: Wallet },
+    { id: "vacations", label: t('employeePortal.tabs.vacations'), icon: Calendar },
+    { id: "evaluations", label: t('employeePortal.tabs.evaluations'), icon: Star },
+    { id: "contracts", label: t('employeePortal.tabs.contracts'), icon: FileCheck },
+    { id: "documents", label: t('employeePortal.tabs.documents'), icon: FileSignature },
+    { id: "permissions", label: t('employeePortal.tabs.permissions'), icon: Shield },
+    { id: "profile", label: t('employeePortal.tabs.profile'), icon: User },
+  ];
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center">
@@ -439,115 +457,93 @@ function EmployeeDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-            <img 
-              src={LOGO_URL} 
-              alt="FortexaRH Logo" 
-              className="h-8 sm:h-10 w-auto object-contain flex-shrink-0"
-            />
-            <div className="h-6 sm:h-8 w-px bg-slate-200 hidden sm:block" />
-            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
-                <User className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
-              </div>
-              <div className="min-w-0 hidden xs:block">
-                <h1 className="font-semibold text-slate-800 text-sm sm:text-base truncate">{dashboardData?.employee?.name}</h1>
-                <p className="text-xs text-slate-500 truncate">{dashboardData?.employee?.position}</p>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-            {/* Notification Bell */}
-            <EmployeeNotificationBell />
+    <div className="min-h-screen bg-slate-100 flex">
+      {/* Mobile sidebar overlay */}
+      {mobileSidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setMobileSidebarOpen(false)} />
+      )}
 
-            {/* Language Selector */}
-            <div data-testid="portal-lang-switcher">
-              <LanguageSelector variant="compact" />
-            </div>
-            
-            <Button variant="ghost" size="sm" onClick={logout} className="h-8 px-2 sm:px-3" data-testid="portal-logout-btn">
-              <LogOut className="w-4 h-4 sm:mr-2" />
-              <span className="hidden sm:inline">{t('employeePortal.messages.logout')}</span>
-            </Button>
-          </div>
+      {/* Sidebar */}
+      <aside className={`fixed lg:sticky top-0 left-0 h-screen z-50 bg-white border-r shadow-sm flex flex-col transition-all duration-300 ${
+        mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+      } ${sidebarOpen ? 'w-56' : 'w-16'}`}>
+        <div className={`p-3 border-b flex items-center ${sidebarOpen ? 'justify-between' : 'justify-center'} h-14`}>
+          {sidebarOpen && <img src={LOGO_URL} alt="FortexaRH" className="h-8 w-auto object-contain" />}
+          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { if (mobileSidebarOpen) setMobileSidebarOpen(false); else setSidebarOpen(!sidebarOpen); }} data-testid="toggle-sidebar">
+            <ChevronLeft className={`w-4 h-4 transition-transform ${!sidebarOpen ? 'rotate-180' : ''}`} />
+          </Button>
         </div>
-      </header>
+        <nav className="flex-1 overflow-y-auto py-2 px-1.5">
+          {sidebarItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => { setActiveTab(item.id); setMobileSidebarOpen(false); }}
+                className={`w-full flex items-center gap-3 rounded-lg mb-0.5 text-sm transition-colors relative ${
+                  sidebarOpen ? 'px-3 py-2.5' : 'px-0 py-2.5 justify-center'
+                } ${isActive ? 'bg-blue-50 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-50'}`}
+                data-testid={`sidebar-${item.id}`}
+                title={!sidebarOpen ? item.label : undefined}
+              >
+                <Icon className={`w-[18px] h-[18px] shrink-0 ${isActive ? 'text-blue-600' : 'text-slate-400'}`} />
+                {sidebarOpen && <span className="truncate">{item.label}</span>}
+                {item.badge && sidebarOpen && (
+                  <Badge className="ml-auto bg-red-500 text-white text-[10px] px-1.5 py-0 h-4">{item.badge}</Badge>
+                )}
+                {item.badge && !sidebarOpen && (
+                  <span className="absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full" />
+                )}
+              </button>
+            );
+          })}
+        </nav>
+        <div className="border-t p-2">
+          <button
+            onClick={logout}
+            className={`w-full flex items-center gap-3 rounded-lg text-sm text-red-600 hover:bg-red-50 transition-colors ${sidebarOpen ? 'px-3 py-2.5' : 'px-0 py-2.5 justify-center'}`}
+            data-testid="portal-sidebar-logout"
+          >
+            <LogOut className="w-[18px] h-[18px] shrink-0" />
+            {sidebarOpen && <span>{t('employeePortal.messages.logout')}</span>}
+          </button>
+        </div>
+      </aside>
 
-      <main className="max-w-6xl mx-auto p-3 sm:p-4">
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          {/* Mobile swipe indicator - only shown on small screens */}
-          <div className="sm:hidden mb-3">
-            <div className="flex items-center justify-between px-2">
-              <button 
-                onClick={goToPrevTab}
-                disabled={currentTabIndex === 0}
-                className={`p-2 rounded-full transition-all ${currentTabIndex === 0 ? 'text-slate-300' : 'text-emerald-600 hover:bg-emerald-50 active:scale-95'}`}
-                data-testid="swipe-prev-btn"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              
-              <div className="flex flex-col items-center">
-                <div className="flex items-center gap-1.5 text-slate-700 font-medium">
-                  {(() => {
-                    const CurrentIcon = tabs[currentTabIndex]?.icon;
-                    return CurrentIcon ? <CurrentIcon className="w-4 h-4" /> : null;
-                  })()}
-                  <span className="text-sm">{tabs[currentTabIndex]?.label}</span>
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <header className="bg-white shadow-sm border-b sticky top-0 z-30 h-14">
+          <div className="px-4 h-full flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button variant="ghost" size="icon" className="h-8 w-8 lg:hidden" onClick={() => setMobileSidebarOpen(true)} data-testid="mobile-menu-btn">
+                <ClipboardList className="w-5 h-5" />
+              </Button>
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <User className="w-4 h-4 text-blue-600" />
                 </div>
-                <p className="text-[10px] text-slate-400 mt-0.5">{t('employeePortal.swipe.hint')}</p>
+                <div className="min-w-0">
+                  <h1 className="font-semibold text-slate-800 text-sm truncate">{dashboardData?.employee?.name}</h1>
+                  <p className="text-xs text-slate-500 truncate">{dashboardData?.employee?.position}</p>
+                </div>
               </div>
-              
-              <button 
-                onClick={goToNextTab}
-                disabled={currentTabIndex === tabs.length - 1}
-                className={`p-2 rounded-full transition-all ${currentTabIndex === tabs.length - 1 ? 'text-slate-300' : 'text-emerald-600 hover:bg-emerald-50 active:scale-95'}`}
-                data-testid="swipe-next-btn"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
             </div>
-            
-            {/* Progress dots */}
-            <div className="flex justify-center gap-1.5 mt-2">
-              {tabs.map((tab, index) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    index === currentTabIndex 
-                      ? 'w-6 bg-emerald-500' 
-                      : 'bg-slate-300 hover:bg-slate-400'
-                  }`}
-                  aria-label={`Ir a ${tab.label}`}
-                />
-              ))}
+            <div className="flex items-center gap-1.5">
+              <EmployeeNotificationBell />
+              <div data-testid="portal-lang-switcher"><LanguageSelector variant="compact" /></div>
             </div>
           </div>
+        </header>
 
-          {/* Desktop/Tablet tabs - hidden on mobile */}
-          <TabsList className="mb-4 sm:mb-6 bg-white shadow-sm hidden sm:flex flex-wrap gap-1 h-auto p-1">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <TabsTrigger 
-                  key={tab.id}
-                  value={tab.id} 
-                  className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2"
-                >
-                  <Icon className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
-                  <span className="hidden sm:inline">{tab.label}</span>
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
+        <main className="flex-1 p-4 sm:p-6 overflow-y-auto">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="hidden">
+              {sidebarItems.map((tab) => (
+                <TabsTrigger key={tab.id} value={tab.id}>{tab.label}</TabsTrigger>
+              ))}
+            </TabsList>
 
-          {/* Swipeable content area */}
-          <div {...swipeHandlers} className="touch-pan-y"  data-testid="swipeable-content">
 
           {/* Home Tab */}
           <TabsContent value="home">
@@ -1555,9 +1551,9 @@ function EmployeeDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
-          </div>{/* End swipeable content area */}
         </Tabs>
-      </main>
+        </main>
+      </div>
 
       {/* Vacation Request Dialog */}
       <Dialog open={showVacationRequest} onOpenChange={setShowVacationRequest}>
