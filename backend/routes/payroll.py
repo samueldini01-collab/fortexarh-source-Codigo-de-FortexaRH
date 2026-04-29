@@ -1590,3 +1590,194 @@ async def export_period_iif(period_id: str, current_user: dict = Depends(get_cur
     )
 
 
+
+
+# ===================== PAYSLIP PDF GENERATION (ADMIN) =====================
+
+from fastapi.responses import StreamingResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER, TA_RIGHT
+
+
+def format_currency_pdf(value):
+    try:
+        return f"RD${float(value or 0):,.2f}"
+    except (ValueError, TypeError):
+        return "RD$0.00"
+
+
+@router.get("/payslip/{entry_id}/pdf")
+async def generate_payslip_pdf(entry_id: str, current_user: dict = Depends(get_current_user)):
+    """Generate a payslip PDF for a specific payroll entry (admin access)"""
+    company_id = current_user.get("company_id")
+
+    entry = await db.payroll_entries.find_one(
+        {"entry_id": entry_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not entry:
+        raise HTTPException(status_code=404, detail="Entrada de nómina no encontrada")
+
+    # Get company info
+    company = await db.companies.find_one(
+        {"company_id": company_id},
+        {"_id": 0, "name": 1, "company_name": 1, "rnc": 1, "address": 1}
+    )
+    company_name = (company or {}).get("company_name", (company or {}).get("name", "Empresa"))
+    company_rnc = (company or {}).get("rnc", "")
+
+    # Get employee info
+    employee = await db.employees.find_one(
+        {"employee_id": entry.get("employee_id")},
+        {"_id": 0, "first_name": 1, "last_name": 1, "document_number": 1, "position": 1, "department": 1}
+    )
+    emp_name = f"{(employee or {}).get('first_name', '')} {(employee or {}).get('last_name', '')}"
+
+    # Get period info
+    period = await db.payroll_periods.find_one(
+        {"period_id": entry.get("period_id")},
+        {"_id": 0, "description": 1, "start_date": 1, "end_date": 1}
+    )
+    period_desc = (period or {}).get("description", entry.get("period_id", ""))
+
+    # Build PDF
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter, topMargin=0.5*inch, bottomMargin=0.5*inch)
+    elements = []
+    styles = getSampleStyleSheet()
+
+    title_style = ParagraphStyle('Title', parent=styles['Heading1'], fontSize=16, alignment=TA_CENTER, spaceAfter=6)
+    subtitle_style = ParagraphStyle('Subtitle', parent=styles['Normal'], fontSize=10, alignment=TA_CENTER, spaceAfter=4)
+
+    # Header
+    elements.append(Paragraph(company_name, title_style))
+    if company_rnc:
+        elements.append(Paragraph(f"RNC: {company_rnc}", subtitle_style))
+    elements.append(Paragraph("RECIBO DE NÓMINA", title_style))
+    elements.append(Spacer(1, 15))
+
+    # Employee Info Table
+    emp_info = [
+        ["DATOS DEL EMPLEADO", "", "", ""],
+        ["Nombre:", emp_name, "Cédula:", (employee or {}).get('document_number', 'N/A')],
+        ["Cargo:", (employee or {}).get('position', 'N/A'), "Departamento:", (employee or {}).get('department', 'N/A')],
+        ["Período:", period_desc, "Fecha:", datetime.now().strftime('%d/%m/%Y')],
+    ]
+
+    emp_table = Table(emp_info, colWidths=[1.3*inch, 2.2*inch, 1.3*inch, 2.2*inch])
+    emp_table.setStyle(TableStyle([
+        ('SPAN', (0, 0), (3, 0)),
+        ('BACKGROUND', (0, 0), (3, 0), colors.HexColor('#1e3a5f')),
+        ('TEXTCOLOR', (0, 0), (3, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTNAME', (0, 1), (0, -1), 'Helvetica-Bold'),
+        ('FONTNAME', (2, 1), (2, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 9),
+        ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(emp_table)
+    elements.append(Spacer(1, 15))
+
+    # Earnings
+    earnings_data = [
+        ["INGRESOS", "MONTO"],
+        ["Salario Base", format_currency_pdf(entry.get('base_salary', 0))],
+        ["Horas Extras", format_currency_pdf(entry.get('overtime_pay', 0))],
+        ["Bonificaciones", format_currency_pdf(entry.get('bonuses', 0))],
+        ["Comisiones", format_currency_pdf(entry.get('commissions', 0))],
+        ["TOTAL INGRESOS", format_currency_pdf(entry.get('gross_salary', 0))],
+    ]
+
+    earnings_table = Table(earnings_data, colWidths=[4*inch, 2*inch])
+    earnings_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#28a745')),
+        ('BACKGROUND', (0, -1), (-1, -1), colors.HexColor('#d4edda')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 9),
+        ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('TOPPADDING', (0, 0), (-1, -1), 5),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+    ]))
+    elements.append(earnings_table)
+    elements.append(Spacer(1, 10))
+
+    # Deductions (legal + additional)
+    deductions_data = [
+        ["DEDUCCIONES", "MONTO"],
+        ["SFS (Seguro Familiar de Salud)", format_currency_pdf(entry.get('sfs_employee', 0))],
+        ["AFP (Fondo de Pensiones)", format_currency_pdf(entry.get('afp_employee', 0))],
+        ["ISR (Impuesto Sobre la Renta)", format_currency_pdf(entry.get('isr', 0))],
+    ]
+
+    # Add additional deductions
+    additional_deds = entry.get('additional_deductions', [])
+    for ded in additional_deds:
+        label = ded.get('type', 'Otro')
+        if ded.get('description'):
+            label += f" - {ded['description']}"
+        deductions_data.append([label, format_currency_pdf(ded.get('amount', 0))])
+
+    total_deductions = (
+        (entry.get('sfs_employee', 0) or 0) +
+        (entry.get('afp_employee', 0) or 0) +
+        (entry.get('isr', 0) or 0) +
+        sum(d.get('amount', 0) or 0 for d in additional_deds if not d.get('is_percentage'))
+    )
+    deductions_data.append(["TOTAL DEDUCCIONES", format_currency_pdf(total_deductions)])
+
+    deductions_table = Table(deductions_data, colWidths=[4*inch, 2*inch])
+    deductions_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#dc3545')),
+        ('BACKGROUND', (0, -1), (-1, -1), colors.HexColor('#f8d7da')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 9),
+        ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('TOPPADDING', (0, 0), (-1, -1), 5),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+    ]))
+    elements.append(deductions_table)
+    elements.append(Spacer(1, 15))
+
+    # Net Pay
+    net_data = [["SALARIO NETO A PAGAR", format_currency_pdf(entry.get('net_salary', 0))]]
+    net_table = Table(net_data, colWidths=[4*inch, 2*inch])
+    net_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#1e3a5f')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 12),
+        ('ALIGN', (1, 0), (1, 0), 'RIGHT'),
+        ('TOPPADDING', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+    ]))
+    elements.append(net_table)
+
+    # Footer
+    elements.append(Spacer(1, 30))
+    footer_text = f"Generado el {datetime.now().strftime('%d/%m/%Y %H:%M')} — FortexaRH | www.fortexarh.com"
+    elements.append(Paragraph(footer_text, ParagraphStyle('Footer', fontSize=8, alignment=TA_CENTER, textColor=colors.grey)))
+
+    doc.build(elements)
+    buffer.seek(0)
+
+    safe_name = emp_name.replace(' ', '_')
+    filename = f"recibo_{safe_name}_{period_desc.replace(' ', '_')}.pdf"
+
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'}
+    )

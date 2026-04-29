@@ -980,7 +980,8 @@
       "department": "Departamento",
       "gross": "Bruto",
       "deductions": "Deducciones",
-      "net": "Neto"
+      "net": "Neto",
+      "actions": "Acciones"
     },
     "breakdown": "Desglose",
     "filters": {
@@ -1027,7 +1028,8 @@
       "baseSalary": "Salario Base",
       "periodAndJEDeleted": "Nómina y asiento contable eliminados correctamente",
       "tssExported": "Archivo TSS exportado correctamente",
-      "deductionsUpdated": "Deducciones actualizadas correctamente"
+      "deductionsUpdated": "Deducciones actualizadas correctamente",
+      "payslipDownloaded": "Recibo de nómina descargado"
     },
     "todosLosDepartamentos": "Todos los departamentos",
     "noHayPeriodosDe": "No hay períodos de nómina",
@@ -1138,7 +1140,8 @@
       "descPlaceholder": "Descripción",
       "totalDeductions": "TOTAL DEDUCCIONES",
       "save": "Guardar Cambios"
-    }
+    },
+    "downloadPayslip": "Descargar Recibo"
   },
   "globalSearch": {
     "placeholder": "Buscar o ejecutar acciones con IA...",
@@ -6385,5 +6388,13 @@
       "subtitle": "Su período de prueba ha expirado. Seleccione un plan para continuar.",
       "title": "Período de Prueba Expirado"
     }
+  },
+  "hrAlerts": {
+    "title": "Alertas de RRHH",
+    "more": "alertas más",
+    "probation_ending": "Período de Prueba",
+    "contract_expiring": "Contrato por Vencer",
+    "work_anniversary": "Aniversario Laboral",
+    "birthday": "Cumpleaños"
   }
 }

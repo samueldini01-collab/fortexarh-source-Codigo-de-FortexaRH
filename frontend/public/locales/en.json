@@ -980,7 +980,8 @@
       "department": "Department",
       "gross": "Gross",
       "deductions": "Deductions",
-      "net": "Net"
+      "net": "Net",
+      "actions": "Actions"
     },
     "breakdown": "Breakdown",
     "filters": {
@@ -1027,7 +1028,8 @@
       "tssExported": "TSS exported",
       "baseSalary": "Base Salary",
       "periodAndJEDeleted": "Payroll and journal entry deleted successfully",
-      "deductionsUpdated": "Deductions updated successfully"
+      "deductionsUpdated": "Deductions updated successfully",
+      "payslipDownloaded": "Payslip downloaded"
     },
     "todosLosDepartamentos": "All departments",
     "noHayPeriodosDe": "No payroll periods",
@@ -1138,7 +1140,8 @@
       "descPlaceholder": "Description",
       "totalDeductions": "TOTAL DEDUCTIONS",
       "save": "Save Changes"
-    }
+    },
+    "downloadPayslip": "Download Payslip"
   },
   "globalSearch": {
     "placeholder": "Search or run AI actions...",
@@ -6377,5 +6380,13 @@
       "subtitle": "Your trial period has expired. Select a plan to continue.",
       "title": "Trial Period Expired"
     }
+  },
+  "hrAlerts": {
+    "title": "HR Alerts",
+    "more": "more alerts",
+    "probation_ending": "Probation Period",
+    "contract_expiring": "Contract Expiring",
+    "work_anniversary": "Work Anniversary",
+    "birthday": "Birthday"
   }
 }

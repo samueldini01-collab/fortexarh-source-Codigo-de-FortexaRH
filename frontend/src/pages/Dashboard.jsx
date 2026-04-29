@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { DrillDownModal, DrillDownCard, EmployeeListDrillDown } from "@/components/DrillDown";
+import { HrAlertsPanel } from "@/components/HrAlertsPanel";
 
 export default function Dashboard() {
   const { t, i18n } = useTranslation();
@@ -404,6 +405,9 @@ export default function Dashboard() {
           </div>
         )}
         
+        {/* HR Alerts Panel */}
+        <HrAlertsPanel />
+
         {/* Stats Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
           {loading ? (

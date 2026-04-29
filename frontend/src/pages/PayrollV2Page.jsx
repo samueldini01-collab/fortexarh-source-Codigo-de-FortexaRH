@@ -45,6 +45,7 @@ import {
   Trash2,
   RefreshCw,
   Download,
+  FileDown,
   CheckCircle,
   AlertCircle,
   ChevronRight,
@@ -762,6 +763,28 @@ export default function PayrollPage() {
     }
   };
 
+  // Download individual payslip PDF
+  const handleDownloadPayslip = async (entryId) => {
+    try {
+      const response = await axios.get(`${API}/payroll/payslip/${entryId}/pdf`, {
+        headers: getAuthHeaders(),
+        withCredentials: true,
+        responseType: 'blob'
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `recibo_nomina_${entryId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success(t('payrollV2.messages.payslipDownloaded'));
+    } catch (error) {
+      toast.error(error.response?.data?.detail || t('common.error'));
+    }
+  };
+
   // Novelty handlers
   const openNoveltyDialog = (entry) => {
     setSelectedEntry(entry);
@@ -1462,7 +1485,7 @@ export default function PayrollPage() {
                             <TableHead className="font-bold text-right border-r bg-orange-50 w-20">{t('payrollV2.novedades1')}</TableHead>
                             <TableHead className="font-bold text-right border-r bg-red-100 w-24">{t('payrollV2.deducciones')}</TableHead>
                             <TableHead className="font-bold text-right bg-emerald-100 w-24">{t('payrollV2.neto')}</TableHead>
-                            {selectedPeriod.status !== 'paid' && <TableHead className="w-16"></TableHead>}
+                            <TableHead className="w-20 text-center">{t('payrollV2.table.actions')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -1514,18 +1537,23 @@ export default function PayrollPage() {
                                   </button>
                                 </TableCell>
                                 <TableCell className="text-right bg-emerald-100/50 font-bold text-emerald-700 dark:text-emerald-400">{formatNumber(entry.net_salary)}</TableCell>
-                                {selectedPeriod.status !== 'paid' && (
-                                  <TableCell>
-                                    <div className="flex gap-1">
-                                      <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => openNoveltyDialog(entry)} title="Agregar novedad">
-                                        <PlusCircle className="w-3 h-3 text-blue-500" />
-                                      </Button>
-                                      <Button size="icon" variant="ghost" className="h-6 w-6 text-red-500" onClick={() => handleDeleteEntry(entry.entry_id, selectedPeriod.period_id)}>
-                                        <Trash2 className="w-3 h-3" />
-                                      </Button>
-                                    </div>
-                                  </TableCell>
-                                )}
+                                <TableCell className="text-center">
+                                  <div className="flex gap-1 justify-center">
+                                    <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => handleDownloadPayslip(entry.entry_id)} title={t('payrollV2.downloadPayslip')}>
+                                      <FileDown className="w-3.5 h-3.5 text-blue-600" />
+                                    </Button>
+                                    {selectedPeriod.status !== 'paid' && (
+                                      <>
+                                        <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => openNoveltyDialog(entry)} title="Agregar novedad">
+                                          <PlusCircle className="w-3 h-3 text-blue-500" />
+                                        </Button>
+                                        <Button size="icon" variant="ghost" className="h-6 w-6 text-red-500" onClick={() => handleDeleteEntry(entry.entry_id, selectedPeriod.period_id)}>
+                                          <Trash2 className="w-3 h-3" />
+                                        </Button>
+                                      </>
+                                    )}
+                                  </div>
+                                </TableCell>
                               </TableRow>
                             );
                           })}

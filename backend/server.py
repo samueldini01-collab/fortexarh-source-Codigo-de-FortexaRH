@@ -62,6 +62,7 @@ from routes.super_admin import router as super_admin_router
 from routes.fortexaerp import router as fortexaerp_router
 from routes.workflows import router as workflows_router
 from routes.contracts import router as contracts_router, seed_system_templates
+from routes.hr_alerts import router as hr_alerts_router
 
 # ===================== APP SETUP =====================
 
@@ -168,6 +169,7 @@ for r in [
     fortexaerp_router,
     workflows_router,
     contracts_router,
+    hr_alerts_router,
 ]:
     api_router.include_router(r)
 
