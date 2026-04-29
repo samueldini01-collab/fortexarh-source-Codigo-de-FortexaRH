@@ -753,7 +753,7 @@ export function EmployeeFormDialog({
                             </div>
                             <div className="flex items-center gap-2">
                               <span className="font-mono">
-                                {ded.is_percentage ? `${ded.amount}%` : formatCurrency(ded.amount)}
+                                {ded.is_percentage ? `${ded.amount}%` : formatRD(ded.amount)}
                               </span>
                               <Button
                                 type="button"
