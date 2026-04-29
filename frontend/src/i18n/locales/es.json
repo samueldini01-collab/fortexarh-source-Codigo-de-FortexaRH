@@ -1026,7 +1026,8 @@
       "errorLoadingBreakdown": "Error al cargar desglose",
       "baseSalary": "Salario Base",
       "periodAndJEDeleted": "Nómina y asiento contable eliminados correctamente",
-      "tssExported": "Archivo TSS exportado correctamente"
+      "tssExported": "Archivo TSS exportado correctamente",
+      "deductionsUpdated": "Deducciones actualizadas correctamente"
     },
     "todosLosDepartamentos": "Todos los departamentos",
     "noHayPeriodosDe": "No hay períodos de nómina",
@@ -1123,7 +1124,21 @@
     "deletePeriod": "Eliminar",
     "confirmDeletePeriod": "¿Eliminar este período y su asiento asociado?",
     "confirmDeletePaid": "⚠️ Esta nómina está PAGADA. ¿Está seguro de que desea eliminarla? Esta acción no se puede deshacer.",
-    "confirmDeletePaidWithJE": "⚠️ Esta nómina está PAGADA y tiene un asiento de diario vinculado. Al eliminarla, también se eliminará automáticamente el asiento contable asociado. ¿Está seguro de que desea continuar? Esta acción no se puede deshacer."
+    "confirmDeletePaidWithJE": "⚠️ Esta nómina está PAGADA y tiene un asiento de diario vinculado. Al eliminarla, también se eliminará automáticamente el asiento contable asociado. ¿Está seguro de que desea continuar? Esta acción no se puede deshacer.",
+    "deductionsDialog": {
+      "title": "Detalle de Deducciones",
+      "subtitle": "Modifique las deducciones antes de aprobar la nómina",
+      "grossSalary": "Salario Bruto",
+      "legalDeductions": "Deducciones de Ley",
+      "subtotalLegal": "Subtotal Deducciones Legales",
+      "additionalDeductions": "Descuentos Adicionales",
+      "noAdditional": "Sin descuentos adicionales",
+      "subtotalAdditional": "Subtotal Descuentos Adicionales",
+      "addDeduction": "Agregar Descuento",
+      "descPlaceholder": "Descripción",
+      "totalDeductions": "TOTAL DEDUCCIONES",
+      "save": "Guardar Cambios"
+    }
   },
   "globalSearch": {
     "placeholder": "Buscar o ejecutar acciones con IA...",

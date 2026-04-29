@@ -12,27 +12,17 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 ## Implemented (Apr 2026 Session)
-- AI Search: Quick patterns, Gemini AI, informational answers, 16 action types, payroll summary with charts/PDF
-- ACH Bank Integration: Banreservas, Popular, BHD Leon file generation + preview
-- Approval Workflows (Enterprise): 1-5 step configurable, by role/user, progress indicator in payroll
-- Contracts & E-Signature (Enterprise): WYSIWYG editor, 4 RD templates, canvas signature pad, multi-party signing
-- Bank validation on payroll approval
-- CDC & Auditoria hidden from users
-- Sidebar: "Contratos" under Gestion Humana, "Automatizacion" under Administracion
-- Roles module: Added "contracts" and "workflows" modules with permissions
-- Landing page: 3 new features (Contracts, Workflows, ACH Bank)
-- Contract Templates Auto-seeding: 4 DR system templates seeded on startup (Apr 12)
-- ACH Bank Config UI: New "Bank ACH" tab in /company-config (Apr 14)
-- Delete Paid Payroll: Enabled delete for paid payrolls with cascade JE deletion (Apr 14)
-- i18n Audit: Fixed ~120+ missing keys system-wide (Apr 24)
-- Support Module Refactor (Apr 24):
-  - Removed /support-admin from user navigation (redirects to /dashboard)
-  - SupportContent embedded as "Soporte" tab in Super Admin (/admin)
-  - New "Contactar Soporte" tab in Help Center: ticket creation form (Subject, Category, Priority, Message)
-  - New "Mis Tickets" tab in Help Center: ticket list, detail view with conversation thread, reply functionality
-  - Backend: GET/POST /api/support/my-tickets, GET /api/support/my-tickets/{id}, POST /api/support/my-tickets/{id}/reply
-  - Internal notes from super admin are filtered out from user view
-  - Tested: 15/15 backend + 23/23 frontend (iteration_228.json)
+- AI Search, ACH Bank, Approval Workflows, Contracts & E-Signature, Bank validation
+- CDC & Auditoria hidden, Sidebar reorganized, Roles module updated
+- Landing page features, Contract Templates Auto-seeding
+- ACH Bank Config UI in /company-config
+- Delete Paid Payroll with cascade JE deletion
+- i18n Audit: ~120+ keys fixed system-wide
+- Support Module → Super Admin tab + bidirectional tickets in Help Center
+- Email domain change: all @fortexarh.com emails → @fortexaerp.com (URLs remain fortexarh.com)
+- Employee Deductions fix: formatCurrency → formatRD, null sanitization, weight/height handling
+- Total Additional Deductions summary in Employee profile
+- Payroll Deductions Detail Dialog: clickable DEDUCCIONES column opens modal with full breakdown (SFS, AFP, ISR, additional), all editable inline before approval (Apr 29)
 
 ## IMPORTANT: i18n Sync
 When modifying locale files in src/i18n/locales/, ALWAYS copy to public/locales/ too:
@@ -41,12 +31,6 @@ cp src/i18n/locales/en.json public/locales/en.json
 cp src/i18n/locales/es.json public/locales/es.json
 ```
 And bump TRANSLATION_VERSION in src/i18n/index.js (currently 2.8.0)
-
-## Architecture Notes
-- SupportAdminPage.jsx: exports `SupportContent` (standalone) + default export with DashboardLayout
-- SuperAdminPage.jsx: imports `SupportContent` as "Soporte" tab
-- HelpCenterPage.jsx: 5 tabs (Guides, Updates, FAQ, Contact Support, My Tickets)
-- Route /support-admin redirects to /dashboard
 
 ## Backlog
 - P1: Notifications Phase 3 (Digest Email)

@@ -1026,7 +1026,8 @@
       "errorLoadingBreakdown": "Error loading breakdown",
       "tssExported": "TSS exported",
       "baseSalary": "Base Salary",
-      "periodAndJEDeleted": "Payroll and journal entry deleted successfully"
+      "periodAndJEDeleted": "Payroll and journal entry deleted successfully",
+      "deductionsUpdated": "Deductions updated successfully"
     },
     "todosLosDepartamentos": "All departments",
     "noHayPeriodosDe": "No payroll periods",
@@ -1123,7 +1124,21 @@
     "deletePeriod": "Delete",
     "confirmDeletePeriod": "Delete this period and its associated journal entry?",
     "confirmDeletePaid": "⚠️ This payroll is PAID. Are you sure you want to delete it? This action cannot be undone.",
-    "confirmDeletePaidWithJE": "⚠️ This payroll is PAID and has a linked journal entry. Deleting it will also automatically delete the associated journal entry. Are you sure you want to continue? This action cannot be undone."
+    "confirmDeletePaidWithJE": "⚠️ This payroll is PAID and has a linked journal entry. Deleting it will also automatically delete the associated journal entry. Are you sure you want to continue? This action cannot be undone.",
+    "deductionsDialog": {
+      "title": "Deductions Detail",
+      "subtitle": "Modify deductions before approving payroll",
+      "grossSalary": "Gross Salary",
+      "legalDeductions": "Legal Deductions",
+      "subtotalLegal": "Subtotal Legal Deductions",
+      "additionalDeductions": "Additional Deductions",
+      "noAdditional": "No additional deductions",
+      "subtotalAdditional": "Subtotal Additional Deductions",
+      "addDeduction": "Add Deduction",
+      "descPlaceholder": "Description",
+      "totalDeductions": "TOTAL DEDUCTIONS",
+      "save": "Save Changes"
+    }
   },
   "globalSearch": {
     "placeholder": "Search or run AI actions...",

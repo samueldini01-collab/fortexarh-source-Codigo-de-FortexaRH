@@ -157,6 +157,18 @@ export default function PayrollPage() {
 
   // Workflow status for selected period
   const [workflowStatus, setWorkflowStatus] = useState(null);
+
+  // Deductions Detail Dialog
+  const [showDeductionsDialog, setShowDeductionsDialog] = useState(false);
+  const [deductionsEntry, setDeductionsEntry] = useState(null);
+  const [deductionsForm, setDeductionsForm] = useState({
+    sfs_override: null,
+    afp_override: null,
+    isr_override: null,
+    additional_deductions: []
+  });
+  const [newPayrollDeduction, setNewPayrollDeduction] = useState({ type: "Préstamo Empresa", description: "", amount: "", is_percentage: false });
+  const [savingDeductions, setSavingDeductions] = useState(false);
   
   // Form states
   const [newPeriodForm, setNewPeriodForm] = useState({
@@ -686,6 +698,67 @@ export default function PayrollPage() {
       fetchPeriods();
     } catch (error) {
       toast.error(t('common.error'));
+    }
+  };
+
+  // Deductions Detail Dialog handlers
+  const openDeductionsDialog = (entry) => {
+    if (selectedPeriod?.status === 'paid') return;
+    setDeductionsEntry(entry);
+    setDeductionsForm({
+      sfs_override: entry.sfs_employee || 0,
+      afp_override: entry.afp_employee || 0,
+      isr_override: entry.isr || 0,
+      additional_deductions: (entry.additional_deductions || []).map(d => ({ ...d }))
+    });
+    setNewPayrollDeduction({ type: "Préstamo Empresa", description: "", amount: "", is_percentage: false });
+    setShowDeductionsDialog(true);
+  };
+
+  const addPayrollDeduction = () => {
+    if (!newPayrollDeduction.amount) return;
+    setDeductionsForm(prev => ({
+      ...prev,
+      additional_deductions: [...prev.additional_deductions, { ...newPayrollDeduction, amount: parseFloat(newPayrollDeduction.amount) || 0 }]
+    }));
+    setNewPayrollDeduction({ type: "Préstamo Empresa", description: "", amount: "", is_percentage: false });
+  };
+
+  const removePayrollDeduction = (index) => {
+    setDeductionsForm(prev => ({
+      ...prev,
+      additional_deductions: prev.additional_deductions.filter((_, i) => i !== index)
+    }));
+  };
+
+  const saveDeductions = async () => {
+    if (!deductionsEntry) return;
+    setSavingDeductions(true);
+    try {
+      const updateData = {
+        period_id: deductionsEntry.period_id,
+        employee_id: deductionsEntry.employee_id,
+        base_salary: deductionsEntry.base_salary,
+        overtime_day_hours: deductionsEntry.overtime_day_hours || 0,
+        overtime_night_hours: deductionsEntry.overtime_night_hours || 0,
+        overtime_weekend_hours: deductionsEntry.overtime_weekend_hours || 0,
+        overtime_holiday_hours: deductionsEntry.overtime_holiday_hours || 0,
+        bonuses: deductionsEntry.bonuses || 0,
+        commissions: deductionsEntry.commissions || 0,
+        sfs_override: parseFloat(deductionsForm.sfs_override) || 0,
+        afp_override: parseFloat(deductionsForm.afp_override) || 0,
+        isr_override: parseFloat(deductionsForm.isr_override) || 0,
+        additional_deductions: deductionsForm.additional_deductions
+      };
+      await axios.put(`${API}/payroll/entries/${deductionsEntry.entry_id}`, updateData, { headers: getAuthHeaders(), withCredentials: true });
+      toast.success(t('payrollV2.messages.deductionsUpdated'));
+      setShowDeductionsDialog(false);
+      fetchPeriodDetails(deductionsEntry.period_id);
+      fetchPeriods();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || t('common.error'));
+    } finally {
+      setSavingDeductions(false);
     }
   };
 
@@ -1429,7 +1502,17 @@ export default function PayrollPage() {
                                 <TableCell className="text-right border-r bg-red-50/50 text-red-600 dark:text-red-400">{renderEditableCell(entry, 'afp_employee', entry.afp_employee)}</TableCell>
                                 <TableCell className="text-right border-r bg-red-50/50 text-red-600 dark:text-red-400">{renderEditableCell(entry, 'isr', entry.isr)}</TableCell>
                                 <TableCell className="text-right border-r bg-orange-50/50 text-orange-600">{formatNumber(entry.total_deduction_novelties || 0)}</TableCell>
-                                <TableCell className="text-right border-r bg-red-100/50 font-bold text-red-700 dark:text-red-400">{formatNumber(entry.total_deductions)}</TableCell>
+                                <TableCell className="text-right border-r bg-red-100/50 font-bold text-red-700 dark:text-red-400">
+                                  <button
+                                    type="button"
+                                    onClick={() => openDeductionsDialog(entry)}
+                                    className={`font-mono font-bold ${selectedPeriod?.status !== 'paid' ? 'cursor-pointer hover:underline hover:text-red-900' : ''}`}
+                                    disabled={selectedPeriod?.status === 'paid'}
+                                    data-testid={`deductions-cell-${entry.entry_id}`}
+                                  >
+                                    {formatNumber(entry.total_deductions)}
+                                  </button>
+                                </TableCell>
                                 <TableCell className="text-right bg-emerald-100/50 font-bold text-emerald-700 dark:text-emerald-400">{formatNumber(entry.net_salary)}</TableCell>
                                 {selectedPeriod.status !== 'paid' && (
                                   <TableCell>
@@ -2138,6 +2221,174 @@ export default function PayrollPage() {
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* Deductions Detail Dialog */}
+      <Dialog open={showDeductionsDialog} onOpenChange={setShowDeductionsDialog}>
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Calculator className="w-5 h-5 text-red-600" />
+              {t('payrollV2.deductionsDialog.title')}
+            </DialogTitle>
+            <DialogDescription>
+              {deductionsEntry?.employee_name} &middot; {t('payrollV2.deductionsDialog.subtitle')}
+            </DialogDescription>
+          </DialogHeader>
+
+          {deductionsEntry && (
+            <div className="space-y-5">
+              {/* Salary reference */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex justify-between items-center">
+                <span className="text-sm font-medium text-blue-700">{t('payrollV2.deductionsDialog.grossSalary')}</span>
+                <span className="font-mono font-bold text-blue-700">{formatNumber(deductionsEntry.gross_salary)}</span>
+              </div>
+
+              {/* Legal Deductions */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold text-slate-700">{t('payrollV2.deductionsDialog.legalDeductions')}</h4>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-3">
+                    <Label className="text-sm w-24">SFS (3.04%)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={deductionsForm.sfs_override}
+                      onChange={(e) => setDeductionsForm({ ...deductionsForm, sfs_override: e.target.value })}
+                      className="w-40 text-right font-mono"
+                      data-testid="deductions-sfs"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <Label className="text-sm w-24">AFP (2.87%)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={deductionsForm.afp_override}
+                      onChange={(e) => setDeductionsForm({ ...deductionsForm, afp_override: e.target.value })}
+                      className="w-40 text-right font-mono"
+                      data-testid="deductions-afp"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <Label className="text-sm w-24">ISR</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={deductionsForm.isr_override}
+                      onChange={(e) => setDeductionsForm({ ...deductionsForm, isr_override: e.target.value })}
+                      className="w-40 text-right font-mono"
+                      data-testid="deductions-isr"
+                    />
+                  </div>
+                </div>
+
+                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-2 flex justify-between items-center">
+                  <span className="text-xs font-medium text-emerald-700">{t('payrollV2.deductionsDialog.subtotalLegal')}</span>
+                  <span className="font-mono font-bold text-emerald-700 text-sm">
+                    {formatNumber((parseFloat(deductionsForm.sfs_override) || 0) + (parseFloat(deductionsForm.afp_override) || 0) + (parseFloat(deductionsForm.isr_override) || 0))}
+                  </span>
+                </div>
+              </div>
+
+              {/* Additional Deductions */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold text-slate-700">{t('payrollV2.deductionsDialog.additionalDeductions')}</h4>
+                
+                {deductionsForm.additional_deductions.length === 0 ? (
+                  <p className="text-sm text-slate-400 italic text-center py-2">{t('payrollV2.deductionsDialog.noAdditional')}</p>
+                ) : (
+                  <div className="space-y-2">
+                    {deductionsForm.additional_deductions.map((ded, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-2 bg-slate-50 rounded-lg border">
+                        <div>
+                          <p className="text-sm font-medium">{ded.type}</p>
+                          {ded.description && <p className="text-xs text-slate-500">{ded.description}</p>}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-sm">{ded.is_percentage ? `${ded.amount}%` : formatNumber(ded.amount)}</span>
+                          <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => removePayrollDeduction(idx)}>
+                            <X className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {deductionsForm.additional_deductions.length > 0 && (
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-2 flex justify-between items-center">
+                    <span className="text-xs font-medium text-orange-700">{t('payrollV2.deductionsDialog.subtotalAdditional')}</span>
+                    <span className="font-mono font-bold text-orange-700 text-sm">
+                      {formatNumber(deductionsForm.additional_deductions.reduce((s, d) => s + (d.is_percentage ? 0 : (parseFloat(d.amount) || 0)), 0))}
+                    </span>
+                  </div>
+                )}
+
+                {/* Add deduction form */}
+                <div className="bg-blue-50 rounded-lg p-3 border border-blue-200 space-y-2">
+                  <p className="text-xs font-semibold text-blue-700">+ {t('payrollV2.deductionsDialog.addDeduction')}</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    <Select value={newPayrollDeduction.type} onValueChange={(v) => setNewPayrollDeduction({ ...newPayrollDeduction, type: v })}>
+                      <SelectTrigger className="bg-white text-xs h-8">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Préstamo Empresa">Préstamo Empresa</SelectItem>
+                        <SelectItem value="Pensión Alimenticia">Pensión Alimenticia</SelectItem>
+                        <SelectItem value="Adelanto Salario">Adelanto Salario</SelectItem>
+                        <SelectItem value="Seguro Complementario">Seguro Complementario</SelectItem>
+                        <SelectItem value="Cooperativa">Cooperativa</SelectItem>
+                        <SelectItem value="Otro">Otro</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      placeholder={t('payrollV2.deductionsDialog.descPlaceholder')}
+                      value={newPayrollDeduction.description}
+                      onChange={(e) => setNewPayrollDeduction({ ...newPayrollDeduction, description: e.target.value })}
+                      className="bg-white text-xs h-8"
+                    />
+                    <div className="flex gap-1">
+                      <Input
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        value={newPayrollDeduction.amount}
+                        onChange={(e) => setNewPayrollDeduction({ ...newPayrollDeduction, amount: e.target.value })}
+                        className="bg-white text-xs h-8"
+                      />
+                      <Button type="button" size="sm" className="h-8 px-2 bg-blue-600" onClick={addPayrollDeduction} disabled={!newPayrollDeduction.amount}>
+                        <Plus className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Grand Total */}
+              <div className="bg-red-50 border-2 border-red-200 rounded-lg p-3 flex justify-between items-center">
+                <span className="font-semibold text-red-700">{t('payrollV2.deductionsDialog.totalDeductions')}</span>
+                <span className="font-mono font-bold text-red-700 text-lg">
+                  {formatNumber(
+                    (parseFloat(deductionsForm.sfs_override) || 0) +
+                    (parseFloat(deductionsForm.afp_override) || 0) +
+                    (parseFloat(deductionsForm.isr_override) || 0) +
+                    deductionsForm.additional_deductions.reduce((s, d) => s + (d.is_percentage ? 0 : (parseFloat(d.amount) || 0)), 0)
+                  )}
+                </span>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="gap-2 mt-4">
+            <Button variant="outline" onClick={() => setShowDeductionsDialog(false)}>{t('common.cancel')}</Button>
+            <Button onClick={saveDeductions} disabled={savingDeductions} className="bg-emerald-600 hover:bg-emerald-700" data-testid="save-deductions-btn">
+              {savingDeductions ? <RefreshCw className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />}
+              {t('payrollV2.deductionsDialog.save')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }
