@@ -188,7 +188,8 @@
       "talent": "Talento",
       "administration": "Administración"
     },
-    "helpCenter": "Centro de Ayuda"
+    "helpCenter": "Centro de Ayuda",
+    "liquidation": "Liquidación"
   },
   "checkout": {
     "header": {
@@ -905,7 +906,14 @@
       "incompleteEmployees": "{{count}} empleados con datos incompletos"
     },
     "errorLoadingStats": "Error al cargar estadísticas",
-    "errorLoadingDetails": "Error al cargar detalles"
+    "errorLoadingDetails": "Error al cargar detalles",
+    "comparison": {
+      "title": "Comparación Período a Período",
+      "desc": "Variación entre los dos últimos períodos de nómina procesados",
+      "previousPeriod": "Período Anterior",
+      "currentPeriod": "Período Actual",
+      "variation": "Variación"
+    }
   },
   "pricing": {
     "planNames": {
@@ -1401,7 +1409,8 @@
       "deductions": "Descuentos",
       "documents": "Documentos",
       "paymentMethod": "Forma de Pago",
-      "emergencyContact": "Contacto de Emergencia"
+      "emergencyContact": "Contacto de Emergencia",
+      "salaryHistory": "Historial"
     },
     "fotoDePerfil": "Foto de Perfil",
     "clicParaCambiarMax": "Clic para cambiar. Max 2MB",
@@ -6396,5 +6405,49 @@
     "contract_expiring": "Contrato por Vencer",
     "work_anniversary": "Aniversario Laboral",
     "birthday": "Cumpleaños"
+  },
+  "liquidation": {
+    "title": "Cálculo de Liquidación",
+    "subtitle": "Calcule prestaciones laborales según el Código de Trabajo de RD (Art. 80/86)",
+    "selectEmployee": "Seleccione un empleado",
+    "types": {
+      "desahucio": "Desahucio (Art. 80)",
+      "despido": "Despido Injustificado (Art. 86)",
+      "renuncia": "Renuncia Voluntaria"
+    },
+    "form": {
+      "title": "Datos de Cálculo",
+      "employee": "Empleado",
+      "selectEmployee": "Seleccionar empleado...",
+      "type": "Tipo de Terminación",
+      "date": "Fecha de Terminación",
+      "salary": "Salario Manual",
+      "salaryPlaceholder": "Usar salario del perfil",
+      "calculate": "Calcular Liquidación"
+    },
+    "result": {
+      "title": "Resultado del Cálculo",
+      "empty": "Seleccione un empleado y tipo de terminación para calcular",
+      "employee": "Empleado",
+      "position": "Cargo",
+      "service": "Antigüedad",
+      "dailySalary": "Salario Diario",
+      "days": "días",
+      "months": "meses",
+      "total": "TOTAL LIQUIDACIÓN",
+      "totalNote": "Monto bruto antes de retenciones aplicables",
+      "disclaimer": "Este cálculo es estimado y se basa en el Código de Trabajo de República Dominicana. Consulte con un abogado laboralista para casos específicos."
+    }
+  },
+  "salaryHistory": {
+    "title": "Historial Salarial",
+    "noHistory": "Sin historial de cambios salariales",
+    "currentSalary": "Salario Actual",
+    "change": "Cambio",
+    "reason": "Motivo",
+    "effectiveDate": "Fecha Efectiva",
+    "registeredBy": "Registrado por",
+    "increase": "Aumento",
+    "decrease": "Reducción"
   }
 }

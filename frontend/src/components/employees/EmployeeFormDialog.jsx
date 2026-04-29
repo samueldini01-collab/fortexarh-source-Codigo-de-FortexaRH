@@ -48,6 +48,7 @@ import {
   paymentMethods, paymentFrequencies, deductionTypes, relationshipTypes,
   bloodTypes, countries
 } from "./constants";
+import { SalaryHistoryTimeline } from "./SalaryHistoryTimeline";
 
 export function EmployeeFormDialog({
   isOpen,
@@ -163,6 +164,11 @@ export function EmployeeFormDialog({
                     <Phone className="w-3 h-3 mr-1" />
                     {t('employees.tabs.emergencyContact')}
                   </TabsTrigger>
+                  {editingEmployee && (
+                    <TabsTrigger value="historial" className="text-xs" data-testid="tab-historial">
+                      {t('employees.tabs.salaryHistory')}
+                    </TabsTrigger>
+                  )}
                 </TabsList>
 
                 {/* Tab 1: Datos Principales */}
@@ -1068,6 +1074,13 @@ export function EmployeeFormDialog({
                     </div>
                   )}
                 </TabsContent>
+
+                {/* Tab: Salary History */}
+                {editingEmployee && (
+                  <TabsContent value="historial" className="space-y-4">
+                    <SalaryHistoryTimeline employeeId={editingEmployee.employee_id} />
+                  </TabsContent>
+                )}
               </Tabs>
 
               {/* Form Actions */}

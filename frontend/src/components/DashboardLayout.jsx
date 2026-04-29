@@ -75,6 +75,7 @@ import {
   History,
   PieChart,
   Receipt,
+  Scale,
   Keyboard,
   HelpCircle,
   Sparkles,
@@ -127,6 +128,7 @@ const DEFAULT_NAVIGATION = [
   { id: "users-management", nameKey: "users", href: "/users-management", icon: UserCog, visible: true, featureKey: "settings" },
   { id: "subscriptions", nameKey: "subscriptions", href: "/subscriptions", icon: CreditCard, visible: true, featureKey: "subscriptions" },
   { id: "payroll-config", nameKey: "payrollConfig", href: "/payroll-config", icon: Settings2, visible: true, featureKey: "employees" },
+  { id: "liquidation", nameKey: "liquidation", href: "/liquidation", icon: Scale, visible: true, featureKey: "payroll" },
   { id: "help-center", nameKey: "helpCenter", href: "/help-center", icon: BookOpen, visible: true, featureKey: "settings" },
   { id: "company-config", nameKey: "settings", href: "/company-config", icon: Building2, visible: true, featureKey: "settings" },
 ];

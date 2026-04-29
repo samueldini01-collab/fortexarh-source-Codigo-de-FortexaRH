@@ -123,6 +123,7 @@ const TemplatesPage = lazy(() => import("@/pages/TemplatesPage"));
 // Payroll & Finance - Lazy loaded (Very large pages)
 const PayrollPage = lazy(() => import("@/pages/PayrollV2Page"));
 const PayrollDashboardPage = lazy(() => import("@/pages/PayrollDashboardPage"));
+const LiquidationPage = lazy(() => import("@/pages/LiquidationPage"));
 const PayrollConfigPage = lazy(() => import("@/pages/PayrollConfigPage"));
 const PayrollCalculatorPage = lazy(() => import("@/pages/PayrollCalculatorPage"));
 const AccountingPage = lazy(() => import("@/pages/AccountingPage"));
@@ -479,6 +480,7 @@ function AppRouter() {
       {/* Payroll routes - Lazy loaded */}
       <Route path="/payroll" element={<ProtectedRoute><LazyRoute><PayrollPage /></LazyRoute></ProtectedRoute>} />
       <Route path="/payroll-dashboard" element={<ProtectedRoute><LazyRoute><PayrollDashboardPage /></LazyRoute></ProtectedRoute>} />
+      <Route path="/liquidation" element={<ProtectedRoute><LazyRoute><LiquidationPage /></LazyRoute></ProtectedRoute>} />
       <Route path="/payroll-config" element={<ProtectedRoute><LazyRoute><PayrollConfigPage /></LazyRoute></ProtectedRoute>} />
       <Route path="/payroll-calculator" element={<ProtectedRoute><LazyRoute><PayrollCalculatorPage /></LazyRoute></ProtectedRoute>} />
       <Route path="/accounting" element={<ProtectedRoute><LazyRoute><AccountingPage /></LazyRoute></ProtectedRoute>} />

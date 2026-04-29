@@ -188,7 +188,8 @@
       "talent": "Talent",
       "administration": "Administration"
     },
-    "helpCenter": "Help Center"
+    "helpCenter": "Help Center",
+    "liquidation": "Severance"
   },
   "checkout": {
     "header": {
@@ -905,7 +906,14 @@
       "incompleteEmployees": "{{count}} employees with incomplete data"
     },
     "errorLoadingStats": "Error loading statistics",
-    "errorLoadingDetails": "Error loading details"
+    "errorLoadingDetails": "Error loading details",
+    "comparison": {
+      "title": "Period-over-Period Comparison",
+      "desc": "Variation between the two latest processed payroll periods",
+      "previousPeriod": "Previous Period",
+      "currentPeriod": "Current Period",
+      "variation": "Variation"
+    }
   },
   "pricing": {
     "planNames": {
@@ -1401,7 +1409,8 @@
       "deductions": "Deductions",
       "documents": "Documents",
       "paymentMethod": "Payment Method",
-      "emergencyContact": "Emergency Contact"
+      "emergencyContact": "Emergency Contact",
+      "salaryHistory": "History"
     },
     "fotoDePerfil": "Profile Photo",
     "clicParaCambiarMax": "Click to change. Max 2MB",
@@ -6388,5 +6397,49 @@
     "contract_expiring": "Contract Expiring",
     "work_anniversary": "Work Anniversary",
     "birthday": "Birthday"
+  },
+  "liquidation": {
+    "title": "Severance Calculation",
+    "subtitle": "Calculate labor benefits per DR Labor Code (Art. 80/86)",
+    "selectEmployee": "Select an employee",
+    "types": {
+      "desahucio": "Termination w/o cause (Art. 80)",
+      "despido": "Unjustified Dismissal (Art. 86)",
+      "renuncia": "Voluntary Resignation"
+    },
+    "form": {
+      "title": "Calculation Data",
+      "employee": "Employee",
+      "selectEmployee": "Select employee...",
+      "type": "Termination Type",
+      "date": "Termination Date",
+      "salary": "Manual Salary",
+      "salaryPlaceholder": "Use profile salary",
+      "calculate": "Calculate Severance"
+    },
+    "result": {
+      "title": "Calculation Result",
+      "empty": "Select an employee and termination type to calculate",
+      "employee": "Employee",
+      "position": "Position",
+      "service": "Seniority",
+      "dailySalary": "Daily Salary",
+      "days": "days",
+      "months": "months",
+      "total": "TOTAL SEVERANCE",
+      "totalNote": "Gross amount before applicable withholdings",
+      "disclaimer": "This is an estimate based on the Dominican Republic Labor Code. Consult a labor lawyer for specific cases."
+    }
+  },
+  "salaryHistory": {
+    "title": "Salary History",
+    "noHistory": "No salary change history",
+    "currentSalary": "Current Salary",
+    "change": "Change",
+    "reason": "Reason",
+    "effectiveDate": "Effective Date",
+    "registeredBy": "Registered by",
+    "increase": "Increase",
+    "decrease": "Decrease"
   }
 }

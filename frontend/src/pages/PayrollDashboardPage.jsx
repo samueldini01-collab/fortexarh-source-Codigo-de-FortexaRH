@@ -413,6 +413,51 @@ export default function PayrollDashboardPage() {
           </Card>
         </div>
 
+        {/* Period Comparison */}
+        {monthly_trend && monthly_trend.length >= 2 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-blue-600" />
+                {t('payrollDashboard.comparison.title')}
+              </CardTitle>
+              <CardDescription>{t('payrollDashboard.comparison.desc')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {(() => {
+                const current = monthly_trend[monthly_trend.length - 1];
+                const previous = monthly_trend[monthly_trend.length - 2];
+                const grossChange = current.total_gross - previous.total_gross;
+                const grossPct = previous.total_gross > 0 ? ((grossChange / previous.total_gross) * 100).toFixed(1) : 0;
+                const netChange = current.total_net - previous.total_net;
+                const netPct = previous.total_net > 0 ? ((netChange / previous.total_net) * 100).toFixed(1) : 0;
+                return (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="text-center p-4 bg-slate-50 rounded-lg border">
+                      <p className="text-xs text-slate-500 mb-1">{previous.month}</p>
+                      <p className="text-lg font-bold text-slate-700">{formatCurrency(previous.total_gross)}</p>
+                      <p className="text-xs text-slate-400">{t('payrollDashboard.comparison.previousPeriod')}</p>
+                    </div>
+                    <div className="text-center p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
+                      <p className="text-xs text-blue-600 mb-1">{current.month}</p>
+                      <p className="text-lg font-bold text-blue-700">{formatCurrency(current.total_gross)}</p>
+                      <p className="text-xs text-blue-500">{t('payrollDashboard.comparison.currentPeriod')}</p>
+                    </div>
+                    <div className="flex flex-col items-center justify-center p-4 rounded-lg border">
+                      <div className={`flex items-center gap-1 ${grossChange >= 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                        {grossChange >= 0 ? <ArrowUpRight className="w-5 h-5" /> : <ArrowDownRight className="w-5 h-5" />}
+                        <span className="text-lg font-bold">{grossPct}%</span>
+                      </div>
+                      <p className="text-xs text-slate-500 mt-1">{formatCurrency(Math.abs(grossChange))}</p>
+                      <p className="text-xs text-slate-400">{t('payrollDashboard.comparison.variation')}</p>
+                    </div>
+                  </div>
+                );
+              })()}
+            </CardContent>
+          </Card>
+        )}
+
         {/* Bottom Row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Employer Cost Breakdown */}

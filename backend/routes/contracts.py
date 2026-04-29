@@ -508,7 +508,23 @@ async def send_for_signature(contract_id: str, current_user: dict = Depends(get_
             "document_hash": generate_document_hash(contract.get("content_html", ""))
         }}
     )
-    
+
+    # Send push notification to employee
+    try:
+        from services.push_service import send_push_to_user
+        employee_id = contract.get("employee_id")
+        if employee_id:
+            employee = await db.employees.find_one({"employee_id": employee_id}, {"_id": 0, "user_id": 1})
+            if employee and employee.get("user_id"):
+                await send_push_to_user(
+                    employee["user_id"],
+                    "Contrato Pendiente de Firma",
+                    "Tienes un contrato laboral pendiente de firma en tu portal.",
+                    "/portal/contracts"
+                )
+    except Exception:
+        pass
+
     return {"success": True, "message": "Contrato enviado para firma"}
 
 
