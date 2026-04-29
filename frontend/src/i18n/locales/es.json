@@ -3690,6 +3690,13 @@
         "paternity": "Paternidad",
         "maternity": "Maternidad",
         "other": "Otro"
+      },
+      "typesInfo": {
+        "title": "Días por Tipo de Permiso (Código de Trabajo RD)",
+        "days": "días",
+        "asNeeded": "Según certificado",
+        "variable": "Variable",
+        "note": "* Los días indicados son referenciales según el Código de Trabajo de República Dominicana. La empresa puede otorgar beneficios adicionales."
       }
     }
   },

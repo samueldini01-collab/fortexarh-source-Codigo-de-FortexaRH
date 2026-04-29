@@ -1294,6 +1294,36 @@ function EmployeeDashboard() {
                 </Button>
               </div>
 
+              {/* Permission Types Info Card */}
+              <Card data-testid="permission-types-info">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Info className="w-4 h-4 text-blue-600" />
+                    {t('employeePortal.permissions.typesInfo.title')}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                    {[
+                      { type: t('employeePortal.permissions.types.personal'), days: "1-3", icon: "👤", color: "bg-slate-50 border-slate-200" },
+                      { type: t('employeePortal.permissions.types.medical'), days: t('employeePortal.permissions.typesInfo.asNeeded'), icon: "🏥", color: "bg-blue-50 border-blue-200" },
+                      { type: t('employeePortal.permissions.types.bereavement'), days: "3", icon: "🕊️", color: "bg-slate-50 border-slate-200" },
+                      { type: t('employeePortal.permissions.types.marriage'), days: "5", icon: "💍", color: "bg-pink-50 border-pink-200" },
+                      { type: t('employeePortal.permissions.types.paternity'), days: "2", icon: "👶", color: "bg-cyan-50 border-cyan-200" },
+                      { type: t('employeePortal.permissions.types.maternity'), days: "84", icon: "🤱", color: "bg-purple-50 border-purple-200" },
+                      { type: t('employeePortal.permissions.types.other'), days: t('employeePortal.permissions.typesInfo.variable'), icon: "📋", color: "bg-amber-50 border-amber-200" },
+                    ].map((item, idx) => (
+                      <div key={idx} className={`border rounded-lg p-2.5 text-center ${item.color}`}>
+                        <span className="text-lg">{item.icon}</span>
+                        <p className="text-xs font-medium mt-1">{item.type}</p>
+                        <p className="text-sm font-bold text-slate-700 mt-0.5">{item.days} {t('employeePortal.permissions.typesInfo.days')}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-2 italic">{t('employeePortal.permissions.typesInfo.note')}</p>
+                </CardContent>
+              </Card>
+
               {/* Permission Request Form */}
               {showPermissionRequest && (
                 <Card className="border-2 border-blue-200">

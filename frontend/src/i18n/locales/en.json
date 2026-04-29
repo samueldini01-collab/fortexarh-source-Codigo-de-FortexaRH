@@ -3685,6 +3685,13 @@
         "paternity": "Paternity",
         "maternity": "Maternity",
         "other": "Other"
+      },
+      "typesInfo": {
+        "title": "Days per Permission Type (DR Labor Code)",
+        "days": "days",
+        "asNeeded": "As certified",
+        "variable": "Variable",
+        "note": "* Days shown are referential per DR Labor Code. The company may grant additional benefits."
       }
     }
   },
