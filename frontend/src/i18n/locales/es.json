@@ -1455,7 +1455,8 @@
     "deduccionesDesc": "Active o desactive las deducciones de ley. Puede usar el calculo automatico o ingresar un monto manual.",
     "deduccionesDesactivadasWarning": "Algunas deducciones de ley estan desactivadas para este empleado. Asegurese de cumplir con las regulaciones aplicables.",
     "position": "Cargo",
-    "salary": "Salario"
+    "salary": "Salario",
+    "totalDeduccionesAdicionales": "Total Deducciones Adicionales"
   },
   "payroll": {
     "title": "Nómina",

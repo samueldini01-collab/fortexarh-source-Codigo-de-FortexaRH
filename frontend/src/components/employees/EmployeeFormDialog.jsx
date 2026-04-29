@@ -744,30 +744,42 @@ export function EmployeeFormDialog({
                         <p className="text-slate-500 italic">{t('employees.noHayDescuentosAdicionales')}</p>
                       </div>
                     ) : (
-                      <div className="space-y-2 mb-4">
-                        {formData.additional_deductions.map((ded, index) => (
-                          <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                      <>
+                        <div className="space-y-2 mb-4">
+                          {formData.additional_deductions.map((ded, index) => (
+                            <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                              <div>
+                                <p className="font-medium">{ded.type}</p>
+                                <p className="text-sm text-slate-500">{ded.description}</p>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-mono">
+                                  {ded.is_percentage ? `${ded.amount}%` : formatRD(ded.amount)}
+                                </span>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => removeDeduction(index)}
+                                  className="text-red-500 hover:text-red-600 h-8 w-8"
+                                >
+                                  <X className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        {formData.additional_deductions.length > 1 && (
+                          <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 mb-4 flex justify-between items-center">
                             <div>
-                              <p className="font-medium">{ded.type}</p>
-                              <p className="text-sm text-slate-500">{ded.description}</p>
+                              <p className="text-sm font-semibold text-orange-700">{t('employees.totalDeduccionesAdicionales')}</p>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <span className="font-mono">
-                                {ded.is_percentage ? `${ded.amount}%` : formatRD(ded.amount)}
-                              </span>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => removeDeduction(index)}
-                                className="text-red-500 hover:text-red-600 h-8 w-8"
-                              >
-                                <X className="w-4 h-4" />
-                              </Button>
-                            </div>
+                            <p className="font-mono font-bold text-orange-700">
+                              {formatRD(formData.additional_deductions.reduce((sum, d) => sum + (d.is_percentage ? 0 : (parseFloat(d.amount) || 0)), 0))}
+                            </p>
                           </div>
-                        ))}
-                      </div>
+                        )}
+                      </>
                     )}
 
                     {/* Add new deduction form */}

@@ -1455,7 +1455,8 @@
     "deduccionesDesc": "Enable or disable legal deductions. You can use automatic calculation or enter a manual amount.",
     "deduccionesDesactivadasWarning": "Some legal deductions are disabled for this employee. Make sure to comply with applicable regulations.",
     "position": "Position",
-    "salary": "Salary"
+    "salary": "Salary",
+    "totalDeduccionesAdicionales": "Total Additional Deductions"
   },
   "payroll": {
     "title": "Payroll",
