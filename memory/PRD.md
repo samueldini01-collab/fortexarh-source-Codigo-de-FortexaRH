@@ -66,6 +66,16 @@
   - Frontend: currency dropdown selector, FX badge in results header showing "FX activo: USD (vía open.er-api.com)", dual values per row (local + converted)
   - Tested: iteration_234.json — 26/26 (17 legacy + 9 FX) backend tests PASSED
 - **Sidebar Bug Fix (May 1, 2026)**: Fiscal Comparison item was missing in sidebar (only existed in flat DEFAULT_NAVIGATION). Added to MENU_GROUPS Payroll & Finance group with isNew badge. Verified visible.
+- **Executive PDF Report — Fiscal Comparison (May 1, 2026)** — Board-ready DONE:
+  - New endpoint `POST /api/multi-country-reports/cost-comparison-pdf` generates an A4 PDF with:
+    - Cover with company info, salary, countries compared, FX setting, generation timestamp
+    - Executive summary paragraph (cheapest country, spread vs most expensive)
+    - Comparative table (8 columns: country, gross, employee deductions, net, employer, total cost in display currency + local, overhead)
+    - Bar chart visualization (text-based) with cheapest in cyan, most expensive in amber
+    - Strategic recommendation with savings %, SS system, agency, currency, considerations checklist
+    - Methodology section with FX rate source disclosure
+  - Frontend: gradient blue→emerald button "Exportar Análisis Ejecutivo (PDF)" in results header
+  - Tested: iteration_235.json — 37/37 backend tests PASSED (11 new + 26 regression)
 
 ## Architecture Notes
 - COUNTRY_PROFILES dict (country_config.py) is source of truth
@@ -76,6 +86,15 @@
 ## Backlog
 - P1: Importación masiva Excel (Empleados, Novedades)
 - P2: Formatos nativos oficiales de reportes (CO PILA plano UGPP, MX IMSS SUA, US IRS 941 PDF, ES TC1/Modelo 111, UK HMRC RTI XML, FR DSN)
+- P2: Refactor payroll.py (~1800 lines) en servicios
+- P2: API pública documentada
+- P2: Backup/Exportation de datos de empresa
+- P2: Configurable Notifications Phase 3 (Digest Email)
+- P2: QuickBooks Desktop Web Connector
+- P2: Préstamos automáticos con auto-deducción
+- P2: Multi-moneda (DOP/USD dual)
+- P2: Onboarding checklist
+o actual**: ya hay reporte universal CSV/PDF que cubre el 80% del valor para los 27 países restantes
 - P2: Refactor payroll.py (~1800 lines) en servicios
 - P2: API pública documentada
 - P2: Backup/Exportation de datos de empresa
