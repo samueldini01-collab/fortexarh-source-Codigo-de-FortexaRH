@@ -115,6 +115,30 @@
     - Calendar refreshes after marking
   - **15/33 formats implemented** (45% native coverage), **10 países con cumplimiento nativo completo** (DR, CO, MX, US, ES, GB, FR, CA, BR, AR)
   - Tested: iteration_239.json — **66/66 backend tests PASSED** (18 new + 48 regression)
+- **Native Fiscal Formats — Cobertura completa 33/33 + Cron diario automático (May 1, 2026)** — P0 DONE:
+  - 🇨🇱 **CL PreviRed**: `GET /api/native-reports/cl/previred?period=YYYY-MM` — CSV semicolon UTF-8 BOM con AFP 10%, Salud 7%, AFC, SIS, Mutual.
+  - 🇵🇪 **PE PLAME**: `GET /api/native-reports/pe/plame?period=YYYY-MM` — SUNAT planilla electrónica (AFP/ONP, EsSalud, Renta 5ta, SCTR).
+  - 🇪🇨 **EC IESS**: `GET /api/native-reports/ec/iess?period=YYYY-MM` — IESS aporte personal 9.45% + patronal 11.15% + IECE-SECAP.
+  - 🇻🇪 **VE IVSS**: `GET /api/native-reports/ve/ivss?period=YYYY-MM` — IVSS 4%, Paro Forzoso, LPH, INCES.
+  - 🇧🇴 **BO F.110**: `GET /api/native-reports/bo/f110?period=YYYY-MM` — AFP/SIN, CNS Salud, PROVIVIENDA.
+  - 🇵🇾 **PY F.109**: `GET /api/native-reports/py/f109?period=YYYY-MM` — IPS 9%/16.5% + IRP.
+  - 🇺🇾 **UY BPS 1146**: `GET /api/native-reports/uy/bps-1146?period=YYYY-MM` — Aporte jubilatorio 15%, FONASA 4.5%, FRL.
+  - 🇬🇾 **GY NIS**: `GET /api/native-reports/gy/nis?period=YYYY-MM` — NIS 5.6%/8.4% + PAYE.
+  - 🇸🇷 **SR SZF**: `GET /api/native-reports/sr/szf?period=YYYY-MM` — AOV + Loonbelasting + Ziektekosten.
+  - 🇨🇷 **CR CCSS**: `GET /api/native-reports/cr/ccss?period=YYYY-MM` — CCSS 10.67%/26.67% + INA + INS RT.
+  - 🇸🇻 **SV F-1 ISSS**: `GET /api/native-reports/sv/f1-isss?period=YYYY-MM` — ISSS + AFP + INSAFORP.
+  - 🇬🇹 **GT IGSS**: `GET /api/native-reports/gt/igss?period=YYYY-MM` — IGSS 4.83%/10.67% + IRTRA + INTECAP.
+  - 🇭🇳 **HN IHSS**: `GET /api/native-reports/hn/ihss?period=YYYY-MM` — IHSS EM/IVM + RAP + INFOP.
+  - 🇳🇮 **NI INSS**: `GET /api/native-reports/ni/inss?period=YYYY-MM` — INSS 7%/22.5% + INATEC.
+  - 🇵🇦 **PA CSS**: `GET /api/native-reports/pa/css?period=YYYY-MM` — CSS 9.75%/12.25% + Seguro Educativo + Riesgos.
+  - 🇨🇺 **CU ONAT**: `GET /api/native-reports/cu/onat?period=YYYY-MM` — Contribución Especial + Fuerza de Trabajo.
+  - 🇭🇹 **HT ONA**: `GET /api/native-reports/ht/ona?period=YYYY-MM` — ONA 6%/6% + OFATMA.
+  - 🇵🇷 **PR Form 499R-2/W-2PR**: `GET /api/native-reports/pr/form-499r?year=YYYY` — Comprobante anual de Retención Hacienda PR (PDF).
+  - **Helper genérico `_generate_planilla_csv`** + `PLANILLA_COLUMN_PROFILES` con configuración por agencia (deducciones empleado + aportes empleador) → 17 endpoints LATAM comparten la misma factory CSV (UTF-8 BOM + delimitador `;` para Excel).
+  - **APScheduler diario @ 08:00 UTC** integrado en `server.py` (lifespan startup/shutdown). El job `fiscal_reminders_daily` invoca `run_reminders_for_all_companies()` que itera todas las empresas activas y dispara recordatorios fiscales para cada una.
+  - **Endpoint admin global** `POST /api/native-reports/calendar/run-reminders-all` para disparo manual (solo admin/super_admin).
+  - **Cobertura: 33/33 formatos (100%)** en 28 países — PRIMERA SaaS HRTech LATAM con cumplimiento nativo total continental.
+  - Tested: iteration_240.json — **103/103 backend tests PASSED** (37 nuevos + 66 regresión).
 - **Global Compliance Center page (May 1, 2026)** — Roadmap visual DONE:
   - New page `/global-compliance` with stats cards (28 países, 33 formatos, 7 implementados, 28 cobertura universal)
   - Country cards grouped by region (Caribe, Centro, Norte, Sur, Europa) with status badges (Cumplimiento Nativo green / Parcial amber / Solo Universal slate)
@@ -132,17 +156,11 @@
 
 ## Backlog
 - P1: Importación masiva Excel (Empleados, Novedades)
-- P2: Formatos nativos oficiales de reportes (CO PILA plano UGPP, MX IMSS SUA, US IRS 941 PDF, ES TC1/Modelo 111, UK HMRC RTI XML, FR DSN)
+- P2: Refactor `native_reports.py` (~2641 lines) en sub-módulos: `native/catalog.py`, `native/latam_planilla.py`, `native/pr_form499r.py`, `native/filings.py`, `native/reminders.py`, `native/calendar.py` (recomendación del testing agent iter240)
 - P2: Refactor payroll.py (~1800 lines) en servicios
-- P2: API pública documentada
-- P2: Backup/Exportation de datos de empresa
-- P2: Configurable Notifications Phase 3 (Digest Email)
-- P2: QuickBooks Desktop Web Connector
-- P2: Préstamos automáticos con auto-deducción
-- P2: Multi-moneda (DOP/USD dual)
-- P2: Onboarding checklist
-o actual**: ya hay reporte universal CSV/PDF que cubre el 80% del valor para los 27 países restantes
-- P2: Refactor payroll.py (~1800 lines) en servicios
+- P2: Auto-registro de endpoints LATAM iterando `PLANILLA_COLUMN_PROFILES` (eliminar 17 wrappers casi idénticos)
+- P2: `run_reminders_for_all_companies` con paginación + `asyncio.gather` con semáforo para escalar a miles de empresas
+- P2: Centralizar `_require_country` en helper `ensure_company_country()` para i18n futuro
 - P2: API pública documentada
 - P2: Backup/Exportation de datos de empresa
 - P2: Configurable Notifications Phase 3 (Digest Email)
