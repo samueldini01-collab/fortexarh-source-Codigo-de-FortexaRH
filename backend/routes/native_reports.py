@@ -400,8 +400,8 @@ NATIVE_FORMATS = {
         {"code": "MODELO_111", "name": "Modelo 111 (Retenciones IRPF)", "agency": "AEAT", "frequency": "quarterly", "endpoint": "/api/native-reports/es/modelo-111", "implemented": True},
         {"code": "TC1", "name": "TC1 FAN (Cotización SS)", "agency": "TGSS", "frequency": "monthly", "endpoint": "/api/native-reports/es/tc1", "implemented": True},
     ],
-    "GB": [{"code": "RTI_FPS", "name": "HMRC RTI FPS", "agency": "HMRC", "frequency": "monthly", "implemented": False}],
-    "FR": [{"code": "DSN", "name": "DSN (Déclaration Sociale Nominative)", "agency": "URSSAF", "frequency": "monthly", "implemented": False}],
+    "GB": [{"code": "RTI_FPS", "name": "HMRC RTI FPS (XML)", "agency": "HMRC", "frequency": "monthly", "endpoint": "/api/native-reports/gb/rti-fps", "implemented": True}],
+    "FR": [{"code": "DSN", "name": "DSN (Déclaration Sociale Nominative)", "agency": "URSSAF", "frequency": "monthly", "endpoint": "/api/native-reports/fr/dsn", "implemented": True}],
     "CA": [{"code": "T4", "name": "T4 Statement of Remuneration", "agency": "CRA", "frequency": "annual", "implemented": False}],
     "BR": [{"code": "ESOCIAL", "name": "eSocial", "agency": "Receita Federal", "frequency": "monthly", "implemented": False}],
     "AR": [{"code": "F931", "name": "F.931 AFIP", "agency": "AFIP", "frequency": "monthly", "implemented": False}],
@@ -935,3 +935,403 @@ async def generate_es_tc1(period: str, current_user: dict = Depends(get_current_
         media_type="text/plain; charset=iso-8859-1",
         headers={"Content-Disposition": f'attachment; filename="{filename}"'}
     )
+
+
+# ===================== UNITED KINGDOM: HMRC RTI FPS (XML) =====================
+# Real Time Information - Full Payment Submission
+# Submitted to HMRC each pay day
+# https://www.gov.uk/guidance/run-payroll-using-rti
+
+import xml.etree.ElementTree as ET
+from xml.dom import minidom
+
+
+def _xml_pretty(root) -> str:
+    """Pretty-print an ElementTree root."""
+    rough = ET.tostring(root, encoding="unicode")
+    return minidom.parseString(rough).toprettyxml(indent="  ")
+
+
+@router.get("/gb/rti-fps")
+async def generate_gb_rti_fps(period: str, current_user: dict = Depends(get_current_user)):
+    """Generate UK HMRC RTI FPS (Full Payment Submission) XML.
+
+    Format: XML per HMRC RTI specification (simplified).
+    Period: YYYY-MM.
+    """
+    company_id = current_user.get("company_id")
+    await _require_country(company_id, "GB", "HMRC RTI FPS")
+
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0}) or {}
+    entries, emps, period_info = await _collect_period_data(company_id, period)
+    if not entries:
+        raise HTTPException(status_code=404, detail=f"No hay datos de nómina para {period}")
+
+    employer_paye = company.get("paye_reference") or "123/AB12345"
+    accounts_office = company.get("accounts_office_reference") or "123PA12345678"
+    company_name = (company.get("company_name") or company.get("name") or "Employer Ltd")[:56]
+    period_str = period.replace("-", "")[:6]
+
+    # Get tax year (UK tax year: April 6 → April 5)
+    year, month = period.split("-")
+    year = int(year)
+    month = int(month)
+    if month >= 4:
+        tax_year_end = year + 1
+    else:
+        tax_year_end = year
+    tax_year_str = f"{tax_year_end - 1}-{str(tax_year_end)[2:]}"  # e.g., "2025-26"
+
+    # Build XML
+    root = ET.Element("GovTalkMessage")
+    root.set("xmlns", "http://www.govtalk.gov.uk/CM/envelope")
+    header = ET.SubElement(root, "Header")
+    msg_details = ET.SubElement(header, "MessageDetails")
+    ET.SubElement(msg_details, "Class").text = "HMRC-PAYE-RTI-FPS"
+    ET.SubElement(msg_details, "Qualifier").text = "request"
+    ET.SubElement(msg_details, "Function").text = "submit"
+    ET.SubElement(msg_details, "GatewayTimestamp").text = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+
+    body = ET.SubElement(root, "Body")
+    ir_envelope = ET.SubElement(body, "IRenvelope")
+    ir_envelope.set("xmlns", "http://www.govtalk.gov.uk/taxation/PAYE/RTI/FullPaymentSubmission/24-25/1")
+    ir_header = ET.SubElement(ir_envelope, "IRheader")
+    keys = ET.SubElement(ir_header, "Keys")
+    key_taxoffice = ET.SubElement(keys, "Key")
+    key_taxoffice.set("Type", "TaxOfficeNumber")
+    key_taxoffice.text = employer_paye.split("/")[0]
+    key_taxoffice2 = ET.SubElement(keys, "Key")
+    key_taxoffice2.set("Type", "TaxOfficeReference")
+    key_taxoffice2.text = employer_paye.split("/")[-1]
+    ET.SubElement(ir_header, "PeriodEnd").text = f"{year}-{int(month):02d}-30"
+
+    fps = ET.SubElement(ir_envelope, "FullPaymentSubmission")
+    employer = ET.SubElement(fps, "EmpRefs")
+    ET.SubElement(employer, "OfficeNo").text = employer_paye.split("/")[0]
+    ET.SubElement(employer, "PayeRef").text = employer_paye.split("/")[-1]
+    ET.SubElement(employer, "AOref").text = accounts_office
+
+    # Aggregate per-employee data
+    employee_totals = {}
+    for entry in entries:
+        eid = entry["employee_id"]
+        if eid not in employee_totals:
+            employee_totals[eid] = {"gross": 0.0, "tax": 0.0, "ni_emp": 0.0, "ni_er": 0.0, "net": 0.0}
+        employee_totals[eid]["gross"] += entry.get("gross_salary", 0)
+        employee_totals[eid]["tax"] += entry.get("isr", 0)
+        # GB SS slots: NIC_EMP (12% over £242 threshold), NIC_EMP_EMP (13.8%)
+        employee_totals[eid]["ni_emp"] += entry.get("sfs_employee", 0)
+        employee_totals[eid]["ni_er"] += entry.get("sfs_employer", 0)
+        employee_totals[eid]["net"] += entry.get("net_salary", 0)
+
+    for eid, totals in employee_totals.items():
+        emp = emps.get(eid, {})
+        emp_xml = ET.SubElement(fps, "Employee")
+        nino = (emp.get("nino") or emp.get("national_insurance_number") or "")[:9].upper()
+        emp_details = ET.SubElement(emp_xml, "EmployeeDetails")
+        if nino:
+            ET.SubElement(emp_details, "NINO").text = nino
+        name = ET.SubElement(emp_details, "Name")
+        ET.SubElement(name, "Fore").text = (emp.get("first_name") or "").strip()[:35]
+        ET.SubElement(name, "Sur").text = (emp.get("last_name") or "").strip()[:35]
+        # Address (simplified)
+        if emp.get("address"):
+            addr = ET.SubElement(emp_details, "Address")
+            ET.SubElement(addr, "Line").text = emp["address"][:35]
+
+        employment = ET.SubElement(emp_xml, "Employment")
+        ET.SubElement(employment, "PayId").text = (emp.get("employee_id") or "")[:35]
+        ET.SubElement(employment, "PaymentToANonIndividual").text = "no"
+        ET.SubElement(employment, "FiguresToDate").text = ""
+
+        figures = ET.SubElement(employment, "PaymentToDate")
+        ET.SubElement(figures, "TaxablePay").text = f"{totals['gross']:.2f}"
+        ET.SubElement(figures, "TaxDeducted").text = f"{totals['tax']:.2f}"
+        ET.SubElement(figures, "EmployeeNICsInPeriod").text = f"{totals['ni_emp']:.2f}"
+        ET.SubElement(figures, "EmployerNICsInPeriod").text = f"{totals['ni_er']:.2f}"
+        ET.SubElement(figures, "NetPay").text = f"{totals['net']:.2f}"
+
+        # Pay frequency
+        ET.SubElement(employment, "PayFreq").text = "M1"  # Monthly
+        ET.SubElement(employment, "PmtDate").text = f"{year}-{int(month):02d}-25"  # Default last working day
+        ET.SubElement(employment, "TaxYearEnd").text = str(tax_year_end)
+
+    # Totals
+    totals_root = ET.SubElement(fps, "Totals")
+    total_gross = sum(t["gross"] for t in employee_totals.values())
+    total_tax = sum(t["tax"] for t in employee_totals.values())
+    total_ni = sum(t["ni_emp"] + t["ni_er"] for t in employee_totals.values())
+    ET.SubElement(totals_root, "TotalTaxablePay").text = f"{total_gross:.2f}"
+    ET.SubElement(totals_root, "TotalTaxDeducted").text = f"{total_tax:.2f}"
+    ET.SubElement(totals_root, "TotalNICsLiable").text = f"{total_ni:.2f}"
+
+    xml_content = '<?xml version="1.0" encoding="UTF-8"?>\n' + _xml_pretty(root).split("\n", 1)[1]
+    filename = f"RTI_FPS_{employer_paye.replace('/', '')}_{period_str}.xml"
+    return Response(
+        content=xml_content.encode("utf-8"),
+        media_type="application/xml; charset=utf-8",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'}
+    )
+
+
+# ===================== FRANCE: DSN (Déclaration Sociale Nominative) =====================
+# Monthly mandatory declaration replacing 30+ older declarations
+# Submitted via net-entreprises.fr to URSSAF + various organisms
+# https://www.dsn-info.fr/
+
+@router.get("/fr/dsn")
+async def generate_fr_dsn(period: str, current_user: dict = Depends(get_current_user)):
+    """Generate France DSN (Déclaration Sociale Nominative) XML.
+
+    Format: XML per DSN-Info specification (simplified).
+    Period: YYYY-MM.
+    """
+    company_id = current_user.get("company_id")
+    await _require_country(company_id, "FR", "DSN")
+
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0}) or {}
+    entries, emps, period_info = await _collect_period_data(company_id, period)
+    if not entries:
+        raise HTTPException(status_code=404, detail=f"No hay datos de nómina para {period}")
+
+    siret = (company.get("siret") or company.get("rnc") or company.get("tax_id") or "00000000000000")[:14]
+    siren = siret[:9]
+    nic = siret[9:14] if len(siret) >= 14 else "00000"
+    company_name = (company.get("company_name") or company.get("name") or "ENTREPRISE")[:50]
+    naf = company.get("naf_code") or "6201Z"  # Default IT activity
+    period_str = period.replace("-", "")[:6]
+    year, month = period.split("-")
+    period_dsn = f"01{int(month):02d}{year}"  # Format DSN: DDMMYYYY (1st of month)
+
+    root = ET.Element("DSN")
+    root.set("xmlns", "http://dsn-info.fr/schema/v1")
+    root.set("version", "P24V01")  # DSN phase 3 schema version
+
+    # === DÉCLARATION ===
+    declaration = ET.SubElement(root, "Declaration")
+    ET.SubElement(declaration, "Nature").text = "01"  # 01=DSN mensuelle normale
+    ET.SubElement(declaration, "Type").text = "01"   # 01=Mensuelle
+    ET.SubElement(declaration, "Fraction").text = "11"  # 11=DSN du mois
+    ET.SubElement(declaration, "MoisPrincipal").text = f"{int(month):02d}/{year}"
+    ET.SubElement(declaration, "DateConstitution").text = datetime.now(timezone.utc).strftime("%d/%m/%Y")
+    ET.SubElement(declaration, "Devise").text = "EUR"
+
+    # === ÉMETTEUR ===
+    emetteur = ET.SubElement(root, "Emetteur")
+    ET.SubElement(emetteur, "SIREN").text = siren
+    ET.SubElement(emetteur, "NIC").text = nic
+    ET.SubElement(emetteur, "RaisonSociale").text = company_name
+
+    # === ENTREPRISE ===
+    entreprise = ET.SubElement(root, "Entreprise")
+    ET.SubElement(entreprise, "SIREN").text = siren
+    ET.SubElement(entreprise, "APE").text = naf
+    if company.get("address"):
+        adresse = ET.SubElement(entreprise, "Adresse")
+        ET.SubElement(adresse, "Voie").text = (company["address"] or "")[:50]
+        ET.SubElement(adresse, "CodePostal").text = (company.get("postal_code") or "75001")[:5]
+        ET.SubElement(adresse, "Ville").text = (company.get("city") or "PARIS")[:50]
+        ET.SubElement(adresse, "Pays").text = "FR"
+
+    # === ÉTABLISSEMENT ===
+    etab = ET.SubElement(root, "Etablissement")
+    ET.SubElement(etab, "SIRET").text = siret
+    ET.SubElement(etab, "APE").text = naf
+    ET.SubElement(etab, "EffectifMoyen").text = str(len({e["employee_id"] for e in entries}))
+
+    # === SALARIÉS ===
+    employee_totals = {}
+    for entry in entries:
+        eid = entry["employee_id"]
+        if eid not in employee_totals:
+            employee_totals[eid] = {"gross": 0.0, "isr": 0.0, "ss_emp": 0.0, "ss_er": 0.0, "net": 0.0}
+        employee_totals[eid]["gross"] += entry.get("gross_salary", 0)
+        employee_totals[eid]["isr"] += entry.get("isr", 0)
+        # FR slots: SS_EMP (~22% combined), SS_ER (~42% combined). Maps to sfs_employee/employer + afp slots
+        employee_totals[eid]["ss_emp"] += entry.get("sfs_employee", 0) + entry.get("afp_employee", 0)
+        employee_totals[eid]["ss_er"] += (entry.get("sfs_employer", 0) + entry.get("afp_employer", 0) +
+                                          entry.get("srl_employer", 0) + entry.get("infotep_employer", 0))
+        employee_totals[eid]["net"] += entry.get("net_salary", 0)
+
+    for eid, totals in employee_totals.items():
+        emp = emps.get(eid, {})
+        salarie = ET.SubElement(root, "Salarie")
+        # NIR (numéro de sécurité sociale) - 13 + 2 chars
+        nir = (emp.get("nir") or emp.get("document_number") or "1000000000000")[:13]
+        ET.SubElement(salarie, "NIR").text = nir
+        ET.SubElement(salarie, "Nom").text = (emp.get("last_name") or "").upper()[:40]
+        ET.SubElement(salarie, "NomFamille").text = (emp.get("last_name") or "").upper()[:40]
+        ET.SubElement(salarie, "Prenoms").text = (emp.get("first_name") or "")[:40]
+        ET.SubElement(salarie, "Sexe").text = "01"  # 01=M, 02=F (default M)
+        ET.SubElement(salarie, "DateNaissance").text = (emp.get("birth_date") or "01/01/1980")
+        ET.SubElement(salarie, "PaysNaissance").text = "FR"
+        ET.SubElement(salarie, "MatriculeSalarie").text = (emp.get("employee_id") or "")[:30]
+
+        # Contrat
+        contrat = ET.SubElement(salarie, "Contrat")
+        ET.SubElement(contrat, "DateDebut").text = (emp.get("hire_date") or "01/01/2024")
+        ET.SubElement(contrat, "Statut").text = "04"  # 04=non-cadre par défaut
+        ET.SubElement(contrat, "NatureContrat").text = "01"  # 01=CDI
+        ET.SubElement(contrat, "DispositifPolitiquePublique").text = "99"
+        ET.SubElement(contrat, "MotifRecours").text = "01"
+
+        # Rémunération
+        remu = ET.SubElement(salarie, "Remuneration")
+        ET.SubElement(remu, "DateDebutPaie").text = f"01/{int(month):02d}/{year}"
+        ET.SubElement(remu, "DateFinPaie").text = f"30/{int(month):02d}/{year}"
+        ET.SubElement(remu, "MontantBrut").text = f"{totals['gross']:.2f}"
+        ET.SubElement(remu, "TypeRemuneration").text = "001"  # Salaire de base
+
+        # Cotisations
+        for code, libelle, montant_emp, montant_er in [
+            ("100", "Maladie maternité invalidité décès", totals["ss_emp"] * 0.3, totals["ss_er"] * 0.4),
+            ("200", "Vieillesse plafonnée + déplafonnée", totals["ss_emp"] * 0.5, totals["ss_er"] * 0.4),
+            ("400", "AT/MP", 0.0, totals["ss_er"] * 0.05),
+            ("900", "Allocations familiales", 0.0, totals["ss_er"] * 0.15),
+        ]:
+            cot = ET.SubElement(salarie, "Cotisation")
+            ET.SubElement(cot, "Code").text = code
+            ET.SubElement(cot, "Libelle").text = libelle
+            ET.SubElement(cot, "Assiette").text = f"{totals['gross']:.2f}"
+            ET.SubElement(cot, "MontantSalarial").text = f"{montant_emp:.2f}"
+            ET.SubElement(cot, "MontantPatronal").text = f"{montant_er:.2f}"
+
+        # Versement individuel
+        versement = ET.SubElement(salarie, "VersementIndividuel")
+        ET.SubElement(versement, "DateVersement").text = f"30/{int(month):02d}/{year}"
+        ET.SubElement(versement, "Montant").text = f"{totals['net']:.2f}"
+        ET.SubElement(versement, "PrelevementSource").text = f"{totals['isr']:.2f}"
+
+    # === BORDEREAU DE COTISATION (résumé) ===
+    bordereau = ET.SubElement(root, "BordereauCotisation")
+    ET.SubElement(bordereau, "Periode").text = f"{int(month):02d}/{year}"
+    ET.SubElement(bordereau, "OrganismeProtectionSociale").text = "URSSAF"
+    total_assiette = sum(t["gross"] for t in employee_totals.values())
+    total_emp = sum(t["ss_emp"] for t in employee_totals.values())
+    total_er = sum(t["ss_er"] for t in employee_totals.values())
+    ET.SubElement(bordereau, "AssietteTotal").text = f"{total_assiette:.2f}"
+    ET.SubElement(bordereau, "MontantSalarialTotal").text = f"{total_emp:.2f}"
+    ET.SubElement(bordereau, "MontantPatronalTotal").text = f"{total_er:.2f}"
+    ET.SubElement(bordereau, "MontantTotal").text = f"{(total_emp + total_er):.2f}"
+
+    xml_content = '<?xml version="1.0" encoding="UTF-8"?>\n' + _xml_pretty(root).split("\n", 1)[1]
+    filename = f"DSN_{siret}_{period_str}.xml"
+    return Response(
+        content=xml_content.encode("utf-8"),
+        media_type="application/xml; charset=utf-8",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'}
+    )
+
+
+# ===================== FISCAL CALENDAR (DEADLINES) =====================
+# Each format has typical deadlines per country. Used for the Global Compliance Calendar.
+
+FORMAT_DEADLINES = {
+    # Format: (day_of_filing_month, offset_months_after_period)
+    # day=N means: due by Nth day of (period_month + offset)
+    # period_offset: 0 = same month, 1 = next month, 3 = next quarter
+    "TSS_AUTODET": {"day": 3, "offset_months": 1, "description": "Día 3 del mes siguiente"},
+    "TSS_NOVEDADES": {"day": 3, "offset_months": 1, "description": "Día 3 del mes siguiente"},
+    "IR3": {"day": 10, "offset_months": 1, "description": "Día 10 del mes siguiente"},
+    "IR17": {"day": 15, "offset_months": 3, "description": "15 de marzo del año siguiente"},
+    "PILA": {"day": 8, "offset_months": 1, "description": "Días 8-13 según último dígito NIT"},
+    "IMSS_SUA": {"day": 17, "offset_months": 1, "description": "Día 17 del mes siguiente"},
+    "INFONAVIT": {"day": 17, "offset_months": 2, "description": "Día 17 cada bimestre"},
+    "FORM_941": {"day": 30, "offset_months": 1, "description": "Último día del mes siguiente al trimestre"},
+    "MODELO_111": {"day": 20, "offset_months": 1, "description": "Día 20 del mes siguiente al trimestre"},
+    "TC1": {"day": 30, "offset_months": 1, "description": "Último día del mes siguiente"},
+    "RTI_FPS": {"day": 19, "offset_months": 1, "description": "Día 19 del mes siguiente al pago (HMRC)"},
+    "DSN": {"day": 15, "offset_months": 1, "description": "Día 15 del mes siguiente (régimen général)"},
+}
+
+
+@router.get("/calendar")
+async def get_fiscal_calendar(current_user: dict = Depends(get_current_user)):
+    """Return upcoming fiscal deadlines for all countries with implemented native formats.
+    Used by the Global Compliance Calendar dashboard.
+    """
+    today = datetime.now(timezone.utc).date()
+    company_id = current_user.get("company_id")
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0, "country": 1})
+    company_country = (company or {}).get("country", "DO")
+
+    upcoming = []
+    by_country = {}
+    for country_code, formats in NATIVE_FORMATS.items():
+        profile = COUNTRY_PROFILES.get(country_code, {})
+        for fmt in formats:
+            if not fmt.get("implemented"):
+                continue
+            deadline_cfg = FORMAT_DEADLINES.get(fmt["code"])
+            if not deadline_cfg:
+                continue
+            # Calculate next due date based on most recent applicable period
+            offset = deadline_cfg["offset_months"]
+            day = deadline_cfg["day"]
+            # Period to file: current month minus offset (if today >= offset)
+            # Next due: take current month's filing for previous period
+            from calendar import monthrange
+            # Current period covered: month before today by 'offset' months
+            # Filing deadline: this month, day=N
+            # Next deadline calculation:
+            # If today is before deadline_day of this month -> deadline this month
+            # else -> next month
+            current_month = today.month
+            current_year = today.year
+            # Try this month first
+            try_day = min(day, monthrange(current_year, current_month)[1])
+            try_date = datetime(current_year, current_month, try_day, tzinfo=timezone.utc).date()
+            if try_date < today:
+                # Move to next month
+                if current_month == 12:
+                    next_year = current_year + 1
+                    next_month = 1
+                else:
+                    next_year = current_year
+                    next_month = current_month + 1
+                try_day = min(day, monthrange(next_year, next_month)[1])
+                try_date = datetime(next_year, next_month, try_day, tzinfo=timezone.utc).date()
+            days_until = (try_date - today).days
+            # Period being filed: depends on offset_months
+            filing_month = try_date.month - offset
+            filing_year = try_date.year
+            while filing_month <= 0:
+                filing_month += 12
+                filing_year -= 1
+            period_str = f"{filing_year}-{filing_month:02d}"
+
+            item = {
+                "country_code": country_code,
+                "country_name": profile.get("name", country_code),
+                "flag": profile.get("flag", ""),
+                "format_code": fmt["code"],
+                "format_name": fmt["name"],
+                "agency": fmt["agency"],
+                "frequency": fmt["frequency"],
+                "due_date": try_date.isoformat(),
+                "days_until_due": days_until,
+                "period_to_file": period_str,
+                "description": deadline_cfg["description"],
+                "endpoint": fmt.get("endpoint"),
+                "is_company_country": country_code == company_country,
+                "urgency": "overdue" if days_until < 0 else ("critical" if days_until <= 3 else ("warning" if days_until <= 7 else "ok")),
+            }
+            upcoming.append(item)
+            by_country.setdefault(country_code, []).append(item)
+
+    upcoming.sort(key=lambda x: x["days_until_due"])
+
+    return {
+        "today": today.isoformat(),
+        "company_country": company_country,
+        "total_upcoming": len(upcoming),
+        "next_due": upcoming[0] if upcoming else None,
+        "deadlines": upcoming,
+        "by_country": by_country,
+        "summary": {
+            "overdue": sum(1 for x in upcoming if x["urgency"] == "overdue"),
+            "critical": sum(1 for x in upcoming if x["urgency"] == "critical"),
+            "warning": sum(1 for x in upcoming if x["urgency"] == "warning"),
+            "ok": sum(1 for x in upcoming if x["urgency"] == "ok"),
+        }
+    }

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Globe, CheckCircle2, AlertCircle, Circle, Download, Loader2, FileText, Calendar } from "lucide-react";
+import { Globe, CheckCircle2, AlertCircle, Circle, Download, Loader2, FileText, Calendar, Clock, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
 const STATUS_CONFIG = {
@@ -34,6 +34,7 @@ const REGION_LABEL = {
 export default function GlobalCompliancePage() {
   const { user } = useAuth();
   const [catalog, setCatalog] = useState(null);
+  const [calendar, setCalendar] = useState(null);
   const [period, setPeriod] = useState(new Date().toISOString().slice(0, 7));
   const [downloading, setDownloading] = useState(null);
   const [filter, setFilter] = useState("all");
@@ -48,6 +49,10 @@ export default function GlobalCompliancePage() {
       .get(`${API}/native-reports/catalog`, { headers: getAuthHeaders(), withCredentials: true })
       .then((res) => setCatalog(res.data))
       .catch(() => toast.error("No se pudo cargar el catálogo"));
+    axios
+      .get(`${API}/native-reports/calendar`, { headers: getAuthHeaders(), withCredentials: true })
+      .then((res) => setCalendar(res.data))
+      .catch(() => {});
   }, [getAuthHeaders]);
 
   const downloadFormat = async (format) => {
@@ -164,6 +169,88 @@ export default function GlobalCompliancePage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Fiscal Calendar */}
+        {calendar && calendar.deadlines.length > 0 && (
+          <Card className="border-l-4 border-l-amber-500" data-testid="fiscal-calendar-card">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 flex-wrap">
+                <Calendar className="w-5 h-5 text-amber-600" />
+                Calendario Fiscal Mundial
+                {calendar.summary.overdue > 0 && (
+                  <Badge variant="destructive" className="ml-2" data-testid="badge-overdue">
+                    {calendar.summary.overdue} vencido{calendar.summary.overdue > 1 ? "s" : ""}
+                  </Badge>
+                )}
+                {calendar.summary.critical > 0 && (
+                  <Badge className="bg-red-500 text-white" data-testid="badge-critical">
+                    <AlertTriangle className="w-3 h-3 mr-1" />
+                    {calendar.summary.critical} crítico{calendar.summary.critical > 1 ? "s" : ""} (≤3d)
+                  </Badge>
+                )}
+                {calendar.summary.warning > 0 && (
+                  <Badge className="bg-amber-500 text-white" data-testid="badge-warning">
+                    <Clock className="w-3 h-3 mr-1" />
+                    {calendar.summary.warning} próximo{calendar.summary.warning > 1 ? "s" : ""} (≤7d)
+                  </Badge>
+                )}
+              </CardTitle>
+              <CardDescription>
+                Próximas fechas de presentación oficial por país. Hoy: <b>{calendar.today}</b>.
+                Plan tu cumplimiento sin sorpresas.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2 max-h-72 overflow-y-auto">
+                {calendar.deadlines.slice(0, 10).map((d, idx) => {
+                  const urgencyConfig = {
+                    overdue: { color: "bg-red-100 dark:bg-red-950/40 border-red-300 dark:border-red-800", textColor: "text-red-700 dark:text-red-300", label: "VENCIDO" },
+                    critical: { color: "bg-red-50/60 dark:bg-red-950/30 border-red-200 dark:border-red-800", textColor: "text-red-700 dark:text-red-300", label: "Crítico" },
+                    warning: { color: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800", textColor: "text-amber-700 dark:text-amber-300", label: "Próximo" },
+                    ok: { color: "bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800", textColor: "text-emerald-700 dark:text-emerald-300", label: "A tiempo" },
+                  };
+                  const cfg = urgencyConfig[d.urgency] || urgencyConfig.ok;
+                  return (
+                    <div
+                      key={`${d.country_code}-${d.format_code}-${idx}`}
+                      className={`flex items-center gap-3 p-3 rounded-md border ${cfg.color} ${d.is_company_country ? "ring-2 ring-blue-300" : ""}`}
+                      data-testid={`deadline-${d.country_code}-${d.format_code}`}
+                    >
+                      <span className="text-2xl shrink-0">{d.flag}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm flex items-center gap-1.5">
+                          {d.format_name}
+                          {d.is_company_country && <Badge variant="outline" className="text-[10px]">Tu empresa</Badge>}
+                        </p>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                          {d.agency} · Período: {d.period_to_file} · {d.description}
+                        </p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className={`text-sm font-bold ${cfg.textColor}`}>
+                          {d.due_date}
+                        </p>
+                        <p className={`text-xs ${cfg.textColor}`}>
+                          {d.days_until_due < 0
+                            ? `${Math.abs(d.days_until_due)} día${Math.abs(d.days_until_due) > 1 ? "s" : ""} de retraso`
+                            : `en ${d.days_until_due} día${d.days_until_due !== 1 ? "s" : ""}`}
+                        </p>
+                      </div>
+                      <Badge className={`${cfg.textColor} bg-transparent border ${d.urgency === "ok" ? "border-emerald-300" : d.urgency === "warning" ? "border-amber-300" : "border-red-300"}`}>
+                        {cfg.label}
+                      </Badge>
+                    </div>
+                  );
+                })}
+              </div>
+              {calendar.deadlines.length > 10 && (
+                <p className="text-center text-xs text-slate-500 mt-3">
+                  Mostrando próximos 10 de {calendar.deadlines.length}. Revisa cada país abajo para todos sus vencimientos.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Filters + Period */}
         <Card>

@@ -79,7 +79,7 @@ class TestCatalog:
         data = r.json()
         assert data["total_countries"] == 28, data["total_countries"]
         assert data["total_formats"] == 33, data["total_formats"]
-        assert data["implemented_formats"] == 10, data["implemented_formats"]
+        assert data["implemented_formats"] == 12, data["implemented_formats"]
         assert isinstance(data["countries"], list)
         assert len(data["countries"]) == 28
 
@@ -123,9 +123,10 @@ class TestCatalog:
 
     def test_catalog_25_other_countries_universal_only(self, client):
         data = client.get(f"{BASE_URL}/api/native-reports/catalog").json()
-        # DO/CO/MX/US/ES are now implemented (5)
-        others = [c for c in data["countries"] if c["code"] not in ("DO", "CO", "MX", "US", "ES")]
-        assert len(others) == 23
+        # DO/CO/MX/US/ES/GB/FR are now implemented (7)
+        implemented = ("DO", "CO", "MX", "US", "ES", "GB", "FR")
+        others = [c for c in data["countries"] if c["code"] not in implemented]
+        assert len(others) == 21
         for c in others:
             assert c["implemented_count"] == 0, c["code"]
             assert c["compliance_status"] == "universal_only", c["code"]
@@ -450,3 +451,266 @@ class TestRegressionIter235:
         r = client.get(f"{BASE_URL}/api/multi-country-reports/fiscal-summary",
                        params={"period": "2099-12", "format": "csv"}, timeout=30)
         assert r.status_code in (404, 400)
+
+
+# ==================== GB HMRC RTI FPS + FR DSN + CALENDAR (iter 238) ====================
+
+import xml.etree.ElementTree as ET
+from datetime import date
+
+
+# -------------------- Catalog: GB + FR complete --------------------
+
+class TestCatalogGBFRComplete:
+    def test_catalog_GB_complete_with_rti_fps(self, client):
+        data = client.get(f"{BASE_URL}/api/native-reports/catalog").json()
+        gb = next((c for c in data["countries"] if c["code"] == "GB"), None)
+        assert gb is not None
+        assert gb["implemented_count"] == 1
+        assert gb["total_count"] == 1
+        assert gb["compliance_status"] == "complete"
+        codes = {f["code"] for f in gb["formats"]}
+        assert "RTI_FPS" in codes
+
+    def test_catalog_FR_complete_with_dsn(self, client):
+        data = client.get(f"{BASE_URL}/api/native-reports/catalog").json()
+        fr = next((c for c in data["countries"] if c["code"] == "FR"), None)
+        assert fr is not None
+        assert fr["implemented_count"] == 1
+        assert fr["total_count"] == 1
+        assert fr["compliance_status"] == "complete"
+        codes = {f["code"] for f in fr["formats"]}
+        assert "DSN" in codes
+
+
+# -------------------- GB RTI FPS --------------------
+
+class TestGBRtiFps:
+    """UK HMRC RTI FPS (XML) — country=GB required."""
+
+    def test_rti_fps_blocked_when_country_is_DO(self, client):
+        _set_country(client, "DO")
+        r = client.get(f"{BASE_URL}/api/native-reports/gb/rti-fps",
+                       params={"period": PERIOD}, timeout=30)
+        assert r.status_code == 400, r.text[:300]
+        detail = r.json().get("detail", "")
+        # helpful msg about HMRC RTI being UK-specific
+        assert any(k in detail for k in ("HMRC", "RTI", "UK", "Reino Unido", "GB"))
+
+    def test_rti_fps_valid_xml_when_country_GB(self, client):
+        _set_country(client, "GB")
+        try:
+            r = client.get(f"{BASE_URL}/api/native-reports/gb/rti-fps",
+                           params={"period": PERIOD}, timeout=60)
+            assert r.status_code == 200, r.text[:500]
+            # Content-type & filename
+            ctype = r.headers.get("content-type", "")
+            assert "application/xml" in ctype, ctype
+            cd = r.headers.get("content-disposition", "")
+            assert "RTI_FPS_" in cd, cd
+            assert cd.endswith('.xml"') or cd.endswith(".xml"), cd
+            body = r.content
+            assert body.startswith(b"<?xml"), body[:60]
+            # Parse XML
+            root = ET.fromstring(body)
+            # Root = GovTalkMessage with HMRC namespace
+            assert root.tag.endswith("GovTalkMessage"), root.tag
+            # ElementTree folds xmlns into the tag as Clark notation {ns}tag
+            assert "http://www.govtalk.gov.uk/CM/envelope" in root.tag or \
+                   root.get("xmlns") == "http://www.govtalk.gov.uk/CM/envelope"
+        finally:
+            _set_country(client, "DO")
+
+    def test_rti_fps_structure_employees_and_payments(self, client):
+        _set_country(client, "GB")
+        try:
+            r = client.get(f"{BASE_URL}/api/native-reports/gb/rti-fps",
+                           params={"period": PERIOD}, timeout=60)
+            assert r.status_code == 200
+            text = r.content.decode("utf-8")
+            # Required nodes (namespaces may prefix — do substring check)
+            for tag in ("<FullPaymentSubmission>", "<EmpRefs>", "<OfficeNo>",
+                        "<PayeRef>", "<AOref>", "<Employee>", "<EmployeeDetails>",
+                        "<Name>", "<Fore>", "<Sur>", "<Employment>",
+                        "<PaymentToDate>", "<TaxablePay>", "<TaxDeducted>",
+                        "<EmployeeNICsInPeriod>", "<EmployerNICsInPeriod>", "<NetPay>"):
+                assert tag in text, f"Missing node {tag}"
+        finally:
+            _set_country(client, "DO")
+
+    def test_rti_fps_404_when_no_payroll(self, client):
+        _set_country(client, "GB")
+        try:
+            r = client.get(f"{BASE_URL}/api/native-reports/gb/rti-fps",
+                           params={"period": "2099-12"}, timeout=30)
+            assert r.status_code == 404, r.text[:300]
+        finally:
+            _set_country(client, "DO")
+
+
+# -------------------- FR DSN --------------------
+
+class TestFrDsn:
+    """France DSN (XML) — country=FR required."""
+
+    def test_dsn_blocked_when_country_is_DO(self, client):
+        _set_country(client, "DO")
+        r = client.get(f"{BASE_URL}/api/native-reports/fr/dsn",
+                       params={"period": PERIOD}, timeout=30)
+        assert r.status_code == 400, r.text[:300]
+
+    def test_dsn_valid_xml_when_country_FR(self, client):
+        _set_country(client, "FR")
+        try:
+            r = client.get(f"{BASE_URL}/api/native-reports/fr/dsn",
+                           params={"period": PERIOD}, timeout=60)
+            assert r.status_code == 200, r.text[:500]
+            ctype = r.headers.get("content-type", "")
+            assert "application/xml" in ctype, ctype
+            cd = r.headers.get("content-disposition", "")
+            assert "DSN_" in cd, cd
+            body = r.content
+            assert body.startswith(b"<?xml"), body[:60]
+            root = ET.fromstring(body)
+            assert root.tag.endswith("DSN"), root.tag
+            assert root.get("version") == "P24V01", root.get("version")
+        finally:
+            _set_country(client, "DO")
+
+    def test_dsn_structure_required_blocks(self, client):
+        _set_country(client, "FR")
+        try:
+            r = client.get(f"{BASE_URL}/api/native-reports/fr/dsn",
+                           params={"period": PERIOD}, timeout=60)
+            assert r.status_code == 200
+            text = r.content.decode("utf-8")
+            for tag in ("<Declaration>", "<Nature>", "<Type>", "<MoisPrincipal>",
+                        "<Emetteur>", "<SIREN>", "<NIC>",
+                        "<Entreprise>", "<APE>",
+                        "<Etablissement>", "<SIRET>",
+                        "<Salarie>", "<NIR>", "<Nom>", "<Prenoms>",
+                        "<Contrat>", "<Remuneration>", "<MontantBrut>",
+                        "<Cotisation>", "<VersementIndividuel>",
+                        "<BordereauCotisation>"):
+                assert tag in text, f"Missing DSN node {tag}"
+            # Cotisation codes 100/200/400/900 present
+            for code in ("<Code>100</Code>", "<Code>200</Code>",
+                         "<Code>400</Code>", "<Code>900</Code>"):
+                assert code in text, f"Missing cotisation code block {code}"
+        finally:
+            _set_country(client, "DO")
+
+    def test_dsn_404_when_no_payroll(self, client):
+        _set_country(client, "FR")
+        try:
+            r = client.get(f"{BASE_URL}/api/native-reports/fr/dsn",
+                           params={"period": "2099-12"}, timeout=30)
+            assert r.status_code == 404, r.text[:300]
+        finally:
+            _set_country(client, "DO")
+
+
+# -------------------- Fiscal Calendar --------------------
+
+class TestFiscalCalendar:
+    """GET /api/native-reports/calendar — country-independent aggregator."""
+
+    def test_calendar_top_level_shape(self, client):
+        _set_country(client, "DO")  # ensure company_country is DO
+        r = client.get(f"{BASE_URL}/api/native-reports/calendar", timeout=30)
+        assert r.status_code == 200, r.text[:500]
+        data = r.json()
+        # required top-level keys
+        for k in ("today", "company_country", "total_upcoming", "next_due",
+                  "deadlines", "by_country", "summary"):
+            assert k in data, f"Missing top-level key {k}"
+        # today is ISO date parseable
+        date.fromisoformat(data["today"])
+        assert data["company_country"] == "DO"
+        assert isinstance(data["deadlines"], list)
+        assert isinstance(data["by_country"], dict)
+        assert data["total_upcoming"] == len(data["deadlines"])
+        # 12 implemented formats each produce 1 deadline entry
+        assert data["total_upcoming"] == 12, data["total_upcoming"]
+
+    def test_calendar_next_due_is_closest(self, client):
+        r = client.get(f"{BASE_URL}/api/native-reports/calendar", timeout=30).json()
+        deadlines = r["deadlines"]
+        assert len(deadlines) > 0
+        # deadlines sorted ascending by days_until_due
+        days = [d["days_until_due"] for d in deadlines]
+        assert days == sorted(days), f"Not sorted ascending: {days}"
+        # next_due equals first deadline
+        assert r["next_due"] == deadlines[0]
+
+    def test_calendar_item_shape(self, client):
+        r = client.get(f"{BASE_URL}/api/native-reports/calendar", timeout=30).json()
+        d = r["deadlines"][0]
+        for k in ("country_code", "country_name", "flag", "format_code",
+                  "format_name", "agency", "frequency", "due_date",
+                  "days_until_due", "period_to_file", "description",
+                  "endpoint", "is_company_country", "urgency"):
+            assert k in d, f"Missing key {k} in deadline item"
+        # types
+        assert isinstance(d["days_until_due"], int)
+        assert isinstance(d["is_company_country"], bool)
+        # due_date is ISO
+        date.fromisoformat(d["due_date"])
+        # period_to_file is YYYY-MM
+        assert len(d["period_to_file"]) == 7 and d["period_to_file"][4] == "-"
+
+    def test_calendar_urgency_mapping(self, client):
+        r = client.get(f"{BASE_URL}/api/native-reports/calendar", timeout=30).json()
+        for d in r["deadlines"]:
+            days = d["days_until_due"]
+            u = d["urgency"]
+            if days < 0:
+                assert u == "overdue", (days, u)
+            elif days <= 3:
+                assert u == "critical", (days, u)
+            elif days <= 7:
+                assert u == "warning", (days, u)
+            else:
+                assert u == "ok", (days, u)
+        # summary counts match
+        s = r["summary"]
+        assert s["overdue"] == sum(1 for d in r["deadlines"] if d["urgency"] == "overdue")
+        assert s["critical"] == sum(1 for d in r["deadlines"] if d["urgency"] == "critical")
+        assert s["warning"] == sum(1 for d in r["deadlines"] if d["urgency"] == "warning")
+        assert s["ok"] == sum(1 for d in r["deadlines"] if d["urgency"] == "ok")
+
+    def test_calendar_by_country_contains_all_7_implemented(self, client):
+        r = client.get(f"{BASE_URL}/api/native-reports/calendar", timeout=30).json()
+        bc = r["by_country"]
+        # All 7 implemented countries must be present
+        for code in ("DO", "CO", "MX", "US", "ES", "GB", "FR"):
+            assert code in bc, f"Missing {code} in by_country"
+        # DO has 4 deadlines, ES has 2, MX has 2, others 1
+        assert len(bc["DO"]) == 4
+        assert len(bc["MX"]) == 2
+        assert len(bc["ES"]) == 2
+        assert len(bc["CO"]) == 1
+        assert len(bc["US"]) == 1
+        assert len(bc["GB"]) == 1
+        assert len(bc["FR"]) == 1
+
+    def test_calendar_is_company_country_flag(self, client):
+        # With company = DO, only DO items should be flagged true
+        _set_country(client, "DO")
+        r = client.get(f"{BASE_URL}/api/native-reports/calendar", timeout=30).json()
+        assert r["company_country"] == "DO"
+        for d in r["deadlines"]:
+            expected = (d["country_code"] == "DO")
+            assert d["is_company_country"] is expected, (d["country_code"], d["is_company_country"])
+
+    def test_calendar_company_country_updates_with_country_change(self, client):
+        _set_country(client, "GB")
+        try:
+            r = client.get(f"{BASE_URL}/api/native-reports/calendar", timeout=30).json()
+            assert r["company_country"] == "GB"
+            gb_items = [d for d in r["deadlines"] if d["country_code"] == "GB"]
+            assert len(gb_items) == 1
+            assert gb_items[0]["is_company_country"] is True
+        finally:
+            _set_country(client, "DO")
+
