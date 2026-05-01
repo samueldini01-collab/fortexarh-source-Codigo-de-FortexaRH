@@ -126,69 +126,80 @@ async def _run_reminders_for_company(company_id: str) -> dict:
 async def run_reminders_for_all_companies(
     batch_size: int = 100,
     max_concurrency: int = 10,
+    queue_high_water: int = 200,
 ) -> dict:
     """Iterate every active company and dispatch fiscal-deadline reminders.
 
-    - Streams companies via Motor's async cursor (``batch_size`` per round-trip)
-      so memory stays flat even with hundreds of thousands of tenants.
-    - Bounds parallelism with ``asyncio.Semaphore(max_concurrency)`` so a single
-      slow company cannot stall the daily cron and we do not flood the DB.
-    - Errors per company are captured and returned so the cron remains
-      resilient. A WARNING is logged when ``len(errors) > 0``.
+    Architecture: producer/consumer via ``asyncio.Queue`` for true backpressure.
+
+    - **Producer**: an async task that streams companies from MongoDB
+      (``cursor.batch_size``) and puts each ``company_id`` onto a bounded queue
+      (``maxsize=queue_high_water``). When the queue is full the producer
+      ``await``s, applying natural backpressure when consumers are slow.
+    - **Consumers**: ``max_concurrency`` worker tasks pull from the queue and
+      run ``_run_reminders_for_company`` per item. A sentinel ``None`` is
+      placed by the producer for each worker on completion to signal shutdown.
+
+    This pattern scales to hundreds of thousands of tenants without buffering
+    every company in memory at once.
     """
-    sem = asyncio.Semaphore(max_concurrency)
     started_at = datetime.now(timezone.utc)
+    queue: asyncio.Queue = asyncio.Queue(maxsize=queue_high_water)
 
     total_notifications = 0
     total_skipped = 0
     processed = 0
     errors: list[dict] = []
+    _lock = asyncio.Lock()  # protect counters under concurrent updates
 
-    async def _bounded(company_id: str) -> dict | None:
-        async with sem:
-            try:
-                return await _run_reminders_for_company(company_id)
-            except Exception as exc:  # noqa: BLE001
-                return {"__error__": True, "company_id": company_id, "error": str(exc)}
-
-    cursor = db.companies.find({}, {"_id": 0, "company_id": 1}).batch_size(batch_size)
-    pending: list[asyncio.Task] = []
-
-    async for company in cursor:
-        cid = company.get("company_id")
-        if not cid:
-            continue
-        pending.append(asyncio.create_task(_bounded(cid)))
-        # Drain in batches so we do not buffer a million tasks for huge tenants.
-        if len(pending) >= batch_size:
-            for res in await asyncio.gather(*pending):
-                if res is None:
-                    continue
-                if res.get("__error__"):
-                    errors.append({"company_id": res["company_id"], "error": res["error"]})
-                else:
-                    total_notifications += res["notifications_sent"]
-                    total_skipped += res["skipped_already_filed"]
-                    processed += 1
-            pending.clear()
-
-    # Final partial batch.
-    if pending:
-        for res in await asyncio.gather(*pending):
-            if res is None:
+    async def _producer() -> int:
+        """Stream companies onto the queue; returns count produced."""
+        produced = 0
+        cursor = db.companies.find({}, {"_id": 0, "company_id": 1}).batch_size(batch_size)
+        async for company in cursor:
+            cid = company.get("company_id")
+            if not cid:
                 continue
-            if res.get("__error__"):
-                errors.append({"company_id": res["company_id"], "error": res["error"]})
-            else:
-                total_notifications += res["notifications_sent"]
-                total_skipped += res["skipped_already_filed"]
-                processed += 1
+            await queue.put(cid)
+            produced += 1
+        # Sentinel per consumer to signal "no more work".
+        for _ in range(max_concurrency):
+            await queue.put(None)
+        return produced
+
+    async def _consumer(worker_id: int) -> None:
+        nonlocal total_notifications, total_skipped, processed
+        while True:
+            cid = await queue.get()
+            try:
+                if cid is None:
+                    return  # shutdown sentinel
+                try:
+                    res = await _run_reminders_for_company(cid)
+                    async with _lock:
+                        total_notifications += res["notifications_sent"]
+                        total_skipped += res["skipped_already_filed"]
+                        processed += 1
+                except Exception as exc:  # noqa: BLE001
+                    async with _lock:
+                        errors.append({"company_id": cid, "error": str(exc)})
+            finally:
+                queue.task_done()
+
+    # Run producer + N consumers concurrently.
+    consumer_tasks = [
+        asyncio.create_task(_consumer(i)) for i in range(max_concurrency)
+    ]
+    producer_task = asyncio.create_task(_producer())
+
+    produced_count = await producer_task
+    await asyncio.gather(*consumer_tasks)
 
     if errors:
         logger.warning(
             "Fiscal reminders: %d company error(s) during cron run "
-            "(processed=%d notifications=%d).",
-            len(errors), processed, total_notifications,
+            "(produced=%d processed=%d notifications=%d).",
+            len(errors), produced_count, processed, total_notifications,
         )
 
     return {
@@ -201,6 +212,8 @@ async def run_reminders_for_all_companies(
         "duration_seconds": (datetime.now(timezone.utc) - started_at).total_seconds(),
         "batch_size": batch_size,
         "max_concurrency": max_concurrency,
+        "queue_high_water": queue_high_water,
+        "produced_companies": produced_count,
     }
 
 

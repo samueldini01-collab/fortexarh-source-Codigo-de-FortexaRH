@@ -17,11 +17,39 @@ Sub-modules:
   (CL, PE, EC, VE, BO, PY, UY, GY, SR, CR, SV, GT, HN, NI, PA, CU, HT) iterated
   from ``PLANILLA_COLUMN_PROFILES``.
 - ``pr_form499r``   : Puerto Rico annual W-2PR PDF.
+
+Every response emitted by ``router`` is automatically tagged with the
+``X-Fortexa-Disclaimer`` header so downstream consumers (accounting
+integrations, audit tooling) know the file is a reference implementation
+pending local accountant validation.
 """
-from fastapi import APIRouter
+from fastapi import APIRouter, Request, Response
+from fastapi.routing import APIRoute
+
+from ._helpers import DISCLAIMER_HEADER_NAME, DISCLAIMER_HEADER_VALUE
+
+
+class _DisclaimerRoute(APIRoute):
+    """Custom route class that stamps every response with the standard
+    ``X-Fortexa-Disclaimer`` header."""
+
+    def get_route_handler(self):  # type: ignore[override]
+        original = super().get_route_handler()
+
+        async def _handler(request: Request) -> Response:
+            response = await original(request)
+            response.headers[DISCLAIMER_HEADER_NAME] = DISCLAIMER_HEADER_VALUE
+            return response
+
+        return _handler
+
 
 # Single APIRouter shared by every sub-module via ``from . import router``.
-router = APIRouter(prefix="/native-reports", tags=["Native Fiscal Reports"])
+router = APIRouter(
+    prefix="/native-reports",
+    tags=["Native Fiscal Reports"],
+    route_class=_DisclaimerRoute,
+)
 
 # Importing sub-modules registers their endpoints on ``router``. Order matters
 # only for the catalog dict (``catalog`` must load before any module that
@@ -39,4 +67,10 @@ from .catalog import NATIVE_FORMATS, FORMAT_DEADLINES  # noqa: E402,F401
 from .reminders import (  # noqa: E402,F401
     run_reminders_for_all_companies,
     _run_reminders_for_company,
+)
+
+# Catalog integrity check — fails fast if a future import order change drops
+# a country / format from the implemented set (testing-agent recommendation).
+assert sum(len(v) for v in NATIVE_FORMATS.values()) == 33, (
+    "NATIVE_FORMATS catalog drift: expected 33 implemented formats."
 )

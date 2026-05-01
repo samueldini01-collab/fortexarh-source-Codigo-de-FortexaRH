@@ -1,0 +1,45 @@
+{
+  "summary": "Backend-only validation of FortexaRH iter242: (a) payroll.py 1812-line monolith refactored into routes/payroll/ package with 5 sub-modules (_helpers, core, templates, exports, misc), (b) X-Fortexa-Disclaimer response header stamped on every 2xx native-reports response via a custom _DisclaimerRoute APIRoute subclass + centralized require_country, (c) run_reminders_for_all_companies switched from Semaphore to asyncio.Queue producer/consumer with queue_high_water=200. Wrote /app/backend/tests/test_iter242_payroll_refactor_and_disclaimer.py with 19 new tests. Combined regression (test_payroll_dr.py[58] + 4 native_reports files[122] + iter242[19]) = 199/199 GREEN. Verified via curl that: X-Fortexa-Disclaimer is present on /catalog, /calendar, /filings/history, /calendar/run-reminders-all (value = 'Reference implementation of a public fiscal format. Validate with a certified local accountant before submission.'); run-reminders-all JSON body contains all 11 required fields (success=true, processed_companies=22, total_notifications_sent=0, total_skipped_already_filed=0, errors=[], ran_at, duration_seconds=0.031, batch_size=100, max_concurrency=10, queue_high_water=200, produced_companies=22) — producer streamed 22 companies and consumer processed 22 (queue drained cleanly, no buffering). Backend log shows 'APScheduler started: fiscal_reminders_daily @ 08:00 UTC' and NO ImportError/ModuleNotFoundError from the package split — routes.payroll package resolves correctly, core.py imports `from . import router` and `from ._helpers import ...` both resolve. Payroll smoke tests (periods, templates, novelty-types, payroll-types, available-years) all 200. DR DGII endpoints unchanged (/tss/autodeterminacion, /tss/novedades, /ir3, /ir17 all 200). 58 DR pure-function tests (ISR DGII brackets, SFS/AFP/SRL/Infotep rates, regalía/preaviso/cesantía/vacaciones/horas extra) all GREEN.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iter242_payroll_refactor_and_disclaimer.py",
+    "/app/backend/tests/test_payroll_dr.py",
+    "/app/backend/tests/test_native_reports.py",
+    "/app/backend/tests/test_native_reports_iter239.py",
+    "/app/backend/tests/test_native_reports_iter240.py",
+    "/app/backend/tests/test_native_reports_iter241.py",
+    "/app/test_reports/pytest/iter242_new.xml",
+    "/app/test_reports/pytest/iter242_combined.xml",
+    "/app/test_reports/pytest/iter242_full.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "routes/payroll/__init__.py correctly defines the shared `router = APIRouter(prefix='/payroll', tags=['Payroll'])` at module load and re-uses it in every sub-module via `from . import router`. Import order (_helpers, core, templates, exports, misc) is documented as load-bearing — good. Consider adding an integrity assert at the bottom (e.g., `assert len(router.routes) >= 30` or a count of expected endpoints) to fail-fast if a future import reorder drops a sub-module, mirroring the pattern already applied in routes/native/__init__.py for NATIVE_FORMATS.",
+    "core.py (1432 lines) is LARGER than the 700-line guideline in critical_code_review rules. The review_request acknowledges this was a verbatim lift via a split script. Suggested follow-up: split core.py further into periods.py (CRUD), entries.py, novelties.py, workflow.py (calculate/submit/approve/reject/pay), and je.py (journal entry management) — this would bring every file under 400 lines and make the workflow state machine easier to audit.",
+    "The custom _DisclaimerRoute APIRoute subclass in routes/native/__init__.py is a clean way to stamp 2xx responses with X-Fortexa-Disclaimer without polluting every handler. Verified empirically: header present on /catalog, /calendar, /filings/history, and /calendar/run-reminders-all. Only stamps successful responses (4xx country-guards don't carry it — confirmed via /cl/previred test), which matches the review_request phrasing ('EVERY 2xx response').",
+    "reminders.py producer/consumer via asyncio.Queue(maxsize=queue_high_water=200) is correct backpressure: producer awaits `queue.put()` which blocks when the queue is full, so the cursor naturally slows down if consumers can't keep up. The response now exposes produced_companies (22 in our run) so consumers can verify the producer task actually streamed — this is exactly the iter241 follow-up comment from the previous testing agent, now resolved.",
+    "routes/native/_helpers.py centralizing require_country + DISCLAIMER_HEADER_NAME/VALUE/attach_disclaimer() is a good DRY move; the i18n-friendly Spanish message in require_country is now single-sourced. No regression: all 18 LATAM country-guard tests still produce country-specific Spanish messages.",
+    "Observation (non-blocking): the ratelimit WARNING spam in backend.err.log from /api/auth/login is unrelated to iter242 but worth cleaning up — tests hit the limiter multiple times. Consider a higher rate on the test_refactor@ account or exempting localhost/test traffic if not already done. This did NOT cause any iter242 test failure."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iter242_payroll_refactor_and_disclaimer.py"
+  ],
+  "success_rate": {
+    "backend": "100% (199/199 — 58 DR pure-function + 122 native_reports baseline + 19 iter242 new)",
+    "frontend": "not tested (backend-only scope)"
+  },
+  "test_credentials": "test_refactor@fortexa.com / test123 (admin, DO company) — from /app/memory/test_credentials.md",
+  "seed_data_creation": "None. All tests use GET/POST against public /api. run-reminders-all may insert notifications into the companies' DBs, which is shared with the iter239-241 baseline behaviour and was verified across 22 produced companies with 0 new notifications emitted (all already filed or outside reminder window).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "iter242 baseline is now 199/199 GREEN across 6 test files: test_payroll_dr.py (58), test_native_reports.py (iter238 legacy), test_native_reports_iter239.py, test_native_reports_iter240.py, test_native_reports_iter241.py (122 native baseline), and test_iter242_payroll_refactor_and_disclaimer.py (19 new). The payroll package split is clean: core.py is 1432 lines (over the 700-line guideline but a verbatim lift per review_request). X-Fortexa-Disclaimer is stamped only on 2xx native-reports responses via _DisclaimerRoute subclass — 4xx guards do NOT carry the header, which matches the review_request's 'EVERY 2xx response' wording. run-reminders-all schema now has 11 fields (iter241 added duration_seconds/batch_size/max_concurrency; iter242 added queue_high_water/produced_companies). Pre-existing unrelated test failures in test_push_notifications_vacation_payroll.py and test_qbo_account_mapping.py were NOT run and are NOT iter242's responsibility per the review_request note. Next iteration should consider splitting core.py into periods/entries/novelties/workflow/je sub-modules.",
+  "rca of the issue": "No bugs found. Iter242 refactor + header + backpressure queue are all working as specified. All 30 payroll endpoints resolve via the new package; all native-reports 2xx responses carry the X-Fortexa-Disclaimer header; producer/consumer emitted produced_companies=22 matching processed_companies=22 with queue_high_water=200."
+}

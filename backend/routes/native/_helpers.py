@@ -7,10 +7,29 @@ from __future__ import annotations
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
-from fastapi import HTTPException
+from fastapi import HTTPException, Response
 
 from config import db
 from routes.country_config import COUNTRY_PROFILES
+
+
+# ===================== DISCLAIMER HEADER =====================
+
+# Standard advisory header attached to every native report response. Lets
+# downstream consumers (Excel, accounting integrations, audit tooling) detect
+# that the file is a reference implementation pending local accountant
+# validation.
+DISCLAIMER_HEADER_NAME = "X-Fortexa-Disclaimer"
+DISCLAIMER_HEADER_VALUE = (
+    "Reference implementation of a public fiscal format. "
+    "Validate with a certified local accountant before submission."
+)
+
+
+def attach_disclaimer(response: Response) -> Response:
+    """Attach ``X-Fortexa-Disclaimer`` to ``response`` and return it."""
+    response.headers[DISCLAIMER_HEADER_NAME] = DISCLAIMER_HEADER_VALUE
+    return response
 
 
 # ===================== COUNTRY GUARD =====================
