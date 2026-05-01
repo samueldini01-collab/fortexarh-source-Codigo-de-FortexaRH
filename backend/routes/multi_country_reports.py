@@ -415,6 +415,55 @@ class ComparisonRequest(BaseModel):
     countries: List[str]  # e.g. ["DO", "CO", "MX", "US"]
     include_employee: bool = True  # employee-side breakdown
     include_employer: bool = True  # employer-side breakdown
+    display_currency: Optional[str] = None  # e.g. "USD", "EUR" — if set, adds FX-converted values
+    gross_currency: Optional[str] = None  # currency of the gross_monthly input (if None, assumes each country's own)
+
+
+# Simple in-memory FX cache (1 hour TTL)
+_fx_cache: dict = {"timestamp": 0, "rates": {}}
+_FX_CACHE_TTL = 3600  # 1 hour
+
+
+async def _get_fx_rates(base: str = "USD") -> dict:
+    """Fetch FX rates from open.er-api.com (free, no API key, ~166 currencies).
+    Returns dict mapping currency_code -> rate (1 base = rate units of target).
+    Cached for 1 hour.
+    """
+    import time
+    import httpx
+    now = time.time()
+    cache_key = base.upper()
+    if _fx_cache.get("base") == cache_key and (now - _fx_cache.get("timestamp", 0)) < _FX_CACHE_TTL:
+        return _fx_cache.get("rates", {})
+    try:
+        async with httpx.AsyncClient(timeout=6.0) as client:
+            resp = await client.get(f"https://open.er-api.com/v6/latest/{base}")
+            data = resp.json()
+            if data.get("result") == "success":
+                rates = data.get("rates") or {}
+                if rates:
+                    _fx_cache["rates"] = rates
+                    _fx_cache["base"] = cache_key
+                    _fx_cache["timestamp"] = now
+                    return rates
+    except Exception as e:
+        print(f"[FX] Failed to fetch rates: {e}")
+    return _fx_cache.get("rates", {})
+
+
+def _convert(amount: float, from_curr: str, to_curr: str, rates_from_usd: dict) -> Optional[float]:
+    """Convert amount from one currency to another using USD-based rates.
+    rates_from_usd: {"USD": 1, "EUR": 0.85, "DOP": 60.5, ...}
+    """
+    if from_curr == to_curr:
+        return round(amount, 2)
+    rate_from = rates_from_usd.get(from_curr)
+    rate_to = rates_from_usd.get(to_curr)
+    if not rate_from or not rate_to:
+        return None
+    # amount in USD = amount / rate_from, then * rate_to
+    converted = (amount / rate_from) * rate_to
+    return round(converted, 2)
 
 
 def _compute_country_cost(gross: float, country_code: str) -> dict:
@@ -536,15 +585,42 @@ async def fiscal_cost_comparison(
             data.pop("employer", None)
         results.append(data)
 
+    # FX conversion — optional, only if display_currency is set
+    fx_info = None
+    if payload.display_currency:
+        display_curr = payload.display_currency.upper()
+        import time
+        rates = await _get_fx_rates(base="USD")
+        if rates:
+            fx_info = {"display_currency": display_curr, "base": "USD", "rate_source": "open.er-api.com", "cached": (time.time() - _fx_cache.get("timestamp", 0)) < _FX_CACHE_TTL - 5}
+            for r in results:
+                local = r["currency"]
+                converted = {
+                    "display_currency": display_curr,
+                    "gross_salary": _convert(r["gross_salary"], local, display_curr, rates),
+                }
+                if "employee" in r:
+                    converted["total_deductions"] = _convert(r["employee"]["total_deductions"], local, display_curr, rates)
+                    converted["net_salary"] = _convert(r["employee"]["net_salary"], local, display_curr, rates)
+                if "employer" in r:
+                    converted["total_contributions"] = _convert(r["employer"]["total_contributions"], local, display_curr, rates)
+                    converted["total_cost_to_company"] = _convert(r["employer"]["total_cost_to_company"], local, display_curr, rates)
+                r["converted"] = converted
+
     # Sort: by total_cost_to_company ascending (cheapest first)
+    # If FX conversion applied, sort by converted total cost so comparison is apples-to-apples
     if payload.include_employer:
-        results.sort(key=lambda r: r.get("employer", {}).get("total_cost_to_company", 0))
+        if fx_info and all(r.get("converted", {}).get("total_cost_to_company") is not None for r in results):
+            results.sort(key=lambda r: r["converted"]["total_cost_to_company"])
+        else:
+            results.sort(key=lambda r: r.get("employer", {}).get("total_cost_to_company", 0))
 
     return {
         "gross_monthly": payload.gross_monthly,
         "countries_compared": len(results),
         "unsupported_countries": unsupported,
         "results": results,
+        "fx": fx_info,
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "note": "Los montos están en la moneda local de cada país. No se aplica conversión de divisas."
+        "note": ("Montos en moneda local. Campo 'converted' muestra equivalencia en " + payload.display_currency.upper()) if payload.display_currency else "Los montos están en la moneda local de cada país. No se aplica conversión de divisas."
     }

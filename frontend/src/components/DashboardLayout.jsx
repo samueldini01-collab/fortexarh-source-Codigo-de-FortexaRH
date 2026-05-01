@@ -181,6 +181,7 @@ const getMenuGroups = (t) => [
     items: [
       { id: "payroll", nameKey: "payroll", href: "/payroll", icon: DollarSign, featureKey: "employees" },
       { id: "payroll-calculator", nameKey: "payrollCalculator", href: "/payroll-calculator", icon: Calculator, featureKey: "payroll_calculator" },
+      { id: "fiscal-comparison", nameKey: "fiscalComparison", href: "/fiscal-comparison", icon: Globe, featureKey: "payroll_calculator", isNew: true },
       { id: "loans", nameKey: "loans", href: "/loans", icon: Wallet, featureKey: "loans" },
       { id: "expenses", nameKey: "expenses", href: "/expenses", icon: Receipt, featureKey: "expenses" },
       { id: "accounting", nameKey: "accounting", href: "/accounting", icon: BookOpen, featureKey: "accounting" },

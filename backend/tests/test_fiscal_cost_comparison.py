@@ -234,3 +234,156 @@ class TestAuth:
                           json={"gross_monthly": 3000, "countries": ["DO"]},
                           timeout=30)
         assert r.status_code in (401, 403), r.text
+
+
+# -------------------- FX Conversion (NEW) --------------------
+
+class TestFXConversion:
+    """Validates the FX conversion enhancement (display_currency)."""
+
+    def test_no_display_currency_no_converted_field(self, client):
+        """Backwards compat: omitting display_currency should keep response identical to legacy."""
+        r = _post(client, {"gross_monthly": 3000, "countries": ["DO", "US"]})
+        assert r.status_code == 200, r.text
+        body = r.json()
+        assert body.get("fx") is None
+        for c in body["results"]:
+            assert "converted" not in c, f"unexpected converted field on {c['country_code']}"
+
+    def test_display_currency_usd_adds_converted_and_fx(self, client):
+        r = _post(client, {"gross_monthly": 3000,
+                            "countries": ["DO", "CO", "MX", "US", "ES"],
+                            "display_currency": "USD"})
+        assert r.status_code == 200, r.text
+        body = r.json()
+        # FX object
+        fx = body.get("fx")
+        if fx is None:
+            pytest.skip("FX rates unavailable in this env (no internet egress to open.er-api.com); converted gracefully None — acceptable per spec.")
+        assert fx["display_currency"] == "USD"
+        assert fx["base"] == "USD"
+        assert fx["rate_source"] == "open.er-api.com"
+        assert "cached" in fx and isinstance(fx["cached"], bool)
+
+        # Each result has converted with all required keys
+        required_conv = {"display_currency", "gross_salary", "total_deductions",
+                         "net_salary", "total_contributions", "total_cost_to_company"}
+        for c in body["results"]:
+            assert "converted" in c, f"missing converted in {c['country_code']}"
+            assert required_conv.issubset(c["converted"].keys()), \
+                f"{c['country_code']}: missing {required_conv - c['converted'].keys()}"
+            assert c["converted"]["display_currency"] == "USD"
+
+    def test_us_no_conversion_when_local_equals_display(self, client):
+        """US local currency is USD — converted values should equal local values exactly."""
+        r = _post(client, {"gross_monthly": 3000,
+                            "countries": ["US"],
+                            "display_currency": "USD"})
+        assert r.status_code == 200, r.text
+        body = r.json()
+        if body.get("fx") is None:
+            pytest.skip("FX rates unavailable; skipping cross-currency assertions.")
+        us = body["results"][0]
+        assert us["country_code"] == "US"
+        assert abs(us["converted"]["gross_salary"] - us["gross_salary"]) <= 0.01
+        assert abs(us["converted"]["total_cost_to_company"] - us["employer"]["total_cost_to_company"]) <= 0.01
+        assert abs(us["converted"]["net_salary"] - us["employee"]["net_salary"]) <= 0.01
+
+    def test_eur_conversion_for_us_uses_eur_rate(self, client):
+        """US gross 3000 USD → ~2400-2900 EUR (depending on day's rate, expected ~2560)."""
+        r = _post(client, {"gross_monthly": 3000,
+                            "countries": ["US"],
+                            "display_currency": "EUR"})
+        assert r.status_code == 200, r.text
+        body = r.json()
+        if body.get("fx") is None:
+            pytest.skip("FX rates unavailable.")
+        us = body["results"][0]
+        conv_gross = us["converted"]["gross_salary"]
+        if conv_gross is None:
+            pytest.skip("EUR rate missing in cache — graceful null.")
+        # USD->EUR around 0.85-0.96 historically, so 3000 USD -> 2400-2900 EUR
+        assert 2300 <= conv_gross <= 3000, f"US 3000 USD -> EUR was {conv_gross}, expected ~2400-2900"
+
+    def test_dop_to_usd_dramatically_lower(self, client):
+        """DR gross 3000 DOP -> ~50 USD (DOP is ~60 per USD)."""
+        r = _post(client, {"gross_monthly": 3000,
+                            "countries": ["DO"],
+                            "display_currency": "USD"})
+        assert r.status_code == 200, r.text
+        body = r.json()
+        if body.get("fx") is None:
+            pytest.skip("FX rates unavailable.")
+        do = body["results"][0]
+        conv_gross = do["converted"]["gross_salary"]
+        if conv_gross is None:
+            pytest.skip("DOP rate missing.")
+        # 3000 DOP / ~60 = ~50 USD (range 40-80 to be safe)
+        assert 30 <= conv_gross <= 90, f"DO 3000 DOP -> USD was {conv_gross}, expected ~50"
+
+    def test_sort_by_converted_total_cost_when_fx_active(self, client):
+        """When FX active, results sorted by converted.total_cost_to_company ascending."""
+        r = _post(client, {"gross_monthly": 3000,
+                            "countries": ["DO", "CO", "MX", "US", "ES"],
+                            "display_currency": "USD"})
+        assert r.status_code == 200, r.text
+        body = r.json()
+        if body.get("fx") is None:
+            pytest.skip("FX rates unavailable.")
+        results = body["results"]
+        # All converted values present?
+        all_conv = all(r["converted"]["total_cost_to_company"] is not None for r in results)
+        if not all_conv:
+            pytest.skip("Some converted values None — can't check sort by converted.")
+        costs = [r["converted"]["total_cost_to_company"] for r in results]
+        assert costs == sorted(costs), f"Not ascending by converted: {costs}"
+        # And specifically: DO (~$58 USD) should come BEFORE US (~$3247 USD)
+        codes_in_order = [r["country_code"] for r in results]
+        assert codes_in_order.index("DO") < codes_in_order.index("US"), \
+            f"Expected DO before US in sort by converted USD, got: {codes_in_order}"
+
+    def test_invalid_display_currency_returns_null_not_500(self, client):
+        """display_currency='XYZ' is unknown — converted fields should be null, not 500."""
+        r = _post(client, {"gross_monthly": 3000,
+                            "countries": ["DO", "US"],
+                            "display_currency": "XYZ"})
+        assert r.status_code == 200, r.text
+        body = r.json()
+        # fx info still returned (with display=XYZ) if rates fetched
+        if body.get("fx") is None:
+            pytest.skip("FX rates unavailable in env.")
+        for c in body["results"]:
+            assert "converted" in c
+            # Each numeric converted field must be null since target is unknown
+            assert c["converted"]["gross_salary"] is None
+            assert c["converted"].get("total_cost_to_company") is None
+
+    def test_fx_cache_second_call_cached_true(self, client):
+        """Second call within TTL should return cached: true."""
+        # First call (warms cache)
+        r1 = _post(client, {"gross_monthly": 3000, "countries": ["US"], "display_currency": "USD"})
+        assert r1.status_code == 200
+        if r1.json().get("fx") is None:
+            pytest.skip("FX rates unavailable.")
+        # Second call (should be cached)
+        r2 = _post(client, {"gross_monthly": 3000, "countries": ["US"], "display_currency": "USD"})
+        assert r2.status_code == 200
+        fx2 = r2.json().get("fx")
+        assert fx2 is not None
+        assert fx2["cached"] is True, f"Second call should be cached, got fx={fx2}"
+
+    def test_supported_currencies_eur_gbp_jpy(self, client):
+        """open.er-api.com supports major currencies — spot check EUR, GBP, JPY."""
+        for curr in ["EUR", "GBP", "JPY"]:
+            r = _post(client, {"gross_monthly": 3000,
+                                "countries": ["US"],
+                                "display_currency": curr})
+            assert r.status_code == 200, f"{curr}: {r.text}"
+            body = r.json()
+            if body.get("fx") is None:
+                pytest.skip("FX rates unavailable.")
+            us = body["results"][0]
+            assert us["converted"]["display_currency"] == curr
+            # USD->X conversion should not be None for major currencies
+            assert us["converted"]["gross_salary"] is not None, f"{curr}: gross conversion was None"
+            assert us["converted"]["gross_salary"] > 0

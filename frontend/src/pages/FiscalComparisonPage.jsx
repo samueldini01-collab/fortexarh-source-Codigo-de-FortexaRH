@@ -27,6 +27,7 @@ export default function FiscalComparisonPage() {
   const [countries, setCountries] = useState({ regions: {}, total: 0 });
   const [selected, setSelected] = useState([]);
   const [grossSalary, setGrossSalary] = useState(3000);
+  const [displayCurrency, setDisplayCurrency] = useState("");  // "" = local only; USD/EUR etc = converted
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
   const [expanded, setExpanded] = useState({});
@@ -67,7 +68,13 @@ export default function FiscalComparisonPage() {
     try {
       const res = await axios.post(
         `${API}/multi-country-reports/cost-comparison`,
-        { gross_monthly: parseFloat(grossSalary), countries: selected, include_employee: true, include_employer: true },
+        {
+          gross_monthly: parseFloat(grossSalary),
+          countries: selected,
+          include_employee: true,
+          include_employer: true,
+          ...(displayCurrency ? { display_currency: displayCurrency } : {}),
+        },
         { headers: getAuthHeaders(), withCredentials: true }
       );
       setResults(res.data);
@@ -132,6 +139,24 @@ export default function FiscalComparisonPage() {
                   className="text-lg font-semibold"
                 />
               </div>
+              <div className="space-y-1 w-44">
+                <Label>Ver en Moneda</Label>
+                <select
+                  value={displayCurrency}
+                  onChange={(e) => setDisplayCurrency(e.target.value)}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  data-testid="display-currency-select"
+                >
+                  <option value="">— Solo moneda local —</option>
+                  <option value="USD">🇺🇸 USD (Dólar)</option>
+                  <option value="EUR">🇪🇺 EUR (Euro)</option>
+                  <option value="GBP">🇬🇧 GBP (Libra)</option>
+                  <option value="DOP">🇩🇴 DOP (Peso Dom.)</option>
+                  <option value="COP">🇨🇴 COP (Peso Col.)</option>
+                  <option value="MXN">🇲🇽 MXN (Peso Mex.)</option>
+                  <option value="BRL">🇧🇷 BRL (Real)</option>
+                </select>
+              </div>
               <div className="flex-1 min-w-[200px]">
                 <Label>Países seleccionados ({selected.length}/10)</Label>
                 <div className="flex gap-1 flex-wrap mt-1 min-h-[36px] p-2 border rounded-md bg-slate-50 dark:bg-slate-900">
@@ -191,12 +216,18 @@ export default function FiscalComparisonPage() {
         {results && (
           <Card data-testid="comparison-results">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 flex-wrap">
                 <TrendingUp className="w-5 h-5 text-blue-600" />
                 Resultados — {results.countries_compared} países
                 {cheapest && mostExpensive && (
                   <Badge variant="outline" className="ml-2">
                     Spread: {(mostExpensive.employer.cost_overhead_pct - results.results[0].employer.cost_overhead_pct).toFixed(2)}%
+                  </Badge>
+                )}
+                {results.fx && (
+                  <Badge variant="outline" className="bg-blue-50 dark:bg-blue-950 border-blue-300 text-blue-700 dark:text-blue-300">
+                    <Globe className="w-3 h-3 mr-1" />
+                    FX activo: {results.fx.display_currency} (vía {results.fx.rate_source})
                   </Badge>
                 )}
               </CardTitle>
@@ -247,12 +278,26 @@ export default function FiscalComparisonPage() {
                             </div>
                           </TableCell>
                           <TableCell><Badge variant="outline">{r.currency}</Badge></TableCell>
-                          <TableCell className="text-right font-mono">{fmtMoney(r.gross_salary, r.currency_symbol)}</TableCell>
+                          <TableCell className="text-right font-mono">
+                            {fmtMoney(r.gross_salary, r.currency_symbol)}
+                            {r.converted?.gross_salary != null && (
+                              <div className="text-xs font-normal text-slate-500 mt-0.5">
+                                ≈ {r.converted.display_currency} {Number(r.converted.gross_salary).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </div>
+                            )}
+                          </TableCell>
                           <TableCell className="text-right font-mono text-red-600">{fmtMoney(r.employee.total_ss, r.currency_symbol)}</TableCell>
                           <TableCell className="text-right font-mono text-red-600">{fmtMoney(r.employee.isr, r.currency_symbol)}</TableCell>
                           <TableCell className="text-right font-mono font-semibold text-emerald-700">{fmtMoney(r.employee.net_salary, r.currency_symbol)}</TableCell>
                           <TableCell className="text-right font-mono text-amber-700">{fmtMoney(r.employer.total_contributions, r.currency_symbol)}</TableCell>
-                          <TableCell className="text-right font-mono font-bold text-blue-700">{fmtMoney(r.employer.total_cost_to_company, r.currency_symbol)}</TableCell>
+                          <TableCell className="text-right font-mono font-bold text-blue-700">
+                            {fmtMoney(r.employer.total_cost_to_company, r.currency_symbol)}
+                            {r.converted?.total_cost_to_company != null && (
+                              <div className="text-xs font-normal text-slate-500 mt-0.5">
+                                ≈ {r.converted.display_currency} {Number(r.converted.total_cost_to_company).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </div>
+                            )}
+                          </TableCell>
                           <TableCell className="text-right">
                             <Badge variant={r.employer.cost_overhead_pct > 25 ? "destructive" : r.employer.cost_overhead_pct > 15 ? "secondary" : "default"}>
                               +{r.employer.cost_overhead_pct}%
