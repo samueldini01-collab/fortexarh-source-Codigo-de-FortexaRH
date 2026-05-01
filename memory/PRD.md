@@ -56,8 +56,16 @@
   - DR uses legacy DGII ISR table; others use bracket-based dynamic
   - Caps per contribution supported (e.g. SV ISSS cap 30 USD)
   - New frontend page `/fiscal-comparison` with country multi-select grouped by region, expandable breakdown rows, visual "Most economical" / "Most expensive" badges, overhead badge (green/amber/red), detail table per row
-  - Menu item "Comparativa Fiscal" in Payroll & Finance group
+  - Menu item "Comparativa Fiscal" in Payroll & Finance group with "New" badge
   - Tested: iteration_233.json — 17/17 backend tests PASSED
+- **FX (Currency Conversion) Integration (May 1, 2026)** — Cross-border decisions tool DONE:
+  - `display_currency` optional param in cost-comparison: USD/EUR/GBP/DOP/COP/MXN/BRL/etc (~166 currencies)
+  - Free FX provider: open.er-api.com (no API key, ECB rates, 1500 req/month)
+  - In-memory cache with 1h TTL — minimizes external calls
+  - When FX active, results sorted by converted total_cost_to_company (apples-to-apples comparison)
+  - Frontend: currency dropdown selector, FX badge in results header showing "FX activo: USD (vía open.er-api.com)", dual values per row (local + converted)
+  - Tested: iteration_234.json — 26/26 (17 legacy + 9 FX) backend tests PASSED
+- **Sidebar Bug Fix (May 1, 2026)**: Fiscal Comparison item was missing in sidebar (only existed in flat DEFAULT_NAVIGATION). Added to MENU_GROUPS Payroll & Finance group with isNew badge. Verified visible.
 
 ## Architecture Notes
 - COUNTRY_PROFILES dict (country_config.py) is source of truth
