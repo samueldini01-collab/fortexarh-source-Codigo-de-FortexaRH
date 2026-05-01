@@ -1,0 +1,44 @@
+{
+  "summary": "Backend testing of FortexaRH P2 Native Fiscal Reports — added US (IRS Form 941 PDF) and ES (Modelo 111 IRPF + TC1 FAN) on top of DO/CO/MX. 31/31 tests PASSED. Validated: (1) Catalog now reports total_countries=28, total_formats=33, implemented_formats=10 with US complete (FORM_941) and ES complete (MODELO_111 + TC1); the 23 non-implemented countries remain compliance_status=universal_only. (2) Country guard: form-941, modelo-111, tc1 all return 400 with helpful message when company.country=DO. (3) US Form 941 with country=US: returns 200 application/pdf, %PDF- magic, >4000 bytes, Content-Disposition contains Form941_Q1_2026; accepts both 2026-Q1 and 2026-03 (auto-derives Q1) and produces the same filename; 2099-Q4 returns 404. (4) ES Modelo 111 with country=ES and period=2026-T1: returns 200 text/plain, Content-Disposition contains 'Modelo111_', line 1 starts with '11112026' (Tipo registro 1 + modelo 111 + ejercicio), perceptor lines start with '21112026', latin-1 decoding succeeds. (5) ES TC1 with country=ES and period=2026-03: returns 200 text/plain, Content-Disposition contains 'TC1_FAN_', line 1 starts with '01FAN', worker lines start with '02', final line starts with '99'; structure is N+2 records (1 cabecera + N trabajadores + 1 totales). (6) Regression: all 21 previously-passing tests from iteration_236.json still PASS (catalog basic shape, DO/CO/MX entries, country guard for CO PILA + MX IMSS/INFONAVIT, file generation for those three, 404 cases, auth, iter_235 cost-comparison/PDF, fiscal-summary). CRITICAL CLEANUP: session-scoped autouse fixture restored company.country to 'DO' at end of run; verified post-run via GET /api/country-config/company → country_code='DO'.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_native_reports.py",
+    "/app/test_reports/pytest/native_reports_iter237.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "native_reports.py: US Form 941 EIN is taken raw from `company.rnc` then `.replace('-', '')` only inside filename; the in-PDF rendering uses the raw value with dashes — fine, but consider validating EIN format (NN-NNNNNNN, 9 digits) and warning if absent so users don't file with placeholder '00-0000000'.",
+    "_us_quarter_period and _es_quarter_period silently accept malformed periods that contain '-' or 'T'/'Q'. Bad inputs like '2026-' or 'Q1' (without year) will raise ValueError → 500. Wrap in try/except and raise HTTPException(400) for clearer client errors.",
+    "Form 941 line 13a (Total deposits) is hardcoded to 0.0, so line 14 'Balance due' equals the gross liability for every filing. The PDF says 'manual input required' but the API has no parameter to inject deposits; consider adding optional query param `?deposits=` for a more accurate balance.",
+    "Modelo 111 record 1 ('declarante') uses `_pad_str(f'{quarter}T', 2)` for período (e.g. '1T') — AEAT spec uses '1T'/'2T'/'3T'/'4T' which is correct, but the field is fixed length 2 so 4T is 2 chars (OK). Just ensure tipo_periodo='T' and the quarter code combine to AEAT's expected 3 chars in some legacy variants — verify with a Spanish accountant.",
+    "TC1 FAN: the file uses CCC=28000000000 (Madrid placeholder) when company.ccc is missing. For real ES filings this would be rejected by TGSS. Consider raising a 422 if the company has country=ES but no CCC configured, instead of silently filing with a placeholder.",
+    "Modelo 111: NIF default is 'B00000000' (an invalid NIF format — letters expected at end) and used as both filename and content. Validate format (^[A-Z][0-9]{7}[0-9A-Z]$) at company creation; otherwise filename Modelo111_B00000000_2026T1.txt looks suspicious.",
+    "DRY: Both modelo-111 and form-941 quarter computation share logic with payroll_periods.find for year/months. Consider extracting `_aggregate_quarter_payroll(company_id, year, months)` to reduce duplication.",
+    "All three Spanish/US endpoints recompute `await db.companies.find_one` twice (once in _require_country, once in body). Carry the company through from the guard to avoid the 2nd round-trip.",
+    "Spec drift surface: like PILA, the Modelo 111 and TC1 record total widths are not asserted in tests or in code. A spec change in any pad length would silently shift offsets of subsequent fields. Recommend adding `assert sum(field_widths) == EXPECTED_TOTAL` per record type to catch drift early."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_native_reports.py"
+  ],
+  "success_rate": {
+    "backend": "100% (31/31)",
+    "frontend": "not tested (per request — backend only)"
+  },
+  "test_credentials": {
+    "admin_user": "test_refactor@fortexa.com / test123",
+    "note": "Login response uses key 'token' (not 'access_token') — the test fixture handles both."
+  },
+  "seed_data_creation": "None. Reused existing paid period 2026-03 (period_42a51c051530). For US Q1 2026, only March is populated; the form aggregates that single month. No employees/periods added or removed.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Native Fiscal Reports backend P2 (US + ES) is fully validated. Test file /app/backend/tests/test_native_reports.py now contains 31 reusable tests across 8 classes (TestCatalog [8], TestCountryGuard [3], TestColombiaPILA [2], TestMexicoIMSS [4], TestUSForm941 [4], TestSpainModelo111 [2], TestSpainTC1 [2], TestNativeReportsAuth [2], TestRegressionIter235 [4]). The session-scoped autouse fixture `restore_country_to_do` GUARANTEES company.country resets to 'DO' after the suite (verified post-run). Implemented formats now =10: DO=4 (TSS_AUTODET, TSS_NOVEDADES, IR3, IR17), CO=1 (PILA), MX=2 (IMSS_SUA, INFONAVIT), US=1 (FORM_941 PDF), ES=2 (MODELO_111, TC1). Other 23 countries are universal_only stubs. Form 941 is the only PDF native format; all others are TXT (latin-1). When adding a new format, increment `implemented_formats` expected value in test_catalog_basic_shape. Helper `_set_country(client, code)` toggles via PUT /api/country-config/company/country?country_code=XX. Catalog endpoint is country-independent. The login endpoint returns `token` (not `access_token`) — the auth_token fixture already handles both keys.",
+  "rca of the issue": "N/A — all 31 tests passed, no issues found."
+}

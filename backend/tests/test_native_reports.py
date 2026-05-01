@@ -79,7 +79,7 @@ class TestCatalog:
         data = r.json()
         assert data["total_countries"] == 28, data["total_countries"]
         assert data["total_formats"] == 33, data["total_formats"]
-        assert data["implemented_formats"] == 7, data["implemented_formats"]
+        assert data["implemented_formats"] == 10, data["implemented_formats"]
         assert isinstance(data["countries"], list)
         assert len(data["countries"]) == 28
 
@@ -123,11 +123,32 @@ class TestCatalog:
 
     def test_catalog_25_other_countries_universal_only(self, client):
         data = client.get(f"{BASE_URL}/api/native-reports/catalog").json()
-        others = [c for c in data["countries"] if c["code"] not in ("DO", "CO", "MX")]
-        assert len(others) == 25
+        # DO/CO/MX/US/ES are now implemented (5)
+        others = [c for c in data["countries"] if c["code"] not in ("DO", "CO", "MX", "US", "ES")]
+        assert len(others) == 23
         for c in others:
             assert c["implemented_count"] == 0, c["code"]
             assert c["compliance_status"] == "universal_only", c["code"]
+
+    def test_catalog_US_complete_with_form941(self, client):
+        data = client.get(f"{BASE_URL}/api/native-reports/catalog").json()
+        us = next((c for c in data["countries"] if c["code"] == "US"), None)
+        assert us is not None
+        assert us["implemented_count"] == 1
+        assert us["compliance_status"] == "complete"
+        codes = {f["code"] for f in us["formats"]}
+        assert "FORM_941" in codes
+
+    def test_catalog_ES_complete_with_modelo111_and_tc1(self, client):
+        data = client.get(f"{BASE_URL}/api/native-reports/catalog").json()
+        es = next((c for c in data["countries"] if c["code"] == "ES"), None)
+        assert es is not None
+        assert es["implemented_count"] == 2
+        assert es["total_count"] == 2
+        assert es["compliance_status"] == "complete"
+        codes = {f["code"] for f in es["formats"]}
+        assert "MODELO_111" in codes
+        assert "TC1" in codes
 
 
 # -------------------- Country guard (400) tests --------------------
@@ -258,6 +279,122 @@ class TestMexicoIMSS:
             r = client.get(f"{BASE_URL}/api/native-reports/mx/infonavit",
                            params={"period": "2099-12"}, timeout=30)
             assert r.status_code == 404
+        finally:
+            _set_country(client, "DO")
+
+
+# -------------------- US Form 941 (PDF) --------------------
+
+class TestUSForm941:
+
+    def test_form941_blocked_when_country_is_DO(self, client):
+        _set_country(client, "DO")
+        r = client.get(f"{BASE_URL}/api/native-reports/us/form-941",
+                       params={"period": "2026-Q1"}, timeout=30)
+        assert r.status_code == 400, r.text[:300]
+        detail = r.json().get("detail", "")
+        assert "941" in detail or "IRS" in detail or "Estados Unidos" in detail or "US" in detail
+
+    def test_form941_pdf_with_quarter_period(self, client):
+        _set_country(client, "US")
+        try:
+            r = client.get(f"{BASE_URL}/api/native-reports/us/form-941",
+                           params={"period": "2026-Q1"}, timeout=60)
+            assert r.status_code == 200, r.text[:300]
+            assert "application/pdf" in r.headers.get("content-type", "")
+            assert r.content.startswith(b"%PDF-"), "Not a valid PDF"
+            assert len(r.content) > 4000, f"PDF too small: {len(r.content)}"
+            cd = r.headers.get("content-disposition", "")
+            assert "Form941_Q1_2026" in cd, cd
+        finally:
+            _set_country(client, "DO")
+
+    def test_form941_accepts_yyyy_mm_period(self, client):
+        _set_country(client, "US")
+        try:
+            # 2026-03 → Q1
+            r = client.get(f"{BASE_URL}/api/native-reports/us/form-941",
+                           params={"period": "2026-03"}, timeout=60)
+            assert r.status_code == 200, r.text[:300]
+            assert r.content.startswith(b"%PDF-")
+            cd = r.headers.get("content-disposition", "")
+            assert "Form941_Q1_2026" in cd, cd
+        finally:
+            _set_country(client, "DO")
+
+    def test_form941_404_when_no_payroll(self, client):
+        _set_country(client, "US")
+        try:
+            r = client.get(f"{BASE_URL}/api/native-reports/us/form-941",
+                           params={"period": "2099-Q4"}, timeout=30)
+            assert r.status_code == 404, r.text[:300]
+        finally:
+            _set_country(client, "DO")
+
+
+# -------------------- Spain Modelo 111 + TC1 --------------------
+
+class TestSpainModelo111:
+
+    def test_modelo111_blocked_when_country_is_DO(self, client):
+        _set_country(client, "DO")
+        r = client.get(f"{BASE_URL}/api/native-reports/es/modelo-111",
+                       params={"period": "2026-T1"}, timeout=30)
+        assert r.status_code == 400, r.text[:300]
+
+    def test_modelo111_generates_txt(self, client):
+        _set_country(client, "ES")
+        try:
+            r = client.get(f"{BASE_URL}/api/native-reports/es/modelo-111",
+                           params={"period": "2026-T1"}, timeout=60)
+            assert r.status_code == 200, r.text[:300]
+            assert "text/plain" in r.headers.get("content-type", "")
+            cd = r.headers.get("content-disposition", "")
+            assert "Modelo111_" in cd, cd
+            body = r.content
+            assert len(body) > 50, f"Too small: {len(body)}"
+            text = body.decode("latin-1")
+            lines = [ln for ln in text.split("\n") if ln]
+            assert len(lines) >= 2, f"Expected header + perceptor, got {len(lines)}"
+            # Line 1 starts with '1111' + year (Tipo 1, modelo 111, ejercicio)
+            assert lines[0].startswith("1111" + "2026"), f"Header start invalid: {lines[0][:12]!r}"
+            # Following lines start with '2111' + year
+            for dl in lines[1:]:
+                assert dl.startswith("2111" + "2026"), f"Perceptor line invalid: {dl[:12]!r}"
+
+            # latin-1 decoding worked (sanity: no UnicodeDecodeError)
+            assert isinstance(text, str)
+        finally:
+            _set_country(client, "DO")
+
+
+class TestSpainTC1:
+
+    def test_tc1_blocked_when_country_is_DO(self, client):
+        _set_country(client, "DO")
+        r = client.get(f"{BASE_URL}/api/native-reports/es/tc1",
+                       params={"period": "2026-03"}, timeout=30)
+        assert r.status_code == 400, r.text[:300]
+
+    def test_tc1_generates_fan_txt(self, client):
+        _set_country(client, "ES")
+        try:
+            r = client.get(f"{BASE_URL}/api/native-reports/es/tc1",
+                           params={"period": "2026-03"}, timeout=60)
+            assert r.status_code == 200, r.text[:300]
+            assert "text/plain" in r.headers.get("content-type", "")
+            cd = r.headers.get("content-disposition", "")
+            assert "TC1_FAN_" in cd, cd
+            text = r.content.decode("latin-1")
+            lines = [ln for ln in text.split("\n") if ln]
+            # N+2: 1 cabecera + N trabajadores + 1 totales (N>=1)
+            assert len(lines) >= 3, f"Expected at least 3 lines, got {len(lines)}"
+            assert lines[0].startswith("01FAN"), f"Header invalid: {lines[0][:8]!r}"
+            # Worker lines
+            for wl in lines[1:-1]:
+                assert wl.startswith("02"), f"Worker line invalid: {wl[:5]!r}"
+            # Final totals line
+            assert lines[-1].startswith("99"), f"Footer invalid: {lines[-1][:5]!r}"
         finally:
             _set_country(client, "DO")
 
