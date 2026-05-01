@@ -139,6 +139,13 @@
   - **Endpoint admin global** `POST /api/native-reports/calendar/run-reminders-all` para disparo manual (solo admin/super_admin).
   - **Cobertura: 33/33 formatos (100%)** en 28 países — PRIMERA SaaS HRTech LATAM con cumplimiento nativo total continental.
   - Tested: iteration_240.json — **103/103 backend tests PASSED** (37 nuevos + 66 regresión).
+- **Refactor + Scaling de native_reports — Modular package + Cron paralelo (May 1, 2026)** — P2 DONE:
+  - Monolito `routes/native_reports.py` (2641 líneas) → **package `routes/native/` con 8 sub-módulos** (`__init__.py`, `_helpers.py`, `catalog.py`, `calendar.py`, `filings.py`, `reminders.py`, `country_specific.py`, `latam_planilla.py`, `pr_form499r.py`). Archivo más grande ahora 1246 líneas.
+  - **Auto-registro de los 17 endpoints LATAM** iterando `PLANILLA_COLUMN_PROFILES` con factory `_make_handler` (default-arg trick `_fc=format_code, _cc=expected_country` para evitar late-binding closure). Eliminados 17 wrappers casi idénticos.
+  - **`run_reminders_for_all_companies` paralelizado**: `cursor.batch_size(100)` streaming + `asyncio.Semaphore(max_concurrency=10)` + `asyncio.gather` batched draining. Errors capturados per-company, `logger.warning` cuando `len(errors)>0`. Nuevos campos en respuesta: `duration_seconds`, `batch_size`, `max_concurrency`.
+  - `routes/native_reports.py` reducido a shim de 25 líneas (re-exporta `router` y `run_reminders_for_all_companies`) — `server.py` no necesita cambios.
+  - 🇩🇴 **Cero impacto en RD**: las rutas DGII (`tss/autodeterminacion`, `tss/novedades`, `ir3`, `ir17`) viven en `routes/dgii_reports.py` (módulo aparte) y no se tocaron — verificado con HTTP 200.
+  - Tested: iteration_241.json — **122/122 backend tests PASSED** (19 nuevos + 103 regresión).
 - **Global Compliance Center page (May 1, 2026)** — Roadmap visual DONE:
   - New page `/global-compliance` with stats cards (28 países, 33 formatos, 7 implementados, 28 cobertura universal)
   - Country cards grouped by region (Caribe, Centro, Norte, Sur, Europa) with status badges (Cumplimiento Nativo green / Parcial amber / Solo Universal slate)
@@ -156,11 +163,10 @@
 
 ## Backlog
 - P1: Importación masiva Excel (Empleados, Novedades)
-- P2: Refactor `native_reports.py` (~2641 lines) en sub-módulos: `native/catalog.py`, `native/latam_planilla.py`, `native/pr_form499r.py`, `native/filings.py`, `native/reminders.py`, `native/calendar.py` (recomendación del testing agent iter240)
-- P2: Refactor payroll.py (~1800 lines) en servicios
-- P2: Auto-registro de endpoints LATAM iterando `PLANILLA_COLUMN_PROFILES` (eliminar 17 wrappers casi idénticos)
-- P2: `run_reminders_for_all_companies` con paginación + `asyncio.gather` con semáforo para escalar a miles de empresas
-- P2: Centralizar `_require_country` en helper `ensure_company_country()` para i18n futuro
+- P2: Refactor `payroll.py` (~1800 líneas) en servicios — REQUIERE crear suite `tests/test_payroll_dr.py` con 30+ casos DR ANTES del split
+- P2: Backpressure en `run_reminders_for_all_companies` (asyncio.Queue producer/consumer cuando >10k empresas)
+- P2: Centralizar `_require_country` en helper i18n-friendly (recomendación iter240)
+- P2: Surfaces el disclaimer de validación contable como header HTTP `X-Fortexa-Disclaimer`
 - P2: API pública documentada
 - P2: Backup/Exportation de datos de empresa
 - P2: Configurable Notifications Phase 3 (Digest Email)
