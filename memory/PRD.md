@@ -152,6 +152,18 @@
   - 🌐 **Header `X-Fortexa-Disclaimer`** stampado en cada respuesta 2xx de `/api/native-reports/*` vía custom `_DisclaimerRoute` (APIRoute subclass) — un patrón limpio sin polución de cada handler. 4xx country-guards no llevan el header (correcto, errores no son contenido fiscal). `require_country` centralizado en `routes/native/_helpers.py` con mensaje en español como fuente única de verdad para futuro i18n.
   - ⚡ **Backpressure asyncio.Queue** producer/consumer en `run_reminders_for_all_companies`: cuando el queue (maxsize=200) se llena, el productor `await`s en `queue.put()` aplicando contrapresión natural sobre el cursor de Mongo. Workers `max_concurrency=10` consumen del queue. Sentinels `None` por worker para shutdown limpio. Respuesta gana campos `queue_high_water` + `produced_companies` para verificar que productor y consumidor están sincronizados.
   - Tested: iteration_242.json — **199/199 backend tests PASSED** (58 DR + 122 native baseline + 19 iter242 nuevos). Sin acción pendiente.
+- **Refactor de core.py + Tests de integración + Rate-limit configurable (May 1, 2026)** — P2/P2/P2 DONE:
+  - 🧪 **13 tests de integración HTTP nuevos** (`tests/test_payroll_routes_integration.py`): catalogs (3), period CRUD + 404 (4), workflow smoke con add-employees + calculate + workflow-status (4), entry mutations (1), regression guard (1). Establecidos ANTES del split como safety net (mismo patrón que iter242).
+  - 🏗️ **Split segundo paso de `core.py` (1432 líneas)** → 6 sub-módulos cohesivos:
+    - `periods.py` (341): list/create/get/delete + add-employees
+    - `entries.py` (218): GET/PUT/DELETE entries
+    - `novelties.py` (234): novelty add/delete con recálculo
+    - `payment.py` (241): calculate + pay
+    - `workflow.py` (512, intencional): submit/approve/reject + status/bank-check/history (approve_period es ~210 líneas — state machine que resiste fragmentación)
+    - `journal_entries.py` (86): toggle-auto-je, generate-je, delete-je
+    - `core.py` ahora es shim de 20 líneas que importa los 6 sub-módulos.
+  - ⏱️ **Rate limits env-configurables** (`routes/auth.py`): `FORTEXA_RATE_REGISTER`, `FORTEXA_RATE_LOGIN` (default 60/min, antes 10/min), `FORTEXA_RATE_RESEND`, `FORTEXA_RATE_PASS_RESET`, `FORTEXA_RATE_PASS_CHANGE`. Probado: 30 logins en 10s → 30/30 200s, sin spam de warnings.
+  - Tested: iteration_243.json — **212/212 backend tests PASSED** (13 nuevos + 199 baseline). Sin acción pendiente.
 - **Global Compliance Center page (May 1, 2026)** — Roadmap visual DONE:
   - New page `/global-compliance` with stats cards (28 países, 33 formatos, 7 implementados, 28 cobertura universal)
   - Country cards grouped by region (Caribe, Centro, Norte, Sur, Europa) with status badges (Cumplimiento Nativo green / Parcial amber / Solo Universal slate)
@@ -169,9 +181,8 @@
 
 ## Backlog
 - P1: Importación masiva Excel (Empleados, Novedades)
-- P2: **Continuar split de `core.py`** (1432 líneas) → `periods.py` + `entries.py` + `novelties.py` + `workflow.py` + `journal_entries.py` para llegar a archivos <400 líneas (recomendación testing-agent iter242).
-- P2: Añadir tests de integración para rutas payroll (POST /periods, POST /add-employees, /calculate, /approve, /pay) — la suite actual cubre la math pura pero no los endpoints HTTP.
-- P2: Surface el rate-limiter del `/auth/login` para entornos de testing (limpiar warning spam que detectó el testing agent).
+- P2: `workflow.py` queda en 512 líneas — **NO** dividir más sin antes proteger `approve_period` (~210 líneas, state-machine crítica) con tests de integración para cada transición de estado (draft→pending→approved→paid).
+- P2: Cubrir las transiciones submit→approve→pay→reject con tests E2E (la integración actual cubre solo el smoke layer).
 - P2: API pública documentada
 - P2: Backup/Exportation de datos de empresa
 - P2: Configurable Notifications Phase 3 (Digest Email)
