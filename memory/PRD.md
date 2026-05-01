@@ -41,6 +41,15 @@
   - DR-specific file endpoints gated via `_require_dr()`: `/tss/autodeterminacion`, `/tss/novedades`, `/ir3`, `/ir17`, payroll `/tss-preview`, `/tss-report`. Non-DR companies get clear 400 error with next-steps message.
   - Bug fix: `autodeterminacion` now handles employees with null `document_number`
   - Tested: iteration_231.json — 16/17 passed (the 1 failure was the null-doc bug, now fixed)
+- **Universal Multi-Country Fiscal Reports (May 1, 2026)** — P2 Opción (a) DONE:
+  - New module `/app/backend/routes/multi_country_reports.py` with 2 endpoints:
+    - `GET /api/multi-country-reports/available-reports` — lists reports available for company's country (country-specific native + universal)
+    - `GET /api/multi-country-reports/fiscal-summary?period=YYYY-MM&format=csv|pdf` — works for all 28 countries
+  - CSV: adapts headers to country codes (DR: SFS/AFP/SRL/INFOTEP — CO: SALUD/PENSION/ARL/CCF/ICBF/SENA — US: SS/MEDICARE/FUTA — ES: CC/DESEMPLEO/FP/FOGASA — MX: IMSS). UTF-8 BOM for Excel compatibility.
+  - PDF: landscape A4 with 2 tables (Employee Deductions + Employer Contributions), dynamic columns per country, totals row, and agency/SS system names.
+  - Period formats supported: `YYYY-MM` (groups all company periods for that month) and `period_id` (specific period).
+  - Frontend: "Reporte Fiscal Universal" card in Payroll → Reports tab with CSV + PDF download buttons per period. Badge shows active country.
+  - Tested: iteration_232.json — 14/14 backend tests PASSED for DR/CO/US/ES/MX adaptations
 
 ## Architecture Notes
 - COUNTRY_PROFILES dict (country_config.py) is source of truth
@@ -50,6 +59,7 @@
 
 ## Backlog
 - P1: Importación masiva Excel (Empleados, Novedades)
+- P2: Formatos nativos oficiales de reportes (CO PILA plano UGPP, MX IMSS SUA, US IRS 941 PDF, ES TC1/Modelo 111, UK HMRC RTI XML, FR DSN)
 - P2: Refactor payroll.py (~1800 lines) en servicios
 - P2: API pública documentada
 - P2: Backup/Exportation de datos de empresa
@@ -58,4 +68,3 @@
 - P2: Préstamos automáticos con auto-deducción
 - P2: Multi-moneda (DOP/USD dual)
 - P2: Onboarding checklist
-- P2: Generar reportes fiscales CO (PILA), MX (IMSS/INFONAVIT), US (941) — formatos específicos
