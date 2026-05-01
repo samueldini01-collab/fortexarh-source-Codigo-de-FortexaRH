@@ -22,7 +22,8 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 
 from config import db
 from utils.auth import get_current_user
-from routes.country_config import COUNTRY_PROFILES, get_company_rates_flat
+from routes.country_config import COUNTRY_PROFILES, get_company_rates_flat, calculate_isr_dynamic
+from utils.payroll_constants import calculate_isr_monthly as _calc_isr_dr
 
 router = APIRouter(prefix="/multi-country-reports", tags=["Multi-Country Fiscal Reports"])
 
@@ -401,3 +402,149 @@ def _render_pdf(rows, totals, profile, rates, company_name, tax_id, period, file
         media_type="application/pdf",
         headers={"Content-Disposition": f'attachment; filename="{filename_base}.pdf"'}
     )
+
+
+# ===================== FISCAL COMPARISON CALCULATOR =====================
+
+from pydantic import BaseModel
+from typing import List
+
+
+class ComparisonRequest(BaseModel):
+    gross_monthly: float
+    countries: List[str]  # e.g. ["DO", "CO", "MX", "US"]
+    include_employee: bool = True  # employee-side breakdown
+    include_employer: bool = True  # employer-side breakdown
+
+
+def _compute_country_cost(gross: float, country_code: str) -> dict:
+    """For a single country, compute: employee deductions, ISR, net, employer contributions, total cost."""
+    profile = COUNTRY_PROFILES.get(country_code.upper())
+    if not profile:
+        return None
+
+    emp_deds = profile["social_security"]["employee_deductions"]
+    er_conts = profile["social_security"]["employer_contributions"]
+
+    # Employee SS deductions
+    employee_breakdown = []
+    total_employee_ss = 0.0
+    for d in emp_deds:
+        amt = round(gross * d["rate"], 2)
+        cap = d.get("cap_monthly")
+        if cap is not None and cap > 0 and amt > cap:
+            amt = cap
+        employee_breakdown.append({
+            "code": d["code"],
+            "name": d["name"],
+            "rate": d["rate"],
+            "rate_pct": round(d["rate"] * 100, 3),
+            "amount": amt,
+        })
+        total_employee_ss += amt
+
+    # ISR (DR uses DGII table for precision; others use bracket-based)
+    income_tax = profile.get("income_tax") or {}
+    if country_code.upper() == "DO":
+        isr_val = _calc_isr_dr(gross)["isr_monthly"]
+    else:
+        isr_val = calculate_isr_dynamic(gross, income_tax)["isr_monthly"]
+    isr_val = round(isr_val, 2)
+
+    # Employer contributions
+    employer_breakdown = []
+    total_employer = 0.0
+    for c in er_conts:
+        amt = round(gross * c["rate"], 2)
+        cap = c.get("cap_monthly")
+        if cap is not None and cap > 0 and amt > cap:
+            amt = cap
+        employer_breakdown.append({
+            "code": c["code"],
+            "name": c["name"],
+            "rate": c["rate"],
+            "rate_pct": round(c["rate"] * 100, 3),
+            "amount": amt,
+        })
+        total_employer += amt
+
+    total_employee_deductions = round(total_employee_ss + isr_val, 2)
+    net_salary = round(gross - total_employee_deductions, 2)
+    total_employer = round(total_employer, 2)
+    total_cost_to_company = round(gross + total_employer, 2)
+
+    return {
+        "country_code": country_code.upper(),
+        "country_name": profile["name"],
+        "flag": profile.get("flag", ""),
+        "currency": profile["currency"],
+        "currency_symbol": profile["currency_symbol"],
+        "region": profile.get("region", ""),
+        "agency": income_tax.get("agency", ""),
+        "social_security_system": profile["social_security"].get("system_name", ""),
+        "gross_salary": round(gross, 2),
+        "employee": {
+            "breakdown": employee_breakdown,
+            "total_ss": round(total_employee_ss, 2),
+            "isr": isr_val,
+            "total_deductions": total_employee_deductions,
+            "net_salary": net_salary,
+            "effective_tax_rate_pct": round((total_employee_deductions / gross * 100) if gross > 0 else 0, 2),
+        },
+        "employer": {
+            "breakdown": employer_breakdown,
+            "total_contributions": total_employer,
+            "total_cost_to_company": total_cost_to_company,
+            "cost_overhead_pct": round((total_employer / gross * 100) if gross > 0 else 0, 2),
+        }
+    }
+
+
+@router.post("/cost-comparison")
+async def fiscal_cost_comparison(
+    payload: ComparisonRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Compare the fiscal cost of the same gross salary across multiple countries.
+
+    Input:
+      { "gross_monthly": 3000, "countries": ["DO","CO","MX","US","ES"] }
+
+    Output: for each country, a full breakdown of employee deductions, ISR, net salary,
+    employer contributions, and total cost to company — all in the country's local currency
+    (NOTE: no FX conversion is applied; amounts are shown in each country's currency).
+    Useful for cross-border hiring decisions.
+    """
+    if payload.gross_monthly <= 0:
+        raise HTTPException(status_code=400, detail="gross_monthly debe ser > 0")
+    if not payload.countries or len(payload.countries) < 1:
+        raise HTTPException(status_code=400, detail="Debe proporcionar al menos 1 país")
+    if len(payload.countries) > 10:
+        raise HTTPException(status_code=400, detail="Máximo 10 países por comparación")
+
+    results = []
+    unsupported = []
+    for cc in payload.countries:
+        data = _compute_country_cost(payload.gross_monthly, cc)
+        if data is None:
+            unsupported.append(cc)
+            continue
+        if not payload.include_employee:
+            data.pop("employee", None)
+        if not payload.include_employer:
+            data.pop("employer", None)
+        results.append(data)
+
+    # Sort: by total_cost_to_company ascending (cheapest first)
+    if payload.include_employer:
+        results.sort(key=lambda r: r.get("employer", {}).get("total_cost_to_company", 0))
+
+    return {
+        "gross_monthly": payload.gross_monthly,
+        "countries_compared": len(results),
+        "unsupported_countries": unsupported,
+        "results": results,
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "note": "Los montos están en la moneda local de cada país. No se aplica conversión de divisas."
+    }

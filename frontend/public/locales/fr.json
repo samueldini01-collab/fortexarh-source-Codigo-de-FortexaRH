@@ -135,6 +135,7 @@
     "payroll": "Paie",
     "payrollConfig": "Config. Paie",
     "payrollCalculator": "Calculatrice",
+    "fiscalComparison": "Comparaison Fiscale",
     "attendance": "Présences",
     "vacations": "Vacances",
     "leaves": "Congés",
@@ -5617,7 +5618,7 @@
     "oficialDeProteccionDe": "Data Protection Officer",
     "cloudtexaSolutionsSrl": "Cloudtexa Solutions SRL",
     "avWinstonChurchillSanto": "Av. Winston Churchill, Santo Domingo, República Dominicana",
-    "emailPrivacidadfortexarhcom": "Email: privacidad@fortexarh.com",
+    "emailPrivacidadfortexarhcom": "Email: privacidad@fortexaerp.com",
     "telefono8096859898": "Téléphone: (809) 685-9898",
     "nota": "Nota:"
   },
@@ -5644,7 +5645,7 @@
     "procesarDatosDeNomina": "Procesar datos de nómina que no correspondan a empleados legítimos de su empresa",
     "cloudtexaSolutionsSrl": "Cloudtexa Solutions SRL",
     "avWinstonChurchillSanto": "Av. Winston Churchill, Santo Domingo, República Dominicana",
-    "emailInfofortexarhcom": "Email: info@fortexarh.com",
+    "emailInfofortexarhcom": "Email: info@fortexaerp.com",
     "telefono8096859898": "Téléphone: (809) 685-9898"
   },
   "accountants": {

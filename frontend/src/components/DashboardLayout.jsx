@@ -86,7 +86,8 @@ import {
   UserCircle,
   FolderOpen,
   GitBranch,
-  FileSignature
+  FileSignature,
+  Globe
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
@@ -108,6 +109,7 @@ const DEFAULT_NAVIGATION = [
   { id: "organigrama", nameKey: "orgChart", href: "/organigrama", icon: Network, visible: true, featureKey: "organigrama" },
   { id: "payroll", nameKey: "payroll", href: "/payroll", icon: DollarSign, visible: true, featureKey: "employees" },
   { id: "payroll-calculator", nameKey: "payrollCalculator", href: "/payroll-calculator", icon: Calculator, visible: true, featureKey: "payroll_calculator" },
+  { id: "fiscal-comparison", nameKey: "fiscalComparison", href: "/fiscal-comparison", icon: Globe, visible: true, featureKey: "payroll_calculator" },
   { id: "loans", nameKey: "loans", href: "/loans", icon: Wallet, visible: true, featureKey: "loans" },
   { id: "reports-system", nameKey: "reportsCenter", href: "/reports-system", icon: FileBarChart, visible: true, featureKey: "reports" },
   { id: "costs-by-department", nameKey: "costsByDept", href: "/costs-by-department", icon: PieChart, visible: true, featureKey: "reports" },
