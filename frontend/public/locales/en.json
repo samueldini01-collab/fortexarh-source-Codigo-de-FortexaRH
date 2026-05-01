@@ -2510,7 +2510,9 @@
       "address": "Address",
       "phone": "Phone",
       "email": "Email",
-      "website": "Website"
+      "website": "Website",
+      "country": "Country",
+      "currency": "Currency"
     },
     "logo": {
       "title": "Company Logo",

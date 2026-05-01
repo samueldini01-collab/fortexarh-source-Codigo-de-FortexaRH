@@ -101,6 +101,7 @@ export default function CompanyConfigPage() {
     email: "",
     website: "",
     company_id: "",
+    country: "DO",
   });
   
   // Logo
@@ -316,7 +317,7 @@ export default function CompanyConfigPage() {
       
       const data = response.data;
       if (data.company) {
-        setCompany(data.company);
+        setCompany({ ...data.company, country: data.company.country || "DO" });
         if (data.company.logo) {
           setLogoPreview(data.company.logo);
         }
@@ -603,6 +604,32 @@ export default function CompanyConfigPage() {
           </div>
         </div>
         
+        {/* Country Selector */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label>{t('settings.general.country')}</Label>
+            <Select value={company.country || "DO"} onValueChange={(v) => setCompany({...company, country: v})}>
+              <SelectTrigger data-testid="company-country-select">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="DO">Rep. Dominicana (DOP)</SelectItem>
+                <SelectItem value="CO">Colombia (COP)</SelectItem>
+                <SelectItem value="MX">México (MXN)</SelectItem>
+                <SelectItem value="PA">Panamá (PAB)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label>{t('settings.general.currency')}</Label>
+            <Input
+              value={company.country === "CO" ? "COP" : company.country === "MX" ? "MXN" : company.country === "PA" ? "PAB" : "DOP"}
+              readOnly
+              className="bg-slate-50 cursor-default"
+            />
+          </div>
+        </div>
+
         <div className="space-y-2">
           <Label>{t('settings.general.slogan')}</Label>
           <Input 

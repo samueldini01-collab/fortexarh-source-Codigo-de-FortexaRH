@@ -2515,7 +2515,9 @@
       "address": "Dirección",
       "phone": "Teléfono",
       "email": "Correo Electrónico",
-      "website": "Sitio Web"
+      "website": "Sitio Web",
+      "country": "País",
+      "currency": "Moneda"
     },
     "logo": {
       "title": "Logo de la Empresa",

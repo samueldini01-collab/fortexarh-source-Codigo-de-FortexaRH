@@ -66,6 +66,7 @@ from routes.hr_alerts import router as hr_alerts_router
 from routes.liquidation import router as liquidation_router
 from routes.salary_history import router as salary_history_router
 from routes.admin_permissions import router as admin_permissions_router
+from routes.country_config import router as country_config_router, migrate_existing_companies
 
 # ===================== APP SETUP =====================
 
@@ -176,6 +177,7 @@ for r in [
     liquidation_router,
     salary_history_router,
     admin_permissions_router,
+    country_config_router,
 ]:
     api_router.include_router(r)
 
@@ -197,6 +199,7 @@ async def startup_db_client():
         await create_cdc_indexes()
         await create_performance_indexes()
         await seed_system_templates()
+        await migrate_existing_companies()
     except asyncio.TimeoutError:
         logger.warning("Database connection timeout during startup - will retry on first request")
     except Exception as e:
