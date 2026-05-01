@@ -83,8 +83,13 @@
   - 🇲🇽 **Mexico INFONAVIT**: `GET /api/native-reports/mx/infonavit?period=YYYY-MM` — bimonthly contribution file with 5% aportación
   - Country guard `_require_country()`: 400 error if company is in different country with helpful message
   - **Catalog endpoint** `GET /api/native-reports/catalog`: lists all 28 countries with their native formats + implementation status (complete/partial/universal_only)
-  - 7 of 33 formats implemented (DR: 4, CO: 1, MX: 2). Other 25 countries listed as backlog.
   - Tested: iteration_236.json — 21/21 backend tests PASSED
+- **Native Fiscal Formats — US Form 941 + ES Modelo 111 + ES TC1 FAN (May 1, 2026)** — P2 DONE:
+  - 🇺🇸 **US IRS Form 941**: `GET /api/native-reports/us/form-941?period=YYYY-Qn` — Quarterly Federal Tax Return PDF with Part 1 (lines 1-15: wages, federal income tax, SS tax 12.4%, Medicare tax 2.9%, totals), Part 2 (monthly liability breakdown), employer info, footer with CPA disclaimer. Accepts both `2026-Q1` and `2026-03` formats.
+  - 🇪🇸 **ES Modelo 111**: `GET /api/native-reports/es/modelo-111?period=YYYY-Tn` — IRPF Quarterly Retentions for AEAT. 2 record types (Tipo 1 declarante + Tipo 2 perceptores), Spanish format with NIF, base imponible, retención.
+  - 🇪🇸 **ES TC1 FAN**: `GET /api/native-reports/es/tc1?period=YYYY-MM` — Monthly Social Security Settlement for TGSS Sistema RED. 3 record types (01 cabecera + 02 trabajadores + 99 totales), CCC, NAF, base CC, cuotas trabajador/empresa.
+  - **Catalog now shows 10/33 formats implemented**: DR 4/4, CO 1/1, MX 2/2, US 1/1, ES 2/2 (5 países con cumplimiento nativo completo)
+  - Tested: iteration_237.json — 31/31 backend tests PASSED
 - **Global Compliance Center page (May 1, 2026)** — Roadmap visual DONE:
   - New page `/global-compliance` with stats cards (28 países, 33 formatos, 7 implementados, 28 cobertura universal)
   - Country cards grouped by region (Caribe, Centro, Norte, Sur, Europa) with status badges (Cumplimiento Nativo green / Parcial amber / Solo Universal slate)
