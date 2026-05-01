@@ -146,6 +146,12 @@
   - `routes/native_reports.py` reducido a shim de 25 líneas (re-exporta `router` y `run_reminders_for_all_companies`) — `server.py` no necesita cambios.
   - 🇩🇴 **Cero impacto en RD**: las rutas DGII (`tss/autodeterminacion`, `tss/novedades`, `ir3`, `ir17`) viven en `routes/dgii_reports.py` (módulo aparte) y no se tocaron — verificado con HTTP 200.
   - Tested: iteration_241.json — **122/122 backend tests PASSED** (19 nuevos + 103 regresión).
+- **Refactor de payroll.py + Suite DR + Backpressure + Disclaimer header (May 1, 2026)** — P0/P2 DONE:
+  - 🧪 **Suite DR de regresión** (`tests/test_payroll_dr.py`): **58 tests pure-function** cubriendo brackets ISR DGII (12 casos), constantes de tasas DR (9 casos), `COUNTRY_PROFILES["DO"]` (3 casos), `calculate_isr_dynamic` parity (4 casos), inline payroll math (7 casos), código laboral RD — regalía/preaviso/cesantía/vacaciones (8 casos), ISR Obreros NG 07-2007 (4 casos), determinismo + estabilidad numérica (8 casos). Construida ANTES del refactor como red de seguridad.
+  - 🏗️ **Refactor `payroll.py`**: monolito 1812 líneas → package `routes/payroll/` con 5 sub-módulos (`_helpers`, `core`, `templates`, `exports`, `misc`). El split se hizo via script Python que extrae rangos de líneas verbatim → cero cambios de lógica, solo reorganización física. `core.py` (1432 líneas) sigue grande pero está marcado para split adicional (periods/entries/novelties/workflow/je) en próxima sesión. Integrity assert (`len(router.routes) >= 30`) protege contra drift futuro.
+  - 🌐 **Header `X-Fortexa-Disclaimer`** stampado en cada respuesta 2xx de `/api/native-reports/*` vía custom `_DisclaimerRoute` (APIRoute subclass) — un patrón limpio sin polución de cada handler. 4xx country-guards no llevan el header (correcto, errores no son contenido fiscal). `require_country` centralizado en `routes/native/_helpers.py` con mensaje en español como fuente única de verdad para futuro i18n.
+  - ⚡ **Backpressure asyncio.Queue** producer/consumer en `run_reminders_for_all_companies`: cuando el queue (maxsize=200) se llena, el productor `await`s en `queue.put()` aplicando contrapresión natural sobre el cursor de Mongo. Workers `max_concurrency=10` consumen del queue. Sentinels `None` por worker para shutdown limpio. Respuesta gana campos `queue_high_water` + `produced_companies` para verificar que productor y consumidor están sincronizados.
+  - Tested: iteration_242.json — **199/199 backend tests PASSED** (58 DR + 122 native baseline + 19 iter242 nuevos). Sin acción pendiente.
 - **Global Compliance Center page (May 1, 2026)** — Roadmap visual DONE:
   - New page `/global-compliance` with stats cards (28 países, 33 formatos, 7 implementados, 28 cobertura universal)
   - Country cards grouped by region (Caribe, Centro, Norte, Sur, Europa) with status badges (Cumplimiento Nativo green / Parcial amber / Solo Universal slate)
@@ -163,10 +169,9 @@
 
 ## Backlog
 - P1: Importación masiva Excel (Empleados, Novedades)
-- P2: Refactor `payroll.py` (~1800 líneas) en servicios — REQUIERE crear suite `tests/test_payroll_dr.py` con 30+ casos DR ANTES del split
-- P2: Backpressure en `run_reminders_for_all_companies` (asyncio.Queue producer/consumer cuando >10k empresas)
-- P2: Centralizar `_require_country` en helper i18n-friendly (recomendación iter240)
-- P2: Surfaces el disclaimer de validación contable como header HTTP `X-Fortexa-Disclaimer`
+- P2: **Continuar split de `core.py`** (1432 líneas) → `periods.py` + `entries.py` + `novelties.py` + `workflow.py` + `journal_entries.py` para llegar a archivos <400 líneas (recomendación testing-agent iter242).
+- P2: Añadir tests de integración para rutas payroll (POST /periods, POST /add-employees, /calculate, /approve, /pay) — la suite actual cubre la math pura pero no los endpoints HTTP.
+- P2: Surface el rate-limiter del `/auth/login` para entornos de testing (limpiar warning spam que detectó el testing agent).
 - P2: API pública documentada
 - P2: Backup/Exportation de datos de empresa
 - P2: Configurable Notifications Phase 3 (Digest Email)
