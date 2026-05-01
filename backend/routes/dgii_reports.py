@@ -167,7 +167,7 @@ async def generate_tss_autodeterminacion(period: str, current_user: dict = Depen
     period_formatted = period.replace("-", "")
     
     for emp in employees:
-        cedula = emp.get("document_number", "").replace("-", "")
+        cedula = (emp.get("document_number") or "").replace("-", "")
         salary = emp.get("salary", 0)
         
         # Skip employees with deductions disabled

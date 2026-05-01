@@ -31,6 +31,16 @@
   - `payroll.py` refactored at 4 locations: `add_employees_to_period`, `update_payroll_entry`, `add_novelty`/`delete_novelty`, `calculate`. All fetch rates dynamically based on company's country.
   - Regression: DR unchanged (3.04/2.87/7.09/7.10/1/1). CO validated (4/4/8.5/12/0.522/4).
   - Tested: iteration_230.json — 22/22 backend tests PASSED
+- **Payroll Sheet multi-country UI (May 1, 2026)** — P1 DONE:
+  - New endpoint `GET /api/country-config/rates-flat` returns `labels`, `codes`, and all rates for company's current country
+  - `PayrollV2Page.jsx` fetches on mount; table headers and modal labels swap dynamically (DR: SFS/AFP/ISR — CO: SALUD/PENSION/ISR)
+  - Badge "Motor fiscal: {country} ({currency})" prominently shown on payroll sheet header
+  - `getDeductionLabel(field, fallbackI18nKey)` helper centralizes label resolution
+- **Multi-country TSS/DGII Reports (May 1, 2026)** — P2 DONE:
+  - `GET /api/dgii-reports/summary` now adaptable: includes country_code, labels, codes, available_reports, and full `employer_contributions_detail` / `employee_deductions_detail` (all country-specific rows, e.g. CO returns 6 employer contributions: SALUD_EMP, PENSION_EMP, ARL, CCF, ICBF, SENA)
+  - DR-specific file endpoints gated via `_require_dr()`: `/tss/autodeterminacion`, `/tss/novedades`, `/ir3`, `/ir17`, payroll `/tss-preview`, `/tss-report`. Non-DR companies get clear 400 error with next-steps message.
+  - Bug fix: `autodeterminacion` now handles employees with null `document_number`
+  - Tested: iteration_231.json — 16/17 passed (the 1 failure was the null-doc bug, now fixed)
 
 ## Architecture Notes
 - COUNTRY_PROFILES dict (country_config.py) is source of truth
@@ -40,7 +50,6 @@
 
 ## Backlog
 - P1: Importación masiva Excel (Empleados, Novedades)
-- P2: Reportes TSS/DGII mejorados (adaptables multi-país)
 - P2: Refactor payroll.py (~1800 lines) en servicios
 - P2: API pública documentada
 - P2: Backup/Exportation de datos de empresa
@@ -49,3 +58,4 @@
 - P2: Préstamos automáticos con auto-deducción
 - P2: Multi-moneda (DOP/USD dual)
 - P2: Onboarding checklist
+- P2: Generar reportes fiscales CO (PILA), MX (IMSS/INFONAVIT), US (941) — formatos específicos
