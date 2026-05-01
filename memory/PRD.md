@@ -50,6 +50,14 @@
   - Period formats supported: `YYYY-MM` (groups all company periods for that month) and `period_id` (specific period).
   - Frontend: "Reporte Fiscal Universal" card in Payroll → Reports tab with CSV + PDF download buttons per period. Badge shows active country.
   - Tested: iteration_232.json — 14/14 backend tests PASSED for DR/CO/US/ES/MX adaptations
+- **Fiscal Comparison Calculator (May 1, 2026)** — Global hiring tool DONE:
+  - New endpoint `POST /api/multi-country-reports/cost-comparison` — compares same gross salary across up to 10 countries simultaneously
+  - Returns per country: employee breakdown (SS + ISR + net), employer breakdown (all contributions + total cost + overhead %), sorted cheapest first
+  - DR uses legacy DGII ISR table; others use bracket-based dynamic
+  - Caps per contribution supported (e.g. SV ISSS cap 30 USD)
+  - New frontend page `/fiscal-comparison` with country multi-select grouped by region, expandable breakdown rows, visual "Most economical" / "Most expensive" badges, overhead badge (green/amber/red), detail table per row
+  - Menu item "Comparativa Fiscal" in Payroll & Finance group
+  - Tested: iteration_233.json — 17/17 backend tests PASSED
 
 ## Architecture Notes
 - COUNTRY_PROFILES dict (country_config.py) is source of truth
