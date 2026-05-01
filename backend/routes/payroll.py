@@ -19,14 +19,26 @@ from services.journal_entry_service import (
     delete_payroll_journal_entry,
 )
 
-# Import shared constants
+# Import shared constants (DR defaults - used as fallback)
 from utils.payroll_constants import (
-    SFS_EMPLOYEE_RATE, AFP_EMPLOYEE_RATE,
-    SFS_EMPLOYER_RATE, AFP_EMPLOYER_RATE, SRL_EMPLOYER_RATE, INFOTEP_EMPLOYER_RATE,
     PAYROLL_TYPES, PAYROLL_NOVELTY_TYPES, ISR_OBREROS_RATE,
     PayrollPeriodCreateV2, PayrollNoveltyCreate, PayrollPaymentRequest,
     calculate_isr_monthly, generate_id, now_iso
 )
+
+# Multi-country dynamic rates engine
+from routes.country_config import get_company_rates_flat, calculate_isr_dynamic
+
+
+async def _compute_isr(company_id: str, gross_salary: float, rates: dict) -> dict:
+    """
+    Compute ISR for a given company+gross.
+    - DR keeps using its legacy DGII interpolation table (more precise).
+    - Other countries use bracket-based calculation from country profile.
+    """
+    if rates.get("country_code") == "DO":
+        return calculate_isr_monthly(gross_salary)
+    return calculate_isr_dynamic(gross_salary, rates.get("income_tax") or {})
 
 # Payroll router (consolidated)
 router = APIRouter(prefix="/payroll", tags=["Payroll"])
@@ -217,6 +229,15 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
     
     added_count = 0
     payroll_type = period.get("payroll_type", "REG")
+
+    # Fetch country-specific rates once for the whole period
+    rates = await get_company_rates_flat(company_id)
+    sfs_emp_rate = rates["sfs_employee_rate"]
+    afp_emp_rate = rates["afp_employee_rate"]
+    sfs_er_rate = rates["sfs_employer_rate"]
+    afp_er_rate = rates["afp_employer_rate"]
+    srl_er_rate = rates["srl_employer_rate"]
+    infotep_er_rate = rates["infotep_employer_rate"]
     
     for emp in employees:
         if emp["employee_id"] in existing_employee_ids:
@@ -307,23 +328,23 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
                 "commissions": 0,
                 "other_income": 0,
                 "gross_salary": salary,
-                "sfs_employee": round(salary * SFS_EMPLOYEE_RATE, 2) if emp.get("sfs_discount", True) and not emp.get("sfs_manual_override") else (float(emp.get("sfs_manual_amount", 0)) if emp.get("sfs_manual_override") and emp.get("sfs_discount", True) else 0),
-                "afp_employee": round(salary * AFP_EMPLOYEE_RATE, 2) if emp.get("afp_discount", True) and not emp.get("afp_manual_override") else (float(emp.get("afp_manual_amount", 0)) if emp.get("afp_manual_override") and emp.get("afp_discount", True) else 0),
+                "sfs_employee": round(salary * sfs_emp_rate, 2) if emp.get("sfs_discount", True) and not emp.get("sfs_manual_override") else (float(emp.get("sfs_manual_amount", 0)) if emp.get("sfs_manual_override") and emp.get("sfs_discount", True) else 0),
+                "afp_employee": round(salary * afp_emp_rate, 2) if emp.get("afp_discount", True) and not emp.get("afp_manual_override") else (float(emp.get("afp_manual_amount", 0)) if emp.get("afp_manual_override") and emp.get("afp_discount", True) else 0),
                 "isr": 0,
                 "additional_deductions": emp.get("additional_deductions", []),
                 "total_additional_deductions": sum(d.get("amount", 0) for d in emp.get("additional_deductions", []) if not d.get("is_percentage")),
                 "total_deductions": 0,
                 "net_salary": 0,
-                "sfs_employer": round(salary * SFS_EMPLOYER_RATE, 2),
-                "afp_employer": round(salary * AFP_EMPLOYER_RATE, 2),
-                "srl_employer": round(salary * SRL_EMPLOYER_RATE, 2),
-                "infotep_employer": round(salary * INFOTEP_EMPLOYER_RATE, 2),
+                "sfs_employer": round(salary * sfs_er_rate, 2),
+                "afp_employer": round(salary * afp_er_rate, 2),
+                "srl_employer": round(salary * srl_er_rate, 2),
+                "infotep_employer": round(salary * infotep_er_rate, 2),
                 "total_employer_contributions": 0,
                 "status": "draft",
                 "created_at": now_iso()
             }
             
-            isr_result = calculate_isr_monthly(salary)
+            isr_result = await _compute_isr(company_id, salary, rates)
             if emp.get("isr_discount", True):
                 if emp.get("isr_manual_override"):
                     entry["isr"] = round(float(emp.get("isr_manual_amount", 0)), 2)
@@ -400,8 +421,11 @@ async def update_payroll_entry(entry_id: str, data: PayrollEntryCreate, current_
     )
     if period and period.get("status") == "paid":
         raise HTTPException(status_code=400, detail="No se puede modificar una nómina pagada")
-    
-    hourly_rate = data.base_salary / 23.83 / 8
+
+    # Fetch country-specific rates
+    rates = await get_company_rates_flat(company_id)
+    working_days_month = rates.get("working_days_month") or 23.83
+    hourly_rate = data.base_salary / working_days_month / 8
     
     overtime_day_amount = round(data.overtime_day_hours * hourly_rate * (1 + data.overtime_day_rate/100), 2)
     overtime_night_amount = round(data.overtime_night_hours * hourly_rate * (1 + data.overtime_night_rate/100), 2)
@@ -430,7 +454,7 @@ async def update_payroll_entry(entry_id: str, data: PayrollEntryCreate, current_
     if data.sfs_override is not None:
         sfs_employee = round(data.sfs_override, 2)
     elif emp.get("sfs_discount", True):
-        sfs_employee = round(float(emp.get("sfs_manual_amount", 0)), 2) if emp.get("sfs_manual_override") else round(gross_salary * SFS_EMPLOYEE_RATE, 2)
+        sfs_employee = round(float(emp.get("sfs_manual_amount", 0)), 2) if emp.get("sfs_manual_override") else round(gross_salary * rates["sfs_employee_rate"], 2)
     else:
         sfs_employee = 0
 
@@ -438,12 +462,12 @@ async def update_payroll_entry(entry_id: str, data: PayrollEntryCreate, current_
     if data.afp_override is not None:
         afp_employee = round(data.afp_override, 2)
     elif emp.get("afp_discount", True):
-        afp_employee = round(float(emp.get("afp_manual_amount", 0)), 2) if emp.get("afp_manual_override") else round(gross_salary * AFP_EMPLOYEE_RATE, 2)
+        afp_employee = round(float(emp.get("afp_manual_amount", 0)), 2) if emp.get("afp_manual_override") else round(gross_salary * rates["afp_employee_rate"], 2)
     else:
         afp_employee = 0
 
     # ISR: respect inline override first, then employee override, then calculation
-    isr_result = calculate_isr_monthly(gross_salary)
+    isr_result = await _compute_isr(company_id, gross_salary, rates)
     if data.isr_override is not None:
         isr = round(data.isr_override, 2)
     elif emp.get("isr_discount", True):
@@ -460,10 +484,10 @@ async def update_payroll_entry(entry_id: str, data: PayrollEntryCreate, current_
     total_deductions = round(sfs_employee + afp_employee + isr + total_additional + loan_deduction, 2)
     net_salary = round(gross_salary - total_deductions, 2)
     
-    sfs_employer = round(gross_salary * SFS_EMPLOYER_RATE, 2)
-    afp_employer = round(gross_salary * AFP_EMPLOYER_RATE, 2)
-    srl_employer = round(gross_salary * SRL_EMPLOYER_RATE, 2)
-    infotep_employer = round(gross_salary * INFOTEP_EMPLOYER_RATE, 2)
+    sfs_employer = round(gross_salary * rates["sfs_employer_rate"], 2)
+    afp_employer = round(gross_salary * rates["afp_employer_rate"], 2)
+    srl_employer = round(gross_salary * rates["srl_employer_rate"], 2)
+    infotep_employer = round(gross_salary * rates["infotep_employer_rate"], 2)
     
     update_data = {
         "base_salary": data.base_salary,
@@ -615,9 +639,10 @@ async def add_novelty(entry_id: str, data: PayrollNoveltyCreate, current_user: d
     
     gross_salary = base_salary + overtime_total + bonuses + commissions + other_income + total_income_novelties
     
-    sfs_employee = round(gross_salary * SFS_EMPLOYEE_RATE, 2)
-    afp_employee = round(gross_salary * AFP_EMPLOYEE_RATE, 2)
-    isr_result = calculate_isr_monthly(gross_salary)
+    rates = await get_company_rates_flat(company_id)
+    sfs_employee = round(gross_salary * rates["sfs_employee_rate"], 2)
+    afp_employee = round(gross_salary * rates["afp_employee_rate"], 2)
+    isr_result = await _compute_isr(company_id, gross_salary, rates)
     isr = isr_result["isr_monthly"]
     
     total_additional = entry.get("total_additional_deductions", 0)
@@ -626,10 +651,10 @@ async def add_novelty(entry_id: str, data: PayrollNoveltyCreate, current_user: d
     total_deductions = round(sfs_employee + afp_employee + isr + total_additional + loan_deduction + total_deduction_novelties, 2)
     net_salary = round(gross_salary - total_deductions, 2)
     
-    sfs_employer = round(gross_salary * SFS_EMPLOYER_RATE, 2)
-    afp_employer = round(gross_salary * AFP_EMPLOYER_RATE, 2)
-    srl_employer = round(gross_salary * SRL_EMPLOYER_RATE, 2)
-    infotep_employer = round(gross_salary * INFOTEP_EMPLOYER_RATE, 2)
+    sfs_employer = round(gross_salary * rates["sfs_employer_rate"], 2)
+    afp_employer = round(gross_salary * rates["afp_employer_rate"], 2)
+    srl_employer = round(gross_salary * rates["srl_employer_rate"], 2)
+    infotep_employer = round(gross_salary * rates["infotep_employer_rate"], 2)
     
     await db.payroll_entries.update_one(
         {"entry_id": entry_id, "company_id": company_id},
@@ -700,9 +725,10 @@ async def delete_novelty(entry_id: str, novelty_id: str, current_user: dict = De
     
     gross_salary = base_salary + overtime_total + bonuses + commissions + other_income + total_income_novelties
     
-    sfs_employee = round(gross_salary * SFS_EMPLOYEE_RATE, 2)
-    afp_employee = round(gross_salary * AFP_EMPLOYEE_RATE, 2)
-    isr_result = calculate_isr_monthly(gross_salary)
+    rates = await get_company_rates_flat(company_id)
+    sfs_employee = round(gross_salary * rates["sfs_employee_rate"], 2)
+    afp_employee = round(gross_salary * rates["afp_employee_rate"], 2)
+    isr_result = await _compute_isr(company_id, gross_salary, rates)
     isr = isr_result["isr_monthly"]
     
     total_additional = entry.get("total_additional_deductions", 0)
@@ -711,10 +737,10 @@ async def delete_novelty(entry_id: str, novelty_id: str, current_user: dict = De
     total_deductions = round(sfs_employee + afp_employee + isr + total_additional + loan_deduction + total_deduction_novelties, 2)
     net_salary = round(gross_salary - total_deductions, 2)
     
-    sfs_employer = round(gross_salary * SFS_EMPLOYER_RATE, 2)
-    afp_employer = round(gross_salary * AFP_EMPLOYER_RATE, 2)
-    srl_employer = round(gross_salary * SRL_EMPLOYER_RATE, 2)
-    infotep_employer = round(gross_salary * INFOTEP_EMPLOYER_RATE, 2)
+    sfs_employer = round(gross_salary * rates["sfs_employer_rate"], 2)
+    afp_employer = round(gross_salary * rates["afp_employer_rate"], 2)
+    srl_employer = round(gross_salary * rates["srl_employer_rate"], 2)
+    infotep_employer = round(gross_salary * rates["infotep_employer_rate"], 2)
     
     await db.payroll_entries.update_one(
         {"entry_id": entry_id, "company_id": company_id},
@@ -774,12 +800,14 @@ async def calculate_period(period_id: str, current_user: dict = Depends(get_curr
         {"_id": 0}
     ).to_list(1000)
     
+    rates = await get_company_rates_flat(company_id)
+
     for entry in entries:
         gross_salary = entry.get("gross_salary", 0)
         
-        sfs_employee = round(gross_salary * SFS_EMPLOYEE_RATE, 2)
-        afp_employee = round(gross_salary * AFP_EMPLOYEE_RATE, 2)
-        isr_result = calculate_isr_monthly(gross_salary)
+        sfs_employee = round(gross_salary * rates["sfs_employee_rate"], 2)
+        afp_employee = round(gross_salary * rates["afp_employee_rate"], 2)
+        isr_result = await _compute_isr(company_id, gross_salary, rates)
         isr = isr_result["isr_monthly"]
         
         total_additional = entry.get("total_additional_deductions", 0)
@@ -788,10 +816,10 @@ async def calculate_period(period_id: str, current_user: dict = Depends(get_curr
         total_deductions = round(sfs_employee + afp_employee + isr + total_additional + loan_deduction, 2)
         net_salary = round(gross_salary - total_deductions, 2)
         
-        sfs_employer = round(gross_salary * SFS_EMPLOYER_RATE, 2)
-        afp_employer = round(gross_salary * AFP_EMPLOYER_RATE, 2)
-        srl_employer = round(gross_salary * SRL_EMPLOYER_RATE, 2)
-        infotep_employer = round(gross_salary * INFOTEP_EMPLOYER_RATE, 2)
+        sfs_employer = round(gross_salary * rates["sfs_employer_rate"], 2)
+        afp_employer = round(gross_salary * rates["afp_employer_rate"], 2)
+        srl_employer = round(gross_salary * rates["srl_employer_rate"], 2)
+        infotep_employer = round(gross_salary * rates["infotep_employer_rate"], 2)
         
         await db.payroll_entries.update_one(
             {"entry_id": entry["entry_id"], "company_id": company_id},

@@ -16,6 +16,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
+  SelectLabel,
 } from "@/components/ui/select";
 import {
   Building2, Image, Palette, Type, Bell, Link2, History,
@@ -103,6 +105,10 @@ export default function CompanyConfigPage() {
     company_id: "",
     country: "DO",
   });
+
+  // Dynamic multi-country data (28 countries grouped by region)
+  const [countryData, setCountryData] = useState({ regions: {}, total: 0 });
+  const [currencySymbol, setCurrencySymbol] = useState("DOP");
   
   // Logo
   const [logo, setLogo] = useState(null);
@@ -224,6 +230,14 @@ export default function CompanyConfigPage() {
     } catch { /* silently */ }
   }, [getAuthHeaders]);
 
+  // Fetch supported countries (multi-country engine)
+  const fetchCountries = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API}/country-config/countries`, { headers: getAuthHeaders(), withCredentials: true });
+      setCountryData(res.data || { regions: {}, total: 0 });
+    } catch { /* silently */ }
+  }, [getAuthHeaders]);
+
   const handleSaveBankConfig = async (bankData) => {
     setBankSaving(true);
     try {
@@ -309,6 +323,7 @@ export default function CompanyConfigPage() {
       fetchQuickbooksStatus();
       fetchErpConfig();
       fetchBankConfig();
+      fetchCountries();
       
       const response = await axios.get(`${API}/company/settings`, {
         headers: getAuthHeaders(),
@@ -604,28 +619,62 @@ export default function CompanyConfigPage() {
           </div>
         </div>
         
-        {/* Country Selector */}
+        {/* Country Selector - Multi-country engine (28 countries, 5 regions) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label>{t('settings.general.country')}</Label>
-            <Select value={company.country || "DO"} onValueChange={(v) => setCompany({...company, country: v})}>
+            <Select
+              value={company.country || "DO"}
+              onValueChange={(v) => {
+                setCompany({ ...company, country: v });
+                // Update currency symbol from loaded data
+                for (const region of Object.values(countryData.regions || {})) {
+                  const found = (region.countries || []).find(c => c.code === v);
+                  if (found) { setCurrencySymbol(found.currency); break; }
+                }
+              }}
+            >
               <SelectTrigger data-testid="company-country-select">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="DO">Rep. Dominicana (DOP)</SelectItem>
-                <SelectItem value="CO">Colombia (COP)</SelectItem>
-                <SelectItem value="MX">México (MXN)</SelectItem>
-                <SelectItem value="PA">Panamá (PAB)</SelectItem>
+              <SelectContent className="max-h-96">
+                {Object.entries(countryData.regions || {}).length === 0 ? (
+                  <SelectItem value="DO">🇩🇴 República Dominicana (DOP)</SelectItem>
+                ) : (
+                  Object.entries(countryData.regions).map(([regionCode, regionInfo]) => (
+                    <SelectGroup key={regionCode}>
+                      <SelectLabel className="text-xs font-semibold text-slate-500 bg-slate-50">
+                        {regionInfo.region?.name || regionCode}
+                      </SelectLabel>
+                      {(regionInfo.countries || []).map(c => (
+                        <SelectItem key={c.code} value={c.code} data-testid={`country-option-${c.code}`}>
+                          {c.flag} {c.name} ({c.currency})
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  ))
+                )}
               </SelectContent>
             </Select>
+            {countryData.total > 0 && (
+              <p className="text-xs text-slate-500">
+                {countryData.total} {t('settings.general.countriesAvailable') || 'países disponibles'}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <Label>{t('settings.general.currency')}</Label>
             <Input
-              value={company.country === "CO" ? "COP" : company.country === "MX" ? "MXN" : company.country === "PA" ? "PAB" : "DOP"}
+              value={(() => {
+                for (const region of Object.values(countryData.regions || {})) {
+                  const found = (region.countries || []).find(c => c.code === company.country);
+                  if (found) return found.currency;
+                }
+                return currencySymbol || "DOP";
+              })()}
               readOnly
               className="bg-slate-50 cursor-default"
+              data-testid="company-currency-display"
             />
           </div>
         </div>

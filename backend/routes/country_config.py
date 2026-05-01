@@ -994,6 +994,116 @@ async def get_payroll_rates(company_id: str) -> dict:
     }
 
 
+async def get_company_rates_flat(company_id: str) -> dict:
+    """
+    Get payroll rates in FLAT format (legacy-compatible with DR structure).
+    Returns sfs/afp/srl/infotep slots mapped from country profile.
+    - Slot 0-1 employee: first 2 employee deductions (DR: SFS, AFP)
+    - Slot 0-3 employer: first 4 employer contributions (DR: SFS_EMP, AFP_EMP, SRL, INFOTEP)
+    Countries with fewer slots get 0.0 for missing ones.
+    """
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0, "country": 1})
+    country_code = (company or {}).get("country", "DO")
+    profile = COUNTRY_PROFILES.get(country_code, COUNTRY_PROFILES["DO"])
+    emp_deds = profile["social_security"]["employee_deductions"]
+    employer_conts = profile["social_security"]["employer_contributions"]
+
+    def _rate(lst, idx):
+        return lst[idx]["rate"] if idx < len(lst) else 0.0
+
+    def _name(lst, idx, default=""):
+        return lst[idx]["name"] if idx < len(lst) else default
+
+    def _code(lst, idx, default=""):
+        return lst[idx]["code"] if idx < len(lst) else default
+
+    return {
+        "country_code": country_code,
+        "country_name": profile["name"],
+        "currency": profile["currency"],
+        "currency_symbol": profile["currency_symbol"],
+        "working_days_month": profile["working_days_month"],
+        # Employee deductions (legacy DR slots)
+        "sfs_employee_rate": _rate(emp_deds, 0),
+        "afp_employee_rate": _rate(emp_deds, 1),
+        # Employer contributions (legacy DR slots)
+        "sfs_employer_rate": _rate(employer_conts, 0),
+        "afp_employer_rate": _rate(employer_conts, 1),
+        "srl_employer_rate": _rate(employer_conts, 2),
+        "infotep_employer_rate": _rate(employer_conts, 3),
+        # Extra details for display / future expansion
+        "employee_deductions_detail": emp_deds,
+        "employer_contributions_detail": employer_conts,
+        "income_tax": profile["income_tax"],
+        # Labels for frontend (UI-agnostic to DR)
+        "labels": {
+            "sfs_employee": _name(emp_deds, 0, "Deducción 1"),
+            "afp_employee": _name(emp_deds, 1, "Deducción 2"),
+            "sfs_employer": _name(employer_conts, 0, "Contribución 1"),
+            "afp_employer": _name(employer_conts, 1, "Contribución 2"),
+            "srl_employer": _name(employer_conts, 2, "Contribución 3"),
+            "infotep_employer": _name(employer_conts, 3, "Contribución 4"),
+        },
+        "codes": {
+            "sfs_employee": _code(emp_deds, 0),
+            "afp_employee": _code(emp_deds, 1),
+            "sfs_employer": _code(employer_conts, 0),
+            "afp_employer": _code(employer_conts, 1),
+            "srl_employer": _code(employer_conts, 2),
+            "infotep_employer": _code(employer_conts, 3),
+        },
+    }
+
+
+def calculate_isr_dynamic(gross_monthly: float, income_tax_config: dict) -> dict:
+    """
+    Calculate monthly ISR (income tax) using bracket structure from any country.
+    Returns dict compatible with DR's calculate_isr_monthly.
+    """
+    if not income_tax_config or not income_tax_config.get("brackets"):
+        return {
+            "taxable_base_monthly": round(gross_monthly, 2),
+            "annual_taxable": round(gross_monthly * 12, 2),
+            "isr_annual": 0.0,
+            "isr_monthly": 0.0,
+            "tax_bracket": "N/A",
+        }
+    exempt = float(income_tax_config.get("exempt_monthly", 0) or 0)
+    annual_gross = gross_monthly * 12 if exempt > 0 and gross_monthly > 0 else gross_monthly * 12
+    # Brackets can be annual (DO uses annual) or monthly. DO uses annual brackets.
+    # Strategy: if country has exempt_monthly > 0 AND bracket max > 100000 → likely annual (DO, CR, MX).
+    # If brackets are in currency thousands (e.g., UK: 12570) with no clear exemption -> monthly × 12.
+    # Heuristic: if any bracket max > annual_gross * 2, treat as annual.
+    brackets = income_tax_config["brackets"]
+    max_bracket_val = max([b.get("max") or 0 for b in brackets])
+    use_annual = max_bracket_val > gross_monthly * 3  # likely annual brackets
+    taxable = annual_gross if use_annual else gross_monthly
+    # Apply exemption
+    if exempt > 0 and use_annual:
+        pass  # brackets already include exempt threshold as first bracket
+    isr_calc = 0.0
+    bracket_label = "Exento"
+    for b in brackets:
+        b_min = float(b.get("min", 0) or 0)
+        b_max = b.get("max")
+        b_rate = float(b.get("rate", 0) or 0)
+        b_fixed = float(b.get("fixed", 0) or 0)
+        if b_max is None or taxable <= float(b_max):
+            if taxable > b_min:
+                isr_calc = b_fixed + (taxable - b_min) * b_rate
+                bracket_label = f"{int(b_rate * 100)}%"
+            break
+    isr_monthly_val = isr_calc / 12 if use_annual else isr_calc
+    isr_monthly_val = round(max(0.0, isr_monthly_val), 2)
+    return {
+        "taxable_base_monthly": round(gross_monthly, 2),
+        "annual_taxable": round(gross_monthly * 12, 2),
+        "isr_annual": round(isr_monthly_val * 12, 2),
+        "isr_monthly": isr_monthly_val,
+        "tax_bracket": bracket_label,
+    }
+
+
 # ===================== MIGRATION =====================
 
 async def migrate_existing_companies():
