@@ -76,6 +76,23 @@
     - Methodology section with FX rate source disclosure
   - Frontend: gradient blue→emerald button "Exportar Análisis Ejecutivo (PDF)" in results header
   - Tested: iteration_235.json — 37/37 backend tests PASSED (11 new + 26 regression)
+- **Native Fiscal Formats — CO PILA + MX IMSS/INFONAVIT (May 1, 2026)** — P2 DONE:
+  - New module `/app/backend/routes/native_reports.py` with country-specific flat-file generators
+  - 🇨🇴 **Colombia PILA UGPP**: `GET /api/native-reports/co/pila?period=YYYY-MM` — Resolución 0454/2019, 2 record types (Header tipo 1 + Detalle tipo 2 padded to 942 bytes), latin-1 encoding
+  - 🇲🇽 **Mexico IMSS SUA Cuotas**: `GET /api/native-reports/mx/imss-cuotas?period=YYYY-MM` — fixed-width with employee NSS, RFC, CURP, SDI, days cotizados, employee/employer cuotas, RCV, INFONAVIT
+  - 🇲🇽 **Mexico INFONAVIT**: `GET /api/native-reports/mx/infonavit?period=YYYY-MM` — bimonthly contribution file with 5% aportación
+  - Country guard `_require_country()`: 400 error if company is in different country with helpful message
+  - **Catalog endpoint** `GET /api/native-reports/catalog`: lists all 28 countries with their native formats + implementation status (complete/partial/universal_only)
+  - 7 of 33 formats implemented (DR: 4, CO: 1, MX: 2). Other 25 countries listed as backlog.
+  - Tested: iteration_236.json — 21/21 backend tests PASSED
+- **Global Compliance Center page (May 1, 2026)** — Roadmap visual DONE:
+  - New page `/global-compliance` with stats cards (28 países, 33 formatos, 7 implementados, 28 cobertura universal)
+  - Country cards grouped by region (Caribe, Centro, Norte, Sur, Europa) with status badges (Cumplimiento Nativo green / Parcial amber / Solo Universal slate)
+  - Per-country format list with download button (active for implemented, "Pendiente" for backlog)
+  - Filter buttons: Todos / Cumplimiento nativo / Parcial / Solo universal
+  - Period selector to download files for specific YYYY-MM
+  - Footer legal disclaimer about validation with local accountants
+  - Menu item "Global Compliance" with isNew badge in Payroll & Finance group
 
 ## Architecture Notes
 - COUNTRY_PROFILES dict (country_config.py) is source of truth
