@@ -1,6 +1,7 @@
 """
 DGII Reports Routes - FortexaRH
-Handles Dominican Republic tax reporting (TSS, IR-3, IR-17, IR-4, IR-13)
+Handles Dominican Republic tax reporting (TSS, IR-3, IR-17, IR-4, IR-13).
+Multi-country: /summary adapts to company country; DR-specific formats (TXT) gated.
 """
 from fastapi import APIRouter, Request, HTTPException, Depends, Response
 from fastapi.security import HTTPBearer
@@ -11,13 +12,15 @@ import uuid
 import io
 import csv
 
+from routes.country_config import get_company_rates_flat, COUNTRY_PROFILES
+
 router = APIRouter(prefix="/dgii-reports", tags=["DGII Reports"])
 from config import db
 from utils.auth import get_current_user
 security = HTTPBearer(auto_error=False)
 
 
-# Dominican Republic Tax Rates
+# Dominican Republic Tax Rates (kept as fallback / for DR-specific files)
 TSS_RATES = {
     "afp_employee": 0.0287,      # 2.87% AFP Empleado
     "afp_employer": 0.0710,      # 7.10% AFP Patronal
@@ -27,7 +30,7 @@ TSS_RATES = {
     "infotep": 0.01,             # 1% INFOTEP
 }
 
-# ISR Tax Brackets 2024
+# ISR Tax Brackets 2024 (DR)
 ISR_BRACKETS = [
     {"min": 0, "max": 416220.00, "rate": 0, "base": 0},
     {"min": 416220.01, "max": 624329.00, "rate": 0.15, "base": 0},
@@ -37,6 +40,21 @@ ISR_BRACKETS = [
 
 
 from models.system import DGIIReportRequest as ReportRequest
+
+
+async def _require_dr(company_id: str, report_name: str = "Este reporte"):
+    """Guard: raise 400 if company's country is not DR (DGII/TSS files are DR-specific)."""
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0, "country": 1})
+    country_code = (company or {}).get("country", "DO")
+    if country_code != "DO":
+        profile = COUNTRY_PROFILES.get(country_code, {})
+        raise HTTPException(
+            status_code=400,
+            detail=f"{report_name} es específico de República Dominicana (DGII/TSS). "
+                   f"Su empresa está configurada como {profile.get('name', country_code)}. "
+                   f"Use /api/dgii-reports/summary para ver totales de impuestos adaptables al motor fiscal de su país."
+        )
+    return country_code
 
 
 def calculate_isr(annual_income: float) -> float:
@@ -52,38 +70,52 @@ def calculate_isr(annual_income: float) -> float:
 
 @router.get("/summary")
 async def get_dgii_summary(period: str, current_user: dict = Depends(get_current_user)):
-    """Get summary of DGII obligations for a period"""
+    """Get summary of tax obligations for a period.
+    Multi-country: uses country-specific SS rates from company profile.
+    For DR: TSS (SFS/AFP/SRL/INFOTEP). For other countries: mapped labels."""
     company_id = current_user.get("company_id")
-    
+    rates = await get_company_rates_flat(company_id)
+
     # Get employees with payroll for the period
     employees = await db.employees.find(
         {"company_id": company_id, "status": "active"},
         {"_id": 0}
     ).to_list(1000)
-    
+
     total_salaries = sum(e.get("salary", 0) for e in employees)
     employee_count = len(employees)
-    
-    # Calculate TSS contributions
-    afp_employee = total_salaries * TSS_RATES["afp_employee"]
-    afp_employer = total_salaries * TSS_RATES["afp_employer"]
-    sfs_employee = total_salaries * TSS_RATES["sfs_employee"]
-    sfs_employer = total_salaries * TSS_RATES["sfs_employer"]
-    risk_labor = total_salaries * TSS_RATES["risk_employer"]
-    infotep = total_salaries * TSS_RATES["infotep"]
-    
+
+    # Country-specific SS contributions
+    sfs_employee = total_salaries * rates["sfs_employee_rate"]
+    afp_employee = total_salaries * rates["afp_employee_rate"]
+    sfs_employer = total_salaries * rates["sfs_employer_rate"]
+    afp_employer = total_salaries * rates["afp_employer_rate"]
+    risk_labor = total_salaries * rates["srl_employer_rate"]
+    infotep = total_salaries * rates["infotep_employer_rate"]
+
     # Get payroll entries for ISR calculation
     payroll_entries = await db.payroll_entries.find(
         {"company_id": company_id, "period_id": {"$regex": period.replace("-", "")}},
         {"_id": 0}
     ).to_list(1000)
-    
+
     total_isr = sum(e.get("isr", 0) for e in payroll_entries)
-    
+
+    # Country-specific report types available
+    country_profile = COUNTRY_PROFILES.get(rates["country_code"], {})
+    available_reports = country_profile.get("reports", [])
+
     return {
         "period": period,
         "employee_count": employee_count,
         "total_salaries": round(total_salaries, 2),
+        "country_code": rates["country_code"],
+        "country_name": rates["country_name"],
+        "currency": rates["currency"],
+        "currency_symbol": rates["currency_symbol"],
+        "labels": rates["labels"],
+        "codes": rates["codes"],
+        "available_reports": available_reports,
         "tss": {
             "afp_employee": round(afp_employee, 2),
             "afp_employer": round(afp_employer, 2),
@@ -93,18 +125,29 @@ async def get_dgii_summary(period: str, current_user: dict = Depends(get_current
             "sfs_total": round(sfs_employee + sfs_employer, 2),
             "risk_labor": round(risk_labor, 2),
             "infotep": round(infotep, 2),
-            "total_tss": round(afp_employee + afp_employer + sfs_employee + sfs_employer + risk_labor + infotep, 2)
+            "total_tss": round(afp_employee + afp_employer + sfs_employee + sfs_employer + risk_labor + infotep, 2),
+            # Full details from country profile (for future UI table)
+            "employee_deductions_detail": [
+                {"code": d["code"], "name": d["name"], "rate": d["rate"], "amount": round(total_salaries * d["rate"], 2)}
+                for d in rates.get("employee_deductions_detail", [])
+            ],
+            "employer_contributions_detail": [
+                {"code": c["code"], "name": c["name"], "rate": c["rate"], "amount": round(total_salaries * c["rate"], 2)}
+                for c in rates.get("employer_contributions_detail", [])
+            ],
         },
         "isr": {
-            "total_retained": round(total_isr, 2)
+            "total_retained": round(total_isr, 2),
+            "agency": country_profile.get("income_tax", {}).get("agency", ""),
         }
     }
 
 
 @router.get("/tss/autodeterminacion")
 async def generate_tss_autodeterminacion(period: str, current_user: dict = Depends(get_current_user)):
-    """Generate TSS Autodeterminación file (Type A)"""
+    """Generate TSS Autodeterminación file (Type A) - Dominican Republic only"""
     company_id = current_user.get("company_id")
+    await _require_dr(company_id, "TSS Autodeterminación")
     
     company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
     if not company:
@@ -157,8 +200,9 @@ async def generate_tss_autodeterminacion(period: str, current_user: dict = Depen
 
 @router.get("/tss/novedades")
 async def generate_tss_novedades(period: str, current_user: dict = Depends(get_current_user)):
-    """Generate TSS Novedades file (Type N)"""
+    """Generate TSS Novedades file (Type N) - Dominican Republic only"""
     company_id = current_user.get("company_id")
+    await _require_dr(company_id, "TSS Novedades")
     
     company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
     if not company:
@@ -196,8 +240,9 @@ async def generate_tss_novedades(period: str, current_user: dict = Depends(get_c
 
 @router.get("/ir3")
 async def generate_ir3(period: str, current_user: dict = Depends(get_current_user)):
-    """Generate IR-3 (Monthly ISR Withholdings) report"""
+    """Generate IR-3 (Monthly ISR Withholdings) report - Dominican Republic only"""
     company_id = current_user.get("company_id")
+    await _require_dr(company_id, "IR-3")
     
     company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
     if not company:
@@ -242,8 +287,9 @@ async def generate_ir3(period: str, current_user: dict = Depends(get_current_use
 
 @router.get("/ir17")
 async def generate_ir17(year: int, current_user: dict = Depends(get_current_user)):
-    """Generate IR-17 (Annual Employee Compensation) report"""
+    """Generate IR-17 (Annual Employee Compensation) report - Dominican Republic only"""
     company_id = current_user.get("company_id")
+    await _require_dr(company_id, "IR-17")
     
     company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
     if not company:

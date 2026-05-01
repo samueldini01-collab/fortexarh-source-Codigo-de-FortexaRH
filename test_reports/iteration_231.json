@@ -1,0 +1,53 @@
+{
+  "summary": "P1+P2 backend regression: 16/17 tests PASSED. Validated new /api/country-config/rates-flat endpoint (DR and CO: labels, codes, rates, currency correctly switched). /api/dgii-reports/summary is multi-country adaptable (DR returns 4 employer contributions SFS_EMP/AFP_EMP/SRL/INFOTEP; CO returns all 6: SALUD_EMP/PENSION_EMP/ARL/CCF/ICBF/SENA with 8.5/12/0.522/4/3/2 rates). All 6 DR-specific endpoints (tss/autodeterminacion, tss/novedades, ir3, ir17, payroll tss-preview, payroll tss-report) correctly return 400 when company country != DO. DR regression OK for 5/6 endpoints. 1 FAILURE: /api/dgii-reports/tss/autodeterminacion throws 500 AttributeError when any active employee has document_number=None (pre-existing bug, not introduced by P1/P2 refactor, but affects DR customers and should be fixed). Company country restored to DO at end.",
+  "backend_issues": {
+    "critical": [
+      {
+        "endpoint": "GET /api/dgii-reports/tss/autodeterminacion?period=2026-03 (DR)",
+        "issue": "Returns 500 Internal Server Error. Root cause: dgii_reports.py line 170 `cedula = emp.get('document_number', '').replace('-', '')` fails with AttributeError: 'NoneType' object has no attribute 'replace' when an active employee has document_number=None (dict has the key but value is None, so default '' is not used). Pre-existing bug – NOT introduced by P1/P2 refactor (the offending code was not modified); but DR customers with any null document_number will hit 500. Fix: `(emp.get('document_number') or '').replace('-', '')`.",
+        "priority": "HIGH"
+      }
+    ],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_country_config_rates_flat_and_dgii.py",
+    "/app/test_reports/pytest/p1_p2_rates_flat_dgii_results.xml"
+  ],
+  "action_items": [
+    "Fix dgii_reports.py line 170 (and any similar `.get(key, '').replace(...)` patterns e.g. first_name/last_name) using `(emp.get('document_number') or '').replace('-', '')` to handle NULL values gracefully. Same defensive pattern should be applied on line 170 (document_number), line 180 (first_name), line 181 (last_name) to be safe."
+  ],
+  "critical_code_review_comments": [
+    "country_config.py get_company_rates_flat(): clean implementation; correctly maps first 2 employee deductions to sfs/afp slots and first 4 employer contributions to sfs/afp/srl/infotep slots. Missing slots default to 0.0 – safe for countries with fewer bands.",
+    "dgii_reports.py _require_dr() guard is idiomatic FastAPI with clear Spanish error messages referencing /api/dgii-reports/summary as the cross-country alternative. Applied consistently to autodeterminacion, novedades, ir3, ir17.",
+    "dgii_reports.py /summary correctly preserves legacy DR tss.total_tss and slots (afp_employee, afp_employer, sfs_employee, sfs_employer, risk_labor, infotep) by mapping country-specific rates into those slots. Also adds new employee_deductions_detail and employer_contributions_detail for multi-country richness. Good backward-compat.",
+    "payroll_exports.py _require_dr_company() helper duplicates _require_dr() from dgii_reports.py with slightly different wording. Consider extracting into a shared helper in utils/ to DRY. Minor.",
+    "Pre-existing defensive-coding issue in dgii_reports.py lines 170, 180, 181: `emp.get('field', '')` fallback doesn't handle None values. Should use `(emp.get('field') or '')`."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_country_config_rates_flat_and_dgii.py"
+  ],
+  "success_rate": {
+    "backend": "94% (16/17 passed)",
+    "frontend": "not tested (per request)"
+  },
+  "test_credentials": {
+    "admin_user": "test_refactor@fortexa.com / test123"
+  },
+  "seed_data_creation": "None. Tests only switch country between DO<->CO and call GET endpoints. Country state restored to DO via module autouse teardown fixture. Verified via /api/country-config/company.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Company test_refactor@fortexa.com is restored to DO at end of run. One failure: /dgii-reports/tss/autodeterminacion returns 500 when a DR employee has document_number=None. Fix is 1-line in /app/backend/routes/dgii_reports.py line 170 (and similarly for first_name/last_name defensive). After fix, re-run `pytest /app/backend/tests/test_country_config_rates_flat_and_dgii.py -v`. All P1 rates-flat + P2 multi-country /summary + all 6 DR-specific guards work correctly.",
+  "rca of the issue": {
+    "bug": "500 AttributeError on /api/dgii-reports/tss/autodeterminacion for DR company",
+    "reproduction": "1) Login as test_refactor@fortexa.com 2) Ensure country=DO 3) GET /api/dgii-reports/tss/autodeterminacion?period=2026-03 -> 500",
+    "root_cause": "dgii_reports.py:170 uses `emp.get('document_number', '').replace('-','')`. When an active employee document in MongoDB has {document_number: null} (key present, value None), dict.get returns None (not the default ''), and calling .replace on None raises AttributeError.",
+    "mitigation": "Change to `cedula = (emp.get('document_number') or '').replace('-', '')`. Apply the same defensive pattern to first_name and last_name lines to prevent future 500s.",
+    "regression_risk": "Low. Tests in test_country_config_rates_flat_and_dgii.py::TestDrRegression will verify the fix."
+  }
+}

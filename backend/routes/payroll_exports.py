@@ -15,6 +15,22 @@ from utils.payroll_constants import (
     ISR_OBREROS_RATE, calculate_isr_monthly
 )
 
+from routes.country_config import COUNTRY_PROFILES
+
+
+async def _require_dr_company(db_ref, company_id: str, report_name: str):
+    """Guard: raise 400 if company's country is not DR."""
+    company = await db_ref.companies.find_one({"company_id": company_id}, {"_id": 0, "country": 1})
+    country_code = (company or {}).get("country", "DO")
+    if country_code != "DO":
+        profile = COUNTRY_PROFILES.get(country_code, {})
+        raise HTTPException(
+            status_code=400,
+            detail=f"{report_name} es específico de República Dominicana (TSS/SUIR+). "
+                   f"Su empresa está configurada como {profile.get('name', country_code)}. "
+                   f"Este formato de archivo solo se admite para empresas DO."
+        )
+
 router = APIRouter(prefix="/payroll", tags=["Payroll Exports"])
 from config import db
 from utils.auth import get_current_user
@@ -766,8 +782,9 @@ async def export_ir13(year: int, current_user: dict = Depends(get_current_user))
 
 @router.get("/periods/{period_id}/tss-report")
 async def generate_tss_report(period_id: str, current_user: dict = Depends(get_current_user)):
-    """Generate TSS report in TXT format for SUIR+ system submission"""
+    """Generate TSS report in TXT format for SUIR+ system submission - Dominican Republic only"""
     company_id = current_user.get("company_id")
+    await _require_dr_company(db, company_id, "Reporte TSS (SUIR+)")
     
     period = await db.payroll_periods.find_one(
         {"period_id": period_id, "company_id": company_id},
@@ -860,8 +877,9 @@ async def generate_tss_report(period_id: str, current_user: dict = Depends(get_c
 
 @router.get("/periods/{period_id}/tss-preview")
 async def preview_tss_report(period_id: str, current_user: dict = Depends(get_current_user)):
-    """Preview TSS report data as JSON before downloading"""
+    """Preview TSS report data as JSON before downloading - Dominican Republic only"""
     company_id = current_user.get("company_id")
+    await _require_dr_company(db, company_id, "Preview TSS")
     
     period = await db.payroll_periods.find_one(
         {"period_id": period_id, "company_id": company_id},

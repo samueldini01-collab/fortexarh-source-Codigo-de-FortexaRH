@@ -971,6 +971,14 @@ async def set_company_country(country_code: str, current_user: dict = Depends(ge
     return {"success": True, "message": f"País configurado: {profile['name']}"}
 
 
+@router.get("/rates-flat")
+async def get_company_rates_flat_endpoint(current_user: dict = Depends(get_current_user)):
+    """Get the flat payroll rates (DR-compatible slots) for the current company.
+    Used by frontend to display country-specific deduction labels in Payroll Sheet & Reports."""
+    company_id = current_user.get("company_id")
+    return await get_company_rates_flat(company_id)
+
+
 # ===================== PAYROLL RATES HELPER =====================
 
 async def get_payroll_rates(company_id: str) -> dict:

@@ -64,7 +64,8 @@ import {
   List,
   Send,
   BookOpen,
-  GitBranch
+  GitBranch,
+  Globe
 } from "lucide-react";
 import { toast } from "sonner";
 import { DrillDownModal } from "@/components/DrillDown";
@@ -262,6 +263,40 @@ export default function PayrollPage() {
     }
   }, [getAuthHeaders]);
 
+  // Multi-country payroll rates (labels + codes + rates per company country)
+  const [countryRates, setCountryRates] = useState(null);
+  const fetchCountryRates = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API}/country-config/rates-flat`, { headers: getAuthHeaders(), withCredentials: true });
+      setCountryRates(response.data);
+    } catch (_error) {
+      // Fallback: null → UI uses default DR i18n labels
+    }
+  }, [getAuthHeaders]);
+
+  // Helper: get deduction label for a DB field, preferring country profile code when not DR
+  const getDeductionLabel = useCallback((field, fallbackI18nKey) => {
+    if (countryRates?.country_code && countryRates.country_code !== 'DO') {
+      const code = countryRates?.codes?.[field];
+      if (code) return code;
+    }
+    return t(fallbackI18nKey);
+  }, [countryRates, t]);
+
+  const getDeductionRatePct = useCallback((field) => {
+    const rateMap = {
+      sfs_employee: countryRates?.sfs_employee_rate,
+      afp_employee: countryRates?.afp_employee_rate,
+      sfs_employer: countryRates?.sfs_employer_rate,
+      afp_employer: countryRates?.afp_employer_rate,
+      srl_employer: countryRates?.srl_employer_rate,
+      infotep_employer: countryRates?.infotep_employer_rate,
+    };
+    const r = rateMap[field];
+    if (r === undefined || r === null) return '';
+    return `${(r * 100).toFixed(2)}%`;
+  }, [countryRates]);
+
   // TSS Report functions
   const openTssPreview = async (periodId) => {
     // Find and set the period for download button
@@ -319,8 +354,9 @@ export default function PayrollPage() {
     fetchBankAccounts();
     fetchNoveltyTypes();
     fetchCompanySettings();
+    fetchCountryRates();
     if (user?.company_name) setCompanyName(user.company_name);
-  }, [fetchPeriods, fetchBankAccounts, fetchNoveltyTypes, fetchCompanySettings, user?.company_name]);
+  }, [fetchPeriods, fetchBankAccounts, fetchNoveltyTypes, fetchCompanySettings, fetchCountryRates, user?.company_name]);
 
   useEffect(() => {
     if (selectedPeriod) fetchPeriodDetails(selectedPeriod.period_id);
@@ -1262,6 +1298,17 @@ export default function PayrollPage() {
                         <h2 className="text-2xl font-bold">{companyName}</h2>
                         <div className="text-slate-300 mt-1 flex items-center gap-2">NÓMINA DE PAGO {getPayrollTypeBadge(selectedPeriod.payroll_type)}</div>
                         <p className="text-sm text-slate-400 mt-2">{selectedPeriod.description} • {selectedPeriod.start_date} al {selectedPeriod.end_date}</p>
+                        {countryRates && (
+                          <Badge
+                            variant="outline"
+                            className="mt-2 bg-slate-900/40 text-slate-100 border-slate-500"
+                            data-testid="payroll-country-badge"
+                            title={`Motor fiscal: ${countryRates.country_name} — moneda ${countryRates.currency}`}
+                          >
+                            <Globe className="w-3 h-3 mr-1" />
+                            {t('payrollV2.fiscalEngine') || 'Motor fiscal'}: {countryRates.country_name} ({countryRates.currency})
+                          </Badge>
+                        )}
                       </div>
                       <div className="text-right">
                         {getStatusBadge(selectedPeriod.status)}
@@ -1479,8 +1526,8 @@ export default function PayrollPage() {
                             <TableHead className="font-bold text-right border-r bg-emerald-50 w-20">{t('payrollV2.hextras')}</TableHead>
                             <TableHead className="font-bold text-right border-r bg-amber-50 w-20">{t('payrollV2.novedades')}</TableHead>
                             <TableHead className="font-bold text-right border-r bg-slate-200 w-24">{t('payrollV2.bruto')}</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-red-50 w-20">{t('payrollV2.sfs')}</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-red-50 w-20">{t('payrollV2.afp')}</TableHead>
+                            <TableHead className="font-bold text-right border-r bg-red-50 w-20" title={countryRates?.labels?.sfs_employee}>{getDeductionLabel('sfs_employee', 'payrollV2.sfs')}</TableHead>
+                            <TableHead className="font-bold text-right border-r bg-red-50 w-20" title={countryRates?.labels?.afp_employee}>{getDeductionLabel('afp_employee', 'payrollV2.afp')}</TableHead>
                             <TableHead className="font-bold text-right border-r bg-red-50 w-20">{t('payrollV2.isr')}</TableHead>
                             <TableHead className="font-bold text-right border-r bg-orange-50 w-20">{t('payrollV2.novedades1')}</TableHead>
                             <TableHead className="font-bold text-right border-r bg-red-100 w-24">{t('payrollV2.deducciones')}</TableHead>
@@ -2277,7 +2324,7 @@ export default function PayrollPage() {
                 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between gap-3">
-                    <Label className="text-sm w-24">SFS (3.04%)</Label>
+                    <Label className="text-sm w-24" title={countryRates?.labels?.sfs_employee}>{getDeductionLabel('sfs_employee', 'payrollV2.sfs')} ({getDeductionRatePct('sfs_employee') || '3.04%'})</Label>
                     <Input
                       type="number"
                       step="0.01"
