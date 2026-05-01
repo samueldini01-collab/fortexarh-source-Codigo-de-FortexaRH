@@ -55,6 +55,50 @@ export default function GlobalCompliancePage() {
       .catch(() => {});
   }, [getAuthHeaders]);
 
+  const reloadCalendar = useCallback(() => {
+    axios
+      .get(`${API}/native-reports/calendar`, { headers: getAuthHeaders(), withCredentials: true })
+      .then((res) => setCalendar(res.data))
+      .catch(() => {});
+  }, [getAuthHeaders]);
+
+  const markAsFiled = async (deadline) => {
+    try {
+      await axios.post(
+        `${API}/native-reports/filings/mark-filed`,
+        {
+          country_code: deadline.country_code,
+          format_code: deadline.format_code,
+          period: deadline.period_to_file,
+        },
+        { headers: getAuthHeaders(), withCredentials: true }
+      );
+      toast.success(`✓ ${deadline.format_name} marcado como presentado para ${deadline.period_to_file}`);
+      reloadCalendar();
+    } catch (e) {
+      toast.error(e.response?.data?.detail || "Error al marcar");
+    }
+  };
+
+  const triggerReminders = async () => {
+    try {
+      const res = await axios.post(
+        `${API}/native-reports/calendar/run-reminders`,
+        {},
+        { headers: getAuthHeaders(), withCredentials: true }
+      );
+      const sent = res.data.notifications_sent;
+      const skipped = res.data.skipped_already_filed;
+      if (sent > 0) {
+        toast.success(`${sent} recordatorio${sent > 1 ? "s" : ""} enviado${sent > 1 ? "s" : ""}. ${skipped} omitido${skipped > 1 ? "s" : ""} (ya presentado${skipped > 1 ? "s" : ""}).`);
+      } else {
+        toast.info(`No hay vencimientos en ventanas 7/3/1/0 días. ${skipped} omitidos (ya presentados).`);
+      }
+    } catch (e) {
+      toast.error("Error ejecutando recordatorios");
+    }
+  };
+
   const downloadFormat = async (format) => {
     if (!format.endpoint || !format.implemented) {
       toast.info("Este formato aún no está implementado. Usa el Reporte Fiscal Universal en /fiscal-comparison");
@@ -194,6 +238,16 @@ export default function GlobalCompliancePage() {
                     {calendar.summary.warning} próximo{calendar.summary.warning > 1 ? "s" : ""} (≤7d)
                   </Badge>
                 )}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="ml-auto bg-blue-600 text-white border-0 hover:bg-blue-700"
+                  onClick={triggerReminders}
+                  data-testid="trigger-reminders-btn"
+                >
+                  <AlertCircle className="w-4 h-4 mr-1" />
+                  Enviar Recordatorios
+                </Button>
               </CardTitle>
               <CardDescription>
                 Próximas fechas de presentación oficial por país. Hoy: <b>{calendar.today}</b>.
@@ -239,6 +293,19 @@ export default function GlobalCompliancePage() {
                       <Badge className={`${cfg.textColor} bg-transparent border ${d.urgency === "ok" ? "border-emerald-300" : d.urgency === "warning" ? "border-amber-300" : "border-red-300"}`}>
                         {cfg.label}
                       </Badge>
+                      {d.is_company_country && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="ml-2 h-7 px-2 text-xs"
+                          onClick={(e) => { e.stopPropagation(); markAsFiled(d); }}
+                          data-testid={`mark-filed-${d.country_code}-${d.format_code}`}
+                          title="Marcar como presentado"
+                        >
+                          <CheckCircle2 className="w-3 h-3 mr-1" />
+                          Presentado
+                        </Button>
+                      )}
                     </div>
                   );
                 })}

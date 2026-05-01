@@ -1,0 +1,41 @@
+{
+  "summary": "Backend-only testing of FortexaRH P2 iter 239: CA T4 PDF + BR eSocial S-1200 XML + AR F.931 SICOSS TXT + filing tracking (POST/DELETE/GET /filings/*) + smart fiscal deadline reminders (POST /calendar/run-reminders). 18 new tests (test_native_reports_iter239.py) + 48 regression tests (test_native_reports.py with 3 stale hardcoded counters updated 12->15) all pass -> 66/66 PASSED. Validated: (1) Catalog implemented_formats now = 15 (DO=4, CO=1, MX=2, US=1, ES=2, GB=1, FR=1, CA=1, BR=1, AR=1); CA/BR/AR each have compliance_status='complete'. (2) CA T4 country guard returns 400 when country=DO with CRA/CA-specific message; returns 200 application/pdf > 2000 bytes starting with %PDF- and filename T4_* when country=CA. Takes 'year' param (annual). (3) BR eSocial country guard returns 400 when DO; returns 200 application/xml when BR with <?xml header, <eSocial> root, esocial.gov.br namespace, <evtRemun Id=...>, <ideEvento> with indRetif=1/indApuracao=1/perApur, <ideEmpregador> with <nrInsc> (CNPJ), and <ideTrabalhador> with <cpfTrab> or <nisTrab> per employee. (4) AR F.931 guard returns 400 when DO; returns 200 text/plain with filename F931_SICOSS_*, latin-1 encodable body, all records uniform fixed-width (>=100 chars). (5) Filing tracking: POST /filings/mark-filed returns {success,filing:{filing_id,filed_at,filed_by=EMAIL,country_code,format_code,period,receipt_number}}; upsert idempotency confirmed -- 2 POSTs with same (company,country,format,period) produce exactly 1 record in history with last receipt_number. DELETE returns {deleted:1} first call, {deleted:0} on re-delete. GET /filings/history returns {total,filings[]} sorted by filed_at desc; ?country_code=DO filter restricts correctly. (6) POST /calendar/run-reminders returns {success:true, company_country, notifications_sent:int, skipped_already_filed:int, checked_at}; switching country (DO->CA) switches company_country in response -> confirms only company's country is targeted (efficient). After marking all DO upcoming deadlines as filed, skipped_already_filed increments & notifications_sent decrements as expected. Current date (2026-05-01 UTC) is 2d/9d/14d from DO deadlines -> outside {7,3,1,0,-1} window so notifications_sent=0 (correct per spec). create_notification import is reachable. (7) REGRESSION: All 48 iter238 tests still pass after 3 minor assertion updates (implemented_formats 12->15, others count 21->18, total_upcoming 12->15) reflecting the additional 3 implemented countries. CRITICAL: autouse session fixture restored company.country to 'DO' and cleaned up all created fiscal_filings (verified 0 leftover TSS_AUTODET 2026-04 rows in MongoDB post-run).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_native_reports_iter239.py",
+    "/app/backend/tests/test_native_reports.py",
+    "/app/test_reports/pytest/native_reports_iter239.xml",
+    "/app/test_reports/pytest/native_reports_iter239_full.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "native_reports.py:1695 filing_id uses UTC timestamp down to seconds; two concurrent mark-filed requests in the same second for the same company would collide, but upsert also uses $set so the record is stable. Consider uuid4() to avoid accidental sharing across companies.",
+    "native_reports.py:1741 GET /filings/history sorts by filed_at (a YYYY-MM-DD string). Ties within the same day are not deterministic. Add a secondary sort on created_at or _id for stable ordering.",
+    "native_reports.py:1789-1796 run-reminders computes 'period_to_file' by subtracting offset_months from try_date.month; for offset > 12 (not currently used) the loop works, but for annual CA T4 (offset_months likely 0 or 12) the period should be the previous YEAR (e.g. filing T4 in Feb 2026 covers 2025). Verify annual format handling explicitly.",
+    "native_reports.py:1810 Reminder window is hardcoded tuple (7,3,1,0,-1) skipping days 4,5,6,2 and anything <=-2. Consider configurable per-format windows and escalation past -1 (permanent overdue nag) rather than silencing it.",
+    "native_reports.py:1820 create_notification priority mapping: 'normal' is only used if urgency not in ('critical','warning'); given urgency branch returns only critical/warning (days<=1 or <=3) and the outer filter only passes days in {7,3,1,0,-1}, day=7 falls through to 'normal'. Works but confusing; use explicit mapping dict.",
+    "native_reports.py:1692 filed_at stored as ISO date string (YYYY-MM-DD) rather than datetime, which mixes with created_at (ISO datetime). Lexical sort works but downstream analytics querying by range should normalise types.",
+    "native_reports.py file size is now ~1846 lines -- exceeds 700-line guideline. Consider splitting into native/ca_t4.py, native/br_esocial.py, native/ar_f931.py, native/filings.py, native/reminders.py.",
+    "native_reports.py BR eSocial and AR F.931 appear to still embed placeholder IDs (CNPJ/CUIT default 00..., NIS/CUIL default 0...) when employee data is missing. In production these files will be rejected by Receita Federal/AFIP. Consider raising 422 when mandatory IDs are missing instead of silently padding with zeros.",
+    "DELETE /filings/mark-filed uses query params rather than a JSON body; REST-wise a composite key delete via body is arguably cleaner, but query-string is acceptable. Ensure OpenAPI docs reflect this."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_native_reports_iter239.py",
+    "/app/backend/tests/test_native_reports.py"
+  ],
+  "success_rate": {"backend": "100% (66/66)", "frontend": "not tested (backend-only scope)"},
+  "test_credentials": "test_refactor@fortexa.com / test123 (from /app/backend/tests/test_native_reports.py)",
+  "seed_data_creation": "No new seed data created. Test data uses existing CA/BR/AR payroll records (iter238 baseline). Filings marked during test are deleted on teardown.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All 10 implemented native fiscal formats (DO:4, CO:1, MX:2, US:1, ES:2, GB:1, FR:1, CA:1, BR:1, AR:1 = 15) are passing. Use /app/backend/tests/test_native_reports_iter239.py for iter239 specifics and /app/backend/tests/test_native_reports.py for full regression. Both restore country to DO in autouse fixtures. If future iterations add more formats, update hardcoded counts in test_native_reports.py (implemented_formats, total_upcoming, 'others' list) to match. Reminders endpoint notifications_sent depends on current calendar date vs FORMAT_DEADLINES -- tests validate schema and counter plumbing, not firing, which is date-dependent.",
+  "rca of the issue": "No bugs found. 3 pre-existing iter238 test assertions required updating (12->15 implemented_formats and others 21->18) to reflect the legitimate addition of CA/BR/AR formats. These are test maintenance, not functional regressions."
+}

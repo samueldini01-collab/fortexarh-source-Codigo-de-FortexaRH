@@ -14,6 +14,7 @@ Before submitting to official agencies, files must be validated by a local certi
 accountant. FortexaRH is not responsible for rejected filings.
 """
 from fastapi import APIRouter, HTTPException, Depends, Response
+from typing import Optional
 from datetime import datetime, timezone
 import io
 
@@ -402,9 +403,9 @@ NATIVE_FORMATS = {
     ],
     "GB": [{"code": "RTI_FPS", "name": "HMRC RTI FPS (XML)", "agency": "HMRC", "frequency": "monthly", "endpoint": "/api/native-reports/gb/rti-fps", "implemented": True}],
     "FR": [{"code": "DSN", "name": "DSN (Déclaration Sociale Nominative)", "agency": "URSSAF", "frequency": "monthly", "endpoint": "/api/native-reports/fr/dsn", "implemented": True}],
-    "CA": [{"code": "T4", "name": "T4 Statement of Remuneration", "agency": "CRA", "frequency": "annual", "implemented": False}],
-    "BR": [{"code": "ESOCIAL", "name": "eSocial", "agency": "Receita Federal", "frequency": "monthly", "implemented": False}],
-    "AR": [{"code": "F931", "name": "F.931 AFIP", "agency": "AFIP", "frequency": "monthly", "implemented": False}],
+    "CA": [{"code": "T4", "name": "T4 Statement of Remuneration", "agency": "CRA", "frequency": "annual", "endpoint": "/api/native-reports/ca/t4", "implemented": True}],
+    "BR": [{"code": "ESOCIAL", "name": "eSocial S-1200", "agency": "Receita Federal", "frequency": "monthly", "endpoint": "/api/native-reports/br/esocial", "implemented": True}],
+    "AR": [{"code": "F931", "name": "F.931 AFIP", "agency": "AFIP", "frequency": "monthly", "endpoint": "/api/native-reports/ar/f931", "implemented": True}],
     "CL": [{"code": "PREVIRED", "name": "PreviRed", "agency": "PreviRed", "frequency": "monthly", "implemented": False}],
     "PE": [{"code": "PLAME", "name": "PLAME SUNAT", "agency": "SUNAT", "frequency": "monthly", "implemented": False}],
     "EC": [{"code": "IESS_PLANILLA", "name": "IESS Planilla", "agency": "IESS", "frequency": "monthly", "implemented": False}],
@@ -1242,6 +1243,9 @@ FORMAT_DEADLINES = {
     "TC1": {"day": 30, "offset_months": 1, "description": "Último día del mes siguiente"},
     "RTI_FPS": {"day": 19, "offset_months": 1, "description": "Día 19 del mes siguiente al pago (HMRC)"},
     "DSN": {"day": 15, "offset_months": 1, "description": "Día 15 del mes siguiente (régimen général)"},
+    "T4": {"day": 28, "offset_months": 2, "description": "Último día de febrero del año siguiente"},
+    "ESOCIAL": {"day": 15, "offset_months": 1, "description": "Día 15 del mes siguiente"},
+    "F931": {"day": 13, "offset_months": 1, "description": "Días 7-13 según último dígito CUIT"},
 }
 
 
@@ -1334,4 +1338,508 @@ async def get_fiscal_calendar(current_user: dict = Depends(get_current_user)):
             "warning": sum(1 for x in upcoming if x["urgency"] == "warning"),
             "ok": sum(1 for x in upcoming if x["urgency"] == "ok"),
         }
+    }
+
+
+# ===================== CANADA: T4 STATEMENT OF REMUNERATION =====================
+# Annual T4 slip per employee - filed with CRA
+# https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/completing-filing-information-returns/t4-information-employers.html
+
+@router.get("/ca/t4")
+async def generate_ca_t4(year: int, current_user: dict = Depends(get_current_user)):
+    """Generate Canada T4 Statement of Remuneration Paid (annual summary PDF).
+
+    One PDF per employee + summary, all in one document.
+    Filed annually with CRA by last day of February.
+    """
+    company_id = current_user.get("company_id")
+    await _require_country(company_id, "CA", "T4 CRA")
+
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0}) or {}
+    # Aggregate all periods of the year
+    periods = await db.payroll_periods.find(
+        {"company_id": company_id, "year": year},
+        {"_id": 0}
+    ).to_list(50)
+    period_ids = [p["period_id"] for p in periods]
+    if not period_ids:
+        raise HTTPException(status_code=404, detail=f"No hay nóminas para {year}")
+    entries = await db.payroll_entries.find(
+        {"company_id": company_id, "period_id": {"$in": period_ids}},
+        {"_id": 0}
+    ).to_list(10000)
+
+    employee_ids = list({e["employee_id"] for e in entries})
+    employees_data = await db.employees.find(
+        {"company_id": company_id, "employee_id": {"$in": employee_ids}},
+        {"_id": 0}
+    ).to_list(5000)
+    emp_map = {e["employee_id"]: e for e in employees_data}
+
+    # Aggregate per employee
+    employee_t4s = {}
+    for entry in entries:
+        eid = entry["employee_id"]
+        if eid not in employee_t4s:
+            employee_t4s[eid] = {
+                "box_14_employment_income": 0.0,
+                "box_16_cpp_contributions": 0.0,
+                "box_18_ei_premiums": 0.0,
+                "box_22_income_tax": 0.0,
+            }
+        employee_t4s[eid]["box_14_employment_income"] += entry.get("gross_salary", 0)
+        # CA slots: CPP_EMP (~5.95%) → sfs_employee, EI (~1.66%) → afp_employee
+        employee_t4s[eid]["box_16_cpp_contributions"] += entry.get("sfs_employee", 0)
+        employee_t4s[eid]["box_18_ei_premiums"] += entry.get("afp_employee", 0)
+        employee_t4s[eid]["box_22_income_tax"] += entry.get("isr", 0)
+
+    # Build PDF
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(
+        buffer, pagesize=letter,
+        leftMargin=15 * mm, rightMargin=15 * mm,
+        topMargin=12 * mm, bottomMargin=12 * mm,
+        title=f"T4 {year}"
+    )
+    styles = getSampleStyleSheet()
+    h1 = ParagraphStyle("h1", parent=styles["Heading1"], fontSize=14, alignment=1,
+                        textColor=colors.HexColor("#dc2626"), spaceAfter=4)
+    h2 = ParagraphStyle("h2", parent=styles["Normal"], fontSize=10, alignment=1,
+                        textColor=colors.HexColor("#475569"), spaceAfter=8)
+    section = ParagraphStyle("sec", parent=styles["Heading3"], fontSize=11,
+                             textColor=colors.HexColor("#0f172a"), spaceBefore=8, spaceAfter=4)
+    body = ParagraphStyle("body", parent=styles["Normal"], fontSize=9, spaceAfter=4)
+    story = []
+
+    company_name = company.get("company_name") or company.get("name") or "Employer"
+    bn = (company.get("rnc") or company.get("business_number") or "123456789RP0001")[:15]
+
+    story.append(Paragraph(f"T4 STATEMENT OF REMUNERATION PAID — {year}", h1))
+    story.append(Paragraph(f"Canada Revenue Agency · Agence du revenu du Canada", h2))
+
+    # Summary
+    story.append(Paragraph("T4 Summary (T4-Sum)", section))
+    summary_totals = {
+        "box_14": sum(t["box_14_employment_income"] for t in employee_t4s.values()),
+        "box_16": sum(t["box_16_cpp_contributions"] for t in employee_t4s.values()),
+        "box_18": sum(t["box_18_ei_premiums"] for t in employee_t4s.values()),
+        "box_22": sum(t["box_22_income_tax"] for t in employee_t4s.values()),
+    }
+    sum_data = [
+        ["Field", "Description", "Total"],
+        ["BN", "Business Number", bn],
+        ["—", "Employer name", company_name],
+        ["—", "Number of T4 slips filed", str(len(employee_t4s))],
+        ["Total Box 14", "Employment income", f"${summary_totals['box_14']:,.2f}"],
+        ["Total Box 16", "Employee's CPP contributions", f"${summary_totals['box_16']:,.2f}"],
+        ["Total Box 18", "Employee's EI premiums", f"${summary_totals['box_18']:,.2f}"],
+        ["Total Box 22", "Income tax deducted", f"${summary_totals['box_22']:,.2f}"],
+    ]
+    t = Table(sum_data, colWidths=[40 * mm, 95 * mm, 45 * mm])
+    t.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#dc2626")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, -1), 9),
+        ("PADDING", (0, 0), (-1, -1), 5),
+        ("ALIGN", (-1, 1), (-1, -1), "RIGHT"),
+        ("GRID", (0, 0), (-1, -1), 0.3, colors.HexColor("#cbd5e1")),
+    ]))
+    story.append(t)
+
+    # Per-employee T4 slips
+    story.append(Spacer(1, 8))
+    story.append(Paragraph("Individual T4 Slips", section))
+    slip_data = [["#", "SIN", "Employee", "Box 14", "Box 16", "Box 18", "Box 22"]]
+    for idx, (eid, totals) in enumerate(employee_t4s.items(), 1):
+        emp = emp_map.get(eid, {})
+        sin = (emp.get("sin") or emp.get("document_number") or "000000000")[:11]
+        name = f"{emp.get('first_name', '')} {emp.get('last_name', '')}".strip()
+        slip_data.append([
+            str(idx),
+            sin,
+            name,
+            f"${totals['box_14_employment_income']:,.2f}",
+            f"${totals['box_16_cpp_contributions']:,.2f}",
+            f"${totals['box_18_ei_premiums']:,.2f}",
+            f"${totals['box_22_income_tax']:,.2f}",
+        ])
+    t2 = Table(slip_data, colWidths=[10 * mm, 28 * mm, 50 * mm, 25 * mm, 25 * mm, 25 * mm, 25 * mm], repeatRows=1)
+    t2.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#dc2626")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("FONTSIZE", (0, 0), (-1, -1), 8),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("ALIGN", (3, 1), (-1, -1), "RIGHT"),
+        ("GRID", (0, 0), (-1, -1), 0.3, colors.HexColor("#cbd5e1")),
+        ("PADDING", (0, 0), (-1, -1), 4),
+    ]))
+    story.append(t2)
+
+    story.append(Spacer(1, 10))
+    story.append(Paragraph(
+        f"<i>Generated by FortexaRH on {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}. "
+        f"Filing deadline: last day of February {year + 1} (CRA). "
+        f"Each employee must receive their T4 slip by the same deadline.</i>",
+        body
+    ))
+
+    doc.build(story)
+    pdf_bytes = buffer.getvalue()
+    buffer.close()
+    filename = f"T4_{bn.replace('-', '')}_{year}.pdf"
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'}
+    )
+
+
+# ===================== BRAZIL: eSocial S-1200 =====================
+# Monthly remuneration submission to Receita Federal eSocial
+# https://www.gov.br/esocial/
+
+@router.get("/br/esocial")
+async def generate_br_esocial(period: str, current_user: dict = Depends(get_current_user)):
+    """Generate Brazil eSocial event S-1200 (monthly remuneration) XML.
+
+    Format: XML per eSocial S-1200 layout simplified.
+    Period: YYYY-MM.
+    """
+    company_id = current_user.get("company_id")
+    await _require_country(company_id, "BR", "eSocial S-1200")
+
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0}) or {}
+    entries, emps, _ = await _collect_period_data(company_id, period)
+    if not entries:
+        raise HTTPException(status_code=404, detail=f"No hay datos de nómina para {period}")
+
+    cnpj = "".join(c for c in (company.get("rnc") or company.get("tax_id") or "00000000000000") if c.isdigit())[:14]
+    period_str = period.replace("-", "")[:6]
+    ano_mes = f"{period[:4]}-{period[5:7]}"
+
+    root = ET.Element("eSocial")
+    root.set("xmlns", "http://www.esocial.gov.br/schema/evt/evtRemun/v_S_01_02_00")
+    evt = ET.SubElement(root, "evtRemun")
+    evt.set("Id", f"ID1{cnpj}{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}{period_str}")
+
+    # ideEvento
+    ide_evento = ET.SubElement(evt, "ideEvento")
+    ET.SubElement(ide_evento, "indRetif").text = "1"  # 1=Original, 2=Retificação
+    ET.SubElement(ide_evento, "indApuracao").text = "1"  # 1=Mensal
+    ET.SubElement(ide_evento, "perApur").text = ano_mes
+    ET.SubElement(ide_evento, "tpAmb").text = "2"  # 1=Produção, 2=Produção restrita (testes)
+    ET.SubElement(ide_evento, "procEmi").text = "1"  # 1=Aplicativo do empregador
+    ET.SubElement(ide_evento, "verProc").text = "FortexaRH-1.0"
+
+    # ideEmpregador
+    ide_emp = ET.SubElement(evt, "ideEmpregador")
+    ET.SubElement(ide_emp, "tpInsc").text = "1"  # 1=CNPJ
+    ET.SubElement(ide_emp, "nrInsc").text = cnpj[:8]  # CNPJ raiz (8 dígitos)
+
+    # Per-employee remuneration
+    for entry in entries:
+        emp = emps.get(entry.get("employee_id"), {})
+        cpf = "".join(c for c in (emp.get("cpf") or emp.get("document_number") or "00000000000") if c.isdigit())[:11]
+        nis = (emp.get("nis") or emp.get("pis") or "00000000000")[:11]
+
+        ide_trab = ET.SubElement(evt, "ideTrabalhador")
+        ET.SubElement(ide_trab, "cpfTrab").text = cpf
+        ET.SubElement(ide_trab, "nisTrab").text = nis
+
+        # dmDev (demonstrativo de valores devidos)
+        dm_dev = ET.SubElement(ide_trab, "dmDev")
+        ET.SubElement(dm_dev, "ideDmDev").text = f"DM{period_str}"
+        ET.SubElement(dm_dev, "codCateg").text = "101"  # 101=Empregado geral
+
+        info_perApur = ET.SubElement(dm_dev, "infoPerApur")
+        ide_estab = ET.SubElement(info_perApur, "ideEstabLot")
+        ET.SubElement(ide_estab, "tpInsc").text = "1"
+        ET.SubElement(ide_estab, "nrInsc").text = cnpj
+        ET.SubElement(ide_estab, "codLotacao").text = "0001"
+
+        # Rubricas (rúbricas de pago)
+        gross = float(entry.get("gross_salary", 0) or 0)
+        inss_emp = float(entry.get("sfs_employee", 0) or 0)  # BR INSS = sfs slot
+        irrf = float(entry.get("isr", 0) or 0)
+
+        # Salário base
+        rem_per = ET.SubElement(ide_estab, "remunPerApur")
+        item1 = ET.SubElement(rem_per, "itensRemun")
+        ET.SubElement(item1, "codRubr").text = "1000"  # Código rubric salário
+        ET.SubElement(item1, "ideTabRubr").text = "FortexaRH"
+        ET.SubElement(item1, "qtdRubr").text = "1.00"
+        ET.SubElement(item1, "fatorRubr").text = "1"
+        ET.SubElement(item1, "vrUnit").text = f"{gross:.2f}"
+        ET.SubElement(item1, "vrRubr").text = f"{gross:.2f}"
+
+        # INSS empregado
+        if inss_emp > 0:
+            item2 = ET.SubElement(rem_per, "itensRemun")
+            ET.SubElement(item2, "codRubr").text = "2000"  # INSS
+            ET.SubElement(item2, "ideTabRubr").text = "FortexaRH"
+            ET.SubElement(item2, "vrRubr").text = f"-{inss_emp:.2f}"  # Negativo (desconto)
+
+        # IRRF
+        if irrf > 0:
+            item3 = ET.SubElement(rem_per, "itensRemun")
+            ET.SubElement(item3, "codRubr").text = "3000"  # IRRF
+            ET.SubElement(item3, "ideTabRubr").text = "FortexaRH"
+            ET.SubElement(item3, "vrRubr").text = f"-{irrf:.2f}"
+
+    xml_content = '<?xml version="1.0" encoding="UTF-8"?>\n' + _xml_pretty(root).split("\n", 1)[1]
+    filename = f"eSocial_S1200_{cnpj}_{period_str}.xml"
+    return Response(
+        content=xml_content.encode("utf-8"),
+        media_type="application/xml; charset=utf-8",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'}
+    )
+
+
+# ===================== ARGENTINA: F.931 AFIP =====================
+# Monthly Declaración Jurada de aportes y contribuciones de la Seguridad Social
+# Sistema SiCOSS - filed via AFIP
+
+@router.get("/ar/f931")
+async def generate_ar_f931(period: str, current_user: dict = Depends(get_current_user)):
+    """Generate Argentina F.931 (SICOSS) monthly Social Security DDJJ flat file.
+
+    Format: TXT plain file per AFIP SICOSS spec, fixed-width records.
+    Period: YYYY-MM.
+    """
+    company_id = current_user.get("company_id")
+    await _require_country(company_id, "AR", "F.931 AFIP")
+
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0}) or {}
+    entries, emps, _ = await _collect_period_data(company_id, period)
+    if not entries:
+        raise HTTPException(status_code=404, detail=f"No hay datos de nómina para {period}")
+
+    cuit = "".join(c for c in (company.get("rnc") or company.get("tax_id") or "30000000003") if c.isdigit())[:11]
+    period_str = period.replace("-", "")[:6]
+
+    lines = []
+    for entry in entries:
+        emp = emps.get(entry.get("employee_id"), {})
+        cuil = "".join(c for c in (emp.get("cuil") or emp.get("document_number") or "20000000000") if c.isdigit())[:11]
+        first_name = (emp.get("first_name") or "").upper()[:30]
+        last_name = (emp.get("last_name") or "").upper()[:30]
+        gross = float(entry.get("gross_salary", 0) or 0)
+        # AR slots: APORTE_JUB (~11%), OBRA_SOCIAL (~3%) → emp; CONTRIB_PATRON (~17%), OS_PATRON (~6%) → er
+        aporte_jub = float(entry.get("sfs_employee", 0) or 0)
+        obra_social_emp = float(entry.get("afp_employee", 0) or 0)
+        contrib_patron = float(entry.get("sfs_employer", 0) or 0)
+        os_patron = float(entry.get("afp_employer", 0) or 0)
+        art = float(entry.get("srl_employer", 0) or 0)
+        # SICOSS record format (simplified, ~280 bytes)
+        rec = []
+        rec.append(_pad_str(cuil, 11))                            # CUIL
+        rec.append(_pad_str(last_name + ", " + first_name, 30))   # Apellido y nombre
+        rec.append(_pad_str("00", 2))                             # Conyuge
+        rec.append(_pad_num(0, 2))                                # Cant. hijos
+        rec.append(_pad_str("01", 2))                             # Cód. situación (01=Activo)
+        rec.append(_pad_str("08", 2))                             # Cód. condición (08=Servicio común)
+        rec.append(_pad_str("100", 3))                            # Cód. actividad
+        rec.append(_pad_str("00", 2))                             # Cód. localidad
+        rec.append(_pad_str("01", 2))                             # Cód. tabla art (01)
+        rec.append(_pad_num(30, 2))                               # Cant. días trabajados
+        rec.append(_pad_num(40, 2))                               # Horas trabajadas
+        rec.append(_pad_num(gross * 100, 12))                     # Remuneración total (centavos)
+        rec.append(_pad_num(gross * 100, 12))                     # Remuneración SIPA (jubilación)
+        rec.append(_pad_num(gross * 100, 12))                     # Remuneración INSSJP
+        rec.append(_pad_num(gross * 100, 12))                     # Remuneración OS
+        rec.append(_pad_num(0, 12))                               # Asig. familiares
+        rec.append(_pad_num(0, 12))                               # Adicionales no remunerativos
+        rec.append(_pad_num(aporte_jub * 100, 12))                # Aporte SIPA
+        rec.append(_pad_num(obra_social_emp * 100, 12))           # Aporte OS
+        rec.append(_pad_num(contrib_patron * 100, 12))            # Contrib. SIPA patronal
+        rec.append(_pad_num(os_patron * 100, 12))                 # Contrib. OS patronal
+        rec.append(_pad_num(art * 100, 12))                       # ART
+        rec.append(_pad_num((aporte_jub + obra_social_emp + contrib_patron + os_patron + art) * 100, 14))  # Total
+        rec.append(_pad_str(period_str, 6))                       # Período
+        rec.append(_pad_str(" ", 50))                             # Reservado
+        lines.append("".join(rec))
+
+    content = "\n".join(lines) + "\n"
+    filename = f"F931_SICOSS_{cuit}_{period_str}.txt"
+    return Response(
+        content=content.encode("latin-1", errors="replace"),
+        media_type="text/plain; charset=iso-8859-1",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'}
+    )
+
+
+# ===================== FILING TRACKING + NOTIFICATIONS =====================
+# Track which fiscal filings have been submitted, and send proactive reminders.
+
+from pydantic import BaseModel as _BaseModel
+
+
+class MarkFiledRequest(_BaseModel):
+    country_code: str
+    format_code: str
+    period: str  # YYYY-MM, YYYY-Tn, YYYY-Qn or year
+    filed_at: Optional[str] = None  # ISO date; defaults to today
+    receipt_number: Optional[str] = None  # confirmation number from agency
+    notes: Optional[str] = None
+
+
+@router.post("/filings/mark-filed")
+async def mark_filing_as_filed(payload: MarkFiledRequest, current_user: dict = Depends(get_current_user)):
+    """Mark a fiscal filing as submitted, recording it in the compliance history."""
+    company_id = current_user.get("company_id")
+    user_email = current_user.get("email")
+    filed_at = payload.filed_at or datetime.now(timezone.utc).date().isoformat()
+
+    record = {
+        "filing_id": f"filing_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}_{payload.country_code}_{payload.format_code}",
+        "company_id": company_id,
+        "country_code": payload.country_code.upper(),
+        "format_code": payload.format_code.upper(),
+        "period": payload.period,
+        "filed_at": filed_at,
+        "filed_by": user_email,
+        "receipt_number": payload.receipt_number,
+        "notes": payload.notes,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    # Upsert by company+country+format+period
+    await db.fiscal_filings.update_one(
+        {"company_id": company_id, "country_code": record["country_code"],
+         "format_code": record["format_code"], "period": payload.period},
+        {"$set": record},
+        upsert=True
+    )
+    return {"success": True, "filing": record}
+
+
+@router.delete("/filings/mark-filed")
+async def unmark_filing(country_code: str, format_code: str, period: str,
+                       current_user: dict = Depends(get_current_user)):
+    """Remove a filing record (mark as not filed)."""
+    company_id = current_user.get("company_id")
+    res = await db.fiscal_filings.delete_one({
+        "company_id": company_id,
+        "country_code": country_code.upper(),
+        "format_code": format_code.upper(),
+        "period": period,
+    })
+    return {"success": True, "deleted": res.deleted_count}
+
+
+@router.get("/filings/history")
+async def get_filings_history(
+    country_code: Optional[str] = None,
+    limit: int = 100,
+    current_user: dict = Depends(get_current_user),
+):
+    """Get filing history for the company."""
+    company_id = current_user.get("company_id")
+    query = {"company_id": company_id}
+    if country_code:
+        query["country_code"] = country_code.upper()
+    items = await db.fiscal_filings.find(query, {"_id": 0}).sort("filed_at", -1).limit(limit).to_list(limit)
+    return {"total": len(items), "filings": items}
+
+
+@router.post("/calendar/run-reminders")
+async def run_calendar_reminders(current_user: dict = Depends(get_current_user)):
+    """Manually trigger fiscal deadline reminders for the current company.
+    In production, this should be run as a daily cron job (background task).
+    Generates in-app notifications for deadlines at 7, 3, and 1 day before due date.
+    Skips formats already marked as filed for the relevant period.
+    """
+    from routes.notifications_system import create_notification
+
+    company_id = current_user.get("company_id")
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0, "country": 1})
+    company_country = (company or {}).get("country", "DO")
+
+    today = datetime.now(timezone.utc).date()
+    notifications_sent = 0
+    skipped_filed = 0
+    from calendar import monthrange
+
+    for country_code, formats in NATIVE_FORMATS.items():
+        # Only remind for the company's country (not all 28)
+        if country_code != company_country:
+            continue
+        profile = COUNTRY_PROFILES.get(country_code, {})
+        for fmt in formats:
+            if not fmt.get("implemented"):
+                continue
+            deadline_cfg = FORMAT_DEADLINES.get(fmt["code"])
+            if not deadline_cfg:
+                continue
+            day = deadline_cfg["day"]
+            offset = deadline_cfg["offset_months"]
+            current_month = today.month
+            current_year = today.year
+            try_day = min(day, monthrange(current_year, current_month)[1])
+            try_date = datetime(current_year, current_month, try_day, tzinfo=timezone.utc).date()
+            if try_date < today:
+                if current_month == 12:
+                    next_year = current_year + 1
+                    next_month = 1
+                else:
+                    next_year = current_year
+                    next_month = current_month + 1
+                try_day = min(day, monthrange(next_year, next_month)[1])
+                try_date = datetime(next_year, next_month, try_day, tzinfo=timezone.utc).date()
+            days_until = (try_date - today).days
+            # Calculate the period being filed
+            filing_month = try_date.month - offset
+            filing_year = try_date.year
+            while filing_month <= 0:
+                filing_month += 12
+                filing_year -= 1
+            period_str = f"{filing_year}-{filing_month:02d}"
+
+            # Check if already filed for this period
+            already_filed = await db.fiscal_filings.find_one({
+                "company_id": company_id,
+                "country_code": country_code,
+                "format_code": fmt["code"],
+                "period": period_str,
+            })
+            if already_filed:
+                skipped_filed += 1
+                continue
+
+            # Trigger only for 7, 3, 1 day windows
+            if days_until not in (7, 3, 1, 0, -1):
+                continue
+
+            urgency = "critical" if days_until <= 1 else ("warning" if days_until <= 3 else "normal")
+            title = f"{profile.get('flag', '')} {fmt['name']} — vence en {days_until} día{'s' if days_until != 1 else ''}"
+            if days_until <= 0:
+                title = f"⚠️ {profile.get('flag', '')} {fmt['name']} — VENCIDO"
+            message = (f"Tu empresa debe presentar {fmt['name']} ante {fmt['agency']} "
+                      f"el {try_date.isoformat()}. Período a declarar: {period_str}.")
+
+            await create_notification(
+                company_id=company_id,
+                title=title,
+                message=message,
+                notification_type="fiscal_deadline",
+                priority=urgency if urgency in ("critical", "warning") else "normal",
+                link="/global-compliance",
+                target_role="admin",
+                metadata={
+                    "country_code": country_code,
+                    "format_code": fmt["code"],
+                    "period": period_str,
+                    "due_date": try_date.isoformat(),
+                    "days_until_due": days_until,
+                    "endpoint": fmt.get("endpoint"),
+                }
+            )
+            notifications_sent += 1
+
+    return {
+        "success": True,
+        "company_country": company_country,
+        "notifications_sent": notifications_sent,
+        "skipped_already_filed": skipped_filed,
+        "checked_at": datetime.now(timezone.utc).isoformat(),
     }
