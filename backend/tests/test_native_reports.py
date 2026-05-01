@@ -79,7 +79,7 @@ class TestCatalog:
         data = r.json()
         assert data["total_countries"] == 28, data["total_countries"]
         assert data["total_formats"] == 33, data["total_formats"]
-        assert data["implemented_formats"] == 15, data["implemented_formats"]
+        assert data["implemented_formats"] == 33, data["implemented_formats"]
         assert isinstance(data["countries"], list)
         assert len(data["countries"]) == 28
 
@@ -123,13 +123,17 @@ class TestCatalog:
 
     def test_catalog_25_other_countries_universal_only(self, client):
         data = client.get(f"{BASE_URL}/api/native-reports/catalog").json()
-        # DO/CO/MX/US/ES/GB/FR/CA/BR/AR are now implemented (10)
-        implemented = ("DO", "CO", "MX", "US", "ES", "GB", "FR", "CA", "BR", "AR")
+        # As of iter240, all 28 catalog countries are implemented (33 formats).
+        implemented = (
+            "DO", "CO", "MX", "US", "ES", "GB", "FR", "CA", "BR", "AR",
+            "CL", "PE", "EC", "VE", "BO", "PY", "UY", "GY", "SR", "CR",
+            "SV", "GT", "HN", "NI", "PA", "CU", "HT", "PR",
+        )
         others = [c for c in data["countries"] if c["code"] not in implemented]
-        assert len(others) == 18
-        for c in others:
-            assert c["implemented_count"] == 0, c["code"]
-            assert c["compliance_status"] == "universal_only", c["code"]
+        assert len(others) == 0
+        for c in data["countries"]:
+            assert c["implemented_count"] >= 1, c["code"]
+            assert c["compliance_status"] != "universal_only", c["code"]
 
     def test_catalog_US_complete_with_form941(self, client):
         data = client.get(f"{BASE_URL}/api/native-reports/catalog").json()
@@ -631,7 +635,7 @@ class TestFiscalCalendar:
         assert isinstance(data["by_country"], dict)
         assert data["total_upcoming"] == len(data["deadlines"])
         # 12 implemented formats each produce 1 deadline entry
-        assert data["total_upcoming"] == 15, data["total_upcoming"]
+        assert data["total_upcoming"] == 33, data["total_upcoming"]
 
     def test_calendar_next_due_is_closest(self, client):
         r = client.get(f"{BASE_URL}/api/native-reports/calendar", timeout=30).json()

@@ -1,0 +1,43 @@
+{
+  "summary": "Backend-only testing of FortexaRH iter240: native fiscal report coverage expanded from 15 -> 33 formats across 28 countries (18 new: CL/PE/EC/VE/BO/PY/UY/GY/SR/CR/SV/GT/HN/NI/PA/CU/HT/PR) plus APScheduler daily cron @08:00 UTC firing run_reminders_for_all_companies(). Wrote test_native_reports_iter240.py with 37 tests, all PASSED. Full regression across test_native_reports.py + test_native_reports_iter239.py + test_native_reports_iter240.py = 103/103 PASSED. Validated: (1) GET /api/native-reports/catalog returns total_countries=28, total_formats=33, implemented_formats=33, and each new country/format entry exposes the correct endpoint URL and implemented=True. (2) All 18 new endpoints return HTTP 400 with Spanish country-guard guidance (tokens like 'país','empresa','configurada','requiere','debe') when invoked by the DO-configured admin — the expected behaviour per system design. (3) Existing native endpoints (CO/MX/US/ES/GB/FR/CA/BR/AR) still reachable (200 or 400 country-mismatch, never 404/500). (4) POST /api/native-reports/calendar/run-reminders (per-company) still returns {success:true, notifications_sent:int, skipped_already_filed:int,...} after refactor. (5) POST /api/native-reports/calendar/run-reminders-all requires auth (401 without token) and returns 200 for admin with full global summary schema: {success:true, processed_companies:int(>=1), total_notifications_sent:int, total_skipped_already_filed:int, errors:[], ran_at}. (6) GET /api/native-reports/calendar returns deadlines for DO company (non-empty, each with country_code+format_code). (7) GET /api/native-reports/filings/history returns {total, filings:[]}. (8) Backend logs show 'APScheduler started: fiscal_reminders_daily @ 08:00 UTC' on startup — cron is registered. Pre-existing legacy tests had 3 hardcoded counts (implemented_formats=15, total_upcoming=15, others==18 universal_only) which needed updating to reflect the legitimate 33/33 coverage — this is test maintenance matching the iter239 pattern (12->15 then 15->33).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_native_reports_iter240.py",
+    "/app/backend/tests/test_native_reports.py",
+    "/app/backend/tests/test_native_reports_iter239.py",
+    "/app/test_reports/pytest/native_reports_iter240.xml",
+    "/app/test_reports/pytest/native_reports_full_iter240.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "native_reports.py file size now ~2641 lines — significantly exceeds the 700-line guideline. Split into native/catalog.py, native/latam_planilla.py (18 endpoints + PLANILLA_COLUMN_PROFILES + _generate_planilla_csv), native/pr_form499r.py, native/filings.py, native/reminders.py, native/calendar.py for maintainability.",
+    "The 18 new LATAM endpoints are thin wrappers that all call the same _generate_planilla_csv helper — good DRY — but every route duplicates (period,current_user) signature. Consider a single registered factory or a sub-router that iterates PLANILLA_COLUMN_PROFILES to auto-register endpoints, reducing 18 near-identical route decorators.",
+    "run_reminders_for_all_companies() iterates companies with to_list(10000); add pagination or batch processing for scale, and parallelism via asyncio.gather (bounded by a semaphore) so a single slow company does not stall the daily cron.",
+    "run_reminders_for_all_companies accumulates errors[] but does not surface a non-zero exit signal; APScheduler will log success even if many companies fail. Emit a structured log warning when len(errors) > 0 and consider a super-admin notification when errors > threshold.",
+    "The Spanish country-guard message tokens are currently scattered inline in each endpoint. Refactor into a single ensure_company_country(company, expected_cc, agency_hint) helper that raises HTTPException(400) — consistent message, easier i18n later.",
+    "server.py APScheduler uses AsyncIOScheduler without a job_defaults (misfire_grace_time, max_instances=1). Add max_instances=1 and coalesce=True so that if the app is restarted across 08:00 UTC no duplicate runs fire.",
+    "APScheduler shutdown in server.py should await scheduler.shutdown(wait=False) with wait=False to avoid blocking the ASGI shutdown on an in-flight job that hits an external API; document or guard.",
+    "PR Form 499R is registered with frequency='annual' and endpoint accepts 'year' — confirm FORMAT_DEADLINES/_run_reminders_for_company handles annual offset correctly (iter239 review item still open).",
+    "PLANILLA_COLUMN_PROFILES uses semicolon delimiter + UTF-8 BOM for Excel compatibility across all 17 LATAM formats — acceptable placeholder, but the file disclaimer (noted in problem statement) should be surfaced as an HTTP response header (e.g., X-Fortexa-Disclaimer) so downstream consumers know the format is a reference implementation pending local accountant validation."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_native_reports_iter240.py",
+    "/app/backend/tests/test_native_reports.py",
+    "/app/backend/tests/test_native_reports_iter239.py"
+  ],
+  "success_rate": {"backend": "100% (103/103)", "frontend": "not tested (backend-only scope per request)"},
+  "test_credentials": "test_refactor@fortexa.com / test123 (admin, DO company) — from /app/memory/test_credentials.md",
+  "seed_data_creation": "No seed data created. Tests only GET/POST to public /api; country-guard exercises the 400 path without writing any state. run-reminders-all was invoked with the admin user, which processes at least the admin's own company; no DB mutations outside the normal notifications collection (which iter239 baseline confirmed is safe).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Coverage now at 33/33 formats across 28 countries. Use /app/backend/tests/test_native_reports_iter240.py for iter240 specifics (catalog counts, 18 new country-guards, run-reminders-all, APScheduler log grep). Full regression of all three native_reports test files = 103/103 green. NOTE: test_native_reports.py and test_native_reports_iter239.py had 3 stale hardcoded counts (15 -> 33, and 'others universal_only' list 18 -> 0) that I updated to reflect the legitimate expansion. Any future format additions will require updating (a) /app/backend/tests/test_native_reports.py::TestCatalog::test_catalog_basic_shape, (b) test_catalog_25_other_countries_universal_only, (c) test_calendar_top_level_shape::total_upcoming, (d) iter239 TestCatalogIter239::test_catalog_shape, and (e) iter240 TestCatalog::test_catalog_counts_33. APScheduler daily cron cannot be time-triggered in CI; validated via (i) startup-log grep and (ii) manually invoking /calendar/run-reminders-all (same function the cron calls).",
+  "rca of the issue": "No bugs found. 3 legacy test assertions were stale (still using iter239 counts of 15). Updated them to 33 to match the legitimate coverage expansion in iter240. This is test maintenance, not a functional regression — identical pattern to iter239's 12->15 update documented in /app/test_reports/iteration_239.json."
+}

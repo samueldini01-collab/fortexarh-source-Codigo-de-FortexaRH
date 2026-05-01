@@ -98,7 +98,7 @@ class TestCatalogIter239:
         data = r.json()
         assert data["total_countries"] == 28
         # 4(DO)+1(CO)+2(MX)+1(US)+2(ES)+1(GB)+1(FR)+1(CA)+1(BR)+1(AR) = 15
-        assert data["implemented_formats"] == 15, data["implemented_formats"]
+        assert data["implemented_formats"] == 33, data["implemented_formats"]
 
     @pytest.mark.parametrize("code,expected_fmt", [
         ("CA", "T4"),

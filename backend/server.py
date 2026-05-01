@@ -68,7 +68,7 @@ from routes.salary_history import router as salary_history_router
 from routes.admin_permissions import router as admin_permissions_router
 from routes.country_config import router as country_config_router, migrate_existing_companies
 from routes.multi_country_reports import router as multi_country_reports_router
-from routes.native_reports import router as native_reports_router
+from routes.native_reports import router as native_reports_router, run_reminders_for_all_companies
 
 # ===================== APP SETUP =====================
 
@@ -208,6 +208,51 @@ async def startup_db_client():
         logger.warning("Database connection timeout during startup - will retry on first request")
     except Exception as e:
         logger.warning(f"Database connection error during startup: {e} - will retry on first request")
+    # Start the daily fiscal-reminders cron (APScheduler)
+    _start_fiscal_reminders_scheduler()
+
+
+# ===================== FISCAL REMINDERS SCHEDULER (APScheduler) =====================
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
+
+_fiscal_scheduler: AsyncIOScheduler | None = None
+
+
+async def _scheduled_run_reminders():
+    try:
+        result = await run_reminders_for_all_companies()
+        logger.info(
+            "Fiscal reminders cron executed: "
+            f"companies={result.get('processed_companies')} "
+            f"notifications={result.get('total_notifications_sent')} "
+            f"skipped={result.get('total_skipped_already_filed')} "
+            f"errors={len(result.get('errors', []))}"
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.exception(f"Fiscal reminders cron failed: {exc}")
+
+
+def _start_fiscal_reminders_scheduler():
+    global _fiscal_scheduler
+    if _fiscal_scheduler is not None:
+        return
+    try:
+        sched = AsyncIOScheduler(timezone="UTC")
+        # Daily at 08:00 UTC
+        sched.add_job(
+            _scheduled_run_reminders,
+            CronTrigger(hour=8, minute=0, timezone="UTC"),
+            id="fiscal_reminders_daily",
+            replace_existing=True,
+            max_instances=1,
+            misfire_grace_time=3600,
+        )
+        sched.start()
+        _fiscal_scheduler = sched
+        logger.info("APScheduler started: fiscal_reminders_daily @ 08:00 UTC")
+    except Exception as exc:  # noqa: BLE001
+        logger.warning(f"Could not start APScheduler: {exc}")
 
 
 async def create_performance_indexes():
@@ -248,5 +293,13 @@ async def create_performance_indexes():
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
+    global _fiscal_scheduler
+    if _fiscal_scheduler is not None:
+        try:
+            _fiscal_scheduler.shutdown(wait=False)
+            logger.info("APScheduler shut down")
+        except Exception as exc:  # noqa: BLE001
+            logger.warning(f"Scheduler shutdown error: {exc}")
+        _fiscal_scheduler = None
     client.close()
     logger.info("Database connection closed")

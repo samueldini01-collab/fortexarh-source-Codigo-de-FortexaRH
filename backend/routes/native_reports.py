@@ -406,24 +406,24 @@ NATIVE_FORMATS = {
     "CA": [{"code": "T4", "name": "T4 Statement of Remuneration", "agency": "CRA", "frequency": "annual", "endpoint": "/api/native-reports/ca/t4", "implemented": True}],
     "BR": [{"code": "ESOCIAL", "name": "eSocial S-1200", "agency": "Receita Federal", "frequency": "monthly", "endpoint": "/api/native-reports/br/esocial", "implemented": True}],
     "AR": [{"code": "F931", "name": "F.931 AFIP", "agency": "AFIP", "frequency": "monthly", "endpoint": "/api/native-reports/ar/f931", "implemented": True}],
-    "CL": [{"code": "PREVIRED", "name": "PreviRed", "agency": "PreviRed", "frequency": "monthly", "implemented": False}],
-    "PE": [{"code": "PLAME", "name": "PLAME SUNAT", "agency": "SUNAT", "frequency": "monthly", "implemented": False}],
-    "EC": [{"code": "IESS_PLANILLA", "name": "IESS Planilla", "agency": "IESS", "frequency": "monthly", "implemented": False}],
-    "VE": [{"code": "IVSS_FORMA", "name": "IVSS Forma", "agency": "IVSS", "frequency": "monthly", "implemented": False}],
-    "BO": [{"code": "F110", "name": "Formulario 110", "agency": "SIN", "frequency": "monthly", "implemented": False}],
-    "PY": [{"code": "F109", "name": "Formulario 109 IPS", "agency": "IPS", "frequency": "monthly", "implemented": False}],
-    "UY": [{"code": "BPS_1146", "name": "BPS Formulario 1146", "agency": "BPS", "frequency": "monthly", "implemented": False}],
-    "GY": [{"code": "NIS", "name": "NIS Returns", "agency": "NIS", "frequency": "monthly", "implemented": False}],
-    "SR": [{"code": "SZF", "name": "SZF Filing", "agency": "SZF", "frequency": "monthly", "implemented": False}],
-    "CR": [{"code": "CCSS_PLANILLA", "name": "CCSS Planilla", "agency": "CCSS", "frequency": "monthly", "implemented": False}],
-    "SV": [{"code": "F1_ISSS", "name": "Formulario F-1 ISSS", "agency": "ISSS", "frequency": "monthly", "implemented": False}],
-    "GT": [{"code": "IGSS_PLANILLA", "name": "IGSS Planilla", "agency": "IGSS", "frequency": "monthly", "implemented": False}],
-    "HN": [{"code": "IHSS_PLANILLA", "name": "IHSS Planilla", "agency": "IHSS", "frequency": "monthly", "implemented": False}],
-    "NI": [{"code": "INSS_PLANILLA", "name": "INSS Planilla", "agency": "INSS", "frequency": "monthly", "implemented": False}],
-    "PA": [{"code": "CSS_PLANILLA", "name": "CSS Planilla", "agency": "CSS", "frequency": "monthly", "implemented": False}],
-    "CU": [{"code": "ONAT_FORM", "name": "ONAT Form", "agency": "ONAT", "frequency": "monthly", "implemented": False}],
-    "HT": [{"code": "ONA_DECLAR", "name": "ONA Déclaration", "agency": "ONA", "frequency": "monthly", "implemented": False}],
-    "PR": [{"code": "FORM_499R", "name": "Form 499 R", "agency": "Hacienda PR", "frequency": "annual", "implemented": False}],
+    "CL": [{"code": "PREVIRED", "name": "PreviRed (cotizaciones previsionales)", "agency": "PreviRed", "frequency": "monthly", "endpoint": "/api/native-reports/cl/previred", "implemented": True}],
+    "PE": [{"code": "PLAME", "name": "PLAME SUNAT (Planilla Electrónica)", "agency": "SUNAT", "frequency": "monthly", "endpoint": "/api/native-reports/pe/plame", "implemented": True}],
+    "EC": [{"code": "IESS_PLANILLA", "name": "IESS Planilla mensual", "agency": "IESS", "frequency": "monthly", "endpoint": "/api/native-reports/ec/iess", "implemented": True}],
+    "VE": [{"code": "IVSS_FORMA", "name": "IVSS Forma 14-02", "agency": "IVSS", "frequency": "monthly", "endpoint": "/api/native-reports/ve/ivss", "implemented": True}],
+    "BO": [{"code": "F110", "name": "Formulario 110 (Aportes AFP/SIN)", "agency": "SIN/AFP", "frequency": "monthly", "endpoint": "/api/native-reports/bo/f110", "implemented": True}],
+    "PY": [{"code": "F109", "name": "Formulario 109 IPS", "agency": "IPS", "frequency": "monthly", "endpoint": "/api/native-reports/py/f109", "implemented": True}],
+    "UY": [{"code": "BPS_1146", "name": "BPS Formulario 1146", "agency": "BPS", "frequency": "monthly", "endpoint": "/api/native-reports/uy/bps-1146", "implemented": True}],
+    "GY": [{"code": "NIS", "name": "NIS Returns", "agency": "NIS", "frequency": "monthly", "endpoint": "/api/native-reports/gy/nis", "implemented": True}],
+    "SR": [{"code": "SZF", "name": "SZF Filing", "agency": "SZF", "frequency": "monthly", "endpoint": "/api/native-reports/sr/szf", "implemented": True}],
+    "CR": [{"code": "CCSS_PLANILLA", "name": "CCSS Planilla", "agency": "CCSS", "frequency": "monthly", "endpoint": "/api/native-reports/cr/ccss", "implemented": True}],
+    "SV": [{"code": "F1_ISSS", "name": "Formulario F-1 ISSS", "agency": "ISSS", "frequency": "monthly", "endpoint": "/api/native-reports/sv/f1-isss", "implemented": True}],
+    "GT": [{"code": "IGSS_PLANILLA", "name": "IGSS Planilla", "agency": "IGSS", "frequency": "monthly", "endpoint": "/api/native-reports/gt/igss", "implemented": True}],
+    "HN": [{"code": "IHSS_PLANILLA", "name": "IHSS Planilla", "agency": "IHSS", "frequency": "monthly", "endpoint": "/api/native-reports/hn/ihss", "implemented": True}],
+    "NI": [{"code": "INSS_PLANILLA", "name": "INSS Planilla", "agency": "INSS", "frequency": "monthly", "endpoint": "/api/native-reports/ni/inss", "implemented": True}],
+    "PA": [{"code": "CSS_PLANILLA", "name": "CSS Planilla", "agency": "CSS", "frequency": "monthly", "endpoint": "/api/native-reports/pa/css", "implemented": True}],
+    "CU": [{"code": "ONAT_FORM", "name": "ONAT Form", "agency": "ONAT", "frequency": "monthly", "endpoint": "/api/native-reports/cu/onat", "implemented": True}],
+    "HT": [{"code": "ONA_DECLAR", "name": "ONA Déclaration", "agency": "ONA", "frequency": "monthly", "endpoint": "/api/native-reports/ht/ona", "implemented": True}],
+    "PR": [{"code": "FORM_499R", "name": "Form 499R-2/W-2PR", "agency": "Hacienda PR", "frequency": "annual", "endpoint": "/api/native-reports/pr/form-499r", "implemented": True}],
 }
 
 
@@ -1246,6 +1246,24 @@ FORMAT_DEADLINES = {
     "T4": {"day": 28, "offset_months": 2, "description": "Último día de febrero del año siguiente"},
     "ESOCIAL": {"day": 15, "offset_months": 1, "description": "Día 15 del mes siguiente"},
     "F931": {"day": 13, "offset_months": 1, "description": "Días 7-13 según último dígito CUIT"},
+    "PREVIRED": {"day": 10, "offset_months": 1, "description": "Día 10 del mes siguiente (Chile)"},
+    "PLAME": {"day": 12, "offset_months": 1, "description": "Días 7-22 según último dígito RUC (Perú)"},
+    "IESS_PLANILLA": {"day": 15, "offset_months": 1, "description": "Día 15 del mes siguiente (IESS Ecuador)"},
+    "IVSS_FORMA": {"day": 5, "offset_months": 1, "description": "Primeros 5 días del mes siguiente (IVSS)"},
+    "F110": {"day": 13, "offset_months": 1, "description": "Día 13 del mes siguiente (SIN/AFP Bolivia)"},
+    "F109": {"day": 20, "offset_months": 1, "description": "Día 20 del mes siguiente (IPS Paraguay)"},
+    "BPS_1146": {"day": 25, "offset_months": 1, "description": "Día 25 del mes siguiente (BPS Uruguay)"},
+    "NIS": {"day": 15, "offset_months": 1, "description": "Día 15 del mes siguiente (NIS Guyana)"},
+    "SZF": {"day": 15, "offset_months": 1, "description": "Día 15 del mes siguiente (SZF Surinam)"},
+    "CCSS_PLANILLA": {"day": 20, "offset_months": 1, "description": "Día 20 del mes siguiente (CCSS Costa Rica)"},
+    "F1_ISSS": {"day": 7, "offset_months": 1, "description": "Primeros 7 días hábiles del mes siguiente (ISSS El Salvador)"},
+    "IGSS_PLANILLA": {"day": 20, "offset_months": 1, "description": "Día 20 del mes siguiente (IGSS Guatemala)"},
+    "IHSS_PLANILLA": {"day": 10, "offset_months": 1, "description": "Día 10 del mes siguiente (IHSS Honduras)"},
+    "INSS_PLANILLA": {"day": 17, "offset_months": 1, "description": "Día 17 del mes siguiente (INSS Nicaragua)"},
+    "CSS_PLANILLA": {"day": 30, "offset_months": 1, "description": "Último día del mes siguiente (CSS Panamá)"},
+    "ONAT_FORM": {"day": 20, "offset_months": 1, "description": "Día 20 del mes siguiente (ONAT Cuba)"},
+    "ONA_DECLAR": {"day": 10, "offset_months": 1, "description": "Día 10 del mes siguiente (ONA Haití)"},
+    "FORM_499R": {"day": 31, "offset_months": 1, "description": "31 de enero del año siguiente (Hacienda PR)"},
 }
 
 
@@ -1843,3 +1861,780 @@ async def run_calendar_reminders(current_user: dict = Depends(get_current_user))
         "skipped_already_filed": skipped_filed,
         "checked_at": datetime.now(timezone.utc).isoformat(),
     }
+
+
+# ===================== CRON-FRIENDLY: RUN REMINDERS FOR ALL COMPANIES =====================
+
+async def _run_reminders_for_company(company_id: str) -> dict:
+    """Internal helper to run fiscal deadline reminders for a single company.
+    Used by the daily APScheduler cron in server.py.
+    """
+    from routes.notifications_system import create_notification
+
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0, "country": 1})
+    company_country = (company or {}).get("country", "DO")
+
+    today = datetime.now(timezone.utc).date()
+    notifications_sent = 0
+    skipped_filed = 0
+    from calendar import monthrange
+
+    for country_code, formats in NATIVE_FORMATS.items():
+        if country_code != company_country:
+            continue
+        profile = COUNTRY_PROFILES.get(country_code, {})
+        for fmt in formats:
+            if not fmt.get("implemented"):
+                continue
+            deadline_cfg = FORMAT_DEADLINES.get(fmt["code"])
+            if not deadline_cfg:
+                continue
+            day = deadline_cfg["day"]
+            offset = deadline_cfg["offset_months"]
+            current_month = today.month
+            current_year = today.year
+            try_day = min(day, monthrange(current_year, current_month)[1])
+            try_date = datetime(current_year, current_month, try_day, tzinfo=timezone.utc).date()
+            if try_date < today:
+                if current_month == 12:
+                    next_year, next_month = current_year + 1, 1
+                else:
+                    next_year, next_month = current_year, current_month + 1
+                try_day = min(day, monthrange(next_year, next_month)[1])
+                try_date = datetime(next_year, next_month, try_day, tzinfo=timezone.utc).date()
+            days_until = (try_date - today).days
+            filing_month = try_date.month - offset
+            filing_year = try_date.year
+            while filing_month <= 0:
+                filing_month += 12
+                filing_year -= 1
+            period_str = f"{filing_year}-{filing_month:02d}"
+
+            already_filed = await db.fiscal_filings.find_one({
+                "company_id": company_id,
+                "country_code": country_code,
+                "format_code": fmt["code"],
+                "period": period_str,
+            })
+            if already_filed:
+                skipped_filed += 1
+                continue
+
+            if days_until not in (7, 3, 1, 0, -1):
+                continue
+
+            urgency = "critical" if days_until <= 1 else ("warning" if days_until <= 3 else "normal")
+            title = f"{profile.get('flag', '')} {fmt['name']} — vence en {days_until} día{'s' if days_until != 1 else ''}"
+            if days_until <= 0:
+                title = f"⚠️ {profile.get('flag', '')} {fmt['name']} — VENCIDO"
+            message = (f"Tu empresa debe presentar {fmt['name']} ante {fmt['agency']} "
+                      f"el {try_date.isoformat()}. Período a declarar: {period_str}.")
+
+            await create_notification(
+                company_id=company_id,
+                title=title,
+                message=message,
+                notification_type="fiscal_deadline",
+                priority=urgency if urgency in ("critical", "warning") else "normal",
+                link="/global-compliance",
+                target_role="admin",
+                metadata={
+                    "country_code": country_code,
+                    "format_code": fmt["code"],
+                    "period": period_str,
+                    "due_date": try_date.isoformat(),
+                    "days_until_due": days_until,
+                    "endpoint": fmt.get("endpoint"),
+                }
+            )
+            notifications_sent += 1
+
+    return {
+        "company_id": company_id,
+        "company_country": company_country,
+        "notifications_sent": notifications_sent,
+        "skipped_already_filed": skipped_filed,
+    }
+
+
+async def run_reminders_for_all_companies() -> dict:
+    """Iterate over all active companies and dispatch fiscal deadline reminders.
+    Designed to be invoked by the APScheduler daily cron at 08:00 UTC.
+    """
+    cursor = db.companies.find({}, {"_id": 0, "company_id": 1})
+    companies = await cursor.to_list(10000)
+    total_notifications = 0
+    total_skipped = 0
+    processed = 0
+    errors = []
+    for c in companies:
+        cid = c.get("company_id")
+        if not cid:
+            continue
+        try:
+            res = await _run_reminders_for_company(cid)
+            total_notifications += res["notifications_sent"]
+            total_skipped += res["skipped_already_filed"]
+            processed += 1
+        except Exception as exc:  # noqa: BLE001
+            errors.append({"company_id": cid, "error": str(exc)})
+    return {
+        "success": True,
+        "processed_companies": processed,
+        "total_notifications_sent": total_notifications,
+        "total_skipped_already_filed": total_skipped,
+        "errors": errors,
+        "ran_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+@router.post("/calendar/run-reminders-all")
+async def run_reminders_all_endpoint(current_user: dict = Depends(get_current_user)):
+    """Manually trigger the global cron job (admin tool / debugging).
+    In production, the APScheduler daily job runs this automatically.
+    """
+    if (current_user.get("role") or "").lower() not in ("super_admin", "admin"):
+        raise HTTPException(status_code=403, detail="Solo administradores pueden ejecutar el cron global")
+    return await run_reminders_for_all_companies()
+
+
+# =====================================================================
+# GENERIC LATAM PLANILLA CSV BUILDER
+# =====================================================================
+# Many countries (CL, PE, EC, VE, BO, PY, UY, GY, SR, CR, SV, GT, HN,
+# NI, PA, CU, HT) require monthly contribution planillas with the same
+# essential columns. We expose a single helper that produces an
+# agency-tailored CSV (UTF-8 BOM for Excel compatibility) using the
+# COUNTRY_PROFILES rates that already live in country_config.
+# =====================================================================
+
+import csv as _csv
+
+# CSV column profile per format. Keys are pulled from payroll_entries +
+# employees + payroll calculation slots. Pension/social-security amounts
+# come from the standardized slot mapping (sfs_*, afp_*, srl_*, infotep_*).
+PLANILLA_COLUMN_PROFILES = {
+    "PREVIRED": {  # CL — AFP + ISAPRE/FONASA + Mutual + AFC
+        "agency": "PreviRed",
+        "doc_field": "rut",
+        "doc_label": "RUT Trabajador",
+        "deductions": [
+            ("AFP (10%)", "afp_employee"),
+            ("Salud 7%", "sfs_employee"),
+            ("AFC Trabajador 0.6%", "afc_employee"),
+        ],
+        "employer": [
+            ("SIS Empleador", "srl_employer"),
+            ("AFC Empleador 2.4%", "afc_employer"),
+            ("Mutual ATEP", "mutual_employer"),
+        ],
+        "extra_company_field": ("RUT Empresa", "rnc"),
+    },
+    "PLAME": {  # PE — SUNAT
+        "agency": "SUNAT",
+        "doc_field": "dni",
+        "doc_label": "DNI / CE",
+        "deductions": [
+            ("AFP/ONP", "afp_employee"),
+            ("EsSalud Trabajador", "sfs_employee"),
+            ("Renta 5ta Cat.", "isr"),
+        ],
+        "employer": [
+            ("EsSalud Empleador 9%", "sfs_employer"),
+            ("SCTR", "srl_employer"),
+        ],
+        "extra_company_field": ("RUC", "rnc"),
+    },
+    "IESS_PLANILLA": {  # EC — IESS
+        "agency": "IESS",
+        "doc_field": "cedula",
+        "doc_label": "Cédula",
+        "deductions": [
+            ("Aporte IESS Personal 9.45%", "sfs_employee"),
+            ("Impuesto a la Renta", "isr"),
+        ],
+        "employer": [
+            ("Aporte Patronal 11.15%", "sfs_employer"),
+            ("IECE-SECAP 1%", "infotep_employer"),
+        ],
+        "extra_company_field": ("RUC", "rnc"),
+    },
+    "IVSS_FORMA": {  # VE — IVSS
+        "agency": "IVSS",
+        "doc_field": "cedula",
+        "doc_label": "Cédula",
+        "deductions": [
+            ("IVSS 4%", "sfs_employee"),
+            ("Paro Forzoso 0.5%", "afp_employee"),
+            ("LPH 1%", "srl_employee"),
+        ],
+        "employer": [
+            ("IVSS Patronal", "sfs_employer"),
+            ("Paro Forzoso Patronal", "afp_employer"),
+            ("LPH Patronal 2%", "srl_employer"),
+            ("INCES 2%", "infotep_employer"),
+        ],
+        "extra_company_field": ("RIF", "rnc"),
+    },
+    "F110": {  # BO — SIN/AFP
+        "agency": "SIN/AFP",
+        "doc_field": "ci",
+        "doc_label": "CI",
+        "deductions": [
+            ("AFP Trabajador 12.71%", "afp_employee"),
+            ("Aporte Solidario 0.5%", "sfs_employee"),
+            ("RC-IVA", "isr"),
+        ],
+        "employer": [
+            ("CNS Salud 10%", "sfs_employer"),
+            ("PROVIVIENDA 2%", "srl_employer"),
+            ("AFP Patronal 1.71%", "afp_employer"),
+        ],
+        "extra_company_field": ("NIT", "rnc"),
+    },
+    "F109": {  # PY — IPS
+        "agency": "IPS",
+        "doc_field": "ci",
+        "doc_label": "CI",
+        "deductions": [
+            ("IPS Trabajador 9%", "sfs_employee"),
+            ("IRP", "isr"),
+        ],
+        "employer": [
+            ("IPS Patronal 16.5%", "sfs_employer"),
+        ],
+        "extra_company_field": ("RUC", "rnc"),
+    },
+    "BPS_1146": {  # UY — BPS
+        "agency": "BPS",
+        "doc_field": "ci",
+        "doc_label": "CI",
+        "deductions": [
+            ("Aporte Jubilatorio 15%", "afp_employee"),
+            ("FONASA 4.5%", "sfs_employee"),
+            ("FRL 0.125%", "srl_employee"),
+            ("IRPF", "isr"),
+        ],
+        "employer": [
+            ("Aporte Patronal 7.5%", "afp_employer"),
+            ("FONASA Patronal 5%", "sfs_employer"),
+            ("FRL Patronal 0.025%", "srl_employer"),
+        ],
+        "extra_company_field": ("RUT BPS", "rnc"),
+    },
+    "NIS": {  # GY — NIS
+        "agency": "NIS Guyana",
+        "doc_field": "nis_number",
+        "doc_label": "NIS Number",
+        "deductions": [
+            ("NIS Employee 5.6%", "sfs_employee"),
+            ("PAYE", "isr"),
+        ],
+        "employer": [
+            ("NIS Employer 8.4%", "sfs_employer"),
+        ],
+        "extra_company_field": ("Employer NIS Reg.", "rnc"),
+    },
+    "SZF": {  # SR — SZF
+        "agency": "SZF",
+        "doc_field": "id_number",
+        "doc_label": "ID Nummer",
+        "deductions": [
+            ("AOV 4%", "afp_employee"),
+            ("Loonbelasting", "isr"),
+        ],
+        "employer": [
+            ("AOV Werkgever 4%", "afp_employer"),
+            ("Ziektekosten", "sfs_employer"),
+        ],
+        "extra_company_field": ("KKF Nummer", "rnc"),
+    },
+    "CCSS_PLANILLA": {  # CR — CCSS
+        "agency": "CCSS",
+        "doc_field": "cedula",
+        "doc_label": "Cédula",
+        "deductions": [
+            ("CCSS Trabajador 10.67%", "sfs_employee"),
+            ("Renta", "isr"),
+        ],
+        "employer": [
+            ("CCSS Patronal 26.67%", "sfs_employer"),
+            ("INA/IMAS/Banco Pop.", "infotep_employer"),
+            ("INS Riesgos Trabajo", "srl_employer"),
+        ],
+        "extra_company_field": ("Cédula Jurídica", "rnc"),
+    },
+    "F1_ISSS": {  # SV — ISSS + AFP + Renta
+        "agency": "ISSS / AFP",
+        "doc_field": "dui",
+        "doc_label": "DUI / NIT",
+        "deductions": [
+            ("ISSS 3%", "sfs_employee"),
+            ("AFP 7.25%", "afp_employee"),
+            ("Renta", "isr"),
+        ],
+        "employer": [
+            ("ISSS Patronal 7.5%", "sfs_employer"),
+            ("AFP Patronal 8.75%", "afp_employer"),
+            ("INSAFORP 1%", "infotep_employer"),
+        ],
+        "extra_company_field": ("NIT Empresa", "rnc"),
+    },
+    "IGSS_PLANILLA": {  # GT — IGSS
+        "agency": "IGSS",
+        "doc_field": "dpi",
+        "doc_label": "DPI",
+        "deductions": [
+            ("IGSS Trabajador 4.83%", "sfs_employee"),
+            ("ISR", "isr"),
+        ],
+        "employer": [
+            ("IGSS Patronal 10.67%", "sfs_employer"),
+            ("IRTRA 1%", "infotep_employer"),
+            ("INTECAP 1%", "srl_employer"),
+        ],
+        "extra_company_field": ("NIT Patronal", "rnc"),
+    },
+    "IHSS_PLANILLA": {  # HN — IHSS
+        "agency": "IHSS",
+        "doc_field": "id_number",
+        "doc_label": "Identidad",
+        "deductions": [
+            ("IHSS EM 2.5%", "sfs_employee"),
+            ("IHSS IVM 2.5%", "afp_employee"),
+            ("RAP", "srl_employee"),
+            ("ISR", "isr"),
+        ],
+        "employer": [
+            ("IHSS EM Patronal 5%", "sfs_employer"),
+            ("IHSS IVM Patronal 3.5%", "afp_employer"),
+            ("RAP Patronal 1.5%", "srl_employer"),
+            ("INFOP 1%", "infotep_employer"),
+        ],
+        "extra_company_field": ("RTN Empresa", "rnc"),
+    },
+    "INSS_PLANILLA": {  # NI — INSS
+        "agency": "INSS",
+        "doc_field": "cedula",
+        "doc_label": "Cédula",
+        "deductions": [
+            ("INSS Laboral 7%", "sfs_employee"),
+            ("IR", "isr"),
+        ],
+        "employer": [
+            ("INSS Patronal 22.5%", "sfs_employer"),
+            ("INATEC 2%", "infotep_employer"),
+        ],
+        "extra_company_field": ("RUC", "rnc"),
+    },
+    "CSS_PLANILLA": {  # PA — CSS
+        "agency": "CSS",
+        "doc_field": "cedula",
+        "doc_label": "Cédula",
+        "deductions": [
+            ("CSS Trabajador 9.75%", "sfs_employee"),
+            ("Seguro Educativo 1.25%", "infotep_employee"),
+            ("ISR", "isr"),
+        ],
+        "employer": [
+            ("CSS Patronal 12.25%", "sfs_employer"),
+            ("Seguro Educativo Pat. 1.5%", "infotep_employer"),
+            ("Riesgos Profesionales", "srl_employer"),
+        ],
+        "extra_company_field": ("RUC", "rnc"),
+    },
+    "ONAT_FORM": {  # CU — ONAT
+        "agency": "ONAT",
+        "doc_field": "ci",
+        "doc_label": "CI",
+        "deductions": [
+            ("Contribución Especial Trabajador 5%", "sfs_employee"),
+            ("Impuesto Ingresos Personales", "isr"),
+        ],
+        "employer": [
+            ("Contribución Empleador 14%", "sfs_employer"),
+            ("Fuerza de Trabajo 5%", "infotep_employer"),
+        ],
+        "extra_company_field": ("Reeup", "rnc"),
+    },
+    "ONA_DECLAR": {  # HT — ONA
+        "agency": "ONA / DGI",
+        "doc_field": "nif",
+        "doc_label": "NIF",
+        "deductions": [
+            ("ONA Travailleur 6%", "afp_employee"),
+            ("OFATMA 3%", "sfs_employee"),
+            ("Impôt sur Salaire", "isr"),
+        ],
+        "employer": [
+            ("ONA Patronal 6%", "afp_employer"),
+            ("OFATMA Patronal 3%", "sfs_employer"),
+        ],
+        "extra_company_field": ("NIF Entreprise", "rnc"),
+    },
+}
+
+
+def _entry_value(entry: dict, slot: str) -> float:
+    """Lookup a slot from a payroll entry, with safe fallbacks."""
+    if slot is None:
+        return 0.0
+    return float(entry.get(slot, 0) or 0)
+
+
+async def _generate_planilla_csv(
+    company_id: str,
+    period: str,
+    expected_country: str,
+    format_code: str,
+):
+    """Build a Generic LATAM Planilla CSV based on PLANILLA_COLUMN_PROFILES."""
+    profile_cfg = PLANILLA_COLUMN_PROFILES.get(format_code)
+    if not profile_cfg:
+        raise HTTPException(status_code=400, detail=f"Formato {format_code} no soportado")
+
+    await _require_country(company_id, expected_country, profile_cfg["agency"])
+
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0}) or {}
+    entries, emps, _ = await _collect_period_data(company_id, period)
+    if not entries:
+        raise HTTPException(status_code=404, detail=f"No hay datos de nómina para {period}")
+
+    country_profile = COUNTRY_PROFILES.get(expected_country, {})
+    company_name = company.get("company_name") or company.get("name") or "EMPRESA"
+    period_str = period.replace("-", "")[:6]
+    extra_label, extra_field = profile_cfg["extra_company_field"]
+    extra_value = company.get(extra_field) or company.get("tax_id") or ""
+
+    output = io.StringIO()
+    output.write("\ufeff")  # UTF-8 BOM for Excel
+    writer = _csv.writer(output, delimiter=";")
+
+    # Cabecera informativa
+    writer.writerow([
+        f"# {country_profile.get('flag', '')} {country_profile.get('name', expected_country)} — "
+        f"{profile_cfg['agency']} Planilla {format_code}"
+    ])
+    writer.writerow([f"# Empresa: {company_name}", f"{extra_label}: {extra_value}", f"Período: {period}"])
+    writer.writerow([
+        f"# Generado por FortexaRH — {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}"
+    ])
+    writer.writerow([])
+
+    # Encabezado de columnas
+    headers = [
+        "#",
+        profile_cfg["doc_label"],
+        "Apellidos",
+        "Nombres",
+        "Días",
+        f"Sueldo Bruto ({country_profile.get('currency', '')})",
+    ]
+    headers += [d[0] for d in profile_cfg["deductions"]]
+    headers += [e[0] for e in profile_cfg["employer"]]
+    headers += [
+        f"Total Aportes ({country_profile.get('currency', '')})",
+        f"Sueldo Neto ({country_profile.get('currency', '')})",
+    ]
+    writer.writerow(headers)
+
+    total_gross = 0.0
+    total_net = 0.0
+    total_aportes = 0.0
+    for idx, entry in enumerate(entries, 1):
+        emp = emps.get(entry.get("employee_id"), {})
+        last_name = (emp.get("last_name") or "").upper()
+        first_name = (emp.get("first_name") or "").upper()
+        # Try common doc fields: profile-specific then fallbacks
+        doc = (
+            emp.get(profile_cfg["doc_field"])
+            or emp.get("document_number")
+            or emp.get("national_id")
+            or ""
+        )
+        gross = float(entry.get("gross_salary", 0) or 0)
+        net = float(entry.get("net_salary", 0) or gross)
+        days = int(entry.get("days_worked", 30) or 30)
+
+        row = [str(idx), str(doc), last_name, first_name, str(days), f"{gross:.2f}"]
+        cot_total = 0.0
+        for _label, slot in profile_cfg["deductions"]:
+            v = _entry_value(entry, slot)
+            row.append(f"{v:.2f}")
+            cot_total += v
+        for _label, slot in profile_cfg["employer"]:
+            v = _entry_value(entry, slot)
+            row.append(f"{v:.2f}")
+            cot_total += v
+        row.append(f"{cot_total:.2f}")
+        row.append(f"{net:.2f}")
+        writer.writerow(row)
+
+        total_gross += gross
+        total_net += net
+        total_aportes += cot_total
+
+    # Totales
+    writer.writerow([])
+    writer.writerow([
+        "TOTALES",
+        "",
+        f"# trabajadores: {len(entries)}",
+        "",
+        "",
+        f"{total_gross:.2f}",
+    ] + [""] * (len(profile_cfg["deductions"]) + len(profile_cfg["employer"])) + [
+        f"{total_aportes:.2f}",
+        f"{total_net:.2f}",
+    ])
+
+    content = output.getvalue()
+    output.close()
+
+    safe_id = "".join(c for c in str(extra_value) if c.isalnum()) or "EMPRESA"
+    filename = f"{format_code}_{safe_id}_{period_str}.csv"
+    return Response(
+        content=content.encode("utf-8"),
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+# ===================== INDIVIDUAL ENDPOINTS PER COUNTRY =====================
+
+@router.get("/cl/previred")
+async def generate_cl_previred(period: str, current_user: dict = Depends(get_current_user)):
+    """🇨🇱 Chile — PreviRed (cotizaciones previsionales mensuales)."""
+    return await _generate_planilla_csv(current_user.get("company_id"), period, "CL", "PREVIRED")
+
+
+@router.get("/pe/plame")
+async def generate_pe_plame(period: str, current_user: dict = Depends(get_current_user)):
+    """🇵🇪 Perú — PLAME (Planilla Electrónica SUNAT)."""
+    return await _generate_planilla_csv(current_user.get("company_id"), period, "PE", "PLAME")
+
+
+@router.get("/ec/iess")
+async def generate_ec_iess(period: str, current_user: dict = Depends(get_current_user)):
+    """🇪🇨 Ecuador — IESS Planilla mensual."""
+    return await _generate_planilla_csv(current_user.get("company_id"), period, "EC", "IESS_PLANILLA")
+
+
+@router.get("/ve/ivss")
+async def generate_ve_ivss(period: str, current_user: dict = Depends(get_current_user)):
+    """🇻🇪 Venezuela — IVSS Forma 14-02."""
+    return await _generate_planilla_csv(current_user.get("company_id"), period, "VE", "IVSS_FORMA")
+
+
+@router.get("/bo/f110")
+async def generate_bo_f110(period: str, current_user: dict = Depends(get_current_user)):
+    """🇧🇴 Bolivia — Formulario 110 (Aportes AFP/SIN)."""
+    return await _generate_planilla_csv(current_user.get("company_id"), period, "BO", "F110")
+
+
+@router.get("/py/f109")
+async def generate_py_f109(period: str, current_user: dict = Depends(get_current_user)):
+    """🇵🇾 Paraguay — Formulario 109 IPS."""
+    return await _generate_planilla_csv(current_user.get("company_id"), period, "PY", "F109")
+
+
+@router.get("/uy/bps-1146")
+async def generate_uy_bps(period: str, current_user: dict = Depends(get_current_user)):
+    """🇺🇾 Uruguay — BPS Formulario 1146."""
+    return await _generate_planilla_csv(current_user.get("company_id"), period, "UY", "BPS_1146")
+
+
+@router.get("/gy/nis")
+async def generate_gy_nis(period: str, current_user: dict = Depends(get_current_user)):
+    """🇬🇾 Guyana — NIS Returns."""
+    return await _generate_planilla_csv(current_user.get("company_id"), period, "GY", "NIS")
+
+
+@router.get("/sr/szf")
+async def generate_sr_szf(period: str, current_user: dict = Depends(get_current_user)):
+    """🇸🇷 Surinam — SZF Filing."""
+    return await _generate_planilla_csv(current_user.get("company_id"), period, "SR", "SZF")
+
+
+@router.get("/cr/ccss")
+async def generate_cr_ccss(period: str, current_user: dict = Depends(get_current_user)):
+    """🇨🇷 Costa Rica — CCSS Planilla mensual."""
+    return await _generate_planilla_csv(current_user.get("company_id"), period, "CR", "CCSS_PLANILLA")
+
+
+@router.get("/sv/f1-isss")
+async def generate_sv_f1(period: str, current_user: dict = Depends(get_current_user)):
+    """🇸🇻 El Salvador — Formulario F-1 ISSS."""
+    return await _generate_planilla_csv(current_user.get("company_id"), period, "SV", "F1_ISSS")
+
+
+@router.get("/gt/igss")
+async def generate_gt_igss(period: str, current_user: dict = Depends(get_current_user)):
+    """🇬🇹 Guatemala — IGSS Planilla."""
+    return await _generate_planilla_csv(current_user.get("company_id"), period, "GT", "IGSS_PLANILLA")
+
+
+@router.get("/hn/ihss")
+async def generate_hn_ihss(period: str, current_user: dict = Depends(get_current_user)):
+    """🇭🇳 Honduras — IHSS Planilla."""
+    return await _generate_planilla_csv(current_user.get("company_id"), period, "HN", "IHSS_PLANILLA")
+
+
+@router.get("/ni/inss")
+async def generate_ni_inss(period: str, current_user: dict = Depends(get_current_user)):
+    """🇳🇮 Nicaragua — INSS Planilla."""
+    return await _generate_planilla_csv(current_user.get("company_id"), period, "NI", "INSS_PLANILLA")
+
+
+@router.get("/pa/css")
+async def generate_pa_css(period: str, current_user: dict = Depends(get_current_user)):
+    """🇵🇦 Panamá — CSS Planilla."""
+    return await _generate_planilla_csv(current_user.get("company_id"), period, "PA", "CSS_PLANILLA")
+
+
+@router.get("/cu/onat")
+async def generate_cu_onat(period: str, current_user: dict = Depends(get_current_user)):
+    """🇨🇺 Cuba — ONAT Form."""
+    return await _generate_planilla_csv(current_user.get("company_id"), period, "CU", "ONAT_FORM")
+
+
+@router.get("/ht/ona")
+async def generate_ht_ona(period: str, current_user: dict = Depends(get_current_user)):
+    """🇭🇹 Haití — ONA Déclaration."""
+    return await _generate_planilla_csv(current_user.get("company_id"), period, "HT", "ONA_DECLAR")
+
+
+# =====================================================================
+# PUERTO RICO — Form 499R-2/W-2PR (Annual PDF)
+# =====================================================================
+
+@router.get("/pr/form-499r")
+async def generate_pr_form_499r(year: int, current_user: dict = Depends(get_current_user)):
+    """🇵🇷 Puerto Rico — Form 499R-2/W-2PR (Comprobante de Retención anual).
+    Resumen anual por empleado. Filed with Hacienda PR by January 31.
+    """
+    company_id = current_user.get("company_id")
+    await _require_country(company_id, "PR", "Form 499R-2/W-2PR")
+
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0}) or {}
+    periods = await db.payroll_periods.find(
+        {"company_id": company_id, "year": year}, {"_id": 0}
+    ).to_list(50)
+    period_ids = [p["period_id"] for p in periods]
+    if not period_ids:
+        raise HTTPException(status_code=404, detail=f"No hay nóminas para {year}")
+    entries = await db.payroll_entries.find(
+        {"company_id": company_id, "period_id": {"$in": period_ids}}, {"_id": 0}
+    ).to_list(10000)
+
+    employee_ids = list({e["employee_id"] for e in entries})
+    employees_data = await db.employees.find(
+        {"company_id": company_id, "employee_id": {"$in": employee_ids}}, {"_id": 0}
+    ).to_list(5000)
+    emp_map = {e["employee_id"]: e for e in employees_data}
+
+    per_emp = {}
+    for entry in entries:
+        eid = entry["employee_id"]
+        if eid not in per_emp:
+            per_emp[eid] = {"wages": 0.0, "tax_withheld": 0.0, "ss_emp": 0.0, "med_emp": 0.0}
+        per_emp[eid]["wages"] += entry.get("gross_salary", 0)
+        per_emp[eid]["tax_withheld"] += entry.get("isr", 0)
+        per_emp[eid]["ss_emp"] += entry.get("sfs_employee", 0)
+        per_emp[eid]["med_emp"] += entry.get("afp_employee", 0)
+
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(
+        buffer, pagesize=letter,
+        leftMargin=15 * mm, rightMargin=15 * mm,
+        topMargin=12 * mm, bottomMargin=12 * mm,
+        title=f"Form 499R-2 W-2PR {year}",
+    )
+    styles = getSampleStyleSheet()
+    h1 = ParagraphStyle("h1", parent=styles["Heading1"], fontSize=14, alignment=1,
+                        textColor=colors.HexColor("#0f172a"), spaceAfter=4)
+    h2 = ParagraphStyle("h2", parent=styles["Normal"], fontSize=10, alignment=1,
+                        textColor=colors.HexColor("#475569"), spaceAfter=8)
+    section = ParagraphStyle("sec", parent=styles["Heading3"], fontSize=11,
+                             textColor=colors.HexColor("#0f172a"), spaceBefore=8, spaceAfter=4)
+    body = ParagraphStyle("body", parent=styles["Normal"], fontSize=9, spaceAfter=4)
+    story = []
+
+    company_name = company.get("company_name") or company.get("name") or "Patrono"
+    ein = company.get("rnc") or company.get("tax_id") or "00-0000000"
+
+    story.append(Paragraph(f"FORM 499R-2/W-2PR — COMPROBANTE DE RETENCIÓN {year}", h1))
+    story.append(Paragraph("Departamento de Hacienda · Estado Libre Asociado de Puerto Rico", h2))
+
+    # Patrono info
+    story.append(Paragraph("Información del Patrono", section))
+    employer_data = [
+        ["Nombre del patrono", company_name],
+        ["Número Patronal (EIN)", ein],
+        ["Año natural", str(year)],
+        ["Total empleados", str(len(per_emp))],
+    ]
+    t = Table(employer_data, colWidths=[60 * mm, 120 * mm])
+    t.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (0, -1), colors.HexColor("#e2e8f0")),
+        ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, -1), 9),
+        ("PADDING", (0, 0), (-1, -1), 5),
+        ("GRID", (0, 0), (-1, -1), 0.3, colors.HexColor("#94a3b8")),
+    ]))
+    story.append(t)
+
+    # Empleados
+    story.append(Spacer(1, 8))
+    story.append(Paragraph("Comprobantes individuales", section))
+    rows = [["#", "SS / ID", "Empleado", "Salarios", "Retención IRPR", "SS Emp.", "Medicare Emp."]]
+    totals = {"w": 0.0, "th": 0.0, "ss": 0.0, "med": 0.0}
+    for idx, (eid, t_data) in enumerate(per_emp.items(), 1):
+        emp = emp_map.get(eid, {})
+        ssn = (emp.get("ssn") or emp.get("document_number") or "")[:11]
+        name = f"{emp.get('first_name', '')} {emp.get('last_name', '')}".strip()
+        rows.append([
+            str(idx), ssn, name,
+            f"${t_data['wages']:,.2f}", f"${t_data['tax_withheld']:,.2f}",
+            f"${t_data['ss_emp']:,.2f}", f"${t_data['med_emp']:,.2f}",
+        ])
+        totals["w"] += t_data["wages"]
+        totals["th"] += t_data["tax_withheld"]
+        totals["ss"] += t_data["ss_emp"]
+        totals["med"] += t_data["med_emp"]
+    rows.append(["", "", "TOTAL",
+                 f"${totals['w']:,.2f}", f"${totals['th']:,.2f}",
+                 f"${totals['ss']:,.2f}", f"${totals['med']:,.2f}"])
+    t2 = Table(rows, colWidths=[10 * mm, 28 * mm, 50 * mm, 25 * mm, 28 * mm, 22 * mm, 25 * mm], repeatRows=1)
+    t2.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0f172a")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, -1), 8),
+        ("ALIGN", (3, 1), (-1, -1), "RIGHT"),
+        ("GRID", (0, 0), (-1, -1), 0.3, colors.HexColor("#cbd5e1")),
+        ("PADDING", (0, 0), (-1, -1), 4),
+        ("BACKGROUND", (0, -1), (-1, -1), colors.HexColor("#dcfce7")),
+        ("FONTNAME", (0, -1), (-1, -1), "Helvetica-Bold"),
+    ]))
+    story.append(t2)
+
+    story.append(Spacer(1, 10))
+    story.append(Paragraph(
+        f"<i>Generado por FortexaRH el {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}. "
+        f"Fecha de radicación: 31 de enero {year + 1} (Hacienda PR).</i>",
+        body,
+    ))
+
+    doc.build(story)
+    pdf_bytes = buffer.getvalue()
+    buffer.close()
+
+    safe_ein = "".join(c for c in ein if c.isalnum())
+    filename = f"Form499R_{safe_ein}_{year}.pdf"
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
