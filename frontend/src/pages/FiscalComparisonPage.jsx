@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { Globe, Calculator, TrendingUp, Loader2, DollarSign, Info, ChevronDown, ChevronUp } from "lucide-react";
+import { Globe, Calculator, TrendingUp, Loader2, DollarSign, Info, ChevronDown, ChevronUp, FileDown } from "lucide-react";
 import { toast } from "sonner";
 
 const REGION_LABEL = {
@@ -87,6 +87,39 @@ export default function FiscalComparisonPage() {
   };
 
   const fmtMoney = (amount, symbol = "$") => `${symbol} ${Number(amount || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  const downloadExecutivePDF = async () => {
+    if (!grossSalary || grossSalary <= 0 || selected.length < 1) {
+      toast.error("Configure salario y países antes de exportar");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await axios.post(
+        `${API}/multi-country-reports/cost-comparison-pdf`,
+        {
+          gross_monthly: parseFloat(grossSalary),
+          countries: selected,
+          ...(displayCurrency ? { display_currency: displayCurrency } : {}),
+        },
+        { headers: getAuthHeaders(), withCredentials: true, responseType: "blob" }
+      );
+      const blob = new Blob([res.data], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `AnalisisFiscalComparativo_${selected.length}paises.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      toast.success("Análisis ejecutivo descargado");
+    } catch (e) {
+      toast.error(e.response?.data?.detail || "Error al exportar PDF");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const cheapest = results?.results?.[0]?.employer?.total_cost_to_company;
   const mostExpensive = results?.results?.length
@@ -230,6 +263,17 @@ export default function FiscalComparisonPage() {
                     FX activo: {results.fx.display_currency} (vía {results.fx.rate_source})
                   </Badge>
                 )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="ml-auto bg-gradient-to-r from-blue-600 to-emerald-600 text-white border-0 hover:opacity-90"
+                  onClick={downloadExecutivePDF}
+                  disabled={loading}
+                  data-testid="export-executive-pdf-btn"
+                >
+                  <FileDown className="w-4 h-4 mr-1" />
+                  Exportar Análisis Ejecutivo (PDF)
+                </Button>
               </CardTitle>
               <CardDescription>
                 Ordenados por <b>costo total empleador ascendente</b> (país más económico primero).

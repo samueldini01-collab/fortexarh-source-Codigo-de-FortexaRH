@@ -1,0 +1,43 @@
+{
+  "summary": "Backend regression for FortexaRH Executive PDF export of fiscal comparison (POST /api/multi-country-reports/cost-comparison-pdf): 11/11 new PDF tests PASSED + 26/26 prior cost-comparison + FX tests PASSED = 37/37 total PASSED. Validated: (1) 5 countries [DO,CO,MX,US,ES] gross=3000 with display_currency=USD returns 200, application/pdf, %PDF- magic bytes, >4000 bytes, Content-Disposition attachment with filename starting 'AnalisisFiscalComparativo' ✓; (2) Same without display_currency still produces valid PDF (no FX conversion in body) ✓; (3) Single country (1 item) produces valid PDF ✓; (4) Max 10 countries produces valid PDF ✓; (5) Validation: gross_monthly=0 → 400 with detail; gross negative → 400; countries=[] → 400/422; 11 countries → 400 ✓; (6) Invalid country code (ZZZ) gracefully ignored — included in unsupported, valid DO still produces PDF ✓; (7) All-unsupported [ZZZ,AAA] → 400 'Ningún país válido' ✓; (8) No auth → 401/403 ✓; (9) Regression: available-reports 200, fiscal-summary 404-on-no-data, cost-comparison full 26-test suite PASSED unchanged ✓. PDF sizes observed 5-15KB as expected. Reportlab generated cover, comparative table, text-based bar chart, recommendation, methodology — all sections render. FX egress to open.er-api.com works in this preview env (cache hit confirmed by prior FX tests).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_fiscal_comparison_pdf.py",
+    "/app/backend/tests/test_fiscal_cost_comparison.py",
+    "/app/test_reports/pytest/fiscal_comparison_pdf_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Country count validation collapses two errors into one detail string ('Países: 1-10 requeridos'). For better DX consider distinct messages for empty vs >10 (matches the cost-comparison endpoint which has distinct messages). Cosmetic.",
+    "PDF endpoint duplicates the FX/sort logic from /cost-comparison rather than calling it internally. About 30 lines of overlap (compute loop + FX conversion + sort). DRY refactor opportunity: extract a shared `_compute_comparison(payload, with_fx=True)` helper. Not blocking — both code paths are tested.",
+    "Bar chart uses Unicode block character '█' repeated by integer division (bar_width // 4). On very small max_costs the bars round to 0-1 chars and visually flatten; would be more robust to render an actual reportlab Drawing/Rect via reportlab.graphics. Acceptable for v1; works for the 5-country happy path.",
+    "savings_pct division guards against most_expensive total=0 but not against negative values. With the current calculator total_cost_to_company is always >= gross > 0 so safe in practice.",
+    "display_currency upper-cased only when truthy; payload.display_currency='' becomes None (correct). gross_currency field from ComparisonRequest is NOT in ComparisonPDFRequest — intentional simplification, fine.",
+    "Filename uses len(results)paises but if all unsupported the endpoint short-circuits with 400, so len(results)>=1 always when reaching the PDF build. Safe.",
+    "datetime.now(timezone.utc) used consistently — no naive datetimes. Good.",
+    "No DB writes in this endpoint — pure compute + outbound FX call. Stateless and idempotent. Excellent for a board-report endpoint."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_fiscal_comparison_pdf.py"
+  ],
+  "success_rate": {
+    "backend": "100% (37/37 = 11 new PDF + 26 prior regression)",
+    "frontend": "not tested (per request — backend only)"
+  },
+  "test_credentials": {
+    "admin_user": "test_refactor@fortexa.com / test123"
+  },
+  "seed_data_creation": "None. Endpoint is pure compute. No DB writes, no employees/periods consumed.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Executive PDF export at POST /api/multi-country-reports/cost-comparison-pdf is fully validated. Test file /app/backend/tests/test_fiscal_comparison_pdf.py contains 11 reusable tests (TestPDFGeneration/TestPDFValidation/TestPDFInvalidCountries/TestPDFAuth). Combined with the 26 cost-comparison tests in test_fiscal_cost_comparison.py the full suite is 37 PASSED. PDF validity is asserted via %PDF- magic bytes + size threshold (>4000) + Content-Disposition filename prefix 'AnalisisFiscalComparativo'. Reportlab is installed (reportlab.platypus.SimpleDocTemplate). open.er-api.com FX egress works in this preview environment. No frontend testing was performed.",
+  "rca of the issue": "N/A — all tests passed."
+}

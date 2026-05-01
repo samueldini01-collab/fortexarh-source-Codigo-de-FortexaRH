@@ -624,3 +624,302 @@ async def fiscal_cost_comparison(
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "note": ("Montos en moneda local. Campo 'converted' muestra equivalencia en " + payload.display_currency.upper()) if payload.display_currency else "Los montos están en la moneda local de cada país. No se aplica conversión de divisas."
     }
+
+
+# ===================== EXECUTIVE PDF EXPORT (Fiscal Comparison) =====================
+
+class ComparisonPDFRequest(BaseModel):
+    gross_monthly: float
+    countries: List[str]
+    display_currency: Optional[str] = None
+    company_name: Optional[str] = None  # optional override
+
+
+@router.post("/cost-comparison-pdf")
+async def cost_comparison_pdf(
+    payload: ComparisonPDFRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Generate an Executive PDF report of the fiscal cost comparison.
+    Includes cover, comparative table, key insights, recommendation, and methodology footer.
+    Suitable for board presentations / hiring decisions.
+    """
+    if payload.gross_monthly <= 0:
+        raise HTTPException(status_code=400, detail="gross_monthly debe ser > 0")
+    if not payload.countries or len(payload.countries) > 10:
+        raise HTTPException(status_code=400, detail="Países: 1-10 requeridos")
+
+    # Compute results (reuse helpers)
+    results = []
+    unsupported = []
+    for cc in payload.countries:
+        data = _compute_country_cost(payload.gross_monthly, cc)
+        if data is None:
+            unsupported.append(cc)
+            continue
+        results.append(data)
+
+    if not results:
+        raise HTTPException(status_code=400, detail="Ningún país válido")
+
+    # FX conversion
+    fx_info = None
+    display_curr = (payload.display_currency or "").upper() or None
+    if display_curr:
+        rates = await _get_fx_rates(base="USD")
+        if rates:
+            fx_info = {"display_currency": display_curr, "rate_source": "open.er-api.com"}
+            for r in results:
+                local = r["currency"]
+                r["converted"] = {
+                    "display_currency": display_curr,
+                    "gross_salary": _convert(r["gross_salary"], local, display_curr, rates),
+                    "total_deductions": _convert(r["employee"]["total_deductions"], local, display_curr, rates),
+                    "net_salary": _convert(r["employee"]["net_salary"], local, display_curr, rates),
+                    "total_contributions": _convert(r["employer"]["total_contributions"], local, display_curr, rates),
+                    "total_cost_to_company": _convert(r["employer"]["total_cost_to_company"], local, display_curr, rates),
+                }
+
+    # Sort: cheapest first
+    if fx_info and all(r.get("converted", {}).get("total_cost_to_company") is not None for r in results):
+        results.sort(key=lambda r: r["converted"]["total_cost_to_company"])
+    else:
+        results.sort(key=lambda r: r["employer"]["total_cost_to_company"])
+
+    cheapest = results[0]
+    most_expensive = results[-1]
+
+    # Get company info
+    company_id = current_user.get("company_id")
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0}) or {}
+    company_name = payload.company_name or company.get("company_name") or company.get("name") or "FortexaRH"
+
+    # Build PDF
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(
+        buffer, pagesize=A4,
+        leftMargin=18 * mm, rightMargin=18 * mm,
+        topMargin=15 * mm, bottomMargin=15 * mm,
+        title=f"Análisis Fiscal Comparativo — {len(results)} países"
+    )
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle("title", parent=styles["Heading1"], fontSize=22,
+                                 textColor=colors.HexColor("#0f172a"), spaceAfter=4, alignment=1)
+    subtitle = ParagraphStyle("sub", parent=styles["Normal"], fontSize=11,
+                              textColor=colors.HexColor("#475569"), spaceAfter=14, alignment=1)
+    section = ParagraphStyle("sec", parent=styles["Heading2"], fontSize=13,
+                             textColor=colors.HexColor("#1e293b"), spaceBefore=10, spaceAfter=6)
+    body = ParagraphStyle("body", parent=styles["Normal"], fontSize=10,
+                          textColor=colors.HexColor("#334155"), spaceAfter=6, leading=14)
+    callout = ParagraphStyle("callout", parent=styles["Normal"], fontSize=10,
+                             textColor=colors.HexColor("#0f766e"), spaceAfter=4)
+
+    story = []
+
+    # ========= COVER =========
+    story.append(Spacer(1, 30))
+    story.append(Paragraph("ANÁLISIS FISCAL COMPARATIVO", title_style))
+    story.append(Paragraph(f"<i>Decisión Estratégica de Contratación Internacional</i>", subtitle))
+    story.append(Spacer(1, 20))
+
+    # Cover summary card
+    cover_data = [
+        ["Empresa solicitante", company_name],
+        ["Salario bruto evaluado", f"{payload.gross_monthly:,.2f} (moneda local de cada país)"],
+        ["Países comparados", f"{len(results)} de {len(payload.countries)} solicitados"],
+        ["Moneda de visualización", display_curr or "Local de cada país"],
+        ["Generado", datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")],
+    ]
+    cover_tbl = Table(cover_data, colWidths=[55 * mm, 105 * mm])
+    cover_tbl.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (0, -1), colors.HexColor("#1e293b")),
+        ("TEXTCOLOR", (0, 0), (0, -1), colors.white),
+        ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
+        ("BACKGROUND", (1, 0), (1, -1), colors.HexColor("#f1f5f9")),
+        ("FONTSIZE", (0, 0), (-1, -1), 10),
+        ("PADDING", (0, 0), (-1, -1), 8),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#cbd5e1")),
+    ]))
+    story.append(cover_tbl)
+    story.append(Spacer(1, 20))
+
+    # ========= EXECUTIVE SUMMARY =========
+    story.append(Paragraph("Resumen Ejecutivo", section))
+    cheapest_curr = cheapest["currency_symbol"]
+    cheapest_cost = cheapest["employer"]["total_cost_to_company"]
+    cheapest_overhead = cheapest["employer"]["cost_overhead_pct"]
+    cheapest_usd = ""
+    if cheapest.get("converted") and cheapest["converted"].get("total_cost_to_company") is not None:
+        cheapest_usd = f" (≈ {cheapest['converted']['display_currency']} {cheapest['converted']['total_cost_to_company']:,.2f})"
+
+    spread = round(most_expensive["employer"]["cost_overhead_pct"] - cheapest_overhead, 2)
+    summary_text = (
+        f"De {len(results)} países evaluados, <b>{cheapest['flag']} {cheapest['country_name']}</b> "
+        f"presenta el menor costo total para la empresa: "
+        f"<b>{cheapest_curr} {cheapest_cost:,.2f}{cheapest_usd}</b> "
+        f"con un overhead de <b>+{cheapest_overhead}%</b> sobre el salario bruto. "
+        f"El país más caro es <b>{most_expensive['flag']} {most_expensive['country_name']}</b> "
+        f"con +{most_expensive['employer']['cost_overhead_pct']}% — un <b>spread de {spread} puntos porcentuales</b>."
+    )
+    story.append(Paragraph(summary_text, body))
+    story.append(Spacer(1, 8))
+
+    # ========= COMPARATIVE TABLE =========
+    story.append(Paragraph("Tabla Comparativa por País", section))
+    if fx_info:
+        header = ["#", "País", "Bruto Local", "Empleado SS+ISR", "Neto", "Aporte Patronal",
+                 f"Costo Total\n({display_curr})", "Overhead"]
+    else:
+        header = ["#", "País", "Bruto Local", "Empleado SS+ISR", "Neto", "Aporte Patronal",
+                 "Costo Total Local", "Overhead"]
+    data = [header]
+    for idx, r in enumerate(results, 1):
+        sym = r["currency_symbol"]
+        cost_total_str = f"{sym} {r['employer']['total_cost_to_company']:,.2f}"
+        if r.get("converted") and r["converted"].get("total_cost_to_company") is not None:
+            cost_total_str = f"{r['converted']['display_currency']} {r['converted']['total_cost_to_company']:,.2f}\n({sym} {r['employer']['total_cost_to_company']:,.0f})"
+        country_label = f"{r['flag']} {r['country_name']}"
+        if idx == 1:
+            country_label += " ★"
+        data.append([
+            str(idx),
+            Paragraph(f"<b>{country_label}</b><br/><font size=7 color='#64748b'>{r['agency'] or '—'}</font>", body),
+            f"{sym} {r['gross_salary']:,.2f}",
+            f"{sym} {r['employee']['total_deductions']:,.2f}",
+            f"{sym} {r['employee']['net_salary']:,.2f}",
+            f"{sym} {r['employer']['total_contributions']:,.2f}",
+            cost_total_str,
+            f"+{r['employer']['cost_overhead_pct']}%",
+        ])
+    tbl = Table(data, colWidths=[8 * mm, 38 * mm, 25 * mm, 24 * mm, 22 * mm, 24 * mm, 30 * mm, 17 * mm], repeatRows=1)
+    tbl.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0f172a")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("FONTSIZE", (0, 0), (-1, 0), 8),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("ALIGN", (0, 0), (-1, 0), "CENTER"),
+        ("FONTSIZE", (0, 1), (-1, -1), 8),
+        ("ALIGN", (2, 1), (-1, -1), "RIGHT"),
+        ("ALIGN", (0, 1), (0, -1), "CENTER"),
+        ("ALIGN", (-1, 1), (-1, -1), "CENTER"),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("BACKGROUND", (0, 1), (-1, 1), colors.HexColor("#dcfce7")),  # green tint for #1
+        ("BACKGROUND", (0, -1), (-1, -1), colors.HexColor("#fef3c7")),  # yellow for last
+        ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#cbd5e1")),
+        ("PADDING", (0, 0), (-1, -1), 5),
+    ]))
+    story.append(tbl)
+    story.append(Spacer(1, 4))
+    story.append(Paragraph("<i>★ País con menor costo total para la empresa</i>", callout))
+    story.append(Spacer(1, 12))
+
+    # ========= COST BAR CHART (visual) =========
+    story.append(Paragraph("Visualización del Costo Total al Empleador", section))
+    if fx_info:
+        max_cost = max(r["converted"]["total_cost_to_company"] for r in results if r.get("converted"))
+        chart_unit = display_curr
+    else:
+        max_cost = max(r["employer"]["total_cost_to_company"] for r in results)
+        chart_unit = "moneda local"
+    chart_rows = []
+    for r in results:
+        if fx_info and r.get("converted"):
+            value = r["converted"]["total_cost_to_company"]
+            label = f"{display_curr} {value:,.0f}"
+        else:
+            value = r["employer"]["total_cost_to_company"]
+            label = f"{r['currency_symbol']} {value:,.0f}"
+        bar_pct = (value / max_cost) if max_cost else 0
+        bar_width = max(2, int(bar_pct * 100))  # width 0-100mm
+        bar_html = (f"<font color='#0ea5e9'>{'█' * (bar_width // 4)}</font>"
+                    if r == cheapest else
+                    f"<font color='#f59e0b'>{'█' * (bar_width // 4)}</font>"
+                    if r == most_expensive else
+                    f"<font color='#64748b'>{'█' * (bar_width // 4)}</font>")
+        chart_rows.append([
+            f"{r['flag']} {r['country_code']}",
+            Paragraph(bar_html, body),
+            label,
+            f"+{r['employer']['cost_overhead_pct']}%",
+        ])
+    chart_tbl = Table(chart_rows, colWidths=[28 * mm, 78 * mm, 38 * mm, 18 * mm])
+    chart_tbl.setStyle(TableStyle([
+        ("FONTSIZE", (0, 0), (-1, -1), 9),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("ALIGN", (2, 0), (-1, -1), "RIGHT"),
+        ("PADDING", (0, 0), (-1, -1), 4),
+        ("LINEBELOW", (0, 0), (-1, -2), 0.3, colors.HexColor("#e2e8f0")),
+    ]))
+    story.append(chart_tbl)
+    story.append(Spacer(1, 4))
+    story.append(Paragraph(f"<i>Escala relativa al máximo. Unidades: {chart_unit}.</i>", callout))
+    story.append(Spacer(1, 12))
+
+    # ========= RECOMMENDATION =========
+    story.append(Paragraph("Recomendación Estratégica", section))
+    savings_pct = round(((most_expensive["employer"]["total_cost_to_company"] -
+                          cheapest["employer"]["total_cost_to_company"]) /
+                         most_expensive["employer"]["total_cost_to_company"]) * 100, 2) if most_expensive["employer"]["total_cost_to_company"] else 0
+
+    rec_text = (
+        f"<b>Para una contratación a costo optimizado, contratar en {cheapest['flag']} {cheapest['country_name']} "
+        f"genera ahorros de hasta {savings_pct}% comparado con {most_expensive['flag']} {most_expensive['country_name']}.</b><br/><br/>"
+        f"<b>Consideraciones adicionales:</b><br/>"
+        f"• Sistema de seguridad social: <b>{cheapest['social_security_system']}</b><br/>"
+        f"• Agencia tributaria: <b>{cheapest['agency'] or 'N/A'}</b><br/>"
+        f"• Moneda local: <b>{cheapest['currency']} ({cheapest['currency_symbol']})</b><br/>"
+        f"• Overhead total: <b>+{cheapest['employer']['cost_overhead_pct']}%</b> (de los más bajos del análisis)<br/><br/>"
+        f"<i>Recordatorio: este análisis es puramente fiscal. Decisiones de contratación deben considerar también: "
+        f"disponibilidad de talento, costo de vida, marcos legales laborales, husos horarios, idioma, regulación de visados y políticas de teletrabajo.</i>"
+    )
+    story.append(Paragraph(rec_text, body))
+    story.append(Spacer(1, 14))
+
+    # ========= METHODOLOGY =========
+    story.append(Paragraph("Metodología", section))
+    methodology_text = (
+        "Los cálculos se basan en los perfiles fiscales del motor multi-país de FortexaRH (28 países soportados, "
+        "5 regiones). Las tasas de seguridad social y bandas de impuesto sobre la renta se aplican según el perfil "
+        "vigente del país. El costo total empleador incluye salario bruto + todas las contribuciones patronales obligatorias "
+        "(salud, pensión, riesgo laboral, prestaciones sociales según país)."
+    )
+    if fx_info:
+        methodology_text += (
+            f" Las cifras convertidas usan tasas de cambio en vivo de <b>{fx_info['rate_source']}</b> "
+            f"(actualizadas máx. cada hora)."
+        )
+    methodology_text += (
+        " <i>Este informe es un análisis comparativo de referencia. Para cumplimiento fiscal específico de cada país "
+        "consulte siempre con un contador local certificado.</i>"
+    )
+    story.append(Paragraph(methodology_text, body))
+
+    # Footer info
+    story.append(Spacer(1, 14))
+    footer_data = [[
+        Paragraph(
+            f"<font size=8 color='#94a3b8'>Generado por <b>FortexaRH</b> · Motor Fiscal Multi-País · "
+            f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}</font>",
+            body
+        )
+    ]]
+    footer_tbl = Table(footer_data, colWidths=[170 * mm])
+    footer_tbl.setStyle(TableStyle([
+        ("LINEABOVE", (0, 0), (-1, 0), 0.5, colors.HexColor("#94a3b8")),
+        ("PADDING", (0, 0), (-1, -1), 4),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+    ]))
+    story.append(footer_tbl)
+
+    doc.build(story)
+    pdf_bytes = buffer.getvalue()
+    buffer.close()
+
+    filename = f"AnalisisFiscalComparativo_{len(results)}paises_{datetime.now(timezone.utc).strftime('%Y%m%d')}.pdf"
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'}
+    )
