@@ -319,6 +319,35 @@ export default function PayrollPage() {
     }
   };
 
+  // Download universal fiscal summary (multi-country) - works for all 28 countries
+  const downloadUniversalFiscalReport = async (period, format) => {
+    try {
+      const periodParam = period?.period_id || (period?.year && period?.month ? `${period.year}-${String(period.month).padStart(2, '0')}` : '');
+      if (!periodParam) {
+        toast.error('Período inválido');
+        return;
+      }
+      const response = await axios.get(
+        `${API}/multi-country-reports/fiscal-summary?period=${encodeURIComponent(periodParam)}&format=${format}`,
+        { headers: getAuthHeaders(), withCredentials: true, responseType: 'blob' }
+      );
+      const mimeType = format === 'pdf' ? 'application/pdf' : 'text/csv';
+      const blob = new Blob([response.data], { type: `${mimeType};charset=utf-8` });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      const countryCode = countryRates?.country_code || 'DO';
+      link.download = `FiscalSummary_${countryCode}_${periodParam}.${format}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success(`Reporte fiscal (${format.toUpperCase()}) descargado`);
+    } catch (error) {
+      const msg = error.response?.status === 404 ? 'No hay datos de nómina para este período'
+                : error.response?.data?.detail || 'Error al descargar reporte';
+      toast.error(msg);
+    }
+  };
+
   const downloadTssReport = async (periodId) => {
     try {
       const response = await axios.get(
@@ -1747,6 +1776,64 @@ export default function PayrollPage() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Universal Multi-Country Fiscal Report */}
+            <Card data-testid="universal-fiscal-report-card" className="border-2 border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50/40 to-emerald-50/40 dark:from-blue-950/30 dark:to-emerald-950/30">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  Reporte Fiscal Universal
+                  {countryRates && (
+                    <Badge variant="outline" className="ml-2">
+                      {countryRates.country_name} · {countryRates.currency}
+                    </Badge>
+                  )}
+                </CardTitle>
+                <CardDescription>
+                  Resumen fiscal adaptado al motor del país activo. Funciona para los <b>28 países</b> soportados.
+                  Incluye deducciones del empleado, contribuciones del empleador, ISR y totales con la agencia fiscal correspondiente.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {periods.filter(p => ['calculated', 'approved', 'paid'].includes(p.status)).length === 0 ? (
+                  <p className="text-slate-500 text-center py-4">{t('payrollV2.pagueUnaNominaPara') || 'Calcule o apruebe una nómina para generar el reporte.'}</p>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {periods.filter(p => ['calculated', 'approved', 'paid'].includes(p.status)).map(period => (
+                      <div key={period.period_id} className="p-4 border rounded-lg bg-white dark:bg-slate-900 shadow-sm"
+                           data-testid={`universal-report-row-${period.period_id}`}>
+                        <div className="mb-3">
+                          <p className="font-semibold text-slate-800 dark:text-slate-100">{period.description}</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                            {period.month}/{period.year} • {period.employee_count || 0} empleados
+                          </p>
+                        </div>
+                        <div className="flex gap-2 flex-wrap">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-blue-700 border-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                            onClick={() => downloadUniversalFiscalReport(period, 'csv')}
+                            data-testid={`universal-csv-${period.period_id}`}
+                          >
+                            <FileSpreadsheet className="w-4 h-4 mr-1" />CSV
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-emerald-700 border-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30"
+                            onClick={() => downloadUniversalFiscalReport(period, 'pdf')}
+                            data-testid={`universal-pdf-${period.period_id}`}
+                          >
+                            <FileDown className="w-4 h-4 mr-1" />PDF
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
             {/* DGII Tax Reports Section */}
             <Card>

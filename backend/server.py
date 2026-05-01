@@ -67,6 +67,7 @@ from routes.liquidation import router as liquidation_router
 from routes.salary_history import router as salary_history_router
 from routes.admin_permissions import router as admin_permissions_router
 from routes.country_config import router as country_config_router, migrate_existing_companies
+from routes.multi_country_reports import router as multi_country_reports_router
 
 # ===================== APP SETUP =====================
 
@@ -178,6 +179,7 @@ for r in [
     salary_history_router,
     admin_permissions_router,
     country_config_router,
+    multi_country_reports_router,
 ]:
     api_router.include_router(r)
 
