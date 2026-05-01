@@ -90,6 +90,13 @@
   - 🇪🇸 **ES TC1 FAN**: `GET /api/native-reports/es/tc1?period=YYYY-MM` — Monthly Social Security Settlement for TGSS Sistema RED. 3 record types (01 cabecera + 02 trabajadores + 99 totales), CCC, NAF, base CC, cuotas trabajador/empresa.
   - **Catalog now shows 10/33 formats implemented**: DR 4/4, CO 1/1, MX 2/2, US 1/1, ES 2/2 (5 países con cumplimiento nativo completo)
   - Tested: iteration_237.json — 31/31 backend tests PASSED
+- **Native Fiscal Formats — UK HMRC RTI FPS + FR DSN + Fiscal Calendar (May 1, 2026)** — P2 DONE:
+  - 🇬🇧 **UK HMRC RTI FPS**: `GET /api/native-reports/gb/rti-fps?period=YYYY-MM` — XML format per HMRC GovTalk envelope. Includes EmpRefs (OfficeNo/PayeRef/AOref), Employee node with NINO + Name (Fore/Sur), Employment with PaymentToDate (TaxablePay, TaxDeducted, EmployeeNICsInPeriod, EmployerNICsInPeriod, NetPay), Totals. UTF-8 XML.
+  - 🇫🇷 **FR DSN**: `GET /api/native-reports/fr/dsn?period=YYYY-MM` — Déclaration Sociale Nominative XML version P24V01. Includes Declaration (Nature, MoisPrincipal), Emetteur, Entreprise (SIREN, APE), Etablissement (SIRET), Salarie nodes per employee (NIR, Nom, Prenoms, Sexe, Contrat, Remuneration, Cotisations codes 100/200/400/900, VersementIndividuel with PrelevementSource). Final BordereauCotisation with totals.
+  - **Fiscal Calendar endpoint** `GET /api/native-reports/calendar`: returns deadlines sorted by days_until_due with urgency classification (overdue/critical ≤3d/warning ≤7d/ok), summary counts, is_company_country flag, period_to_file. Powers the dashboard.
+  - **Calendar UI in `/global-compliance`**: amber-bordered card with badge counters (overdue/crítico/próximo), priority list with country flag + format name + agency + due_date + days_until_due + urgency badge color-coded, "Tu empresa" badge on user's country items, top-10 view with counter footer.
+  - 12/33 formats implemented (DR 4 + CO 1 + MX 2 + US 1 + ES 2 + GB 1 + FR 1 = 7 países con cumplimiento nativo completo)
+  - Tested: iteration_238.json — 48/48 backend tests PASSED (17 new + 31 regression)
 - **Global Compliance Center page (May 1, 2026)** — Roadmap visual DONE:
   - New page `/global-compliance` with stats cards (28 países, 33 formatos, 7 implementados, 28 cobertura universal)
   - Country cards grouped by region (Caribe, Centro, Norte, Sur, Europa) with status badges (Cumplimiento Nativo green / Parcial amber / Solo Universal slate)
