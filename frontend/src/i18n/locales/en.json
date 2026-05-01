@@ -3463,7 +3463,13 @@
       "noPayslips": "No payslips available",
       "latestPayslips": "Latest Payslips",
       "receiptDownloaded": "Receipt downloaded",
-      "errorDownload": "Error downloading receipt"
+      "errorDownload": "Error downloading receipt",
+      "earnings": "Earnings",
+      "baseSalary": "Base Salary",
+      "overtime": "Overtime",
+      "bonuses": "Bonuses",
+      "commissions": "Commissions",
+      "totalEarnings": "Total Earnings"
     },
     "attendance": {
       "title": "Attendance Record",

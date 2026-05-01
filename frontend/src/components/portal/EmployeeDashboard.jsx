@@ -426,7 +426,7 @@ function EmployeeDashboard() {
     }
   };
 
-  const formatCurrency = (value) => new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'DOP', maximumFractionDigits: 0 }).format(value || 0);
+  const formatCurrency = (value) => new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'DOP', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Math.round((value || 0) * 100) / 100);
 
   const LOGO_URL = "https://customer-assets.emergentagent.com/job_hrpulse-26/artifacts/ohljcqui_FortexaRH%20Logo.png";
 
@@ -1648,19 +1648,48 @@ function EmployeeDashboard() {
                   <p className="font-bold text-lg text-emerald-700">{formatCurrency(showPayslipDetail.net_salary)}</p>
                 </div>
               </div>
-              
+
+              {/* Earnings breakdown */}
               <div className="border-t pt-4">
-                <h4 className="font-medium mb-2">{t('employeePortal.payslips.deductions')}</h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between"><span>AFP:</span><span>{formatCurrency(showPayslipDetail.afp_employee)}</span></div>
-                  <div className="flex justify-between"><span>SFS:</span><span>{formatCurrency(showPayslipDetail.sfs_employee)}</span></div>
-                  <div className="flex justify-between"><span>ISR:</span><span>{formatCurrency(showPayslipDetail.isr)}</span></div>
-                  {showPayslipDetail.loan_deduction > 0 && (
-                    <div className="flex justify-between"><span>{t('employeePortal.tabs.loans')}:</span><span>{formatCurrency(showPayslipDetail.loan_deduction)}</span></div>
+                <h4 className="font-medium mb-2 text-emerald-700">{t('employeePortal.payslips.earnings')}</h4>
+                <div className="space-y-1.5 text-sm">
+                  <div className="flex justify-between"><span>{t('employeePortal.payslips.baseSalary')}</span><span className="font-mono">{formatCurrency(showPayslipDetail.base_salary)}</span></div>
+                  {(showPayslipDetail.overtime_pay || 0) > 0 && (
+                    <div className="flex justify-between"><span>{t('employeePortal.payslips.overtime')}</span><span className="font-mono">{formatCurrency(showPayslipDetail.overtime_pay)}</span></div>
                   )}
-                  <div className="flex justify-between font-medium border-t pt-2">
+                  {(showPayslipDetail.bonuses || 0) > 0 && (
+                    <div className="flex justify-between"><span>{t('employeePortal.payslips.bonuses')}</span><span className="font-mono">{formatCurrency(showPayslipDetail.bonuses)}</span></div>
+                  )}
+                  {(showPayslipDetail.commissions || 0) > 0 && (
+                    <div className="flex justify-between"><span>{t('employeePortal.payslips.commissions')}</span><span className="font-mono">{formatCurrency(showPayslipDetail.commissions)}</span></div>
+                  )}
+                  <div className="flex justify-between font-medium border-t pt-1.5">
+                    <span>{t('employeePortal.payslips.totalEarnings')}</span>
+                    <span className="font-mono text-emerald-700">{formatCurrency(showPayslipDetail.gross_salary)}</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Legal Deductions */}
+              <div className="border-t pt-4">
+                <h4 className="font-medium mb-2 text-red-700">{t('employeePortal.payslips.deductions')}</h4>
+                <div className="space-y-1.5 text-sm">
+                  <div className="flex justify-between"><span>AFP (2.87%):</span><span className="font-mono">{formatCurrency(showPayslipDetail.afp_employee)}</span></div>
+                  <div className="flex justify-between"><span>SFS (3.04%):</span><span className="font-mono">{formatCurrency(showPayslipDetail.sfs_employee)}</span></div>
+                  <div className="flex justify-between"><span>ISR:</span><span className="font-mono">{formatCurrency(showPayslipDetail.isr)}</span></div>
+                  {(showPayslipDetail.loan_deduction || 0) > 0 && (
+                    <div className="flex justify-between"><span>{t('employeePortal.tabs.loans')}:</span><span className="font-mono">{formatCurrency(showPayslipDetail.loan_deduction)}</span></div>
+                  )}
+                  {/* Additional deductions */}
+                  {(showPayslipDetail.additional_deductions || []).map((ded, idx) => (
+                    <div key={idx} className="flex justify-between">
+                      <span>{ded.type}{ded.description ? ` - ${ded.description}` : ''}:</span>
+                      <span className="font-mono">{ded.is_percentage ? `${ded.amount}%` : formatCurrency(ded.amount)}</span>
+                    </div>
+                  ))}
+                  <div className="flex justify-between font-medium border-t pt-1.5">
                     <span>{t('common.total')} {t('employeePortal.payslips.deductions')}:</span>
-                    <span className="text-red-600">{formatCurrency(showPayslipDetail.total_deductions)}</span>
+                    <span className="font-mono text-red-600">{formatCurrency(showPayslipDetail.total_deductions)}</span>
                   </div>
                 </div>
               </div>

@@ -3468,7 +3468,13 @@
       "noPayslips": "No hay recibos disponibles",
       "latestPayslips": "Últimos Recibos",
       "receiptDownloaded": "Recibo descargado",
-      "errorDownload": "Error al descargar recibo"
+      "errorDownload": "Error al descargar recibo",
+      "earnings": "Ingresos",
+      "baseSalary": "Salario Base",
+      "overtime": "Horas Extras",
+      "bonuses": "Bonificaciones",
+      "commissions": "Comisiones",
+      "totalEarnings": "Total Ingresos"
     },
     "attendance": {
       "title": "Registro de Asistencia",
