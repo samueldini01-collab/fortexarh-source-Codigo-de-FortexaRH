@@ -1,0 +1,39 @@
+{
+  "summary": "Backend-only validation of FortexaRH iter241 refactor (native_reports.py 2641-line monolith -> routes/native/ package with 8 sub-modules) + scaling (asyncio.Semaphore(10) + cursor.batch_size(100) + asyncio.gather in run_reminders_for_all_companies) + LATAM endpoint auto-registration (17 wrappers replaced by PLANILLA_COLUMN_PROFILES iteration with _make_handler default-arg closure trick). Wrote /app/backend/tests/test_native_reports_iter241.py with 19 new tests targeting exactly the review_request concerns; all PASSED. Full regression of all 4 native_reports test files = 122/122 GREEN (103 pre-existing baseline from iter240 remain green, +19 new). Validated: (1) GET /catalog still reports total_countries=28, total_formats=33, implemented_formats=33, every auto-registered endpoint path is listed. (2) All 18 LATAM/PR endpoints return HTTP 400 country-guard for the DO admin; each guard message references its OWN country/format (verified /cl/previred, /pe/plame, /ec/iess, /bo/f110, /ht/ona return DIFFERENT messages — closure late-binding regression is NOT present). (3) All 9 bespoke endpoints (CO/MX/US/ES/GB/FR/CA/BR/AR) covered by the pre-existing iter240 TestExistingEndpointsRegression remain reachable. (4) DR DGII endpoints (/api/dgii-reports/tss/autodeterminacion, /tss/novedades, /ir3, /ir17) still return HTTP 200 for the DO admin — the refactor did not touch dgii_reports.py. (5) GET /calendar and GET /filings/history respond 200 with expected shape; POST /calendar/run-reminders-all responds 200 with ALL pre-existing fields (success, processed_companies>=1, total_notifications_sent, total_skipped_already_filed, errors[], ran_at) AND the new iter241 fields (duration_seconds is numeric>=0, batch_size=100, max_concurrency=10). (6) Backward-compat shim: `from routes.native_reports import router, run_reminders_for_all_companies, _run_reminders_for_company, NATIVE_FORMATS, FORMAT_DEADLINES` still works; shim file is 25 lines and re-exports the SAME APIRouter instance as routes.native (identity check passes). (7) APScheduler registers fiscal_reminders_daily @ 08:00 UTC (backend log grep).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_native_reports_iter241.py",
+    "/app/backend/tests/test_native_reports_iter240.py",
+    "/app/backend/tests/test_native_reports_iter239.py",
+    "/app/backend/tests/test_native_reports.py",
+    "/app/test_reports/pytest/native_reports_iter241_new.xml",
+    "/app/test_reports/pytest/native_reports_full_iter241.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "routes/native/latam_planilla.py correctly uses the default-arg closure trick (_fc=format_code, _cc=expected_country in _make_handler) to bind format_code/expected_country BY VALUE — the typical Python loop-variable trap is avoided. Verified empirically: /cl/previred mentions Chile, /pe/plame mentions Peru, /ht/ona mentions Haiti (not all the same country).",
+    "reminders.py run_reminders_for_all_companies implements the review_request scaling contract: cursor.batch_size(100) streaming + asyncio.Semaphore(10) bounding + asyncio.gather draining in batches of batch_size. Errors are captured per-company and logger.warning is emitted when len(errors)>0 — addresses iter240 critical_code_review_comment #4.",
+    "Backward-compat shim is thin (25 lines) and re-exports the SAME APIRouter singleton via `from routes.native import router` — tests assert `router is pkg_router` identity, confirming no accidental wrapping.",
+    "Consider: run_reminders_for_all_companies currently drains `pending` when len==batch_size, but tasks are created inside the cursor loop — under extreme load the drain still blocks new cursor pulls. For true backpressure, push the batch_size drain onto a background task or switch to an asyncio.Queue producer/consumer pattern. Non-blocking at current scale; note for future.",
+    "_make_handler sets _handler.__name__ = f'generate_{format_code.lower()}'. This is correct for debugging but FastAPI uses the route's `name=` kwarg (passed as f'native_{_format_code.lower()}') for reverse lookup — no collision, but worth a one-line comment so future readers don't try to 'unify' them.",
+    "Catalog dict is populated in catalog.py, but latam_planilla.py, pr_form499r.py, country_specific.py etc. also add entries via .update(). Order of sub-module imports in __init__.py is therefore load-bearing — the docstring calls this out ('Order matters only for the catalog dict'), good. Consider adding an assert at the end of __init__.py verifying total_formats == 33 to fail-fast if a future import reorder drops an entry."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_native_reports_iter241.py"
+  ],
+  "success_rate": {"backend": "100% (122/122 — 103 baseline + 19 new iter241)", "frontend": "not tested (backend-only scope)"},
+  "test_credentials": "test_refactor@fortexa.com / test123 (admin, DO company) — from /app/memory/test_credentials.md",
+  "seed_data_creation": "None. All new tests use GET/POST against the public /api; country-guard path returns 400 without DB mutation; run-reminders-all may insert notifications but that is the endpoint's documented behaviour and is shared with the iter240 baseline.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Refactor + scaling landed cleanly. The native_reports module is now a 25-line shim over routes/native/ (8 sub-modules, largest ~483 lines — all under the 700-line guideline). Auto-registered LATAM endpoints use the default-arg closure trick correctly; the regression guard test test_different_endpoints_yield_different_messages will catch any future late-binding slip. run-reminders-all schema has THREE new fields (duration_seconds, batch_size, max_concurrency) on top of the iter240 fields; any consumer doing strict-equality dict comparisons will need to allow extra keys (the iter240 test used `.get()` membership checks so it remained green unchanged). Regression suite now at 122/122 — maintain this baseline going forward by running all four test_native_reports*.py files.",
+  "rca of the issue": "No bugs found. Iter241 refactor is clean and backwards-compatible; scaling additions (Semaphore + cursor batching + asyncio.gather) are in place; DR DGII flow is independently routed via routes/dgii_reports.py and is unaffected."
+}
