@@ -1,0 +1,51 @@
+{
+  "summary": "Iter245 testing complete. Backend: 206/206 regression tests pass (workflow_e2e + payroll_routes_integration + payroll_dr) + 141/141 native_reports + 7/7 NEW calculator-lead tests = 354/354 PASS. Workflow split (approval.py + status.py + 10-line shim) registers correctly via core.py->workflow.py chain; payroll router has exactly 34 routes (32 existing + lead + pdf). Public /api/payroll/calculator/lead and /pdf endpoints confirmed: idempotent upsert (counter 1->2 on 2nd call same email), Pydantic EmailStr 422 on bad email, 400 on country=ZZ, 422 on gross=0, 4KB+ binary PDF with attachment Content-Disposition containing 'FortexaRH_Nomina_DO_'. DR 50000 known-answer (44747.75) verified via API and UI. Frontend /calculator page renders with all required data-testids (calculator-page, calc-country-select, calc-gross-input, calc-submit-btn, calc-result, calc-net-hero, calc-pdf-cta, calc-lead-modal, calc-lead-email-input, calc-lead-submit), default DO/50000 computes RD$44,747.75 net, and PDF lead modal opens correctly. ONE UI ISSUE: Landing 'Calculadora gratis' button (data-testid=landing-calculator-btn) exists with correct href=/calculator but its click is intercepted by the absolute-positioned '+500 Companies trust us' floating decoration card overlapping the hero CTA row.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "LandingPage hero CTA row",
+        "issue": "The '+500 Companies trust us' floating decoration card (absolute positioned, line ~503 of LandingPage.jsx, class 'absolute -bottom-4 sm:-bottom-6 -left-2 sm:-left-6 ...') overlaps and intercepts pointer events on the 4th hero button 'Calculadora gratis' (data-testid=landing-calculator-btn). The button has a correct <Link to='/calculator'> wrapper with href=/calculator, but real-user clicks (without force) cannot reach it — Playwright reports the floating card subtree intercepts pointer events. Direct URL navigation to /calculator works fine; only the landing CTA click is broken. Fix: add `pointer-events-none` to the decorative '+500' card or move the calculator CTA to a row that doesn't sit behind the floating card, or wrap the CTA in a higher-z-index container.",
+        "selector": "[data-testid='landing-calculator-btn']",
+        "priority": "MEDIUM"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "LandingPage hero",
+        "issues": [
+          "Hero CTA row has 4 buttons (Start Free / Watch Demo / Brochure / Calculadora gratis) which on 1920x1080 wrap awkwardly and the last button is partially clipped by the right-side hero illustration container. Consider restyling the row or placing 'Calculadora gratis' in a separate, more prominent banner."
+        ]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_calculator_lead_iter245.py",
+    "/app/test_reports/pytest/iter53_regression.xml",
+    "/app/test_reports/pytest/iter53_calc_lead.xml"
+  ],
+  "action_items": [
+    "Fix landing-calculator-btn click interception: add `pointer-events-none` to the floating '+500 Companies trust us' decorative card in LandingPage.jsx (around line 503) so users can actually click 'Calculadora gratis'. Currently the only way to reach /calculator is direct URL navigation."
+  ],
+  "critical_code_review_comments": [
+    "workflow.py 10-line shim relies on core.py importing it (`core.py` line 19 `from . import workflow`). This indirect chain works but is fragile — if a future refactor removes the workflow import from core.py, all approval+status endpoints silently disappear (the `>=34` integrity assert in __init__.py would catch it on startup, which is good).",
+    "calculator_lead.py duplicates the breakdown-computation logic from calculator.public_payroll_calculator (_compute_breakdown). DRY: extract this into a shared helper in calculator.py and import from both endpoints to avoid future drift.",
+    "calculator_lead.py uses `db.payroll_calculator_leads.update_one` with `upsert=True` keyed only on `email` — case-sensitive. 'User@x.com' and 'user@x.com' would create two leads. Recommend lowercasing email before the upsert filter (Pydantic EmailStr does NOT normalize case)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_calculator_lead_iter245.py (NEW)"
+  ],
+  "success_rate": {
+    "backend": "100% (354/354 incl. 7 new + 206 regression + 141 native_reports)",
+    "frontend": "92% (12/13 frontend criteria; landing CTA click blocked by overlay)"
+  },
+  "seed_data_creation": "Test leads inserted into db.payroll_calculator_leads with TEST_ uuid emails. No cleanup performed (low-impact marketing collection).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Iter245 baseline: 354 backend tests GREEN. Calculator endpoints (lead/pdf) tested in /app/backend/tests/test_calculator_lead_iter245.py. The only outstanding issue is the landing page 'Calculadora gratis' button being click-intercepted by a floating decoration card — direct /calculator URL works perfectly. PDF generation real (reportlab, ~4KB output). Lead storage is real MongoDB upsert keyed on email (recommend lowercasing).",
+  "rca_of_the_issue": "ROOT CAUSE for landing CTA click failure: in LandingPage.jsx around line 503 there's an `<div class='absolute -bottom-4 sm:-bottom-6 -left-2 sm:-left-6 bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-lg ...'>+500 Companies trust us</div>` decoration. This sibling div sits in the same stacking context as the hero CTA buttons row and overlaps the 4th button at viewport widths >= 1024px. Playwright's diagnostic explicitly identifies this subtree as the pointer-event interceptor. Reproduction: visit / on 1920x1080 desktop, attempt to click 'Calculadora gratis' — the click hits the floating card instead of the Link wrapper. Mitigation: add `pointer-events-none` Tailwind utility to the decorative card (it has no interactive content), or raise z-index of the button row, or relocate the CTA outside the overlap zone."
+}

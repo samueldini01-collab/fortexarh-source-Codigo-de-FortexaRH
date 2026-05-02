@@ -167,6 +167,7 @@ const HelpCenterPage = lazy(() => import("@/pages/HelpCenterPage"));
 const TermsPage = lazy(() => import("@/pages/TermsPage"));
 const PrivacyPage = lazy(() => import("@/pages/PrivacyPage"));
 const BrochurePage = lazy(() => import("@/pages/BrochurePage"));
+const CalculatorPage = lazy(() => import("@/pages/CalculatorPage"));
 const SuperAdminPage = lazy(() => import("@/pages/SuperAdminPage"));
 const WorkflowsPage = lazy(() => import("@/pages/WorkflowsPage"));
 const ContractsPage = lazy(() => import("@/pages/ContractsPage"));
@@ -467,6 +468,7 @@ function AppRouter() {
       <Route path="/register" element={<LazyRoute><RegisterPage /></LazyRoute>} />
       <Route path="/checkout" element={<LazyRoute><CheckoutPage /></LazyRoute>} />
       <Route path="/pricing" element={<LazyRoute><PricingPage /></LazyRoute>} />
+      <Route path="/calculator" element={<LazyRoute><CalculatorPage /></LazyRoute>} />
       <Route path="/forgot-password" element={<LazyRoute><ForgotPasswordPage /></LazyRoute>} />
       <Route path="/reset-password" element={<LazyRoute><ResetPasswordPage /></LazyRoute>} />
       

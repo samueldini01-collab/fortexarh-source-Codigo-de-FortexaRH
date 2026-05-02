@@ -23,13 +23,14 @@ from . import templates     # noqa: F401,E402
 from . import exports       # noqa: F401,E402
 from . import misc          # noqa: F401,E402
 from . import calculator    # noqa: F401,E402  iter244 — public endpoint, no auth
+from . import calculator_lead  # noqa: F401,E402  iter245 — lead capture + PDF
 
 # Public re-exports
 from ._helpers import update_period_totals, _compute_isr, format_currency_pdf  # noqa: F401,E402
 
 # Integrity check — fails fast if a future import reorder drops endpoints
 # (testing-agent recommendation iter242, mirrors routes/native/__init__.py).
-assert len(router.routes) >= 32, (
-    f"Payroll router lost endpoints: {len(router.routes)} (expected >=32 after iter244 calculator). "
+assert len(router.routes) >= 34, (
+    f"Payroll router lost endpoints: {len(router.routes)} (expected >=34 after iter245 lead+pdf). "
     "Check sub-module import order in this file."
 )
