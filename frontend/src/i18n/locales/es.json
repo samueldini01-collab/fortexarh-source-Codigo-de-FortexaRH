@@ -654,7 +654,8 @@
       "incomeTax": "Impuesto sobre la renta",
       "employeeDeductions": "Deducciones empleado",
       "employerContributions": "Aportes empleador",
-      "reports": "Reportes nativos soportados"
+      "reports": "Reportes nativos soportados",
+      "compliance": "Cumplimiento regulatorio"
     }
   },
   "auth": {

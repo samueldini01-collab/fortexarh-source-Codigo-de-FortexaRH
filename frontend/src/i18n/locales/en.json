@@ -654,7 +654,8 @@
       "incomeTax": "Income tax",
       "employeeDeductions": "Employee deductions",
       "employerContributions": "Employer contributions",
-      "reports": "Native reports supported"
+      "reports": "Native reports supported",
+      "compliance": "Regulatory compliance"
     }
   },
   "auth": {

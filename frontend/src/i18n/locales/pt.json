@@ -3735,7 +3735,8 @@
       "incomeTax": "Imposto de renda",
       "employeeDeductions": "Deduções do funcionário",
       "employerContributions": "Contribuições patronais",
-      "reports": "Relatórios nativos suportados"
+      "reports": "Relatórios nativos suportados",
+      "compliance": "Conformidade regulatória"
     }
   },
   "liquidation": {

@@ -2,6 +2,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Shield, FileText, Landmark, Wallet, TrendingDown, TrendingUp } from "lucide-react";
 import CountryFlag from "@/components/CountryFlag";
+import ComplianceBadges from "@/components/ComplianceBadges";
+import MiniPayrollCalculator from "@/components/MiniPayrollCalculator";
 
 /**
  * LandingCountryFiscal — renders a section with the fiscal engine detail for the selected country.
@@ -151,6 +153,20 @@ export default function LandingCountryFiscal({ profile, t }) {
             </CardContent>
           </Card>
         )}
+
+        {/* Compliance badges */}
+        <div className="mt-6">
+          <div className="flex items-center gap-2 mb-3">
+            <Shield className="w-5 h-5 text-emerald-600" />
+            <h3 className="font-bold text-slate-800">
+              {t ? t("landing.countryFiscal.compliance") : "Cumplimiento regulatorio"}
+            </h3>
+          </div>
+          <ComplianceBadges countryCode={profile.code} variant="grid" t={t} />
+        </div>
+
+        {/* Live calculator */}
+        <MiniPayrollCalculator profile={profile} />
       </div>
     </section>
   );

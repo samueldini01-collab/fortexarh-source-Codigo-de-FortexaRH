@@ -654,7 +654,8 @@
       "incomeTax": "Impôt sur le revenu",
       "employeeDeductions": "Déductions salarié",
       "employerContributions": "Cotisations patronales",
-      "reports": "Rapports natifs supportés"
+      "reports": "Rapports natifs supportés",
+      "compliance": "Conformité réglementaire"
     }
   },
   "auth": {

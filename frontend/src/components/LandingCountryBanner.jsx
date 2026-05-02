@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useParams } from "react-router-dom";
 import axios from "axios";
 import { Globe, ChevronDown, MapPin, X, Check } from "lucide-react";
 import CountryFlag from "@/components/CountryFlag";
+import { slugToCountry } from "@/components/LandingSEO";
 
 const API = (process.env.REACT_APP_BACKEND_URL || "").replace(/\/$/, "") + "/api";
 const STORAGE_KEY = "fortexarh-landing-country";
@@ -22,12 +23,16 @@ const REGION_LABEL = {
  */
 export function useLandingCountry() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const urlCountry = (searchParams.get("country") || "").toUpperCase();
-  const initial = urlCountry || (typeof window !== "undefined" && localStorage.getItem(STORAGE_KEY)) || DEFAULT_COUNTRY;
+  const { slug } = useParams();
+  const slugCountry = slug ? slugToCountry(slug) : null;
+  const urlCountry = slugCountry || (searchParams.get("country") || "").toUpperCase();
+  const stored = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
+  const initial = urlCountry || stored || DEFAULT_COUNTRY;
 
   const [countryCode, setCountryCodeState] = useState(initial);
   const [profile, setProfile] = useState(null);
   const [regions, setRegions] = useState({});
+  const [ipDetected, setIpDetected] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -36,6 +41,35 @@ export function useLandingCountry() {
     }).catch(() => {});
     return () => { cancelled = true; };
   }, []);
+
+  // Sync when URL slug changes (e.g. /pais/mexico → /pais/colombia)
+  useEffect(() => {
+    if (slugCountry && slugCountry !== countryCode) {
+      setCountryCodeState(slugCountry);
+      try { localStorage.setItem(STORAGE_KEY, slugCountry); } catch { /* ignore */ }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slugCountry]);
+
+  // IP-based geolocation — only if no URL param, no slug and no localStorage preference
+  useEffect(() => {
+    if (urlCountry || stored) return; // User preference takes priority
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await axios.get("https://ipapi.co/json/", { timeout: 3000 });
+        const code = (data?.country_code || "").toUpperCase();
+        if (!cancelled && code) {
+          setIpDetected(code);
+          setCountryCodeState(code);
+          try { localStorage.setItem(STORAGE_KEY, code); } catch {}
+        }
+      } catch {
+        // Silent fallback — default DO remains
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [urlCountry, stored]);
 
   useEffect(() => {
     if (!countryCode) return;
@@ -62,7 +96,7 @@ export function useLandingCountry() {
 
   const isDefault = countryCode === DEFAULT_COUNTRY;
 
-  return { countryCode, profile, regions, setCountry, isDefault };
+  return { countryCode, profile, regions, setCountry, isDefault, ipDetected };
 }
 
 /**

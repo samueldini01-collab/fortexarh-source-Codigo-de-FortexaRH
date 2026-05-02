@@ -191,6 +191,32 @@
     - CTA nuevo en landing hero ("Calculadora gratis" con icono Calculator).
     - Bug fix: `pointer-events-none` en 2 decorative floating cards del landing que interceptaban clicks en la CTA row (detectado por testing agent).
   - Tested: iteration_53.json — **354/354 backend tests PASSED** (7 nuevos calculator-lead + 206 regression + 141 native_reports). Frontend 12/13 → 13/13 después del fix de pointer-events.
+- **Sprint TOP 5 Landing Multi-País (Feb 2, 2026)** — 5 enhancements DONE:
+  - 💰 **#1 Pricing en moneda local**: nuevo componente `LocalPrice.jsx` convierte USD → moneda del país usando nuevo endpoint público `/api/exchange-rates/latest` (cache 1h via `_get_fx_rates`). Ejemplos verificados:
+    - DO: `$5 → RD$297`, `$10 → RD$595`, `$20 → RD$1,190`
+    - MX: `$5 → $87`, `$10 → $175`, `$20 → $350`
+    - BE/ES/FR: convierte a €
+  - 🔗 **#2 URLs amigables + SEO**: nuevo `LandingSEO.jsx` con react-helmet-async (HelmetProvider en index.js):
+    - Rutas nuevas: `/pais/:slug` y `/country/:slug` (ej. `/pais/mexico`, `/pais/colombia`, `/pais/belgica`)
+    - Mapeo de 29 slugs en `COUNTRY_SLUGS` (kebab-case sin acentos)
+    - Title, description dinámicos por país × 4 idiomas (ej "FortexaRH · HR & Payroll Software for México")
+    - Hreflang tags para cada combo país × idioma + x-default
+    - OpenGraph + Twitter Card tags
+    - JSON-LD Schema.org `SoftwareApplication` con `areaServed` por país
+    - Canonical URL: `{origin}/pais/{slug}`
+  - 🛡️ **#3 Badges de cumplimiento por país**: nuevo `ComplianceBadges.jsx` con mapa `COMPLIANCE_BY_COUNTRY` para los 29 países. Ejemplos:
+    - DO: Ley 87-01 · Código Tributario 11-92 · Código de Trabajo 16-92
+    - MX: CFDI 4.0 (SAT) · Ley IMSS/INFONAVIT · ISR LISR 2026
+    - BR: eSocial · INSS/IRRF/FGTS · LGPD
+    - BE: ONSS DmfA · SPF Finances 281.10 · RGPD
+    - US: IRS Form 941/W-2 · FICA · FLSA
+    - Integrado en LandingCountryFiscal como sección grid
+  - 🌍 **#4 Auto-detect IP geolocation**: `useLandingCountry` hook usa `ipapi.co/json/` (gratis, sin key) en primer visit si no hay URL param ni localStorage. Fallback silencioso a DO si falla.
+  - 🧮 **#5 Calculadora en vivo inline**: nuevo `MiniPayrollCalculator.jsx` integrado en LandingCountryFiscal. User ingresa salario bruto → ve al instante 3 cards:
+    - Deducciones empleado (rojo, con breakdown de cada %)
+    - Salario neto estimado (verde, formato moneda local)
+    - Costo patronal adicional (azul, con breakdown)
+    - Link "calculadora oficial →" lleva a `/calculator?country=XX` (preselección)
 - **Landing multi-país adaptativo + columna Creado por (Feb 2, 2026)** — Enhancement + polish DONE:
   - 🌎 **Landing adaptativa por país** (29 países · 5 regiones):
     - Nuevo componente `LandingCountryBanner.jsx` con hook `useLandingCountry()`:

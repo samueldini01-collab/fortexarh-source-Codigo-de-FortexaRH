@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import LanguageSelector from "@/components/LanguageSelector";
 import { LandingCountryBanner, useLandingCountry } from "@/components/LandingCountryBanner";
 import LandingCountryFiscal from "@/components/LandingCountryFiscal";
+import LandingSEO from "@/components/LandingSEO";
+import LocalPrice from "@/components/LocalPrice";
 import {
   Accordion,
   AccordionContent,
@@ -67,7 +69,7 @@ import {
 // Feature, Testimonial, and FAQ data will be generated using translations
 
 export default function LandingPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const landingCountry = useLandingCountry();
   const [openDropdown, setOpenDropdown] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -197,7 +199,11 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
+      <LandingSEO
+        profile={landingCountry.profile}
+        countryCode={landingCountry.countryCode}
+        lang={(i18n.language || "es").split("-")[0]}
+      />      {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-slate-900 border-b border-slate-700" style={{ backgroundColor: '#0f172a' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
@@ -759,9 +765,13 @@ export default function LandingPage() {
                 <h3 className="text-xl sm:text-2xl font-bold text-slate-900 heading">FortexaRH {t('landing.pricing.basic')}</h3>
                 <p className="text-slate-500 mt-1 text-sm sm:text-base">{t('landing.pricing.basicDesc')}</p>
                 <div className="mt-3 sm:mt-4">
-                  <span className="text-3xl sm:text-4xl font-bold text-slate-900">$5</span>
-                  <span className="text-slate-500">/{t('landing.pricing.monthly')}</span>
-                  <p className="text-xs sm:text-sm text-slate-500">+ $1.50 {t('landing.pricing.perEmployee')}</p>
+                  <div className="text-3xl sm:text-4xl font-bold text-slate-900">
+                    <LocalPrice usdAmount={5} profile={landingCountry.profile} showOriginal={false} />
+                  </div>
+                  <span className="text-slate-500 text-sm">/{t('landing.pricing.monthly')}</span>
+                  <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                    + <LocalPrice usdAmount={1.5} profile={landingCountry.profile} showOriginal={false} /> {t('landing.pricing.perEmployee')}
+                  </p>
                 </div>
               </div>
               
@@ -800,9 +810,13 @@ export default function LandingPage() {
                 <h3 className="text-xl sm:text-2xl font-bold text-slate-900 heading">{t('landing.fortexarhPro')}</h3>
                 <p className="text-slate-600 mt-1 text-sm sm:text-base">{t('landing.pricing.proDesc')}</p>
                 <div className="mt-3 sm:mt-4">
-                  <span className="text-3xl sm:text-4xl font-bold text-slate-900">$10</span>
-                  <span className="text-slate-600">/{t('landing.pricing.monthly')}</span>
-                  <p className="text-xs sm:text-sm text-slate-600">+ $1.50 {t('landing.pricing.perEmployee')}</p>
+                  <div className="text-3xl sm:text-4xl font-bold text-slate-900">
+                    <LocalPrice usdAmount={10} profile={landingCountry.profile} showOriginal={false} />
+                  </div>
+                  <span className="text-slate-600 text-sm">/{t('landing.pricing.monthly')}</span>
+                  <p className="text-xs sm:text-sm text-slate-600 mt-1">
+                    + <LocalPrice usdAmount={1.5} profile={landingCountry.profile} showOriginal={false} /> {t('landing.pricing.perEmployee')}
+                  </p>
                 </div>
               </div>
               
@@ -837,9 +851,13 @@ export default function LandingPage() {
                 <h3 className="text-xl sm:text-2xl font-bold text-slate-900 heading">{t('landing.fortexarhEnterprise')}</h3>
                 <p className="text-slate-600 mt-1 text-sm sm:text-base">{t('landing.pricing.enterpriseDesc')}</p>
                 <div className="mt-3 sm:mt-4">
-                  <span className="text-3xl sm:text-4xl font-bold text-slate-900">$20</span>
-                  <span className="text-slate-600">/{t('landing.pricing.monthly')}</span>
-                  <p className="text-xs sm:text-sm text-slate-600">+ $1.50 {t('landing.pricing.perEmployee')}</p>
+                  <div className="text-3xl sm:text-4xl font-bold text-slate-900">
+                    <LocalPrice usdAmount={20} profile={landingCountry.profile} showOriginal={false} />
+                  </div>
+                  <span className="text-slate-600 text-sm">/{t('landing.pricing.monthly')}</span>
+                  <p className="text-xs sm:text-sm text-slate-600 mt-1">
+                    + <LocalPrice usdAmount={1.5} profile={landingCountry.profile} showOriginal={false} /> {t('landing.pricing.perEmployee')}
+                  </p>
                 </div>
               </div>
               

@@ -69,6 +69,7 @@ from routes.admin_permissions import router as admin_permissions_router
 from routes.country_config import router as country_config_router, migrate_existing_companies
 from routes.multi_country_reports import router as multi_country_reports_router
 from routes.brochure_builder import router as brochure_builder_router
+from routes.exchange_rates import router as exchange_rates_router
 from routes.native_reports import router as native_reports_router, run_reminders_for_all_companies
 
 # ===================== APP SETUP =====================
@@ -183,6 +184,7 @@ for r in [
     country_config_router,
     multi_country_reports_router,
     brochure_builder_router,
+    exchange_rates_router,
     native_reports_router,
 ]:
     api_router.include_router(r)

@@ -460,6 +460,8 @@ function AppRouter() {
     <Routes>
       {/* Critical routes - Not lazy loaded */}
       <Route path="/" element={<LandingPage />} />
+      <Route path="/pais/:slug" element={<LandingPage />} />
+      <Route path="/country/:slug" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       
