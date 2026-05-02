@@ -3,6 +3,8 @@ import { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import LanguageSelector from "@/components/LanguageSelector";
+import { LandingCountryBanner, useLandingCountry } from "@/components/LandingCountryBanner";
+import LandingCountryFiscal from "@/components/LandingCountryFiscal";
 import {
   Accordion,
   AccordionContent,
@@ -66,6 +68,7 @@ import {
 
 export default function LandingPage() {
   const { t } = useTranslation();
+  const landingCountry = useLandingCountry();
   const [openDropdown, setOpenDropdown] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
@@ -430,8 +433,13 @@ export default function LandingPage() {
         )}
       </header>
 
+      {/* Landing Country Banner — global selector */}
+      <div className="pt-16 sm:pt-20">
+        <LandingCountryBanner {...landingCountry} t={t} />
+      </div>
+
       {/* Hero Section - Enhanced with Video */}
-      <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-white to-emerald-50">
+      <section className="pt-8 sm:pt-10 md:pt-12 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-white to-emerald-50">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="animate-fade-in text-center lg:text-left">
@@ -445,6 +453,11 @@ export default function LandingPage() {
               </h1>
               <p className="text-base sm:text-lg text-slate-600 mb-6 sm:mb-8 max-w-xl mx-auto lg:mx-0">
                 {t('landing.hero.subtitle')}
+                {!landingCountry.isDefault && landingCountry.profile && (
+                  <span className="block mt-2 text-sm text-emerald-700 font-semibold">
+                    ✓ {t('landing.countryFiscal.title', { country: landingCountry.profile.name })} · {landingCountry.profile.currency_symbol} {landingCountry.profile.currency}
+                  </span>
+                )}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
                 <Link to="/register" className="w-full sm:w-auto">
@@ -584,6 +597,9 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Country Fiscal Section — adapts to selected country */}
+      <LandingCountryFiscal profile={landingCountry.profile} t={t} />
 
       {/* NEW: Geolocation Feature Highlight */}
       <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 text-white overflow-hidden relative">

@@ -191,6 +191,30 @@
     - CTA nuevo en landing hero ("Calculadora gratis" con icono Calculator).
     - Bug fix: `pointer-events-none` en 2 decorative floating cards del landing que interceptaban clicks en la CTA row (detectado por testing agent).
   - Tested: iteration_53.json — **354/354 backend tests PASSED** (7 nuevos calculator-lead + 206 regression + 141 native_reports). Frontend 12/13 → 13/13 después del fix de pointer-events.
+- **Landing multi-país adaptativo + columna Creado por (Feb 2, 2026)** — Enhancement + polish DONE:
+  - 🌎 **Landing adaptativa por país** (29 países · 5 regiones):
+    - Nuevo componente `LandingCountryBanner.jsx` con hook `useLandingCountry()`:
+      - Detección: URL `?country=XX` → `localStorage.fortexarh-landing-country` → default DO
+      - Persistencia automática en localStorage + URL param (solo cuando ≠ DO)
+    - **Banner grande al inicio del landing** (bajo el header): gradient emerald→teal→cyan con bandera actual + nombre + moneda + botón "Cambiar país"
+    - **Modal picker**: 29 países agrupados por 5 regiones (AMÉRICA DEL NORTE / AMÉRICA CENTRAL / CARIBE / AMÉRICA DEL SUR / EUROPA), cada uno con bandera SVG + moneda, selección con ring verde + check, botón "Restablecer a República Dominicana"
+    - Nuevo componente `LandingCountryFiscal.jsx` — **sección "Motor Fiscal Nativo"** entre Benefits y Geolocation:
+      - Hero card con bandera grande + "Motor fiscal para {país}"
+      - 4 summary cards: Seguridad Social, Agencia Tributaria, Moneda, Impuesto Renta
+      - 2 cards grandes: Deducciones empleado + Aportes empleador con % exactos
+      - Badges de reportes nativos (DGII_IR3, 273S, DmfA, etc.)
+    - **Hero mejorado**: muestra sutil línea "✓ Motor fiscal para {país} · {currency}" cuando ≠ DO
+  - 16 i18n keys nuevas × 4 idiomas = 64 traducciones (landing.countryBanner.* + landing.countryFiscal.*)
+  - TRANSLATION_VERSION 3.6.0 → 3.7.0
+  - Verificado visualmente: DO (default), BE (ONSS 13.07%/25.07% + 273S/281.10/DmfA), MX (cambio desde URL), picker muestra 29 países en 5 regiones.
+  - 🎯 **Columna "Creado por" + filtro Super Admin** (Brochure Builder):
+    - Backend: nuevo endpoint `GET /api/brochure-builder/creators` devuelve lista única (email + role + count + downloads).
+    - Backend: `GET /links` ahora acepta query param opcional `?created_by_email=XX` y `?created_by_role=XX` para filtrar.
+    - `LinkOut` expone `created_by_role` (super_admin/partner/admin) además del email.
+    - Frontend: `BrochureBuilderPanel` prop `showCreatorFilter` — cuando true (solo Super Admin), renderiza:
+      - Dropdown "Filtrar por creador" en header de tabla (Todos / email1 · role · count / email2 · role · count / ...)
+      - Nueva columna "Creado por" con badge color-coded por rol (indigo=super_admin, emerald=partner, default=admin)
+    - Verificado E2E: 3 creators listados (sdqinmobiliaria/admin, fortexa2026rd/super_admin, test_refactor/admin), filtro fortexa2026rd devuelve 1 link (MX).
 - **Brochure Builder relocalizado: solo Super Admin + Partners (Feb 2, 2026)** — security & UX DONE:
   - ❌ **Removido del sidebar/navegación normal**: `/brochure-builder` ya NO está disponible para admins regulares.
   - ✅ **Ruta standalone `/brochure-builder` eliminada** de App.js — ya no accesible directamente.

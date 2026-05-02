@@ -3716,6 +3716,26 @@
       "lessQueries": "Menos consultas RH",
       "subtitle": "Descubra como nossa plataforma pode transformar a gestão da sua equipe em minutos",
       "title": "Veja FortexaRH em Ação"
+    },
+    "countryBanner": {
+      "label": "Visualizando informações de",
+      "change": "Alterar país",
+      "title": "Selecione seu país",
+      "subtitle": "A landing se adaptará com informações fiscais nativas do seu país.",
+      "footer": "Motor fiscal dinâmico · alíquotas, imposto e relatórios se adaptam ao país selecionado",
+      "reset": "Restaurar para República Dominicana"
+    },
+    "countryFiscal": {
+      "badge": "MOTOR FISCAL NATIVO",
+      "title": "Motor fiscal para {{country}}",
+      "subtitle": "Cálculos com alíquotas locais oficiais, conformidade automatizada e relatórios nativos prontos para apresentar.",
+      "system": "Seguridade Social",
+      "agency": "Agência Fiscal",
+      "currency": "Moeda",
+      "incomeTax": "Imposto de renda",
+      "employeeDeductions": "Deduções do funcionário",
+      "employerContributions": "Contribuições patronais",
+      "reports": "Relatórios nativos suportados"
     }
   },
   "liquidation": {

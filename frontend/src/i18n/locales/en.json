@@ -635,6 +635,26 @@
       "commission": "Commission per referred company",
       "multiClient": "Multi-Client",
       "dashboard": "Client management dashboard"
+    },
+    "countryBanner": {
+      "label": "Viewing info for",
+      "change": "Change country",
+      "title": "Select your country",
+      "subtitle": "The landing will adapt with native fiscal info for your country.",
+      "footer": "Dynamic fiscal engine · rates, income tax and reports adapt to the selected country",
+      "reset": "Reset to Dominican Republic"
+    },
+    "countryFiscal": {
+      "badge": "NATIVE FISCAL ENGINE",
+      "title": "Fiscal engine for {{country}}",
+      "subtitle": "Calculations with official local rates, automated compliance and native-ready reports.",
+      "system": "Social Security",
+      "agency": "Tax Agency",
+      "currency": "Currency",
+      "incomeTax": "Income tax",
+      "employeeDeductions": "Employee deductions",
+      "employerContributions": "Employer contributions",
+      "reports": "Native reports supported"
     }
   },
   "auth": {

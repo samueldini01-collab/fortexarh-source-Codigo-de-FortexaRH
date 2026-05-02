@@ -635,6 +635,26 @@
       "commission": "Commission par entreprise référée",
       "dashboard": "Tableau de bord de gestion des clients",
       "multiClient": "Multi-clients"
+    },
+    "countryBanner": {
+      "label": "Informations pour",
+      "change": "Changer de pays",
+      "title": "Sélectionnez votre pays",
+      "subtitle": "La landing s'adaptera avec les informations fiscales natives de votre pays.",
+      "footer": "Moteur fiscal dynamique · taux, impôts et rapports s'adaptent au pays sélectionné",
+      "reset": "Réinitialiser à la République dominicaine"
+    },
+    "countryFiscal": {
+      "badge": "MOTEUR FISCAL NATIF",
+      "title": "Moteur fiscal pour {{country}}",
+      "subtitle": "Calculs avec taux locaux officiels, conformité automatisée et rapports natifs prêts à présenter.",
+      "system": "Sécurité Sociale",
+      "agency": "Agence Fiscale",
+      "currency": "Devise",
+      "incomeTax": "Impôt sur le revenu",
+      "employeeDeductions": "Déductions salarié",
+      "employerContributions": "Cotisations patronales",
+      "reports": "Rapports natifs supportés"
     }
   },
   "auth": {

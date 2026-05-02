@@ -635,6 +635,26 @@
       "commission": "Comisión por cada empresa referida",
       "multiClient": "Multi-Cliente",
       "dashboard": "Dashboard de gestión de clientes"
+    },
+    "countryBanner": {
+      "label": "Viendo información de",
+      "change": "Cambiar país",
+      "title": "Selecciona tu país",
+      "subtitle": "La landing se adaptará con información fiscal nativa de tu país.",
+      "footer": "Motor fiscal dinámico · tarifas, ISR y reportes se adaptan al país seleccionado",
+      "reset": "Restablecer a República Dominicana"
+    },
+    "countryFiscal": {
+      "badge": "MOTOR FISCAL NATIVO",
+      "title": "Motor fiscal para {{country}}",
+      "subtitle": "Cálculos con tarifas locales oficiales, cumplimiento automatizado y reportes nativos listos para presentar.",
+      "system": "Seguridad Social",
+      "agency": "Agencia Tributaria",
+      "currency": "Moneda",
+      "incomeTax": "Impuesto sobre la renta",
+      "employeeDeductions": "Deducciones empleado",
+      "employerContributions": "Aportes empleador",
+      "reports": "Reportes nativos soportados"
     }
   },
   "auth": {
