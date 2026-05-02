@@ -154,11 +154,11 @@ def _close_pct(actual_amount, gross, expected_rate):
 # --- Country catalog endpoints ---
 
 class TestCountryCatalog:
-    def test_get_countries_returns_28_in_5_regions(self):
+    def test_get_countries_returns_29_in_5_regions(self):
         r = requests.get(f"{API}/country-config/countries", timeout=30)
         assert r.status_code == 200, r.text
         data = r.json()
-        assert data.get("total") == 28, f"Expected 28 countries, got {data.get('total')}"
+        assert data.get("total") == 29, f"Expected 29 countries, got {data.get('total')}"
         regions = data.get("regions", {})
         expected_regions = {
             "north_america", "central_america", "caribbean",
@@ -167,11 +167,11 @@ class TestCountryCatalog:
         assert set(regions.keys()) == expected_regions, (
             f"Regions mismatch. Got: {set(regions.keys())}"
         )
-        # Total countries across regions == 28
+        # Total countries across regions == 29
         total = sum(len(r["countries"]) for r in regions.values())
-        assert total == 28, f"Sum of region countries = {total}, expected 28"
+        assert total == 29, f"Sum of region countries = {total}, expected 29"
 
-    @pytest.mark.parametrize("code", ["DO", "CO", "MX", "US", "ES", "GB", "AR", "CL", "BR"])
+    @pytest.mark.parametrize("code", ["DO", "CO", "MX", "US", "ES", "GB", "AR", "CL", "BR", "BE"])
     def test_get_country_profile_by_code(self, code):
         r = requests.get(f"{API}/country-config/countries/{code}", timeout=30)
         assert r.status_code == 200, f"{code}: {r.status_code} {r.text}"

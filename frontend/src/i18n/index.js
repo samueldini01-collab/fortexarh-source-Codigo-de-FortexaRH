@@ -4,7 +4,7 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import HttpBackend from 'i18next-http-backend';
 
 // Supported languages
-const supportedLanguages = ['es', 'en', 'fr'];
+const supportedLanguages = ['es', 'en', 'fr', 'pt'];
 
 // Custom language detector that maps browser languages to supported ones
 const mapBrowserLanguage = (browserLang) => {
@@ -26,8 +26,8 @@ const mapBrowserLanguage = (browserLang) => {
     'en': 'en', 'en-us': 'en', 'en-gb': 'en', 'en-au': 'en', 'en-ca': 'en',
     // French variants
     'fr': 'fr', 'fr-ca': 'fr', 'fr-be': 'fr', 'fr-ch': 'fr',
-    // Portuguese -> Spanish (similar)
-    'pt': 'es', 'pt-br': 'es',
+    // Portuguese variants (Brazil + Portugal -> pt-BR)
+    'pt': 'pt', 'pt-br': 'pt', 'pt-pt': 'pt',
     // Italian -> Spanish (similar)
     'it': 'es',
     // German -> English
@@ -52,7 +52,7 @@ const getInitialLanguage = () => {
 const initialLang = getInitialLanguage();
 
 // Cache version - increment this to force translation reload
-const TRANSLATION_VERSION = '2.9.0';
+const TRANSLATION_VERSION = '3.0.0';
 
 i18n
   .use(HttpBackend)
@@ -115,7 +115,8 @@ export default i18n;
 export const languages = [
   { code: 'es', name: 'Español', flag: '🇪🇸', nativeName: 'Español' },
   { code: 'en', name: 'English', flag: '🇺🇸', nativeName: 'English' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷', nativeName: 'Français' }
+  { code: 'fr', name: 'Français', flag: '🇫🇷', nativeName: 'Français' },
+  { code: 'pt', name: 'Português', flag: '🇧🇷', nativeName: 'Português (BR)' }
 ];
 
 // Helper to get current language

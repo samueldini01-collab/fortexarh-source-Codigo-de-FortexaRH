@@ -191,6 +191,29 @@
     - CTA nuevo en landing hero ("Calculadora gratis" con icono Calculator).
     - Bug fix: `pointer-events-none` en 2 decorative floating cards del landing que interceptaban clicks en la CTA row (detectado por testing agent).
   - Tested: iteration_53.json — **354/354 backend tests PASSED** (7 nuevos calculator-lead + 206 regression + 141 native_reports). Frontend 12/13 → 13/13 después del fix de pointer-events.
+- **Portugués (pt-BR) + Bélgica (BE) + PR→Caribe (Feb 2, 2026)** — P1 DONE:
+  - 🇧🇷 **Nuevo idioma PT**: `pt.json` generado con Claude Sonnet 4.5 vía batch (5.362 claves traducidas desde es.json + 3 arrays de `settingsPage.plans.*.features` completados manualmente). Total: **5.365 claves** (paridad completa con ES).
+  - Script reutilizable: `/app/backend/scripts/translate_pt.py` (~135 batches de 40 keys). Output duplicado a `src/i18n/locales/pt.json` + `public/locales/pt.json`.
+  - Frontend `/app/frontend/src/i18n/index.js` actualizado:
+    - `supportedLanguages = ['es', 'en', 'fr', 'pt']`
+    - `languageMap`: `pt-br` y `pt-pt` → `pt`
+    - `languages[]` expone `{ code: 'pt', nativeName: 'Português (BR)' }`
+    - `TRANSLATION_VERSION` bump 2.9.0 → 3.0.0 para caché bust
+  - `LanguageSelector.jsx` automáticamente muestra PT (itera `languages` array).
+  - Verificación visual: landing renderiza `"Folha de Pagamento Automatizada"`, `"Gerencie seu capital humano com a plataforma mais completa"`, `"Começar Grátis"`, `"Entrar"`, menú `"Para empresas / Contadores / Preços / Contato"`.
+  - 🇧🇪 **Nuevo país Bélgica (BE)** añadido a `COUNTRY_PROFILES`:
+    - Moneda EUR €, locale fr-BE, región Europa
+    - **ONSS** empleado 13.07%, ONSS patronal 25.07% + Pécule de vacances 18.38% prov.
+    - **Précompte Professionnel** progresivo (25%/40%/45%/50%)
+    - Documento NISS, contratos CDI/CDD/intérim/étudiant, reports 273S/281.10/DmfA, 13e mois.
+  - 🇵🇷 **Puerto Rico** reubicado de `north_america` → `caribbean` (corrección geográfica).
+  - **Total países: 29 en 5 regiones**:
+    - América del Norte (3): CA, US, MX
+    - América Central (6): CR, SV, GT, HN, NI, PA
+    - Caribe (4): CU, HT, PR, DO
+    - América del Sur (12): AR, BO, BR, CL, CO, EC, GY, PY, PE, SR, UY, VE
+    - Europa (4): BE, ES, FR, GB
+  - Tests: 58/58 `test_payroll_dr.py` + 23/23 `test_multi_country_payroll.py` passing (actualizado de 28→29 países + BE añadido al parametrize).
 - **Traducciones francesas completas (Feb 2, 2026)** — P1 DONE:
   - Script `/app/backend/scripts/translate_fr.py` que usa Emergent LLM Key (Claude Sonnet 4.5) para traducir batch (40 claves/req) desde EN → FR.
   - Resultado: **432 claves** traducidas (346 faltantes en código + 86 inconsistentes). `fr.json` pasó de 4.931 → 5.365 claves.

@@ -463,7 +463,7 @@ COUNTRY_PROFILES = {
         "permission_types": _base_permissions()
     },
     "PR": {
-        "code": "PR", "region": "north_america",
+        "code": "PR", "region": "caribbean",
         "name": "Puerto Rico", "flag": "🇵🇷",
         "currency": "USD", "currency_symbol": "$", "currency_name": "US Dollar",
         "locale": "es-PR",
@@ -909,6 +909,32 @@ COUNTRY_PROFILES = {
         ]},
         "severance": {"cesantia_formula": "GENERIC"}, "reports": ["DSN"],
         "contract_types": ["CDI", "CDD", "interim"],
+        "permission_types": _base_permissions()
+    },
+    "BE": {
+        "code": "BE", "region": "europe", "name": "Bélgica", "flag": "🇧🇪",
+        "currency": "EUR", "currency_symbol": "€", "currency_name": "Euro", "locale": "fr-BE",
+        "document_types": ["NISS", "Carte d'identité", "Passeport", "Titre de Séjour"],
+        "working_days_month": 22, "weekly_hours": 38, "vacation_days_per_year": 20, "probation_days": 0,
+        "christmas_bonus": True, "christmas_bonus_name": "13e Mois / Prime de Fin d'Année",
+        "social_security": {
+            "system_name": "ONSS / RSZ (Sécurité Sociale)",
+            "employee_deductions": [
+                {"code": "ONSS", "name": "ONSS (Sécurité Sociale)", "rate": 0.1307, "cap_monthly": None}
+            ],
+            "employer_contributions": [
+                {"code": "ONSS_EMP", "name": "ONSS Patronale", "rate": 0.2507, "cap_monthly": None},
+                {"code": "VAC_EMP", "name": "Pécule de Vacances (prov.)", "rate": 0.1838, "cap_monthly": None}
+            ]
+        },
+        "income_tax": {"name": "Précompte Professionnel", "agency": "SPF Finances", "exempt_monthly": 0, "brackets": [
+            {"min": 0, "max": 15820, "rate": 0.25, "fixed": 0},
+            {"min": 15820, "max": 27920, "rate": 0.40, "fixed": 3955},
+            {"min": 27920, "max": 48320, "rate": 0.45, "fixed": 8795},
+            {"min": 48320, "max": None, "rate": 0.50, "fixed": 17975}
+        ]},
+        "severance": {"cesantia_formula": "GENERIC"}, "reports": ["273S", "281.10", "DmfA"],
+        "contract_types": ["CDI", "CDD", "intérim", "étudiant"],
         "permission_types": _base_permissions()
     },
 }
