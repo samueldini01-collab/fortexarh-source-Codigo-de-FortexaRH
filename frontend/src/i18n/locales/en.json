@@ -4877,10 +4877,13 @@
         "allStatuses": "All statuses",
         "withinZone": "Within zone",
         "outsideZone": "Outside zone",
-        "pendingReview": "Pending review"
+        "pendingReview": "Pending review",
+        "activeFilters": "Active filters:"
       },
       "employeesOnMap": "employees on map",
-      "noData": "No live map data available"
+      "noData": "No live map data available",
+      "employeeToast": "{{name}} - {{markType}}",
+      "locationToast": "{{name}} - Radius: {{radius}}m"
     },
     "fraud": {
       "title": "Detected Fraud Alerts",

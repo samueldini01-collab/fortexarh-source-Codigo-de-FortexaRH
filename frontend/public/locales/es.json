@@ -127,7 +127,8 @@
     "other": "Otro",
     "readOnlyAccess": "Solo lectura",
     "recruitment": "Reclutamiento",
-    "saving": "Guardando..."
+    "saving": "Guardando...",
+    "retry": "Reintentar"
   },
   "colors": {
     "red": "Rojo",
@@ -1151,7 +1152,8 @@
       "totalDeductions": "TOTAL DEDUCCIONES",
       "save": "Guardar Cambios"
     },
-    "downloadPayslip": "Descargar Recibo"
+    "downloadPayslip": "Descargar Recibo",
+    "fiscalEngine": "Motor Fiscal"
   },
   "globalSearch": {
     "placeholder": "Buscar o ejecutar acciones con IA...",
@@ -2519,7 +2521,8 @@
       "email": "Correo Electrónico",
       "website": "Sitio Web",
       "country": "País",
-      "currency": "Moneda"
+      "currency": "Moneda",
+      "countriesAvailable": "países disponibles"
     },
     "logo": {
       "title": "Logo de la Empresa",
@@ -4528,7 +4531,8 @@
       "saved": "Configuración bancaria guardada",
       "errorSaving": "Error al guardar configuración bancaria",
       "allConfigured": "Todos los bancos disponibles están configurados. Ya puede generar archivos ACH para cualquier banco."
-    }
+    },
+    "qbNotConfigured": "QuickBooks no configurado"
   },
   "errors": {
     "generic": "Ha ocurrido un error",

@@ -191,6 +191,15 @@
     - CTA nuevo en landing hero ("Calculadora gratis" con icono Calculator).
     - Bug fix: `pointer-events-none` en 2 decorative floating cards del landing que interceptaban clicks en la CTA row (detectado por testing agent).
   - Tested: iteration_53.json — **354/354 backend tests PASSED** (7 nuevos calculator-lead + 206 regression + 141 native_reports). Frontend 12/13 → 13/13 después del fix de pointer-events.
+- **Traducciones francesas completas (Feb 2, 2026)** — P1 DONE:
+  - Script `/app/backend/scripts/translate_fr.py` que usa Emergent LLM Key (Claude Sonnet 4.5) para traducir batch (40 claves/req) desde EN → FR.
+  - Resultado: **432 claves** traducidas (346 faltantes en código + 86 inconsistentes). `fr.json` pasó de 4.931 → 5.365 claves.
+  - Auditoría final: **0 claves inconsistentes** entre EN/ES/FR. Los 3 archivos tienen exactamente los mismos 5.365 keys.
+  - Sync automático: copié desde `/app/frontend/src/i18n/locales/` → `/app/frontend/public/locales/` (que es el path que sirve i18next HttpBackend en runtime).
+  - Bump `TRANSLATION_VERSION` 2.8.0 → 2.9.0 en `/app/frontend/src/i18n/index.js` para invalidar caché del navegador.
+  - También añadí 3 claves `geoLocationsPage.liveMap.*` faltantes en EN para mantener consistencia perfecta.
+  - Verificación visual: landing page renderiza `"Paie Automatisée"`, `"Gérez votre capital humain avec la plateforme la plus complète"`, `"Commencer Gratuitement"`, `"Connexion"`, `"Mot de passe oublié?"` correctamente.
+  - Backend safety net: 58/58 `test_payroll_dr.py` passing (no regresiones en math payroll).
 - **Global Compliance Center page (May 1, 2026)** — Roadmap visual DONE:
   - New page `/global-compliance` with stats cards (28 países, 33 formatos, 7 implementados, 28 cobertura universal)
   - Country cards grouped by region (Caribe, Centro, Norte, Sur, Europa) with status badges (Cumplimiento Nativo green / Parcial amber / Solo Universal slate)

@@ -116,7 +116,19 @@
     "selectOption": "Sélectionner une option",
     "lastUpdated": "Dernière mise à jour",
     "days": "jours",
-    "retry": "Réessayer"
+    "retry": "Réessayer",
+    "accessDenied": "Accès refusé",
+    "copied": "Copié",
+    "dashboard": "Tableau de bord",
+    "editAccess": "Accès modification",
+    "fillRequired": "Remplir les champs requis",
+    "fillRequiredFields": "Remplir tous les champs requis",
+    "fullAccess": "Accès complet",
+    "invalidEmail": "Courriel invalide",
+    "other": "Autre",
+    "readOnlyAccess": "Lecture seule",
+    "recruitment": "Recrutement",
+    "saving": "Enregistrement..."
   },
   "colors": {
     "red": "Rouge",
@@ -176,7 +188,11 @@
       "talent": "Talent",
       "administration": "Administration"
     },
-    "helpCenter": "Centre d'aide"
+    "helpCenter": "Centre d'aide",
+    "automation": "Automatisation",
+    "contracts": "Contrats",
+    "liquidation": "Indemnités de départ",
+    "workflows": "Flux de travail"
   },
   "checkout": {
     "header": {
@@ -274,7 +290,8 @@
       "pricing": "Tarifs",
       "contact": "Contact",
       "login": "Connexion",
-      "startFree": "Commencer Gratuitement"
+      "startFree": "Commencer Gratuitement",
+      "getStarted": "Démarrer"
     },
     "features": {
       "title": "Tout ce dont vous avez besoin pour gérer votre équipe",
@@ -320,7 +337,13 @@
       "dgii": "Rapports DGII",
       "dgiiDesc": "Générez automatiquement IR-3, IR-4, IR-13, IR-17 et TSS selon la réglementation en vigueur.",
       "customization": "Personnalisation",
-      "customizationDesc": "Branding personnalisé avec les couleurs et logo de votre entreprise sur toute la plateforme."
+      "customizationDesc": "Branding personnalisé avec les couleurs et logo de votre entreprise sur toute la plateforme.",
+      "achBank": "Paiements bancaires ACH",
+      "achBankDesc": "Générez des fichiers ACH pour Banreservas, Popular et BHD León directement depuis la paie.",
+      "contracts": "Contrats et signature électronique",
+      "contractsDesc": "Créez des contrats de travail avec éditeur WYSIWYG, modèles RD et signature électronique numérique.",
+      "workflows": "Flux d'approbation",
+      "workflowsDesc": "Définissez les niveaux d'approbation pour la paie : qui révise et approuve à chaque étape."
     },
     "video": {
       "title": "Voir FortexaRH en Action",
@@ -390,7 +413,18 @@
       "dedicated247": "24/7 + Gestionnaire dédié",
       "reports30": "30 rapports",
       "reports58": "58 rapports",
-      "additionalUsers": "* Utilisateurs supplémentaires disponibles à $2.50/mois par utilisateur"
+      "additionalUsers": "* Utilisateurs supplémentaires disponibles à $2.50/mois par utilisateur",
+      "achBank": "Paiements bancaires ACH",
+      "contracts": "Contrats de travail",
+      "eSignature": "Signature électronique",
+      "qbDesktop": "QuickBooks Desktop (IIF)",
+      "sectionAdmin": "Administration avancée",
+      "sectionHR": "Gestion RH",
+      "sectionIntegrations": "Intégrations et rapports",
+      "sectionPayroll": "Paie et finances",
+      "sectionPricing": "Tarification et capacité",
+      "sectionTalent": "Talents et évaluations",
+      "workflows": "Flux d'approbation"
     },
     "testimonials": {
       "badge": "Témoignages Clients",
@@ -555,7 +589,8 @@
         "allBasic": "Tout du plan Basique",
         "allPro": "Tout du plan Pro",
         "unlimitedEmployees": "Employés illimités"
-      }
+      },
+      "freeTrial": "Essai gratuit de 3 jours"
     },
     "contact": {
       "title": "Contact et Support",
@@ -590,7 +625,12 @@
     "fortexarhEnterprise": "FortexaRH Enterprise",
     "avGeorgeWashington503": "Av. George Washington #503, Gazcue",
     "santoDomingoDistritoNacional": "Santo Domingo, Distrito Nacional",
-    "santoDomingoDn": "Santo Domingo, D.N."
+    "santoDomingoDn": "Santo Domingo, D.N.",
+    "accountantDropdown": {
+      "commission": "Commission par entreprise référée",
+      "dashboard": "Tableau de bord de gestion des clients",
+      "multiClient": "Multi-clients"
+    }
   },
   "auth": {
     "login": {
@@ -869,7 +909,14 @@
       "incompleteEmployees": "{{count}} employés avec données incomplètes"
     },
     "errorLoadingStats": "Erreur lors du chargement des statistiques",
-    "errorLoadingDetails": "Erreur lors du chargement des détails"
+    "errorLoadingDetails": "Erreur lors du chargement des détails",
+    "comparison": {
+      "currentPeriod": "Période actuelle",
+      "desc": "Variation entre les deux dernières périodes de paie traitées",
+      "previousPeriod": "Période précédente",
+      "title": "Comparaison période par période",
+      "variation": "Variation"
+    }
   },
   "pricing": {
     "planNames": {
@@ -908,7 +955,12 @@
       "advancedWorkflows": "Flux de travail avancés",
       "sapOracleIntegration": "Intégration SAP/Oracle/Dynamics",
       "support247": "Support 24/7",
-      "dedicatedManager": "Gestionnaire de compte dédié"
+      "dedicatedManager": "Gestionnaire de compte dédié",
+      "achPayments": "Paiements bancaires ACH",
+      "approvalWorkflows": "Flux d'approbation",
+      "contracts": "Contrats de travail",
+      "eSignature": "Signature électronique",
+      "qbDesktop": "QuickBooks Desktop (IIF)"
     }
   },
   "payrollV2": {
@@ -939,7 +991,8 @@
       "department": "Département",
       "gross": "Brut",
       "deductions": "Déductions",
-      "net": "Net"
+      "net": "Net",
+      "actions": "Actions"
     },
     "breakdown": "Ventilation",
     "filters": {
@@ -983,7 +1036,11 @@
       "errorDownloadingIr17": "Erreur lors du téléchargement de IR-17",
       "errorExportingTss": "Erreur lors de l'exportation TSS",
       "errorLoadingBreakdown": "Erreur lors du chargement de la ventilation",
-      "baseSalary": "Salaire de Base"
+      "baseSalary": "Salaire de Base",
+      "deductionsUpdated": "Déductions mises à jour avec succès",
+      "payslipDownloaded": "Bulletin de paie téléchargé",
+      "periodAndJEDeleted": "Paie et écriture de journal supprimées avec succès",
+      "tssExported": "TSS exporté"
     },
     "todosLosDepartamentos": "Tous les départements",
     "noHayPeriodosDe": "Pas de périodes de paie",
@@ -1077,7 +1134,26 @@
     "totalAPagarTss": "Total à payer TSS",
     "archivo": "Fichier",
     "agregueUnIngresoODeduccion": "Ajouter un revenu ou déduction pour {{name}}",
-    "fiscalEngine": "Moteur fiscal"
+    "fiscalEngine": "Moteur fiscal",
+    "confirmDeletePaid": "⚠️ Cette paie est PAYÉE. Êtes-vous sûr de vouloir la supprimer ? Cette action est irréversible.",
+    "confirmDeletePaidWithJE": "⚠️ Cette paie est PAYÉE et possède une écriture de journal associée. La supprimer effacera également l'écriture comptable. Êtes-vous sûr de vouloir continuer ? Cette action est irréversible.",
+    "confirmDeletePeriod": "Supprimer cette période et son écriture de journal associée ?",
+    "deductionsDialog": {
+      "addDeduction": "Ajouter une déduction",
+      "additionalDeductions": "Déductions additionnelles",
+      "descPlaceholder": "Description",
+      "grossSalary": "Salaire brut",
+      "legalDeductions": "Déductions légales",
+      "noAdditional": "Aucune déduction additionnelle",
+      "save": "Enregistrer les modifications",
+      "subtitle": "Modifier les déductions avant d'approuver la paie",
+      "subtotalAdditional": "Sous-total déductions additionnelles",
+      "subtotalLegal": "Sous-total déductions légales",
+      "title": "Détail des déductions",
+      "totalDeductions": "TOTAL DES DÉDUCTIONS"
+    },
+    "deletePeriod": "Supprimer",
+    "downloadPayslip": "Télécharger le bulletin de paie"
   },
   "globalSearch": {
     "placeholder": "Rechercher ou exécuter des actions IA...",
@@ -1308,7 +1384,8 @@
       "description2": "Description",
       "descriptionPlaceholder": "Ex. Versement 1/10",
       "amount": "Montant / %",
-      "add": "Ajouter"
+      "add": "Ajouter",
+      "amountRequired": "Saisissez un montant pour la déduction"
     },
     "emergencyContacts": {
       "title": "Contacts d'Urgence",
@@ -1336,7 +1413,8 @@
       "deductions": "Retenues",
       "documents": "Documents",
       "paymentMethod": "Mode de Paiement",
-      "emergencyContact": "Contact d'Urgence"
+      "emergencyContact": "Contact d'Urgence",
+      "salaryHistory": "Historique"
     },
     "fotoDePerfil": "Photo de profil",
     "clicParaCambiarMax": "Cliquez pour changer. Max 2Mo",
@@ -1406,7 +1484,10 @@
     "totalDeduccionesLey": "Total deductions legales",
     "salarioNeto": "Salaire net estime",
     "deduccionesDesc": "Activez ou desactivez les deductions legales. Vous pouvez utiliser le calcul automatique ou entrer un montant manuel.",
-    "deduccionesDesactivadasWarning": "Certaines deductions legales sont desactivees pour cet employe. Assurez-vous de respecter les reglementations applicables."
+    "deduccionesDesactivadasWarning": "Certaines deductions legales sont desactivees pour cet employe. Assurez-vous de respecter les reglementations applicables.",
+    "position": "Poste",
+    "salary": "Salaire",
+    "totalDeduccionesAdicionales": "Total des déductions additionnelles"
   },
   "payroll": {
     "title": "Paie",
@@ -1775,7 +1856,14 @@
       "errorLoading": "Erreur chargement données",
       "errorCreateShift": "Erreur création équipe",
       "noRecordsDate": "Pas d'enregistrements pour cette date",
-      "noRecordsFilter": "Pas d'enregistrements avec ces filtres"
+      "noRecordsFilter": "Pas d'enregistrements avec ces filtres",
+      "checkInSuccess": "Entrée enregistrée",
+      "checkOutSuccess": "Sortie enregistrée",
+      "errorCheckIn": "Erreur lors de l'enregistrement de l'entrée",
+      "errorCheckOut": "Erreur lors de l'enregistrement de la sortie",
+      "errorCreatingShift": "Erreur lors de la création du quart de travail",
+      "errorRegistering": "Erreur lors de l'enregistrement",
+      "registered": "Présence enregistrée"
     },
     "presente": "Present",
     "ausente": "Absent",
@@ -2119,7 +2207,8 @@
       "errorGenerating": "Erreur de génération du rapport",
       "errorExporting": "Erreur d'exportation",
       "noData": "Pas de données pour la période sélectionnée"
-    }
+    },
+    "period": "Période"
   },
   "loans": {
     "title": "Prêts aux Employés",
@@ -2191,7 +2280,12 @@
       "errorPayment": "Erreur enregistrement paiement",
       "errorDeleting": "Erreur suppression",
       "noLoans": "Aucun prêt enregistré",
-      "noLoansFilter": "Aucun prêt avec ces filtres"
+      "noLoansFilter": "Aucun prêt avec ces filtres",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce prêt ?",
+      "errorLoadDetails": "Erreur lors du chargement des détails du prêt",
+      "errorLoadHistory": "Erreur lors du chargement de l'historique du prêt",
+      "errorLoading": "Erreur lors du chargement des prêts",
+      "fillRequired": "Veuillez remplir tous les champs requis"
     },
     "listadoDePrestamos": "Liste des Prêts",
     "noHayPrestamosRegistrados": "No hay préstamos registrados",
@@ -2228,7 +2322,8 @@
     "descuentoDeNomina": "Descuento de Nómina",
     "pagoManual": "Pago Manual",
     "otro": "Otro",
-    "notasOpcional": "Notas (opcional)"
+    "notasOpcional": "Notas (opcional)",
+    "paid": "payé"
   },
   "portal": {
     "title": "Portail Employé",
@@ -2425,7 +2520,9 @@
       "phone": "Téléphone",
       "email": "Email",
       "website": "Site Web",
-      "countriesAvailable": "pays disponibles"
+      "countriesAvailable": "pays disponibles",
+      "country": "Pays",
+      "currency": "Devise"
     },
     "logo": {
       "title": "Logo de l'Entreprise",
@@ -2984,8 +3081,26 @@
       "manager": "Gestionnaire",
       "managerDesc": "Accès aux modules assignés avec permissions d'édition",
       "user": "Utilisateur",
-      "userDesc": "Accès en lecture seule aux modules assignés"
-    }
+      "userDesc": "Accès en lecture seule aux modules assignés",
+      "employee": "Employé"
+    },
+    "messages": {
+      "confirmDelete": "Supprimer cet utilisateur?",
+      "errorCreating": "Erreur lors de la création de l'utilisateur",
+      "errorCreatingRole": "Erreur lors de la création du rôle",
+      "errorDeleting": "Erreur lors de la suppression de l'utilisateur",
+      "errorPassword": "Erreur lors de la mise à jour du mot de passe",
+      "errorUpdating": "Erreur lors de la mise à jour de l'utilisateur",
+      "fillRequired": "Remplir les champs obligatoires",
+      "passwordRequired": "Le mot de passe est obligatoire",
+      "passwordUpdated": "Mot de passe mis à jour",
+      "roleCreated": "Rôle créé avec succès",
+      "roleNameRequired": "Le nom du rôle est obligatoire",
+      "userCreated": "Utilisateur créé avec succès",
+      "userDeleted": "Utilisateur supprimé",
+      "userUpdated": "Utilisateur mis à jour"
+    },
+    "title": "Gestion des utilisateurs"
   },
   "roles": {
     "title": "Rôles et Permissions",
@@ -3327,7 +3442,10 @@
       "loans": "Prêts",
       "profile": "Mes Données",
       "requests": "Mes Demandes",
-      "notifications": "Notifications"
+      "notifications": "Notifications",
+      "contracts": "Contrats",
+      "documents": "Documents",
+      "permissions": "Permissions"
     },
     "swipe": {
       "hint": "Glissez pour naviguer"
@@ -3357,7 +3475,13 @@
       "noPayslips": "Aucun bulletin disponible",
       "latestPayslips": "Derniers Bulletins",
       "receiptDownloaded": "Bulletin téléchargé",
-      "errorDownload": "Erreur de téléchargement"
+      "errorDownload": "Erreur de téléchargement",
+      "baseSalary": "Salaire de base",
+      "bonuses": "Primes",
+      "commissions": "Commissions",
+      "earnings": "Gains",
+      "overtime": "Heures supplémentaires",
+      "totalEarnings": "Total des gains"
     },
     "attendance": {
       "title": "Registre de Présence",
@@ -3519,6 +3643,74 @@
       "errorClockout": "Erreur d'enregistrement de sortie",
       "errorLoadingData": "Erreur de chargement des données",
       "logout": "Déconnexion"
+    },
+    "contracts": {
+      "laborContract": "Contrat de travail",
+      "noContracts": "Aucun contrat assigné",
+      "pendingSignature": "Signature en attente",
+      "signed": "Signé",
+      "title": "Mes contrats"
+    },
+    "documents": {
+      "downloaded": "Document téléchargé",
+      "generate": "Générer PDF",
+      "incomeCertificate": "Certificat de revenus",
+      "incomeCertificateDesc": "Document certifiant votre salaire et la ventilation de vos revenus.",
+      "subtitle": "Générer des documents officiels instantanément",
+      "title": "Documents et attestations",
+      "workLetter": "Attestation de travail",
+      "workLetterDesc": "Document officiel certifiant votre emploi auprès de l'entreprise."
+    },
+    "password": {
+      "changeBtn": "Changer le mot de passe",
+      "confirm": "Confirmer le mot de passe",
+      "confirmPlaceholder": "Confirmez votre nouveau mot de passe",
+      "current": "Mot de passe actuel",
+      "currentPlaceholder": "Entrez votre mot de passe actuel",
+      "error": "Erreur lors du changement de mot de passe",
+      "fillAll": "Remplissez tous les champs",
+      "minLength": "Le mot de passe doit contenir au moins 6 caractères",
+      "new": "Nouveau mot de passe",
+      "newPlaceholder": "Entrez votre nouveau mot de passe",
+      "noMatch": "Les mots de passe ne correspondent pas",
+      "subtitle": "Modifiez votre mot de passe d'accès au portail",
+      "title": "Changer le mot de passe",
+      "updated": "Mot de passe mis à jour avec succès"
+    },
+    "permissions": {
+      "approvedBy": "Approuvé par",
+      "days": "jours",
+      "endDate": "Date de fin",
+      "fillRequired": "Remplissez le type, les dates et la raison",
+      "newRequest": "Nouvelle demande",
+      "noPermissions": "Aucune demande de permission",
+      "reason": "Raison",
+      "reasonPlaceholder": "Décrivez la raison de votre demande...",
+      "requestSent": "Demande de permission envoyée",
+      "requestTitle": "Demander une permission",
+      "startDate": "Date de début",
+      "statusApproved": "Approuvé",
+      "statusPending": "En attente",
+      "statusRejected": "Rejeté",
+      "submit": "Soumettre la demande",
+      "title": "Permissions et congés",
+      "type": "Type de permission",
+      "types": {
+        "bereavement": "Deuil",
+        "marriage": "Mariage",
+        "maternity": "Maternité",
+        "medical": "Médical",
+        "other": "Autre",
+        "paternity": "Paternité",
+        "personal": "Personnel"
+      },
+      "typesInfo": {
+        "asNeeded": "Selon certification",
+        "days": "jours",
+        "note": "* Les jours indiqués sont à titre indicatif selon le Code du travail RD. L'entreprise peut accorder des avantages additionnels.",
+        "title": "Jours par type de permission (Code du travail RD)",
+        "variable": "Variable"
+      }
     }
   },
   "geoAttendance": {
@@ -3734,7 +3926,15 @@
       "pending": "En Attente",
       "installments": "Mensualités",
       "costs": "Coûts",
-      "errorLoading": "Erreur lors du chargement des détails"
+      "errorLoading": "Erreur lors du chargement des détails",
+      "exitsYTD": "Sorties cumulées",
+      "hired": "Embauché",
+      "hiresExits": "Embauches et sorties mensuelles (cliquer pour détails)",
+      "hiresYTD": "Embauches cumulées",
+      "month": "Mois",
+      "netBalance": "Solde net",
+      "payrollBreakdown": "Répartition de la paie",
+      "terminated": "Sorties"
     }
   },
   "orgChart": {
@@ -3875,7 +4075,8 @@
       "accounts": "Comptes",
       "reports": "Rapports",
       "journalEntries": "Écritures de Journal",
-      "chartOfAccounts": "Plan Comptable"
+      "chartOfAccounts": "Plan Comptable",
+      "payrollSummary": "Sommaire de la paie"
     },
     "stats": {
       "totalEntries": "Total Écritures",
@@ -3905,7 +4106,8 @@
       "save": "Enregistrer",
       "cancel": "Annuler",
       "post": "Comptabiliser",
-      "void": "Annuler"
+      "void": "Annuler",
+      "createFirst": "Créer la première écriture"
     },
     "entry": {
       "number": "Numéro",
@@ -3955,14 +4157,21 @@
       "namePlaceholder": "Ex: Caisse",
       "parentAccount": "Compte Parent",
       "selectParent": "Sélectionner compte parent",
-      "noParent": "Sans parent (niveau 1)"
+      "noParent": "Sans parent (niveau 1)",
+      "createAccountDesc": "Remplir les données pour créer un nouveau compte",
+      "createEntryDesc": "Remplir les données pour créer une nouvelle écriture",
+      "editAccountDesc": "Modifier les données du compte",
+      "editEntryDesc": "Modifier les données de l'écriture",
+      "parentCode": "Code parent (optionnel)",
+      "parentCodePlaceholder": "Ex : 51"
     },
     "preview": {
       "title": "Aperçu d'Exportation",
       "format": "Format",
       "summary": "Résumé",
       "detailed": "Détaillé",
-      "download": "Télécharger CSV"
+      "download": "Télécharger CSV",
+      "exportAs": "Exporter en"
     },
     "catalog": {
       "title": "Sélectionner Plan Comptable",
@@ -3971,7 +4180,8 @@
       "niif": "Catalogue IFRS",
       "niifDesc": "Plan comptable basé sur les Normes Internationales",
       "dr": "Catalogue RD",
-      "drDesc": "Plan comptable standard de République Dominicaine"
+      "drDesc": "Plan comptable standard de République Dominicaine",
+      "chartOfAccounts": "Plan comptable"
     },
     "messages": {
       "entryCreated": "Écriture créée avec succès",
@@ -4037,7 +4247,22 @@
     "codigo": "Code",
     "nombreDeCuenta": "Nombre de Compte",
     "centroDeCostos": "Centro de Costos",
-    "empleado": "Employé"
+    "empleado": "Employé",
+    "payroll": {
+      "allBalanced": "Toutes les écritures sont équilibrées",
+      "balanceStatus": "Solde",
+      "draftEntries": "Écritures brouillon",
+      "hasUnbalanced": "Il y a des écritures déséquilibrées",
+      "lastEntry": "Dernière écriture",
+      "noEntries": "Aucune écriture de paie",
+      "noEntriesDesc": "Les écritures sont générées automatiquement lors du traitement de la paie",
+      "onlyPayroll": "Paie seulement",
+      "periodStatus": "Statut de la période",
+      "postedEntries": "Écritures comptabilisées",
+      "subtitle": "Écritures générées automatiquement à partir de la paie",
+      "title": "Écritures de paie",
+      "totalPayroll": "Total de la paie"
+    }
   },
   "costsByDepartment": {
     "title": "Coûts par Département",
@@ -4054,7 +4279,9 @@
       "totalCost": "Coût Total",
       "totalEmployees": "Total Employés",
       "avgCostPerEmployee": "Coût Moy. par Employé",
-      "departments": "Départements"
+      "departments": "Départements",
+      "employerContributions": "Cotisations patronales",
+      "grossSalary": "Salaire brut"
     },
     "charts": {
       "distribution": "Distribution des Coûts",
@@ -4098,7 +4325,8 @@
       "branding": "Marque et Textes",
       "notifications": "Notifications",
       "integrations": "Intégrations",
-      "audit": "Audit"
+      "audit": "Audit",
+      "bank": "Virement bancaire ACH"
     },
     "fontSizes": {
       "small": "Petit",
@@ -4180,7 +4408,31 @@
       "disconnect": "Déconnecter",
       "comingSoon": "Bientôt Disponible",
       "fortexaerp": {
-        "desc": "Synchronisation native complète avec l'écosystème Fortexa."
+        "desc": "Synchronisation native complète avec l'écosystème Fortexa.",
+        "amount": "Montant",
+        "apiUrl": "URL API",
+        "autoSync": "Synchronisation auto",
+        "autoSyncDesc": "Synchroniser automatiquement lors du traitement de la paie",
+        "companyId": "ID entreprise",
+        "configure": "Configurer",
+        "configured": "Configuré",
+        "connectedTo": "Connecté à:",
+        "date": "Date",
+        "email": "Courriel",
+        "failed": "Échec",
+        "lastSync": "Dernière synchro",
+        "lines": "Lignes",
+        "noSyncHistory": "Aucun historique de synchronisation disponible",
+        "password": "Mot de passe",
+        "reference": "Référence",
+        "saveConfig": "Enregistrer la configuration",
+        "status": "Statut",
+        "success": "Réussi",
+        "syncLog": "Historique de synchronisation FortexaERP",
+        "syncLogDesc": "Journal de toutes les synchronisations effectuées",
+        "syncedBy": "Synchronisé par",
+        "testConnection": "Tester la connexion",
+        "viewHistory": "Voir l'historique"
       },
       "quickbooks": {
         "desc": "Exportez automatiquement la paie et les écritures comptables vers QBO."
@@ -4190,6 +4442,15 @@
       },
       "oracle": {
         "desc": "Connectivité cloud pour la gestion financière avancée."
+      },
+      "qbd": {
+        "csv": "Fichier CSV",
+        "csvDesc": "Exporter les données en format CSV compatible avec QBD.",
+        "desc": "Exporter les données de paie vers QuickBooks Desktop.",
+        "iif": "Fichier IIF",
+        "iifDesc": "Télécharger les fichiers IIF pour importation manuelle dans QBD.",
+        "webConnector": "Web Connector",
+        "webConnectorDesc": "Synchronisation automatique via Intuit Web Connector."
       }
     },
     "messages": {
@@ -4250,7 +4511,28 @@
     "noHayRegistrosDe": "No hay registros de auditoría",
     "configuracionDeEmpresa": "Configuration de Empresa",
     "administraLaIdentidadApariencia": "Administra la identidad, apariencia e integraciones de tu organización.",
-    "qbNotConfigured": "QuickBooks non configuré"
+    "qbNotConfigured": "QuickBooks non configuré",
+    "bank": {
+      "account": "Compte",
+      "accountNumber": "Numéro de compte",
+      "accountType": "Type de compte",
+      "addAnother": "Ajouter une autre banque",
+      "addFirst": "Configurer le compte bancaire",
+      "allConfigured": "Toutes les banques disponibles sont configurées. Vous pouvez maintenant générer des fichiers ACH pour n'importe quelle banque.",
+      "checking": "Chèques",
+      "clickToConfigure": "Cliquer pour configurer",
+      "configured": "Configuré",
+      "configuredAccounts": "Comptes configurés",
+      "currency": "Devise",
+      "description": "Configurez les comptes bancaires de l'entreprise pour générer les fichiers de paiement de paie ACH.",
+      "errorSaving": "Erreur lors de l'enregistrement de la configuration bancaire",
+      "infoDesc": "Lors de la génération d'un fichier ACH depuis le module Paie, le système a besoin du compte bancaire de l'entreprise comme source de paiement. Configurez le compte ici pour chaque banque que vous utilisez.",
+      "infoTitle": "À quoi sert cette configuration?",
+      "saveAccount": "Enregistrer le compte",
+      "saved": "Configuration bancaire enregistrée",
+      "savings": "Épargne",
+      "title": "Configuration bancaire ACH"
+    }
   },
   "errors": {
     "generic": "Une erreur s'est produite",
@@ -4595,10 +4877,13 @@
         "allStatuses": "Tous les statuts",
         "withinZone": "Dans la zone",
         "outsideZone": "Hors zone",
-        "pendingReview": "En attente de révision"
+        "pendingReview": "En attente de révision",
+        "activeFilters": "Filtres actifs :"
       },
       "employeesOnMap": "employés sur la carte",
-      "noData": "Aucune donnée de carte en direct disponible"
+      "noData": "Aucune donnée de carte en direct disponible",
+      "employeeToast": "{{name}} - {{markType}}",
+      "locationToast": "{{name}} - Rayon : {{radius}}m"
     },
     "fraud": {
       "title": "Alertes de Fraude Détectées",
@@ -4633,7 +4918,13 @@
     "alerts": {
       "title": "Pointages Hors Zone",
       "subtitle": "Pointages nécessitant une révision",
-      "outsideAuthorized": "hors de la zone autorisée"
+      "outsideAuthorized": "hors de la zone autorisée",
+      "levels": {
+        "critical": "Critique",
+        "high": "Élevé",
+        "low": "Faible",
+        "medium": "Moyen"
+      }
     },
     "dialogs": {
       "newLocation": {
@@ -4917,7 +5208,13 @@
     "descripcion": "Description",
     "marcarComoFavorito": "Marcar como favorito",
     "cancelar": "Annuler",
-    "guardar": "Enregistrer"
+    "guardar": "Enregistrer",
+    "configDeleted": "Configuration supprimée",
+    "configLoaded": "Configuration chargée",
+    "configSaved": "Configuration enregistrée",
+    "enterReportName": "Saisissez un nom pour le rapport",
+    "errorDeletingConfig": "Erreur lors de la suppression de la configuration",
+    "errorSavingConfig": "Erreur lors de l'enregistrement de la configuration"
   },
   "subscriptions": {
     "errorLoadingData": "Erreur lors du chargement des données d'abonnement",
@@ -5107,7 +5404,10 @@
     "noHayTickets": "No hay tickets",
     "abierto": "Abierto",
     "resuelto": "Resuelto",
-    "cerrado": "Cerrado"
+    "cerrado": "Cerrado",
+    "internalNoteAdded": "Note interne ajoutée",
+    "responseSent": "Réponse envoyée au client",
+    "writeMessage": "Rédiger un message"
   },
   "recruitment": {
     "errorLoading": "Erreur lors du chargement des données",
@@ -5261,7 +5561,17 @@
       "rolesPermissions": "Rôles et Permissions",
       "rolesPermissionsDesc": "Contrôle d'accès granulaire par module et action",
       "complianceTitle": "Conformité Légale Garantie",
-      "complianceDescription": "FortexaRH est spécifiquement conçu pour respecter toutes les réglementations du travail de la République Dominicaine: TSS (Trésorerie de Sécurité Sociale), DGII (Direction Générale des Impôts), Code du Travail, Norme Générale 07-2007 pour les Ouvriers du Bâtiment, et plus."
+      "complianceDescription": "FortexaRH est spécifiquement conçu pour respecter toutes les réglementations du travail de la République Dominicaine: TSS (Trésorerie de Sécurité Sociale), DGII (Direction Générale des Impôts), Code du Travail, Norme Générale 07-2007 pour les Ouvriers du Bâtiment, et plus.",
+      "achPayments": "Paiements bancaires ACH",
+      "achPaymentsDesc": "Génération de fichiers ACH pour Banreservas, Popular et BHD León à partir de la paie",
+      "approvalWorkflows": "Processus d'approbation",
+      "approvalWorkflowsDesc": "Niveaux d'approbation configurables pour la paie avec contrôle par rôle ou utilisateur",
+      "contracts": "Contrats de travail",
+      "contractsDesc": "Éditeur WYSIWYG, modèles DR, variables automatiques et gestion de contrats par type",
+      "eSignature": "Signature électronique",
+      "eSignatureDesc": "Signature numérique à l'écran avec vérification SHA-256, horodatage et multipartite",
+      "qbDesktop": "QuickBooks Desktop",
+      "qbDesktopDesc": "Export IIF pour intégration QuickBooks Desktop"
     },
     "benefits": {
       "sectionTitle": "AVANTAGES",
@@ -5532,7 +5842,30 @@
     "noHayDocumentosGenerados": "No hay documentos generados",
     "seleccionarEmpleado": "Sélectionner employé",
     "firmaElectronica": "Firma Electrónica",
-    "firmaEnElRecuadro": "Firma en el recuadro de abajo con tu mouse o dedo:"
+    "firmaEnElRecuadro": "Firma en el recuadro de abajo con tu mouse o dedo:",
+    "messages": {
+      "confirmDelete": "Supprimer ce modèle ?",
+      "documentSignedAndSaved": "Document signé et enregistré",
+      "errorDeleting": "Erreur lors de la suppression du modèle",
+      "errorDuplicating": "Erreur lors de la duplication du modèle",
+      "errorGeneratingPdf": "Erreur lors de la génération du PDF",
+      "errorLoading": "Erreur lors du chargement des modèles",
+      "errorSaving": "Erreur lors de l'enregistrement du modèle",
+      "generatingPdf": "Génération du PDF...",
+      "pdfDownloaded": "PDF téléchargé",
+      "pleaseSignDocument": "Veuillez signer le document",
+      "selectEmployee": "Sélectionner un employé",
+      "templateCreated": "Modèle créé avec succès",
+      "templateDeleted": "Modèle supprimé",
+      "templateDuplicated": "Modèle dupliqué",
+      "templateUpdated": "Modèle mis à jour"
+    },
+    "types": {
+      "certificate": "Certificat",
+      "contract": "Contrat",
+      "letter": "Lettre",
+      "policy": "Politique"
+    }
   },
   "payrollCalc": {
     "tss": "TSS:",
@@ -5765,7 +6098,9 @@
     "tabs": {
       "guides": "Guides",
       "updates": "Nouveautes",
-      "faq": "FAQ"
+      "faq": "FAQ",
+      "contact": "Contacter le soutien",
+      "myTickets": "Mes tickets"
     },
     "badge": {
       "feature": "Nouvelle fonction",
@@ -5804,6 +6139,22 @@
       "settings": {
         "title": "Configuration",
         "desc": "Entreprise, securite, langue et integrations"
+      },
+      "accounting": {
+        "desc": "Écritures comptables, QuickBooks et paiements",
+        "title": "Comptabilité"
+      },
+      "calculator": {
+        "desc": "Calculs de salaire, déductions et retenues",
+        "title": "Calculateur de paie"
+      },
+      "documents": {
+        "desc": "Modèles, génération de documents et dossiers d'employés",
+        "title": "Documents"
+      },
+      "reports": {
+        "desc": "Centre de rapports, DGII, TSS et rapports avancés",
+        "title": "Rapports"
       }
     },
     "articles": {
@@ -5918,6 +6269,54 @@
       "settings-integrations": {
         "title": "Integrations disponibles",
         "body": "Connectez Stripe, PayPal, QuickBooks et Google Auth."
+      },
+      "accounting-overview": {
+        "body": "Les écritures de journal sont générées automatiquement lors de l'approbation ou du paiement d'une paie.",
+        "title": "Écritures de journal"
+      },
+      "accounting-payments": {
+        "body": "Gérez les paiements avec Stripe ou PayPal pour votre abonnement FortexaRH.",
+        "title": "Paiements et facturation"
+      },
+      "accounting-quickbooks": {
+        "body": "Synchronisez les écritures de journal avec QuickBooks Online et associez les comptes entre les deux systèmes.",
+        "title": "Intégration QuickBooks"
+      },
+      "calc-basic": {
+        "body": "Comprenez comment le salaire net est calculé à partir du salaire brut, des déductions et des primes.",
+        "title": "Calcul de paie de base"
+      },
+      "calc-deductions": {
+        "body": "Les déductions SFS (3,04 %), AFP (2,87 %) et ISR sont calculées automatiquement selon les taux en vigueur.",
+        "title": "Déductions TSS (SFS, AFP, ISR)"
+      },
+      "calc-edit": {
+        "body": "Vous pouvez modifier manuellement les montants ISR, SFS et AFP directement sur la feuille de paie.",
+        "title": "Modifier ISR et déductions"
+      },
+      "docs-employee": {
+        "body": "Accédez et gérez les documents stockés dans le dossier numérique de chaque employé.",
+        "title": "Dossier de l'employé"
+      },
+      "docs-generate": {
+        "body": "Générez des documents à partir de modèles en sélectionnant l'employé et en remplissant les variables.",
+        "title": "Générer des documents"
+      },
+      "docs-templates": {
+        "body": "Créez et gérez des modèles personnalisables pour lettres, attestations et contrats.",
+        "title": "Modèles de documents"
+      },
+      "reports-advanced": {
+        "body": "Utilisez des graphiques et filtres avancés pour analyser les données de paie et RH.",
+        "title": "Rapports avancés"
+      },
+      "reports-center": {
+        "body": "Accédez au centre de rapports pour générer des rapports filtrés par période, département et plus.",
+        "title": "Centre de rapports"
+      },
+      "reports-dgii": {
+        "body": "Générez les formats IR-3, IR-4, IR-17, IR-6 et fichiers TSS requis par la DGII.",
+        "title": "Rapports DGII et TSS"
       }
     },
     "updates": {
@@ -5948,6 +6347,30 @@
       "update-tech-debt": {
         "title": "Ameliorations de stabilite",
         "body": "Correction d'erreurs, amelioration de la testabilite et internationalisation."
+      },
+      "update-dgii-fix": {
+        "body": "Correction de l'erreur et du téléchargement du rapport DGII. Les rapports génèrent maintenant correctement les fichiers au format requis.",
+        "title": "Correction des rapports DGII"
+      },
+      "update-isr-editable": {
+        "body": "Vous pouvez maintenant modifier manuellement le montant ISR par employé directement sur la feuille de paie. Utile pour les ajustements spéciaux ou les employés avec exemptions.",
+        "title": "ISR modifiable dans la paie"
+      },
+      "update-qb-journal": {
+        "body": "Les écritures de journal générées à partir de la paie peuvent maintenant être synchronisées directement vers QuickBooks Online en un seul clic.",
+        "title": "Écritures de journal de paie vers QuickBooks"
+      },
+      "update-qb-mapping": {
+        "body": "Nouvelle correspondance intelligente entre le plan comptable de FortexaRH et le catalogue de comptes QuickBooks Online.",
+        "title": "Correspondance des comptes QuickBooks"
+      },
+      "update-sfs-afp-editable": {
+        "body": "Les montants SFS et AFP sont maintenant modifiables sur la feuille de paie. Permet d'ajuster les déductions de sécurité sociale pour les cas spéciaux.",
+        "title": "SFS et AFP modifiables dans la paie"
+      },
+      "update-sfs-rate": {
+        "body": "Correction du pourcentage SFS à la valeur correcte de 3,04% selon les taux TSS actuels.",
+        "title": "Correction du taux SFS 3,04%"
       }
     },
     "faq": {
@@ -5991,6 +6414,109 @@
         "q": "Que sont les heures de silence?",
         "a": "Les heures de silence pausent les notifications push et email pendant des horaires specifiques."
       }
+    },
+    "support": {
+      "backToTickets": "Retour à mes tickets",
+      "catAccount": "Mon compte",
+      "catBilling": "Facturation",
+      "catBug": "Signaler un bogue",
+      "catGeneral": "Demande générale",
+      "catTechnical": "Support technique",
+      "category": "Catégorie",
+      "contactDesc": "Soumettez un ticket et notre équipe vous répondra dans les plus brefs délais.",
+      "contactTitle": "Contacter le support",
+      "createFirst": "Créer un ticket de support",
+      "errorCreating": "Erreur lors de la création du ticket",
+      "errorReplying": "Erreur lors de l'envoi de la réponse",
+      "fillRequired": "Remplissez le sujet et le message",
+      "message": "Message",
+      "messagePlaceholder": "Décrivez votre demande ou problème en détail...",
+      "newTicket": "Nouveau ticket",
+      "noTickets": "Aucun ticket de support",
+      "noTicketsDesc": "Lorsque vous avez besoin d'aide, créez un ticket et nous vous répondrons.",
+      "prioHigh": "Élevée",
+      "prioLow": "Faible",
+      "prioMedium": "Moyenne",
+      "priority": "Priorité",
+      "reply": "Répondre",
+      "replyPlaceholder": "Écrivez votre réponse...",
+      "replySent": "Réponse envoyée",
+      "sendTicket": "Soumettre un ticket",
+      "statusClosed": "Fermé",
+      "statusInProgress": "En cours",
+      "statusOpen": "Ouvert",
+      "statusResolved": "Résolu",
+      "subject": "Objet",
+      "subjectPlaceholder": "Comment pouvons-nous vous aider?",
+      "supportTeam": "Équipe de soutien",
+      "ticketCreated": "Ticket {{id}} créé avec succès",
+      "totalTickets": "{{count}} ticket(s)",
+      "you": "Vous"
+    }
+  },
+  "hrAlerts": {
+    "birthday": "Anniversaire",
+    "contract_expiring": "Contrat expirant",
+    "more": "alertes supplémentaires",
+    "probation_ending": "Période d'essai",
+    "title": "Alertes RH",
+    "work_anniversary": "Anniversaire de travail"
+  },
+  "liquidation": {
+    "form": {
+      "calculate": "Calculer l'indemnité",
+      "date": "Date de cessation",
+      "employee": "Employé",
+      "salary": "Salaire manuel",
+      "salaryPlaceholder": "Utiliser le salaire du profil",
+      "selectEmployee": "Sélectionner un employé...",
+      "title": "Données de calcul",
+      "type": "Type de cessation"
+    },
+    "result": {
+      "dailySalary": "Salaire journalier",
+      "days": "jours",
+      "disclaimer": "Ceci est une estimation basée sur le Code du travail de la République dominicaine. Consultez un avocat en droit du travail pour les cas spécifiques.",
+      "employee": "Employé",
+      "empty": "Sélectionnez un employé et un type de cessation pour calculer",
+      "months": "mois",
+      "position": "Poste",
+      "service": "Ancienneté",
+      "title": "Résultat du calcul",
+      "total": "INDEMNITÉ TOTALE",
+      "totalNote": "Montant brut avant retenues applicables"
+    },
+    "selectEmployee": "Sélectionner un employé",
+    "subtitle": "Calculez les indemnités de travail selon le Code du travail RD (Art. 80/86)",
+    "title": "Calcul d'indemnité",
+    "types": {
+      "desahucio": "Cessation sans cause (Art. 80)",
+      "despido": "Licenciement injustifié (Art. 86)",
+      "renuncia": "Démission volontaire"
+    }
+  },
+  "salaryHistory": {
+    "change": "Changement",
+    "currentSalary": "Salaire actuel",
+    "decrease": "Diminution",
+    "effectiveDate": "Date d'effet",
+    "increase": "Augmentation",
+    "noHistory": "Aucun historique de changement de salaire",
+    "reason": "Raison",
+    "registeredBy": "Enregistré par",
+    "title": "Historique des salaires"
+  },
+  "trial": {
+    "banner": {
+      "daysLeft": "jours d'essai restants",
+      "lastDay": "Dernier jour d'essai",
+      "upgrade": "Changer de forfait"
+    },
+    "expired": {
+      "contact": "Contacter le support",
+      "selectPlan": "Sélectionner un forfait",
+      "subtitle": "Votre période d'essai a expiré. Sélectionnez un forfait pour continuer.",
+      "title": "Période d'essai expirée"
     }
   }
 }
