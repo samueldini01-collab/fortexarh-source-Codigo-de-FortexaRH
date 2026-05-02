@@ -164,6 +164,20 @@
     - `core.py` ahora es shim de 20 líneas que importa los 6 sub-módulos.
   - ⏱️ **Rate limits env-configurables** (`routes/auth.py`): `FORTEXA_RATE_REGISTER`, `FORTEXA_RATE_LOGIN` (default 60/min, antes 10/min), `FORTEXA_RATE_RESEND`, `FORTEXA_RATE_PASS_RESET`, `FORTEXA_RATE_PASS_CHANGE`. Probado: 30 logins en 10s → 30/30 200s, sin spam de warnings.
   - Tested: iteration_243.json — **212/212 backend tests PASSED** (13 nuevos + 199 baseline). Sin acción pendiente.
+- **Calculadora Pública + E2E Workflow Safety Net (May 1, 2026)** — P2/P2 DONE:
+  - 💰 **Calculadora pública de salario neto** (`routes/payroll/calculator.py`, sin auth) — 2 endpoints nuevos:
+    - `GET /api/payroll/calculator?country=DO&gross=50000` — desglose completo: deducciones empleado (SFS/AFP/ISR), aportes empleador (SFS-ER/AFP-ER/SRL/Infotep), neto mensual/anual, costo fiscal total. Soporta **los 28 países** con tasas oficiales vigentes.
+    - `GET /api/payroll/calculator/countries` — lista los 28 países para el dropdown de la landing.
+    - Reutiliza `calculate_isr_monthly` (DR, tabla DGII) / `calculate_isr_dynamic` (resto). Incluye `disclaimer` + `calculator_version`. Validación Pydantic (`gt=0`, country 2-3 chars). Respeta caps contributivos.
+    - **Marketing tool**: contadores y candidatos pueden simular su neto desde la landing sin registrarse → lead capture cualificado.
+  - 🧪 **Safety net E2E del workflow** (`tests/test_payroll_workflow_e2e.py`, **15 tests nuevos**):
+    - `TestWorkflowHappyPath` (4): draft → pending_approval → (iterativo workflow_pending para multi-step) → approved → paid.
+    - `TestWorkflowInvariants` (4): empty period rechazado, approve desde draft rechazado, pay desde draft rechazado, `workflow_history` acumula entradas.
+    - `TestWorkflowReject` (1): pending_approval → reject → estado no-pagado válido.
+    - `TestPublicCalculator` (6): countries list sin auth, DR 50k con math exacta, invalid country 400, gross=0 rechazado 422, CO 5M, disclaimer presente.
+    - Descubrió y protege: el tenant DO tiene workflow multi-step configurado → `/approve` pasa por `workflow_pending` antes de llegar a `approved`. El test itera hasta 10 veces.
+  - 🛡️ **Integrity assert** en `routes/payroll/__init__.py` subido de `>=30` a `>=32` (cuenta actual: 32 routes).
+  - Tested: iteration_244.json — **227/227 backend tests PASSED** (15 nuevos + 212 baseline). Sin acción pendiente.
 - **Global Compliance Center page (May 1, 2026)** — Roadmap visual DONE:
   - New page `/global-compliance` with stats cards (28 países, 33 formatos, 7 implementados, 28 cobertura universal)
   - Country cards grouped by region (Caribe, Centro, Norte, Sur, Europa) with status badges (Cumplimiento Nativo green / Parcial amber / Solo Universal slate)
@@ -181,8 +195,9 @@
 
 ## Backlog
 - P1: Importación masiva Excel (Empleados, Novedades)
-- P2: `workflow.py` queda en 512 líneas — **NO** dividir más sin antes proteger `approve_period` (~210 líneas, state-machine crítica) con tests de integración para cada transición de estado (draft→pending→approved→paid).
-- P2: Cubrir las transiciones submit→approve→pay→reject con tests E2E (la integración actual cubre solo el smoke layer).
+- P2: Widget UI en la landing page que consume `/api/payroll/calculator` (formulario de salario + dropdown de 28 países → tabla de desglose).
+- P2: Email capture tras calcular ("¿Quieres que te envíe este reporte en PDF?" → lead captured).
+- P2: Dividir `workflow.py` (512 líneas) — **AHORA SEGURO** gracias a los 15 tests E2E. `approve_period` sigue siendo ~210 líneas de state-machine; candidatos para split: helper para missing-bank-info check (~30 líneas) + helper multi-step workflow coordination (~60 líneas).
 - P2: API pública documentada
 - P2: Backup/Exportation de datos de empresa
 - P2: Configurable Notifications Phase 3 (Digest Email)
