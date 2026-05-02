@@ -3369,7 +3369,10 @@
       "anywhere": "Acesso de qualquer lugar",
       "implementation": "Implementação em minutos",
       "realtime": "Relatórios em tempo real",
-      "secure": "Dados seguros e criptografados"
+      "secure": "Dados seguros e criptografados",
+      "complianceWith": "Em conformidade com",
+      "activeIn": "Disponível em",
+      "nativeReports": "relatórios nativos"
     },
     "comparison": {
       "accountingNIIF": "Contabilidade e planos IFRS",
@@ -3565,7 +3568,9 @@
       "realtimeDesc": "Visualize em um mapa interativo onde seus funcionários estão com atualização automática.",
       "subtitle": "A forma mais moderna e segura de controlar a presença de seus funcionários. GPS em tempo real, detecção de fraude e alertas automáticos.",
       "title": "Controle de Presença com",
-      "tryFree": "Testar Grátis por 14 Dias"
+      "tryFree": "Testar Grátis por 14 Dias",
+      "availableIn": "Disponível em",
+      "idealIn": "Ideal para empresas em {{country}} com equipe de campo, construção, entregas, vendas e mais."
     },
     "hero": {
       "brochure": "Brochura",

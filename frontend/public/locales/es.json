@@ -358,7 +358,10 @@
       "implementation": "Implementación en minutos",
       "secure": "Datos seguros y encriptados",
       "anywhere": "Acceso desde cualquier lugar",
-      "realtime": "Reportes en tiempo real"
+      "realtime": "Reportes en tiempo real",
+      "complianceWith": "Cumplimiento",
+      "activeIn": "Disponible en",
+      "nativeReports": "reportes nativos"
     },
     "geolocation": {
       "title": "Control de Asistencia con",
@@ -373,7 +376,9 @@
       "alerts": "Alertas por Email",
       "alertsDesc": "Recibe notificaciones inmediatas cuando se detecta una anomalía o marcación fuera de zona.",
       "ideal": "Ideal para empresas con personal de campo, construcción, delivery, ventas y más.",
-      "tryFree": "Probar Gratis por 14 Días"
+      "tryFree": "Probar Gratis por 14 Días",
+      "availableIn": "Disponible en",
+      "idealIn": "Ideal para empresas en {{country}} con personal de campo, construcción, delivery, ventas y más."
     },
     "cta": {
       "title": "¿Listo para transformar tu gestión de RRHH?",

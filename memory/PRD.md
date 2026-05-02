@@ -365,6 +365,23 @@
   - Footer legal disclaimer about validation with local accountants
   - Menu item "Global Compliance" with isNew badge in Payroll & Finance group
 
+- **Landing localization finalization (Feb 2, 2026)** — Sprint cierre DONE:
+  - **Pricing revertido a USD global**: removed `<LocalPrice>` usages; plans now show `$5 USD`, `$10 USD`, `$20 USD` + `$1.50 USD per employee` in all 29 countries (user business rule). Import of `LocalPrice` removed from `LandingPage.jsx`.
+  - **Benefits bar (Trust Bar) por país** — adapts with `landingCountry.profile`:
+    - Item 1: "Implementation in minutes" (generic)
+    - Item 2: "Compliant with {agency}" (e.g. SAT / DGII / AFIP / IRS / HMRC)
+    - Item 3: "Available in {countryName}"
+    - Item 4: "{N} native reports" (using `profile.reports.length`)
+  - **Geolocation section país-aware**: pill `Available in {country} · {currency_symbol} {currency}` above the features grid + dynamic `idealIn` text interpolating country name.
+  - New i18n keys added to ES/EN/FR/PT (`landing.benefits.{complianceWith,activeIn,nativeReports}` and `landing.geolocation.{availableIn,idealIn}`) in both `/app/frontend/src/i18n/locales` and `/app/frontend/public/locales`. Bumped `TRANSLATION_VERSION` 3.7.0 → 3.7.1.
+  - Verified with screenshots for MX (Spanish UI) and AR (English UI) — all dynamic text swaps correctly.
+- **Dynamic sitemap.xml + robots.txt (Feb 2, 2026)** — SEO P1 DONE:
+  - New module `/app/backend/routes/sitemap.py` wired into `/api/`.
+  - `GET /api/sitemap.xml` returns XML with 34 URLs: 5 core routes (`/`, `/pricing`, `/register`, `/login`, `/soporte`) + 29 country pages (`/pais/{slug}`), each with 4 hreflang alternates (es, en, fr, pt) — totalling 145 alternate links. `Cache-Control: public, max-age=3600`. Content-Type `application/xml`.
+  - `GET /api/robots.txt` returns robots config pointing to the sitemap; `/app/frontend/public/robots.txt` also added as static fallback.
+  - SEO base URL configurable via `SEO_BASE_URL` / `PUBLIC_BASE_URL` env vars (defaults to `https://fortexarh.com`).
+  - Tested via curl: HTTP 200, 34 URLs, hreflang alternates present.
+
 ## Architecture Notes
 - COUNTRY_PROFILES dict (country_config.py) is source of truth
 - `get_company_rates_flat(company_id)` is the ONLY function used inside payroll calc paths
@@ -373,7 +390,6 @@
 
 ## Backlog
 - P1: Importación masiva Excel (Empleados, Novedades)
-- P2: SEO tags + OpenGraph image para `/calculator` (meta descriptions, sitemap, hreflang para 28 países). Canal de adquisición orgánica directo.
 - P2: Email transaccional con el PDF (actualmente solo descarga — requiere integración Resend con API key del usuario).
 - P2: Dashboard Super Admin `/admin/leads` para ver leads capturados (filtro por país/fecha/consent).
 - P2: API pública documentada

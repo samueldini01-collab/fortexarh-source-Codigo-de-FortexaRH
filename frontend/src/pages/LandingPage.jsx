@@ -6,7 +6,6 @@ import LanguageSelector from "@/components/LanguageSelector";
 import { LandingCountryBanner, useLandingCountry } from "@/components/LandingCountryBanner";
 import LandingCountryFiscal from "@/components/LandingCountryFiscal";
 import LandingSEO from "@/components/LandingSEO";
-import LocalPrice from "@/components/LocalPrice";
 import {
   Accordion,
   AccordionContent,
@@ -116,14 +115,6 @@ export default function LandingPage() {
   
   // Generate FAQs array using translations  
   const faqIds = ["1", "2", "3", "4", "5", "6", "7", "8"];
-
-  // Benefits bar
-  const benefits = [
-    { icon: Zap, textKey: "implementation" },
-    { icon: Shield, textKey: "secure" },
-    { icon: Globe, textKey: "anywhere" },
-    { icon: BarChart3, textKey: "realtime" }
-  ];
 
   // Features for dropdowns
   const empresaFeatures = [
@@ -590,16 +581,45 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Benefits Bar */}
+      {/* Benefits Bar — adapts to selected country */}
       <section className="py-6 sm:py-8 bg-emerald-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {benefits.map((benefit, index) => (
-              <div key={index} className="flex items-center gap-2 sm:gap-3 text-white justify-center lg:justify-start">
-                <benefit.icon className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-100 shrink-0" />
-                <span className="text-xs sm:text-sm font-medium">{t(`landing.benefits.${benefit.textKey}`)}</span>
-              </div>
-            ))}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6" data-testid="benefits-bar">
+            {/* Item 1 — always generic */}
+            <div className="flex items-center gap-2 sm:gap-3 text-white justify-center lg:justify-start">
+              <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-100 shrink-0" />
+              <span className="text-xs sm:text-sm font-medium">{t('landing.benefits.implementation')}</span>
+            </div>
+
+            {/* Item 2 — compliance agency when country profile loaded */}
+            <div className="flex items-center gap-2 sm:gap-3 text-white justify-center lg:justify-start" data-testid="benefit-agency">
+              <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-100 shrink-0" />
+              <span className="text-xs sm:text-sm font-medium">
+                {landingCountry.profile?.income_tax?.agency
+                  ? `${t('landing.benefits.complianceWith', { defaultValue: 'Cumplimiento' })} ${landingCountry.profile.income_tax.agency}`
+                  : t('landing.benefits.secure')}
+              </span>
+            </div>
+
+            {/* Item 3 — country name + flag when loaded */}
+            <div className="flex items-center gap-2 sm:gap-3 text-white justify-center lg:justify-start" data-testid="benefit-country">
+              <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-100 shrink-0" />
+              <span className="text-xs sm:text-sm font-medium truncate">
+                {landingCountry.profile
+                  ? `${t('landing.benefits.activeIn', { defaultValue: 'Disponible en' })} ${landingCountry.profile.name}`
+                  : t('landing.benefits.anywhere')}
+              </span>
+            </div>
+
+            {/* Item 4 — native reports count when loaded */}
+            <div className="flex items-center gap-2 sm:gap-3 text-white justify-center lg:justify-start" data-testid="benefit-reports">
+              <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-100 shrink-0" />
+              <span className="text-xs sm:text-sm font-medium">
+                {landingCountry.profile?.reports?.length
+                  ? `${landingCountry.profile.reports.length} ${t('landing.benefits.nativeReports', { defaultValue: 'reportes nativos' })}`
+                  : t('landing.benefits.realtime')}
+              </span>
+            </div>
           </div>
         </div>
       </section>
@@ -626,6 +646,17 @@ export default function LandingPage() {
             <p className="text-slate-300 max-w-2xl mx-auto text-sm sm:text-base">
               {t('landing.geolocation.subtitle')}
             </p>
+            {landingCountry.profile && (
+              <div
+                className="mt-4 inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/30 text-emerald-100 px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium"
+                data-testid="geo-country-pill"
+              >
+                <MapPin className="w-3.5 h-3.5" />
+                {t('landing.geolocation.availableIn', { defaultValue: 'Disponible en' })} <strong>{landingCountry.profile.name}</strong>
+                <span className="opacity-70">·</span>
+                <span className="opacity-90">{landingCountry.profile.currency_symbol} {landingCountry.profile.currency}</span>
+              </div>
+            )}
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -671,8 +702,13 @@ export default function LandingPage() {
           </div>
           
           <div className="mt-10 text-center">
-            <p className="text-slate-400 text-sm mb-4">
-              {t('landing.geolocation.ideal')}
+            <p className="text-slate-400 text-sm mb-4" data-testid="geo-ideal-text">
+              {landingCountry.profile
+                ? t('landing.geolocation.idealIn', {
+                    country: landingCountry.profile.name,
+                    defaultValue: `Ideal para empresas en ${landingCountry.profile.name} con personal de campo, construcción, delivery, ventas y más.`,
+                  })
+                : t('landing.geolocation.ideal')}
             </p>
             <Link to="/register">
               <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white">
@@ -766,11 +802,12 @@ export default function LandingPage() {
                 <p className="text-slate-500 mt-1 text-sm sm:text-base">{t('landing.pricing.basicDesc')}</p>
                 <div className="mt-3 sm:mt-4">
                   <div className="text-3xl sm:text-4xl font-bold text-slate-900">
-                    <LocalPrice usdAmount={5} profile={landingCountry.profile} showOriginal={false} />
+                    <span data-testid="price-basic">$5</span>
+                    <span className="text-sm font-semibold text-slate-400 align-top ml-1">USD</span>
                   </div>
                   <span className="text-slate-500 text-sm">/{t('landing.pricing.monthly')}</span>
                   <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                    + <LocalPrice usdAmount={1.5} profile={landingCountry.profile} showOriginal={false} /> {t('landing.pricing.perEmployee')}
+                    + $1.50 USD {t('landing.pricing.perEmployee')}
                   </p>
                 </div>
               </div>
@@ -811,11 +848,12 @@ export default function LandingPage() {
                 <p className="text-slate-600 mt-1 text-sm sm:text-base">{t('landing.pricing.proDesc')}</p>
                 <div className="mt-3 sm:mt-4">
                   <div className="text-3xl sm:text-4xl font-bold text-slate-900">
-                    <LocalPrice usdAmount={10} profile={landingCountry.profile} showOriginal={false} />
+                    <span data-testid="price-pro">$10</span>
+                    <span className="text-sm font-semibold text-slate-500 align-top ml-1">USD</span>
                   </div>
                   <span className="text-slate-600 text-sm">/{t('landing.pricing.monthly')}</span>
                   <p className="text-xs sm:text-sm text-slate-600 mt-1">
-                    + <LocalPrice usdAmount={1.5} profile={landingCountry.profile} showOriginal={false} /> {t('landing.pricing.perEmployee')}
+                    + $1.50 USD {t('landing.pricing.perEmployee')}
                   </p>
                 </div>
               </div>
@@ -852,11 +890,12 @@ export default function LandingPage() {
                 <p className="text-slate-600 mt-1 text-sm sm:text-base">{t('landing.pricing.enterpriseDesc')}</p>
                 <div className="mt-3 sm:mt-4">
                   <div className="text-3xl sm:text-4xl font-bold text-slate-900">
-                    <LocalPrice usdAmount={20} profile={landingCountry.profile} showOriginal={false} />
+                    <span data-testid="price-enterprise">$20</span>
+                    <span className="text-sm font-semibold text-slate-500 align-top ml-1">USD</span>
                   </div>
                   <span className="text-slate-600 text-sm">/{t('landing.pricing.monthly')}</span>
                   <p className="text-xs sm:text-sm text-slate-600 mt-1">
-                    + <LocalPrice usdAmount={1.5} profile={landingCountry.profile} showOriginal={false} /> {t('landing.pricing.perEmployee')}
+                    + $1.50 USD {t('landing.pricing.perEmployee')}
                   </p>
                 </div>
               </div>

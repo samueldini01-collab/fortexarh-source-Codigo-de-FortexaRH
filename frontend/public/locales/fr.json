@@ -358,7 +358,10 @@
       "implementation": "Implémentation en minutes",
       "secure": "Données sécurisées et cryptées",
       "anywhere": "Accès de n'importe où",
-      "realtime": "Rapports en temps réel"
+      "realtime": "Rapports en temps réel",
+      "complianceWith": "Conformité",
+      "activeIn": "Disponible en",
+      "nativeReports": "rapports natifs"
     },
     "geolocation": {
       "title": "Contrôle des Présences avec",
@@ -373,7 +376,9 @@
       "alerts": "Alertes par Email",
       "alertsDesc": "Recevez des notifications immédiates lorsqu'une anomalie ou un pointage hors zone est détecté.",
       "ideal": "Idéal pour les entreprises avec du personnel de terrain, construction, livraison, ventes et plus.",
-      "tryFree": "Essayer Gratuitement 14 Jours"
+      "tryFree": "Essayer Gratuitement 14 Jours",
+      "availableIn": "Disponible en",
+      "idealIn": "Idéal pour les entreprises de {{country}} avec personnel de terrain, construction, livraison, ventes et plus."
     },
     "cta": {
       "title": "Prêt à transformer votre gestion RH?",

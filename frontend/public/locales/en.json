@@ -358,7 +358,10 @@
       "implementation": "Implementation in minutes",
       "secure": "Secure encrypted data",
       "anywhere": "Access from anywhere",
-      "realtime": "Real-time reports"
+      "realtime": "Real-time reports",
+      "complianceWith": "Compliant with",
+      "activeIn": "Available in",
+      "nativeReports": "native reports"
     },
     "geolocation": {
       "title": "Attendance Control with",
@@ -373,7 +376,9 @@
       "alerts": "Email Alerts",
       "alertsDesc": "Receive immediate notifications when an anomaly or out-of-zone check-in is detected.",
       "ideal": "Ideal for companies with field staff, construction, delivery, sales and more.",
-      "tryFree": "Try Free for 14 Days"
+      "tryFree": "Try Free for 14 Days",
+      "availableIn": "Available in",
+      "idealIn": "Ideal for companies in {{country}} with field staff, construction, delivery, sales and more."
     },
     "cta": {
       "title": "Ready to transform your HR management?",

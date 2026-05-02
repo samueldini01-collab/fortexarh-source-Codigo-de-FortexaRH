@@ -71,6 +71,7 @@ from routes.multi_country_reports import router as multi_country_reports_router
 from routes.brochure_builder import router as brochure_builder_router
 from routes.exchange_rates import router as exchange_rates_router
 from routes.native_reports import router as native_reports_router, run_reminders_for_all_companies
+from routes.sitemap import router as sitemap_router
 
 # ===================== APP SETUP =====================
 
@@ -186,6 +187,7 @@ for r in [
     brochure_builder_router,
     exchange_rates_router,
     native_reports_router,
+    sitemap_router,
 ]:
     api_router.include_router(r)
 

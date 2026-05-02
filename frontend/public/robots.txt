@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /super-admin
+Disallow: /dashboard
+
+# Dynamic sitemap served by the FortexaRH backend
+Sitemap: https://fortexarh.com/api/sitemap.xml
