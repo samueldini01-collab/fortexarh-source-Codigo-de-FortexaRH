@@ -5508,7 +5508,7 @@
       "title1": "Sistema Integral de",
       "title2": "Recursos Humanos",
       "title3": "y Nómina",
-      "subtitle": "La solución completa para la gestión de RRHH de su empresa. Automatice nóminas, controle asistencia y cumpla con las regulaciones de TSS y DGII de República Dominicana.",
+      "subtitle": "La solución completa para la gestión de RRHH y Nómina de su empresa. Automatice nóminas, controle asistencia y cumpla con regulaciones fiscales en 29 países — República Dominicana, Colombia, México, Panamá, Estados Unidos, España y más.",
       "compliance": "Cumplimiento Legal",
       "complianceDesc": "TSS, DGII, Código de Trabajo",
       "automation": "Automatización Total",
@@ -5571,13 +5571,23 @@
       "achPayments": "Pagos ACH Bancarios",
       "achPaymentsDesc": "Generación de archivos ACH para Banreservas, Popular y BHD León desde la nómina",
       "qbDesktop": "QuickBooks Desktop",
-      "qbDesktopDesc": "Exportación IIF para integración con QuickBooks Desktop"
+      "qbDesktopDesc": "Exportación IIF para integración con QuickBooks Desktop",
+      "multiCountry": "Motor Multi-País",
+      "multiCountryDesc": "Cálculo fiscal nativo en 29 países: DGII, SAT, SUNAT, IRS, DIAN, URSSAF, ONSS y más",
+      "publicCalculator": "Calculadora Pública",
+      "publicCalculatorDesc": "Calculadora de nómina gratis con captura de leads y PDF por email",
+      "smartBanner": "Banner País-Aware",
+      "smartBannerDesc": "Detecta el país del visitante y sugiere el motor fiscal correspondiente automáticamente",
+      "multiLanguage": "4 Idiomas Nativos",
+      "multiLanguageDesc": "Español, Inglés, Francés y Portugués (Brasil) — 5.365 claves traducidas",
+      "globalCompliance": "Compliance Global",
+      "globalComplianceDesc": "33 formatos fiscales nativos + reportes universales para 29 países"
     },
     "benefits": {
       "sectionTitle": "BENEFICIOS",
       "title": "¿Por qué elegir FortexaRH?",
       "benefit1": "Reduce hasta 70% el tiempo de procesamiento de nómina",
-      "benefit2": "Cumplimiento 100% con TSS y DGII de Rep. Dominicana",
+      "benefit2": "Motor fiscal dinámico con soporte nativo para 29 países en 5 regiones",
       "benefit3": "Control de asistencia GPS con detección de fraude",
       "benefit4": "Mapa en tiempo real de ubicación de empleados",
       "benefit5": "Alertas automáticas por email de anomalías",
@@ -5684,6 +5694,19 @@
       "freeUpdates": "Actualizaciones Gratuitas",
       "copyright": "© 2026 FortexaRH. Todos los derechos reservados.",
       "location": "Santo Domingo, República Dominicana"
+    },
+    "countries": {
+      "sectionTitle": "ALCANCE GLOBAL",
+      "title": "Nómina nativa en 29 países, 5 regiones",
+      "subtitle": "Motor fiscal dinámico que calcula deducciones, ISR y aportes según las leyes locales de cada país.",
+      "region": {
+        "north_america": "América del Norte",
+        "central_america": "América Central",
+        "caribbean": "Caribe",
+        "south_america": "América del Sur",
+        "europe": "Europa"
+      },
+      "footer": "Motor fiscal dinámico: tarifas, ISR, aportes y documentos se adaptan automáticamente según el país de la empresa."
     }
   },
   "geoLocations": {

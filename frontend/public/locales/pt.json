@@ -599,7 +599,7 @@
     "benefits": {
       "benefit1": "Reduz até 70% o tempo de processamento da folha",
       "benefit10": "Dados seguros na nuvem com backup automático",
-      "benefit2": "Conformidade 100% com TSS e DGII da Rep. Dominicana",
+      "benefit2": "Motor fiscal dinâmico com suporte nativo para 29 países em 5 regiões",
       "benefit3": "Controle de presença GPS com detecção de fraude",
       "benefit4": "Mapa em tempo real da localização de funcionários",
       "benefit5": "Alertas automáticos por e-mail de anomalias",
@@ -629,7 +629,7 @@
       "cloudDesc": "Acesso de qualquer lugar",
       "compliance": "Conformidade Legal",
       "complianceDesc": "TSS, DGII, Código do Trabalho",
-      "subtitle": "A solução completa para a gestão de RH da sua empresa. Automatize a folha, controle a presença e cumpra as regulamentações de TSS e DGII da República Dominicana.",
+      "subtitle": "A solução completa para gestão de RH e Folha de Pagamento. Automatize a folha, controle a presença e cumpra regulamentações fiscais em 29 países — República Dominicana, Colômbia, México, Panamá, EUA, Espanha e mais.",
       "title1": "Sistema Integral de",
       "title2": "Recursos Humanos",
       "title3": "e Folha"
@@ -690,7 +690,17 @@
       "subtitle": "Sistema completo de gestão de RH e Folha de Pagamento",
       "title": "Tudo o que você precisa para gerenciar sua equipe",
       "vacationManagement": "Gestão de Férias",
-      "vacationManagementDesc": "Solicitações, aprovações e cálculo automático de dias"
+      "vacationManagementDesc": "Solicitações, aprovações e cálculo automático de dias",
+      "multiCountry": "Motor Multi-País",
+      "multiCountryDesc": "Cálculo fiscal nativo em 29 países: DGII, SAT, SUNAT, IRS, DIAN, URSSAF, ONSS e mais",
+      "publicCalculator": "Calculadora Pública",
+      "publicCalculatorDesc": "Calculadora de folha gratuita com captura de leads e PDF por e-mail",
+      "smartBanner": "Banner Pais-Aware",
+      "smartBannerDesc": "Detecta o país do visitante e sugere automaticamente o motor fiscal correspondente",
+      "multiLanguage": "4 Idiomas Nativos",
+      "multiLanguageDesc": "Espanhol, Inglês, Francês e Português (Brasil) — 5.365 chaves traduzidas",
+      "globalCompliance": "Compliance Global",
+      "globalComplianceDesc": "33 formatos fiscais nativos + relatórios universais para 29 países"
     },
     "generatingPdf": "Gerando PDF...",
     "geolocation": {
@@ -778,6 +788,19 @@
       "title": "Investimento que se paga sozinho",
       "trialNote": "* Todos os planos incluem 3 dias de teste grátis. Sem cartão de crédito necessário.",
       "usersIncluded": "usuários incluídos"
+    },
+    "countries": {
+      "sectionTitle": "ALCANCE GLOBAL",
+      "title": "Folha nativa em 29 países, 5 regiões",
+      "subtitle": "Motor fiscal dinâmico que calcula deduções, imposto de renda e contribuições conforme leis locais.",
+      "region": {
+        "north_america": "América do Norte",
+        "central_america": "América Central",
+        "caribbean": "Caribe",
+        "south_america": "América do Sul",
+        "europe": "Europa"
+      },
+      "footer": "Motor fiscal dinâmico: alíquotas, imposto, contribuições e documentos se adaptam automaticamente ao país da empresa."
     }
   },
   "cdcAudit": {

@@ -191,6 +191,17 @@
     - CTA nuevo en landing hero ("Calculadora gratis" con icono Calculator).
     - Bug fix: `pointer-events-none` en 2 decorative floating cards del landing que interceptaban clicks en la CTA row (detectado por testing agent).
   - Tested: iteration_53.json — **354/354 backend tests PASSED** (7 nuevos calculator-lead + 206 regression + 141 native_reports). Frontend 12/13 → 13/13 después del fix de pointer-events.
+- **Brochure + PricingPage i18n fix (Feb 2, 2026)** — bug-fix DONE:
+  - 🐛 `PricingPage.jsx` tenía array local de idiomas hardcodeado con solo 3 entradas (es/en/fr). Ahora importa `languages` desde `@/i18n` → muestra los 4 idiomas (es/en/fr/pt). Single source of truth.
+  - 📄 `BrochurePage.jsx` actualizado integralmente:
+    - Subtítulo portada menciona 29 países: "Automatice nóminas... cumpla con regulaciones fiscales en 29 países — RD, CO, MX, PA, USA, España y más"
+    - +5 features al inicio del array (todas con badge NEW): Motor Multi-País, Calculadora Pública, Banner País-Aware, 4 Idiomas Nativos, Compliance Global
+    - Benefit 2 actualizado: "Motor fiscal dinámico con soporte nativo para 29 países en 5 regiones"
+    - Nueva sección **"Alcance Global"** con `useEffect` que fetchea `/api/country-config/countries` y renderiza dinámicamente los 29 países agrupados por 5 regiones, con banderas SVG + moneda. 100% reactivo: al añadir nuevos países al backend se actualiza solo.
+    - Usa `<CountryFlag>` para banderas cross-platform
+  - 21 i18n keys nuevas × 4 idiomas (es/en/fr/pt) = 84 traducciones (brochure.countries.*, brochure.features.{multiCountry,publicCalculator,smartBanner,multiLanguage,globalCompliance})
+  - TRANSLATION_VERSION bump 3.0.0 → 3.1.0 para cache bust
+  - Verificado: 4 idiomas visibles en /pricing dropdown, 29 country cards renderizadas en /brochure, 81/81 tests backend passing.
 - **Smart Locale Banner país-aware (Feb 2, 2026)** — Enhancement DONE:
   - `/app/frontend/src/components/LanguageBanner.jsx` reescrito (88→180 líneas) como `SmartLocaleBanner`.
   - **Mapa `BROWSER_LOCALE_MAP`** con 31 mapeos de locales BCP-47 a los 29 países soportados (ej: `pt-BR`→Brasil/BRL, `fr-BE`→Bélgica/EUR, `es-MX`→México/MXN, `en-CA`/`fr-CA`→Canadá/CAD, `nl-SR`→Surinam, `es-DO`→default no-banner).

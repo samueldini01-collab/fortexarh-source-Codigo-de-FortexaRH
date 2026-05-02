@@ -5508,7 +5508,7 @@
       "title1": "Comprehensive",
       "title2": "Human Resources",
       "title3": "and Payroll System",
-      "subtitle": "The complete solution for your company's HR management. Automate payroll, control attendance, and comply with Dominican Republic TSS and DGII regulations.",
+      "subtitle": "The complete solution for HR and Payroll management. Automate payroll, track attendance and stay compliant with tax regulations across 29 countries — Dominican Republic, Colombia, Mexico, Panama, USA, Spain and more.",
       "compliance": "Legal Compliance",
       "complianceDesc": "TSS, DGII, Labor Code",
       "automation": "Full Automation",
@@ -5571,13 +5571,23 @@
       "achPayments": "ACH Bank Payments",
       "achPaymentsDesc": "ACH file generation for Banreservas, Popular and BHD León from payroll",
       "qbDesktop": "QuickBooks Desktop",
-      "qbDesktopDesc": "IIF export for QuickBooks Desktop integration"
+      "qbDesktopDesc": "IIF export for QuickBooks Desktop integration",
+      "multiCountry": "Multi-Country Engine",
+      "multiCountryDesc": "Native tax calculation in 29 countries: DGII, SAT, SUNAT, IRS, DIAN, URSSAF, ONSS and more",
+      "publicCalculator": "Public Calculator",
+      "publicCalculatorDesc": "Free payroll calculator with lead capture and PDF via email",
+      "smartBanner": "Country-Aware Banner",
+      "smartBannerDesc": "Detects visitor's country and suggests the matching fiscal engine automatically",
+      "multiLanguage": "4 Native Languages",
+      "multiLanguageDesc": "Spanish, English, French and Brazilian Portuguese — 5,365 translated keys",
+      "globalCompliance": "Global Compliance",
+      "globalComplianceDesc": "33 native fiscal formats + universal reports for 29 countries"
     },
     "benefits": {
       "sectionTitle": "BENEFITS",
       "title": "Why choose FortexaRH?",
       "benefit1": "Reduce payroll processing time by up to 70%",
-      "benefit2": "100% compliance with TSS and DGII of Dominican Republic",
+      "benefit2": "Dynamic fiscal engine with native support for 29 countries across 5 regions",
       "benefit3": "GPS attendance control with fraud detection",
       "benefit4": "Real-time map of employee location",
       "benefit5": "Automatic email alerts for anomalies",
@@ -5684,6 +5694,19 @@
       "freeUpdates": "Free Updates",
       "copyright": "© 2026 FortexaRH. All rights reserved.",
       "location": "Santo Domingo, Dominican Republic"
+    },
+    "countries": {
+      "sectionTitle": "GLOBAL REACH",
+      "title": "Native payroll in 29 countries, 5 regions",
+      "subtitle": "Dynamic fiscal engine that calculates deductions, income tax and contributions per local laws.",
+      "region": {
+        "north_america": "North America",
+        "central_america": "Central America",
+        "caribbean": "Caribbean",
+        "south_america": "South America",
+        "europe": "Europe"
+      },
+      "footer": "Dynamic fiscal engine: rates, income tax, contributions and documents adapt automatically per company country."
     }
   },
   "geoLocations": {

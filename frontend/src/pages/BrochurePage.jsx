@@ -1,5 +1,6 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
@@ -40,15 +41,34 @@ import {
   FileSignature,
   Pen,
   GitBranch,
-  Landmark
+  Landmark,
+  Languages
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import CountryFlag from "@/components/CountryFlag";
+
+const API = (process.env.REACT_APP_BACKEND_URL || "").replace(/\/$/, "") + "/api";
 
 export default function BrochurePage() {
   const { t } = useTranslation();
   const brochureRef = useRef(null);
   const [downloading, setDownloading] = useState(false);
+  const [regions, setRegions] = useState({});
   const navigate = useNavigate();
+
+  // Load 29-country catalog from backend (with fallback if offline)
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await axios.get(`${API}/country-config/countries`);
+        if (!cancelled) setRegions(data.regions || {});
+      } catch {
+        // Silent — section will render empty if unavailable
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const handleDownloadPDF = async () => {
     setDownloading(true);
@@ -75,6 +95,11 @@ export default function BrochurePage() {
 
   // ALL system features - using translation keys
   const features = [
+    { icon: Globe, titleKey: "brochure.features.multiCountry", descKey: "brochure.features.multiCountryDesc", isNew: true },
+    { icon: Calculator, titleKey: "brochure.features.publicCalculator", descKey: "brochure.features.publicCalculatorDesc", isNew: true },
+    { icon: MapPin, titleKey: "brochure.features.smartBanner", descKey: "brochure.features.smartBannerDesc", isNew: true },
+    { icon: Languages, titleKey: "brochure.features.multiLanguage", descKey: "brochure.features.multiLanguageDesc", isNew: true },
+    { icon: Shield, titleKey: "brochure.features.globalCompliance", descKey: "brochure.features.globalComplianceDesc", isNew: true },
     { icon: Users, titleKey: "brochure.features.employeeManagement", descKey: "brochure.features.employeeManagementDesc" },
     { icon: Calculator, titleKey: "brochure.features.automatedPayroll", descKey: "brochure.features.automatedPayrollDesc" },
     { icon: MapPin, titleKey: "brochure.features.gpsGeolocation", descKey: "brochure.features.gpsGeolocationDesc", isNew: true },
@@ -358,6 +383,52 @@ export default function BrochurePage() {
                     <span className="text-slate-300">{item}</span>
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Page 2.75: Multi-Country Coverage (NEW) */}
+          <div className="p-12 bg-white min-h-[650px]">
+            <div className="text-center mb-8">
+              <p className="text-emerald-600 font-semibold mb-2">{t('brochure.countries.sectionTitle')}</p>
+              <h2 className="text-3xl font-bold text-slate-800">{t('brochure.countries.title')}</h2>
+              <p className="text-slate-500 mt-2 max-w-2xl mx-auto">{t('brochure.countries.subtitle')}</p>
+            </div>
+
+            <div className="space-y-6">
+              {Object.entries(regions).map(([regionCode, info]) => (
+                <div key={regionCode} className="border border-slate-200 rounded-xl p-5 bg-gradient-to-br from-slate-50 to-white">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-1 h-6 bg-emerald-500 rounded-full" />
+                    <h3 className="font-bold text-slate-800">
+                      {t(`brochure.countries.region.${regionCode}`)}
+                    </h3>
+                    <span className="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+                      {info.countries.length}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {info.countries.map((c) => (
+                      <div
+                        key={c.code}
+                        className="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200 hover:border-emerald-300 transition-colors"
+                      >
+                        <CountryFlag code={c.code} className="w-6 h-auto flex-shrink-0 rounded-sm" />
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-slate-800 truncate">{c.name}</p>
+                          <p className="text-[10px] text-slate-500">{c.currency_symbol} {c.currency}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
+              <div className="flex items-start gap-3">
+                <Globe className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-slate-700">{t('brochure.countries.footer')}</p>
               </div>
             </div>
           </div>

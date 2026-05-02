@@ -5508,7 +5508,7 @@
       "title1": "Système Intégral de",
       "title2": "Ressources Humaines",
       "title3": "et Paie",
-      "subtitle": "La solution complète pour la gestion RH de votre entreprise. Automatisez la paie, contrôlez les présences et respectez les réglementations TSS et DGII de la République Dominicaine.",
+      "subtitle": "La solution complète pour la gestion RH et Paie. Automatisez la paie, contrôlez la présence et respectez les réglementations fiscales dans 29 pays — République dominicaine, Colombie, Mexique, Panama, États-Unis, Espagne et plus.",
       "compliance": "Conformité Légale",
       "complianceDesc": "TSS, DGII, Code du Travail",
       "automation": "Automatisation Totale",
@@ -5571,13 +5571,23 @@
       "eSignature": "Signature électronique",
       "eSignatureDesc": "Signature numérique à l'écran avec vérification SHA-256, horodatage et multipartite",
       "qbDesktop": "QuickBooks Desktop",
-      "qbDesktopDesc": "Export IIF pour intégration QuickBooks Desktop"
+      "qbDesktopDesc": "Export IIF pour intégration QuickBooks Desktop",
+      "multiCountry": "Moteur Multi-Pays",
+      "multiCountryDesc": "Calcul fiscal natif dans 29 pays : DGII, SAT, SUNAT, IRS, DIAN, URSSAF, ONSS et plus",
+      "publicCalculator": "Calculatrice Publique",
+      "publicCalculatorDesc": "Calculatrice de paie gratuite avec capture de leads et PDF par e-mail",
+      "smartBanner": "Bannière Pays-Aware",
+      "smartBannerDesc": "Détecte le pays du visiteur et suggère automatiquement le moteur fiscal correspondant",
+      "multiLanguage": "4 Langues Natives",
+      "multiLanguageDesc": "Espagnol, Anglais, Français et Portugais (Brésil) — 5 365 clés traduites",
+      "globalCompliance": "Conformité Globale",
+      "globalComplianceDesc": "33 formats fiscaux natifs + rapports universels pour 29 pays"
     },
     "benefits": {
       "sectionTitle": "AVANTAGES",
       "title": "Pourquoi choisir FortexaRH?",
       "benefit1": "Réduisez jusqu'à 70% le temps de traitement de la paie",
-      "benefit2": "Conformité 100% avec TSS et DGII de Rép. Dominicaine",
+      "benefit2": "Moteur fiscal dynamique avec support natif pour 29 pays dans 5 régions",
       "benefit3": "Contrôle de présence GPS avec détection de fraude",
       "benefit4": "Carte en temps réel de la localisation des employés",
       "benefit5": "Alertes automatiques par email des anomalies",
@@ -5684,6 +5694,19 @@
       "freeUpdates": "Mises à Jour Gratuites",
       "copyright": "© 2026 FortexaRH. Tous droits réservés.",
       "location": "Saint-Domingue, République Dominicaine"
+    },
+    "countries": {
+      "sectionTitle": "PORTÉE MONDIALE",
+      "title": "Paie native dans 29 pays, 5 régions",
+      "subtitle": "Moteur fiscal dynamique qui calcule les déductions, l'impôt sur le revenu et les cotisations selon les lois locales.",
+      "region": {
+        "north_america": "Amérique du Nord",
+        "central_america": "Amérique centrale",
+        "caribbean": "Caraïbes",
+        "south_america": "Amérique du Sud",
+        "europe": "Europe"
+      },
+      "footer": "Moteur fiscal dynamique : taux, impôts, cotisations et documents s'adaptent automatiquement selon le pays de l'entreprise."
     }
   },
   "geoLocations": {
