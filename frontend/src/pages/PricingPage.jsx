@@ -43,8 +43,10 @@ export default function PricingPage() {
   };
 
   const handleSelectPlan = async (planId) => {
+    // Unauthenticated visitors go through the same pay-first flow used by /#pricing
+    // (public checkout → account created after successful payment).
     if (!user) {
-      navigate("/register");
+      navigate(`/checkout?plan=${planId}`);
       return;
     }
 

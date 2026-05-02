@@ -379,6 +379,12 @@
   - Clave `landing.hero.title` convertida a plantilla con interpolación `{{country}}` en los 4 idiomas (ES/EN/FR/PT, sincronizada en `src/i18n/locales` y `public/locales`).
   - `LandingPage.jsx` pasa `landingCountry.profile?.name || 'República Dominicana'` al `t()`.
   - Resultados: CO→"#1 Sistema de RRHH y Nómina para Colombia", BR→"#1 Sistema de RH e Folha de Pagamento para Brasil", GB/EN→"#1 HR & Payroll System for Reino Unido". Bump `TRANSLATION_VERSION` 3.7.1 → 3.7.2.
+- **`/pricing` alineada con `/#pricing` — pay-first flow (Feb 2, 2026)** — P0 DONE:
+  - `PricingPage.jsx → handleSelectPlan` ahora redirige a `/checkout?plan=${planId}` cuando el visitante no está autenticado (mismo comportamiento que los botones `buy-basic-btn`/`buy-pro-btn`/`buy-enterprise-btn` del landing section `/#pricing`).
+  - Usuarios autenticados siguen usando `POST /api/checkout` (upgrades desde el dashboard).
+  - Plan "Free" conserva el redirect directo a `/register` (no requiere pago).
+  - Flujo completo: seleccionar plan → elegir cantidad de empleados → pago Stripe (`/api/public/checkout`) → cuenta creada post-pago.
+  - Test: click en `select-plan-pro` y `select-plan-basic` desde `/pricing` sin sesión redirige correctamente a `/checkout?plan=X` y renderiza `proceed-to-payment-btn`.
 - **Dynamic sitemap.xml + robots.txt (Feb 2, 2026)** — SEO P1 DONE:
   - New module `/app/backend/routes/sitemap.py` wired into `/api/`.
   - `GET /api/sitemap.xml` returns XML with 34 URLs: 5 core routes (`/`, `/pricing`, `/register`, `/login`, `/soporte`) + 29 country pages (`/pais/{slug}`), each with 4 hreflang alternates (es, en, fr, pt) — totalling 145 alternate links. `Cache-Control: public, max-age=3600`. Content-Type `application/xml`.
