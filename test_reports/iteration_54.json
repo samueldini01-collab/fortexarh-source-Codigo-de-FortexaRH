@@ -1,0 +1,37 @@
+{
+  "summary": "Iter246 multi-country i18n + payroll-calculator refactor validated. Backend: 8/8 NEW iter246 tests + 116/116 regression (payroll_dr + payroll_routes_integration + payroll_workflow_e2e + country_config_rates_flat + calculator_lead_iter245) = 124/124 GREEN. DR math UNCHANGED (net_salary=44747.75 for base=50000 days=30 — exact match to iter245 known answer). /api/payroll-calculator now returns breakdown.{country_code,country_name,currency,currency_symbol,flag,labels{sfs/afp/srl/infotep/isr_agency},rates_applied{...}} dynamically from COUNTRY_PROFILES via company.country (DR keeps DGII precise calculate_isr_monthly; non-DR uses calculate_isr_dynamic). /api/country-config/company returns {country_code, profile, overrides, company_name} as expected. Frontend: /calculator dropdown now renders 29 SVG flags + 28 options (verified via DOM probe — flag-do, flag-ar, flag-bo, flag-br, flag-ca... — replacing the broken 'us' lowercase emoji-fallback Windows bug). i18n key 'settings.general.countriesAvailable' resolves correctly ('Disponible en 28 países de América'). All 4 iter246-claimed keys (common.retry, companyConfig.qbNotConfigured, payrollV2.fiscalEngine, settings.general.countriesAvailable) present in es/en/fr. Internal /payroll-config banner data-testid=payroll-config-country-banner renders with company country: 'Esta configuración aplica al país de tu empresa: República Dominicana (DO) — moneda DOP'. Internal /payroll-calculator shows country-aware DR labels: 'TSS: SFS 3.04% + AFP 2.87% | ISR: DGII' and RD$ currency. End-to-end UI calculation produces RD$44,747.75 net.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iter246_multi_country.py",
+    "/app/test_reports/pytest/iter54_iter246.xml",
+    "/app/test_reports/pytest/iter54_regression.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "payroll_config.py:120 falls back to COUNTRY_PROFILES['DO'] when country_code is unknown. Consider logging a WARNING when an unrecognized country_code is found so misconfigured tenants surface in observability instead of silently getting DR rates.",
+    "payroll_config.py:139 _label() helper picks employee_deductions[0]/[1] and employer_contributions[0..3] by INDEX. This works for current COUNTRY_PROFILES shape but is fragile — if any country's profile reorders the array (e.g. puts pension before health), labels will swap (sfs label might display the AFP entry). Long-term, switch to lookup-by-code (e.g., find item where code in {'SFS','HEALTH','SALUD'}) instead of positional indexing.",
+    "i18n FR locale has 430 keys missing vs ES (pre-existing, unrelated to iter246 — but a future sprint should run /app/backend/scripts/i18n_audit.py and patch them, especially accounting.* and geoLocationsPage.liveMap.*). EN has 3 still-missing keys (geoLocationsPage.liveMap.{employeeToast,filters.activeFilters,locationToast}) — also pre-existing.",
+    "calculator_lead.py duplicates breakdown computation from public_payroll_calculator (same comment carried from iter53 — still applies)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iter246_multi_country.py (NEW — 8 tests covering DR-unchanged math, breakdown shape, /country-config/company shape, public countries endpoint)"
+  ],
+  "success_rate": {
+    "backend": "100% (8/8 iter246 + 116/116 regression = 124/124)",
+    "frontend": "100% (5/5 criteria: SVG flags ≥20 in /calculator dropdown, countriesAvailable banner, payroll-config-country-banner data-testid present, /payroll-calculator DR labels intact, DR net 44,747.75 in UI)"
+  },
+  "test_credentials": "Used test_refactor@fortexa.com / test123 from /app/memory/test_credentials.md (DR company, role=admin) — login OK, /dashboard reached.",
+  "seed_data_creation": "None. Tests are read-only and use existing seeded admin company.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Iter246 baseline confirmed: 124 backend tests GREEN. The /api/payroll-calculator response shape changed (breakdown now includes country_code/country_name/currency/currency_symbol/flag/labels/rates_applied) — any new test relying on the old breakdown shape must be updated. CountryFlag.jsx renders <svg data-testid='flag-XX'> via country-flag-icons package — use this selector for any future UI tests that need to assert flag presence (do NOT assume unicode emoji 🇺🇸/🇩🇴 — Windows browsers don't render regional indicators). Pre-existing FR i18n gap (430 keys) is OUT OF SCOPE for iter246; do not flag as regression. Pre-existing failures in test_qbo_account_mapping.py and test_push_notifications_vacation_payroll.py are out-of-scope as flagged in the review request.",
+  "rca_of_the_issue": "All 3 user-reported issues confirmed FIXED in iter246: (1) /payroll-calculator + /payroll-config now adapt dynamically to company.country via COUNTRY_PROFILES + get_company_rates_flat() + calculate_isr_dynamic() — DR companies still use DGII precise interpolation (calculate_isr_monthly) and pass exact 44747.75 known-answer. (2) The 4 missing i18n keys (common.retry, companyConfig.qbNotConfigured, payrollV2.fiscalEngine, settings.general.countriesAvailable) all resolve correctly across es/en/fr — verified by JSON traversal + visible 'Disponible en 28 países' banner in /calculator. (3) The Windows emoji-flag bug ('us' lowercase showing instead of 🇺🇸) is fixed via new CountryFlag.jsx component using country-flag-icons SVGs — DOM probe confirmed 29 svg[data-testid^='flag-'] elements rendered when dropdown opens (flag-do, flag-ar, flag-bo, flag-br, flag-ca, ...). No regression detected in any existing flow."
+}

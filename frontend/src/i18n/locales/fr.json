@@ -115,7 +115,8 @@
     "submit": "Soumettre",
     "selectOption": "Sélectionner une option",
     "lastUpdated": "Dernière mise à jour",
-    "days": "jours"
+    "days": "jours",
+    "retry": "Réessayer"
   },
   "colors": {
     "red": "Rouge",
@@ -1075,7 +1076,8 @@
     "totalAportesPatronal": "Total Aportes Patronal",
     "totalAPagarTss": "Total à payer TSS",
     "archivo": "Fichier",
-    "agregueUnIngresoODeduccion": "Ajouter un revenu ou déduction pour {{name}}"
+    "agregueUnIngresoODeduccion": "Ajouter un revenu ou déduction pour {{name}}",
+    "fiscalEngine": "Moteur fiscal"
   },
   "globalSearch": {
     "placeholder": "Rechercher ou exécuter des actions IA...",
@@ -2422,7 +2424,8 @@
       "address": "Adresse",
       "phone": "Téléphone",
       "email": "Email",
-      "website": "Site Web"
+      "website": "Site Web",
+      "countriesAvailable": "pays disponibles"
     },
     "logo": {
       "title": "Logo de l'Entreprise",
@@ -4246,7 +4249,8 @@
     "actualizar": "Update",
     "noHayRegistrosDe": "No hay registros de auditoría",
     "configuracionDeEmpresa": "Configuration de Empresa",
-    "administraLaIdentidadApariencia": "Administra la identidad, apariencia e integraciones de tu organización."
+    "administraLaIdentidadApariencia": "Administra la identidad, apariencia e integraciones de tu organización.",
+    "qbNotConfigured": "QuickBooks non configuré"
   },
   "errors": {
     "generic": "Une erreur s'est produite",

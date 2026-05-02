@@ -127,7 +127,8 @@
     "other": "Other",
     "readOnlyAccess": "Read only",
     "recruitment": "Recruitment",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "retry": "Retry"
   },
   "colors": {
     "red": "Red",
@@ -1151,7 +1152,8 @@
       "totalDeductions": "TOTAL DEDUCTIONS",
       "save": "Save Changes"
     },
-    "downloadPayslip": "Download Payslip"
+    "downloadPayslip": "Download Payslip",
+    "fiscalEngine": "Fiscal Engine"
   },
   "globalSearch": {
     "placeholder": "Search or run AI actions...",
@@ -2278,7 +2280,12 @@
       "errorPayment": "Error registering payment",
       "errorDeleting": "Error deleting",
       "noLoans": "No loans registered",
-      "noLoansFilter": "No loans with these filters"
+      "noLoansFilter": "No loans with these filters",
+      "confirmDelete": "Are you sure you want to delete this loan?",
+      "errorLoadDetails": "Error loading loan details",
+      "errorLoadHistory": "Error loading loan history",
+      "errorLoading": "Error loading loans",
+      "fillRequired": "Please fill in all required fields"
     },
     "listadoDePrestamos": "Loans List",
     "noHayPrestamosRegistrados": "No loans registered",
@@ -2514,7 +2521,8 @@
       "email": "Email",
       "website": "Website",
       "country": "Country",
-      "currency": "Currency"
+      "currency": "Currency",
+      "countriesAvailable": "countries available"
     },
     "logo": {
       "title": "Company Logo",
@@ -4523,7 +4531,8 @@
       "saved": "Bank configuration saved",
       "errorSaving": "Error saving bank configuration",
       "allConfigured": "All available banks are configured. You can now generate ACH files for any bank."
-    }
+    },
+    "qbNotConfigured": "QuickBooks not configured"
   },
   "errors": {
     "generic": "An error occurred",

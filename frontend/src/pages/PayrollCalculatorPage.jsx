@@ -140,11 +140,23 @@ export default function PayrollCalculatorPage() {
   };
 
   const formatCurrency = (value) => {
-    return new Intl.NumberFormat('es-DO', {
-      style: 'currency',
-      currency: 'DOP',
-      minimumFractionDigits: 2
-    }).format(value);
+    // iter246: read currency from the breakdown returned by the backend so the
+    // label matches the company's configured country (USD, MXN, COP, etc.).
+    const bd = result?.breakdown || {};
+    const currency = bd.currency || 'DOP';
+    const locale = currency === 'DOP' ? 'es-DO' : 'en-US';
+    try {
+      return new Intl.NumberFormat(locale, {
+        style: 'currency',
+        currency,
+        minimumFractionDigits: 2
+      }).format(value || 0);
+    } catch {
+      // Fallback for uncommon currencies (BOB, HTG, SRD) that some browsers
+      // may not recognize.
+      const sym = bd.currency_symbol || '';
+      return `${sym}${(value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
   };
 
   const exportToPDF = () => {
@@ -244,9 +256,14 @@ export default function PayrollCalculatorPage() {
     doc.setFontSize(10);
     yPos += 7;
     
+    const bd = result.breakdown || {};
+    const labels = bd.labels || {};
+    const rates = bd.rates_applied || {};
+    const fmtPct = (r) => r ? `${(r * 100).toFixed(2)}%` : "";
+
     const tssDeductions = [
-      ["  SFS (3.04%)", formatCurrency(result.sfs_employee)],
-      ["  AFP (2.87%)", formatCurrency(result.afp_employee)],
+      [`  ${labels.sfs_employee || 'Seguro Salud'} (${fmtPct(rates.sfs_employee)})`, formatCurrency(result.sfs_employee)],
+      [`  ${labels.afp_employee || 'Pensión'} (${fmtPct(rates.afp_employee)})`, formatCurrency(result.afp_employee)],
     ];
     
     tssDeductions.forEach(([label, value]) => {
@@ -335,10 +352,10 @@ export default function PayrollCalculatorPage() {
     
     yPos += 10;
     const employerContributions = [
-      ["SFS (7.09%)", formatCurrency(result.sfs_employer)],
-      ["AFP (7.10%)", formatCurrency(result.afp_employer)],
-      ["SRL (1%)", formatCurrency(result.srl_employer)],
-      ["INFOTEP (1%)", formatCurrency(result.infotep_employer)],
+      [`${labels.sfs_employer || 'Salud Patronal'} (${fmtPct(rates.sfs_employer)})`, formatCurrency(result.sfs_employer)],
+      [`${labels.afp_employer || 'Pensión Patronal'} (${fmtPct(rates.afp_employer)})`, formatCurrency(result.afp_employer)],
+      [`${labels.srl_employer || 'Riesgos Laborales'} (${fmtPct(rates.srl_employer)})`, formatCurrency(result.srl_employer)],
+      [`${labels.infotep_employer || 'Capacitación'} (${fmtPct(rates.infotep_employer)})`, formatCurrency(result.infotep_employer)],
     ];
     
     employerContributions.forEach(([label, value]) => {
@@ -354,7 +371,11 @@ export default function PayrollCalculatorPage() {
     
     yPos += 15;
 
-    // ISR Reference Table Section
+    // ISR Reference Table — DR-only (DGII brackets). Skipped for other
+    // countries since each has its own bracket structure already reflected in
+    // the "tramo_impositivo" field from the backend.
+    const isDR = (bd.country_code || 'DO') === 'DO';
+    if (isDR) {
     doc.setFillColor(255, 251, 235); // amber-50
     doc.rect(15, yPos - 5, pageWidth - 30, 8, 'F');
     
@@ -419,11 +440,12 @@ export default function PayrollCalculatorPage() {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7);
     doc.text(`Salario bruto mensual: ${formatCurrency(result.isr_taxable_base)} | Tramo: ${result.isr_bracket} | ISR mensual: ${formatCurrency(result.isr_monthly)}`, 25, yPos + 10);
+    } // end isDR ISR block
     
     // Footer
     doc.setFontSize(8);
     doc.setTextColor(150, 150, 150);
-    doc.text(`Generado por FortexaRH - ${new Date().toLocaleString('es-DO')}`, pageWidth / 2, 285, { align: "center" });
+    doc.text(`Generado por FortexaRH - ${new Date().toLocaleString('es-DO')} — ${bd.country_name || ''}`, pageWidth / 2, 285, { align: "center" });
 
     // Save PDF
     const fileName = `nomina_${result.employee_name?.replace(/\s+/g, '_') || 'calculo'}_${new Date().toISOString().split('T')[0]}.pdf`;
@@ -469,7 +491,15 @@ export default function PayrollCalculatorPage() {
               <div>
                 <h3 className="font-semibold text-blue-900">{t("payroll.calculator.subtitle")}</h3>
                 <p className="text-sm text-blue-700 mt-1">
-                  <strong>{t('payrollCalc.tss')}</strong> SFS 3.04% + AFP 2.87% | <strong>{t('payrollCalc.isr')}</strong> DGII
+                  {result?.breakdown ? (
+                    <>
+                      <strong>{result.breakdown.country_name}</strong> ({result.breakdown.currency}) — <strong>{t('payrollCalc.tss')}</strong> {result.breakdown.labels?.sfs_employee} {((result.breakdown.rates_applied?.sfs_employee || 0) * 100).toFixed(2)}% + {result.breakdown.labels?.afp_employee} {((result.breakdown.rates_applied?.afp_employee || 0) * 100).toFixed(2)}% | <strong>{t('payrollCalc.isr')}</strong> {result.breakdown.labels?.isr_agency}
+                    </>
+                  ) : (
+                    <>
+                      <strong>{t('payrollCalc.tss')}</strong> SFS 3.04% + AFP 2.87% | <strong>{t('payrollCalc.isr')}</strong> DGII
+                    </>
+                  )}
                 </p>
               </div>
             </div>
@@ -699,11 +729,21 @@ export default function PayrollCalculatorPage() {
                       {/* TSS Section */}
                       <p className="text-xs text-red-600 font-medium mb-1">{t('payroll.calculator.socialSecurity')}</p>
                       <div className="flex justify-between">
-                        <span className="text-slate-600 dark:text-slate-300">{t('payrollCalc.sfs307')}</span>
+                        <span className="text-slate-600 dark:text-slate-300">
+                          {result.breakdown?.labels?.sfs_employee || t('payrollCalc.sfs307')}
+                          {result.breakdown?.rates_applied?.sfs_employee
+                            ? ` (${(result.breakdown.rates_applied.sfs_employee * 100).toFixed(2)}%)`
+                            : ''}
+                        </span>
                         <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.sfs_employee)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-600 dark:text-slate-300">{t('payrollCalc.afp287')}</span>
+                        <span className="text-slate-600 dark:text-slate-300">
+                          {result.breakdown?.labels?.afp_employee || t('payrollCalc.afp287')}
+                          {result.breakdown?.rates_applied?.afp_employee
+                            ? ` (${(result.breakdown.rates_applied.afp_employee * 100).toFixed(2)}%)`
+                            : ''}
+                        </span>
                         <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(result.afp_employee)}</span>
                       </div>
                       <div className="flex justify-between text-xs">
@@ -787,19 +827,39 @@ export default function PayrollCalculatorPage() {
                     <h4 className="font-semibold text-blue-800 text-sm">{t('payrollCalc.aportesDelEmpleadorReferencia')}</h4>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div className="flex justify-between">
-                        <span className="text-slate-600 dark:text-slate-300">{t('payrollCalc.sfs709')}</span>
+                        <span className="text-slate-600 dark:text-slate-300">
+                          {result.breakdown?.labels?.sfs_employer || t('payrollCalc.sfs709')}
+                          {result.breakdown?.rates_applied?.sfs_employer
+                            ? ` (${(result.breakdown.rates_applied.sfs_employer * 100).toFixed(2)}%)`
+                            : ''}
+                        </span>
                         <span className="font-medium">{formatCurrency(result.sfs_employer)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-600 dark:text-slate-300">{t('payrollCalc.afp710')}</span>
+                        <span className="text-slate-600 dark:text-slate-300">
+                          {result.breakdown?.labels?.afp_employer || t('payrollCalc.afp710')}
+                          {result.breakdown?.rates_applied?.afp_employer
+                            ? ` (${(result.breakdown.rates_applied.afp_employer * 100).toFixed(2)}%)`
+                            : ''}
+                        </span>
                         <span className="font-medium">{formatCurrency(result.afp_employer)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-600 dark:text-slate-300">{t('payrollCalc.srl1')}</span>
+                        <span className="text-slate-600 dark:text-slate-300">
+                          {result.breakdown?.labels?.srl_employer || t('payrollCalc.srl1')}
+                          {result.breakdown?.rates_applied?.srl_employer
+                            ? ` (${(result.breakdown.rates_applied.srl_employer * 100).toFixed(2)}%)`
+                            : ''}
+                        </span>
                         <span className="font-medium">{formatCurrency(result.srl_employer)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-600 dark:text-slate-300">{t('payrollCalc.infotep1')}</span>
+                        <span className="text-slate-600 dark:text-slate-300">
+                          {result.breakdown?.labels?.infotep_employer || t('payrollCalc.infotep1')}
+                          {result.breakdown?.rates_applied?.infotep_employer
+                            ? ` (${(result.breakdown.rates_applied.infotep_employer * 100).toFixed(2)}%)`
+                            : ''}
+                        </span>
                         <span className="font-medium">{formatCurrency(result.infotep_employer)}</span>
                       </div>
                     </div>

@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import CountryFlag from "@/components/CountryFlag";
 import {
   Select,
   SelectContent,
@@ -639,7 +640,9 @@ export default function CompanyConfigPage() {
               </SelectTrigger>
               <SelectContent className="max-h-96">
                 {Object.entries(countryData.regions || {}).length === 0 ? (
-                  <SelectItem value="DO">🇩🇴 República Dominicana (DOP)</SelectItem>
+                  <SelectItem value="DO">
+                    <CountryFlag code="DO" /> República Dominicana (DOP)
+                  </SelectItem>
                 ) : (
                   Object.entries(countryData.regions).map(([regionCode, regionInfo]) => (
                     <SelectGroup key={regionCode}>
@@ -648,7 +651,7 @@ export default function CompanyConfigPage() {
                       </SelectLabel>
                       {(regionInfo.countries || []).map(c => (
                         <SelectItem key={c.code} value={c.code} data-testid={`country-option-${c.code}`}>
-                          {c.flag} {c.name} ({c.currency})
+                          <CountryFlag code={c.code} /> {c.name} ({c.currency})
                         </SelectItem>
                       ))}
                     </SelectGroup>

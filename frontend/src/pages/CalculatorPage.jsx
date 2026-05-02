@@ -29,6 +29,7 @@ import {
   CheckCircle2,
   Globe,
 } from "lucide-react";
+import CountryFlag from "@/components/CountryFlag";
 
 const API = (process.env.REACT_APP_BACKEND_URL || "").replace(/\/$/, "") + "/api";
 
@@ -194,7 +195,7 @@ export default function CalculatorPage() {
                   <SelectContent className="max-h-72">
                     {countries.map((c) => (
                       <SelectItem key={c.code} value={c.code} data-testid={`calc-country-option-${c.code}`}>
-                        <span className="mr-2">{c.flag}</span>
+                        <CountryFlag code={c.code} />
                         {c.name} <span className="text-slate-400 ml-1">· {c.currency}</span>
                       </SelectItem>
                     ))}

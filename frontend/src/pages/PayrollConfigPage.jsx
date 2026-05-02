@@ -86,9 +86,27 @@ export default function PayrollConfigPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAuthHeaders]);
 
+  // iter246: fetch company's country profile so labels/currency adapt across
+  // the 28 supported countries (SFS→NIS, AFP→AFORE, DOP→USD, etc.).
+  const [companyProfile, setCompanyProfile] = useState(null);
+  const fetchCompanyProfile = useCallback(async () => {
+    try {
+      const { data } = await axios.get(`${API}/country-config/company`, {
+        headers: getAuthHeaders(),
+        withCredentials: true,
+      });
+      setCompanyProfile(data || null);
+    } catch (error) {
+      // Tolerate failure — UI falls back to DR defaults.
+      setCompanyProfile(null);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getAuthHeaders]);
+
   useEffect(() => {
     fetchConfig();
-  }, [fetchConfig]);
+    fetchCompanyProfile();
+  }, [fetchConfig, fetchCompanyProfile]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -167,7 +185,7 @@ export default function PayrollConfigPage() {
       </div>
       <div className="relative">
         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">
-          DOP
+          {companyProfile?.profile?.currency || 'DOP'}
         </span>
         <Input
           type="number"
@@ -199,6 +217,24 @@ export default function PayrollConfigPage() {
             {t('payrollConfig.subtitle')}
           </p>
         </div>
+
+        {/* iter246: Country context banner */}
+        {companyProfile && (
+          <Card className="border-blue-200 bg-blue-50/60" data-testid="payroll-config-country-banner">
+            <CardContent className="pt-4 pb-4 flex items-center gap-3">
+              <div className="flex-shrink-0">
+                <Info className="w-5 h-5 text-blue-600" />
+              </div>
+              <div className="text-sm text-blue-900">
+                Esta configuración aplica al país de tu empresa:&nbsp;
+                <strong>{companyProfile.profile?.name || companyProfile.country_code}</strong>
+                &nbsp;({companyProfile.country_code}) —
+                moneda <strong>{companyProfile.profile?.currency}</strong>.
+                Las tasas y etiquetas (salud/pensión/riesgos/capacitación) siguen el sistema oficial local.
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Important Info Banner */}
         <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">

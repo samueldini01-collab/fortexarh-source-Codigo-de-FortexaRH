@@ -14,6 +14,11 @@ from utils.payroll_constants import (
     SFS_EMPLOYER_RATE, AFP_EMPLOYER_RATE, SRL_EMPLOYER_RATE, INFOTEP_EMPLOYER_RATE,
     calculate_isr_monthly,
 )
+from routes.country_config import (
+    COUNTRY_PROFILES,
+    calculate_isr_dynamic,
+    get_company_rates_flat,
+)
 
 router = APIRouter(tags=["Payroll Config"])
 from config import db
@@ -105,16 +110,63 @@ async def delete_payroll_config(config_id: str, current_user: dict = Depends(get
 
 @router.post("/payroll-calculator")
 async def calculate_payroll(data: PayrollCalculatorInput, current_user: dict = Depends(get_current_user)):
+    # ===== iter246: DYNAMIC COUNTRY CONFIGURATION =====
+    # Look up the company's country and use its rates/ISR/labels instead of
+    # hardcoding DR values. Falls back to DR constants when country=='DO' or
+    # when no country is configured (legacy behaviour preserved).
+    company_id = current_user.get("company_id")
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0}) or {}
+    country_code = (company.get("country") or "DO").upper()
+    profile = COUNTRY_PROFILES.get(country_code, COUNTRY_PROFILES.get("DO", {}))
+
+    # Dynamic rates from country_config (overrides applied via settings). The
+    # flat dict exposes sfs/afp/srl/infotep for every country with matching
+    # semantics (health/pension/risk/training).
+    rates = await get_company_rates_flat(company_id)
+    sfs_emp_rate = rates.get("sfs_employee_rate", SFS_EMPLOYEE_RATE)
+    afp_emp_rate = rates.get("afp_employee_rate", AFP_EMPLOYEE_RATE)
+    sfs_er_rate = rates.get("sfs_employer_rate", SFS_EMPLOYER_RATE)
+    afp_er_rate = rates.get("afp_employer_rate", AFP_EMPLOYER_RATE)
+    srl_er_rate = rates.get("srl_employer_rate", SRL_EMPLOYER_RATE)
+    infotep_er_rate = rates.get("infotep_employer_rate", INFOTEP_EMPLOYER_RATE)
+
+    # Friendly labels for the frontend — each country's social-security system
+    # has its own terminology (NIS in Guyana, AFORE in Mexico, etc.).
+    ss = profile.get("social_security") or {}
+    emp_deds = ss.get("employee_deductions") or []
+    er_cons = ss.get("employer_contributions") or []
+
+    def _label(items, idx, default):
+        try:
+            return items[idx].get("label") or items[idx].get("name") or items[idx].get("code") or default
+        except (IndexError, AttributeError):
+            return default
+
+    labels = {
+        "sfs_employee": _label(emp_deds, 0, "Seguro Salud"),
+        "afp_employee": _label(emp_deds, 1, "Pensión"),
+        "sfs_employer": _label(er_cons, 0, "Seguro Salud (Patronal)"),
+        "afp_employer": _label(er_cons, 1, "Pensión (Patronal)"),
+        "srl_employer": _label(er_cons, 2, "Riesgos Laborales"),
+        "infotep_employer": _label(er_cons, 3, "Capacitación / Otros"),
+        "isr_agency": (profile.get("income_tax") or {}).get("agency", "DGII"),
+    }
+
     daily_rate = data.base_salary / 30
     proportional_salary = daily_rate * data.days_worked
     extra_hours_pay = data.hours_extra * data.hour_rate
     total_earnings = proportional_salary + extra_hours_pay + data.bonuses + data.commissions
 
-    sfs_employee = round(total_earnings * SFS_EMPLOYEE_RATE, 2)
-    afp_employee = round(total_earnings * AFP_EMPLOYEE_RATE, 2)
+    sfs_employee = round(total_earnings * sfs_emp_rate, 2)
+    afp_employee = round(total_earnings * afp_emp_rate, 2)
     total_tss_employee = round(sfs_employee + afp_employee, 2)
 
-    isr_result = calculate_isr_monthly(total_earnings)
+    # DR uses the precise DGII interpolation table. Other countries use
+    # the dynamic bracket calculator driven by country_config's income_tax.
+    if country_code == "DO":
+        isr_result = calculate_isr_monthly(total_earnings)
+    else:
+        isr_result = calculate_isr_dynamic(total_earnings, profile.get("income_tax") or {})
     isr_monthly = isr_result["isr_monthly"]
 
     total_employee_deductions = round(total_tss_employee + isr_monthly, 2)
@@ -122,10 +174,10 @@ async def calculate_payroll(data: PayrollCalculatorInput, current_user: dict = D
     total_deductions = round(total_employee_deductions + total_other_deductions, 2)
     net_salary = round(total_earnings - total_deductions, 2)
 
-    sfs_employer = round(total_earnings * SFS_EMPLOYER_RATE, 2)
-    afp_employer = round(total_earnings * AFP_EMPLOYER_RATE, 2)
-    srl_employer = round(total_earnings * SRL_EMPLOYER_RATE, 2)
-    infotep_employer = round(total_earnings * INFOTEP_EMPLOYER_RATE, 2)
+    sfs_employer = round(total_earnings * sfs_er_rate, 2)
+    afp_employer = round(total_earnings * afp_er_rate, 2)
+    srl_employer = round(total_earnings * srl_er_rate, 2)
+    infotep_employer = round(total_earnings * infotep_er_rate, 2)
     total_tss_employer = round(sfs_employer + afp_employer, 2)
     total_employer_contributions = round(sfs_employer + afp_employer + srl_employer + infotep_employer, 2)
     total_cost_employer = round(total_earnings + total_employer_contributions, 2)
@@ -163,6 +215,20 @@ async def calculate_payroll(data: PayrollCalculatorInput, current_user: dict = D
         total_cost_employer=total_cost_employer,
         total_employer_contributions=total_employer_contributions,
         breakdown={
+            "country_code": country_code,
+            "country_name": profile.get("name", country_code),
+            "currency": profile.get("currency", "DOP"),
+            "currency_symbol": profile.get("currency_symbol", "RD$"),
+            "flag": profile.get("flag", ""),
+            "labels": labels,
+            "rates_applied": {
+                "sfs_employee": sfs_emp_rate,
+                "afp_employee": afp_emp_rate,
+                "sfs_employer": sfs_er_rate,
+                "afp_employer": afp_er_rate,
+                "srl_employer": srl_er_rate,
+                "infotep_employer": infotep_er_rate,
+            },
             "ingresos": {
                 "salario_proporcional": round(proportional_salary, 2),
                 "horas_extra": round(extra_hours_pay, 2),
