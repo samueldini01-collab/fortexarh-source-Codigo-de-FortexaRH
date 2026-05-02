@@ -16,6 +16,7 @@ router = APIRouter(tags=["Checkout"])
 from config import db, SUBSCRIPTION_PLANS
 from utils.auth import get_current_user
 from email_service import send_payment_confirmation_email, send_invoice_email
+from routes.abandoned_carts import mark_cart_recovered
 
 security = HTTPBearer(auto_error=False)
 
@@ -170,14 +171,18 @@ async def create_public_checkout(data: PublicCheckoutRequest, request: Request):
     
     stripe.api_key = api_key
     host_url = data.origin_url
-    
+
+    # If caller provided email + cart_id, keep them linked so the Stripe
+    # success handler can mark the cart as recovered.
+    customer_email = (data.email or "").strip().lower() or None
+
     success_url = f"{host_url}/register?session_id={{CHECKOUT_SESSION_ID}}&plan={data.plan_id}&employees={employee_count}&payment=success"
     cancel_url = f"{host_url}/#pricing"
     
     checkout_id = f"pchk_{uuid.uuid4().hex[:12]}"
     
     try:
-        session = stripe.checkout.Session.create(
+        session_kwargs = dict(
             payment_method_types=['card'],
             line_items=[{
                 'price_data': {
@@ -201,9 +206,13 @@ async def create_public_checkout(data: PublicCheckoutRequest, request: Request):
                 "base_price": str(base_price),
                 "price_per_employee": str(price_per_employee),
                 "total_amount": str(amount),
-                "type": "new_registration"
+                "type": "new_registration",
+                "cart_id": data.cart_id or "",
             }
         )
+        if customer_email:
+            session_kwargs["customer_email"] = customer_email
+        session = stripe.checkout.Session.create(**session_kwargs)
     except stripe.error.StripeError as e:
         logger.error(f"Stripe API error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error de Stripe: {str(e)[:100]}")
@@ -267,7 +276,18 @@ async def verify_public_checkout(session_id: str):
             {"session_id": session_id},
             {"$set": {"payment_status": "paid", "paid_at": datetime.now(timezone.utc).isoformat()}}
         )
-        
+
+        # Mark the matching abandoned cart (if any) as recovered
+        try:
+            customer_email = None
+            if getattr(session, "customer_details", None):
+                customer_email = getattr(session.customer_details, "email", None)
+            customer_email = customer_email or getattr(session, "customer_email", None)
+            if customer_email and pending.get("plan_id"):
+                await mark_cart_recovered(customer_email, pending["plan_id"], session_id)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning(f"mark_cart_recovered failed: {exc}")
+
         return {
             "valid": True,
             "payment_status": "paid",

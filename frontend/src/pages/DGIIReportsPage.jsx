@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { DrillDownModal } from "@/components/DrillDown";
+import useCompanyCountry from "@/hooks/useCompanyCountry";
+import { Link } from "react-router-dom";
 
 const formatCurrency = (val) => {
   const num = parseFloat(val) || 0;
@@ -85,6 +87,7 @@ const ANNUAL_REPORTS = [
 export default function DGIIReportsPage() {
   const { t } = useTranslation();
   const { getAuthHeaders } = useAuth();
+  const { countryCode: companyCountry, loading: countryLoading } = useCompanyCountry();
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(null);
   const [periods, setPeriods] = useState([]);
@@ -366,11 +369,59 @@ export default function DGIIReportsPage() {
     return <Badge className={`${style.bg} ${style.text}`}>{t(`dgiiReports.statuses.${status}`)}</Badge>;
   };
 
-  if (loading) {
+  if (loading || countryLoading) {
     return (
       <DashboardLayout title={t('dgiiReports.title')}>
         <div className="flex items-center justify-center h-64">
           <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // Country gating — this module is exclusive to the Dominican Republic.
+  if (companyCountry && companyCountry !== "DO") {
+    return (
+      <DashboardLayout title={t('dgiiReports.title')}>
+        <div className="max-w-2xl mx-auto mt-12" data-testid="dgii-country-restricted">
+          <Card className="border-amber-200 bg-amber-50/50 dark:bg-amber-950/20">
+            <CardHeader>
+              <div className="flex items-start gap-3">
+                <div className="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center flex-shrink-0">
+                  <AlertCircle className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg text-amber-900 dark:text-amber-100">
+                    {t('dgiiReports.restricted.title', { defaultValue: 'Módulo exclusivo de República Dominicana' })}
+                  </CardTitle>
+                  <CardDescription className="text-amber-800/80 dark:text-amber-200/80 mt-1">
+                    {t('dgiiReports.restricted.subtitle', { defaultValue: 'Los reportes DGII y TSS son oficiales de República Dominicana y no aplican a tu país.' })}
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-slate-700 dark:text-slate-300">
+                {t('dgiiReports.restricted.description', {
+                  defaultValue: 'Para generar reportes fiscales nativos de tu país usa el Centro de Reportes o la sección Global Compliance, donde cada país tiene su propio motor y formatos oficiales.',
+                })}
+              </p>
+              <div className="flex flex-wrap gap-3 pt-2">
+                <Link to="/reports-system">
+                  <Button className="bg-emerald-600 hover:bg-emerald-700" data-testid="go-reports-system-btn">
+                    <FileSpreadsheet className="w-4 h-4 mr-2" />
+                    {t('dgiiReports.restricted.goReports', { defaultValue: 'Ir al Centro de Reportes' })}
+                  </Button>
+                </Link>
+                <Link to="/global-compliance">
+                  <Button variant="outline" data-testid="go-global-compliance-btn">
+                    {t('dgiiReports.restricted.goCompliance', { defaultValue: 'Ver Global Compliance' })}
+                    <ChevronRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </DashboardLayout>
     );

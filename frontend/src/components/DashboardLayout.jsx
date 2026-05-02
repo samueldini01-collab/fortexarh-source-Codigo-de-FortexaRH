@@ -97,6 +97,7 @@ import GlobalSearch from "@/components/GlobalSearch";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import NotificationBell from "@/components/NotificationBell";
 import LanguageSelector from "@/components/LanguageSelector";
+import useCompanyCountry from "@/hooks/useCompanyCountry";
 
 // Menu groups will be generated dynamically inside the component to support i18n
 // Using nameKey instead of static name
@@ -119,7 +120,7 @@ const DEFAULT_NAVIGATION = [
   { id: "accounting", nameKey: "accounting", href: "/accounting", icon: BookOpen, visible: true, featureKey: "accounting" },
   { id: "evaluations", nameKey: "evaluations", href: "/evaluations", icon: Target, visible: true, featureKey: "evaluations" },
   { id: "recruitment", nameKey: "recruitment", href: "/recruitment", icon: Briefcase, visible: true, featureKey: "recruitment" },
-  { id: "dgii-reports", nameKey: "dgiiReports", href: "/dgii-reports", icon: FileText, visible: true, featureKey: "reports" },
+  { id: "dgii-reports", nameKey: "dgiiReports", href: "/dgii-reports", icon: FileText, visible: true, featureKey: "reports", countryOnly: ["DO"] },
   { id: "attendance", nameKey: "attendance", href: "/attendance", icon: Clock, visible: true, featureKey: "attendance" },
   { id: "geo-locations", nameKey: "geolocation", href: "/geo-locations", icon: MapPin, visible: true, featureKey: "attendance" },
   { id: "vacations", nameKey: "vacations", href: "/vacations", icon: Calendar, visible: true, featureKey: "vacations" },
@@ -213,7 +214,7 @@ const getMenuGroups = (t) => [
     items: [
       { id: "reports-system", nameKey: "reportsCenter", href: "/reports-system", icon: FileBarChart, featureKey: "reports" },
       { id: "costs-by-department", nameKey: "costsByDept", href: "/costs-by-department", icon: PieChart, featureKey: "reports" },
-      { id: "dgii-reports", nameKey: "dgiiReports", href: "/dgii-reports", icon: FileText, featureKey: "reports" },
+      { id: "dgii-reports", nameKey: "dgiiReports", href: "/dgii-reports", icon: FileText, featureKey: "reports", countryOnly: ["DO"] },
     ]
   },
   {
@@ -274,6 +275,7 @@ export default function DashboardLayout({ children, title }) {
     }
   });
   const { user, logout, getAuthHeaders } = useAuth();
+  const { countryCode: companyCountry } = useCompanyCountry();
   const { subscription, canAccessFeature, isTrialExpired, getTrialDaysRemaining, isOnTrial, getCurrentPlan } = useSubscription();
   const { registerShortcut, unregisterShortcut, setIsHelpOpen } = useKeyboardShortcuts();
   const { startOnboarding, isCompleted: onboardingCompleted } = useOnboarding();
@@ -627,6 +629,10 @@ export default function DashboardLayout({ children, title }) {
                 // For single items (dashboards without submenu)
                 if (!group.isGroup) {
                   return group.items.map((item) => {
+                    // Country gating (e.g. DGII-TSS only for DO companies)
+                    if (item.countryOnly && companyCountry && !item.countryOnly.includes(companyCountry)) {
+                      return null;
+                    }
                     const Icon = item.icon;
                     const isActive = location.pathname === item.href;
                     const hasAccess = canAccessFeature(item.featureKey);
@@ -700,6 +706,10 @@ export default function DashboardLayout({ children, title }) {
                     <CollapsibleContent className="mt-1">
                       <div className={`space-y-0.5 ${sidebarCollapsed ? '' : 'ml-4 pl-3 border-l-2 border-slate-200 dark:border-slate-700'}`}>
                         {group.items.map((item) => {
+                          // Country gating (e.g. DGII-TSS only for DO companies)
+                          if (item.countryOnly && companyCountry && !item.countryOnly.includes(companyCountry)) {
+                            return null;
+                          }
                           const Icon = item.icon;
                           const isActive = location.pathname === item.href;
                           const hasAccess = canAccessFeature(item.featureKey);

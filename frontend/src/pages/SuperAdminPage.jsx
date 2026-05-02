@@ -6,7 +6,7 @@ import {
   CheckCircle, XCircle, Activity, CreditCard, Banknote,
   Gift, ArrowUpDown, Eye, Power, PowerOff, Clock,
   TrendingUp, ChevronDown, RefreshCw, AlertTriangle,
-  Mail, Phone, Settings2, Columns3, ChevronRight, Loader2, Receipt, Ticket, Share2
+  Mail, Phone, Settings2, Columns3, ChevronRight, Loader2, Receipt, Ticket, Share2, ShoppingCart
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
 import { Button } from "../components/ui/button";
@@ -22,6 +22,7 @@ import { Toaster } from "../components/ui/sonner";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
 import { SupportContent } from "./SupportAdminPage";
 import { BrochureBuilderPanel } from "./BrochureBuilderPage";
+import AbandonedCartsTab from "../components/super-admin/AbandonedCartsTab";
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api/super-admin";
 
@@ -373,6 +374,9 @@ function SuperAdminDashboard({ token, onLogout }) {
             </TabsTrigger>
             <TabsTrigger value="brochure-builder" className="data-[state=active]:bg-indigo-600" data-testid="tab-brochure-builder">
               <Share2 className="w-4 h-4 mr-1.5" /> Brochure Builder
+            </TabsTrigger>
+            <TabsTrigger value="abandoned-carts" className="data-[state=active]:bg-rose-600" data-testid="tab-abandoned-carts">
+              <ShoppingCart className="w-4 h-4 mr-1.5" /> Carritos
             </TabsTrigger>
           </TabsList>
 
@@ -773,6 +777,9 @@ function SuperAdminDashboard({ token, onLogout }) {
           {/* Brochure Builder Tab */}
           <TabsContent value="brochure-builder" className="space-y-4" data-testid="brochure-builder-tab">
             <BrochureBuilderPanel containerClassName="space-y-6" showCreatorFilter={true} />
+          </TabsContent>
+          <TabsContent value="abandoned-carts" className="space-y-4" data-testid="abandoned-carts-content">
+            <AbandonedCartsTab saToken={token} />
           </TabsContent>
         </Tabs>
       </main>

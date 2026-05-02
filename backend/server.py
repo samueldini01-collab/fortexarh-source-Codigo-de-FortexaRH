@@ -72,6 +72,11 @@ from routes.brochure_builder import router as brochure_builder_router
 from routes.exchange_rates import router as exchange_rates_router
 from routes.native_reports import router as native_reports_router, run_reminders_for_all_companies
 from routes.sitemap import router as sitemap_router
+from routes.abandoned_carts import (
+    router as abandoned_carts_router,
+    run_abandoned_cart_recovery_job,
+    create_abandoned_cart_indexes,
+)
 
 # ===================== APP SETUP =====================
 
@@ -188,6 +193,7 @@ for r in [
     exchange_rates_router,
     native_reports_router,
     sitemap_router,
+    abandoned_carts_router,
 ]:
     api_router.include_router(r)
 
@@ -208,6 +214,7 @@ async def startup_db_client():
         logger.info("Database connection established successfully")
         await create_cdc_indexes()
         await create_performance_indexes()
+        await create_abandoned_cart_indexes()
         await seed_system_templates()
         await migrate_existing_companies()
     except asyncio.TimeoutError:
@@ -239,6 +246,17 @@ async def _scheduled_run_reminders():
         logger.exception(f"Fiscal reminders cron failed: {exc}")
 
 
+async def _scheduled_run_abandoned_cart_recovery():
+    try:
+        result = await run_abandoned_cart_recovery_job()
+        logger.info(
+            f"Abandoned-cart recovery cron executed: scanned={result.get('scanned')} "
+            f"sent={result.get('sent')} failed={result.get('failed')}"
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.exception(f"Abandoned-cart recovery cron failed: {exc}")
+
+
 def _start_fiscal_reminders_scheduler():
     global _fiscal_scheduler
     if _fiscal_scheduler is not None:
@@ -254,9 +272,18 @@ def _start_fiscal_reminders_scheduler():
             max_instances=1,
             misfire_grace_time=3600,
         )
+        # Abandoned cart recovery — runs every 30 minutes
+        sched.add_job(
+            _scheduled_run_abandoned_cart_recovery,
+            CronTrigger(minute="*/30", timezone="UTC"),
+            id="abandoned_cart_recovery",
+            replace_existing=True,
+            max_instances=1,
+            misfire_grace_time=600,
+        )
         sched.start()
         _fiscal_scheduler = sched
-        logger.info("APScheduler started: fiscal_reminders_daily @ 08:00 UTC")
+        logger.info("APScheduler started: fiscal_reminders_daily @ 08:00 UTC + abandoned_cart_recovery every 30m")
     except Exception as exc:  # noqa: BLE001
         logger.warning(f"Could not start APScheduler: {exc}")
 

@@ -385,6 +385,24 @@
   - Plan "Free" conserva el redirect directo a `/register` (no requiere pago).
   - Flujo completo: seleccionar plan → elegir cantidad de empleados → pago Stripe (`/api/public/checkout`) → cuenta creada post-pago.
   - Test: click en `select-plan-pro` y `select-plan-basic` desde `/pricing` sin sesión redirige correctamente a `/checkout?plan=X` y renderiza `proceed-to-payment-btn`.
+- **DGII-TSS gating por país (Feb 2, 2026)** — P0 DONE:
+  - Nuevo hook `/app/frontend/src/hooks/useCompanyCountry.js` — fetchea `/api/country-config/company`, cachea el perfil a nivel módulo (una sola llamada por sesión) y expone `{ countryCode, profile, loading }`.
+  - `DashboardLayout.jsx`: el ítem `dgii-reports` ahora lleva `countryOnly: ["DO"]`. Filtro durante render en los 2 puntos (single items + grouped items) remueve items cuyo `countryOnly` no incluye `companyCountry`.
+  - `DGIIReportsPage.jsx`: early-return con card "Módulo exclusivo de República Dominicana" + botones a `/reports-system` y `/global-compliance` cuando `companyCountry !== "DO"`.
+  - Test con switch MX/DO verificado: MX oculta el ítem del sidebar + muestra card restrictiva; DO mantiene la funcionalidad completa.
+- **Abandoned Cart Recovery (Feb 2, 2026)** — P1 DONE:
+  - Backend module `/app/backend/routes/abandoned_carts.py` con endpoints:
+    - `POST /api/public/abandoned-carts` — captura/actualiza carrito (natural key: email+plan_id)
+    - `GET  /api/public/abandoned-carts/{cart_id}` — rehidratar carrito desde link de recuperación
+    - `GET  /api/super-admin/abandoned-carts/stats` — métricas 30d (total, enviados, recuperados, tasa%, revenue)
+    - `GET  /api/super-admin/abandoned-carts?status=open|recovered|emailed|all`
+    - `POST /api/super-admin/abandoned-carts/{cart_id}/resend` — reenvío manual
+  - Integración checkout: `PublicCheckoutRequest` acepta `email` / `cart_id` / `country` / `language`; `mark_cart_recovered` se dispara en `/public/checkout/verify/{session_id}` cuando Stripe reporta pago exitoso.
+  - APScheduler: nuevo job `abandoned_cart_recovery` corriendo cada 30 min — busca carritos con `created_at < now - 1h` y `recovery_email_sent_at IS NULL` y envía email via Resend (HTML multi-idioma ES/EN/FR/PT).
+  - Frontend `/checkout`: email input obligatorio + validación email + debounce de 1.2s auto-captura carrito. Rehidrata si venimos de link de recuperación (`?cart=xxx`). Button `proceed-to-payment-btn` se habilita solo con email válido.
+  - Super Admin tab "Carritos" con 5 stat cards (total, emails, recuperados, tasa%, revenue perdido) + tabla filtrable con acción "Reenviar" por carrito.
+  - Tested end-to-end: cart captured automatically from UI, cron triggered manually → `{scanned:1, sent:1, failed:0}` (Resend email enviado exitosamente).
+  - Índices Mongo: `cart_id` único, `email+plan_id`, `created_at desc`, `recovery_email_sent_at+recovered_at`.
 - **Dynamic sitemap.xml + robots.txt (Feb 2, 2026)** — SEO P1 DONE:
   - New module `/app/backend/routes/sitemap.py` wired into `/api/`.
   - `GET /api/sitemap.xml` returns XML with 34 URLs: 5 core routes (`/`, `/pricing`, `/register`, `/login`, `/soporte`) + 29 country pages (`/pais/{slug}`), each with 4 hreflang alternates (es, en, fr, pt) — totalling 145 alternate links. `Cache-Control: public, max-age=3600`. Content-Type `application/xml`.

@@ -141,6 +141,10 @@ class PublicCheckoutRequest(BaseModel):
     plan_id: str
     employee_count: int = 1
     origin_url: str
+    email: Optional[str] = None
+    country: Optional[str] = None
+    language: Optional[str] = None
+    cart_id: Optional[str] = None
 
 
 class CheckoutRequest(BaseModel):
