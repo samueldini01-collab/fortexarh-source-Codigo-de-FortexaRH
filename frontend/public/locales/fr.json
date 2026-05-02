@@ -279,7 +279,7 @@
   },
   "landing": {
     "hero": {
-      "title": "Système RH et Paie pour la République Dominicaine",
+      "title": "Système RH et Paie pour {{country}}",
       "subtitle": "Gérez votre capital humain avec la plateforme la plus complète. Paie, TSS, DGII, et plus.",
       "cta": "Commencer Gratuitement",
       "demo": "Voir la Démo",

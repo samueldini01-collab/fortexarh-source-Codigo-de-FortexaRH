@@ -375,6 +375,10 @@
   - **Geolocation section país-aware**: pill `Available in {country} · {currency_symbol} {currency}` above the features grid + dynamic `idealIn` text interpolating country name.
   - New i18n keys added to ES/EN/FR/PT (`landing.benefits.{complianceWith,activeIn,nativeReports}` and `landing.geolocation.{availableIn,idealIn}`) in both `/app/frontend/src/i18n/locales` and `/app/frontend/public/locales`. Bumped `TRANSLATION_VERSION` 3.7.0 → 3.7.1.
   - Verified with screenshots for MX (Spanish UI) and AR (English UI) — all dynamic text swaps correctly.
+- **Hero tagline país-adaptativa (Feb 2, 2026)** — P0 DONE (post-sprint):
+  - Clave `landing.hero.title` convertida a plantilla con interpolación `{{country}}` en los 4 idiomas (ES/EN/FR/PT, sincronizada en `src/i18n/locales` y `public/locales`).
+  - `LandingPage.jsx` pasa `landingCountry.profile?.name || 'República Dominicana'` al `t()`.
+  - Resultados: CO→"#1 Sistema de RRHH y Nómina para Colombia", BR→"#1 Sistema de RH e Folha de Pagamento para Brasil", GB/EN→"#1 HR & Payroll System for Reino Unido". Bump `TRANSLATION_VERSION` 3.7.1 → 3.7.2.
 - **Dynamic sitemap.xml + robots.txt (Feb 2, 2026)** — SEO P1 DONE:
   - New module `/app/backend/routes/sitemap.py` wired into `/api/`.
   - `GET /api/sitemap.xml` returns XML with 34 URLs: 5 core routes (`/`, `/pricing`, `/register`, `/login`, `/soporte`) + 29 country pages (`/pais/{slug}`), each with 4 hreflang alternates (es, en, fr, pt) — totalling 145 alternate links. `Cache-Control: public, max-age=3600`. Content-Type `application/xml`.

@@ -440,9 +440,9 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="animate-fade-in text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6 border border-emerald-200">
+              <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6 border border-emerald-200" data-testid="hero-tagline">
                 <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
-                #1 {t('landing.hero.title')}
+                #1 {t('landing.hero.title', { country: landingCountry.profile?.name || 'República Dominicana' })}
               </div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight heading mb-4 sm:mb-6">
                 {t('landing.features.payroll')}

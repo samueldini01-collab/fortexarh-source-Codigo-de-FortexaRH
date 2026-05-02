@@ -279,7 +279,7 @@
   },
   "landing": {
     "hero": {
-      "title": "HR & Payroll System for the Dominican Republic",
+      "title": "HR & Payroll System for {{country}}",
       "subtitle": "Manage your human capital with the most complete platform. Payroll, TSS, DGII, and more.",
       "cta": "Start Free",
       "demo": "Watch Demo",

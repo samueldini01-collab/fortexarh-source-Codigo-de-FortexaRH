@@ -3577,7 +3577,7 @@
       "cta": "Começar Grátis",
       "demo": "Ver Demo",
       "subtitle": "Gerencie seu capital humano com a plataforma mais completa. Folha de pagamento, TSS, DGII e mais.",
-      "title": "Sistema de RH e Folha de Pagamento para República Dominicana"
+      "title": "Sistema de RH e Folha de Pagamento para {{country}}"
     },
     "nav": {
       "accountants": "Contadores",

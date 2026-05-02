@@ -279,7 +279,7 @@
   },
   "landing": {
     "hero": {
-      "title": "Sistema de RRHH y Nómina para República Dominicana",
+      "title": "Sistema de RRHH y Nómina para {{country}}",
       "subtitle": "Gestiona tu capital humano con la plataforma más completa. Nómina, TSS, DGII, y más.",
       "cta": "Comenzar Gratis",
       "demo": "Ver Demo",
