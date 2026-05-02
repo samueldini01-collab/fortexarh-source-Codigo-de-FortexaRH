@@ -17,11 +17,13 @@ import { Copy, Link2, Eye, Download, Loader2, Plus, Trash2, Share2, TrendingUp, 
 import { toast } from "sonner";
 import CountryFlag from "@/components/CountryFlag";
 
-export function BrochureBuilderPanel({ containerClassName = "p-6 space-y-6", hideHeader = false }) {
+export function BrochureBuilderPanel({ containerClassName = "p-6 space-y-6", hideHeader = false, showCreatorFilter = false }) {
   const { user: _user } = useAuth(); // eslint-disable-line no-unused-vars
   const [countries, setCountries] = useState([]);
   const [links, setLinks] = useState([]);
   const [stats, setStats] = useState(null);
+  const [creators, setCreators] = useState([]);
+  const [creatorFilter, setCreatorFilter] = useState("all");
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
 
@@ -53,14 +55,29 @@ export function BrochureBuilderPanel({ containerClassName = "p-6 space-y-6", hid
   const loadLinks = useCallback(async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get(`${API}/brochure-builder/links`, { headers: getAuthHeaders() });
+      const params = {};
+      if (creatorFilter && creatorFilter !== "all") params.created_by_email = creatorFilter;
+      const { data } = await axios.get(`${API}/brochure-builder/links`, {
+        headers: getAuthHeaders(),
+        params,
+      });
       setLinks(data || []);
     } catch (e) {
       toast.error(e.response?.data?.detail || "Error al cargar enlaces");
     } finally {
       setLoading(false);
     }
-  }, [getAuthHeaders]);
+  }, [getAuthHeaders, creatorFilter]);
+
+  const loadCreators = useCallback(async () => {
+    if (!showCreatorFilter) return;
+    try {
+      const { data } = await axios.get(`${API}/brochure-builder/creators`, { headers: getAuthHeaders() });
+      setCreators(data || []);
+    } catch {
+      // silent
+    }
+  }, [getAuthHeaders, showCreatorFilter]);
 
   const loadStats = useCallback(async () => {
     try {
@@ -75,7 +92,8 @@ export function BrochureBuilderPanel({ containerClassName = "p-6 space-y-6", hid
     loadCountries();
     loadLinks();
     loadStats();
-  }, [loadCountries, loadLinks, loadStats]);
+    loadCreators();
+  }, [loadCountries, loadLinks, loadStats, loadCreators]);
 
   const handleCreate = async () => {
     if (!form.country || !form.lang) {
@@ -283,10 +301,30 @@ export function BrochureBuilderPanel({ containerClassName = "p-6 space-y-6", hid
         {/* Links table */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Globe className="w-5 h-5 text-indigo-600" />
-              Enlaces creados ({links.length})
-            </CardTitle>
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="w-5 h-5 text-indigo-600" />
+                Enlaces creados ({links.length})
+              </CardTitle>
+              {showCreatorFilter && creators.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <Label className="text-xs text-slate-500">Filtrar por creador:</Label>
+                  <Select value={creatorFilter} onValueChange={setCreatorFilter}>
+                    <SelectTrigger className="h-8 w-64" data-testid="creator-filter">
+                      <SelectValue placeholder="Todos los creadores" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos los creadores ({creators.reduce((s, c) => s + c.links, 0)})</SelectItem>
+                      {creators.map((c) => (
+                        <SelectItem key={c.email} value={c.email}>
+                          {c.email} · {c.role} ({c.links})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             {loading ? (
@@ -304,6 +342,7 @@ export function BrochureBuilderPanel({ containerClassName = "p-6 space-y-6", hid
                     <TableRow>
                       <TableHead>Lead</TableHead>
                       <TableHead>País / Idioma</TableHead>
+                      {showCreatorFilter && <TableHead>Creado por</TableHead>}
                       <TableHead className="text-center">Clics</TableHead>
                       <TableHead className="text-center">Descargas</TableHead>
                       <TableHead>Creado</TableHead>
@@ -326,6 +365,27 @@ export function BrochureBuilderPanel({ containerClassName = "p-6 space-y-6", hid
                             <Badge variant="outline" className="text-xs">{l.lang.toUpperCase()}</Badge>
                           </div>
                         </TableCell>
+                        {showCreatorFilter && (
+                          <TableCell>
+                            <div className="text-xs">
+                              <p className="font-mono text-slate-700">{l.created_by_email || "—"}</p>
+                              {l.created_by_role && (
+                                <Badge
+                                  variant="outline"
+                                  className={`mt-1 text-[10px] ${
+                                    l.created_by_role === "super_admin"
+                                      ? "bg-indigo-50 text-indigo-700 border-indigo-200"
+                                      : l.created_by_role === "partner"
+                                      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                      : ""
+                                  }`}
+                                >
+                                  {l.created_by_role}
+                                </Badge>
+                              )}
+                            </div>
+                          </TableCell>
+                        )}
                         <TableCell className="text-center font-mono">{l.clicks}</TableCell>
                         <TableCell className="text-center font-mono">
                           <span className={l.downloads > 0 ? "text-emerald-600 font-bold" : ""}>

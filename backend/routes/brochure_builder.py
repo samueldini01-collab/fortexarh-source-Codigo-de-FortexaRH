@@ -92,6 +92,7 @@ class LinkOut(BaseModel):
     last_download_at: Optional[str] = None
     created_at: str
     created_by_email: Optional[str] = None
+    created_by_role: Optional[str] = None
 
 
 def _scope_filter(user: dict) -> dict:
@@ -151,12 +152,18 @@ async def create_link(payload: LinkCreate, request: Request, current_user: dict 
 
 
 @router.get("/links", response_model=List[LinkOut])
-async def list_links(current_user: dict = Depends(get_user_flexible)):
+async def list_links(
+    current_user: dict = Depends(get_user_flexible),
+    created_by_email: Optional[str] = None,
+    created_by_role: Optional[str] = None,
+):
     _require_super_admin_or_partner(current_user)
-    cursor = db.brochure_builder_links.find(
-        _scope_filter(current_user),
-        {"_id": 0}
-    ).sort("created_at", -1)
+    filter_q = {**_scope_filter(current_user)}
+    if created_by_email:
+        filter_q["created_by_email"] = created_by_email
+    if created_by_role:
+        filter_q["created_by_role"] = created_by_role
+    cursor = db.brochure_builder_links.find(filter_q, {"_id": 0}).sort("created_at", -1)
     results = []
     async for doc in cursor:
         results.append(_to_out(doc))
@@ -237,6 +244,34 @@ async def stats(current_user: dict = Depends(get_user_flexible)):
     }
 
 
+@router.get("/creators")
+async def list_creators(current_user: dict = Depends(get_user_flexible)):
+    """Return unique creators (email + role) — only super admins see all, others see only themselves."""
+    _require_super_admin_or_partner(current_user)
+    scope = _scope_filter(current_user)
+    pipeline = [
+        {"$match": scope},
+        {"$group": {
+            "_id": {"email": "$created_by_email", "role": "$created_by_role"},
+            "count": {"$sum": 1},
+            "total_downloads": {"$sum": "$downloads"},
+        }},
+        {"$sort": {"count": -1}},
+    ]
+    creators = []
+    async for row in db.brochure_builder_links.aggregate(pipeline):
+        key = row["_id"] or {}
+        if not key.get("email"):
+            continue
+        creators.append({
+            "email": key.get("email"),
+            "role": key.get("role") or "admin",
+            "links": row.get("count", 0),
+            "downloads": row.get("total_downloads", 0),
+        })
+    return creators
+
+
 @router.delete("/links/{link_id}")
 async def delete_link(link_id: str, current_user: dict = Depends(get_user_flexible)):
     _require_super_admin_or_partner(current_user)
@@ -267,4 +302,5 @@ def _to_out(doc: dict) -> LinkOut:
         last_download_at=doc.get("last_download_at"),
         created_at=doc.get("created_at"),
         created_by_email=doc.get("created_by_email"),
+        created_by_role=doc.get("created_by_role"),
     )

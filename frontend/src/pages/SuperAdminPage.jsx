@@ -772,7 +772,7 @@ function SuperAdminDashboard({ token, onLogout }) {
 
           {/* Brochure Builder Tab */}
           <TabsContent value="brochure-builder" className="space-y-4" data-testid="brochure-builder-tab">
-            <BrochureBuilderPanel containerClassName="space-y-6" />
+            <BrochureBuilderPanel containerClassName="space-y-6" showCreatorFilter={true} />
           </TabsContent>
         </Tabs>
       </main>
