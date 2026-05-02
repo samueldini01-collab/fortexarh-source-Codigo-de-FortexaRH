@@ -128,7 +128,6 @@ const PayrollConfigPage = lazy(() => import("@/pages/PayrollConfigPage"));
 const PayrollCalculatorPage = lazy(() => import("@/pages/PayrollCalculatorPage"));
 const FiscalComparisonPage = lazy(() => import("@/pages/FiscalComparisonPage"));
 const GlobalCompliancePage = lazy(() => import("@/pages/GlobalCompliancePage"));
-const BrochureBuilderPage = lazy(() => import("@/pages/BrochureBuilderPage"));
 const AccountingPage = lazy(() => import("@/pages/AccountingPage"));
 const LoansPage = lazy(() => import("@/pages/LoansPage"));
 const ExpensesPage = lazy(() => import("@/pages/ExpensesPage"));
@@ -490,7 +489,6 @@ function AppRouter() {
       <Route path="/payroll-calculator" element={<ProtectedRoute><LazyRoute><PayrollCalculatorPage /></LazyRoute></ProtectedRoute>} />
       <Route path="/fiscal-comparison" element={<ProtectedRoute><LazyRoute><FiscalComparisonPage /></LazyRoute></ProtectedRoute>} />
       <Route path="/global-compliance" element={<ProtectedRoute><LazyRoute><GlobalCompliancePage /></LazyRoute></ProtectedRoute>} />
-      <Route path="/brochure-builder" element={<ProtectedRoute><LazyRoute><BrochureBuilderPage /></LazyRoute></ProtectedRoute>} />
       <Route path="/accounting" element={<ProtectedRoute><LazyRoute><AccountingPage /></LazyRoute></ProtectedRoute>} />
       <Route path="/loans" element={<ProtectedRoute><LazyRoute><LoansPage /></LazyRoute></ProtectedRoute>} />
       <Route path="/expenses" element={<ProtectedRoute><LazyRoute><ExpensesPage /></LazyRoute></ProtectedRoute>} />

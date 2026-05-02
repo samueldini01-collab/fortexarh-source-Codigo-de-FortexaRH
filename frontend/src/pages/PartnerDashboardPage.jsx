@@ -77,12 +77,14 @@ import {
   ShieldCheck,
   AlertTriangle,
   X,
-  Info
+  Info,
+  Share2
 } from "lucide-react";
 import { KPIDrillDownDialog } from "@/components/partner/KPIDrillDownDialog";
 import { AddClientDialog } from "@/components/partner/AddClientDialog";
 import { PayoutRequestDialog } from "@/components/partner/PayoutRequestDialog";
 import NotificationBell from "@/components/NotificationBell";
+import { BrochureBuilderPanel } from "./BrochureBuilderPage";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -757,6 +759,10 @@ export default function PartnerDashboardPage() {
               <Banknote className="w-4 h-4 mr-2" />
               {t('partner.dashboard.withdrawals')}
             </TabsTrigger>
+            <TabsTrigger value="brochure-builder" className="data-[state=active]:bg-indigo-600" data-testid="tab-brochure-builder">
+              <Share2 className="w-4 h-4 mr-2" />
+              Brochure Builder
+            </TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -1418,6 +1424,11 @@ export default function PartnerDashboardPage() {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Brochure Builder Tab */}
+          <TabsContent value="brochure-builder" className="space-y-6" data-testid="brochure-builder-tab">
+            <BrochureBuilderPanel containerClassName="space-y-6" />
           </TabsContent>
         </Tabs>
       </main>

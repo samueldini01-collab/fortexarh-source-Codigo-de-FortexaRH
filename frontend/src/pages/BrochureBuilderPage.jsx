@@ -17,8 +17,8 @@ import { Copy, Link2, Eye, Download, Loader2, Plus, Trash2, Share2, TrendingUp, 
 import { toast } from "sonner";
 import CountryFlag from "@/components/CountryFlag";
 
-export default function BrochureBuilderPage() {
-  const { user } = useAuth();
+export function BrochureBuilderPanel({ containerClassName = "p-6 space-y-6", hideHeader = false }) {
+  const { user: _user } = useAuth(); // eslint-disable-line no-unused-vars
   const [countries, setCountries] = useState([]);
   const [links, setLinks] = useState([]);
   const [stats, setStats] = useState(null);
@@ -36,7 +36,8 @@ export default function BrochureBuilderPage() {
   });
 
   const getAuthHeaders = useCallback(() => {
-    const token = localStorage.getItem("token");
+    // Support both regular admin (localStorage.token) and super admin (sessionStorage.sa_token)
+    const token = localStorage.getItem("token") || sessionStorage.getItem("sa_token");
     return token ? { Authorization: `Bearer ${token}` } : {};
   }, []);
 
@@ -119,9 +120,8 @@ export default function BrochureBuilderPage() {
   };
 
   return (
-    <DashboardLayout>
-      <div className="p-6 space-y-6" data-testid="brochure-builder-page">
-        {/* Header */}
+    <div className={containerClassName} data-testid="brochure-builder-panel">
+      {!hideHeader && (
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <Share2 className="w-7 h-7 text-indigo-600" />
@@ -131,6 +131,7 @@ export default function BrochureBuilderPage() {
             Genera enlaces personalizados del brochure por país, idioma y lead. Rastrea clics y descargas automáticamente.
           </p>
         </div>
+      )}
 
         {/* Stats */}
         {stats && (
@@ -401,7 +402,15 @@ export default function BrochureBuilderPage() {
             </CardContent>
           </Card>
         )}
-      </div>
+    </div>
+  );
+}
+
+// Default export retained as standalone page wrapper (for any direct route access)
+export default function BrochureBuilderPage() {
+  return (
+    <DashboardLayout>
+      <BrochureBuilderPanel />
     </DashboardLayout>
   );
 }

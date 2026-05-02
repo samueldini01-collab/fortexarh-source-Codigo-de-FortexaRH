@@ -191,6 +191,18 @@
     - CTA nuevo en landing hero ("Calculadora gratis" con icono Calculator).
     - Bug fix: `pointer-events-none` en 2 decorative floating cards del landing que interceptaban clicks en la CTA row (detectado por testing agent).
   - Tested: iteration_53.json — **354/354 backend tests PASSED** (7 nuevos calculator-lead + 206 regression + 141 native_reports). Frontend 12/13 → 13/13 después del fix de pointer-events.
+- **Brochure Builder relocalizado: solo Super Admin + Partners (Feb 2, 2026)** — security & UX DONE:
+  - ❌ **Removido del sidebar/navegación normal**: `/brochure-builder` ya NO está disponible para admins regulares.
+  - ✅ **Ruta standalone `/brochure-builder` eliminada** de App.js — ya no accesible directamente.
+  - ✅ **BrochureBuilderPage refactorizado**: expone `BrochureBuilderPanel` (named export) reutilizable como tab embebido + `BrochureBuilderPage` default wrapper para compat.
+  - ✅ **Super Admin Dashboard** (`/admin`) → nuevo tab "Brochure Builder" con icono Share2 (verificado visualmente: 4 KPIs + form + tabla de 8 enlaces).
+  - ✅ **Partner Dashboard** (`/partner-dashboard`) → nuevo tab "Brochure Builder" para firmas de contadores.
+  - 🔒 **Backend gating robusto en `/api/brochure-builder/*`**:
+    - Nueva dependency `get_user_flexible`: acepta tokens de auth regular (`localStorage.token`) Y de super-admin (`sessionStorage.sa_token` con SECRET_KEY diferente)
+    - Función `_require_super_admin_or_partner`: solo permite roles `super_admin` o `is_partner=True`. Admin normal recibe **403** con mensaje claro: "Brochure Builder solo está disponible para Super Admin y firmas de contadores".
+    - `_scope_filter`: super admins ven TODOS los links (filtro vacío), partners ven solo los suyos (`created_by=partner_id`), admins excluidos.
+  - `BrochureBuilderPanel` soporta ambos storages (`localStorage.token || sessionStorage.sa_token`).
+  - Verificado E2E: Super admin login → POST /links 200 + stats con 8 enlaces totales. Admin normal → 403. Public track endpoints siguen funcionando.
 - **Sprint completo Feb 2, 2026 PM** — 6 tareas DONE:
   - 🐛 **Bug crítico resuelto**: GlobalCompliancePage descarga formatos nativos — el backend rechazaba correctamente (400) cuando el país del formato ≠ país de la empresa, pero el frontend no parseaba el error del Blob. Arreglado:
     - Backend `/api/native-reports/catalog` ahora devuelve `company_country_code` y `company_country_name`.

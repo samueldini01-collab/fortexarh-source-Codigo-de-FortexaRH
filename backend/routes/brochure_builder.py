@@ -14,10 +14,53 @@ from datetime import datetime, timezone
 from uuid import uuid4
 from secrets import token_urlsafe
 
-from utils.auth import get_current_user
+import jwt as pyjwt
+from utils.auth import get_user_from_request
+from routes.super_admin import SECRET_KEY as SUPER_ADMIN_SECRET_KEY, SUPER_ADMIN_USER
 from server import db
 
 router = APIRouter(prefix="/brochure-builder", tags=["brochure-builder"])
+
+
+async def get_user_flexible(request: Request) -> dict:
+    """Auth dependency that accepts either a regular user JWT/session OR a super-admin JWT.
+
+    Returns a user dict in both cases. For super-admin tokens, returns a synthetic user
+    dict with is_super_admin=True and role='super_admin'.
+    """
+    auth = request.headers.get("Authorization", "")
+    if auth.startswith("Bearer "):
+        token = auth.removeprefix("Bearer ").strip()
+        # Try super-admin JWT first (different SECRET_KEY + short payload)
+        try:
+            payload = pyjwt.decode(token, SUPER_ADMIN_SECRET_KEY, algorithms=["HS256"])
+            if payload.get("role") == "super_admin":
+                return {
+                    "user_id": f"super_admin:{payload.get('user', SUPER_ADMIN_USER)}",
+                    "email": payload.get("user", SUPER_ADMIN_USER),
+                    "role": "super_admin",
+                    "is_super_admin": True,
+                    "is_partner": False,
+                    "company_id": None,
+                }
+        except pyjwt.InvalidTokenError:
+            pass
+    # Fallback: regular auth path
+    return await get_user_from_request(request)
+
+
+def _require_super_admin_or_partner(user: dict):
+    """Allow only super admins and accountant-firm partners."""
+    if not user:
+        raise HTTPException(status_code=401, detail="No autenticado")
+    role = (user.get("role") or "").lower()
+    is_super = bool(user.get("is_super_admin") or role == "super_admin")
+    is_partner = bool(user.get("is_partner"))
+    if not (is_super or is_partner):
+        raise HTTPException(
+            status_code=403,
+            detail="Brochure Builder solo está disponible para Super Admin y firmas de contadores",
+        )
 
 
 class LinkCreate(BaseModel):
@@ -51,8 +94,20 @@ class LinkOut(BaseModel):
     created_by_email: Optional[str] = None
 
 
+def _scope_filter(user: dict) -> dict:
+    """Build Mongo filter: super admins see all, partners see their own, admins see company-scoped."""
+    role = (user.get("role") or "").lower()
+    if user.get("is_super_admin") or role == "super_admin":
+        return {}
+    if user.get("is_partner"):
+        partner_id = user.get("user_id") or user.get("id")
+        return {"created_by": partner_id}
+    return {"company_id": user.get("company_id")}
+
+
 @router.post("/links", response_model=LinkOut)
-async def create_link(payload: LinkCreate, request: Request, current_user: dict = Depends(get_current_user)):
+async def create_link(payload: LinkCreate, request: Request, current_user: dict = Depends(get_user_flexible)):
+    _require_super_admin_or_partner(current_user)
     import os
     link_id = str(uuid4())
     token = token_urlsafe(10)
@@ -86,8 +141,9 @@ async def create_link(payload: LinkCreate, request: Request, current_user: dict 
         "last_click_at": None,
         "last_download_at": None,
         "created_at": datetime.now(timezone.utc).isoformat(),
-        "created_by": current_user.get("id"),
+        "created_by": current_user.get("user_id") or current_user.get("id"),
         "created_by_email": current_user.get("email"),
+        "created_by_role": "super_admin" if (current_user.get("is_super_admin") or (current_user.get("role") or "").lower() == "super_admin") else ("partner" if current_user.get("is_partner") else "admin"),
         "company_id": current_user.get("company_id"),
     }
     await db.brochure_builder_links.insert_one(doc)
@@ -95,12 +151,10 @@ async def create_link(payload: LinkCreate, request: Request, current_user: dict 
 
 
 @router.get("/links", response_model=List[LinkOut])
-async def list_links(current_user: dict = Depends(get_current_user)):
-    company_id = current_user.get("company_id")
-    if not company_id:
-        raise HTTPException(status_code=400, detail="User has no company context")
+async def list_links(current_user: dict = Depends(get_user_flexible)):
+    _require_super_admin_or_partner(current_user)
     cursor = db.brochure_builder_links.find(
-        {"company_id": company_id},
+        _scope_filter(current_user),
         {"_id": 0}
     ).sort("created_at", -1)
     results = []
@@ -137,13 +191,12 @@ async def track_download(token: str):
 
 
 @router.get("/stats")
-async def stats(current_user: dict = Depends(get_current_user)):
-    company_id = current_user.get("company_id")
-    if not company_id:
-        raise HTTPException(status_code=400, detail="User has no company context")
-    total_links = await db.brochure_builder_links.count_documents({"company_id": company_id})
+async def stats(current_user: dict = Depends(get_user_flexible)):
+    _require_super_admin_or_partner(current_user)
+    scope = _scope_filter(current_user)
+    total_links = await db.brochure_builder_links.count_documents(scope)
     pipeline = [
-        {"$match": {"company_id": company_id}},
+        {"$match": scope},
         {"$group": {
             "_id": None,
             "total_clicks": {"$sum": "$clicks"},
@@ -158,7 +211,7 @@ async def stats(current_user: dict = Depends(get_current_user)):
         }
     # Top countries
     by_country_pipe = [
-        {"$match": {"company_id": company_id}},
+        {"$match": scope},
         {"$group": {
             "_id": "$country",
             "links": {"$sum": 1},
@@ -185,9 +238,11 @@ async def stats(current_user: dict = Depends(get_current_user)):
 
 
 @router.delete("/links/{link_id}")
-async def delete_link(link_id: str, current_user: dict = Depends(get_current_user)):
-    company_id = current_user.get("company_id")
-    result = await db.brochure_builder_links.delete_one({"id": link_id, "company_id": company_id})
+async def delete_link(link_id: str, current_user: dict = Depends(get_user_flexible)):
+    _require_super_admin_or_partner(current_user)
+    scope = _scope_filter(current_user)
+    scope["id"] = link_id
+    result = await db.brochure_builder_links.delete_one(scope)
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Link not found")
     return {"ok": True}
