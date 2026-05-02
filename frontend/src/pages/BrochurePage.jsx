@@ -55,6 +55,7 @@ export default function BrochurePage() {
   const [searchParams] = useSearchParams();
   const urlCountry = (searchParams.get("country") || "").toUpperCase();
   const urlLang = searchParams.get("lang");
+  const trackingToken = searchParams.get("t");
 
   const brochureRef = useRef(null);
   const [downloading, setDownloading] = useState(false);
@@ -68,6 +69,12 @@ export default function BrochurePage() {
       changeLanguage(urlLang);
     }
   }, [urlLang]);
+
+  // Track click when ?t=<token> present (once per mount)
+  useEffect(() => {
+    if (!trackingToken) return;
+    axios.get(`${API}/brochure-builder/track/${trackingToken}`).catch(() => {});
+  }, [trackingToken]);
 
   // Load 29-country catalog from backend (with fallback if offline)
   useEffect(() => {
@@ -123,6 +130,10 @@ export default function BrochurePage() {
       };
 
       await html2pdf().set(opt).from(element).save();
+      // Track download if token present
+      if (trackingToken) {
+        axios.post(`${API}/brochure-builder/track-download/${trackingToken}`).catch(() => {});
+      }
     } catch (error) {
       console.error("Error generating PDF:", error);
     } finally {

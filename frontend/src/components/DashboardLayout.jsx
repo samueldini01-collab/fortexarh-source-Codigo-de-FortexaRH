@@ -87,7 +87,8 @@ import {
   FolderOpen,
   GitBranch,
   FileSignature,
-  Globe
+  Globe,
+  Share2
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
@@ -109,8 +110,9 @@ const DEFAULT_NAVIGATION = [
   { id: "organigrama", nameKey: "orgChart", href: "/organigrama", icon: Network, visible: true, featureKey: "organigrama" },
   { id: "payroll", nameKey: "payroll", href: "/payroll", icon: DollarSign, visible: true, featureKey: "employees" },
   { id: "payroll-calculator", nameKey: "payrollCalculator", href: "/payroll-calculator", icon: Calculator, visible: true, featureKey: "payroll_calculator" },
-  { id: "fiscal-comparison", nameKey: "fiscalComparison", href: "/fiscal-comparison", icon: Globe, visible: true, featureKey: "payroll_calculator" },
-  { id: "global-compliance", nameKey: "globalCompliance", href: "/global-compliance", icon: Globe, visible: true, featureKey: "payroll_calculator" },
+  { id: "fiscal-comparison", nameKey: "fiscalComparison", href: "/fiscal-comparison", icon: Globe, visible: true, featureKey: "fiscal_comparison" },
+  { id: "global-compliance", nameKey: "globalCompliance", href: "/global-compliance", icon: Globe, visible: true, featureKey: "global_compliance" },
+  { id: "brochure-builder", nameKey: "brochureBuilder", href: "/brochure-builder", icon: Share2, visible: true, featureKey: "payroll_calculator" },
   { id: "loans", nameKey: "loans", href: "/loans", icon: Wallet, visible: true, featureKey: "loans" },
   { id: "reports-system", nameKey: "reportsCenter", href: "/reports-system", icon: FileBarChart, visible: true, featureKey: "reports" },
   { id: "costs-by-department", nameKey: "costsByDept", href: "/costs-by-department", icon: PieChart, visible: true, featureKey: "reports" },
@@ -182,8 +184,9 @@ const getMenuGroups = (t) => [
     items: [
       { id: "payroll", nameKey: "payroll", href: "/payroll", icon: DollarSign, featureKey: "employees" },
       { id: "payroll-calculator", nameKey: "payrollCalculator", href: "/payroll-calculator", icon: Calculator, featureKey: "payroll_calculator" },
-      { id: "fiscal-comparison", nameKey: "fiscalComparison", href: "/fiscal-comparison", icon: Globe, featureKey: "payroll_calculator", isNew: true },
-      { id: "global-compliance", nameKey: "globalCompliance", href: "/global-compliance", icon: Globe, featureKey: "payroll_calculator", isNew: true },
+      { id: "fiscal-comparison", nameKey: "fiscalComparison", href: "/fiscal-comparison", icon: Globe, featureKey: "fiscal_comparison", isNew: true },
+      { id: "global-compliance", nameKey: "globalCompliance", href: "/global-compliance", icon: Globe, featureKey: "global_compliance", isNew: true },
+      { id: "brochure-builder", nameKey: "brochureBuilder", href: "/brochure-builder", icon: Share2, featureKey: "payroll_calculator", isNew: true },
       { id: "loans", nameKey: "loans", href: "/loans", icon: Wallet, featureKey: "loans" },
       { id: "expenses", nameKey: "expenses", href: "/expenses", icon: Receipt, featureKey: "expenses" },
       { id: "accounting", nameKey: "accounting", href: "/accounting", icon: BookOpen, featureKey: "accounting" },

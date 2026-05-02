@@ -192,7 +192,8 @@
       "administration": "Administración"
     },
     "helpCenter": "Centro de Ayuda",
-    "liquidation": "Liquidación"
+    "liquidation": "Liquidación",
+    "brochureBuilder": "Brochure Builder"
   },
   "checkout": {
     "header": {
@@ -602,7 +603,11 @@
       "weekdays": "Lunes - Viernes",
       "saturday": "Sábados y Domingos",
       "closed": "Cerrado",
-      "supportCenter": "Centro de Soporte"
+      "supportCenter": "Centro de Soporte",
+      "headquartersLabel": "Sede",
+      "headquartersValue": "Santo Domingo, RD",
+      "coverageLabel": "Alcance",
+      "coverageValue": "29 países · 5 regiones"
     },
     "footer": {
       "product": "Producto",
@@ -6121,7 +6126,7 @@
     "ctaTitle": "Unete al Programa Partner Hoy",
     "ctaSubtitle": "Mas de 50 firmas contables ya confian en FortexaRH para gestionar la nomina de sus clientes. Comienza a generar ingresos recurrentes.",
     "contactSales": "Contactar Ventas",
-    "footerTagline": "Software HR y Nomina para Republica Dominicana",
+    "footerTagline": "Sistema de gestión de recursos humanos y nómina nativa para empresas modernas en 29 países y 5 regiones.",
     "footerRights": "Todos los derechos reservados."
   },
   "helpCenter": {
@@ -6552,5 +6557,8 @@
     "registeredBy": "Registrado por",
     "increase": "Aumento",
     "decrease": "Reducción"
+  },
+  "navigation": {
+    "brochureBuilder": "Brochure Builder"
   }
 }

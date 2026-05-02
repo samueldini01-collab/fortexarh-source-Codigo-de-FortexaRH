@@ -191,6 +191,33 @@
     - CTA nuevo en landing hero ("Calculadora gratis" con icono Calculator).
     - Bug fix: `pointer-events-none` en 2 decorative floating cards del landing que interceptaban clicks en la CTA row (detectado por testing agent).
   - Tested: iteration_53.json — **354/354 backend tests PASSED** (7 nuevos calculator-lead + 206 regression + 141 native_reports). Frontend 12/13 → 13/13 después del fix de pointer-events.
+- **Sprint completo Feb 2, 2026 PM** — 6 tareas DONE:
+  - 🐛 **Bug crítico resuelto**: GlobalCompliancePage descarga formatos nativos — el backend rechazaba correctamente (400) cuando el país del formato ≠ país de la empresa, pero el frontend no parseaba el error del Blob. Arreglado:
+    - Backend `/api/native-reports/catalog` ahora devuelve `company_country_code` y `company_country_name`.
+    - Frontend gatea: botón descarga deshabilitado para países ≠ empresa activa (verificado: 29 botones disabled para user DR).
+    - Error handling Blob mejorado: parsea JSON del Blob error y muestra mensaje al usuario.
+    - Added **Bélgica (BE) DmfA + 281.10** al NATIVE_FORMATS catalog (2 placeholders `implemented: False`). Total: **29 países, 35 formatos declarados (33 implementados)**.
+  - 🔒 **Plan Gating** vía nuevo `PlanGate.jsx` component:
+    - `/global-compliance` → Solo plan **Enterprise**
+    - `/fiscal-comparison` → Planes **Pro + Enterprise**
+    - `FEATURE_ACCESS` en `config.py` extendido con claves `global_compliance` y `fiscal_comparison`
+    - UI: bloqueo visual con icon Lock, badge "Plan X requerido", botón "Mejorar plan" a /subscriptions
+    - Sidebar `DashboardLayout.jsx` featureKey ajustado por navegación
+  - 🎯 **Brochure Builder Dashboard** (`/brochure-builder`) — sales-ready:
+    - Backend: `/app/backend/routes/brochure_builder.py` con 5 endpoints (POST create, GET list/stats, track click/download, DELETE)
+    - MongoDB: collection `brochure_builder_links` con `token` único, UTM params, tracking counters, lead info.
+    - Frontend: `/app/frontend/src/pages/BrochureBuilderPage.jsx` con 4 KPI cards, form de creación (país/idioma/lead/UTM), tabla con clicks/downloads, top países ranking.
+    - URL generada: `/brochure?country=XX&lang=yy&t=token&utm_source=sales&utm_campaign=XX`
+    - Token short url-safe (10 chars) → server-side increment en Mongo con `$inc`
+    - `BrochurePage.jsx` envía `GET /track/{token}` al mount y `POST /track-download/{token}` tras descarga PDF.
+    - Verificado E2E via curl: crear link BE/FR → click → download → stats muestran BE como top país con 1/1/1.
+  - 📝 **Textos landing + accountants footer**:
+    - Landing `#contact` card Address → "Sede: Santo Domingo, RD / Alcance: 29 países · 5 regiones" (reemplaza dirección específica)
+    - `/accountants-software` footerTagline → "Sistema de gestión de recursos humanos y nómina nativa para empresas modernas en 29 países y 5 regiones."
+    - Textos "28 países/countries" → "29 países/countries" (4 ocurrencias en páginas frontend + 0 en locales)
+  - 30 i18n keys nuevas × 4 idiomas = 120 traducciones (PlanGate labels + countryHighlight + contact headquarters + accountants footer + nav.brochureBuilder)
+  - TRANSLATION_VERSION 3.3.0 → 3.6.0 (cache bust)
+  - Regresión: 81/81 tests passing (58 DR + 23 multi-country)
 - **Landing footer internacionalizado (Feb 2, 2026)** — UX polish DONE:
   - `LandingPage.jsx` footer actualizado en 3 puntos según imágenes del usuario:
     1. `landing.footer.description` en 4 idiomas → "Sistema de gestión de recursos humanos y nómina nativa para empresas modernas en 29 países y 5 regiones."

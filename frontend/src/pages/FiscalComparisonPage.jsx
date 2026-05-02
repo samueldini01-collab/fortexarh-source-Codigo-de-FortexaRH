@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Globe, Calculator, TrendingUp, Loader2, DollarSign, Info, ChevronDown, ChevronUp, FileDown } from "lucide-react";
 import { toast } from "sonner";
+import PlanGate from "@/components/PlanGate";
 
 const REGION_LABEL = {
   caribbean: "Caribe",
@@ -128,6 +129,12 @@ export default function FiscalComparisonPage() {
 
   return (
     <DashboardLayout>
+      <PlanGate
+        featureKey="fiscal_comparison"
+        requiredPlans={["pro", "enterprise"]}
+        featureName="Comparativa Fiscal Multi-País"
+        featureDescription="Compara el costo fiscal total del mismo salario en hasta 10 países simultáneamente. Disponible en los planes Pro y Enterprise."
+      >
       <div className="p-6 space-y-6" data-testid="fiscal-comparison-page">
         {/* Header */}
         <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -423,6 +430,7 @@ export default function FiscalComparisonPage() {
           </Card>
         )}
       </div>
+      </PlanGate>
     </DashboardLayout>
   );
 }

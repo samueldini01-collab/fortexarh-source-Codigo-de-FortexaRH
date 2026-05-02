@@ -192,7 +192,8 @@
       "administration": "Administration"
     },
     "helpCenter": "Help Center",
-    "liquidation": "Severance"
+    "liquidation": "Severance",
+    "brochureBuilder": "Brochure Builder"
   },
   "checkout": {
     "header": {
@@ -602,7 +603,11 @@
       "weekdays": "Monday - Friday",
       "saturday": "Saturday and Sunday",
       "closed": "Closed",
-      "supportCenter": "Support Center"
+      "supportCenter": "Support Center",
+      "headquartersLabel": "Headquarters",
+      "headquartersValue": "Santo Domingo, DR",
+      "coverageLabel": "Coverage",
+      "coverageValue": "29 countries · 5 regions"
     },
     "footer": {
       "product": "Product",
@@ -6121,7 +6126,7 @@
     "ctaTitle": "Join the Partner Program Today",
     "ctaSubtitle": "Over 50 accounting firms already trust FortexaRH to manage their clients' payroll. Start generating recurring income.",
     "contactSales": "Contact Sales",
-    "footerTagline": "HR & Payroll Software for Dominican Republic",
+    "footerTagline": "Human resources and native payroll management system for modern companies across 29 countries and 5 regions.",
     "footerRights": "All rights reserved."
   },
   "helpCenter": {
@@ -6552,5 +6557,8 @@
     "registeredBy": "Registered by",
     "increase": "Increase",
     "decrease": "Decrease"
+  },
+  "navigation": {
+    "brochureBuilder": "Brochure Builder"
   }
 }

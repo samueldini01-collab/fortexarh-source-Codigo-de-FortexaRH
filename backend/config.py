@@ -111,21 +111,24 @@ FEATURE_ACCESS = {
         "attendance": False, "vacations": False, "evaluations": False,
         "recruitment": False, "reports": False, "organigrama": False,
         "accounting": False, "loans": False, "expenses": False,
-        "employee_portal": False, "subscriptions": True, "settings": True
+        "employee_portal": False, "subscriptions": True, "settings": True,
+        "global_compliance": False, "fiscal_comparison": False
     },
     "basic": {
         "dashboard": True, "payroll_calculator": True, "employees": True,
         "attendance": True, "vacations": True, "evaluations": False,
         "recruitment": False, "reports": True, "organigrama": False,
         "accounting": True, "loans": True, "expenses": False,
-        "employee_portal": False, "subscriptions": True, "settings": True
+        "employee_portal": False, "subscriptions": True, "settings": True,
+        "global_compliance": False, "fiscal_comparison": False
     },
     "pro": {
         "dashboard": True, "payroll_calculator": True, "employees": True,
         "attendance": True, "vacations": True, "evaluations": True,
         "recruitment": True, "reports": True, "organigrama": True,
         "accounting": True, "loans": True, "expenses": True,
-        "employee_portal": True, "subscriptions": True, "settings": True
+        "employee_portal": True, "subscriptions": True, "settings": True,
+        "global_compliance": False, "fiscal_comparison": True
     },
     "enterprise": {
         "dashboard": True, "payroll_calculator": True, "employees": True,
@@ -133,7 +136,8 @@ FEATURE_ACCESS = {
         "recruitment": True, "reports": True, "organigrama": True,
         "accounting": True, "loans": True, "expenses": True,
         "employee_portal": True, "subscriptions": True, "settings": True,
-        "custom_roles": True, "api": True
+        "custom_roles": True, "api": True,
+        "global_compliance": True, "fiscal_comparison": True
     }
 }
 

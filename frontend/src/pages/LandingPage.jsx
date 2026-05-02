@@ -1276,9 +1276,9 @@ export default function LandingPage() {
                 <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
               </div>
               <h3 className="font-semibold text-slate-900 mb-2 text-sm sm:text-base">{t('landing.contact.address')}</h3>
-              <p className="text-slate-600 text-xs sm:text-sm">
-                Av. George Washington #503, Gazcue<br />
-                Santo Domingo, Distrito Nacional
+              <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                <span className="block"><b>{t('landing.contact.headquartersLabel')}:</b> {t('landing.contact.headquartersValue')}</span>
+                <span className="block mt-1"><b>{t('landing.contact.coverageLabel')}:</b> {t('landing.contact.coverageValue')}</span>
               </p>
             </div>
             

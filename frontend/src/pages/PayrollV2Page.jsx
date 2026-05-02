@@ -319,7 +319,7 @@ export default function PayrollPage() {
     }
   };
 
-  // Download universal fiscal summary (multi-country) - works for all 28 countries
+  // Download universal fiscal summary (multi-country) - works for all 29 countries
   const downloadUniversalFiscalReport = async (period, format) => {
     try {
       const periodParam = period?.period_id || (period?.year && period?.month ? `${period.year}-${String(period.month).padStart(2, '0')}` : '');
@@ -1790,7 +1790,7 @@ export default function PayrollPage() {
                   )}
                 </CardTitle>
                 <CardDescription>
-                  Resumen fiscal adaptado al motor del país activo. Funciona para los <b>28 países</b> soportados.
+                  Resumen fiscal adaptado al motor del país activo. Funciona para los <b>29 países</b> soportados.
                   Incluye deducciones del empleado, contribuciones del empleador, ISR y totales con la agencia fiscal correspondiente.
                 </CardDescription>
               </CardHeader>

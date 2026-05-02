@@ -107,7 +107,7 @@ export default function CompanyConfigPage() {
     country: "DO",
   });
 
-  // Dynamic multi-country data (28 countries grouped by region)
+  // Dynamic multi-country data (29 countries grouped by region)
   const [countryData, setCountryData] = useState({ regions: {}, total: 0 });
   const [currencySymbol, setCurrencySymbol] = useState("DOP");
   
@@ -620,7 +620,7 @@ export default function CompanyConfigPage() {
           </div>
         </div>
         
-        {/* Country Selector - Multi-country engine (28 countries, 5 regions) */}
+        {/* Country Selector - Multi-country engine (29 countries, 5 regions) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label>{t('settings.general.country')}</Label>

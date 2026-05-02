@@ -192,7 +192,8 @@
     "automation": "Automatisation",
     "contracts": "Contrats",
     "liquidation": "Indemnités de départ",
-    "workflows": "Flux de travail"
+    "workflows": "Flux de travail",
+    "brochureBuilder": "Brochure Builder"
   },
   "checkout": {
     "header": {
@@ -602,7 +603,11 @@
       "weekdays": "Lundi - Vendredi",
       "saturday": "Samedi et Dimanche",
       "closed": "Fermé",
-      "supportCenter": "Centre de Support"
+      "supportCenter": "Centre de Support",
+      "headquartersLabel": "Siège",
+      "headquartersValue": "Saint-Domingue, RD",
+      "coverageLabel": "Couverture",
+      "coverageValue": "29 pays · 5 régions"
     },
     "footer": {
       "product": "Produit",
@@ -6121,7 +6126,7 @@
     "ctaTitle": "Rejoignez le Programme Partenaire",
     "ctaSubtitle": "Plus de 50 cabinets comptables font deja confiance a FortexaRH. Commencez a generer des revenus recurrents.",
     "contactSales": "Contacter les Ventes",
-    "footerTagline": "Logiciel RH et Paie pour la Republique Dominicaine",
+    "footerTagline": "Système de gestion des ressources humaines et de paie native pour les entreprises modernes dans 29 pays et 5 régions.",
     "footerRights": "Tous droits reserves."
   },
   "helpCenter": {
@@ -6552,5 +6557,8 @@
       "subtitle": "Votre période d'essai a expiré. Sélectionnez un forfait pour continuer.",
       "title": "Période d'essai expirée"
     }
+  },
+  "navigation": {
+    "brochureBuilder": "Brochure Builder"
   }
 }

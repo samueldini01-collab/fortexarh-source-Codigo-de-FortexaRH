@@ -40,6 +40,10 @@ NATIVE_FORMATS: dict[str, list[dict]] = {
     ],
     "GB": [{"code": "RTI_FPS", "name": "HMRC RTI FPS (XML)", "agency": "HMRC", "frequency": "monthly", "endpoint": "/api/native-reports/gb/rti-fps", "implemented": True}],
     "FR": [{"code": "DSN", "name": "DSN (Déclaration Sociale Nominative)", "agency": "URSSAF", "frequency": "monthly", "endpoint": "/api/native-reports/fr/dsn", "implemented": True}],
+    "BE": [
+        {"code": "DMFA", "name": "DmfA (Déclaration Multifonctionnelle)", "agency": "ONSS", "frequency": "quarterly", "endpoint": None, "implemented": False},
+        {"code": "BEL_281_10", "name": "Fiche 281.10 (Salaires)", "agency": "SPF Finances", "frequency": "annual", "endpoint": None, "implemented": False},
+    ],
     "CA": [{"code": "T4", "name": "T4 Statement of Remuneration", "agency": "CRA", "frequency": "annual", "endpoint": "/api/native-reports/ca/t4", "implemented": True}],
     "BR": [{"code": "ESOCIAL", "name": "eSocial S-1200", "agency": "Receita Federal", "frequency": "monthly", "endpoint": "/api/native-reports/br/esocial", "implemented": True}],
     "AR": [{"code": "F931", "name": "F.931 AFIP", "agency": "AFIP", "frequency": "monthly", "endpoint": "/api/native-reports/ar/f931", "implemented": True}],
@@ -110,10 +114,28 @@ FORMAT_DEADLINES: dict[str, dict] = {
 @router.get("/catalog")
 async def get_native_formats_catalog(current_user: dict = Depends(get_current_user)):
     """Return the global catalog of native fiscal formats per country with implementation status."""
+    # Resolve the current user's company country (used by frontend to gate downloads)
+    company_country_code = None
+    company_country_name = None
+    try:
+        from server import db  # local import to avoid circular at module load
+        company_id = current_user.get("company_id")
+        if company_id:
+            company = await db.companies.find_one({"id": company_id}, {"_id": 0, "country": 1})
+            if not company:
+                company = await db.companies.find_one({"company_id": company_id}, {"_id": 0, "country": 1})
+            if company:
+                company_country_code = (company.get("country") or "DO").upper()
+                company_country_name = (COUNTRY_PROFILES.get(company_country_code, {}) or {}).get("name")
+    except Exception:
+        company_country_code = "DO"
+
     summary = {
         "total_countries": len(NATIVE_FORMATS),
         "total_formats": sum(len(v) for v in NATIVE_FORMATS.values()),
         "implemented_formats": sum(1 for v in NATIVE_FORMATS.values() for f in v if f.get("implemented")),
+        "company_country_code": company_country_code,
+        "company_country_name": company_country_name,
         "countries": [],
     }
     for code, formats in NATIVE_FORMATS.items():

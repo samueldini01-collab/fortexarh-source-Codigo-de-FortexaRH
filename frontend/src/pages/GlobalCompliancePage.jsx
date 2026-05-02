@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Globe, CheckCircle2, AlertCircle, Circle, Download, Loader2, FileText, Calendar, Clock, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
+import PlanGate from "@/components/PlanGate";
 
 const STATUS_CONFIG = {
   complete: { label: "Cumplimiento Nativo", color: "bg-emerald-500", textColor: "text-emerald-700", icon: CheckCircle2 },
@@ -99,9 +100,17 @@ export default function GlobalCompliancePage() {
     }
   };
 
-  const downloadFormat = async (format) => {
+  const downloadFormat = async (format, countryCode) => {
     if (!format.endpoint || !format.implemented) {
       toast.info("Este formato aún no está implementado. Usa el Reporte Fiscal Universal en /fiscal-comparison");
+      return;
+    }
+    // Gate: only allow downloads for the company's own country
+    if (catalog?.company_country_code && countryCode && countryCode !== catalog.company_country_code) {
+      toast.error(
+        `Este formato es oficial de ${countryCode}. Tu empresa está configurada como ${catalog.company_country_code}. ` +
+        `Cambia el país desde Configuración de Empresa o usa el Reporte Fiscal Universal en /fiscal-comparison.`
+      );
       return;
     }
     setDownloading(format.code);
@@ -120,23 +129,25 @@ export default function GlobalCompliancePage() {
       URL.revokeObjectURL(link.href);
       toast.success(`${format.name} descargado`);
     } catch (e) {
-      const detail = e.response?.data?.detail;
-      if (detail) {
-        // For blob responses we may need to read as text first
-        if (e.response?.data instanceof Blob) {
-          const txt = await e.response.data.text();
+      // With responseType: blob, error body is also a Blob — read it first
+      let msg = "Error al descargar";
+      const data = e?.response?.data;
+      if (data instanceof Blob) {
+        try {
+          const txt = await data.text();
           try {
             const j = JSON.parse(txt);
-            toast.error(j.detail || "Error");
+            msg = j.detail || msg;
           } catch {
-            toast.error(txt.substring(0, 200));
+            msg = txt.substring(0, 300) || msg;
           }
-        } else {
-          toast.error(detail);
+        } catch {
+          // ignore
         }
-      } else {
-        toast.error("Error al descargar");
+      } else if (data?.detail) {
+        msg = data.detail;
       }
+      toast.error(msg);
     } finally {
       setDownloading(null);
     }
@@ -167,6 +178,12 @@ export default function GlobalCompliancePage() {
 
   return (
     <DashboardLayout>
+      <PlanGate
+        featureKey="global_compliance"
+        requiredPlans={["enterprise"]}
+        featureName="Cumplimiento Fiscal Mundial"
+        featureDescription="Centro de cumplimiento fiscal para 29 países con 33 formatos nativos (TSS, DGII, SAT, SUNAT, IRS, DIAN, URSSAF, ONSS y más). Disponible exclusivamente en el plan Enterprise."
+      >
       <div className="p-6 space-y-6" data-testid="global-compliance-page">
         {/* Header */}
         <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -405,20 +422,26 @@ export default function GlobalCompliancePage() {
                               </div>
                             </div>
                             {fmt.implemented ? (
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-7 px-2 text-emerald-700 hover:bg-emerald-100"
-                                onClick={() => downloadFormat(fmt)}
-                                disabled={downloading === fmt.code}
-                                data-testid={`download-${country.code}-${fmt.code}`}
-                              >
-                                {downloading === fmt.code ? (
-                                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                ) : (
-                                  <Download className="w-3.5 h-3.5" />
-                                )}
-                              </Button>
+                              (() => {
+                                const isOwnCountry = !catalog?.company_country_code || country.code === catalog.company_country_code;
+                                return (
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className={`h-7 px-2 ${isOwnCountry ? 'text-emerald-700 hover:bg-emerald-100' : 'text-slate-400 hover:bg-slate-100 cursor-not-allowed'}`}
+                                    onClick={() => downloadFormat(fmt, country.code)}
+                                    disabled={downloading === fmt.code || !isOwnCountry}
+                                    title={isOwnCountry ? 'Descargar' : `Cambia el país de tu empresa a ${country.code} o usa el Reporte Fiscal Universal`}
+                                    data-testid={`download-${country.code}-${fmt.code}`}
+                                  >
+                                    {downloading === fmt.code ? (
+                                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                    ) : (
+                                      <Download className="w-3.5 h-3.5" />
+                                    )}
+                                  </Button>
+                                );
+                              })()
                             ) : (
                               <Badge variant="outline" className="text-[10px] text-slate-400 border-slate-300">
                                 Pendiente
@@ -452,6 +475,7 @@ export default function GlobalCompliancePage() {
           </CardContent>
         </Card>
       </div>
+      </PlanGate>
     </DashboardLayout>
   );
 }

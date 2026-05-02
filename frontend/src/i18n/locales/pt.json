@@ -57,7 +57,7 @@
     "featuresSubtitle": "Ferramentas profissionais de RH e folha à sua disposição",
     "featuresTitle": "Tudo o que Você Precisa para seus Clientes",
     "footerRights": "Todos os direitos reservados.",
-    "footerTagline": "Software RH e Folha para República Dominicana",
+    "footerTagline": "Sistema de gestão de recursos humanos e folha nativa para empresas modernas em 29 países e 5 regiões.",
     "fortexarh": "FortexaRH",
     "gananciaNetaMensual": "Ganho Líquido Mensal",
     "heroCommission": "30% de comissão recorrente",
@@ -3427,7 +3427,11 @@
       "subtitle": "Estamos aqui para ajudá-lo. Entre em contato para qualquer dúvida sobre nossos serviços.",
       "supportCenter": "Central de Suporte",
       "title": "Contato e Suporte",
-      "weekdays": "Segunda - Sexta"
+      "weekdays": "Segunda - Sexta",
+      "headquartersLabel": "Sede",
+      "headquartersValue": "Santo Domingo, RD",
+      "coverageLabel": "Alcance",
+      "coverageValue": "29 países · 5 regiões"
     },
     "cta": {
       "startTrial": "Iniciar Teste Gratuito",
@@ -4039,7 +4043,8 @@
     "templates": "Modelos",
     "users": "Usuários",
     "vacations": "Férias",
-    "workflows": "Workflows"
+    "workflows": "Workflows",
+    "brochureBuilder": "Brochure Builder"
   },
   "notifications": {
     "activarNotificaciones": "Ativar Notificações",
@@ -6552,5 +6557,8 @@
     },
     "title": "Gestão de Férias",
     "used": "Utilizados"
+  },
+  "navigation": {
+    "brochureBuilder": "Brochure Builder"
   }
 }

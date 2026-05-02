@@ -71,6 +71,6 @@ from .reminders import (  # noqa: E402,F401
 
 # Catalog integrity check — fails fast if a future import order change drops
 # a country / format from the implemented set (testing-agent recommendation).
-assert sum(len(v) for v in NATIVE_FORMATS.values()) == 33, (
-    "NATIVE_FORMATS catalog drift: expected 33 implemented formats."
+assert sum(len(v) for v in NATIVE_FORMATS.values()) == 35, (
+    "NATIVE_FORMATS catalog drift: expected 35 declared formats (33 implemented + 2 BE placeholders)."
 )

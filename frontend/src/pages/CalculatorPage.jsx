@@ -171,7 +171,7 @@ export default function CalculatorPage() {
       <section className="max-w-5xl mx-auto px-4 pt-12 pb-6 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 text-blue-700 text-sm font-medium mb-4">
           <Globe className="w-4 h-4" />
-          <span>Disponible en 28 países de América</span>
+          <span>Disponible en 29 países de América</span>
         </div>
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-4 tracking-tight">
           Calculadora de Nómina <span className="text-blue-600">gratuita</span>
