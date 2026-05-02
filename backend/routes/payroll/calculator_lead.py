@@ -238,9 +238,12 @@ def _build_pdf(country_code: str, gross: float, full_name: Optional[str], breakd
 # ===================== ENDPOINTS =====================
 
 async def _record_lead(request: Request, payload: LeadCaptureRequest) -> dict:
+    # Normalize email to lowercase so "User@x.com" and "user@x.com" are the
+    # same lead (Pydantic EmailStr does NOT normalize case).
+    email_key = payload.email.lower()
     lead = {
         "lead_id": f"lead_{uuid.uuid4().hex[:16]}",
-        "email": payload.email,
+        "email": email_key,
         "full_name": payload.full_name,
         "country": payload.country.upper(),
         "gross_monthly": payload.gross_monthly,
@@ -252,7 +255,7 @@ async def _record_lead(request: Request, payload: LeadCaptureRequest) -> dict:
     }
     # Upsert by email to avoid duplicates — refreshes last-used country/gross
     await db.payroll_calculator_leads.update_one(
-        {"email": payload.email},
+        {"email": email_key},
         {
             "$set": {
                 "full_name": lead["full_name"],
@@ -263,7 +266,7 @@ async def _record_lead(request: Request, payload: LeadCaptureRequest) -> dict:
             },
             "$setOnInsert": {
                 "lead_id": lead["lead_id"],
-                "email": lead["email"],
+                "email": email_key,
                 "source": lead["source"],
                 "created_at": lead["created_at"],
             },
@@ -271,7 +274,7 @@ async def _record_lead(request: Request, payload: LeadCaptureRequest) -> dict:
         },
         upsert=True,
     )
-    stored = await db.payroll_calculator_leads.find_one({"email": payload.email}, {"_id": 0})
+    stored = await db.payroll_calculator_leads.find_one({"email": email_key}, {"_id": 0})
     return stored or lead
 
 

@@ -500,7 +500,7 @@ export default function LandingPage() {
                   className="rounded-lg w-full h-48 sm:h-56 md:h-64 object-cover"
                 />
               </div>
-              <div className="absolute -bottom-4 sm:-bottom-6 -left-2 sm:-left-6 bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-lg border border-slate-100">
+              <div className="absolute -bottom-4 sm:-bottom-6 -left-2 sm:-left-6 bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-lg border border-slate-100 pointer-events-none">
                 <div className="flex items-center gap-2 sm:gap-3">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-emerald-100 rounded-full flex items-center justify-center">
                     <Users className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
@@ -511,7 +511,7 @@ export default function LandingPage() {
                   </div>
                 </div>
               </div>
-              <div className="absolute -top-2 sm:-top-4 -right-2 sm:-right-4 bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-lg border border-slate-100">
+              <div className="absolute -top-2 sm:-top-4 -right-2 sm:-right-4 bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-lg border border-slate-100 pointer-events-none">
                 <div className="flex items-center gap-2">
                   <div className="flex -space-x-2">
                     <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs font-bold">5</div>

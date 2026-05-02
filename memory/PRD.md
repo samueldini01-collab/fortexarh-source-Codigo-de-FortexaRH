@@ -178,6 +178,19 @@
     - Descubrió y protege: el tenant DO tiene workflow multi-step configurado → `/approve` pasa por `workflow_pending` antes de llegar a `approved`. El test itera hasta 10 veces.
   - 🛡️ **Integrity assert** en `routes/payroll/__init__.py` subido de `>=30` a `>=32` (cuenta actual: 32 routes).
   - Tested: iteration_244.json — **227/227 backend tests PASSED** (15 nuevos + 212 baseline). Sin acción pendiente.
+- **Widget UI + Lead Capture + Split final workflow.py (May 2, 2026)** — 3× P2 DONE:
+  - 🏗️ **Split final de `workflow.py`** (512 líneas) → `approval.py` (377) + `status.py` (138) + shim 10 líneas. **TODOS los sub-módulos payroll ahora <400 líneas.** Hecho vía script de extracción verbatim con tests E2E como safety net.
+  - 💰 **Lead capture + PDF** (`routes/payroll/calculator_lead.py`, 320 líneas, sin auth):
+    - `POST /api/payroll/calculator/lead` — upsert en `db.payroll_calculator_leads` (keyed por email lowercased para evitar duplicados), incrementa `calculations_count`.
+    - `POST /api/payroll/calculator/pdf` — compute + upsert lead + retorna PDF branded (~4KB) generado con reportlab con desglose completo.
+  - 🖥️ **`CalculatorPage.jsx`** (~460 líneas) en `/calculator`:
+    - Hero con bandera de 28 países, dropdown visual, input salario, botón Calcular.
+    - Resultado: 3 heroes (bruto, **neto**, costo empleador), tabla deducciones, tabla aportes patronales, disclaimer.
+    - CTA "Recibir PDF" → dialog de captura (email + nombre + consent) → trigger download.
+    - Todos los `data-testid` en elementos interactivos para testing.
+    - CTA nuevo en landing hero ("Calculadora gratis" con icono Calculator).
+    - Bug fix: `pointer-events-none` en 2 decorative floating cards del landing que interceptaban clicks en la CTA row (detectado por testing agent).
+  - Tested: iteration_53.json — **354/354 backend tests PASSED** (7 nuevos calculator-lead + 206 regression + 141 native_reports). Frontend 12/13 → 13/13 después del fix de pointer-events.
 - **Global Compliance Center page (May 1, 2026)** — Roadmap visual DONE:
   - New page `/global-compliance` with stats cards (28 países, 33 formatos, 7 implementados, 28 cobertura universal)
   - Country cards grouped by region (Caribe, Centro, Norte, Sur, Europa) with status badges (Cumplimiento Nativo green / Parcial amber / Solo Universal slate)
@@ -195,9 +208,9 @@
 
 ## Backlog
 - P1: Importación masiva Excel (Empleados, Novedades)
-- P2: Widget UI en la landing page que consume `/api/payroll/calculator` (formulario de salario + dropdown de 28 países → tabla de desglose).
-- P2: Email capture tras calcular ("¿Quieres que te envíe este reporte en PDF?" → lead captured).
-- P2: Dividir `workflow.py` (512 líneas) — **AHORA SEGURO** gracias a los 15 tests E2E. `approve_period` sigue siendo ~210 líneas de state-machine; candidatos para split: helper para missing-bank-info check (~30 líneas) + helper multi-step workflow coordination (~60 líneas).
+- P2: SEO tags + OpenGraph image para `/calculator` (meta descriptions, sitemap, hreflang para 28 países). Canal de adquisición orgánica directo.
+- P2: Email transaccional con el PDF (actualmente solo descarga — requiere integración Resend con API key del usuario).
+- P2: Dashboard Super Admin `/admin/leads` para ver leads capturados (filtro por país/fecha/consent).
 - P2: API pública documentada
 - P2: Backup/Exportation de datos de empresa
 - P2: Configurable Notifications Phase 3 (Digest Email)
