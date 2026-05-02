@@ -403,6 +403,16 @@
   - Super Admin tab "Carritos" con 5 stat cards (total, emails, recuperados, tasa%, revenue perdido) + tabla filtrable con acción "Reenviar" por carrito.
   - Tested end-to-end: cart captured automatically from UI, cron triggered manually → `{scanned:1, sent:1, failed:0}` (Resend email enviado exitosamente).
   - Índices Mongo: `cart_id` único, `email+plan_id`, `created_at desc`, `recovery_email_sent_at+recovered_at`.
+- **Exit-Intent Modal en /checkout (Feb 2, 2026)** — enhancement DONE:
+  - Componente nuevo `/app/frontend/src/components/ExitIntentModal.jsx` — heurística:
+    - Desktop: escucha `mouseleave` con `clientY <= 8` (cursor saliendo al top de la ventana → target likely tab/close button)
+    - Mobile: `visibilitychange → hidden` con debounce para cuando el usuario vuelve de fondo
+    - Flag en `sessionStorage` (`fortexarh_exit_intent_shown`) → dispara 1x por sesión
+    - Auto-disabled si el usuario ya introdujo un email válido (para no molestar)
+  - Conectado a `POST /api/public/abandoned-carts` con el mismo payload que el debounce principal → feeds el flujo de recovery emails que construimos antes
+  - UI con resumen del carrito visible ("Your cart: $17.50/mo · 5 empleados") + CTA doble ("Ahora no" / "Enviarme el link")
+  - i18n keys en `checkout.exitIntent.{title,description,yourCart,invalidEmail,success,dismiss,sendLink}` para ES/EN/FR/PT (sync'd entre `src/i18n/locales` y `public/locales`). `TRANSLATION_VERSION` 3.7.2 → 3.7.3.
+  - Tested end-to-end con Playwright: modal aparece en mouseleave, submit deshabilitado sin email válido, cart capturado en backend con todos los metadatos (plan, emp, amount, country, language).
 - **Dynamic sitemap.xml + robots.txt (Feb 2, 2026)** — SEO P1 DONE:
   - New module `/app/backend/routes/sitemap.py` wired into `/api/`.
   - `GET /api/sitemap.xml` returns XML with 34 URLs: 5 core routes (`/`, `/pricing`, `/register`, `/login`, `/soporte`) + 29 country pages (`/pais/{slug}`), each with 4 hreflang alternates (es, en, fr, pt) — totalling 145 alternate links. `Cache-Control: public, max-age=3600`. Content-Type `application/xml`.

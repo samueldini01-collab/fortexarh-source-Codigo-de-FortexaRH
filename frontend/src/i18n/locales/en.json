@@ -275,6 +275,15 @@
           "manager": "Dedicated account manager"
         }
       }
+    },
+    "exitIntent": {
+      "title": "Want to finish later?",
+      "description": "Leave your email and we'll send you a link to complete your subscription whenever you want. No commitment.",
+      "yourCart": "Your cart",
+      "invalidEmail": "Enter a valid email",
+      "success": "We sent you the link to resume it!",
+      "dismiss": "Not now",
+      "sendLink": "Send me the link"
     }
   },
   "landing": {

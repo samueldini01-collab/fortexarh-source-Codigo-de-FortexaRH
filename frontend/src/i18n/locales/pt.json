@@ -932,7 +932,16 @@
       "perEmployee": "Por funcionário"
     },
     "subtitle": "Configure seu plano e proceda ao pagamento seguro",
-    "title": "Complete sua Compra"
+    "title": "Complete sua Compra",
+    "exitIntent": {
+      "title": "Quer terminar depois?",
+      "description": "Deixe seu email e enviaremos o link para concluir sua assinatura quando quiser. Sem compromisso.",
+      "yourCart": "Seu carrinho",
+      "invalidEmail": "Digite um email válido",
+      "success": "Enviamos o link para retomar!",
+      "dismiss": "Agora não",
+      "sendLink": "Enviar o link"
+    }
   },
   "colors": {
     "blue": "Azul",

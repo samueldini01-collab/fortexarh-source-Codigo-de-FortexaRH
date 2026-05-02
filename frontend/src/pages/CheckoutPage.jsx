@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
+import ExitIntentModal from "@/components/ExitIntentModal";
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api";
 
@@ -146,6 +147,18 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <ExitIntentModal
+        planId={planConfig.id}
+        employeeCount={employeeCount}
+        amount={totalMonthly}
+        currency="usd"
+        currentEmail={email}
+        enabled={!isValidEmail(email)}
+        onCaptured={({ email: capturedEmail, cart_id }) => {
+          if (capturedEmail) setEmail(capturedEmail);
+          if (cart_id) setCartId(cart_id);
+        }}
+      />
       {/* Header */}
       <header className="bg-white border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">

@@ -275,6 +275,15 @@
           "manager": "Gestionnaire de compte dédié"
         }
       }
+    },
+    "exitIntent": {
+      "title": "Besoin d'aide pour finir ?",
+      "description": "Laissez votre email et nous vous enverrons un lien pour terminer votre abonnement quand vous voulez. Sans engagement.",
+      "yourCart": "Votre panier",
+      "invalidEmail": "Entrez un email valide",
+      "success": "Nous vous avons envoyé le lien pour reprendre !",
+      "dismiss": "Pas maintenant",
+      "sendLink": "Envoyez-moi le lien"
     }
   },
   "landing": {

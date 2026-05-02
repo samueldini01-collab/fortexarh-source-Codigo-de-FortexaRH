@@ -275,6 +275,15 @@
           "manager": "Gerente de cuenta dedicado"
         }
       }
+    },
+    "exitIntent": {
+      "title": "¿Te ayudo a completar?",
+      "description": "Déjanos tu email y te enviamos el link para terminar tu suscripción cuando quieras. Sin compromiso.",
+      "yourCart": "Tu carrito",
+      "invalidEmail": "Ingresa un email válido",
+      "success": "¡Te enviamos el link para retomarlo!",
+      "dismiss": "Ahora no",
+      "sendLink": "Enviarme el link"
     }
   },
   "landing": {
