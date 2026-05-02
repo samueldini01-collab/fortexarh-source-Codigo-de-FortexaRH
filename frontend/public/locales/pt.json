@@ -618,7 +618,7 @@
       "phone": "Telefone",
       "secureData": "Dados Seguros na Nuvem",
       "spanishSupport": "Suporte em Espanhol",
-      "subtitle": "Junte-se às empresas dominicanas que já confiam no FortexaRH para gerenciar sua folha e recursos humanos de forma eficiente.",
+      "subtitle": "Junte-se às empresas de 29 países que já confiam no FortexaRH para gerenciar sua folha e recursos humanos de forma eficiente.",
       "title": "Pronto para transformar sua gestão de RH?",
       "website": "Site"
     },
@@ -801,6 +801,17 @@
         "europe": "Europa"
       },
       "footer": "Motor fiscal dinâmico: alíquotas, imposto, contribuições e documentos se adaptam automaticamente ao país da empresa."
+    },
+    "countryHighlight": {
+      "title": "Folha nativa para",
+      "subtitle": "Motor fiscal específico para o seu país com conformidade local automatizada.",
+      "system": "Sistema de Seguridade Social",
+      "agency": "Agência Fiscal",
+      "currency": "Moeda",
+      "employeeDeductions": "Deduções do funcionário",
+      "employerContributions": "Contribuições patronais",
+      "incomeTax": "Imposto de renda",
+      "reports": "Relatórios nativos"
     }
   },
   "cdcAudit": {

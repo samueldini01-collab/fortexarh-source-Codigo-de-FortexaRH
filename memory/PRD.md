@@ -191,6 +191,21 @@
     - CTA nuevo en landing hero ("Calculadora gratis" con icono Calculator).
     - Bug fix: `pointer-events-none` en 2 decorative floating cards del landing que interceptaban clicks en la CTA row (detectado por testing agent).
   - Tested: iteration_53.json — **354/354 backend tests PASSED** (7 nuevos calculator-lead + 206 regression + 141 native_reports). Frontend 12/13 → 13/13 después del fix de pointer-events.
+- **Brochure por país + limpieza footer (Feb 2, 2026)** — Enhancement DONE:
+  - 🎯 **Brochure personalizable por país/idioma** vía URL params: `/brochure?country=XX&lang=yy`
+    - `BrochurePage.jsx` usa `useSearchParams` para leer query
+    - Si `?lang=xx`, aplica `changeLanguage(xx)` inmediatamente (es/en/fr/pt)
+    - Si `?country=XX`, fetchea `/api/country-config/countries/XX` y renderiza **nueva sección "Country Highlight"** justo después de la portada con:
+      - Bandera SVG grande del país + "NÓMINA NATIVA PARA {País}"
+      - 4 cards: Sistema SS, Agencia tributaria, Moneda, Impuesto sobre la renta
+      - Detalle de deducciones empleado + aportes empleador con tarifas exactas
+      - Lista de reportes nativos del país como badges
+    - **Nombre del PDF dinámico**: `FortexaRH_Brochure_España_ES.pdf`, `FortexaRH_Brochure_Belgique_FR.pdf`, etc.
+  - 9 i18n keys nuevas × 4 idiomas = 36 traducciones (`brochure.countryHighlight.*`)
+  - 🧹 **Footer limpiado**: eliminada la línea "Santo Domingo, República Dominicana" (no coherente con expansión a 29 países). Solo queda "© 2026 FortexaRH. All rights reserved."
+  - 🌍 **CTA subtítulo actualizado** en 4 idiomas: "Join the companies across 29 countries..." (antes: "Join the Dominican companies..."). Más inclusivo del alcance global.
+  - TRANSLATION_VERSION 3.1.0 → 3.3.0 (cache bust)
+  - Verificado Playwright: `/brochure?country=ES&lang=es` renderiza highlight España con AEAT/TGSS/IRPF y todas las tarifas; `/brochure?country=BE&lang=fr` renderiza highlight Bélgica con ONSS/SPF Finances/Précompte. Footer limpio confirmado (`Contains 'Santo Domingo': False`).
 - **Brochure + PricingPage i18n fix (Feb 2, 2026)** — bug-fix DONE:
   - 🐛 `PricingPage.jsx` tenía array local de idiomas hardcodeado con solo 3 entradas (es/en/fr). Ahora importa `languages` desde `@/i18n` → muestra los 4 idiomas (es/en/fr/pt). Single source of truth.
   - 📄 `BrochurePage.jsx` actualizado integralmente:

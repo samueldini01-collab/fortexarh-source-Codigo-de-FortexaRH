@@ -5685,7 +5685,7 @@
     },
     "contact": {
       "title": "Ready to transform your HR management?",
-      "subtitle": "Join the Dominican companies that already trust FortexaRH to manage their payroll and human resources efficiently.",
+      "subtitle": "Join the companies across 29 countries that already trust FortexaRH to manage their payroll and human resources efficiently.",
       "website": "Website",
       "phone": "Phone",
       "email": "Email",
@@ -5707,6 +5707,17 @@
         "europe": "Europe"
       },
       "footer": "Dynamic fiscal engine: rates, income tax, contributions and documents adapt automatically per company country."
+    },
+    "countryHighlight": {
+      "title": "Native payroll for",
+      "subtitle": "Country-specific fiscal engine with automated local compliance.",
+      "system": "Social Security System",
+      "agency": "Tax Agency",
+      "currency": "Currency",
+      "employeeDeductions": "Employee deductions",
+      "employerContributions": "Employer contributions",
+      "incomeTax": "Income tax",
+      "reports": "Native reports"
     }
   },
   "geoLocations": {

@@ -5685,7 +5685,7 @@
     },
     "contact": {
       "title": "¿Listo para transformar su gestión de RRHH?",
-      "subtitle": "Únase a las empresas dominicanas que ya confían en FortexaRH para gestionar su nómina y recursos humanos de manera eficiente.",
+      "subtitle": "Únase a las empresas de 29 países que ya confían en FortexaRH para gestionar su nómina y recursos humanos de manera eficiente.",
       "website": "Sitio Web",
       "phone": "Teléfono",
       "email": "Email",
@@ -5707,6 +5707,17 @@
         "europe": "Europa"
       },
       "footer": "Motor fiscal dinámico: tarifas, ISR, aportes y documentos se adaptan automáticamente según el país de la empresa."
+    },
+    "countryHighlight": {
+      "title": "Nómina nativa para",
+      "subtitle": "Motor fiscal específico para tu país con cumplimiento local automatizado.",
+      "system": "Sistema de Seguridad Social",
+      "agency": "Agencia Tributaria",
+      "currency": "Moneda",
+      "employeeDeductions": "Deducciones empleado",
+      "employerContributions": "Aportes empleador",
+      "incomeTax": "Impuesto sobre la renta",
+      "reports": "Reportes nativos"
     }
   },
   "geoLocations": {

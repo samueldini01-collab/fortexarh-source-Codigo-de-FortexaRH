@@ -5685,7 +5685,7 @@
     },
     "contact": {
       "title": "Prêt à transformer votre gestion RH?",
-      "subtitle": "Rejoignez les entreprises dominicaines qui font déjà confiance à FortexaRH pour gérer leur paie et ressources humaines efficacement.",
+      "subtitle": "Rejoignez les entreprises de 29 pays qui font déjà confiance à FortexaRH pour gérer leur paie et ressources humaines efficacement.",
       "website": "Site Web",
       "phone": "Téléphone",
       "email": "Email",
@@ -5707,6 +5707,17 @@
         "europe": "Europe"
       },
       "footer": "Moteur fiscal dynamique : taux, impôts, cotisations et documents s'adaptent automatiquement selon le pays de l'entreprise."
+    },
+    "countryHighlight": {
+      "title": "Paie native pour",
+      "subtitle": "Moteur fiscal spécifique à votre pays avec conformité locale automatisée.",
+      "system": "Système de Sécurité Sociale",
+      "agency": "Agence Fiscale",
+      "currency": "Devise",
+      "employeeDeductions": "Déductions salarié",
+      "employerContributions": "Cotisations patronales",
+      "incomeTax": "Impôt sur le revenu",
+      "reports": "Rapports natifs"
     }
   },
   "geoLocations": {

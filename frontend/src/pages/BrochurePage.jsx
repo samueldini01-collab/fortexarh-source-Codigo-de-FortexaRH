@@ -44,17 +44,30 @@ import {
   Landmark,
   Languages
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import CountryFlag from "@/components/CountryFlag";
+import { changeLanguage } from "@/i18n";
 
 const API = (process.env.REACT_APP_BACKEND_URL || "").replace(/\/$/, "") + "/api";
 
 export default function BrochurePage() {
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
+  const urlCountry = (searchParams.get("country") || "").toUpperCase();
+  const urlLang = searchParams.get("lang");
+
   const brochureRef = useRef(null);
   const [downloading, setDownloading] = useState(false);
   const [regions, setRegions] = useState({});
+  const [countryProfile, setCountryProfile] = useState(null);
   const navigate = useNavigate();
+
+  // Apply ?lang=xx immediately
+  useEffect(() => {
+    if (urlLang && ['es', 'en', 'fr', 'pt'].includes(urlLang)) {
+      changeLanguage(urlLang);
+    }
+  }, [urlLang]);
 
   // Load 29-country catalog from backend (with fallback if offline)
   useEffect(() => {
@@ -70,21 +83,45 @@ export default function BrochurePage() {
     return () => { cancelled = true; };
   }, []);
 
+  // If ?country=XX, fetch that country's full profile for personalized highlight
+  useEffect(() => {
+    if (!urlCountry) { setCountryProfile(null); return; }
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await axios.get(`${API}/country-config/countries/${urlCountry}`);
+        if (!cancelled) setCountryProfile(data);
+      } catch {
+        if (!cancelled) setCountryProfile(null);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [urlCountry]);
+
   const handleDownloadPDF = async () => {
     setDownloading(true);
     try {
       const html2pdf = (await import('html2pdf.js')).default;
       const element = brochureRef.current;
-      
+
+      // Personalized filename when country/lang query params are present
+      let filename = 'FortexaRH_Brochure';
+      if (countryProfile?.name) {
+        const safe = countryProfile.name.replace(/[^a-zA-Z0-9]/g, '_');
+        filename += `_${safe}`;
+      }
+      if (urlLang) filename += `_${urlLang.toUpperCase()}`;
+      filename += '.pdf';
+
       const opt = {
         margin: 0,
-        filename: 'FortexaRH_Brochure.pdf',
+        filename,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, logging: false },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
         pagebreak: { mode: 'avoid-all' }
       };
-      
+
       await html2pdf().set(opt).from(element).save();
     } catch (error) {
       console.error("Error generating PDF:", error);
@@ -277,6 +314,83 @@ export default function BrochurePage() {
               </div>
             </div>
           </div>
+
+          {/* Page 1.5: Country Highlight (only if ?country=XX provided) */}
+          {countryProfile && (
+            <div className="p-12 bg-gradient-to-br from-emerald-50 to-cyan-50 border-t-4 border-emerald-500 min-h-[600px]">
+              <div className="max-w-4xl mx-auto">
+                <div className="flex items-center justify-center gap-4 mb-8">
+                  <CountryFlag code={countryProfile.code} className="w-20 h-auto rounded shadow-lg" />
+                  <div>
+                    <p className="text-emerald-600 font-semibold text-sm">{t('brochure.countryHighlight.title').toUpperCase()}</p>
+                    <h2 className="text-4xl font-bold text-slate-800">{countryProfile.name}</h2>
+                  </div>
+                </div>
+                <p className="text-center text-slate-600 mb-10 max-w-2xl mx-auto">
+                  {t('brochure.countryHighlight.subtitle')}
+                </p>
+
+                <div className="grid md:grid-cols-2 gap-5 mb-6">
+                  <div className="bg-white rounded-xl p-5 shadow-sm border border-emerald-100">
+                    <p className="text-xs font-semibold text-emerald-600 uppercase mb-1">{t('brochure.countryHighlight.system')}</p>
+                    <p className="text-base font-bold text-slate-800">{countryProfile.social_security?.system_name || '—'}</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-5 shadow-sm border border-emerald-100">
+                    <p className="text-xs font-semibold text-emerald-600 uppercase mb-1">{t('brochure.countryHighlight.agency')}</p>
+                    <p className="text-base font-bold text-slate-800">{countryProfile.income_tax?.agency || '—'}</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-5 shadow-sm border border-emerald-100">
+                    <p className="text-xs font-semibold text-emerald-600 uppercase mb-1">{t('brochure.countryHighlight.currency')}</p>
+                    <p className="text-base font-bold text-slate-800">
+                      {countryProfile.currency_symbol} {countryProfile.currency} — {countryProfile.currency_name}
+                    </p>
+                  </div>
+                  <div className="bg-white rounded-xl p-5 shadow-sm border border-emerald-100">
+                    <p className="text-xs font-semibold text-emerald-600 uppercase mb-1">{t('brochure.countryHighlight.incomeTax')}</p>
+                    <p className="text-base font-bold text-slate-800">{countryProfile.income_tax?.name || '—'}</p>
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-5">
+                  <div className="bg-white rounded-xl p-5 shadow-sm border border-emerald-100">
+                    <p className="text-xs font-semibold text-emerald-600 uppercase mb-3">{t('brochure.countryHighlight.employeeDeductions')}</p>
+                    <div className="space-y-2">
+                      {(countryProfile.social_security?.employee_deductions || []).map((d, i) => (
+                        <div key={i} className="flex items-center justify-between text-sm border-b border-slate-100 pb-1.5">
+                          <span className="text-slate-700">{d.name}</span>
+                          <span className="font-mono font-semibold text-emerald-700">{(d.rate * 100).toFixed(2)}%</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-xl p-5 shadow-sm border border-emerald-100">
+                    <p className="text-xs font-semibold text-emerald-600 uppercase mb-3">{t('brochure.countryHighlight.employerContributions')}</p>
+                    <div className="space-y-2">
+                      {(countryProfile.social_security?.employer_contributions || []).map((c, i) => (
+                        <div key={i} className="flex items-center justify-between text-sm border-b border-slate-100 pb-1.5">
+                          <span className="text-slate-700">{c.name}</span>
+                          <span className="font-mono font-semibold text-emerald-700">{(c.rate * 100).toFixed(2)}%</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {countryProfile.reports && countryProfile.reports.length > 0 && (
+                  <div className="mt-6 bg-white rounded-xl p-5 shadow-sm border border-emerald-100">
+                    <p className="text-xs font-semibold text-emerald-600 uppercase mb-3">{t('brochure.countryHighlight.reports')}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {countryProfile.reports.map((r, i) => (
+                        <span key={i} className="bg-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-1 rounded-full">
+                          {r}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Page 2: Features */}
           <div className="p-12 bg-white min-h-[800px]">
@@ -595,8 +709,7 @@ export default function BrochurePage() {
             
             <div className="text-center mt-10 pt-6 border-t border-white/20">
               <p className="text-slate-400 text-sm">
-                {t('brochure.contact.copyright')}<br/>
-                {t('brochure.contact.location')}
+                {t('brochure.contact.copyright')}
               </p>
             </div>
           </div>
