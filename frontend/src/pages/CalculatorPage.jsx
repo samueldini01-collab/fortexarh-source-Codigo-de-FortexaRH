@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -42,10 +42,13 @@ const fmt = (val, currencySymbol = "") => {
 };
 
 export default function CalculatorPage() {
+  const [searchParams] = useSearchParams();
+  const initialCountry = (searchParams.get("country") || "DO").toUpperCase();
+
   const [countries, setCountries] = useState([]);
   const [loadingCountries, setLoadingCountries] = useState(true);
 
-  const [country, setCountry] = useState("DO");
+  const [country, setCountry] = useState(initialCountry);
   const [gross, setGross] = useState(50000);
   const [result, setResult] = useState(null);
   const [calculating, setCalculating] = useState(false);
@@ -68,7 +71,14 @@ export default function CalculatorPage() {
     (async () => {
       try {
         const { data } = await axios.get(`${API}/payroll/calculator/countries`);
-        if (!cancelled) setCountries(data.countries || []);
+        if (!cancelled) {
+          const list = data.countries || [];
+          setCountries(list);
+          // If URL-provided country isn't valid, fall back to DO
+          if (initialCountry && !list.find((c) => c.code === initialCountry)) {
+            setCountry("DO");
+          }
+        }
       } catch {
         if (!cancelled) toast.error("No se pudo cargar la lista de países.");
       } finally {
@@ -78,7 +88,7 @@ export default function CalculatorPage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [initialCountry]);
 
   const handleCalculate = async (e) => {
     e?.preventDefault();

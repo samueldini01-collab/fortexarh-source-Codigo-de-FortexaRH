@@ -191,6 +191,16 @@
     - CTA nuevo en landing hero ("Calculadora gratis" con icono Calculator).
     - Bug fix: `pointer-events-none` en 2 decorative floating cards del landing que interceptaban clicks en la CTA row (detectado por testing agent).
   - Tested: iteration_53.json — **354/354 backend tests PASSED** (7 nuevos calculator-lead + 206 regression + 141 native_reports). Frontend 12/13 → 13/13 después del fix de pointer-events.
+- **Smart Locale Banner país-aware (Feb 2, 2026)** — Enhancement DONE:
+  - `/app/frontend/src/components/LanguageBanner.jsx` reescrito (88→180 líneas) como `SmartLocaleBanner`.
+  - **Mapa `BROWSER_LOCALE_MAP`** con 31 mapeos de locales BCP-47 a los 29 países soportados (ej: `pt-BR`→Brasil/BRL, `fr-BE`→Bélgica/EUR, `es-MX`→México/MXN, `en-CA`/`fr-CA`→Canadá/CAD, `nl-SR`→Surinam, `es-DO`→default no-banner).
+  - Copy i18n en 4 idiomas (es/en/fr/pt) con 4 claves: banner text, currency, primary, calculator, dismiss.
+  - UI: banner fijo bottom-center con bandera SVG (`CountryFlag`), badge emerald con icon sparkle, mensaje país + moneda + idioma nativo detectado.
+  - 3 CTAs: **Probar calculadora** (navega a `/calculator?country=XX`), **Activar** (cambia idioma), **Cerrar** (persiste dismiss en sessionStorage).
+  - `CalculatorPage.jsx` extendido para leer `?country=XX` query param y preseleccionar dropdown de país en la calculadora pública.
+  - Lógica de detección: itera `navigator.languages`, valida contra mapa + fallback por base language (`pt`→BR), oculta para defaults DO, respeta dismiss persistente.
+  - Verificación Playwright: locale-banner renderiza correctamente para `pt-BR`/`fr-BE`/`es-MX`, invisible para `es-DO`. Text extraído: "Está no Brasil? FortexaRH tem suporte nativo de folha para Brasil." y "Basé en Bélgica ? FortexaRH prend en charge la paie native pour Bélgica."
+  - Tests: 81/81 passing (58 DR + 23 multi-country).
 - **Portugués (pt-BR) + Bélgica (BE) + PR→Caribe (Feb 2, 2026)** — P1 DONE:
   - 🇧🇷 **Nuevo idioma PT**: `pt.json` generado con Claude Sonnet 4.5 vía batch (5.362 claves traducidas desde es.json + 3 arrays de `settingsPage.plans.*.features` completados manualmente). Total: **5.365 claves** (paridad completa con ES).
   - Script reutilizable: `/app/backend/scripts/translate_pt.py` (~135 batches de 40 keys). Output duplicado a `src/i18n/locales/pt.json` + `public/locales/pt.json`.
