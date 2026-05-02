@@ -191,6 +191,14 @@
     - CTA nuevo en landing hero ("Calculadora gratis" con icono Calculator).
     - Bug fix: `pointer-events-none` en 2 decorative floating cards del landing que interceptaban clicks en la CTA row (detectado por testing agent).
   - Tested: iteration_53.json — **354/354 backend tests PASSED** (7 nuevos calculator-lead + 206 regression + 141 native_reports). Frontend 12/13 → 13/13 después del fix de pointer-events.
+- **Landing footer internacionalizado (Feb 2, 2026)** — UX polish DONE:
+  - `LandingPage.jsx` footer actualizado en 3 puntos según imágenes del usuario:
+    1. `landing.footer.description` en 4 idiomas → "Sistema de gestión de recursos humanos y nómina nativa para empresas modernas en 29 países y 5 regiones."
+    2. Dirección "Av. George Washington #503, Gazcue / Santo Domingo, Distrito Nacional" ELIMINADA del footer oscuro (quedan solo email y teléfono)
+    3. Copyright "© 2026 FortexaRH. Todos los derechos reservados. República Dominicana." → "© 2026 FortexaRH. Todos los derechos reservados."
+  - TRANSLATION_VERSION 3.3.0 → 3.4.0 (cache bust)
+  - Verificado Playwright: `Copyright text: '© 2026 FortexaRH. All rights reserved.'`, `Footer contains Gazcue: False`.
+  - Nota: la dirección en la sección Contact (`#contact` con 4 cards grandes) NO fue tocada — el usuario pidió específicamente cambios en el "pie" (footer).
 - **Brochure por país + limpieza footer (Feb 2, 2026)** — Enhancement DONE:
   - 🎯 **Brochure personalizable por país/idioma** vía URL params: `/brochure?country=XX&lang=yy`
     - `BrochurePage.jsx` usa `useSearchParams` para leer query

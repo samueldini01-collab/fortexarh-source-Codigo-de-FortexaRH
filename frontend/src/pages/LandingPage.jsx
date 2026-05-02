@@ -1333,11 +1333,6 @@ export default function LandingPage() {
                 {t('landing.footer.description')}
               </p>
               <div className="text-slate-400 text-xs sm:text-sm space-y-1 sm:space-y-2">
-                <p className="flex items-start gap-2">
-                  <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mt-0.5 flex-shrink-0" /> 
-                  <span className="hidden sm:inline">{t('landing.avGeorgeWashington503')}<br />{t('landing.santoDomingoDistritoNacional')}</span>
-                  <span className="sm:hidden">{t('landing.santoDomingoDn')}</span>
-                </p>
                 <p className="flex items-center gap-2"><Mail className="w-3 h-3 sm:w-4 sm:h-4" /> info@fortexaerp.com</p>
                 <p className="flex items-center gap-2"><Phone className="w-3 h-3 sm:w-4 sm:h-4" /> (809) 685-9898</p>
               </div>
@@ -1368,7 +1363,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="border-t border-slate-800 pt-6 sm:pt-8 text-center text-slate-400 text-xs sm:text-sm">
-            © {new Date().getFullYear()} FortexaRH. {t('landing.footer.rights')}. República Dominicana.
+            © {new Date().getFullYear()} FortexaRH. {t('landing.footer.rights')}.
           </div>
         </div>
       </footer>
