@@ -136,21 +136,50 @@ async def calculate_payroll(data: PayrollCalculatorInput, current_user: dict = D
     emp_deds = ss.get("employee_deductions") or []
     er_cons = ss.get("employer_contributions") or []
 
-    def _label(items, idx, default):
+    # Canonical code buckets per slot. Profiles are searched first by known
+    # code aliases; if nothing matches we fall back to positional index (safe
+    # because all COUNTRY_PROFILES entries today follow the health-then-pension
+    # ordering, but the code-lookup makes a future reorder a non-event).
+    _HEALTH_CODES = {"SFS", "HEALTH", "SALUD", "IMSS", "CCSS", "IHSS",
+                      "INSS", "IGSS", "ISSS", "IVSS", "IPS", "CNS", "EsSalud",
+                      "FONASA", "NIS", "NHIF", "ZIEKTEKOSTEN", "OFATMA"}
+    _PENSION_CODES = {"AFP", "PENSION", "PENSIÓN", "AFORE", "ONP", "AFC",
+                       "IVM", "RAP", "JUBILATORIO", "AOV", "ONA"}
+    _RISK_CODES = {"SRL", "ART", "SCTR", "ARL", "INS", "RIESGOS"}
+    _TRAINING_CODES = {"INFOTEP", "INA", "INSAFORP", "INATEC", "IECE", "INTECAP",
+                         "INFOP", "IRTRA", "SEGURO EDUCATIVO"}
+
+    def _label_for(items, buckets, positional_idx, default):
+        # First pass: lookup by code/label aliases.
+        for it in items or []:
+            code = (it.get("code") or "").upper()
+            label = (it.get("label") or it.get("name") or "").upper()
+            if any(b in code or b in label for b in buckets):
+                return it.get("label") or it.get("name") or it.get("code") or default
+        # Fallback to positional index.
         try:
-            return items[idx].get("label") or items[idx].get("name") or items[idx].get("code") or default
+            return items[positional_idx].get("label") or items[positional_idx].get("name") or items[positional_idx].get("code") or default
         except (IndexError, AttributeError):
             return default
 
     labels = {
-        "sfs_employee": _label(emp_deds, 0, "Seguro Salud"),
-        "afp_employee": _label(emp_deds, 1, "Pensión"),
-        "sfs_employer": _label(er_cons, 0, "Seguro Salud (Patronal)"),
-        "afp_employer": _label(er_cons, 1, "Pensión (Patronal)"),
-        "srl_employer": _label(er_cons, 2, "Riesgos Laborales"),
-        "infotep_employer": _label(er_cons, 3, "Capacitación / Otros"),
+        "sfs_employee": _label_for(emp_deds, _HEALTH_CODES, 0, "Seguro Salud"),
+        "afp_employee": _label_for(emp_deds, _PENSION_CODES, 1, "Pensión"),
+        "sfs_employer": _label_for(er_cons, _HEALTH_CODES, 0, "Seguro Salud (Patronal)"),
+        "afp_employer": _label_for(er_cons, _PENSION_CODES, 1, "Pensión (Patronal)"),
+        "srl_employer": _label_for(er_cons, _RISK_CODES, 2, "Riesgos Laborales"),
+        "infotep_employer": _label_for(er_cons, _TRAINING_CODES, 3, "Capacitación / Otros"),
         "isr_agency": (profile.get("income_tax") or {}).get("agency", "DGII"),
     }
+
+    # Observability: log a warning when the company's country is not recognized
+    # so misconfigured tenants surface instead of silently getting DR rates.
+    if country_code not in COUNTRY_PROFILES:
+        import logging
+        logging.getLogger(__name__).warning(
+            "payroll-calculator: unknown company country %r — falling back to DR rates",
+            country_code,
+        )
 
     daily_rate = data.base_salary / 30
     proportional_salary = daily_rate * data.days_worked
