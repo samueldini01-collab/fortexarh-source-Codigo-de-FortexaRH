@@ -60,6 +60,7 @@ async def add_novelty(entry_id: str, data: PayrollNoveltyCreate, current_user: d
         raise HTTPException(status_code=400, detail="No se puede modificar una nómina pagada")
     
     novelty_id = generate_id("nov")
+    actor_name = current_user.get("name") or current_user.get("email") or "Sistema"
     novelty = {
         "novelty_id": novelty_id,
         "novelty_type": data.novelty_type,
@@ -68,7 +69,9 @@ async def add_novelty(entry_id: str, data: PayrollNoveltyCreate, current_user: d
         "description": data.description,
         "amount": data.amount,
         "is_percentage": data.is_percentage,
-        "created_at": now_iso()
+        "created_at": now_iso(),
+        "created_by": actor_name,
+        "created_by_email": current_user.get("email"),
     }
     
     novelties = entry.get("novelties", [])
@@ -174,6 +177,7 @@ async def update_novelty(
     if target_idx is None:
         raise HTTPException(status_code=404, detail="Novedad no encontrada")
 
+    actor_name = current_user.get("name") or current_user.get("email") or "Sistema"
     novelties[target_idx] = {
         **novelties[target_idx],
         "novelty_type": data.novelty_type,
@@ -183,6 +187,8 @@ async def update_novelty(
         "amount": data.amount,
         "is_percentage": data.is_percentage,
         "updated_at": now_iso(),
+        "updated_by": actor_name,
+        "updated_by_email": current_user.get("email"),
     }
 
     # Recalculate (same logic as add/delete)

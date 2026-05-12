@@ -1196,7 +1196,12 @@
     "downloadPayslip": "Descargar Recibo",
     "fiscalEngine": "Motor Fiscal",
     "editarNovedad": "Editar Novedad",
-    "actualizarNovedad": "Actualizar Novedad"
+    "actualizarNovedad": "Actualizar Novedad",
+    "tooltip": {
+      "createdBy": "Creado por",
+      "createdAt": "Creado",
+      "editedBy": "Última edición por"
+    }
   },
   "globalSearch": {
     "placeholder": "Buscar o ejecutar acciones con IA...",

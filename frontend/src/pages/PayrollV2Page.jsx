@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Select,
   SelectContent,
@@ -1614,24 +1615,63 @@ export default function PayrollPage() {
                                       <div className="flex gap-1 mt-1 flex-wrap">
                                         {novelties.map(n => {
                                           const canEdit = selectedPeriod.status !== 'paid';
+                                          const fmtDate = (iso) => {
+                                            if (!iso) return null;
+                                            try {
+                                              const d = new Date(iso);
+                                              return d.toLocaleString(undefined, { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+                                            } catch { return iso; }
+                                          };
+                                          const createdDate = fmtDate(n.created_at);
+                                          const updatedDate = fmtDate(n.updated_at);
                                           return (
-                                            <Badge
-                                              key={n.novelty_id}
-                                              variant="outline"
-                                              className={`text-[8px] ${n.novelty_type === 'income' ? 'border-emerald-300 text-emerald-600' : 'border-red-300 text-red-600'} ${canEdit ? 'cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700' : ''}`}
-                                              onClick={canEdit ? () => openEditNoveltyDialog(entry, n) : undefined}
-                                              title={canEdit ? (t('common.edit') || 'Editar') : ''}
-                                              data-testid={`novelty-badge-${n.novelty_id}`}
-                                            >
-                                              {n.code}: {formatNumber(n.amount)}{n.is_percentage ? '%' : ''}
-                                              {canEdit && (
-                                                <X
-                                                  className="w-2 h-2 ml-1 cursor-pointer"
-                                                  onClick={(e) => { e.stopPropagation(); handleDeleteNovelty(entry.entry_id, n.novelty_id, selectedPeriod.period_id); }}
-                                                  data-testid={`novelty-delete-${n.novelty_id}`}
-                                                />
-                                              )}
-                                            </Badge>
+                                            <TooltipProvider key={n.novelty_id} delayDuration={200}>
+                                              <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                  <Badge
+                                                    variant="outline"
+                                                    className={`text-[8px] ${n.novelty_type === 'income' ? 'border-emerald-300 text-emerald-600' : 'border-red-300 text-red-600'} ${canEdit ? 'cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700' : ''}`}
+                                                    onClick={canEdit ? () => openEditNoveltyDialog(entry, n) : undefined}
+                                                    data-testid={`novelty-badge-${n.novelty_id}`}
+                                                  >
+                                                    {n.code}: {formatNumber(n.amount)}{n.is_percentage ? '%' : ''}
+                                                    {canEdit && (
+                                                      <X
+                                                        className="w-2 h-2 ml-1 cursor-pointer"
+                                                        onClick={(e) => { e.stopPropagation(); handleDeleteNovelty(entry.entry_id, n.novelty_id, selectedPeriod.period_id); }}
+                                                        data-testid={`novelty-delete-${n.novelty_id}`}
+                                                      />
+                                                    )}
+                                                  </Badge>
+                                                </TooltipTrigger>
+                                                <TooltipContent side="top" className="text-[11px] max-w-xs" data-testid={`novelty-tooltip-${n.novelty_id}`}>
+                                                  <div className="space-y-1">
+                                                    <div className="font-semibold">{n.name || n.code}</div>
+                                                    {n.description && <div className="text-slate-500">{n.description}</div>}
+                                                    {n.created_by && (
+                                                      <div>
+                                                        <span className="text-slate-400">{t('payrollV2.tooltip.createdBy', { defaultValue: 'Creado por' })}:</span>{' '}
+                                                        <span className="font-medium">{n.created_by}</span>
+                                                        {createdDate && <span className="text-slate-400"> · {createdDate}</span>}
+                                                      </div>
+                                                    )}
+                                                    {!n.created_by && createdDate && (
+                                                      <div>
+                                                        <span className="text-slate-400">{t('payrollV2.tooltip.createdAt', { defaultValue: 'Creado' })}:</span>{' '}
+                                                        <span>{createdDate}</span>
+                                                      </div>
+                                                    )}
+                                                    {n.updated_at && n.updated_at !== n.created_at && (
+                                                      <div>
+                                                        <span className="text-slate-400">{t('payrollV2.tooltip.editedBy', { defaultValue: 'Última edición por' })}:</span>{' '}
+                                                        <span className="font-medium">{n.updated_by || '—'}</span>
+                                                        {updatedDate && <span className="text-slate-400"> · {updatedDate}</span>}
+                                                      </div>
+                                                    )}
+                                                  </div>
+                                                </TooltipContent>
+                                              </Tooltip>
+                                            </TooltipProvider>
                                           );
                                         })}
                                       </div>

@@ -1196,7 +1196,12 @@
     "deletePeriod": "Supprimer",
     "downloadPayslip": "Télécharger le bulletin de paie",
     "editarNovedad": "Modifier la Nouveauté",
-    "actualizarNovedad": "Mettre à jour"
+    "actualizarNovedad": "Mettre à jour",
+    "tooltip": {
+      "createdBy": "Créé par",
+      "createdAt": "Créé",
+      "editedBy": "Dernière modif par"
+    }
   },
   "globalSearch": {
     "placeholder": "Rechercher ou exécuter des actions IA...",

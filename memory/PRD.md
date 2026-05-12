@@ -429,6 +429,11 @@
   - **Tests end-to-end:**
     - Backend curl: POST→500 (net 13992.93), PATCH→1250 (net 14698.6) recalcula correcto, PATCH inexistente → 404, DELETE funciona
     - Frontend Playwright: chip `COM: 500.00` → click → dialog edit → cambio a 999 → toast "Novelty updated" → chip `COM: 999.00` → totales recalculados (NETO 11,049.70 → 11,519.21)
+- **Mini-historial tooltip en novedades (Feb 2, 2026)** — enhancement DONE:
+  - Backend: `POST /novelties` y `PATCH /novelties/{id}` ahora persisten `created_by` / `created_by_email` y `updated_by` / `updated_by_email` (tomados de `current_user.name || email`).
+  - Frontend: cada chip de novedad envuelto en `<Tooltip>` (shadcn). Hover muestra: nombre/descripción + `Created by: {name} · {dd/mm/yyyy hh:mm}` + (si editado) `Last edited by: ...`.
+  - i18n `payrollV2.tooltip.{createdBy,createdAt,editedBy}` ES/EN/FR/PT. `TRANSLATION_VERSION` 3.7.5 → 3.7.6.
+  - Tested Playwright: tooltip aparece al hover, muestra solo "Created by" tras alta, agrega "Last edited by" tras PATCH.
 - **Dynamic sitemap.xml + robots.txt (Feb 2, 2026)** — SEO P1 DONE:
   - New module `/app/backend/routes/sitemap.py` wired into `/api/`.
   - `GET /api/sitemap.xml` returns XML with 34 URLs: 5 core routes (`/`, `/pricing`, `/register`, `/login`, `/soporte`) + 29 country pages (`/pais/{slug}`), each with 4 hreflang alternates (es, en, fr, pt) — totalling 145 alternate links. `Cache-Control: public, max-age=3600`. Content-Type `application/xml`.

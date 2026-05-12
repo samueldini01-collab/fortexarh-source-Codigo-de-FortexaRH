@@ -5259,7 +5259,12 @@
     "verPeriodos": "Ver períodos",
     "vistaPrevia": "Pré-visualização",
     "editarNovedad": "Editar Novidade",
-    "actualizarNovedad": "Atualizar Novidade"
+    "actualizarNovedad": "Atualizar Novidade",
+    "tooltip": {
+      "createdBy": "Criado por",
+      "createdAt": "Criado",
+      "editedBy": "Última edição por"
+    }
   },
   "portal": {
     "downloadPayslip": "Baixar Recibo",

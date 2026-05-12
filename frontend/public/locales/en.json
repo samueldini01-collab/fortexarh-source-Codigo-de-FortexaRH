@@ -1196,7 +1196,12 @@
     "downloadPayslip": "Download Payslip",
     "fiscalEngine": "Fiscal Engine",
     "editarNovedad": "Edit Novelty",
-    "actualizarNovedad": "Update Novelty"
+    "actualizarNovedad": "Update Novelty",
+    "tooltip": {
+      "createdBy": "Created by",
+      "createdAt": "Created",
+      "editedBy": "Last edited by"
+    }
   },
   "globalSearch": {
     "placeholder": "Search or run AI actions...",
