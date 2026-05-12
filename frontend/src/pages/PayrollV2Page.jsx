@@ -118,6 +118,7 @@ export default function PayrollPage() {
   const [showNewPeriod, setShowNewPeriod] = useState(false);
   const [showPayDialog, setShowPayDialog] = useState(false);
   const [showNoveltyDialog, setShowNoveltyDialog] = useState(false);
+  const [editingNoveltyId, setEditingNoveltyId] = useState(null);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [bankAccounts, setBankAccounts] = useState([]);
   const [selectedBankAccount, setSelectedBankAccount] = useState("");
@@ -853,30 +854,63 @@ export default function PayrollPage() {
   // Novelty handlers
   const openNoveltyDialog = (entry) => {
     setSelectedEntry(entry);
+    setEditingNoveltyId(null);
     setNoveltyForm({ novelty_type: "income", code: "", name: "", description: "", amount: "", is_percentage: false });
     setShowNoveltyDialog(true);
   };
 
-  const handleAddNovelty = async () => {
-    if (!selectedEntry || !noveltyForm.code || !noveltyForm.amount) {
+  const openEditNoveltyDialog = (entry, novelty) => {
+    if (!novelty) return;
+    setSelectedEntry(entry);
+    setEditingNoveltyId(novelty.novelty_id);
+    setNoveltyForm({
+      novelty_type: novelty.novelty_type || "income",
+      code: novelty.code || "",
+      name: novelty.name || "",
+      description: novelty.description || "",
+      amount: novelty.amount ?? "",
+      is_percentage: !!novelty.is_percentage,
+    });
+    setShowNoveltyDialog(true);
+  };
+
+  const handleSaveNovelty = async () => {
+    if (!selectedEntry || !noveltyForm.code || noveltyForm.amount === "" || noveltyForm.amount === null) {
       toast.error(t('payrollV2.messages.completeRequiredFields'));
       return;
     }
-
+    const payload = {
+      entry_id: selectedEntry.entry_id,
+      ...noveltyForm,
+      amount: parseFloat(noveltyForm.amount) || 0,
+    };
     try {
-      await axios.post(`${API}/payroll/entries/${selectedEntry.entry_id}/novelties`, {
-        entry_id: selectedEntry.entry_id,
-        ...noveltyForm,
-        amount: parseFloat(noveltyForm.amount) || 0
-      }, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success(t('payrollV2.messages.noveltyAdded'));
+      if (editingNoveltyId) {
+        await axios.patch(
+          `${API}/payroll/entries/${selectedEntry.entry_id}/novelties/${editingNoveltyId}`,
+          payload,
+          { headers: getAuthHeaders(), withCredentials: true },
+        );
+        toast.success(t('payrollV2.messages.noveltyUpdated', { defaultValue: 'Novedad actualizada' }));
+      } else {
+        await axios.post(
+          `${API}/payroll/entries/${selectedEntry.entry_id}/novelties`,
+          payload,
+          { headers: getAuthHeaders(), withCredentials: true },
+        );
+        toast.success(t('payrollV2.messages.noveltyAdded'));
+      }
       setShowNoveltyDialog(false);
+      setEditingNoveltyId(null);
       fetchPeriodDetails(selectedEntry.period_id);
       fetchPeriods();
     } catch (error) {
       toast.error(error.response?.data?.detail || "Error");
     }
   };
+
+  // Kept for backwards-compat with any external caller
+  const handleAddNovelty = handleSaveNovelty;
 
   const handleDeleteNovelty = async (entryId, noveltyId, periodId) => {
     try {
@@ -1578,14 +1612,28 @@ export default function PayrollPage() {
                                     <p className="text-slate-500 dark:text-slate-400">{entry.position}</p>
                                     {novelties.length > 0 && (
                                       <div className="flex gap-1 mt-1 flex-wrap">
-                                        {novelties.map(n => (
-                                          <Badge key={n.novelty_id} variant="outline" className={`text-[8px] ${n.novelty_type === 'income' ? 'border-emerald-300 text-emerald-600' : 'border-red-300 text-red-600'}`}>
-                                            {n.code}: {formatNumber(n.amount)}
-                                            {selectedPeriod.status !== 'paid' && (
-                                              <X className="w-2 h-2 ml-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); handleDeleteNovelty(entry.entry_id, n.novelty_id, selectedPeriod.period_id); }} />
-                                            )}
-                                          </Badge>
-                                        ))}
+                                        {novelties.map(n => {
+                                          const canEdit = selectedPeriod.status !== 'paid';
+                                          return (
+                                            <Badge
+                                              key={n.novelty_id}
+                                              variant="outline"
+                                              className={`text-[8px] ${n.novelty_type === 'income' ? 'border-emerald-300 text-emerald-600' : 'border-red-300 text-red-600'} ${canEdit ? 'cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700' : ''}`}
+                                              onClick={canEdit ? () => openEditNoveltyDialog(entry, n) : undefined}
+                                              title={canEdit ? (t('common.edit') || 'Editar') : ''}
+                                              data-testid={`novelty-badge-${n.novelty_id}`}
+                                            >
+                                              {n.code}: {formatNumber(n.amount)}{n.is_percentage ? '%' : ''}
+                                              {canEdit && (
+                                                <X
+                                                  className="w-2 h-2 ml-1 cursor-pointer"
+                                                  onClick={(e) => { e.stopPropagation(); handleDeleteNovelty(entry.entry_id, n.novelty_id, selectedPeriod.period_id); }}
+                                                  data-testid={`novelty-delete-${n.novelty_id}`}
+                                                />
+                                              )}
+                                            </Badge>
+                                          );
+                                        })}
                                       </div>
                                     )}
                                   </div>
@@ -2022,9 +2070,9 @@ export default function PayrollPage() {
         </Dialog>
 
         {/* Novelty Dialog */}
-        <Dialog open={showNoveltyDialog} onOpenChange={setShowNoveltyDialog}>
+        <Dialog open={showNoveltyDialog} onOpenChange={(open) => { setShowNoveltyDialog(open); if (!open) setEditingNoveltyId(null); }}>
           <DialogContent>
-            <DialogHeader><DialogTitle>{t('payrollV2.agregarNovedad')}</DialogTitle>
+            <DialogHeader><DialogTitle>{editingNoveltyId ? t('payrollV2.editarNovedad', { defaultValue: 'Editar Novedad' }) : t('payrollV2.agregarNovedad')}</DialogTitle>
               <DialogDescription>{t('payrollV2.agregueUnIngresoODeduccion', {name: selectedEntry?.employee_name})}</DialogDescription></DialogHeader>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -2058,8 +2106,13 @@ export default function PayrollPage() {
                 <Input value={noveltyForm.description} onChange={(e) => setNoveltyForm({...noveltyForm, description: e.target.value})} placeholder="Ej: Comisión ventas enero" />
               </div>
             </div>
-            <DialogFooter><Button variant="outline" onClick={() => setShowNoveltyDialog(false)}>{t('payrollV2.cancelar')}</Button>
-              <Button onClick={handleAddNovelty}><Plus className="w-4 h-4 mr-2" />{t('payrollV2.agregarNovedad')}</Button>
+            <DialogFooter><Button variant="outline" onClick={() => { setShowNoveltyDialog(false); setEditingNoveltyId(null); }}>{t('payrollV2.cancelar')}</Button>
+              <Button onClick={handleSaveNovelty} data-testid="save-novelty-btn">
+                <Plus className="w-4 h-4 mr-2" />
+                {editingNoveltyId
+                  ? t('payrollV2.actualizarNovedad', { defaultValue: 'Actualizar Novedad' })
+                  : t('payrollV2.agregarNovedad')}
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

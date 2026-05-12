@@ -420,6 +420,15 @@
   - Atajos: Enter en el input de monto guarda; Escape cancela. Al eliminar la fila en edición, el modo edición se desactiva automáticamente.
   - Nueva key i18n `employees.montoPorcentaje` (Monto/% — Amount/% — Montant/% — Valor/%) en ES/EN/FR/PT. `TRANSLATION_VERSION` 3.7.3 → 3.7.4.
   - Tested end-to-end con Playwright: agregar deducción, editar monto/descripción, toggle %, cancel preserva valor previo, persistencia en backend confirmada tras `Guardar` + reload (`10%` se mantiene).
+- **Novedades de Nómina editables (Feb 2, 2026)** — bugfix P0 DONE:
+  - **Backend**: Nuevo endpoint `PATCH /api/payroll/entries/{entry_id}/novelties/{novelty_id}` en `routes/payroll/novelties.py` — acepta el mismo payload que POST, actualiza la novedad por `novelty_id`, recalcula `gross_salary, sfs, afp, isr, total_deductions, net_salary, employer_contributions` y propaga vía `update_period_totals`. Rechaza con 400 si el período está `paid`, 404 si la novedad no existe.
+  - **Frontend** (`PayrollV2Page.jsx`): los chips de novedades (`VI`/`COM`/`ANTIC`/`INC`/`CDOP`/`TARD`, etc.) ahora son **clickeables** → click en el body del chip abre el mismo dialog en modo edición pre-llenado. El icono X conserva la acción `delete`.
+  - Nuevo estado `editingNoveltyId`, helper `openEditNoveltyDialog(entry, novelty)`, handler unificado `handleSaveNovelty` que despacha POST o PATCH según `editingNoveltyId`. Dialog cambia título a "Editar Novedad" y botón a "Update Novelty / Actualizar Novedad".
+  - Chip muestra `%` cuando `is_percentage=true` (mejora visual menor).
+  - i18n nuevos: `payrollV2.editarNovedad`, `payrollV2.actualizarNovedad`, `payrollV2.messages.noveltyUpdated` para ES/EN/FR/PT. `TRANSLATION_VERSION` 3.7.4 → 3.7.5.
+  - **Tests end-to-end:**
+    - Backend curl: POST→500 (net 13992.93), PATCH→1250 (net 14698.6) recalcula correcto, PATCH inexistente → 404, DELETE funciona
+    - Frontend Playwright: chip `COM: 500.00` → click → dialog edit → cambio a 999 → toast "Novelty updated" → chip `COM: 999.00` → totales recalculados (NETO 11,049.70 → 11,519.21)
 - **Dynamic sitemap.xml + robots.txt (Feb 2, 2026)** — SEO P1 DONE:
   - New module `/app/backend/routes/sitemap.py` wired into `/api/`.
   - `GET /api/sitemap.xml` returns XML with 34 URLs: 5 core routes (`/`, `/pricing`, `/register`, `/login`, `/soporte`) + 29 country pages (`/pais/{slug}`), each with 4 hreflang alternates (es, en, fr, pt) — totalling 145 alternate links. `Cache-Control: public, max-age=3600`. Content-Type `application/xml`.

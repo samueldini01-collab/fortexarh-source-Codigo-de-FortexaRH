@@ -1080,7 +1080,8 @@
       "periodAndJEDeleted": "Nómina y asiento contable eliminados correctamente",
       "tssExported": "Archivo TSS exportado correctamente",
       "deductionsUpdated": "Deducciones actualizadas correctamente",
-      "payslipDownloaded": "Recibo de nómina descargado"
+      "payslipDownloaded": "Recibo de nómina descargado",
+      "noveltyUpdated": "Novedad actualizada"
     },
     "todosLosDepartamentos": "Todos los departamentos",
     "noHayPeriodosDe": "No hay períodos de nómina",
@@ -1193,7 +1194,9 @@
       "save": "Guardar Cambios"
     },
     "downloadPayslip": "Descargar Recibo",
-    "fiscalEngine": "Motor Fiscal"
+    "fiscalEngine": "Motor Fiscal",
+    "editarNovedad": "Editar Novedad",
+    "actualizarNovedad": "Actualizar Novedad"
   },
   "globalSearch": {
     "placeholder": "Buscar o ejecutar acciones con IA...",

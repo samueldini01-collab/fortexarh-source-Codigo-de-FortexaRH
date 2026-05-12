@@ -5183,7 +5183,8 @@
       "tssDownloaded": "Relatório TSS baixado",
       "tssExported": "Arquivo TSS exportado corretamente",
       "tssNovedadesDownloaded": "TSS Novedades baixado",
-      "updated": "Atualizado"
+      "updated": "Atualizado",
+      "noveltyUpdated": "Novidade atualizada"
     },
     "montoRd": "Valor (RD$)",
     "neto": "LÍQUIDO",
@@ -5256,7 +5257,9 @@
     "totales1": "TOTAIS",
     "ver": "Ver",
     "verPeriodos": "Ver períodos",
-    "vistaPrevia": "Pré-visualização"
+    "vistaPrevia": "Pré-visualização",
+    "editarNovedad": "Editar Novidade",
+    "actualizarNovedad": "Atualizar Novidade"
   },
   "portal": {
     "downloadPayslip": "Baixar Recibo",

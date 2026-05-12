@@ -1080,7 +1080,8 @@
       "baseSalary": "Base Salary",
       "periodAndJEDeleted": "Payroll and journal entry deleted successfully",
       "deductionsUpdated": "Deductions updated successfully",
-      "payslipDownloaded": "Payslip downloaded"
+      "payslipDownloaded": "Payslip downloaded",
+      "noveltyUpdated": "Novelty updated"
     },
     "todosLosDepartamentos": "All departments",
     "noHayPeriodosDe": "No payroll periods",
@@ -1193,7 +1194,9 @@
       "save": "Save Changes"
     },
     "downloadPayslip": "Download Payslip",
-    "fiscalEngine": "Fiscal Engine"
+    "fiscalEngine": "Fiscal Engine",
+    "editarNovedad": "Edit Novelty",
+    "actualizarNovedad": "Update Novelty"
   },
   "globalSearch": {
     "placeholder": "Search or run AI actions...",

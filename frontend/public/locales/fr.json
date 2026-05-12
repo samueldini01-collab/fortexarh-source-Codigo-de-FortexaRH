@@ -1080,7 +1080,8 @@
       "deductionsUpdated": "Déductions mises à jour avec succès",
       "payslipDownloaded": "Bulletin de paie téléchargé",
       "periodAndJEDeleted": "Paie et écriture de journal supprimées avec succès",
-      "tssExported": "TSS exporté"
+      "tssExported": "TSS exporté",
+      "noveltyUpdated": "Nouveauté mise à jour"
     },
     "todosLosDepartamentos": "Tous les départements",
     "noHayPeriodosDe": "Pas de périodes de paie",
@@ -1193,7 +1194,9 @@
       "totalDeductions": "TOTAL DES DÉDUCTIONS"
     },
     "deletePeriod": "Supprimer",
-    "downloadPayslip": "Télécharger le bulletin de paie"
+    "downloadPayslip": "Télécharger le bulletin de paie",
+    "editarNovedad": "Modifier la Nouveauté",
+    "actualizarNovedad": "Mettre à jour"
   },
   "globalSearch": {
     "placeholder": "Rechercher ou exécuter des actions IA...",
