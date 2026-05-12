@@ -413,6 +413,13 @@
   - UI con resumen del carrito visible ("Your cart: $17.50/mo · 5 empleados") + CTA doble ("Ahora no" / "Enviarme el link")
   - i18n keys en `checkout.exitIntent.{title,description,yourCart,invalidEmail,success,dismiss,sendLink}` para ES/EN/FR/PT (sync'd entre `src/i18n/locales` y `public/locales`). `TRANSLATION_VERSION` 3.7.2 → 3.7.3.
   - Tested end-to-end con Playwright: modal aparece en mouseleave, submit deshabilitado sin email válido, cart capturado en backend con todos los metadatos (plan, emp, amount, country, language).
+- **Descuentos Adicionales editables en perfil de empleado (Feb 2, 2026)** — bugfix P0 DONE:
+  - `EmployeeFormDialog.jsx` ahora soporta edición inline de cada `additional_deduction` agregada (antes solo se podía eliminar con X).
+  - Nuevo estado local `editingDeductionIndex` + `editDeductionDraft` con handlers `startEditDeduction / saveEditDeduction / cancelEditDeduction`.
+  - Ícono ✏️ (Pencil) junto a la X de cada fila → click → switch a fila en modo edición inline con 4 campos (`Type` Select, `Description`, `Amount`, toggle `$/%`) + botones Save (✓ verde) y Cancel (X).
+  - Atajos: Enter en el input de monto guarda; Escape cancela. Al eliminar la fila en edición, el modo edición se desactiva automáticamente.
+  - Nueva key i18n `employees.montoPorcentaje` (Monto/% — Amount/% — Montant/% — Valor/%) en ES/EN/FR/PT. `TRANSLATION_VERSION` 3.7.3 → 3.7.4.
+  - Tested end-to-end con Playwright: agregar deducción, editar monto/descripción, toggle %, cancel preserva valor previo, persistencia en backend confirmada tras `Guardar` + reload (`10%` se mantiene).
 - **Dynamic sitemap.xml + robots.txt (Feb 2, 2026)** — SEO P1 DONE:
   - New module `/app/backend/routes/sitemap.py` wired into `/api/`.
   - `GET /api/sitemap.xml` returns XML with 34 URLs: 5 core routes (`/`, `/pricing`, `/register`, `/login`, `/soporte`) + 29 country pages (`/pais/{slug}`), each with 4 hreflang alternates (es, en, fr, pt) — totalling 145 alternate links. `Cache-Control: public, max-age=3600`. Content-Type `application/xml`.

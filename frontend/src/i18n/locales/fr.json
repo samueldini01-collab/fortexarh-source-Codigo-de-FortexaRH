@@ -1527,7 +1527,8 @@
     "deduccionesDesactivadasWarning": "Certaines deductions legales sont desactivees pour cet employe. Assurez-vous de respecter les reglementations applicables.",
     "position": "Poste",
     "salary": "Salaire",
-    "totalDeduccionesAdicionales": "Total des déductions additionnelles"
+    "totalDeduccionesAdicionales": "Total des déductions additionnelles",
+    "montoPorcentaje": "Montant / %"
   },
   "payroll": {
     "title": "Paie",

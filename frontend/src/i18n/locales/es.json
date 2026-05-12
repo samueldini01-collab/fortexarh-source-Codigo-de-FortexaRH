@@ -1527,7 +1527,8 @@
     "deduccionesDesactivadasWarning": "Algunas deducciones de ley estan desactivadas para este empleado. Asegurese de cumplir con las regulaciones aplicables.",
     "position": "Cargo",
     "salary": "Salario",
-    "totalDeduccionesAdicionales": "Total Deducciones Adicionales"
+    "totalDeduccionesAdicionales": "Total Deducciones Adicionales",
+    "montoPorcentaje": "Monto / %"
   },
   "payroll": {
     "title": "Nómina",

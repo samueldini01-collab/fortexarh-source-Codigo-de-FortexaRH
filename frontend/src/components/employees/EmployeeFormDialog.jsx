@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  User, FileText, CreditCard, Camera, Percent, Phone, X, Lock, Calculator
+  User, FileText, CreditCard, Camera, Percent, Phone, X, Lock, Calculator, Pencil, Check
 } from "lucide-react";
 
 const SFS_RATE = 0.0304;
@@ -87,6 +88,51 @@ export function EmployeeFormDialog({
       ...formData,
       additional_deductions: formData.additional_deductions.filter((_, i) => i !== index)
     });
+    if (editingDeductionIndex === index) {
+      setEditingDeductionIndex(null);
+      setEditDeductionDraft(null);
+    }
+  };
+
+  // Inline edit state for additional deductions
+  const [editingDeductionIndex, setEditingDeductionIndex] = useState(null);
+  const [editDeductionDraft, setEditDeductionDraft] = useState(null);
+
+  const startEditDeduction = (index) => {
+    const target = formData.additional_deductions[index];
+    if (!target) return;
+    setEditingDeductionIndex(index);
+    setEditDeductionDraft({
+      type: target.type || (deductionTypes[0] || ""),
+      description: target.description || "",
+      amount: target.amount ?? "",
+      is_percentage: !!target.is_percentage,
+    });
+  };
+
+  const cancelEditDeduction = () => {
+    setEditingDeductionIndex(null);
+    setEditDeductionDraft(null);
+  };
+
+  const saveEditDeduction = () => {
+    if (editingDeductionIndex === null || !editDeductionDraft) return;
+    const amount = parseFloat(editDeductionDraft.amount);
+    if (Number.isNaN(amount) || amount < 0) {
+      toast.error(t('employees.deductions.amountRequired') || "Enter a valid amount for the deduction");
+      return;
+    }
+    const updated = [...formData.additional_deductions];
+    updated[editingDeductionIndex] = {
+      ...updated[editingDeductionIndex],
+      type: editDeductionDraft.type,
+      description: editDeductionDraft.description,
+      amount,
+      is_percentage: !!editDeductionDraft.is_percentage,
+    };
+    setFormData({ ...formData, additional_deductions: updated });
+    setEditingDeductionIndex(null);
+    setEditDeductionDraft(null);
   };
 
   const addEmergencyContact = () => {
@@ -752,28 +798,128 @@ export function EmployeeFormDialog({
                     ) : (
                       <>
                         <div className="space-y-2 mb-4">
-                          {formData.additional_deductions.map((ded, index) => (
-                            <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                              <div>
-                                <p className="font-medium">{ded.type}</p>
-                                <p className="text-sm text-slate-500">{ded.description}</p>
+                          {formData.additional_deductions.map((ded, index) => {
+                            const isEditing = editingDeductionIndex === index && editDeductionDraft;
+                            return (
+                              <div
+                                key={index}
+                                className={`p-3 rounded-lg border ${isEditing ? "bg-blue-50 border-blue-200" : "bg-slate-50 border-transparent"}`}
+                                data-testid={`additional-deduction-row-${index}`}
+                              >
+                                {isEditing ? (
+                                  <div className="grid grid-cols-1 md:grid-cols-12 gap-2 items-end">
+                                    <div className="md:col-span-3 space-y-1">
+                                      <Label className="text-xs text-slate-600">{t('employees.tipo')}</Label>
+                                      <Select
+                                        value={editDeductionDraft.type}
+                                        onValueChange={(v) => setEditDeductionDraft({ ...editDeductionDraft, type: v })}
+                                      >
+                                        <SelectTrigger className="bg-white h-9" data-testid={`edit-deduction-type-${index}`}>
+                                          <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          {deductionTypes.map(type => (
+                                            <SelectItem key={type} value={type}>{type}</SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
+                                    </div>
+                                    <div className="md:col-span-4 space-y-1">
+                                      <Label className="text-xs text-slate-600">{t('employees.descripcion')}</Label>
+                                      <Input
+                                        value={editDeductionDraft.description}
+                                        onChange={(e) => setEditDeductionDraft({ ...editDeductionDraft, description: e.target.value })}
+                                        className="bg-white h-9"
+                                        placeholder="Ej. Cuota 1/10"
+                                        data-testid={`edit-deduction-description-${index}`}
+                                      />
+                                    </div>
+                                    <div className="md:col-span-3 space-y-1">
+                                      <Label className="text-xs text-slate-600">{t('employees.montoPorcentaje') || "Monto / %"}</Label>
+                                      <Input
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        value={editDeductionDraft.amount}
+                                        onChange={(e) => setEditDeductionDraft({ ...editDeductionDraft, amount: e.target.value })}
+                                        className="bg-white h-9"
+                                        data-testid={`edit-deduction-amount-${index}`}
+                                        onKeyDown={(e) => {
+                                          if (e.key === "Enter") { e.preventDefault(); saveEditDeduction(); }
+                                          else if (e.key === "Escape") { e.preventDefault(); cancelEditDeduction(); }
+                                        }}
+                                      />
+                                    </div>
+                                    <div className="md:col-span-1 flex items-center justify-center pb-1">
+                                      <button
+                                        type="button"
+                                        onClick={() => setEditDeductionDraft({ ...editDeductionDraft, is_percentage: !editDeductionDraft.is_percentage })}
+                                        className={`h-9 px-3 rounded border font-mono text-sm transition-colors ${editDeductionDraft.is_percentage ? "bg-blue-600 text-white border-blue-600" : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"}`}
+                                        data-testid={`edit-deduction-toggle-pct-${index}`}
+                                        title={editDeductionDraft.is_percentage ? "%" : "$"}
+                                      >
+                                        {editDeductionDraft.is_percentage ? "%" : "$"}
+                                      </button>
+                                    </div>
+                                    <div className="md:col-span-1 flex items-center gap-1 justify-end">
+                                      <Button
+                                        type="button"
+                                        size="icon"
+                                        className="h-9 w-9 bg-emerald-600 hover:bg-emerald-700"
+                                        onClick={saveEditDeduction}
+                                        data-testid={`save-deduction-${index}`}
+                                      >
+                                        <Check className="w-4 h-4" />
+                                      </Button>
+                                      <Button
+                                        type="button"
+                                        size="icon"
+                                        variant="ghost"
+                                        className="h-9 w-9"
+                                        onClick={cancelEditDeduction}
+                                        data-testid={`cancel-deduction-${index}`}
+                                      >
+                                        <X className="w-4 h-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="flex items-center justify-between">
+                                    <div>
+                                      <p className="font-medium">{ded.type}</p>
+                                      <p className="text-sm text-slate-500">{ded.description}</p>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-mono" data-testid={`deduction-amount-${index}`}>
+                                        {ded.is_percentage ? `${ded.amount}%` : formatRD(ded.amount)}
+                                      </span>
+                                      <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => startEditDeduction(index)}
+                                        className="text-blue-600 hover:text-blue-700 h-8 w-8"
+                                        data-testid={`edit-deduction-${index}`}
+                                        title={t('common.edit') || 'Editar'}
+                                      >
+                                        <Pencil className="w-4 h-4" />
+                                      </Button>
+                                      <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => removeDeduction(index)}
+                                        className="text-red-500 hover:text-red-600 h-8 w-8"
+                                        data-testid={`remove-deduction-${index}`}
+                                      >
+                                        <X className="w-4 h-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                )}
                               </div>
-                              <div className="flex items-center gap-2">
-                                <span className="font-mono">
-                                  {ded.is_percentage ? `${ded.amount}%` : formatRD(ded.amount)}
-                                </span>
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => removeDeduction(index)}
-                                  className="text-red-500 hover:text-red-600 h-8 w-8"
-                                >
-                                  <X className="w-4 h-4" />
-                                </Button>
-                              </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                         {formData.additional_deductions.length > 1 && (
                           <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 mb-4 flex justify-between items-center">

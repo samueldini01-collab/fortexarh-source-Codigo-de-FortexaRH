@@ -2293,7 +2293,8 @@
     "usadoParaCalcularAntigedad": "Usado para calcular antiguidade salarial",
     "valorManual": "Valor manual",
     "whatsapp": "WhatsApp",
-    "whatsappOpcional": "WhatsApp (Opcional)"
+    "whatsappOpcional": "WhatsApp (Opcional)",
+    "montoPorcentaje": "Valor / %"
   },
   "errors": {
     "forbidden": "Acesso negado",

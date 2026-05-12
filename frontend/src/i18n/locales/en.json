@@ -1527,7 +1527,8 @@
     "deduccionesDesactivadasWarning": "Some legal deductions are disabled for this employee. Make sure to comply with applicable regulations.",
     "position": "Position",
     "salary": "Salary",
-    "totalDeduccionesAdicionales": "Total Additional Deductions"
+    "totalDeduccionesAdicionales": "Total Additional Deductions",
+    "montoPorcentaje": "Amount / %"
   },
   "payroll": {
     "title": "Payroll",
