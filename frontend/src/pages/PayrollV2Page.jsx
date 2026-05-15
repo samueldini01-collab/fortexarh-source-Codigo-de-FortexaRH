@@ -1478,6 +1478,21 @@ export default function PayrollPage() {
                             <p className="font-mono font-semibold">{formatCurrency(period.total_net)}</p>
                           </div>
                           {getStatusBadge(period.status)}
+                          {['open', 'draft'].includes(period.status) && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleCalculatePeriod(period.period_id);
+                              }}
+                              title={t('payrollV2.calcular')}
+                              data-testid={`recalc-period-list-${period.period_id}`}
+                              className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            >
+                              <Calculator className="w-4 h-4" />
+                            </Button>
+                          )}
                           <Button 
                             variant="ghost" 
                             size="sm"
