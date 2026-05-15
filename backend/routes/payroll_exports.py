@@ -40,11 +40,23 @@ security = HTTPBearer(auto_error=False)
 # ===================== EXPORT ENDPOINTS =====================
 
 @router.get("/periods/{period_id}/export/excel")
-async def export_period_excel(period_id: str, current_user: dict = Depends(get_current_user)):
-    """Export payroll period to Excel format - Returns JSON for frontend processing.
+async def export_period_excel(
+    period_id: str,
+    format: str = "xlsx",
+    current_user: dict = Depends(get_current_user),
+):
+    """Export payroll period to Excel.
 
-    Columns are emitted as a parallel ``[{key, label}, ...]`` list so the
-    frontend can build the CSV/XLSX without hard-coded column knowledge.
+    Two formats are supported:
+      * ``?format=xlsx`` (default) — returns a fully-styled ``.xlsx`` file
+        (openpyxl) with the company / period header, frozen column row,
+        bold colored header, currency formatting on numeric columns, and
+        a bold TOTALS row at the bottom. This is what the UI downloads.
+      * ``?format=json`` — keeps the legacy JSON payload (``columns``,
+        ``rows``, ``totals``) for any external integration that may rely
+        on it. Columns are emitted as ``[{key, label}, ...]`` so the
+        caller can build its own CSV without hard-coded column knowledge.
+
     Headers use full human-readable names (matches the Payroll Sheet UI),
     and every income/deduction novelty code gets its own column with the
     sum of its novelties per employee.
@@ -170,21 +182,141 @@ async def export_period_excel(period_id: str, current_user: dict = Depends(get_c
 
     totals = {k: round(v, 2) for k, v in totals.items()}
 
-    return {
-        "company_name": company_name,
-        "period": {
-            "period_id": period.get("period_id"),
-            "description": period.get("description", ""),
-            "start_date": period.get("start_date", ""),
-            "end_date": period.get("end_date", ""),
-            "period_type": period.get("period_type", ""),
-            "status": period.get("status", "")
-        },
-        "columns": columns,
-        "rows": rows,
-        "totals": totals,
-        "employee_count": len(entries),
+    period_meta = {
+        "period_id": period.get("period_id"),
+        "description": period.get("description", ""),
+        "start_date": period.get("start_date", ""),
+        "end_date": period.get("end_date", ""),
+        "period_type": period.get("period_type", ""),
+        "status": period.get("status", ""),
     }
+
+    if format.lower() == "json":
+        return {
+            "company_name": company_name,
+            "period": period_meta,
+            "columns": columns,
+            "rows": rows,
+            "totals": totals,
+            "employee_count": len(entries),
+        }
+
+    # ---------- XLSX (default) ----------
+    from openpyxl import Workbook
+    from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
+    from openpyxl.utils import get_column_letter
+    from fastapi.responses import StreamingResponse
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Nómina"
+
+    # Styles
+    title_font = Font(name="Calibri", bold=True, size=14, color="FFFFFF")
+    title_fill = PatternFill("solid", fgColor="1E293B")  # slate-800
+    sub_font = Font(name="Calibri", italic=True, size=10, color="475569")
+    header_font = Font(name="Calibri", bold=True, size=10, color="FFFFFF")
+    header_fill = PatternFill("solid", fgColor="334155")  # slate-700
+    totals_font = Font(name="Calibri", bold=True, size=10)
+    totals_fill = PatternFill("solid", fgColor="E2E8F0")  # slate-200
+    center = Alignment(horizontal="center", vertical="center", wrap_text=True)
+    right = Alignment(horizontal="right", vertical="center")
+    left = Alignment(horizontal="left", vertical="center")
+    thin = Side(border_style="thin", color="CBD5E1")
+    cell_border = Border(left=thin, right=thin, top=thin, bottom=thin)
+
+    n_cols = len(columns)
+
+    # Row 1: Company name (merged across all columns)
+    ws.cell(row=1, column=1, value=company_name).font = title_font
+    ws.cell(row=1, column=1).fill = title_fill
+    ws.cell(row=1, column=1).alignment = center
+    ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=n_cols)
+    ws.row_dimensions[1].height = 24
+
+    # Row 2: Period description
+    ws.cell(row=2, column=1, value=f"Nómina: {period_meta['description']}").font = sub_font
+    ws.cell(row=2, column=1).alignment = left
+    ws.merge_cells(start_row=2, start_column=1, end_row=2, end_column=n_cols)
+
+    # Row 3: Period dates
+    ws.cell(row=3, column=1, value=f"Período: {period_meta['start_date']} al {period_meta['end_date']}").font = sub_font
+    ws.cell(row=3, column=1).alignment = left
+    ws.merge_cells(start_row=3, start_column=1, end_row=3, end_column=n_cols)
+
+    HEADER_ROW = 5
+    # Header row
+    text_cols = {"no", "cedula", "nombre", "cargo", "departamento"}
+    currency_fmt = '_-#,##0.00_-;[Red]-#,##0.00_-'
+    for col_idx, col in enumerate(columns, start=1):
+        cell = ws.cell(row=HEADER_ROW, column=col_idx, value=col["label"])
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = center
+        cell.border = cell_border
+    ws.row_dimensions[HEADER_ROW].height = 32
+    ws.freeze_panes = ws.cell(row=HEADER_ROW + 1, column=4)  # freeze first 3 id columns + header
+
+    # Data rows
+    for r_idx, row in enumerate(rows, start=HEADER_ROW + 1):
+        for c_idx, col in enumerate(columns, start=1):
+            key = col["key"]
+            val = row.get(key, "")
+            cell = ws.cell(row=r_idx, column=c_idx, value=val)
+            cell.border = cell_border
+            if key in text_cols:
+                cell.alignment = left if key in {"nombre", "cargo", "departamento"} else center
+            else:
+                cell.alignment = right
+                if isinstance(val, (int, float)):
+                    cell.number_format = currency_fmt
+
+    # Totals row
+    totals_row = HEADER_ROW + 1 + len(rows)
+    for c_idx, col in enumerate(columns, start=1):
+        key = col["key"]
+        cell = ws.cell(row=totals_row, column=c_idx)
+        cell.font = totals_font
+        cell.fill = totals_fill
+        cell.border = cell_border
+        if c_idx == 1:
+            cell.value = "TOTALES"
+            cell.alignment = center
+        elif key in text_cols:
+            cell.value = ""
+        elif key in totals:
+            cell.value = totals[key]
+            cell.alignment = right
+            cell.number_format = currency_fmt
+
+    # Column widths — heuristic: wider for label columns, narrower for code columns
+    wide = {"nombre": 28, "cargo": 18, "departamento": 18, "cedula": 14}
+    for c_idx, col in enumerate(columns, start=1):
+        letter = get_column_letter(c_idx)
+        if col["key"] == "no":
+            ws.column_dimensions[letter].width = 5
+        elif col["key"] in wide:
+            ws.column_dimensions[letter].width = wide[col["key"]]
+        elif col["key"].startswith(("income_", "ded_")):
+            ws.column_dimensions[letter].width = 14
+        else:
+            ws.column_dimensions[letter].width = 16
+
+    buf = io.BytesIO()
+    wb.save(buf)
+    buf.seek(0)
+
+    safe_desc = (period_meta.get("description") or period_meta.get("period_id") or "nomina").replace(" ", "_")
+    filename = f"nomina_{safe_desc}.xlsx"
+    headers = {
+        "Content-Disposition": f'attachment; filename="{filename}"',
+        "Cache-Control": "no-cache",
+    }
+    return StreamingResponse(
+        buf,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers=headers,
+    )
 
 
 @router.get("/periods/{period_id}/export/tss-autodeterminacion")

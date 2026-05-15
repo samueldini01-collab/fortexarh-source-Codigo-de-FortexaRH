@@ -955,48 +955,36 @@ export default function PayrollPage() {
   // Export handlers
   const handleExportExcel = async (periodId) => {
     try {
-      const response = await axios.get(`${API}/payroll/periods/${periodId}/export/excel`, { headers: getAuthHeaders(), withCredentials: true });
-      const data = response.data;
-      const exportCompanyName = data.company_name || companyName;
+      const response = await axios.get(
+        `${API}/payroll/periods/${periodId}/export/excel`,
+        { headers: getAuthHeaders(), withCredentials: true, responseType: 'blob' }
+      );
 
-      // CSV escaping: quote any field containing comma, quote or newline; double internal quotes
-      const esc = (v) => {
-        if (v === null || v === undefined) return "";
-        const s = String(v);
-        return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-      };
+      // Try to pull the filename from Content-Disposition; fall back to period id
+      let filename = `nomina_${periodId}.xlsx`;
+      const cd = response.headers?.['content-disposition'] || response.headers?.['Content-Disposition'];
+      if (cd) {
+        const m = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(cd);
+        if (m && m[1]) filename = decodeURIComponent(m[1]);
+      }
 
-      // Backend now returns columns as [{key, label}, ...] with FULL names matching the on-screen headers
-      const cols = Array.isArray(data.columns) && typeof data.columns[0] === 'object'
-        ? data.columns
-        : (data.columns || []).map(label => ({ key: label, label })); // legacy fallback
-
-      let csv = `${esc(exportCompanyName)}\n`;
-      csv += `${esc('Nómina: ' + (data.period?.description || ''))}\n`;
-      csv += `${esc('Período: ' + (data.period?.start_date || '') + ' - ' + (data.period?.end_date || ''))}\n\n`;
-      csv += cols.map(c => esc(c.label)).join(",") + "\n";
-
-      (data.rows || []).forEach(row => {
-        csv += cols.map(c => esc(row[c.key] ?? "")).join(",") + "\n";
+      const blob = new Blob([response.data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       });
-
-      // Totals row — label "TOTALES" under the first text column, then sums where present
-      const totals = data.totals || {};
-      const totalsCells = cols.map((c, i) => {
-        if (i === 0) return esc("TOTALES");
-        return c.key in totals ? esc(totals[c.key]) : "";
-      });
-      csv += "\n" + totalsCells.join(",") + "\n";
-
-      const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = `nomina_${data.period.period_id}.csv`;
+      link.download = filename;
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
       toast.success(t('payrollV2.messages.excelExported'));
     } catch (error) {
       console.error("Export error:", error);
-      toast.error(error.response?.data?.detail || t('payrollV2.messages.errorExporting'));
+      const detail = error.response?.data instanceof Blob
+        ? await error.response.data.text().catch(() => '')
+        : error.response?.data?.detail;
+      toast.error(detail || t('payrollV2.messages.errorExporting'));
     }
   };
 

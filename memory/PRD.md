@@ -498,14 +498,22 @@
   - Backend recalcula automáticamente BRUTO/SFS/AFP/ISR/NETO al guardar (lógica existente en `routes/payroll/novelties.py`).
   - Tested Playwright end-to-end: click sobre celda INC vacía → input → fill "1500" → Enter → toast "Updated" → INC shows 1,500 · BRUTO 25,000→26,500 · SFS 760→805.60 · NETO 13,522.48→14,933.83 · badge "INC: 1,500.00" aparece bajo el empleado.
 - **Export Excel/CSV con columnas completas (Feb 15, 2026)** — enhancement DONE:
-  - Backend `GET /api/payroll/periods/{id}/export/excel` ahora retorna `columns` como lista de `{key, label}` (antes era lista de strings). Pasamos de **20** a **39 columnas**, incluyendo:
-    - Todas las legacy con nombres completos: "Salario Base", "Comisiones", "Bonificaciones", "Horas Extras" (unificada con novedades HED/HEN/HEFS/HEFER), "Bruto", "Seguro Familiar de Salud", "Fondo de Pensiones", "ISR", "Deducciones Adicionales", "Préstamos", "Total Deducciones", "Neto a Pagar"
-    - Una columna por cada código de ingreso: `COM - Comisiones`, `VIA - Viáticos`, `INC - Incentivos`, `HED - Horas Extras Diurnas`, `HEN - Horas Extras Nocturnas`, `HEFS - Horas Extras Fin de Semana`, `HEFER - Horas Extras Feriados`, `BON - Bonificación`, `REG - Regalía Pascual`, `VAC - Vacaciones`, `OTROING - Otros Ingresos`
-    - Una columna por cada código de deducción: `ANTIC - Anticipo`, `COOP - Cooperativa`, `SEG - Seguro Adicional`, `PENS - Pensión Alimenticia`, `EMB - Embargo`, `TARD - Tardanzas`, `AUS - Ausencias`, `OTROSD - Otros Descuentos`
+  - Backend `GET /api/payroll/periods/{id}/export/excel` (default `?format=xlsx`) ahora retorna un **archivo .xlsx nativo** generado con `openpyxl`, totalmente estilizado:
+    - Fila 1: nombre de la empresa con fondo slate-800 + fuente blanca bold, mergeada en todo el ancho
+    - Filas 2-3: descripción del período + rango de fechas (italic)
+    - Fila 5: header con fondo slate-700 + fuente blanca bold + word-wrap + bordes
+    - Filas de datos con bordes finos, alineación derecha en numéricos, formato moneda `_-#,##0.00_-;[Red]-#,##0.00_-`
+    - Fila TOTALES al final con fondo slate-200 + bold
+    - `freeze_panes` en D6 (mantiene visible NO/Cédula/Empleado + header al scrollear)
+    - Anchos de columna heurísticos por tipo (id=5, empleado=28, código=14, otros=16)
+  - **39 columnas** con nombres completos en español, incluyendo:
+    - Legacy: "Salario Base", "Comisiones", "Bonificaciones", "Horas Extras" (unificada con novedades HED/HEN/HEFS/HEFER), "Bruto", "Seguro Familiar de Salud", "Fondo de Pensiones", "ISR", "Deducciones Adicionales", "Préstamos", "Total Deducciones", "Neto a Pagar"
+    - Una columna por código de ingreso: `COM - Comisiones`, `VIA - Viáticos`, `INC - Incentivos`, `HED - Horas Extras Diurnas`, `HEN - Horas Extras Nocturnas`, `HEFS - Horas Extras Fin de Semana`, `HEFER - Horas Extras Feriados`, `BON - Bonificación`, `REG - Regalía Pascual`, `VAC - Vacaciones`, `OTROING - Otros Ingresos`
+    - Una columna por código de deducción: `ANTIC - Anticipo`, `COOP - Cooperativa`, `SEG - Seguro Adicional`, `PENS - Pensión Alimenticia`, `EMB - Embargo`, `TARD - Tardanzas`, `AUS - Ausencias`, `OTROSD - Otros Descuentos`
     - Subtotales: "Otros Ingresos (novedades)", "Otras Deducciones (novedades)"
-  - Frontend `handleExportExcel` refactorizado para construir CSV dinámicamente desde `columns[]` descriptors. Escape correcto de campos con comas/saltos/comillas. UTF-8 BOM para Excel. Totales se calculan automáticamente para cualquier columna nueva.
-  - Backwards-compat: si `columns` viene como array de strings (legacy), se adapta.
-  - Tested curl: 39 columnas, labels en español completos, INC=1500 (novedad creada en test anterior) aparece en su columna dedicada, totales agregados correctos.
+  - Backwards-compat: `?format=json` retorna la estructura JSON previa con `columns: [{key, label}]` para integraciones externas.
+  - Frontend `handleExportExcel` simplificado: descarga blob, lee filename de `Content-Disposition`, guarda como `.xlsx` directamente.
+  - Tested: curl descarga 7.4kb XLSX abre OK en openpyxl (39 cols, freeze panes D6, INC=1500 en col 12 con formato moneda, TOTALES fila bold). Playwright e2e: clic en botón Excel → archivo `nomina_Nómina_Abril_Q1_2026.xlsx` se descarga, toast "Excel exported" aparece.
 
 ## Architecture Notes
 - COUNTRY_PROFILES dict (country_config.py) is source of truth
