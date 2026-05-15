@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import PayrollColumnsPicker from "@/components/payroll/PayrollColumnsPicker";
+import { buildPayrollColumns } from "@/components/payroll/payrollColumns";
 import {
   Select,
   SelectContent,
@@ -120,6 +122,32 @@ export default function PayrollPage() {
   const [showPayDialog, setShowPayDialog] = useState(false);
   const [showNoveltyDialog, setShowNoveltyDialog] = useState(false);
   const [editingNoveltyId, setEditingNoveltyId] = useState(null);
+
+  // ----- Payroll Sheet — customizable columns -------------------------------
+  // We build the catalog inside render to capture latest t / countryRates /
+  // renderEditableCell, but the column STATE (order + visibility) is stable.
+  const COLUMNS_STORAGE_KEY = "payroll-sheet-cols-v1";
+
+  const [columnsState, setColumnsState] = useState(() => {
+    try {
+      const raw = localStorage.getItem(COLUMNS_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && Array.isArray(parsed.order) && parsed.visible) return parsed;
+      }
+    } catch { /* ignore */ }
+    return null; // sentinel — will hydrate from defaults on first render
+  });
+
+  const saveColumnsState = (state) => {
+    setColumnsState(state);
+    try { localStorage.setItem(COLUMNS_STORAGE_KEY, JSON.stringify(state)); } catch { /* ignore */ }
+  };
+
+  const resetColumns = () => {
+    try { localStorage.removeItem(COLUMNS_STORAGE_KEY); } catch { /* ignore */ }
+    setColumnsState(null);
+  };
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [bankAccounts, setBankAccounts] = useState([]);
   const [selectedBankAccount, setSelectedBankAccount] = useState("");
@@ -1568,139 +1596,157 @@ export default function PayrollPage() {
                   </Card>
                 )}
 
-                {/* Payroll Sheet */}
+                {/* Payroll Sheet — fully customizable columns */}
                 {periodEntries.length === 0 ? (
                   <Card className="py-12"><CardContent className="text-center">
                     <Users className="w-12 h-12 mx-auto mb-4 text-slate-300" />
                     <p className="text-slate-500 dark:text-slate-400">{t('payrollV2.noHayEmpleados')}</p>
                     <Button variant="link" onClick={() => handleAddEmployees(selectedPeriod.period_id)}>{t('payrollV2.agregarEmpleados')}</Button>
                   </CardContent></Card>
-                ) : (
-                  <Card>
-                    <CardContent className="p-0 overflow-x-auto">
-                      <Table className="text-[10px]">
-                        <TableHeader>
-                          <TableRow className="bg-slate-100 dark:bg-slate-800">
-                            <TableHead className="font-bold text-center border-r w-8">{t('payrollV2.no')}</TableHead>
-                            <TableHead className="font-bold border-r min-w-[150px]">{t('payrollV2.empleado')}</TableHead>
-                            <TableHead className="font-bold text-center border-r w-24">{t('payrollV2.cedula')}</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-blue-50 w-24">{t('payrollV2.salario')}</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-emerald-50 w-20">{t('payrollV2.comis')}</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-emerald-50 w-20">{t('payrollV2.bonos')}</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-emerald-50 w-20">{t('payrollV2.hextras')}</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-amber-50 w-20">{t('payrollV2.novedades')}</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-slate-200 w-24">{t('payrollV2.bruto')}</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-red-50 w-20" title={countryRates?.labels?.sfs_employee}>{getDeductionLabel('sfs_employee', 'payrollV2.sfs')}</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-red-50 w-20" title={countryRates?.labels?.afp_employee}>{getDeductionLabel('afp_employee', 'payrollV2.afp')}</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-red-50 w-20">{t('payrollV2.isr')}</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-orange-50 w-20">{t('payrollV2.novedades1')}</TableHead>
-                            <TableHead className="font-bold text-right border-r bg-red-100 w-24">{t('payrollV2.deducciones')}</TableHead>
-                            <TableHead className="font-bold text-right bg-emerald-100 w-24">{t('payrollV2.neto')}</TableHead>
-                            <TableHead className="w-20 text-center">{t('payrollV2.table.actions')}</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {periodEntries.map((entry, index) => {
-                            const totalOvertime = (entry.overtime_day_amount || 0) + (entry.overtime_night_amount || 0) + 
-                              (entry.overtime_weekend_amount || 0) + (entry.overtime_holiday_amount || 0);
-                            const novelties = entry.novelties || [];
-                            
-                            return (
+                ) : (() => {
+                  // Build column catalog
+                  const allColumns = buildPayrollColumns({ formatNumber, t, countryRates, renderEditableCell });
+                  const defaultOrder = allColumns.map(c => c.id);
+                  const defaultVisible = Object.fromEntries(allColumns.map(c => [c.id, !!c.defaultVisible]));
+
+                  // Hydrate from saved state, merging in any new columns added since last save
+                  const order = columnsState
+                    ? [...columnsState.order.filter(id => defaultOrder.includes(id)),
+                       ...defaultOrder.filter(id => !columnsState.order.includes(id))]
+                    : defaultOrder;
+                  const visible = columnsState
+                    ? { ...defaultVisible, ...columnsState.visible }
+                    : defaultVisible;
+                  const colMap = new Map(allColumns.map(c => [c.id, c]));
+                  const visibleColumns = order.map(id => colMap.get(id)).filter(c => c && visible[c.id]);
+
+                  // Custom cell builders passed to columns via ctx
+                  const ctx = {
+                    renderEmployeeCell: (entry) => {
+                      const novelties = entry.novelties || [];
+                      return (
+                        <div><p className="font-medium text-[11px]">{entry.employee_name}</p>
+                          <p className="text-slate-500 dark:text-slate-400">{entry.position}</p>
+                          {novelties.length > 0 && (
+                            <div className="flex gap-1 mt-1 flex-wrap">
+                              {novelties.map(n => {
+                                const canEdit = selectedPeriod.status !== 'paid';
+                                const fmtDate = (iso) => {
+                                  if (!iso) return null;
+                                  try { return new Date(iso).toLocaleString(undefined, { year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit' }); }
+                                  catch { return iso; }
+                                };
+                                const createdDate = fmtDate(n.created_at);
+                                const updatedDate = fmtDate(n.updated_at);
+                                return (
+                                  <TooltipProvider key={n.novelty_id} delayDuration={200}>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <Badge variant="outline"
+                                          className={`text-[8px] ${n.novelty_type === 'income' ? 'border-emerald-300 text-emerald-600' : 'border-red-300 text-red-600'} ${canEdit ? 'cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700' : ''}`}
+                                          onClick={canEdit ? () => openEditNoveltyDialog(entry, n) : undefined}
+                                          data-testid={`novelty-badge-${n.novelty_id}`}>
+                                          {n.code}: {formatNumber(n.amount)}{n.is_percentage ? '%' : ''}
+                                          {canEdit && (
+                                            <X className="w-2 h-2 ml-1 cursor-pointer"
+                                              onClick={(e) => { e.stopPropagation(); handleDeleteNovelty(entry.entry_id, n.novelty_id, selectedPeriod.period_id); }}
+                                              data-testid={`novelty-delete-${n.novelty_id}`} />
+                                          )}
+                                        </Badge>
+                                      </TooltipTrigger>
+                                      <TooltipContent side="top" className="text-[11px] max-w-xs" data-testid={`novelty-tooltip-${n.novelty_id}`}>
+                                        <div className="space-y-1">
+                                          <div className="font-semibold">{n.name || n.code}</div>
+                                          {n.description && <div className="text-slate-500">{n.description}</div>}
+                                          {n.created_by && (
+                                            <div>
+                                              <span className="text-slate-400">{t('payrollV2.tooltip.createdBy', { defaultValue: 'Creado por' })}:</span>{' '}
+                                              <span className="font-medium">{n.created_by}</span>
+                                              {createdDate && <span className="text-slate-400"> · {createdDate}</span>}
+                                            </div>
+                                          )}
+                                          {!n.created_by && createdDate && (
+                                            <div>
+                                              <span className="text-slate-400">{t('payrollV2.tooltip.createdAt', { defaultValue: 'Creado' })}:</span>{' '}
+                                              <span>{createdDate}</span>
+                                            </div>
+                                          )}
+                                          {n.updated_at && n.updated_at !== n.created_at && (
+                                            <div>
+                                              <span className="text-slate-400">{t('payrollV2.tooltip.editedBy', { defaultValue: 'Última edición por' })}:</span>{' '}
+                                              <span className="font-medium">{n.updated_by || '—'}</span>
+                                              {updatedDate && <span className="text-slate-400"> · {updatedDate}</span>}
+                                            </div>
+                                          )}
+                                        </div>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    },
+                    renderDeductionsButton: (entry) => (
+                      <button type="button"
+                        onClick={() => openDeductionsDialog(entry)}
+                        className={`font-mono font-bold ${selectedPeriod?.status !== 'paid' ? 'cursor-pointer hover:underline hover:text-red-900' : ''}`}
+                        disabled={selectedPeriod?.status === 'paid'}
+                        data-testid={`deductions-cell-${entry.entry_id}`}>
+                        {formatNumber(entry.total_deductions)}
+                      </button>
+                    ),
+                  };
+
+                  // Compute TOTALS row dynamically from visible columns
+                  const totalsByCol = {};
+                  visibleColumns.forEach(c => {
+                    totalsByCol[c.id] = periodEntries.reduce((sum, e) => sum + (c.getValue ? c.getValue(e) : 0), 0);
+                  });
+
+                  return (
+                    <Card>
+                      <div className="flex items-center justify-between px-4 py-2 border-b bg-slate-50 dark:bg-slate-900">
+                        <span className="text-xs text-slate-500 dark:text-slate-400">{periodEntries.length} empleados · {visibleColumns.length} columnas</span>
+                        <PayrollColumnsPicker
+                          columns={allColumns}
+                          order={order}
+                          visible={visible}
+                          onChange={saveColumnsState}
+                          onReset={resetColumns}
+                        />
+                      </div>
+                      <CardContent className="p-0 overflow-x-auto">
+                        <Table className="text-[10px]">
+                          <TableHeader>
+                            <TableRow>
+                              {visibleColumns.map(col => (
+                                <TableHead
+                                  key={col.id}
+                                  className={`font-bold border-r ${col.bgClass || ''} ${col.width || ''} ${col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : ''}`}
+                                  title={col.label}
+                                  data-testid={`th-${col.id}`}
+                                >
+                                  {col.shortLabel || col.label}
+                                </TableHead>
+                              ))}
+                              <TableHead className="w-20 text-center">{t('payrollV2.table.actions')}</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {periodEntries.map((entry, index) => (
                               <TableRow key={entry.entry_id} className="hover:bg-slate-50 dark:bg-slate-800">
-                                <TableCell className="text-center border-r font-medium">{index + 1}</TableCell>
-                                <TableCell className="border-r">
-                                  <div><p className="font-medium text-[11px]">{entry.employee_name}</p>
-                                    <p className="text-slate-500 dark:text-slate-400">{entry.position}</p>
-                                    {novelties.length > 0 && (
-                                      <div className="flex gap-1 mt-1 flex-wrap">
-                                        {novelties.map(n => {
-                                          const canEdit = selectedPeriod.status !== 'paid';
-                                          const fmtDate = (iso) => {
-                                            if (!iso) return null;
-                                            try {
-                                              const d = new Date(iso);
-                                              return d.toLocaleString(undefined, { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-                                            } catch { return iso; }
-                                          };
-                                          const createdDate = fmtDate(n.created_at);
-                                          const updatedDate = fmtDate(n.updated_at);
-                                          return (
-                                            <TooltipProvider key={n.novelty_id} delayDuration={200}>
-                                              <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                  <Badge
-                                                    variant="outline"
-                                                    className={`text-[8px] ${n.novelty_type === 'income' ? 'border-emerald-300 text-emerald-600' : 'border-red-300 text-red-600'} ${canEdit ? 'cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700' : ''}`}
-                                                    onClick={canEdit ? () => openEditNoveltyDialog(entry, n) : undefined}
-                                                    data-testid={`novelty-badge-${n.novelty_id}`}
-                                                  >
-                                                    {n.code}: {formatNumber(n.amount)}{n.is_percentage ? '%' : ''}
-                                                    {canEdit && (
-                                                      <X
-                                                        className="w-2 h-2 ml-1 cursor-pointer"
-                                                        onClick={(e) => { e.stopPropagation(); handleDeleteNovelty(entry.entry_id, n.novelty_id, selectedPeriod.period_id); }}
-                                                        data-testid={`novelty-delete-${n.novelty_id}`}
-                                                      />
-                                                    )}
-                                                  </Badge>
-                                                </TooltipTrigger>
-                                                <TooltipContent side="top" className="text-[11px] max-w-xs" data-testid={`novelty-tooltip-${n.novelty_id}`}>
-                                                  <div className="space-y-1">
-                                                    <div className="font-semibold">{n.name || n.code}</div>
-                                                    {n.description && <div className="text-slate-500">{n.description}</div>}
-                                                    {n.created_by && (
-                                                      <div>
-                                                        <span className="text-slate-400">{t('payrollV2.tooltip.createdBy', { defaultValue: 'Creado por' })}:</span>{' '}
-                                                        <span className="font-medium">{n.created_by}</span>
-                                                        {createdDate && <span className="text-slate-400"> · {createdDate}</span>}
-                                                      </div>
-                                                    )}
-                                                    {!n.created_by && createdDate && (
-                                                      <div>
-                                                        <span className="text-slate-400">{t('payrollV2.tooltip.createdAt', { defaultValue: 'Creado' })}:</span>{' '}
-                                                        <span>{createdDate}</span>
-                                                      </div>
-                                                    )}
-                                                    {n.updated_at && n.updated_at !== n.created_at && (
-                                                      <div>
-                                                        <span className="text-slate-400">{t('payrollV2.tooltip.editedBy', { defaultValue: 'Última edición por' })}:</span>{' '}
-                                                        <span className="font-medium">{n.updated_by || '—'}</span>
-                                                        {updatedDate && <span className="text-slate-400"> · {updatedDate}</span>}
-                                                      </div>
-                                                    )}
-                                                  </div>
-                                                </TooltipContent>
-                                              </Tooltip>
-                                            </TooltipProvider>
-                                          );
-                                        })}
-                                      </div>
-                                    )}
-                                  </div>
-                                </TableCell>
-                                <TableCell className="text-center border-r font-mono">{entry.employee_document}</TableCell>
-                                <TableCell className="text-right border-r bg-blue-50/50">{renderEditableCell(entry, 'base_salary', entry.base_salary)}</TableCell>
-                                <TableCell className="text-right border-r bg-emerald-50/50">{renderEditableCell(entry, 'commissions', entry.commissions)}</TableCell>
-                                <TableCell className="text-right border-r bg-emerald-50/50">{renderEditableCell(entry, 'bonuses', entry.bonuses)}</TableCell>
-                                <TableCell className="text-right border-r bg-emerald-50/50 text-emerald-600 dark:text-emerald-400">{renderEditableCell(entry, 'overtime_total', totalOvertime)}</TableCell>
-                                <TableCell className="text-right border-r bg-amber-50/50 text-amber-600 dark:text-amber-400">{formatNumber(entry.total_income_novelties || 0)}</TableCell>
-                                <TableCell className="text-right border-r bg-slate-100 font-bold">{formatNumber(entry.gross_salary)}</TableCell>
-                                <TableCell className="text-right border-r bg-red-50/50 text-red-600 dark:text-red-400">{renderEditableCell(entry, 'sfs_employee', entry.sfs_employee)}</TableCell>
-                                <TableCell className="text-right border-r bg-red-50/50 text-red-600 dark:text-red-400">{renderEditableCell(entry, 'afp_employee', entry.afp_employee)}</TableCell>
-                                <TableCell className="text-right border-r bg-red-50/50 text-red-600 dark:text-red-400">{renderEditableCell(entry, 'isr', entry.isr)}</TableCell>
-                                <TableCell className="text-right border-r bg-orange-50/50 text-orange-600">{formatNumber(entry.total_deduction_novelties || 0)}</TableCell>
-                                <TableCell className="text-right border-r bg-red-100/50 font-bold text-red-700 dark:text-red-400">
-                                  <button
-                                    type="button"
-                                    onClick={() => openDeductionsDialog(entry)}
-                                    className={`font-mono font-bold ${selectedPeriod?.status !== 'paid' ? 'cursor-pointer hover:underline hover:text-red-900' : ''}`}
-                                    disabled={selectedPeriod?.status === 'paid'}
-                                    data-testid={`deductions-cell-${entry.entry_id}`}
+                                {visibleColumns.map(col => (
+                                  <TableCell
+                                    key={col.id}
+                                    className={`border-r ${col.bgClass || ''} ${col.textClass || ''} ${col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : ''}`}
+                                    data-testid={`cell-${col.id}-${entry.entry_id}`}
                                   >
-                                    {formatNumber(entry.total_deductions)}
-                                  </button>
-                                </TableCell>
-                                <TableCell className="text-right bg-emerald-100/50 font-bold text-emerald-700 dark:text-emerald-400">{formatNumber(entry.net_salary)}</TableCell>
+                                    {col.render ? col.render(entry, { ...ctx, index }) : formatNumber(col.getValue ? col.getValue(entry) : 0)}
+                                  </TableCell>
+                                ))}
                                 <TableCell className="text-center">
                                   <div className="flex gap-1 justify-center">
                                     <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => handleDownloadPayslip(entry.entry_id)} title={t('payrollV2.downloadPayslip')}>
@@ -1719,30 +1765,35 @@ export default function PayrollPage() {
                                   </div>
                                 </TableCell>
                               </TableRow>
-                            );
-                          })}
-                          {/* Totals */}
-                          <TableRow className="bg-slate-200 font-bold text-[11px]">
-                            <TableCell colSpan={3} className="text-right border-r">{t('payrollV2.totales')}</TableCell>
-                            <TableCell className="text-right border-r font-mono">{formatNumber(totals.baseSalary)}</TableCell>
-                            <TableCell className="text-right border-r font-mono">{formatNumber(totals.commissions)}</TableCell>
-                            <TableCell className="text-right border-r font-mono">{formatNumber(totals.bonuses)}</TableCell>
-                            <TableCell className="text-right border-r font-mono">{formatNumber(totals.overtimeDay + totals.overtimeNight + totals.overtimeWeekend + totals.overtimeHoliday)}</TableCell>
-                            <TableCell className="text-right border-r font-mono text-amber-600 dark:text-amber-400">{formatNumber(totals.incomeNovelties)}</TableCell>
-                            <TableCell className="text-right border-r font-mono">{formatNumber(totals.grossSalary)}</TableCell>
-                            <TableCell className="text-right border-r font-mono text-red-600 dark:text-red-400">{formatNumber(totals.sfsEmployee)}</TableCell>
-                            <TableCell className="text-right border-r font-mono text-red-600 dark:text-red-400">{formatNumber(totals.afpEmployee)}</TableCell>
-                            <TableCell className="text-right border-r font-mono text-red-600 dark:text-red-400">{formatNumber(totals.isr)}</TableCell>
-                            <TableCell className="text-right border-r font-mono text-orange-600">{formatNumber(totals.deductionNovelties)}</TableCell>
-                            <TableCell className="text-right border-r font-mono text-red-700 dark:text-red-400">{formatNumber(totals.totalDeductions)}</TableCell>
-                            <TableCell className="text-right font-mono text-emerald-700 dark:text-emerald-400">{formatNumber(totals.netSalary)}</TableCell>
-                            {selectedPeriod.status !== 'paid' && <TableCell></TableCell>}
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </CardContent>
-                  </Card>
-                )}
+                            ))}
+                            {/* Totals row */}
+                            <TableRow className="bg-slate-200 dark:bg-slate-700 font-bold text-[11px]" data-testid="payroll-totals-row">
+                              {visibleColumns.map((col, idx) => {
+                                if (idx === 0) {
+                                  return (
+                                    <TableCell key={col.id} className="text-right border-r" colSpan={1}>
+                                      {t('payrollV2.totales', { defaultValue: 'TOTALES:' })}
+                                    </TableCell>
+                                  );
+                                }
+                                const isLabelCol = col.id === 'employee' || col.id === 'cedula';
+                                return (
+                                  <TableCell
+                                    key={col.id}
+                                    className={`border-r font-mono ${col.textClass || ''} ${col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : ''}`}
+                                  >
+                                    {isLabelCol ? '' : formatNumber(totalsByCol[col.id] || 0)}
+                                  </TableCell>
+                                );
+                              })}
+                              <TableCell></TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </CardContent>
+                    </Card>
+                  );
+                })()}
               </>
             )}
           </TabsContent>

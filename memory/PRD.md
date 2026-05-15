@@ -452,6 +452,18 @@
   - **Ingresos** ya no muestra siempre `Horas Extras / Bonificaciones / Comisiones / Otros Ingresos = 0.00` — solo se muestran líneas con monto > 0. Cada novedad de tipo `income` aparece como su propia línea con formato `CODE - Name` (VIA - Viáticos, BON - Bonificación, INC - Incentivos, REG - Regalía Pascual, VAC - Vacaciones, OTROING - Otros Ingresos, etc.). Si hay desglose de horas extras (`overtime_day_amount / night / weekend / holiday`) se muestra cada uno (HED/HEN/HEFS/HEFER).
   - **Deducciones**: SFS y AFP ahora muestran la tasa (3.04% / 2.87%). Las `additional_deductions` del perfil del empleado (PENS - Pensión Alimenticia, SEG - Seguro Adicional, EMB - Embargo, COOP - Cooperativa, etc.) aparecen cada una como línea separada (antes se omitían). Cada novedad de tipo `deduction` también (TARD, AUS, ANTIC, OTROSD, etc.). Préstamos solo si > 0.
   - Tested: PDF generado para entry con 1 income novelty + 1 deduction novelty + 1 additional_deduction muestra correctamente las 6 líneas individuales (vs 3 agrupadas antes). Lint Python pass.
+- **Hoja de Nómina — Columnas customizables + drag-reorder (Feb 2, 2026)** — enhancement DONE:
+  - Nuevo módulo `/app/frontend/src/components/payroll/payrollColumns.jsx` define **37 columnas** organizadas en 8 grupos: Identificación (NO, Empleado, Cédula), Salario, Ingresos (códigos: COM, VIA, INC, HED, HEN, HEFS, HEFER, BON, REG, VAC, OTROING + legacy aggregates), Subtotal Ingresos (BRUTO), Deducciones de Ley (SFS, AFP, ISR), Deducciones (códigos: ANTIC, COOP, SEG, PENS, EMB, TARD, AUS, OTROSD + adicionales + préstamos), Subtotal Deducciones, Neto. Cada columna tiene `getValue(entry)` para totales; codes filtran `entry.novelties` por código+tipo.
+  - Nuevo componente `PayrollColumnsPicker.jsx` usando **@dnd-kit/sortable** — popover con drag-reorder por filas, checkbox toggle, agrupado por sección (sticky headers), columnas required (NO/Empleado) deshabilitadas.
+  - Estado persistido en `localStorage` key `payroll-sheet-cols-v1` con `{order: [ids], visible: {id: bool}}`. Auto-merge con nuevas columnas si la app agrega más en el futuro.
+  - `PayrollV2Page.jsx`: reemplazada toda la tabla estática de 15 cols hardcodeadas por un render dinámico que itera `visibleColumns`. La fila TOTALES suma automáticamente los `getValue` por columna visible. Las novedades chips, tooltips, editables y el botón "DEDUCCIONES → modal" siguen funcionando dentro de cada celda específica via context (`renderEmployeeCell`, `renderDeductionsButton`).
+  - Tests end-to-end Playwright:
+    - ✅ Default render: 15 cols visibles + totales correctos (210k/6,384/6,027/5,718.10/161,870.88)
+    - ✅ Popover muestra 37 filas agrupadas con drag handles + checkboxes
+    - ✅ Toggle COM → columna aparece insertada en posición correcta del catalog (`COM` entre `CÉDULA` y `SALARIO` en orden por defecto)
+    - ✅ Reorden via localStorage persiste tras reload (`CÉDULA` movida después de `COMIS.`)
+    - ✅ "Restablecer" devuelve al default y oculta toggles
+    - ✅ Botón muestra contador `Columnas (16)` actualizado dinámicamente
 - **Dynamic sitemap.xml + robots.txt (Feb 2, 2026)** — SEO P1 DONE:
   - New module `/app/backend/routes/sitemap.py` wired into `/api/`.
   - `GET /api/sitemap.xml` returns XML with 34 URLs: 5 core routes (`/`, `/pricing`, `/register`, `/login`, `/soporte`) + 29 country pages (`/pais/{slug}`), each with 4 hreflang alternates (es, en, fr, pt) — totalling 145 alternate links. `Cache-Control: public, max-age=3600`. Content-Type `application/xml`.
