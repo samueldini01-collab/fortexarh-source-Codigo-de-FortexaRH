@@ -15,6 +15,11 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, Tabl
 
 from config import db
 from utils.auth import get_current_user
+from services.payslip_lines import (
+    build_earnings_lines,
+    build_deductions_lines,
+    total_deductions as compute_total_deductions,
+)
 
 from . import router
 from ._helpers import format_currency_pdf
@@ -179,14 +184,10 @@ async def generate_payslip_pdf(entry_id: str, current_user: dict = Depends(get_c
     elements.append(Spacer(1, 15))
 
     # Earnings
-    earnings_data = [
-        ["INGRESOS", "MONTO"],
-        ["Salario Base", format_currency_pdf(entry.get('base_salary', 0))],
-        ["Horas Extras", format_currency_pdf(entry.get('overtime_pay', 0))],
-        ["Bonificaciones", format_currency_pdf(entry.get('bonuses', 0))],
-        ["Comisiones", format_currency_pdf(entry.get('commissions', 0))],
-        ["TOTAL INGRESOS", format_currency_pdf(entry.get('gross_salary', 0))],
-    ]
+    earnings_lines = build_earnings_lines(entry)
+    earnings_data = [["INGRESOS", "MONTO"]]
+    earnings_data.extend([label, format_currency_pdf(amount)] for label, amount in earnings_lines)
+    earnings_data.append(["TOTAL INGRESOS", format_currency_pdf(entry.get('gross_salary', 0))])
 
     earnings_table = Table(earnings_data, colWidths=[4*inch, 2*inch])
     earnings_table.setStyle(TableStyle([
@@ -204,28 +205,11 @@ async def generate_payslip_pdf(entry_id: str, current_user: dict = Depends(get_c
     elements.append(earnings_table)
     elements.append(Spacer(1, 10))
 
-    # Deductions (legal + additional)
-    deductions_data = [
-        ["DEDUCCIONES", "MONTO"],
-        ["SFS (Seguro Familiar de Salud)", format_currency_pdf(entry.get('sfs_employee', 0))],
-        ["AFP (Fondo de Pensiones)", format_currency_pdf(entry.get('afp_employee', 0))],
-        ["ISR (Impuesto Sobre la Renta)", format_currency_pdf(entry.get('isr', 0))],
-    ]
-
-    # Add additional deductions
-    additional_deds = entry.get('additional_deductions', [])
-    for ded in additional_deds:
-        label = ded.get('type', 'Otro')
-        if ded.get('description'):
-            label += f" - {ded['description']}"
-        deductions_data.append([label, format_currency_pdf(ded.get('amount', 0))])
-
-    total_deductions = (
-        (entry.get('sfs_employee', 0) or 0) +
-        (entry.get('afp_employee', 0) or 0) +
-        (entry.get('isr', 0) or 0) +
-        sum(d.get('amount', 0) or 0 for d in additional_deds if not d.get('is_percentage'))
-    )
+    # Deductions (legal + additional + novelties)
+    deductions_lines = build_deductions_lines(entry)
+    deductions_data = [["DEDUCCIONES", "MONTO"]]
+    deductions_data.extend([label, format_currency_pdf(amount)] for label, amount in deductions_lines)
+    total_deductions = compute_total_deductions(entry)
     deductions_data.append(["TOTAL DEDUCCIONES", format_currency_pdf(total_deductions)])
 
     deductions_table = Table(deductions_data, colWidths=[4*inch, 2*inch])

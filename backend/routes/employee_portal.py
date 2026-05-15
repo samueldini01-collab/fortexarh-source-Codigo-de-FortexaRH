@@ -593,15 +593,15 @@ async def download_payslip_pdf(payslip_id: str, request: Request):
     elements.append(Spacer(1, 15))
     
     # Earnings
-    earnings_data = [
-        ["INGRESOS", "MONTO"],
-        ["Salario Base", format_currency(payslip.get('base_salary', 0))],
-        ["Horas Extras", format_currency(payslip.get('overtime_pay', 0))],
-        ["Bonificaciones", format_currency(payslip.get('bonuses', 0))],
-        ["Comisiones", format_currency(payslip.get('commissions', 0))],
-        ["Otros Ingresos", format_currency(payslip.get('other_income', 0))],
-        ["TOTAL INGRESOS", format_currency(payslip.get('gross_salary', 0))],
-    ]
+    from services.payslip_lines import (
+        build_earnings_lines,
+        build_deductions_lines,
+        total_deductions as compute_total_deductions,
+    )
+    earnings_lines = build_earnings_lines(payslip)
+    earnings_data = [["INGRESOS", "MONTO"]]
+    earnings_data.extend([label, format_currency(amount)] for label, amount in earnings_lines)
+    earnings_data.append(["TOTAL INGRESOS", format_currency(payslip.get('gross_salary', 0))])
     
     earnings_table = Table(earnings_data, colWidths=[4*inch, 2*inch])
     earnings_table.setStyle(TableStyle([
@@ -619,22 +619,11 @@ async def download_payslip_pdf(payslip_id: str, request: Request):
     elements.append(earnings_table)
     elements.append(Spacer(1, 10))
     
-    # Deductions
-    deductions_data = [
-        ["DEDUCCIONES", "MONTO"],
-        ["SFS (Seguro Familiar de Salud)", format_currency(payslip.get('sfs_employee', 0))],
-        ["AFP (Fondo de Pensiones)", format_currency(payslip.get('afp_employee', 0))],
-        ["ISR (Impuesto Sobre la Renta)", format_currency(payslip.get('isr', 0))],
-        ["Préstamos", format_currency(payslip.get('loan_deduction', 0))],
-        ["Otras Deducciones", format_currency(payslip.get('other_deductions', 0))],
-        ["TOTAL DEDUCCIONES", format_currency(
-            (payslip.get('sfs_employee', 0) or 0) + 
-            (payslip.get('afp_employee', 0) or 0) + 
-            (payslip.get('isr', 0) or 0) + 
-            (payslip.get('loan_deduction', 0) or 0) + 
-            (payslip.get('other_deductions', 0) or 0)
-        )],
-    ]
+    # Deductions (legal + additional + novelties)
+    deductions_lines = build_deductions_lines(payslip)
+    deductions_data = [["DEDUCCIONES", "MONTO"]]
+    deductions_data.extend([label, format_currency(amount)] for label, amount in deductions_lines)
+    deductions_data.append(["TOTAL DEDUCCIONES", format_currency(compute_total_deductions(payslip))])
     
     deductions_table = Table(deductions_data, colWidths=[4*inch, 2*inch])
     deductions_table.setStyle(TableStyle([
