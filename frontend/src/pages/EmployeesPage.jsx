@@ -427,7 +427,8 @@ export default function EmployeesPage() {
                   filters={{
                     status: quickFilter || 'all',
                     department: departmentFilter || 'all',
-                    search: searchTerm || ''
+                    search: searchTerm || '',
+                    columns: visibleColumns,
                   }}
                 />
               </DropdownMenuContent>

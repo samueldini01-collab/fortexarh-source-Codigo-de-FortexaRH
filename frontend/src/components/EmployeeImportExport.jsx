@@ -593,6 +593,9 @@ export function ExportEmployeesButton({ asMenuItem = false, filters = {} }) {
       if (filters.search) {
         params.append('search', filters.search);
       }
+      if (Array.isArray(filters.columns) && filters.columns.length) {
+        params.append('columns', filters.columns.join(','));
+      }
       
       const queryString = params.toString();
       const url = queryString ? `${API}/employees/export/excel?${queryString}` : `${API}/employees/export/excel`;

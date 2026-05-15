@@ -442,6 +442,11 @@
   - Comparator soporta strings (`localeCompare` con `numeric:true`), números (Salary), fechas (Hire Date → epoch).
   - i18n: `employees.table.{email,phone,documentNumber,hireDate,contractType,paymentMethod,columns,resetColumns}` ES/EN/FR/PT. `TRANSLATION_VERSION` 3.7.6 → 3.7.7.
   - Tested Playwright: sort por Empleado (default alfa) ✅, sort salary asc/desc ✅, toggle Email + Hire Date ✅, reload preserva config ✅.
+- **Export Excel respeta columnas visibles (Feb 2, 2026)** — enhancement DONE:
+  - Backend `GET /api/employees/export/excel?columns=employee,department,salary,...` — nuevo query param opcional. Si se omite o queda vacío, exporta la plantilla completa (33 columnas, backwards-compat).
+  - Mapa `VIEW_COLUMNS` traduce los view-ids del frontend a `(header_es, field)`. El id especial `employee` concatena `first_name + last_name` en una sola columna "Empleado" (consistente con la UI).
+  - Frontend `ExportEmployeesButton` recibe `filters.columns` y lo serializa CSV en el query string. `EmployeesPage` ya pasa `visibleColumns` del column picker.
+  - Tested curl: `?columns=employee,department,salary,email,hire_date` → 5 columnas exactas; `?columns=status,position,document_number` → 3 columnas; sin param → 33 columnas (full template).
 - **Dynamic sitemap.xml + robots.txt (Feb 2, 2026)** — SEO P1 DONE:
   - New module `/app/backend/routes/sitemap.py` wired into `/api/`.
   - `GET /api/sitemap.xml` returns XML with 34 URLs: 5 core routes (`/`, `/pricing`, `/register`, `/login`, `/soporte`) + 29 country pages (`/pais/{slug}`), each with 4 hreflang alternates (es, en, fr, pt) — totalling 145 alternate links. `Cache-Control: public, max-age=3600`. Content-Type `application/xml`.

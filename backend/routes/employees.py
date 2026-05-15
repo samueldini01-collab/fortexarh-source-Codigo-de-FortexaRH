@@ -547,9 +547,17 @@ async def export_employees_excel(
     status: Optional[str] = None,
     department: Optional[str] = None,
     search: Optional[str] = None,
+    columns: Optional[str] = None,
     current_user: dict = Depends(get_current_user)
 ):
-    """Export employees to Excel with optional filters"""
+    """Export employees to Excel with optional filters.
+
+    `columns` (optional CSV) restricts the output to the requested view-IDs
+    matching the frontend column picker. Example:
+        ?columns=employee,department,salary,email
+    The special view-ID `employee` maps to first_name + last_name + email.
+    Defaults to the full Excel template when omitted (backwards-compat).
+    """
     company_id = current_user.get("company_id")
     
     try:
@@ -580,6 +588,31 @@ async def export_employees_excel(
             query,
             {"_id": 0}
         ).to_list(10000)
+
+        # Decide which columns to export
+        VIEW_COLUMNS = {
+            "employee":        [("Empleado",          "_full_name")],
+            "department":      [("Departamento",      "department")],
+            "position":        [("Posición",          "position")],
+            "salary":          [("Salario",           "salary")],
+            "status":          [("Estado",            "status")],
+            "email":           [("Email",             "email")],
+            "phone":           [("Teléfono",          "phone")],
+            "document_number": [("Documento",         "document_number")],
+            "hire_date":       [("Fecha Ingreso",     "hire_date")],
+            "contract_type":   [("Tipo Contrato",     "contract_type")],
+            "payment_method":  [("Método Pago",       "payment_method")],
+        }
+
+        if columns:
+            requested = [c.strip() for c in columns.split(",") if c.strip() in VIEW_COLUMNS]
+            if not requested:
+                requested = list(VIEW_COLUMNS.keys())
+            export_columns = []
+            for key in requested:
+                export_columns.extend([{"header": h, "field": f} for h, f in VIEW_COLUMNS[key]])
+        else:
+            export_columns = EXCEL_COLUMNS
         
         wb = Workbook()
         ws = wb.active
@@ -596,13 +629,13 @@ async def export_employees_excel(
         )
         
         # Write headers
-        for col, column_def in enumerate(EXCEL_COLUMNS, 1):
+        for col, column_def in enumerate(export_columns, 1):
             cell = ws.cell(row=1, column=col, value=column_def["header"])
             cell.font = header_font
             cell.fill = header_fill
             cell.alignment = Alignment(horizontal="center", vertical="center")
             cell.border = thin_border
-            ws.column_dimensions[get_column_letter(col)].width = 18
+            ws.column_dimensions[get_column_letter(col)].width = 22
         
         # Write employee data
         for row_num, emp in enumerate(employees, 2):
@@ -619,6 +652,7 @@ async def export_employees_excel(
             row_data = {
                 "first_name": emp.get("first_name", ""),
                 "last_name": emp.get("last_name", ""),
+                "_full_name": f"{emp.get('first_name', '') or ''} {emp.get('last_name', '') or ''}".strip(),
                 "email": emp.get("email", ""),
                 "phone": emp.get("phone", ""),
                 "whatsapp": emp.get("whatsapp", ""),
@@ -651,8 +685,8 @@ async def export_employees_excel(
                 "emergency_contact_phone": emergency_phone,
                 "emergency_contact_relationship": emergency_rel,
             }
-            
-            for col, column_def in enumerate(EXCEL_COLUMNS, 1):
+
+            for col, column_def in enumerate(export_columns, 1):
                 value = row_data.get(column_def["field"], "")
                 cell = ws.cell(row=row_num, column=col, value=value if value else "")
                 cell.border = thin_border
