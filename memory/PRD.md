@@ -464,6 +464,21 @@
     - ✅ Reorden via localStorage persiste tras reload (`CÉDULA` movida después de `COMIS.`)
     - ✅ "Restablecer" devuelve al default y oculta toggles
     - ✅ Botón muestra contador `Columnas (16)` actualizado dinámicamente
+- **Payroll View Presets (Feb 2, 2026)** — enhancement DONE:
+  - Backend nuevo módulo `/app/backend/routes/payroll_view_presets.py` con CRUD endpoints scoped por `(user_id, company_id)`:
+    - `GET /api/payroll/view-presets` · `POST /api/payroll/view-presets` · `PATCH /api/payroll/view-presets/{id}` · `DELETE /api/payroll/view-presets/{id}`
+    - Modelo: `{preset_id, user_id, company_id, name, order, visible, is_default, created_at, updated_at}`
+    - Validaciones: nombres únicos por usuario (409 conflict), solo 1 default por usuario (auto-unmark prev al marcar nuevo)
+    - Índices: `(user_id, company_id, preset_id)` unique + `(user_id, company_id, name)` unique
+  - Frontend `PayrollColumnsPicker.jsx` extendido con sección **Presets** arriba del column picker:
+    - Lista de presets guardados con estrella (default) + Apply on click + delete + toggle default
+    - Botón "Guardar como nuevo" → dialog con name + checkbox "Marcar como default"
+    - Botón "Guardar cambios al preset activo" visible cuando hay preset seleccionado
+    - Auto-aplica el preset `is_default` la primera vez (sin localStorage previa)
+    - Persistencia local en `payroll-sheet-active-preset` para recordar cuál fue aplicado por última vez
+  - Tests end-to-end:
+    - ✅ Backend curl: list/create/update/delete + dup-name 409 + is_default toggle
+    - ✅ Playwright: crear "Vista Contabilidad" + "Vista Auditoría" → aplicar uno oculta columnas del otro → reset funciona → delete limpia los 2.
 - **Dynamic sitemap.xml + robots.txt (Feb 2, 2026)** — SEO P1 DONE:
   - New module `/app/backend/routes/sitemap.py` wired into `/api/`.
   - `GET /api/sitemap.xml` returns XML with 34 URLs: 5 core routes (`/`, `/pricing`, `/register`, `/login`, `/soporte`) + 29 country pages (`/pais/{slug}`), each with 4 hreflang alternates (es, en, fr, pt) — totalling 145 alternate links. `Cache-Control: public, max-age=3600`. Content-Type `application/xml`.

@@ -77,6 +77,10 @@ from routes.abandoned_carts import (
     run_abandoned_cart_recovery_job,
     create_abandoned_cart_indexes,
 )
+from routes.payroll_view_presets import (
+    router as payroll_view_presets_router,
+    create_payroll_view_preset_indexes,
+)
 
 # ===================== APP SETUP =====================
 
@@ -194,6 +198,7 @@ for r in [
     native_reports_router,
     sitemap_router,
     abandoned_carts_router,
+    payroll_view_presets_router,
 ]:
     api_router.include_router(r)
 
@@ -215,6 +220,7 @@ async def startup_db_client():
         await create_cdc_indexes()
         await create_performance_indexes()
         await create_abandoned_cart_indexes()
+        await create_payroll_view_preset_indexes()
         await seed_system_templates()
         await migrate_existing_companies()
     except asyncio.TimeoutError:
