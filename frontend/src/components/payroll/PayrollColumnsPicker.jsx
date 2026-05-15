@@ -25,7 +25,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
-import { Columns3, GripVertical, RotateCcw, Bookmark, BookmarkPlus, Trash2, Star, Save } from "lucide-react";
+import { Columns3, GripVertical, RotateCcw, Bookmark, BookmarkPlus, Trash2, Star, Save, Users } from "lucide-react";
 import { PAYROLL_COL_GROUPS } from "./payrollColumns";
 
 const API = (process.env.REACT_APP_BACKEND_URL || "").replace(/\/$/, "") + "/api";
@@ -91,6 +91,7 @@ export default function PayrollColumnsPicker({
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [newPresetName, setNewPresetName] = useState("");
   const [newPresetDefault, setNewPresetDefault] = useState(false);
+  const [newPresetShared, setNewPresetShared] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
@@ -129,13 +130,14 @@ export default function PayrollColumnsPicker({
     try {
       const { data } = await axios.post(
         `${API}/payroll/view-presets`,
-        { name: newPresetName.trim(), order, visible, is_default: newPresetDefault },
+        { name: newPresetName.trim(), order, visible, is_default: newPresetDefault, is_shared: newPresetShared },
         { headers: getAuthHeaders() },
       );
       toast.success(`Preset "${data.name}" guardado`);
       setShowSaveDialog(false);
       setNewPresetName("");
       setNewPresetDefault(false);
+      setNewPresetShared(false);
       setActivePresetId(data.preset_id);
       try { localStorage.setItem("payroll-sheet-active-preset", data.preset_id); } catch { /* ignore */ }
       loadPresets();
@@ -186,6 +188,20 @@ export default function PayrollColumnsPicker({
         { headers: getAuthHeaders() },
       );
       toast.success(preset.is_default ? "Default removido" : "Marcado como default");
+      loadPresets();
+    } catch (err) {
+      toast.error(err.response?.data?.detail || "No se pudo actualizar");
+    }
+  };
+
+  const handleToggleShare = async (preset) => {
+    try {
+      await axios.patch(
+        `${API}/payroll/view-presets/${preset.preset_id}`,
+        { is_shared: !preset.is_shared },
+        { headers: getAuthHeaders() },
+      );
+      toast.success(preset.is_shared ? "Preset privado nuevamente" : "Preset compartido con el equipo");
       loadPresets();
     } catch (err) {
       toast.error(err.response?.data?.detail || "No se pudo actualizar");
@@ -260,9 +276,10 @@ export default function PayrollColumnsPicker({
           {presets.length === 0 ? (
             <p className="text-[11px] text-slate-400 italic">Sin presets guardados aún.</p>
           ) : (
-            <div className="space-y-1 max-h-[140px] overflow-y-auto" data-testid="presets-list">
+            <div className="space-y-1 max-h-[160px] overflow-y-auto" data-testid="presets-list">
               {presets.map((p) => {
                 const isActive = activePresetId === p.preset_id;
+                const isOwned = p.owned_by_me !== false; // back-compat for legacy presets without the flag
                 return (
                   <div
                     key={p.preset_id}
@@ -272,31 +289,53 @@ export default function PayrollColumnsPicker({
                     <button
                       type="button"
                       onClick={() => applyPreset(p)}
-                      className="flex-1 text-left truncate font-medium"
-                      title={`Aplicar "${p.name}"`}
+                      className="flex-1 text-left truncate font-medium flex items-center gap-1"
+                      title={`Aplicar "${p.name}"${!isOwned ? " (compartido por equipo)" : ""}`}
                       data-testid={`preset-apply-${p.preset_id}`}
                     >
-                      {p.is_default && <Star className="w-3 h-3 inline-block -translate-y-0.5 mr-1 fill-amber-400 text-amber-400" />}
-                      {p.name}
+                      {p.is_default && isOwned && <Star className="w-3 h-3 inline-block fill-amber-400 text-amber-400 flex-shrink-0" />}
+                      <span className="truncate">{p.name}</span>
+                      {p.is_shared && (
+                        <span
+                          className="text-[9px] bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-1 rounded flex items-center gap-0.5 ml-1 flex-shrink-0"
+                          title="Compartido con el equipo"
+                          data-testid={`preset-shared-badge-${p.preset_id}`}
+                        >
+                          <Users className="w-2.5 h-2.5" /> {isOwned ? "Compartido" : "Equipo"}
+                        </span>
+                      )}
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => handleSetDefault(p)}
-                      className="p-1 hover:text-amber-500 text-slate-400"
-                      title={p.is_default ? "Quitar default" : "Marcar como default"}
-                      data-testid={`preset-default-${p.preset_id}`}
-                    >
-                      <Star className={`w-3 h-3 ${p.is_default ? "fill-amber-400 text-amber-400" : ""}`} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDeletePreset(p)}
-                      className="p-1 hover:text-rose-500 text-slate-400"
-                      title="Eliminar"
-                      data-testid={`preset-delete-${p.preset_id}`}
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </button>
+                    {isOwned && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => handleSetDefault(p)}
+                          className="p-1 hover:text-amber-500 text-slate-400"
+                          title={p.is_default ? "Quitar default" : "Marcar como default"}
+                          data-testid={`preset-default-${p.preset_id}`}
+                        >
+                          <Star className={`w-3 h-3 ${p.is_default ? "fill-amber-400 text-amber-400" : ""}`} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleToggleShare(p)}
+                          className={`p-1 ${p.is_shared ? "text-blue-500" : "text-slate-400 hover:text-blue-500"}`}
+                          title={p.is_shared ? "Dejar de compartir" : "Compartir con el equipo"}
+                          data-testid={`preset-share-${p.preset_id}`}
+                        >
+                          <Users className="w-3 h-3" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeletePreset(p)}
+                          className="p-1 hover:text-rose-500 text-slate-400"
+                          title="Eliminar"
+                          data-testid={`preset-delete-${p.preset_id}`}
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </>
+                    )}
                   </div>
                 );
               })}
@@ -389,6 +428,15 @@ export default function PayrollColumnsPicker({
               data-testid="preset-default-check"
             />
             Marcar como default (se aplicará automáticamente al entrar a /payroll)
+          </label>
+          <label className="flex items-center gap-2 text-xs cursor-pointer">
+            <Checkbox
+              checked={newPresetShared}
+              onCheckedChange={setNewPresetShared}
+              data-testid="preset-shared-check"
+            />
+            <Users className="w-3.5 h-3.5 text-blue-500" />
+            Compartir con todo el equipo (visible para otros usuarios de la empresa)
           </label>
         </div>
         <DialogFooter>
