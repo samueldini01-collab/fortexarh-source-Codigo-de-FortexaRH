@@ -497,6 +497,15 @@
   - **Columna "Horas Extras" ahora unifica los 4 tipos**: legacy `overtime_day_amount + night + weekend + holiday` **+** sumatoria de novedades HED + HEN + HEFS + HEFER (via nuevo `sumNoveltiesByCodes(entry, OVERTIME_CODES, "income")`).
   - Backend recalcula automáticamente BRUTO/SFS/AFP/ISR/NETO al guardar (lógica existente en `routes/payroll/novelties.py`).
   - Tested Playwright end-to-end: click sobre celda INC vacía → input → fill "1500" → Enter → toast "Updated" → INC shows 1,500 · BRUTO 25,000→26,500 · SFS 760→805.60 · NETO 13,522.48→14,933.83 · badge "INC: 1,500.00" aparece bajo el empleado.
+- **Export Excel/CSV con columnas completas (Feb 15, 2026)** — enhancement DONE:
+  - Backend `GET /api/payroll/periods/{id}/export/excel` ahora retorna `columns` como lista de `{key, label}` (antes era lista de strings). Pasamos de **20** a **39 columnas**, incluyendo:
+    - Todas las legacy con nombres completos: "Salario Base", "Comisiones", "Bonificaciones", "Horas Extras" (unificada con novedades HED/HEN/HEFS/HEFER), "Bruto", "Seguro Familiar de Salud", "Fondo de Pensiones", "ISR", "Deducciones Adicionales", "Préstamos", "Total Deducciones", "Neto a Pagar"
+    - Una columna por cada código de ingreso: `COM - Comisiones`, `VIA - Viáticos`, `INC - Incentivos`, `HED - Horas Extras Diurnas`, `HEN - Horas Extras Nocturnas`, `HEFS - Horas Extras Fin de Semana`, `HEFER - Horas Extras Feriados`, `BON - Bonificación`, `REG - Regalía Pascual`, `VAC - Vacaciones`, `OTROING - Otros Ingresos`
+    - Una columna por cada código de deducción: `ANTIC - Anticipo`, `COOP - Cooperativa`, `SEG - Seguro Adicional`, `PENS - Pensión Alimenticia`, `EMB - Embargo`, `TARD - Tardanzas`, `AUS - Ausencias`, `OTROSD - Otros Descuentos`
+    - Subtotales: "Otros Ingresos (novedades)", "Otras Deducciones (novedades)"
+  - Frontend `handleExportExcel` refactorizado para construir CSV dinámicamente desde `columns[]` descriptors. Escape correcto de campos con comas/saltos/comillas. UTF-8 BOM para Excel. Totales se calculan automáticamente para cualquier columna nueva.
+  - Backwards-compat: si `columns` viene como array de strings (legacy), se adapta.
+  - Tested curl: 39 columnas, labels en español completos, INC=1500 (novedad creada en test anterior) aparece en su columna dedicada, totales agregados correctos.
 
 ## Architecture Notes
 - COUNTRY_PROFILES dict (country_config.py) is source of truth

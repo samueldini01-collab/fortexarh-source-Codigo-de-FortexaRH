@@ -957,29 +957,38 @@ export default function PayrollPage() {
     try {
       const response = await axios.get(`${API}/payroll/periods/${periodId}/export/excel`, { headers: getAuthHeaders(), withCredentials: true });
       const data = response.data;
-      
-      // Use company name from response or state
       const exportCompanyName = data.company_name || companyName;
-      
-      // Create CSV content
-      let csv = `${exportCompanyName}\n`;
-      csv += `Nómina: ${data.period.description}\n`;
-      csv += `Período: ${data.period.start_date} - ${data.period.end_date}\n\n`;
-      csv += data.columns.join(",") + "\n";
-      
-      data.rows.forEach(row => {
-        csv += `${row.no},"${row.cedula}","${row.nombre}","${row.cargo}","${row.departamento}",`;
-        csv += `${row.salario_base},${row.comisiones},${row.bonos},${row.he_diurnas},${row.he_nocturnas},`;
-        csv += `${row.he_finsemana},${row.he_feriados},${row.otros_ingresos},${row.total_ingresos},`;
-        csv += `${row.sfs},${row.afp},${row.isr},${row.otros_descuentos},${row.total_descuentos},${row.neto}\n`;
-      });
-      
-      csv += `\nTOTALES,,,,`;
-      csv += `${data.totals.salario_base},${data.totals.comisiones},${data.totals.bonos},${data.totals.he_diurnas || 0},${data.totals.he_nocturnas || 0},${data.totals.he_finsemana || 0},${data.totals.he_feriados || 0},${data.totals.otros_ingresos || 0},`;
-      csv += `${data.totals.total_ingresos},${data.totals.sfs},${data.totals.afp},${data.totals.isr},${data.totals.otros_descuentos || 0},`;
-      csv += `${data.totals.total_descuentos},${data.totals.neto}\n`;
 
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      // CSV escaping: quote any field containing comma, quote or newline; double internal quotes
+      const esc = (v) => {
+        if (v === null || v === undefined) return "";
+        const s = String(v);
+        return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+      };
+
+      // Backend now returns columns as [{key, label}, ...] with FULL names matching the on-screen headers
+      const cols = Array.isArray(data.columns) && typeof data.columns[0] === 'object'
+        ? data.columns
+        : (data.columns || []).map(label => ({ key: label, label })); // legacy fallback
+
+      let csv = `${esc(exportCompanyName)}\n`;
+      csv += `${esc('Nómina: ' + (data.period?.description || ''))}\n`;
+      csv += `${esc('Período: ' + (data.period?.start_date || '') + ' - ' + (data.period?.end_date || ''))}\n\n`;
+      csv += cols.map(c => esc(c.label)).join(",") + "\n";
+
+      (data.rows || []).forEach(row => {
+        csv += cols.map(c => esc(row[c.key] ?? "")).join(",") + "\n";
+      });
+
+      // Totals row — label "TOTALES" under the first text column, then sums where present
+      const totals = data.totals || {};
+      const totalsCells = cols.map((c, i) => {
+        if (i === 0) return esc("TOTALES");
+        return c.key in totals ? esc(totals[c.key]) : "";
+      });
+      csv += "\n" + totalsCells.join(",") + "\n";
+
+      const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
       link.download = `nomina_${data.period.period_id}.csv`;

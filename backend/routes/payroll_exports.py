@@ -41,80 +41,135 @@ security = HTTPBearer(auto_error=False)
 
 @router.get("/periods/{period_id}/export/excel")
 async def export_period_excel(period_id: str, current_user: dict = Depends(get_current_user)):
-    """Export payroll period to Excel format - Returns JSON for frontend processing"""
+    """Export payroll period to Excel format - Returns JSON for frontend processing.
+
+    Columns are emitted as a parallel ``[{key, label}, ...]`` list so the
+    frontend can build the CSV/XLSX without hard-coded column knowledge.
+    Headers use full human-readable names (matches the Payroll Sheet UI),
+    and every income/deduction novelty code gets its own column with the
+    sum of its novelties per employee.
+    """
     company_id = current_user.get("company_id")
-    
+
     period = await db.payroll_periods.find_one(
         {"period_id": period_id, "company_id": company_id},
         {"_id": 0}
     )
     if not period:
         raise HTTPException(status_code=404, detail="Período no encontrado")
-    
+
     entries = await db.payroll_entries.find(
         {"period_id": period_id, "company_id": company_id},
         {"_id": 0}
     ).sort("employee_name", 1).to_list(1000)
-    
+
     company = await db.companies.find_one(
         {"company_id": company_id},
         {"_id": 0, "name": 1}
     )
     company_name = company.get("name", "Sin Nombre") if company else "Sin Nombre"
-    
-    columns = [
-        "No", "Cédula", "Nombre", "Cargo", "Departamento",
-        "Salario Base", "Comisiones", "Bonos", "HE Diurnas", "HE Nocturnas",
-        "HE Fin Semana", "HE Feriados", "Otros Ingresos", "Total Ingresos",
-        "SFS", "AFP", "ISR", "Otros Descuentos", "Total Descuentos", "Neto"
+
+    # Income/Deduction novelty code catalogs — kept in sync with
+    # /app/frontend/src/components/payroll/payrollColumns.jsx (INCOME_CODES / DEDUCTION_CODES).
+    INCOME_CODES = [
+        ("COM", "Comisiones"), ("VIA", "Viáticos"), ("INC", "Incentivos"),
+        ("HED", "Horas Extras Diurnas"), ("HEN", "Horas Extras Nocturnas"),
+        ("HEFS", "Horas Extras Fin de Semana"), ("HEFER", "Horas Extras Feriados"),
+        ("BON", "Bonificación"), ("REG", "Regalía Pascual"), ("VAC", "Vacaciones"),
+        ("OTROING", "Otros Ingresos"),
     ]
-    
-    rows = []
-    totals = {
-        "salario_base": 0, "comisiones": 0, "bonos": 0,
-        "he_diurnas": 0, "he_nocturnas": 0, "he_finsemana": 0, "he_feriados": 0,
-        "otros_ingresos": 0, "total_ingresos": 0,
-        "sfs": 0, "afp": 0, "isr": 0, "otros_descuentos": 0,
-        "total_descuentos": 0, "neto": 0
-    }
-    
+    DEDUCTION_CODES = [
+        ("ANTIC", "Anticipo"), ("COOP", "Cooperativa"), ("SEG", "Seguro Adicional"),
+        ("PENS", "Pensión Alimenticia"), ("EMB", "Embargo"), ("TARD", "Tardanzas"),
+        ("AUS", "Ausencias"), ("OTROSD", "Otros Descuentos"),
+    ]
+
+    def _sum_code(entry: dict, code: str, novelty_type: str) -> float:
+        base = entry.get("base_salary", 0) or 0
+        total = 0.0
+        for n in entry.get("novelties", []) or []:
+            if n.get("code") == code and n.get("novelty_type") == novelty_type:
+                amt = n.get("amount", 0) or 0
+                total += (base * amt / 100) if n.get("is_percentage") else amt
+        return round(total, 2)
+
+    # Column descriptors — order matches the Payroll Sheet defaults
+    columns = [
+        {"key": "no", "label": "No"},
+        {"key": "cedula", "label": "Cédula"},
+        {"key": "nombre", "label": "Empleado"},
+        {"key": "cargo", "label": "Cargo"},
+        {"key": "departamento", "label": "Departamento"},
+        {"key": "salario_base", "label": "Salario Base"},
+        # Legacy aggregated income (kept for backwards-compat columns)
+        {"key": "commissions", "label": "Comisiones"},
+        {"key": "bonuses", "label": "Bonificaciones"},
+        {"key": "overtime_total", "label": "Horas Extras"},
+        # Income novelty codes (each its own column with FULL name)
+        *[{"key": f"income_{c}", "label": f"{c} - {n}"} for c, n in INCOME_CODES],
+        {"key": "other_income", "label": "Otros Ingresos (legacy)"},
+        {"key": "income_novelties_total", "label": "Otros Ingresos (novedades)"},
+        {"key": "gross_salary", "label": "Bruto"},
+        {"key": "sfs", "label": "Seguro Familiar de Salud"},
+        {"key": "afp", "label": "Fondo de Pensiones"},
+        {"key": "isr", "label": "ISR"},
+        # Deduction novelty codes (each its own column with FULL name)
+        *[{"key": f"ded_{c}", "label": f"{c} - {n}"} for c, n in DEDUCTION_CODES],
+        {"key": "deduction_novelties_total", "label": "Otras Deducciones (novedades)"},
+        {"key": "additional_deductions_total", "label": "Deducciones Adicionales"},
+        {"key": "loan_deduction", "label": "Préstamos"},
+        {"key": "total_deductions", "label": "Total Deducciones"},
+        {"key": "net_salary", "label": "Neto a Pagar"},
+    ]
+
+    rows: list[dict] = []
+    totals: dict[str, float] = {c["key"]: 0.0 for c in columns if c["key"] not in ("no", "cedula", "nombre", "cargo", "departamento")}
+
     for idx, entry in enumerate(entries, 1):
-        he_diurnas = entry.get("overtime_day_amount", 0)
-        he_nocturnas = entry.get("overtime_night_amount", 0)
-        he_finsemana = entry.get("overtime_weekend_amount", 0)
-        he_feriados = entry.get("overtime_holiday_amount", 0)
-        otros_descuentos = entry.get("total_additional_deductions", 0)
-        
+        he_diurnas = entry.get("overtime_day_amount", 0) or 0
+        he_nocturnas = entry.get("overtime_night_amount", 0) or 0
+        he_finsemana = entry.get("overtime_weekend_amount", 0) or 0
+        he_feriados = entry.get("overtime_holiday_amount", 0) or 0
+        # Horas Extras unificada: legacy + novedades HED/HEN/HEFS/HEFER
+        overtime_total = round(
+            he_diurnas + he_nocturnas + he_finsemana + he_feriados
+            + sum(_sum_code(entry, c, "income") for c in ("HED", "HEN", "HEFS", "HEFER")),
+            2,
+        )
+
         row = {
             "no": idx,
             "cedula": entry.get("employee_document") or "",
             "nombre": entry.get("employee_name") or "",
             "cargo": entry.get("position", ""),
             "departamento": entry.get("department", ""),
-            "salario_base": round(entry.get("base_salary", 0), 2),
-            "comisiones": round(entry.get("commissions", 0), 2),
-            "bonos": round(entry.get("bonuses", 0), 2),
-            "he_diurnas": round(he_diurnas, 2),
-            "he_nocturnas": round(he_nocturnas, 2),
-            "he_finsemana": round(he_finsemana, 2),
-            "he_feriados": round(he_feriados, 2),
-            "otros_ingresos": round(entry.get("other_income", 0), 2),
-            "total_ingresos": round(entry.get("gross_salary", 0), 2),
-            "sfs": round(entry.get("sfs_employee", 0), 2),
-            "afp": round(entry.get("afp_employee", 0), 2),
-            "isr": round(entry.get("isr", 0), 2),
-            "otros_descuentos": round(otros_descuentos, 2),
-            "total_descuentos": round(entry.get("total_deductions", 0), 2),
-            "neto": round(entry.get("net_salary", 0), 2)
+            "salario_base": round(entry.get("base_salary", 0) or 0, 2),
+            "commissions": round(entry.get("commissions", 0) or 0, 2),
+            "bonuses": round(entry.get("bonuses", 0) or 0, 2),
+            "overtime_total": overtime_total,
+            "other_income": round(entry.get("other_income", 0) or 0, 2),
+            "income_novelties_total": round(entry.get("total_income_novelties", 0) or 0, 2),
+            "gross_salary": round(entry.get("gross_salary", 0) or 0, 2),
+            "sfs": round(entry.get("sfs_employee", 0) or 0, 2),
+            "afp": round(entry.get("afp_employee", 0) or 0, 2),
+            "isr": round(entry.get("isr", 0) or 0, 2),
+            "deduction_novelties_total": round(entry.get("total_deduction_novelties", 0) or 0, 2),
+            "additional_deductions_total": round(entry.get("total_additional_deductions", 0) or 0, 2),
+            "loan_deduction": round(entry.get("loan_deduction", 0) or 0, 2),
+            "total_deductions": round(entry.get("total_deductions", 0) or 0, 2),
+            "net_salary": round(entry.get("net_salary", 0) or 0, 2),
         }
+        for code, _name in INCOME_CODES:
+            row[f"income_{code}"] = _sum_code(entry, code, "income")
+        for code, _name in DEDUCTION_CODES:
+            row[f"ded_{code}"] = _sum_code(entry, code, "deduction")
+
         rows.append(row)
-        
-        for key in totals:
-            totals[key] += row[key] if key in row else 0
-    
-    for key in totals:
-        totals[key] = round(totals[key], 2)
-    
+        for k in totals:
+            totals[k] += float(row.get(k, 0) or 0)
+
+    totals = {k: round(v, 2) for k, v in totals.items()}
+
     return {
         "company_name": company_name,
         "period": {
@@ -128,7 +183,7 @@ async def export_period_excel(period_id: str, current_user: dict = Depends(get_c
         "columns": columns,
         "rows": rows,
         "totals": totals,
-        "employee_count": len(entries)
+        "employee_count": len(entries),
     }
 
 
