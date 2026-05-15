@@ -4,7 +4,8 @@
  * Each column knows how to render itself from a payroll entry and how to
  * accumulate its value for the TOTALS row. Income/Deduction novelty codes
  * are first-class columns: their value is the sum of all novelties in the
- * entry whose `code` matches.
+ * entry whose `code` matches, and they are inline-editable through the
+ * `renderEditableCodeCell` helper provided by the page (ctx).
  *
  * Groups (used for color zones in the table & visual grouping in the picker):
  *   - "id"          → NO, Empleado, Cédula
@@ -26,37 +27,66 @@ const sumNoveltiesByCode = (entry, code, type) => {
     .reduce((acc, n) => acc + (n.is_percentage ? (base * _num(n.amount)) / 100 : _num(n.amount)), 0);
 };
 
+const sumNoveltiesByCodes = (entry, codes, type) => {
+  return codes.reduce((acc, c) => acc + sumNoveltiesByCode(entry, c, type), 0);
+};
+
 // ----- Income (Ingresos adicionales) ----------------------------------------
-const INCOME_CODES = [
-  { code: "COM",     label: "COM - Comisiones" },
-  { code: "VIA",     label: "VIA - Viáticos" },
-  { code: "INC",     label: "INC - Incentivos" },
-  { code: "HED",     label: "HED - Horas Extras Diurnas" },
-  { code: "HEN",     label: "HEN - Horas Extras Nocturnas" },
-  { code: "HEFS",    label: "HEFS - Horas Extras Fin de Semana" },
-  { code: "HEFER",   label: "HEFER - Horas Extras Feriados" },
-  { code: "BON",     label: "BON - Bonificación" },
-  { code: "REG",     label: "REG - Regalía Pascual" },
-  { code: "VAC",     label: "VAC - Vacaciones" },
-  { code: "OTROING", label: "OTROING - Otros Ingresos" },
+export const INCOME_CODES = [
+  { code: "COM",     name: "Comisiones" },
+  { code: "VIA",     name: "Viáticos" },
+  { code: "INC",     name: "Incentivos" },
+  { code: "HED",     name: "Horas Extras Diurnas" },
+  { code: "HEN",     name: "Horas Extras Nocturnas" },
+  { code: "HEFS",    name: "Horas Extras Fin de Semana" },
+  { code: "HEFER",   name: "Horas Extras Feriados" },
+  { code: "BON",     name: "Bonificación" },
+  { code: "REG",     name: "Regalía Pascual" },
+  { code: "VAC",     name: "Vacaciones" },
+  { code: "OTROING", name: "Otros Ingresos" },
 ];
 
 // ----- Deduction (Deducciones adicionales) ----------------------------------
-const DEDUCTION_CODES = [
-  { code: "ANTIC",  label: "ANTIC - Anticipo" },
-  { code: "COOP",   label: "COOP - Cooperativa" },
-  { code: "SEG",    label: "SEG - Seguro Adicional" },
-  { code: "PENS",   label: "PENS - Pensión Alimenticia" },
-  { code: "EMB",    label: "EMB - Embargo" },
-  { code: "TARD",   label: "TARD - Tardanzas" },
-  { code: "AUS",    label: "AUS - Ausencias" },
-  { code: "OTROSD", label: "OTROSD - Otros Descuentos" },
+export const DEDUCTION_CODES = [
+  { code: "ANTIC",  name: "Anticipo" },
+  { code: "COOP",   name: "Cooperativa" },
+  { code: "SEG",    name: "Seguro Adicional" },
+  { code: "PENS",   name: "Pensión Alimenticia" },
+  { code: "EMB",    name: "Embargo" },
+  { code: "TARD",   name: "Tardanzas" },
+  { code: "AUS",    name: "Ausencias" },
+  { code: "OTROSD", name: "Otros Descuentos" },
 ];
+
+// Lookup helper: by code (for both income & deduction). Income takes priority
+// when the same code exists in both lists (only happens for "VAC"/"REG"
+// which we treat as income for this purpose).
+export const NOVELTY_CODE_NAMES = (() => {
+  const m = {};
+  DEDUCTION_CODES.forEach(c => { m[c.code] = c.name; });
+  INCOME_CODES.forEach(c => { m[c.code] = c.name; });
+  return m;
+})();
+
+// Codes considered "overtime"; their sum feeds the unified Horas Extras column.
+const OVERTIME_CODES = ["HED", "HEN", "HEFS", "HEFER"];
 
 const FORMAT = (n, formatNumber) => formatNumber(n || 0);
 
-export function buildPayrollColumns({ formatNumber, t, countryRates, renderEditableCell }) {
-  // Column shape: { id, label, group, fixed?, defaultVisible?, getValue, render?, align?, bgClass?, textClass?, width? }
+// Render a two-line header: bold code on top, full name underneath.
+// Used for novelty code columns so the picker label ("INC - Incentivos")
+// stays compact in the table header while still showing the full meaning.
+const codeHeader = (code, name) => (
+  <div className="flex flex-col items-end leading-tight">
+    <span className="font-bold text-[10px]">{code}</span>
+    <span className="font-normal text-[9px] text-slate-500 dark:text-slate-400 whitespace-normal">{name}</span>
+  </div>
+);
+
+export function buildPayrollColumns({ formatNumber, t, countryRates, renderEditableCell, renderEditableCodeCell }) {
+  // Column shape: { id, label, header?, group, fixed?, defaultVisible?, getValue, render?, align?, bgClass?, textClass?, width? }
+  // - `label` is the full human-readable label (used in picker, tooltips, exports)
+  // - `header` (optional JSX) overrides the column header rendering in the table
   const cols = [
     // ----- ID group ---------------------------------------------------------
     {
@@ -90,52 +120,62 @@ export function buildPayrollColumns({ formatNumber, t, countryRates, renderEdita
       getValue: (e) => _num(e.base_salary),
     },
 
-    // ----- Income novelty codes (each its own column) ----------------------
+    // ----- Income novelty codes (each its own column, editable inline) -----
     ...INCOME_CODES.map((c) => ({
       id: `income_${c.code}`,
-      label: c.label,
-      shortLabel: c.code,
+      code: c.code,
+      noveltyType: "income",
+      label: `${c.code} - ${c.name}`,
+      header: codeHeader(c.code, c.name),
       group: "income",
-      width: "w-20", align: "right",
+      width: "min-w-[80px]", align: "right",
       bgClass: "bg-emerald-50/50",
       textClass: "text-emerald-700 dark:text-emerald-400",
       defaultVisible: false,
-      render: (e) => FORMAT(sumNoveltiesByCode(e, c.code, "income"), formatNumber),
+      render: (e) => {
+        const sum = sumNoveltiesByCode(e, c.code, "income");
+        return renderEditableCodeCell
+          ? renderEditableCodeCell(e, c.code, "income", c.name, sum)
+          : FORMAT(sum, formatNumber);
+      },
       getValue: (e) => sumNoveltiesByCode(e, c.code, "income"),
     })),
 
     // ----- Legacy aggregated income (already first-class in the entry) -----
     {
-      id: "commissions", label: t("payrollV2.comis", { defaultValue: "COMIS." }), group: "income", defaultVisible: true,
+      id: "commissions", label: "Comisiones", group: "income", defaultVisible: true,
       width: "w-20", align: "right", bgClass: "bg-emerald-50/50",
       render: (e) => renderEditableCell(e, "commissions", e.commissions),
       getValue: (e) => _num(e.commissions),
     },
     {
-      id: "bonuses", label: t("payrollV2.bonos", { defaultValue: "BONOS" }), group: "income", defaultVisible: true,
+      id: "bonuses", label: "Bonificaciones", group: "income", defaultVisible: true,
       width: "w-20", align: "right", bgClass: "bg-emerald-50/50",
       render: (e) => renderEditableCell(e, "bonuses", e.bonuses),
       getValue: (e) => _num(e.bonuses),
     },
     {
-      id: "overtime_total", label: t("payrollV2.hextras", { defaultValue: "H.EXTRAS" }), group: "income", defaultVisible: true,
+      // Unified Horas Extras column: legacy fields + HED/HEN/HEFS/HEFER novelties
+      id: "overtime_total", label: "Horas Extras", group: "income", defaultVisible: true,
       width: "w-20", align: "right", bgClass: "bg-emerald-50/50", textClass: "text-emerald-600 dark:text-emerald-400",
       render: (e) => {
-        const total = _num(e.overtime_day_amount) + _num(e.overtime_night_amount) +
-                      _num(e.overtime_weekend_amount) + _num(e.overtime_holiday_amount);
-        return renderEditableCell(e, "overtime_total", total);
+        const legacy = _num(e.overtime_day_amount) + _num(e.overtime_night_amount) +
+                       _num(e.overtime_weekend_amount) + _num(e.overtime_holiday_amount);
+        const fromNovelties = sumNoveltiesByCodes(e, OVERTIME_CODES, "income");
+        return renderEditableCell(e, "overtime_total", legacy + fromNovelties);
       },
       getValue: (e) => _num(e.overtime_day_amount) + _num(e.overtime_night_amount) +
-                       _num(e.overtime_weekend_amount) + _num(e.overtime_holiday_amount),
+                       _num(e.overtime_weekend_amount) + _num(e.overtime_holiday_amount) +
+                       sumNoveltiesByCodes(e, OVERTIME_CODES, "income"),
     },
     {
-      id: "other_income", label: "OTROS ING.", group: "income", defaultVisible: false,
+      id: "other_income", label: "Otros Ingresos (legacy)", group: "income", defaultVisible: false,
       width: "w-20", align: "right", bgClass: "bg-emerald-50/50",
       render: (e) => FORMAT(e.other_income, formatNumber),
       getValue: (e) => _num(e.other_income),
     },
     {
-      id: "income_novelties_total", label: t("payrollV2.novedades", { defaultValue: "NOVEDADES+" }), group: "income", defaultVisible: true,
+      id: "income_novelties_total", label: "Otros Ingresos (novedades)", group: "income", defaultVisible: true,
       width: "w-20", align: "right", bgClass: "bg-amber-50/50", textClass: "text-amber-600 dark:text-amber-400",
       render: (e) => FORMAT(e.total_income_novelties, formatNumber),
       getValue: (e) => _num(e.total_income_novelties),
@@ -173,34 +213,41 @@ export function buildPayrollColumns({ formatNumber, t, countryRates, renderEdita
       getValue: (e) => _num(e.isr),
     },
 
-    // ----- Deduction novelty codes -----------------------------------------
+    // ----- Deduction novelty codes (each its own column, editable inline) -----
     ...DEDUCTION_CODES.map((c) => ({
       id: `ded_${c.code}`,
-      label: c.label,
-      shortLabel: c.code,
+      code: c.code,
+      noveltyType: "deduction",
+      label: `${c.code} - ${c.name}`,
+      header: codeHeader(c.code, c.name),
       group: "deduction",
-      width: "w-20", align: "right",
+      width: "min-w-[80px]", align: "right",
       bgClass: "bg-orange-50/50",
       textClass: "text-orange-700 dark:text-orange-400",
       defaultVisible: false,
-      render: (e) => FORMAT(sumNoveltiesByCode(e, c.code, "deduction"), formatNumber),
+      render: (e) => {
+        const sum = sumNoveltiesByCode(e, c.code, "deduction");
+        return renderEditableCodeCell
+          ? renderEditableCodeCell(e, c.code, "deduction", c.name, sum)
+          : FORMAT(sum, formatNumber);
+      },
       getValue: (e) => sumNoveltiesByCode(e, c.code, "deduction"),
     })),
 
     {
-      id: "deduction_novelties_total", label: t("payrollV2.novedades1", { defaultValue: "NOVEDADES-" }), group: "deduction", defaultVisible: true,
+      id: "deduction_novelties_total", label: "Otras Deducciones (novedades)", group: "deduction", defaultVisible: true,
       width: "w-20", align: "right", bgClass: "bg-orange-50/50", textClass: "text-orange-600",
       render: (e) => FORMAT(e.total_deduction_novelties, formatNumber),
       getValue: (e) => _num(e.total_deduction_novelties),
     },
     {
-      id: "additional_deductions_total", label: "ADIC. DEDUC.", group: "deduction", defaultVisible: false,
+      id: "additional_deductions_total", label: "Deducciones Adicionales", group: "deduction", defaultVisible: false,
       width: "w-20", align: "right", bgClass: "bg-orange-50/50",
       render: (e) => FORMAT(e.total_additional_deductions, formatNumber),
       getValue: (e) => _num(e.total_additional_deductions),
     },
     {
-      id: "loan_deduction", label: "PRÉSTAMOS", group: "deduction", defaultVisible: false,
+      id: "loan_deduction", label: "Préstamos", group: "deduction", defaultVisible: false,
       width: "w-20", align: "right", bgClass: "bg-orange-50/50",
       render: (e) => FORMAT(e.loan_deduction, formatNumber),
       getValue: (e) => _num(e.loan_deduction),

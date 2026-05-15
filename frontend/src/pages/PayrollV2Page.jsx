@@ -1179,10 +1179,136 @@ export default function PayrollPage() {
     }
     return (
       <span className={`font-mono text-[10px] ${canEdit ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
-        onClick={() => canEdit && startEditing(entry.entry_id, field, value)} title={canEdit ? "Clic para editar" : ""}>
+        onClick={() => canEdit && startEditing(entry.entry_id, field, value)} title={canEdit ? "Clic para editar" : ""}
+        data-testid={`editable-${field}-${entry.entry_id}`}>
         {isCurrency ? formatNumber(value) : value}
       </span>
     );
+  };
+
+  // Editable cell for novelty CODE columns (INC, HED, COOP, ANTIC, etc.).
+  // Smart behavior:
+  //   - 0 novelties for that code → POST a new novelty
+  //   - 1 novelty (non-percentage) → PATCH it, or DELETE if value becomes 0
+  //   - 2+ novelties → open the novelties dialog instead of inline editing
+  const renderEditableCodeCell = (entry, code, noveltyType, codeName, sum) => {
+    const fieldKey = `novelty:${noveltyType}:${code}`;
+    const isEditing = editingCell?.entryId === entry.entry_id && editingCell?.field === fieldKey;
+    const canEdit = selectedPeriod?.status !== 'paid';
+    const matching = (entry.novelties || []).filter(n => n?.code === code && n?.novelty_type === noveltyType);
+    const hasMultiple = matching.length > 1;
+    const hasPercentage = matching.some(n => n.is_percentage);
+
+    if (isEditing) {
+      return (
+        <div className="flex items-center gap-1">
+          <Input type="number" step="0.01" className="w-20 h-6 text-right text-xs" value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') saveCodeNoveltyEdit(); if (e.key === 'Escape') cancelEditing(); }}
+            autoFocus
+          />
+          <Button size="icon" variant="ghost" className="h-5 w-5" onClick={saveCodeNoveltyEdit} data-testid={`save-code-${code}-${entry.entry_id}`}><Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /></Button>
+          <Button size="icon" variant="ghost" className="h-5 w-5" onClick={cancelEditing}><X className="w-3 h-3 text-red-500" /></Button>
+        </div>
+      );
+    }
+
+    const onClick = () => {
+      if (!canEdit) return;
+      if (hasMultiple) {
+        toast.info(`${matching.length} novedades ${code}. Edítalas individualmente desde el detalle.`);
+        return;
+      }
+      if (hasPercentage) {
+        toast.info(`Esta novedad ${code} está en %. Edítala desde el detalle.`);
+        return;
+      }
+      const existing = matching[0];
+      setEditingCell({
+        entryId: entry.entry_id,
+        field: fieldKey,
+        code,
+        noveltyType,
+        codeName,
+        existingNoveltyId: existing?.novelty_id || null,
+      });
+      setEditValue(String(sum || 0));
+    };
+
+    const tooltipText = !canEdit
+      ? ''
+      : hasMultiple
+        ? `${matching.length} novedades — usa el detalle`
+        : hasPercentage
+          ? 'Novedad en % — usa el detalle'
+          : matching[0]
+            ? 'Clic para editar'
+            : 'Clic para agregar';
+
+    return (
+      <span
+        className={`font-mono text-[10px] ${canEdit ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''} ${hasMultiple ? 'underline decoration-dotted decoration-orange-400' : ''}`}
+        onClick={onClick}
+        title={tooltipText}
+        data-testid={`code-cell-${code}-${entry.entry_id}`}
+      >
+        {formatNumber(sum)}
+        {hasMultiple && <sup className="ml-0.5 text-[8px] text-orange-500">×{matching.length}</sup>}
+      </span>
+    );
+  };
+
+  const saveCodeNoveltyEdit = async () => {
+    if (!editingCell || !editingCell.code) return;
+    const entry = periodEntries.find(e => e.entry_id === editingCell.entryId);
+    if (!entry) return;
+    const numValue = parseFloat(editValue) || 0;
+    const { code, noveltyType, codeName, existingNoveltyId } = editingCell;
+    try {
+      if (existingNoveltyId) {
+        if (numValue === 0) {
+          await axios.delete(
+            `${API}/payroll/entries/${entry.entry_id}/novelties/${existingNoveltyId}`,
+            { headers: getAuthHeaders(), withCredentials: true }
+          );
+        } else {
+          await axios.patch(
+            `${API}/payroll/entries/${entry.entry_id}/novelties/${existingNoveltyId}`,
+            {
+              entry_id: entry.entry_id,
+              novelty_type: noveltyType,
+              code,
+              name: codeName || code,
+              description: "",
+              amount: numValue,
+              is_percentage: false,
+            },
+            { headers: getAuthHeaders(), withCredentials: true }
+          );
+        }
+      } else if (numValue > 0) {
+        await axios.post(
+          `${API}/payroll/entries/${entry.entry_id}/novelties`,
+          {
+            entry_id: entry.entry_id,
+            novelty_type: noveltyType,
+            code,
+            name: codeName || code,
+            description: "",
+            amount: numValue,
+            is_percentage: false,
+          },
+          { headers: getAuthHeaders(), withCredentials: true }
+        );
+      }
+      toast.success(t('payrollV2.messages.updated'));
+      fetchPeriodDetails(entry.period_id);
+      fetchPeriods();
+    } catch (error) {
+      toast.error(error?.response?.data?.detail || t('common.error'));
+    } finally {
+      cancelEditing();
+    }
   };
 
   // Calculate totals
@@ -1605,7 +1731,7 @@ export default function PayrollPage() {
                   </CardContent></Card>
                 ) : (() => {
                   // Build column catalog
-                  const allColumns = buildPayrollColumns({ formatNumber, t, countryRates, renderEditableCell });
+                  const allColumns = buildPayrollColumns({ formatNumber, t, countryRates, renderEditableCell, renderEditableCodeCell });
                   const defaultOrder = allColumns.map(c => c.id);
                   const defaultVisible = Object.fromEntries(allColumns.map(c => [c.id, !!c.defaultVisible]));
 
@@ -1725,11 +1851,11 @@ export default function PayrollPage() {
                               {visibleColumns.map(col => (
                                 <TableHead
                                   key={col.id}
-                                  className={`font-bold border-r ${col.bgClass || ''} ${col.width || ''} ${col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : ''}`}
+                                  className={`font-bold border-r ${col.bgClass || ''} ${col.width || ''} ${col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : ''} align-bottom`}
                                   title={col.label}
                                   data-testid={`th-${col.id}`}
                                 >
-                                  {col.shortLabel || col.label}
+                                  {col.header || col.label}
                                 </TableHead>
                               ))}
                               <TableHead className="w-20 text-center">{t('payrollV2.table.actions')}</TableHead>

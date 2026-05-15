@@ -485,6 +485,18 @@
   - `GET /api/robots.txt` returns robots config pointing to the sitemap; `/app/frontend/public/robots.txt` also added as static fallback.
   - SEO base URL configurable via `SEO_BASE_URL` / `PUBLIC_BASE_URL` env vars (defaults to `https://fortexarh.com`).
   - Tested via curl: HTTP 200, 34 URLs, hreflang alternates present.
+- **Hoja de Nómina — Headers nombre completo + edición inline de columnas-código (Feb 15, 2026)** — enhancement DONE:
+  - **Headers en dos líneas para columnas de códigos**: las columnas de novedades (INC, HED, HEN, HEFS, HEFER, BON, REG, VAC, OTROING, COM, VIA, ANTIC, COOP, SEG, PENS, EMB, TARD, AUS, OTROSD) ahora muestran el código en negrita arriba y el nombre completo abajo (ej. "INC" / "Incentivos"). Implementado via prop `header` (JSX) en `payrollColumns.jsx` + cambio de `col.shortLabel || col.label` → `col.header || col.label` en `PayrollV2Page.jsx`.
+  - **Labels legacy renombradas a nombres completos**: "COMIS." → "Comisiones", "BONOS" → "Bonificaciones", "H.EXTRAS" → "Horas Extras", "OTROS ING." → "Otros Ingresos (legacy)", "ADIC. DEDUC." → "Deducciones Adicionales", "NOVEDADES+" → "Otros Ingresos (novedades)", "NOVEDADES-" → "Otras Deducciones (novedades)".
+  - **Edición inline en columnas de códigos** vía nuevo helper `renderEditableCodeCell(entry, code, type, name, sum)` + handler `saveCodeNoveltyEdit`. Comportamiento inteligente:
+    - 0 novedades de ese código → POST nueva novedad con `{code, name, amount, novelty_type, is_percentage:false}`
+    - 1 novedad existente (no-%) → PATCH para actualizar `amount`
+    - 1 novedad existente y user pone `0` → DELETE la novedad
+    - 2+ novedades del mismo código → no permite edit inline; muestra toast "Edita desde el detalle" + sufijo `×N`
+    - Novedad en % → no permite edit inline; toast informativo
+  - **Columna "Horas Extras" ahora unifica los 4 tipos**: legacy `overtime_day_amount + night + weekend + holiday` **+** sumatoria de novedades HED + HEN + HEFS + HEFER (via nuevo `sumNoveltiesByCodes(entry, OVERTIME_CODES, "income")`).
+  - Backend recalcula automáticamente BRUTO/SFS/AFP/ISR/NETO al guardar (lógica existente en `routes/payroll/novelties.py`).
+  - Tested Playwright end-to-end: click sobre celda INC vacía → input → fill "1500" → Enter → toast "Updated" → INC shows 1,500 · BRUTO 25,000→26,500 · SFS 760→805.60 · NETO 13,522.48→14,933.83 · badge "INC: 1,500.00" aparece bajo el empleado.
 
 ## Architecture Notes
 - COUNTRY_PROFILES dict (country_config.py) is source of truth
