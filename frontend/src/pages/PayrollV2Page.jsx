@@ -467,9 +467,13 @@ export default function PayrollPage() {
   };
 
   const handleCalculatePeriod = async (periodId) => {
+    if (!confirm(t('payrollV2.recalcConfirm', { defaultValue: '¿Recalcular todas las entradas del período? Esto refrescará SFS, AFP, ISR y el neto en base a las novedades, salarios y configuración actuales.' }))) return;
     try {
-      await axios.post(`${API}/payroll/periods/${periodId}/calculate`, {}, { headers: getAuthHeaders(), withCredentials: true });
-      toast.success(t('payrollV2.messages.payrollsCalculated'));
+      const res = await axios.post(`${API}/payroll/periods/${periodId}/calculate`, {}, { headers: getAuthHeaders(), withCredentials: true });
+      const count = res?.data?.recalculated ?? '';
+      toast.success(count
+        ? t('payrollV2.messages.payrollsCalculatedCount', { count, defaultValue: `${count} entradas recalculadas` })
+        : t('payrollV2.messages.payrollsCalculated'));
       fetchPeriodDetails(periodId);
       fetchPeriods();
     } catch (error) {
@@ -1532,7 +1536,7 @@ export default function PayrollPage() {
                           {['open', 'draft'].includes(selectedPeriod.status) && (
                             <>
                               <Button size="sm" variant="secondary" onClick={() => handleAddEmployees(selectedPeriod.period_id)}><Users className="w-4 h-4 mr-1" />{t('payrollV2.agregar')}</Button>
-                              <Button size="sm" variant="secondary" onClick={() => handleCalculatePeriod(selectedPeriod.period_id)}><Calculator className="w-4 h-4 mr-1" />{t('payrollV2.calcular')}</Button>
+                              <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => handleCalculatePeriod(selectedPeriod.period_id)} data-testid="recalc-period-btn"><Calculator className="w-4 h-4 mr-1" />{t('payrollV2.calcular')}</Button>
                               {selectedPeriod.employee_count > 0 && (
                                 <Button size="sm" className="bg-orange-500 hover:bg-orange-600" onClick={() => handleSubmitForApproval(selectedPeriod.period_id)}>
                                   <ChevronRight className="w-4 h-4 mr-1" />Enviar a Aprobación

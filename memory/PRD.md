@@ -530,6 +530,11 @@
   - `buildPayrollColumns` ahora recibe `periodType` y `workingDaysMonth` desde `PayrollV2Page.jsx` (`selectedPeriod.period_type` + `countryRates.working_days_month`).
   - Tested e2e: tabla en período quincenal muestra Juan Rodríguez con Salario(Quincenal)=47,500 · Mensual=95,000 · Quincenal=47,500 · Diario=3,986.57 · Hora=498.32 · ISR=5,142.93. Backend tests 76/76 ✅.
   - **Nota**: aplica solo a períodos nuevos / entradas editadas. Las entradas existentes mantendrán su ISR legacy hasta que se editen o se ejecute "Calcular" sobre el período.
+- **Botón "Recalcular Período" (Feb 15, 2026)** — enhancement DONE:
+  - `POST /api/payroll/periods/{period_id}/calculate` reescrito para hacer recálculo completo desde cero: reconstruye `gross_salary` desde `base_salary + overtime + bonuses + commissions + other_income + novelties` (income/deduction), aplica SFS/AFP/ISR period-aware, honra `*_manual_override_entry` flags y discount flags del empleado, y refresca contribuciones del empleador. Devuelve `{message, recalculated}`.
+  - Frontend: el botón existente "Calcular" se rebautiza a **"Recalcular Período"** (ES) / "Recalculate Period" (EN) / "Recalculer la période" (FR) / "Recalcular Período" (PT). Estilo cambiado a `bg-blue-600` para destacarlo. Pide confirmación antes de ejecutar y muestra toast con conteo: "6 entradas recalculadas".
+  - Bloqueado en períodos pagados (HTTP 400). Visible solo en estados `open`/`draft`.
+  - Tested: recalc masivo sobre 6 entradas del período Q1 Abril → ISR de Margaret/María/Ana/Juan Carlos pasó de 0 a valores correctos (1,376/2,278/8,267/773 respectivamente, todos calculados sobre el mensual equivalente ÷ 2). Endpoint responde con `recalculated: 6`.
 
 ## Architecture Notes
 - COUNTRY_PROFILES dict (country_config.py) is source of truth

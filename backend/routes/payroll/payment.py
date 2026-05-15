@@ -42,45 +42,111 @@ from ._helpers import _compute_isr, update_period_totals
 
 @router.post("/periods/{period_id}/calculate")
 async def calculate_period(period_id: str, current_user: dict = Depends(get_current_user)):
-    """Recalculate all entries in a period"""
+    """Recalculate all entries in a period from scratch.
+
+    Rebuilds ``gross_salary`` from the entry components (base + overtime +
+    bonuses + commissions + other_income + income novelties), then applies
+    SFS/AFP/ISR (period-aware) and updates the totals. Honors the employee's
+    ``sfs_discount``/``afp_discount``/``isr_discount`` flags and any manual
+    overrides stored on the entry (``sfs_manual_override_entry``, etc.).
+
+    Returns ``{"message": str, "recalculated": int}``.
+    """
     company_id = current_user.get("company_id")
-    
+
     period = await db.payroll_periods.find_one(
         {"period_id": period_id, "company_id": company_id},
         {"_id": 0}
     )
     if not period:
         raise HTTPException(status_code=404, detail="Período no encontrado")
-    
+    if period.get("status") == "paid":
+        raise HTTPException(status_code=400, detail="No se puede recalcular una nómina ya pagada")
+
     entries = await db.payroll_entries.find(
         {"period_id": period_id, "company_id": company_id},
         {"_id": 0}
     ).to_list(1000)
-    
+
     rates = await get_company_rates_flat(company_id)
+    period_type = period.get("period_type")
 
     for entry in entries:
-        gross_salary = entry.get("gross_salary", 0)
-        
-        sfs_employee = round(gross_salary * rates["sfs_employee_rate"], 2)
-        afp_employee = round(gross_salary * rates["afp_employee_rate"], 2)
-        isr_result = await _compute_isr(company_id, gross_salary, rates, period_type=(period or {}).get("period_type"))
-        isr = isr_result["isr_monthly"]
-        
-        total_additional = entry.get("total_additional_deductions", 0)
-        loan_deduction = entry.get("loan_deduction", 0)
-        
-        total_deductions = round(sfs_employee + afp_employee + isr + total_additional + loan_deduction, 2)
+        # Fetch employee for discount flags (some entries may pre-date the flags)
+        emp = await db.employees.find_one(
+            {"employee_id": entry.get("employee_id"), "company_id": company_id},
+            {"_id": 0, "sfs_discount": 1, "afp_discount": 1, "isr_discount": 1}
+        ) or {}
+
+        base_salary = entry.get("base_salary", 0) or 0
+        overtime_total = (
+            (entry.get("overtime_day_amount", 0) or 0)
+            + (entry.get("overtime_night_amount", 0) or 0)
+            + (entry.get("overtime_weekend_amount", 0) or 0)
+            + (entry.get("overtime_holiday_amount", 0) or 0)
+        )
+        bonuses = entry.get("bonuses", 0) or 0
+        commissions = entry.get("commissions", 0) or 0
+        other_income = entry.get("other_income", 0) or 0
+
+        income_novelties = 0
+        deduction_novelties = 0
+        for nov in entry.get("novelties", []) or []:
+            amt = nov.get("amount", 0) or 0
+            value = round(base_salary * amt / 100, 2) if nov.get("is_percentage") else amt
+            if nov.get("novelty_type") == "income":
+                income_novelties += value
+            else:
+                deduction_novelties += value
+
+        gross_salary = round(
+            base_salary + overtime_total + bonuses + commissions + other_income + income_novelties,
+            2,
+        )
+
+        # SFS / AFP — honor manual overrides on the entry
+        if entry.get("sfs_manual_override_entry"):
+            sfs_employee = round(entry.get("sfs_employee", 0) or 0, 2)
+        elif emp.get("sfs_discount", True) is False:
+            sfs_employee = 0
+        else:
+            sfs_employee = round(gross_salary * rates["sfs_employee_rate"], 2)
+
+        if entry.get("afp_manual_override_entry"):
+            afp_employee = round(entry.get("afp_employee", 0) or 0, 2)
+        elif emp.get("afp_discount", True) is False:
+            afp_employee = 0
+        else:
+            afp_employee = round(gross_salary * rates["afp_employee_rate"], 2)
+
+        # ISR — period-aware via _compute_isr; honors override
+        if entry.get("isr_manual_override_entry"):
+            isr = round(entry.get("isr", 0) or 0, 2)
+        elif emp.get("isr_discount", True) is False:
+            isr = 0
+        else:
+            isr_result = await _compute_isr(company_id, gross_salary, rates, period_type=period_type)
+            isr = isr_result["isr_monthly"]
+
+        total_additional = entry.get("total_additional_deductions", 0) or 0
+        loan_deduction = entry.get("loan_deduction", 0) or 0
+        total_deductions = round(
+            sfs_employee + afp_employee + isr + total_additional + loan_deduction + deduction_novelties,
+            2,
+        )
         net_salary = round(gross_salary - total_deductions, 2)
-        
+
         sfs_employer = round(gross_salary * rates["sfs_employer_rate"], 2)
         afp_employer = round(gross_salary * rates["afp_employer_rate"], 2)
         srl_employer = round(gross_salary * rates["srl_employer_rate"], 2)
         infotep_employer = round(gross_salary * rates["infotep_employer_rate"], 2)
-        
+
         await db.payroll_entries.update_one(
             {"entry_id": entry["entry_id"], "company_id": company_id},
             {"$set": {
+                "gross_salary": gross_salary,
+                "total_income_novelties": round(income_novelties, 2),
+                "total_deduction_novelties": round(deduction_novelties, 2),
                 "sfs_employee": sfs_employee,
                 "afp_employee": afp_employee,
                 "isr": isr,
@@ -90,14 +156,19 @@ async def calculate_period(period_id: str, current_user: dict = Depends(get_curr
                 "afp_employer": afp_employer,
                 "srl_employer": srl_employer,
                 "infotep_employer": infotep_employer,
-                "total_employer_contributions": round(sfs_employer + afp_employer + srl_employer + infotep_employer, 2),
-                "updated_at": now_iso()
-            }}
+                "total_employer_contributions": round(
+                    sfs_employer + afp_employer + srl_employer + infotep_employer, 2
+                ),
+                "updated_at": now_iso(),
+            }},
         )
-    
+
     await update_period_totals(period_id, company_id)
-    
-    return {"message": f"{len(entries)} entradas recalculadas"}
+
+    return {
+        "message": f"{len(entries)} entradas recalculadas",
+        "recalculated": len(entries),
+    }
 
 
 
