@@ -71,6 +71,23 @@ export const NOVELTY_CODE_NAMES = (() => {
 // Codes considered "overtime"; their sum feeds the unified Horas Extras column.
 const OVERTIME_CODES = ["HED", "HEN", "HEFS", "HEFER"];
 
+// Helpers to derive monthly / biweekly / daily / hourly salary from the
+// period's base_salary. ``entry.base_salary`` is the salary FOR THIS PERIOD
+// (already pro-rated when adding employees to a quincenal period):
+//   - mensual period:    base_salary = monthly salary
+//   - quincenal period:  base_salary = monthly / 2
+const _isQuincenal = (periodType) => (periodType || "").startsWith("quincenal");
+
+const monthlyEquivalent = (entry, periodType) => {
+  const v = _num(entry?.base_salary);
+  return _isQuincenal(periodType) ? v * 2 : v;
+};
+
+const biweeklyEquivalent = (entry, periodType) => {
+  const v = _num(entry?.base_salary);
+  return _isQuincenal(periodType) ? v : v / 2;
+};
+
 const FORMAT = (n, formatNumber) => formatNumber(n || 0);
 
 // Render a two-line header: bold code on top, full name underneath.
@@ -83,7 +100,9 @@ const codeHeader = (code, name) => (
   </div>
 );
 
-export function buildPayrollColumns({ formatNumber, t, countryRates, renderEditableCell, renderEditableCodeCell }) {
+export function buildPayrollColumns({ formatNumber, t, countryRates, renderEditableCell, renderEditableCodeCell, periodType, workingDaysMonth }) {
+  const isQ = _isQuincenal(periodType);
+  const wdm = Number(workingDaysMonth) || 23.83;
   // Column shape: { id, label, header?, group, fixed?, defaultVisible?, getValue, render?, align?, bgClass?, textClass?, width? }
   // - `label` is the full human-readable label (used in picker, tooltips, exports)
   // - `header` (optional JSX) overrides the column header rendering in the table
@@ -113,11 +132,60 @@ export function buildPayrollColumns({ formatNumber, t, countryRates, renderEdita
 
     // ----- Base salary ------------------------------------------------------
     {
-      id: "base_salary", label: t("payrollV2.salario"), group: "base", defaultVisible: true,
+      id: "base_salary",
+      // Dynamic label so the editable column reflects what the value actually represents
+      label: isQ
+        ? t("payrollV2.salarioQuincenalEditable", { defaultValue: "Salario (Quincenal)" })
+        : t("payrollV2.salario"),
+      group: "base", defaultVisible: true,
       width: "w-24", align: "right",
       bgClass: "bg-blue-50/50",
       render: (e) => renderEditableCell(e, "base_salary", e.base_salary),
       getValue: (e) => _num(e.base_salary),
+    },
+    // ----- Monthly salary (derived) ---------------------------------------
+    {
+      id: "salary_monthly",
+      label: t("payrollV2.salarioMensual", { defaultValue: "Salario Mensual" }),
+      group: "base", defaultVisible: isQ,  // only show by default when it adds info (quincenal)
+      width: "w-24", align: "right",
+      bgClass: "bg-blue-50/50",
+      textClass: "text-slate-500 dark:text-slate-400 italic",
+      render: (e) => FORMAT(monthlyEquivalent(e, periodType), formatNumber),
+      getValue: (e) => monthlyEquivalent(e, periodType),
+    },
+    // ----- Biweekly salary (derived) --------------------------------------
+    {
+      id: "salary_biweekly",
+      label: t("payrollV2.salarioQuincenal", { defaultValue: "Salario Quincenal" }),
+      group: "base", defaultVisible: false,
+      width: "w-24", align: "right",
+      bgClass: "bg-blue-50/50",
+      textClass: "text-slate-500 dark:text-slate-400 italic",
+      render: (e) => FORMAT(biweeklyEquivalent(e, periodType), formatNumber),
+      getValue: (e) => biweeklyEquivalent(e, periodType),
+    },
+    // ----- Daily salary (derived from monthly equivalent / working days)
+    {
+      id: "salary_daily",
+      label: t("payrollV2.salarioDiario", { defaultValue: "Salario Diario" }),
+      group: "base", defaultVisible: false,
+      width: "w-20", align: "right",
+      bgClass: "bg-blue-50/50",
+      textClass: "text-slate-500 dark:text-slate-400 italic",
+      render: (e) => FORMAT(monthlyEquivalent(e, periodType) / wdm, formatNumber),
+      getValue: (e) => monthlyEquivalent(e, periodType) / wdm,
+    },
+    // ----- Hourly salary (derived from monthly equivalent / working days / 8)
+    {
+      id: "salary_hourly",
+      label: t("payrollV2.salarioHorario", { defaultValue: "Salario por Hora" }),
+      group: "base", defaultVisible: false,
+      width: "w-20", align: "right",
+      bgClass: "bg-blue-50/50",
+      textClass: "text-slate-500 dark:text-slate-400 italic",
+      render: (e) => FORMAT(monthlyEquivalent(e, periodType) / wdm / 8, formatNumber),
+      getValue: (e) => monthlyEquivalent(e, periodType) / wdm / 8,
     },
 
     // ----- Income novelty codes (each its own column, editable inline) -----

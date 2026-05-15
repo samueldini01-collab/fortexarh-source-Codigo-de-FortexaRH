@@ -514,6 +514,22 @@
   - Backwards-compat: `?format=json` retorna la estructura JSON previa con `columns: [{key, label}]` para integraciones externas.
   - Frontend `handleExportExcel` simplificado: descarga blob, lee filename de `Content-Disposition`, guarda como `.xlsx` directamente.
   - Tested: curl descarga 7.4kb XLSX abre OK en openpyxl (39 cols, freeze panes D6, INC=1500 en col 12 con formato moneda, TOTALES fila bold). Playwright e2e: clic en botón Excel → archivo `nomina_Nómina_Abril_Q1_2026.xlsx` se descarga, toast "Excel exported" aparece.
+- **ISR proporcional al período + columnas derivadas de salario (Feb 15, 2026)** — fix + enhancement DONE:
+  - **Fix bug crítico de ISR en períodos quincenales**: el ISR se calculaba aplicando la tabla DGII (mensual) directamente sobre el gross quincenal, dejando exentos a empleados de RD$25k-34k quincenales (que en realidad ganan RD$50k-68k mensuales y deben pagar ISR).
+    - `_compute_isr` ahora acepta `period_type` opcional. Si es `"quincenal_*"`, multiplica el gross × 2 para aplicar la tabla mensual y luego divide el ISR resultante / 2 → resultado: ISR del período = mitad del ISR mensual correcto (práctica DGII estándar).
+    - Actualizado en 6 callers: `entries.py`, `novelties.py` (×3: add/update/delete), `payment.py`, `periods.py` (add_employees).
+    - Backwards-compat: `period_type=None` mantiene comportamiento legacy (mensual).
+    - Verificado matemáticamente: empleado quincenal de RD$47,500 (RD$95k mensual) → ISR mensual completo RD$10,285.85 / 2 = RD$5,142.93 por quincena (antes: RD$1,922.25 incorrecto).
+  - **4 nuevas columnas derivadas en la Hoja de Nómina** (`payrollColumns.jsx`):
+    - "Salario Mensual" — equivalente mensual (= `base_salary × 2` si quincenal, sino `base_salary`). Default visible solo en períodos quincenales.
+    - "Salario Quincenal" — equivalente quincenal (= `base_salary / 2` si mensual, sino `base_salary`)
+    - "Salario Diario" — `monthly_eq / working_days_month` (23.83 en RD por defecto, configurable por país)
+    - "Salario por Hora" — `monthly_eq / working_days_month / 8`
+    - Todas son **read-only** (derivadas), texto italic gris-pequeño para distinguirlas del campo editable. Selectables/draggables vía el column picker como cualquier otra columna.
+  - **Label dinámico de la columna `base_salary`**: en períodos quincenales muestra "Salario (Quincenal)" para dejar claro que el valor es el del período (no el mensual).
+  - `buildPayrollColumns` ahora recibe `periodType` y `workingDaysMonth` desde `PayrollV2Page.jsx` (`selectedPeriod.period_type` + `countryRates.working_days_month`).
+  - Tested e2e: tabla en período quincenal muestra Juan Rodríguez con Salario(Quincenal)=47,500 · Mensual=95,000 · Quincenal=47,500 · Diario=3,986.57 · Hora=498.32 · ISR=5,142.93. Backend tests 76/76 ✅.
+  - **Nota**: aplica solo a períodos nuevos / entradas editadas. Las entradas existentes mantendrán su ISR legacy hasta que se editen o se ejecute "Calcular" sobre el período.
 
 ## Architecture Notes
 - COUNTRY_PROFILES dict (country_config.py) is source of truth

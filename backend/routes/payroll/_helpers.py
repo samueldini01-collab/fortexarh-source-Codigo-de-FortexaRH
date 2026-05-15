@@ -9,15 +9,49 @@ from services.journal_entry_service import generate_payroll_journal_entry
 from utils.payroll_constants import calculate_isr_monthly, now_iso
 
 
-async def _compute_isr(company_id: str, gross_salary: float, rates: dict) -> dict:
+async def _compute_isr(
+    company_id: str,
+    gross_salary: float,
+    rates: dict,
+    period_type: str | None = None,
+) -> dict:
     """
     Compute ISR for a given company+gross.
+
+    DGII standard practice (and most LATAM equivalents): the ISR bracket
+    table is **monthly**. For quincenal (biweekly) periods, the bracket
+    threshold is applied to the MONTHLY-equivalent gross (``gross × 2``)
+    and the resulting ISR is then split across the 2 quincenas of the
+    month — so each quincena withholds half of the monthly ISR.
+
+    Args:
+        period_type: "mensual" (default), "quincenal_1", "quincenal_2",
+                     or any other engine-specific code. Anything that
+                     ``startswith("quincenal")`` triggers the doubling.
+
+    Returns the standard ``{"isr_monthly": <amount-to-withhold-this-period>, ...}``
+    dict. The ``isr_monthly`` key is kept for backwards-compat even though
+    for quincenal periods it represents the **quincenal** withholding.
+
     - DR keeps using its legacy DGII interpolation table (more precise).
     - Other countries use bracket-based calculation from country profile.
     """
+    is_quincenal = (period_type or "").startswith("quincenal")
+    monthly_gross = gross_salary * 2 if is_quincenal else gross_salary
+
     if rates.get("country_code") == "DO":
-        return calculate_isr_monthly(gross_salary)
-    return calculate_isr_dynamic(gross_salary, rates.get("income_tax") or {})
+        monthly_result = calculate_isr_monthly(monthly_gross)
+    else:
+        monthly_result = calculate_isr_dynamic(monthly_gross, rates.get("income_tax") or {})
+
+    if is_quincenal:
+        result = dict(monthly_result)
+        # Split monthly ISR across 2 quincenas — what's withheld this period
+        result["monthly_isr_total"] = monthly_result.get("isr_monthly", 0)
+        result["isr_monthly"] = round(monthly_result.get("isr_monthly", 0) / 2, 2)
+        result["period_type"] = period_type
+        return result
+    return monthly_result
 
 
 async def update_period_totals(period_id: str, company_id: str):

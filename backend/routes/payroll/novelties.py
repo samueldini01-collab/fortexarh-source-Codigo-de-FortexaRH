@@ -110,7 +110,7 @@ async def add_novelty(entry_id: str, data: PayrollNoveltyCreate, current_user: d
     rates = await get_company_rates_flat(company_id)
     sfs_employee = round(gross_salary * rates["sfs_employee_rate"], 2)
     afp_employee = round(gross_salary * rates["afp_employee_rate"], 2)
-    isr_result = await _compute_isr(company_id, gross_salary, rates)
+    isr_result = await _compute_isr(company_id, gross_salary, rates, period_type=(period or {}).get("period_type"))
     isr = isr_result["isr_monthly"]
     
     total_additional = entry.get("total_additional_deductions", 0)
@@ -223,7 +223,7 @@ async def update_novelty(
     rates = await get_company_rates_flat(company_id)
     sfs_employee = round(gross_salary * rates["sfs_employee_rate"], 2)
     afp_employee = round(gross_salary * rates["afp_employee_rate"], 2)
-    isr_result = await _compute_isr(company_id, gross_salary, rates)
+    isr_result = await _compute_isr(company_id, gross_salary, rates, period_type=(period or {}).get("period_type"))
     isr = isr_result["isr_monthly"]
 
     total_additional = entry.get("total_additional_deductions", 0)
@@ -314,7 +314,7 @@ async def delete_novelty(entry_id: str, novelty_id: str, current_user: dict = De
     rates = await get_company_rates_flat(company_id)
     sfs_employee = round(gross_salary * rates["sfs_employee_rate"], 2)
     afp_employee = round(gross_salary * rates["afp_employee_rate"], 2)
-    isr_result = await _compute_isr(company_id, gross_salary, rates)
+    isr_result = await _compute_isr(company_id, gross_salary, rates, period_type=(period or {}).get("period_type"))
     isr = isr_result["isr_monthly"]
     
     total_additional = entry.get("total_additional_deductions", 0)

@@ -1728,7 +1728,11 @@ export default function PayrollPage() {
                   </CardContent></Card>
                 ) : (() => {
                   // Build column catalog
-                  const allColumns = buildPayrollColumns({ formatNumber, t, countryRates, renderEditableCell, renderEditableCodeCell });
+                  const allColumns = buildPayrollColumns({
+                    formatNumber, t, countryRates, renderEditableCell, renderEditableCodeCell,
+                    periodType: selectedPeriod?.period_type,
+                    workingDaysMonth: countryRates?.working_days_month || 23.83,
+                  });
                   const defaultOrder = allColumns.map(c => c.id);
                   const defaultVisible = Object.fromEntries(allColumns.map(c => [c.id, !!c.defaultVisible]));
 

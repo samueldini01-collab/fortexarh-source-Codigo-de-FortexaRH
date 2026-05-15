@@ -64,7 +64,7 @@ async def calculate_period(period_id: str, current_user: dict = Depends(get_curr
         
         sfs_employee = round(gross_salary * rates["sfs_employee_rate"], 2)
         afp_employee = round(gross_salary * rates["afp_employee_rate"], 2)
-        isr_result = await _compute_isr(company_id, gross_salary, rates)
+        isr_result = await _compute_isr(company_id, gross_salary, rates, period_type=(period or {}).get("period_type"))
         isr = isr_result["isr_monthly"]
         
         total_additional = entry.get("total_additional_deductions", 0)

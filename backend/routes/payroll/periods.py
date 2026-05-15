@@ -293,7 +293,7 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
                 "created_at": now_iso()
             }
             
-            isr_result = await _compute_isr(company_id, salary, rates)
+            isr_result = await _compute_isr(company_id, salary, rates, period_type=period.get("period_type"))
             if emp.get("isr_discount", True):
                 if emp.get("isr_manual_override"):
                     entry["isr"] = round(float(emp.get("isr_manual_amount", 0)), 2)

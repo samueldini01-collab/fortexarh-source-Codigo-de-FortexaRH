@@ -117,7 +117,7 @@ async def update_payroll_entry(entry_id: str, data: PayrollEntryCreate, current_
         afp_employee = 0
 
     # ISR: respect inline override first, then employee override, then calculation
-    isr_result = await _compute_isr(company_id, gross_salary, rates)
+    isr_result = await _compute_isr(company_id, gross_salary, rates, period_type=(period or {}).get("period_type"))
     if data.isr_override is not None:
         isr = round(data.isr_override, 2)
     elif emp.get("isr_discount", True):
