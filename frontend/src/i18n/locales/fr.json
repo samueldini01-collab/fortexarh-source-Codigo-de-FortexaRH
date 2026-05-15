@@ -1335,7 +1335,15 @@
       "salary": "Salaire",
       "startDate": "Date d'Entrée",
       "status": "Statut",
-      "actions": "Actions"
+      "actions": "Actions",
+      "email": "Email",
+      "phone": "Téléphone",
+      "documentNumber": "Document",
+      "hireDate": "Date d'embauche",
+      "contractType": "Type de contrat",
+      "paymentMethod": "Mode de paiement",
+      "columns": "Colonnes",
+      "resetColumns": "Réinitialiser"
     },
     "actions": {
       "bulkEdit": "Modifier la sélection",

@@ -2268,7 +2268,15 @@
       "position": "Posição",
       "salary": "Salário",
       "startDate": "Data Admissão",
-      "status": "Status"
+      "status": "Status",
+      "email": "Email",
+      "phone": "Telefone",
+      "documentNumber": "Documento",
+      "hireDate": "Data de Admissão",
+      "contractType": "Tipo de Contrato",
+      "paymentMethod": "Forma de Pagamento",
+      "columns": "Colunas",
+      "resetColumns": "Redefinir colunas"
     },
     "tabs": {
       "contract": "Contrato",

@@ -434,6 +434,14 @@
   - Frontend: cada chip de novedad envuelto en `<Tooltip>` (shadcn). Hover muestra: nombre/descripción + `Created by: {name} · {dd/mm/yyyy hh:mm}` + (si editado) `Last edited by: ...`.
   - i18n `payrollV2.tooltip.{createdBy,createdAt,editedBy}` ES/EN/FR/PT. `TRANSLATION_VERSION` 3.7.5 → 3.7.6.
   - Tested Playwright: tooltip aparece al hover, muestra solo "Created by" tras alta, agrega "Last edited by" tras PATCH.
+- **Empleados — Headers ordenables + Column Picker (Feb 2, 2026)** — enhancement DONE:
+  - `EmployeesPage.jsx`: headers de tabla ahora son botones clickeables con iconos `ArrowUp` / `ArrowDown` / `ChevronsUpDown`. Click alterna asc/desc; cambiar de columna resetea a asc.
+  - Default sort: **Empleado (apellido+nombre) alfabético asc**. Persistido en `localStorage` (`employees-sort-col`, `employees-sort-dir`).
+  - Column picker (Dropdown ☰) en la esquina derecha de la tabla — checkboxes para 11 columnas: `Employee*`, `Department`, `Position`, `Salary`, `Status` (visibles por defecto) + `Email`, `Phone`, `Document`, `Hire Date`, `Contract Type`, `Payment Method` (ocultas por defecto). `Employee` es required (no se puede ocultar).
+  - Selección persistida en `localStorage` (`employees-visible-cols`). Opción "Reset columns".
+  - Comparator soporta strings (`localeCompare` con `numeric:true`), números (Salary), fechas (Hire Date → epoch).
+  - i18n: `employees.table.{email,phone,documentNumber,hireDate,contractType,paymentMethod,columns,resetColumns}` ES/EN/FR/PT. `TRANSLATION_VERSION` 3.7.6 → 3.7.7.
+  - Tested Playwright: sort por Empleado (default alfa) ✅, sort salary asc/desc ✅, toggle Email + Hire Date ✅, reload preserva config ✅.
 - **Dynamic sitemap.xml + robots.txt (Feb 2, 2026)** — SEO P1 DONE:
   - New module `/app/backend/routes/sitemap.py` wired into `/api/`.
   - `GET /api/sitemap.xml` returns XML with 34 URLs: 5 core routes (`/`, `/pricing`, `/register`, `/login`, `/soporte`) + 29 country pages (`/pais/{slug}`), each with 4 hreflang alternates (es, en, fr, pt) — totalling 145 alternate links. `Cache-Control: public, max-age=3600`. Content-Type `application/xml`.

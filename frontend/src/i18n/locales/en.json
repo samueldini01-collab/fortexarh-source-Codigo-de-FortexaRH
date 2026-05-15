@@ -1335,7 +1335,15 @@
       "salary": "Salary",
       "startDate": "Start Date",
       "status": "Status",
-      "actions": "Actions"
+      "actions": "Actions",
+      "email": "Email",
+      "phone": "Phone",
+      "documentNumber": "Document",
+      "hireDate": "Hire Date",
+      "contractType": "Contract Type",
+      "paymentMethod": "Payment Method",
+      "columns": "Columns",
+      "resetColumns": "Reset columns"
     },
     "actions": {
       "bulkEdit": "Edit selected",

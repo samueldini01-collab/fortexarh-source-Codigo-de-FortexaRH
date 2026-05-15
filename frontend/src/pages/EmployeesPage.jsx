@@ -17,10 +17,11 @@ import {
 } from "@/components/ui/table";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
+  DropdownMenuCheckboxItem, DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { 
   Plus, Search, Edit, Trash2, User, FileText, UserCheck, Calendar, Building2,
-  Upload, Download, MoreVertical, Edit3
+  Upload, Download, MoreVertical, Edit3, ArrowUp, ArrowDown, ChevronsUpDown, Columns3
 } from "lucide-react";
 import { toast } from "sonner";
 import { ImportEmployeesModal, BulkEditModal, ExportEmployeesButton } from "@/components/EmployeeImportExport";
@@ -48,6 +49,87 @@ export default function EmployeesPage() {
   const [selectAll, setSelectAll] = useState(false);
   const [quickFilter, setQuickFilter] = useState(null); // 'all', 'active', 'inactive', 'on_leave'
   const [departmentFilter, setDepartmentFilter] = useState("all");
+
+  // Sort state — defaults to alphabetical by employee name
+  const [sortColumn, setSortColumn] = useState(() => {
+    try { return localStorage.getItem("employees-sort-col") || "employee"; } catch { return "employee"; }
+  });
+  const [sortDirection, setSortDirection] = useState(() => {
+    try { return localStorage.getItem("employees-sort-dir") || "asc"; } catch { return "asc"; }
+  });
+
+  // Visible columns state — persisted to localStorage
+  const ALL_COLUMNS = [
+    { id: "employee", labelKey: "employees.table.employee", required: true, sortable: true },
+    { id: "department", labelKey: "employees.table.department", sortable: true },
+    { id: "position", labelKey: "employees.table.position", sortable: true },
+    { id: "salary", labelKey: "employees.table.salary", sortable: true, align: "left" },
+    { id: "status", labelKey: "employees.table.status", sortable: true },
+    { id: "email", labelKey: "employees.table.email", sortable: true, optional: true, defaultHidden: true },
+    { id: "phone", labelKey: "employees.table.phone", sortable: false, optional: true, defaultHidden: true },
+    { id: "document_number", labelKey: "employees.table.documentNumber", sortable: true, optional: true, defaultHidden: true },
+    { id: "hire_date", labelKey: "employees.table.hireDate", sortable: true, optional: true, defaultHidden: true },
+    { id: "contract_type", labelKey: "employees.table.contractType", sortable: true, optional: true, defaultHidden: true },
+    { id: "payment_method", labelKey: "employees.table.paymentMethod", sortable: true, optional: true, defaultHidden: true },
+  ];
+
+  const defaultVisibleCols = ALL_COLUMNS.filter(c => !c.defaultHidden).map(c => c.id);
+
+  const [visibleColumns, setVisibleColumns] = useState(() => {
+    try {
+      const saved = localStorage.getItem("employees-visible-cols");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length) {
+          // Always keep required columns
+          const required = ALL_COLUMNS.filter(c => c.required).map(c => c.id);
+          return Array.from(new Set([...required, ...parsed]));
+        }
+      }
+    } catch { /* ignore */ }
+    return defaultVisibleCols;
+  });
+
+  useEffect(() => {
+    try { localStorage.setItem("employees-visible-cols", JSON.stringify(visibleColumns)); } catch { /* ignore */ }
+  }, [visibleColumns]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("employees-sort-col", sortColumn);
+      localStorage.setItem("employees-sort-dir", sortDirection);
+    } catch { /* ignore */ }
+  }, [sortColumn, sortDirection]);
+
+  const toggleColumn = (id) => {
+    setVisibleColumns(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]);
+  };
+
+  const handleSort = (column) => {
+    if (sortColumn === column) {
+      setSortDirection(prev => prev === "asc" ? "desc" : "asc");
+    } else {
+      setSortColumn(column);
+      setSortDirection("asc");
+    }
+  };
+
+  // Sort comparator helpers
+  const getSortValue = (emp, col) => {
+    switch (col) {
+      case "employee": return `${emp.first_name || ""} ${emp.last_name || ""}`.trim().toLowerCase();
+      case "department": return (emp.department || "").toLowerCase();
+      case "position": return (emp.position || "").toLowerCase();
+      case "salary": return Number(emp.salary) || 0;
+      case "status": return (emp.status || "").toLowerCase();
+      case "email": return (emp.email || "").toLowerCase();
+      case "document_number": return (emp.document_number || "").toLowerCase();
+      case "hire_date": return emp.hire_date ? new Date(emp.hire_date).getTime() : 0;
+      case "contract_type": return (emp.contract_type || "").toLowerCase();
+      case "payment_method": return (emp.payment_method || "").toLowerCase();
+      default: return "";
+    }
+  };
   
   const { getAuthHeaders } = useAuth();
 
@@ -250,6 +332,16 @@ export default function EmployeesPage() {
     }
     
     return true;
+  }).sort((a, b) => {
+    const va = getSortValue(a, sortColumn);
+    const vb = getSortValue(b, sortColumn);
+    let cmp;
+    if (typeof va === "number" && typeof vb === "number") {
+      cmp = va - vb;
+    } else {
+      cmp = String(va).localeCompare(String(vb), undefined, { sensitivity: "base", numeric: true });
+    }
+    return sortDirection === "asc" ? cmp : -cmp;
   });
 
   // Get unique departments for filter
@@ -488,12 +580,67 @@ export default function EmployeesPage() {
                         aria-label={t('employees.actions.selectAll')}
                       />
                     </TableHead>
-                    <TableHead>{t('employees.table.employee')}</TableHead>
-                    <TableHead>{t('employees.table.department')}</TableHead>
-                    <TableHead>{t('employees.table.position')}</TableHead>
-                    <TableHead>{t('employees.table.salary')}</TableHead>
-                    <TableHead>{t('employees.table.status')}</TableHead>
-                    <TableHead className="text-right">{t('employees.table.actions')}</TableHead>
+                    {ALL_COLUMNS.filter(c => visibleColumns.includes(c.id)).map(col => {
+                      const isActive = sortColumn === col.id;
+                      const SortIcon = !col.sortable ? null
+                        : !isActive ? ChevronsUpDown
+                          : sortDirection === "asc" ? ArrowUp : ArrowDown;
+                      return (
+                        <TableHead
+                          key={col.id}
+                          className={col.align === "right" ? "text-right" : ""}
+                          data-testid={`th-${col.id}`}
+                        >
+                          {col.sortable ? (
+                            <button
+                              type="button"
+                              onClick={() => handleSort(col.id)}
+                              className="inline-flex items-center gap-1 hover:text-slate-900 dark:hover:text-slate-100 font-semibold"
+                              data-testid={`sort-${col.id}`}
+                            >
+                              {t(col.labelKey)}
+                              {SortIcon && <SortIcon className={`w-3 h-3 ${isActive ? "text-blue-600" : "text-slate-400"}`} />}
+                            </button>
+                          ) : (
+                            <span>{t(col.labelKey)}</span>
+                          )}
+                        </TableHead>
+                      );
+                    })}
+                    <TableHead className="text-right">
+                      <div className="inline-flex items-center gap-1 justify-end">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-7 w-7" data-testid="columns-picker-btn" title={t('employees.table.columns', { defaultValue: 'Columnas' })}>
+                              <Columns3 className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-56">
+                            <DropdownMenuLabel>{t('employees.table.columns', { defaultValue: 'Columnas' })}</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            {ALL_COLUMNS.map(col => (
+                              <DropdownMenuCheckboxItem
+                                key={col.id}
+                                checked={visibleColumns.includes(col.id)}
+                                disabled={col.required}
+                                onCheckedChange={() => !col.required && toggleColumn(col.id)}
+                                data-testid={`col-toggle-${col.id}`}
+                              >
+                                {t(col.labelKey)}
+                              </DropdownMenuCheckboxItem>
+                            ))}
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() => setVisibleColumns(defaultVisibleCols)}
+                              data-testid="col-reset"
+                            >
+                              {t('employees.table.resetColumns', { defaultValue: 'Restablecer columnas' })}
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                        <span>{t('employees.table.actions')}</span>
+                      </div>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -510,24 +657,36 @@ export default function EmployeesPage() {
                           aria-label={`${t('common.select')} ${emp.first_name} ${emp.last_name}`}
                         />
                       </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <Avatar className="w-10 h-10">
-                            <AvatarImage src={emp.photo_url} />
-                            <AvatarFallback className="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
-                              {emp.first_name?.[0]}{emp.last_name?.[0]}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="font-medium">{emp.first_name} {emp.last_name}</p>
-                            <p className="text-sm text-slate-500">{emp.email}</p>
+                      {visibleColumns.includes("employee") && (
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <Avatar className="w-10 h-10">
+                              <AvatarImage src={emp.photo_url} />
+                              <AvatarFallback className="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                                {emp.first_name?.[0]}{emp.last_name?.[0]}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-medium">{emp.first_name} {emp.last_name}</p>
+                              <p className="text-sm text-slate-500">{emp.email}</p>
+                            </div>
                           </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{emp.department}</TableCell>
-                      <TableCell>{emp.position}</TableCell>
-                      <TableCell className="font-mono">{formatCurrency(emp.salary)}</TableCell>
-                      <TableCell>{getStatusBadge(emp.status)}</TableCell>
+                        </TableCell>
+                      )}
+                      {visibleColumns.includes("department") && <TableCell>{emp.department || "—"}</TableCell>}
+                      {visibleColumns.includes("position") && <TableCell>{emp.position || "—"}</TableCell>}
+                      {visibleColumns.includes("salary") && <TableCell className="font-mono">{formatCurrency(emp.salary)}</TableCell>}
+                      {visibleColumns.includes("status") && <TableCell>{getStatusBadge(emp.status)}</TableCell>}
+                      {visibleColumns.includes("email") && <TableCell className="text-sm">{emp.email || "—"}</TableCell>}
+                      {visibleColumns.includes("phone") && <TableCell className="text-sm font-mono">{emp.phone || "—"}</TableCell>}
+                      {visibleColumns.includes("document_number") && <TableCell className="text-sm font-mono">{emp.document_number || "—"}</TableCell>}
+                      {visibleColumns.includes("hire_date") && (
+                        <TableCell className="text-sm">
+                          {emp.hire_date ? new Date(emp.hire_date).toLocaleDateString() : "—"}
+                        </TableCell>
+                      )}
+                      {visibleColumns.includes("contract_type") && <TableCell className="text-sm">{emp.contract_type || "—"}</TableCell>}
+                      {visibleColumns.includes("payment_method") && <TableCell className="text-sm">{emp.payment_method || "—"}</TableCell>}
                       <TableCell className="text-right">
                         <Button
                           variant="ghost"
