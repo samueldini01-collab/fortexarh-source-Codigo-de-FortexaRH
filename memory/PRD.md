@@ -17,6 +17,16 @@
 - Cambios: `LoginPage.jsx` y `RegisterPage.jsx` — botón Google, divisor "O continuar con" y handlers (`handleGoogleLogin`, `handleGoogleSignup`) removidos. Strings i18n quedan inactivas (no referenciadas).
 - Login es ahora exclusivamente email/contraseña con 2FA opcional.
 
+## Feb 2026 — Trusted Devices + Login Audit (P1 ENTERPRISE)
+- Nuevo módulo backend `routes/login_audit.py`: registra cada intento de login (éxito/fallo) con IP, User-Agent, browser, OS, ciudad/país (vía ipwho.is, fail-soft) y método (password/2fa/recovery/trusted_device).
+- "Recordar este dispositivo por 30 días" en pantalla 2FA: emite `device_token` (sha256 hash en BD), guardado en `localStorage` como `fortexa_device_token`. Al volver, el login lo envía y se salta el 2FA si sigue vigente.
+- Endpoints: `GET /api/auth/login-history?limit=N`, `GET /api/auth/trusted-devices`, `DELETE /api/auth/trusted-devices/{device_id}`, `DELETE /api/auth/trusted-devices` (panic button).
+- Frontend: nuevo componente `SecurityActivity.jsx` integrado en Settings → Mi cuenta. Muestra dispositivos confiables (icono mobile/desktop, IP, OS, último uso, expira) y tabla de últimos 50 inicios con badges Éxito/Fallido, ubicación con icono pin y método.
+- i18n agregado a 4 locales (es/en/fr/pt) en `/public/locales/*.json` (versión de cache `3.7.8`).
+- Colecciones nuevas: `login_history`, `trusted_devices`. Token confiable expira a 30 días.
+- Tests: 13/13 backend (iteration_245), frontend 100% labels traducidos (iteration_246).
+
+
 ## Implemented (Apr-May 2026)
 - Core: AI Search, ACH Bank, Approval Workflows, Contracts & E-Signature, Bank Config
 - Payroll: Delete Paid, Deductions Dialog (editable), Payslip PDF, Period Comparison
