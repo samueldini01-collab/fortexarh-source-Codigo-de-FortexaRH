@@ -11,6 +11,12 @@
 - Partner: testpartner@test.com / test123
 - Employee Portal: 001-0000001-1 / portal123
 
+
+## Feb 2026 — Removed Google SSO
+- Eliminada por completo la opción "Continuar con Google" / "Registrarse con Google" del sistema en todos los países.
+- Cambios: `LoginPage.jsx` y `RegisterPage.jsx` — botón Google, divisor "O continuar con" y handlers (`handleGoogleLogin`, `handleGoogleSignup`) removidos. Strings i18n quedan inactivas (no referenciadas).
+- Login es ahora exclusivamente email/contraseña con 2FA opcional.
+
 ## Implemented (Apr-May 2026)
 - Core: AI Search, ACH Bank, Approval Workflows, Contracts & E-Signature, Bank Config
 - Payroll: Delete Paid, Deductions Dialog (editable), Payslip PDF, Period Comparison
