@@ -226,10 +226,6 @@ export function EmployeeFormDialog({
                     <Percent className="w-3 h-3 shrink-0" />
                     <span className="truncate">{t('employees.tabs.deductions')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="prestamos" className="text-xs px-2 flex items-center gap-1 whitespace-nowrap" data-testid="tab-prestamos">
-                    <Calculator className="w-3 h-3 shrink-0" />
-                    <span className="truncate">Préstamos</span>
-                  </TabsTrigger>
                   <TabsTrigger value="documentos" className="text-xs px-2 flex items-center gap-1 whitespace-nowrap" data-testid="tab-documentos">
                     <FileText className="w-3 h-3 shrink-0" />
                     <span className="truncate">{t('employees.tabs.documents')}</span>
@@ -243,6 +239,10 @@ export function EmployeeFormDialog({
                       <span className="truncate">{t('employees.tabs.salaryHistory')}</span>
                     </TabsTrigger>
                   )}
+                  <TabsTrigger value="prestamos" className="text-xs px-2 flex items-center gap-1 whitespace-nowrap" data-testid="tab-prestamos">
+                    <Calculator className="w-3 h-3 shrink-0" />
+                    <span className="truncate">Préstamos</span>
+                  </TabsTrigger>
                 </TabsList>
 
                 {/* Tab 1: Datos Principales */}
