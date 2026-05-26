@@ -568,6 +568,23 @@
   - **Fix**: agregada la clave `employees.valorManualMensualHelp` en los 4 idiomas (es/en/fr/pt).
   - **Tested**: empleado RD$80k mensual (40k quincenal) con 3 descuentos del perfil → novelties: `PENS=500`, `PREST=500`, `SEG=500`. Columna Préstamos ahora muestra 500 (antes 0). UI verificada. Backend tests 13/13 ✅. Lint ✅.
 
+- **Fix: ISR backend ahora usa la fórmula DGII oficial (Feb 26, 2026)** — bug fix CRÍTICO DONE:
+  - **Bug**: el backend `calculate_isr_monthly` aplicaba la tabla directamente al gross monthly, con valores de interpolación incorrectos (e.g., para RD$80k mensual devolvía 6,535.85, cuando lo correcto per DGII es 7,400.94). El frontend del perfil del empleado mostraba el valor correcto (vía `calculateISRMonthly` con la fórmula oficial), creando inconsistencia entre lo que se ve en el perfil y lo que se descuenta en la nómina.
+  - **Root cause**: la función legacy aplicaba la tabla 2023 sin restar TSS, y para tramos altos usaba una constante fija errónea (6,535.85 + 25% del excedente sobre 80,000).
+  - **Fix**: `utils/payroll_constants.py::calculate_isr_monthly` reescrita para implementar la fórmula DGII oficial (Ley 11-92, Art. 296):
+    1. Resta TSS (SFS 3.04% + AFP 2.87%) del gross para obtener la **base imponible**.
+    2. Anualiza la base × 12.
+    3. Aplica los 4 tramos anuales:
+       - 0 — 416,220 → Exento
+       - 416,220 — 624,329 → 15% del excedente
+       - 624,329 — 867,123 → 31,216 + 20% del excedente
+       - > 867,123 → 79,776 + 25% del excedente
+    4. ISR mensual = ISR anual / 12.
+  - **Resultado verificado**: para RD$80,000 mensual → ISR mensual = 7,400.94 ✅ (coincide exactamente con el "Auto" mostrado en el perfil del empleado).
+  - **Período quincenal**: la lógica `_compute_isr` con `period_type` sigue dividiendo ÷ 2 correctamente. Para RD$40,000 quincenal (RD$80,000 mensual) → ISR quincenal = 3,700.47.
+  - **Tests actualizados**: 10 tests de `test_payroll_dr.py` ajustados con los valores oficiales DGII. 76/76 ahora pasan.
+  - **Migración para datos existentes**: el botón "Recalcular Período" en draft refresca todas las entradas con la nueva fórmula. Períodos pagados quedan intactos.
+
 ## Architecture Notes
 - COUNTRY_PROFILES dict (country_config.py) is source of truth
 - `get_company_rates_flat(company_id)` is the ONLY function used inside payroll calc paths

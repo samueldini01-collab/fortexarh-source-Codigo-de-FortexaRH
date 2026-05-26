@@ -64,43 +64,52 @@ class TestISRBrackets:
         assert "Exento" in result["tax_bracket"]
 
     def test_isr_just_above_exempt(self):
-        """RD$34,700 — first bucket inside the 15% bracket."""
+        """RD$34,700 gross monthly — once TSS is deducted the taxable
+        annualized base is below RD$416,220, so the worker remains exempt
+        per the DGII formula (gross × 0.9409 × 12 < 416,220)."""
         result = calculate_isr_monthly(34700)
-        assert result["isr_monthly"] == pytest.approx(2.25, abs=0.05)
-        assert result["tax_bracket"] == "15%"
+        assert result["isr_monthly"] == 0.0
+        assert "Exento" in result["tax_bracket"]
 
     def test_isr_15pct_bracket_50k(self):
-        """RD$50,000 — top of the 15% bracket per the reference table."""
+        """RD$50,000 — taxable = 47,045, annual = 564,540, tramo 15%."""
         result = calculate_isr_monthly(50000)
-        assert result["isr_monthly"] == pytest.approx(2297.25, abs=0.05)
+        # (564,540 - 416,220) × 0.15 / 12 = 1854.00
+        assert result["isr_monthly"] == pytest.approx(1854.00, abs=0.05)
         assert result["tax_bracket"] == "15%"
 
     def test_isr_20pct_bracket_60k(self):
-        """RD$60,000 — middle of the 20% bracket."""
+        """RD$60,000 — taxable = 56,454, annual = 677,448, tramo 20%."""
         result = calculate_isr_monthly(60000)
-        assert result["isr_monthly"] == pytest.approx(3795.85, abs=0.05)
+        # 31,216 + (677,448 - 624,329) × 0.20, /12
+        assert result["isr_monthly"] == pytest.approx(3486.65, abs=0.05)
         assert result["tax_bracket"] == "20%"
 
     def test_isr_25pct_bracket_top_table(self):
-        """RD$80,000 — top of the table reference."""
+        """RD$80,000 — taxable = 75,272, annual = 903,264, tramo 25%.
+        Matches the figure shown in the employee profile auto-calc."""
         result = calculate_isr_monthly(80000)
-        assert result["isr_monthly"] == pytest.approx(6535.85, abs=0.05)
+        assert result["isr_monthly"] == pytest.approx(7400.94, abs=0.05)
 
     def test_isr_25pct_extrapolation_100k(self):
-        """RD$100,000 — formula: 6535.85 + (excess × 0.25)."""
-        expected = 6535.85 + (100000 - 80000) * 0.25
+        """RD$100,000 — tramo 25% applied to annualized excess."""
+        # taxable = 94,090, annual = 1,129,080
+        # 79,776 + (1,129,080 - 867,123) × 0.25, /12
+        expected = (79776 + (1129080 - 867123) * 0.25) / 12
         result = calculate_isr_monthly(100000)
         assert result["isr_monthly"] == pytest.approx(expected, abs=0.05)
         assert result["tax_bracket"] == "25%"
 
     def test_isr_high_salary_500k(self):
-        expected = 6535.85 + (500000 - 80000) * 0.25
+        # taxable = 470,450, annual = 5,645,400
+        expected = (79776 + (5645400 - 867123) * 0.25) / 12
         result = calculate_isr_monthly(500000)
         assert result["isr_monthly"] == pytest.approx(expected, abs=0.05)
 
     def test_isr_interpolation_between_table_points(self):
-        """37,500 is between 35,000 (47.25) and 40,000 (797.25). Linear interp."""
-        expected = 47.25 + (797.25 - 47.25) * ((37500 - 35000) / (40000 - 35000))
+        """37,500 — taxable 35,283.75, annual 423,405, tramo 15%."""
+        # (423,405 - 416,220) × 0.15 / 12
+        expected = (423405 - 416220) * 0.15 / 12
         result = calculate_isr_monthly(37500)
         assert result["isr_monthly"] == pytest.approx(expected, abs=0.05)
 
@@ -109,8 +118,10 @@ class TestISRBrackets:
         assert result["isr_annual"] == pytest.approx(result["isr_monthly"] * 12, abs=0.05)
 
     def test_isr_taxable_base_preserved(self):
+        """taxable_base_monthly is gross MINUS statutory TSS (per DGII)."""
         result = calculate_isr_monthly(75432.10)
-        assert result["taxable_base_monthly"] == 75432.10
+        # 75432.10 × (1 - 0.0304 - 0.0287) = 70,973.86
+        assert result["taxable_base_monthly"] == pytest.approx(70974.06, abs=0.5)
 
     def test_isr_negative_input_safe(self):
         """Negative salary should not crash; it should return 0 ISR."""
@@ -235,7 +246,7 @@ class TestDRPayrollEntryMath:
         e = _compute_employer_contributions(gross)
         assert d["sfs"] == 1520.0
         assert d["afp"] == 1435.0
-        assert d["isr"] == pytest.approx(2297.25, abs=0.05)
+        assert d["isr"] == pytest.approx(1854.00, abs=0.05)  # DGII bracket-based
         assert e["sfs_er"] == 3545.0
         assert e["afp_er"] == 3550.0
         assert e["srl_er"] == 500.0
@@ -246,7 +257,8 @@ class TestDRPayrollEntryMath:
         d = _compute_employee_deductions(gross)
         assert d["sfs"] == 2432.0
         assert d["afp"] == 2296.0
-        assert d["isr"] == pytest.approx(6535.85, abs=0.05)
+        # Per DGII formula: (gross - TSS) × 12 → annual brackets, /12
+        assert d["isr"] == pytest.approx(7400.94, abs=0.05)
 
     def test_total_employer_contributions_sum(self):
         gross = 100000

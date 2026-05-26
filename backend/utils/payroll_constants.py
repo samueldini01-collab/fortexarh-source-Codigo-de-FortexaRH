@@ -118,54 +118,63 @@ class PayrollPaymentRequest(BaseModel):
 
 def calculate_isr_monthly(gross_monthly: float) -> dict:
     """
-    Calculate ISR based on DGII 2023 retention table.
-    Uses linear interpolation for accuracy.
+    Calculate Dominican Republic ISR (Income Tax) monthly withholding.
+
+    Implements the official DGII formula (Ley 11-92 modificada por Ley 253-12,
+    Art. 296) using the **annualized progressive bracket** approach:
+
+        1. Compute statutory TSS (SFS 3.04% + AFP 2.87%) from gross monthly.
+        2. Taxable monthly = gross - SFS - AFP.
+        3. Annualize: taxable × 12.
+        4. Apply the annual bracket table:
+             - 0       — 416,220       → Exento (0%)
+             - 416,220 — 624,329       → 15% del excedente de 416,220
+             - 624,329 — 867,123       → 31,216 + 20% del excedente de 624,329
+             - 867,123 — ∞             → 79,776 + 25% del excedente de 867,123
+        5. Monthly ISR = annual / 12.
+
+    This matches the on-screen "Auto" ISR shown in the Employee profile
+    (`EmployeeFormDialog.calculateISRMonthly`) and the values produced by
+    every DGII retention table for salaried workers.
+
+    Reference threshold: gross monthly of RD$34,685.00 is the practical
+    exemption point (annualized = 416,220, the bracket-1 ceiling).
     """
-    if gross_monthly <= ISR_MONTHLY_EXEMPT:
+    g = float(gross_monthly or 0)
+    if g <= 0:
         return {
-            "taxable_base_monthly": round(gross_monthly, 2),
-            "annual_taxable": round(gross_monthly * 12, 2),
+            "taxable_base_monthly": 0.0,
+            "annual_taxable": 0.0,
             "isr_annual": 0.0,
             "isr_monthly": 0.0,
-            "tax_bracket": "Exento (0%)"
+            "tax_bracket": "Exento (0%)",
         }
-    
-    if gross_monthly <= 50000:
-        isr_monthly = (gross_monthly - ISR_MONTHLY_EXEMPT) * 0.15
-        tax_bracket = "15%"
-    elif gross_monthly <= 80000:
-        table_points = sorted(ISR_TABLE_REFERENCE.keys())
-        lower_salary = max([s for s in table_points if s <= gross_monthly])
-        upper_salary = min([s for s in table_points if s >= gross_monthly])
-        
-        if lower_salary == upper_salary:
-            isr_monthly = ISR_TABLE_REFERENCE[lower_salary]
-        else:
-            lower_isr = ISR_TABLE_REFERENCE[lower_salary]
-            upper_isr = ISR_TABLE_REFERENCE[upper_salary]
-            ratio = (gross_monthly - lower_salary) / (upper_salary - lower_salary)
-            isr_monthly = lower_isr + (upper_isr - lower_isr) * ratio
-        
-        if gross_monthly <= 52027:
-            tax_bracket = "15%"
-        elif gross_monthly <= 72260:
-            tax_bracket = "20%"
-        else:
-            tax_bracket = "25%"
+
+    sfs = g * SFS_EMPLOYEE_RATE
+    afp = g * AFP_EMPLOYEE_RATE
+    taxable_monthly = g - sfs - afp
+    annual_taxable = taxable_monthly * 12
+
+    if annual_taxable <= 416220:
+        isr_annual = 0.0
+        bracket = "Exento (0%)"
+    elif annual_taxable <= 624329:
+        isr_annual = (annual_taxable - 416220) * 0.15
+        bracket = "15%"
+    elif annual_taxable <= 867123:
+        isr_annual = 31216 + (annual_taxable - 624329) * 0.20
+        bracket = "20%"
     else:
-        base_isr = 6535.85
-        excess = gross_monthly - 80000
-        isr_monthly = base_isr + (excess * 0.25)
-        tax_bracket = "25%"
-    
-    isr_monthly = round(max(0, isr_monthly), 2)
-    
+        isr_annual = 79776 + (annual_taxable - 867123) * 0.25
+        bracket = "25%"
+
+    isr_monthly = round(max(0.0, isr_annual / 12), 2)
     return {
-        "taxable_base_monthly": round(gross_monthly, 2),
-        "annual_taxable": round(gross_monthly * 12, 2),
-        "isr_annual": round(isr_monthly * 12, 2),
+        "taxable_base_monthly": round(taxable_monthly, 2),
+        "annual_taxable": round(annual_taxable, 2),
+        "isr_annual": round(isr_annual, 2),
         "isr_monthly": isr_monthly,
-        "tax_bracket": tax_bracket
+        "tax_bracket": bracket,
     }
 
 def generate_id(prefix: str = "id") -> str:
