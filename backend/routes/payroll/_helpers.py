@@ -54,6 +54,22 @@ async def _compute_isr(
     return monthly_result
 
 
+def period_scaling_factor(period_type: str | None) -> float:
+    """Return the factor to convert a monthly amount into the period amount.
+
+    Manual override amounts (SFS / AFP / ISR / additional deductions) are
+    stored on the employee profile as MONTHLY amounts. When applied to a
+    quincenal period they must be halved so the withholding for the
+    period is correct (and the monthly total ends up matching what HR
+    entered).
+
+    - ``"mensual"`` → 1.0
+    - ``"quincenal_*"`` → 0.5
+    - anything else (incl. ``None``) → 1.0 (backwards-compat)
+    """
+    return 0.5 if (period_type or "").startswith("quincenal") else 1.0
+
+
 async def update_period_totals(period_id: str, company_id: str):
     """Update period totals based on entries"""
     entries = await db.payroll_entries.find(

@@ -280,6 +280,12 @@ async def delete_novelty(entry_id: str, novelty_id: str, current_user: dict = De
     
     novelties = entry.get("novelties", [])
     novelties = [n for n in novelties if n.get("novelty_id") != novelty_id]
+
+    # Load period to honor period_type during ISR recompute
+    period = await db.payroll_periods.find_one(
+        {"period_id": entry["period_id"], "company_id": company_id},
+        {"_id": 0, "period_type": 1},
+    )
     
     # Recalculate
     base_salary = entry.get("base_salary", 0)

@@ -531,10 +531,17 @@
   - Tested e2e: tabla en período quincenal muestra Juan Rodríguez con Salario(Quincenal)=47,500 · Mensual=95,000 · Quincenal=47,500 · Diario=3,986.57 · Hora=498.32 · ISR=5,142.93. Backend tests 76/76 ✅.
   - **Nota**: aplica solo a períodos nuevos / entradas editadas. Las entradas existentes mantendrán su ISR legacy hasta que se editen o se ejecute "Calcular" sobre el período.
 - **Botón "Recalcular Período" (Feb 15, 2026)** — enhancement DONE:
-  - `POST /api/payroll/periods/{period_id}/calculate` reescrito para hacer recálculo completo desde cero: reconstruye `gross_salary` desde `base_salary + overtime + bonuses + commissions + other_income + novelties` (income/deduction), aplica SFS/AFP/ISR period-aware, honra `*_manual_override_entry` flags y discount flags del empleado, y refresca contribuciones del empleador. Devuelve `{message, recalculated}`.
-  - Frontend: el botón existente "Calcular" se rebautiza a **"Recalcular Período"** (ES) / "Recalculate Period" (EN) / "Recalculer la période" (FR) / "Recalcular Período" (PT). Estilo cambiado a `bg-blue-600` para destacarlo. Pide confirmación antes de ejecutar y muestra toast con conteo: "6 entradas recalculadas".
-  - Bloqueado en períodos pagados (HTTP 400). Visible solo en estados `open`/`draft`.
-  - Tested: recalc masivo sobre 6 entradas del período Q1 Abril → ISR de Margaret/María/Ana/Juan Carlos pasó de 0 a valores correctos (1,376/2,278/8,267/773 respectivamente, todos calculados sobre el mensual equivalente ÷ 2). Endpoint responde con `recalculated: 6`.
+  - `POST /api/payroll/periods/{period_id}/calculate` reescrito para hacer recálculo completo desde cero: reconstruye `gross_salary` desde `base_salary + overtime + bonuses + commissions + other_income + novelties`, aplica SFS/AFP/ISR period-aware, honra `*_manual_override_entry` flags y discount flags. Devuelve `{message, recalculated}`.
+  - Frontend: botón "Recalcular Período" (ES/EN/FR/PT) destacado en azul, con confirmación + toast con conteo. Disponible también como ícono Calculator en cada tarjeta de la pestaña Periodos para borradores (`data-testid="recalc-period-list-{id}"`).
+  - Bloqueado en períodos pagados (HTTP 400). Tested: recalc sobre 6 entradas → todos los ISR corregidos correctamente.
+- **Fix: Manual overrides del perfil del empleado escalan al período (Feb 15, 2026)** — bug fix DONE:
+  - Bug reportado: empleado con `isr_manual_amount=7,500` (monto MENSUAL en su perfil) aparecía con ISR=7,500 en nómina quincenal, cuando debería ser 7,500/2 = 3,750. Mismo problema con `sfs_manual_amount`, `afp_manual_amount` y `additional_deductions` no porcentuales del perfil.
+  - **Fix**: nuevo helper `period_scaling_factor(period_type)` en `routes/payroll/_helpers.py` (0.5 quincenal, 1.0 mensual). Aplicado donde se LEE del perfil del empleado para crear/actualizar la entrada:
+    - `routes/payroll/periods.py` (`add_employees_to_period`): scale en sfs/afp/isr manual + suma de additional_deductions no-%.
+    - `routes/payroll/entries.py` (`update_payroll_entry`): mismas 3 partidas.
+  - Los overrides almacenados en el `entry` (`*_manual_override_entry` y data inline desde edición de celda) NO se escalan — esos valores ya son del período.
+  - Bug colateral arreglado: `novelties.py:delete_novelty` no cargaba el `period` antes de llamar `_compute_isr(..., period_type=...)`; agregado el fetch.
+  - **Tested**: empleado RD$50k mensual con `isr_manual_amount=7,500` en quincenal_1 → ISR = 3,750 ✅ (antes 7,500 ❌). Helper unit test: scale mensual=1.0, quincenal=0.5. Backend lint ✅.
 
 ## Architecture Notes
 - COUNTRY_PROFILES dict (country_config.py) is source of truth

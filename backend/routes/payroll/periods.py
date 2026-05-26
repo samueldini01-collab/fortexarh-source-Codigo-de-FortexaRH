@@ -37,7 +37,7 @@ from utils.payroll_constants import (
 )
 
 from . import router
-from ._helpers import _compute_isr, update_period_totals
+from ._helpers import _compute_isr, period_scaling_factor, update_period_totals
 
 
 @router.get("/periods")
@@ -206,6 +206,11 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
         elif payroll_type == "OBREROS_NG":
             if period.get("period_type", "").startswith("quincenal"):
                 salary = salary / 2
+
+        # Manual overrides on the employee profile are stored as MONTHLY
+        # amounts. Scale to the period (×0.5 for quincenal) so each period
+        # withholds the correct fraction.
+        scale = period_scaling_factor(period.get("period_type"))
         
         entry_id = generate_id("pe")
         
@@ -277,11 +282,11 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
                 "commissions": 0,
                 "other_income": 0,
                 "gross_salary": salary,
-                "sfs_employee": round(salary * sfs_emp_rate, 2) if emp.get("sfs_discount", True) and not emp.get("sfs_manual_override") else (float(emp.get("sfs_manual_amount", 0)) if emp.get("sfs_manual_override") and emp.get("sfs_discount", True) else 0),
-                "afp_employee": round(salary * afp_emp_rate, 2) if emp.get("afp_discount", True) and not emp.get("afp_manual_override") else (float(emp.get("afp_manual_amount", 0)) if emp.get("afp_manual_override") and emp.get("afp_discount", True) else 0),
+                "sfs_employee": round(salary * sfs_emp_rate, 2) if emp.get("sfs_discount", True) and not emp.get("sfs_manual_override") else (round(float(emp.get("sfs_manual_amount", 0)) * scale, 2) if emp.get("sfs_manual_override") and emp.get("sfs_discount", True) else 0),
+                "afp_employee": round(salary * afp_emp_rate, 2) if emp.get("afp_discount", True) and not emp.get("afp_manual_override") else (round(float(emp.get("afp_manual_amount", 0)) * scale, 2) if emp.get("afp_manual_override") and emp.get("afp_discount", True) else 0),
                 "isr": 0,
                 "additional_deductions": emp.get("additional_deductions", []),
-                "total_additional_deductions": sum(d.get("amount", 0) for d in emp.get("additional_deductions", []) if not d.get("is_percentage")),
+                "total_additional_deductions": sum(d.get("amount", 0) * scale for d in emp.get("additional_deductions", []) if not d.get("is_percentage")),
                 "total_deductions": 0,
                 "net_salary": 0,
                 "sfs_employer": round(salary * sfs_er_rate, 2),
@@ -296,7 +301,7 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
             isr_result = await _compute_isr(company_id, salary, rates, period_type=period.get("period_type"))
             if emp.get("isr_discount", True):
                 if emp.get("isr_manual_override"):
-                    entry["isr"] = round(float(emp.get("isr_manual_amount", 0)), 2)
+                    entry["isr"] = round(float(emp.get("isr_manual_amount", 0)) * scale, 2)
                 else:
                     entry["isr"] = isr_result["isr_monthly"]
             else:

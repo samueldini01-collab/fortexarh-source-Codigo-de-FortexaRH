@@ -37,7 +37,7 @@ from utils.payroll_constants import (
 )
 
 from . import router
-from ._helpers import _compute_isr, update_period_totals
+from ._helpers import _compute_isr, period_scaling_factor, update_period_totals
 
 
 @router.get("/entries/{entry_id}")
@@ -100,11 +100,14 @@ async def update_payroll_entry(entry_id: str, data: PayrollEntryCreate, current_
          "isr_manual_override": 1, "isr_manual_amount": 1}
     ) or {}
 
+    # Manual overrides on the employee profile are MONTHLY → scale to period
+    scale = period_scaling_factor((period or {}).get("period_type"))
+
     # SFS: respect inline override first, then employee override, then calculation
     if data.sfs_override is not None:
         sfs_employee = round(data.sfs_override, 2)
     elif emp.get("sfs_discount", True):
-        sfs_employee = round(float(emp.get("sfs_manual_amount", 0)), 2) if emp.get("sfs_manual_override") else round(gross_salary * rates["sfs_employee_rate"], 2)
+        sfs_employee = round(float(emp.get("sfs_manual_amount", 0)) * scale, 2) if emp.get("sfs_manual_override") else round(gross_salary * rates["sfs_employee_rate"], 2)
     else:
         sfs_employee = 0
 
@@ -112,7 +115,7 @@ async def update_payroll_entry(entry_id: str, data: PayrollEntryCreate, current_
     if data.afp_override is not None:
         afp_employee = round(data.afp_override, 2)
     elif emp.get("afp_discount", True):
-        afp_employee = round(float(emp.get("afp_manual_amount", 0)), 2) if emp.get("afp_manual_override") else round(gross_salary * rates["afp_employee_rate"], 2)
+        afp_employee = round(float(emp.get("afp_manual_amount", 0)) * scale, 2) if emp.get("afp_manual_override") else round(gross_salary * rates["afp_employee_rate"], 2)
     else:
         afp_employee = 0
 
@@ -121,7 +124,7 @@ async def update_payroll_entry(entry_id: str, data: PayrollEntryCreate, current_
     if data.isr_override is not None:
         isr = round(data.isr_override, 2)
     elif emp.get("isr_discount", True):
-        isr = round(float(emp.get("isr_manual_amount", 0)), 2) if emp.get("isr_manual_override") else isr_result["isr_monthly"]
+        isr = round(float(emp.get("isr_manual_amount", 0)) * scale, 2) if emp.get("isr_manual_override") else isr_result["isr_monthly"]
     else:
         isr = 0
     
