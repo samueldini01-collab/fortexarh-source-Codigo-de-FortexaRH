@@ -34,6 +34,12 @@
 - **Bug i18n fix**: `employees.valorManualMensualHelp` faltaba en `/public/locales/*.json` → copiado en 4 idiomas, `TRANSLATION_VERSION 3.7.9`.
 - Tests: 28/28 (13 login_audit + 10 2fa_totp + 5 nuevas pruebas de performance). 100% frontend.
 
+## Feb 2026 — Notification Toggle (Security) + Onboarding Checklist
+- **Notification toggle**: nuevo evento `new_location_login` con categoría `security` (icono ShieldCheck) en el catálogo oficial `NOTIFICATION_EVENTS`. La página `/notifications` lo renderiza automáticamente con checkboxes in_app/email/push. `login_audit` consume `should_notify_user(user_id, "new_location_login", "email")` antes de enviar el correo de nueva ubicación.
+- **Onboarding Checklist**: nuevo módulo `routes/onboarding.py` con `GET /api/onboarding/checklist` (6 pasos: empresa, empleados, nómina, banco, usuarios, 2FA — done computado dinámicamente desde datos reales) + `POST /dismiss` y `/restore`. Frontend `OnboardingChecklist.jsx` montado en Dashboard con barra de progreso, line-through en pasos completos, badges de detalle (5/5 campos, 6 empleado(s), etc.) y CTA por paso. Auto-oculta cuando `all_done` o el usuario lo descarta.
+- i18n: `onboardingChecklist.{title, subtitle, dismiss}` en 4 idiomas. `TRANSLATION_VERSION 3.7.10`.
+- Tests: 6/6 backend + 100% frontend (iter248).
+
 
 ## Implemented (Apr-May 2026)
 - Core: AI Search, ACH Bank, Approval Workflows, Contracts & E-Signature, Bank Config
