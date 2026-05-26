@@ -2,7 +2,7 @@
 Authentication Routes - FortexaRH
 Handles user registration, login, password management, and session management
 """
-from fastapi import APIRouter, HTTPException, Depends, Request, Response
+from fastapi import APIRouter, HTTPException, Depends, Request, Response, BackgroundTasks
 from fastapi.security import HTTPBearer
 from typing import Optional
 from datetime import datetime, timezone, timedelta
@@ -213,11 +213,11 @@ async def check_partner(request: Request):
 
 @router.post("/login")
 @limiter.limit(RATE_LIMIT_LOGIN)
-async def login(request: Request, credentials: UserLogin, response: Response):
+async def login(request: Request, credentials: UserLogin, response: Response, background_tasks: BackgroundTasks):
     user = await db.users.find_one({"email": credentials.email}, {"_id": 0})
     if not user or not verify_password(credentials.password, user.get("password_hash", "")):
-        await log_login_attempt(
-            request, user_id=(user or {}).get("user_id"),
+        log_login_attempt(
+            background_tasks, request, user_id=(user or {}).get("user_id"),
             email=credentials.email, success=False,
             method="password", reason="invalid_credentials",
         )
@@ -236,8 +236,8 @@ async def login(request: Request, credentials: UserLogin, response: Response):
                 {"user_id": user["user_id"]},
                 {"$set": {"temp_2fa_token": temp_token}}
             )
-            await log_login_attempt(
-                request, user_id=user["user_id"], email=user["email"],
+            log_login_attempt(
+                background_tasks, request, user_id=user["user_id"], email=user["email"],
                 success=True, method="password", reason="2fa_required",
             )
             return {
@@ -292,8 +292,8 @@ async def login(request: Request, credentials: UserLogin, response: Response):
                 # Free plan without paid subscription - treat as expired trial
                 trial_info = {"on_trial": True, "trial_expired": True, "days_left": 0}
 
-    await log_login_attempt(
-        request, user_id=user["user_id"], email=user["email"],
+    log_login_attempt(
+        background_tasks, request, user_id=user["user_id"], email=user["email"],
         success=True, method=login_method,
     )
 

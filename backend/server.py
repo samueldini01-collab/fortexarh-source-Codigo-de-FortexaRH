@@ -68,6 +68,7 @@ from routes.liquidation import router as liquidation_router
 from routes.salary_history import router as salary_history_router
 from routes.admin_permissions import router as admin_permissions_router
 from routes.country_config import router as country_config_router, migrate_existing_companies
+from routes.login_audit import setup_login_audit_indexes, purge_old_login_history
 from routes.multi_country_reports import router as multi_country_reports_router
 from routes.brochure_builder import router as brochure_builder_router
 from routes.exchange_rates import router as exchange_rates_router
@@ -225,6 +226,7 @@ async def startup_db_client():
         await create_payroll_view_preset_indexes()
         await seed_system_templates()
         await migrate_existing_companies()
+        await setup_login_audit_indexes()
     except asyncio.TimeoutError:
         logger.warning("Database connection timeout during startup - will retry on first request")
     except Exception as e:
@@ -265,6 +267,15 @@ async def _scheduled_run_abandoned_cart_recovery():
         logger.exception(f"Abandoned-cart recovery cron failed: {exc}")
 
 
+async def _scheduled_purge_login_history():
+    try:
+        deleted = await purge_old_login_history()
+        if deleted:
+            logger.info(f"login_history purge cron: deleted {deleted} old records")
+    except Exception as exc:  # noqa: BLE001
+        logger.exception(f"login_history purge cron failed: {exc}")
+
+
 def _start_fiscal_reminders_scheduler():
     global _fiscal_scheduler
     if _fiscal_scheduler is not None:
@@ -288,6 +299,15 @@ def _start_fiscal_reminders_scheduler():
             replace_existing=True,
             max_instances=1,
             misfire_grace_time=600,
+        )
+        # Login history purge — daily at 03:00 UTC
+        sched.add_job(
+            _scheduled_purge_login_history,
+            CronTrigger(hour=3, minute=0, timezone="UTC"),
+            id="login_history_purge_daily",
+            replace_existing=True,
+            max_instances=1,
+            misfire_grace_time=3600,
         )
         sched.start()
         _fiscal_scheduler = sched

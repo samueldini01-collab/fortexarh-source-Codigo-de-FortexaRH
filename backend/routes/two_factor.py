@@ -3,7 +3,7 @@ Two-Factor Authentication (2FA/TOTP) Routes for FortexaRH
 Supports Google Authenticator, Authy, and any TOTP-compatible app.
 Includes recovery codes for account recovery.
 """
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter, HTTPException, Depends, Request, BackgroundTasks
 from pydantic import BaseModel
 import pyotp
 import qrcode
@@ -190,7 +190,7 @@ async def regenerate_recovery_codes(data: TOTPVerifyRequest, current_user: dict 
 
 
 @router.post("/verify-login")
-async def verify_2fa_login(data: TOTPLoginVerifyRequest, request: Request):
+async def verify_2fa_login(data: TOTPLoginVerifyRequest, request: Request, background_tasks: BackgroundTasks):
     """Verify 2FA code during login. Called after initial login returns requires_2fa=true."""
     from utils.auth import create_jwt_token
 
@@ -199,12 +199,12 @@ async def verify_2fa_login(data: TOTPLoginVerifyRequest, request: Request):
         {"_id": 0}
     )
     if not user:
-        await log_login_attempt(request, user_id=data.user_id, email="", success=False, method="2fa", reason="user_not_found")
+        log_login_attempt(background_tasks, request, user_id=data.user_id, email="", success=False, method="2fa", reason="user_not_found")
         raise HTTPException(status_code=401, detail="Usuario no encontrado")
 
     # Verify the temp token matches
     if user.get("temp_2fa_token") != data.temp_token:
-        await log_login_attempt(request, user_id=user["user_id"], email=user["email"], success=False, method="2fa", reason="invalid_temp_token")
+        log_login_attempt(background_tasks, request, user_id=user["user_id"], email=user["email"], success=False, method="2fa", reason="invalid_temp_token")
         raise HTTPException(status_code=401, detail="Token temporal inválido")
 
     # Verify TOTP code
@@ -214,7 +214,7 @@ async def verify_2fa_login(data: TOTPLoginVerifyRequest, request: Request):
 
     totp = pyotp.TOTP(secret)
     if not totp.verify(data.code, valid_window=1):
-        await log_login_attempt(request, user_id=user["user_id"], email=user["email"], success=False, method="2fa", reason="invalid_code")
+        log_login_attempt(background_tasks, request, user_id=user["user_id"], email=user["email"], success=False, method="2fa", reason="invalid_code")
         raise HTTPException(status_code=401, detail="Código 2FA incorrecto")
 
     # Clear temp token
@@ -231,7 +231,7 @@ async def verify_2fa_login(data: TOTPLoginVerifyRequest, request: Request):
     if data.remember_device:
         trusted = await issue_trusted_device(request, user["user_id"])
 
-    await log_login_attempt(request, user_id=user["user_id"], email=user["email"], success=True, method="2fa")
+    log_login_attempt(background_tasks, request, user_id=user["user_id"], email=user["email"], success=True, method="2fa")
 
     return {
         "token": token,
@@ -250,7 +250,7 @@ async def verify_2fa_login(data: TOTPLoginVerifyRequest, request: Request):
 
 
 @router.post("/verify-recovery")
-async def verify_recovery_code(data: RecoveryLoginRequest, request: Request):
+async def verify_recovery_code(data: RecoveryLoginRequest, request: Request, background_tasks: BackgroundTasks):
     """Verify a recovery code during login (alternative to TOTP)."""
     from utils.auth import create_jwt_token
 
@@ -259,11 +259,11 @@ async def verify_recovery_code(data: RecoveryLoginRequest, request: Request):
         {"_id": 0}
     )
     if not user:
-        await log_login_attempt(request, user_id=data.user_id, email="", success=False, method="recovery", reason="user_not_found")
+        log_login_attempt(background_tasks, request, user_id=data.user_id, email="", success=False, method="recovery", reason="user_not_found")
         raise HTTPException(status_code=401, detail="Usuario no encontrado")
 
     if user.get("temp_2fa_token") != data.temp_token:
-        await log_login_attempt(request, user_id=user["user_id"], email=user["email"], success=False, method="recovery", reason="invalid_temp_token")
+        log_login_attempt(background_tasks, request, user_id=user["user_id"], email=user["email"], success=False, method="recovery", reason="invalid_temp_token")
         raise HTTPException(status_code=401, detail="Token temporal inválido")
 
     # Check recovery code
@@ -273,7 +273,7 @@ async def verify_recovery_code(data: RecoveryLoginRequest, request: Request):
 
     code_hash = hash_code(data.recovery_code)
     if code_hash not in stored_codes:
-        await log_login_attempt(request, user_id=user["user_id"], email=user["email"], success=False, method="recovery", reason="invalid_code")
+        log_login_attempt(background_tasks, request, user_id=user["user_id"], email=user["email"], success=False, method="recovery", reason="invalid_code")
         raise HTTPException(status_code=401, detail="Código de recuperación inválido")
 
     # Remove used code (one-time use)
@@ -292,7 +292,7 @@ async def verify_recovery_code(data: RecoveryLoginRequest, request: Request):
     if data.remember_device:
         trusted = await issue_trusted_device(request, user["user_id"])
 
-    await log_login_attempt(request, user_id=user["user_id"], email=user["email"], success=True, method="recovery")
+    log_login_attempt(background_tasks, request, user_id=user["user_id"], email=user["email"], success=True, method="recovery")
 
     return {
         "token": token,

@@ -1545,7 +1545,8 @@
     "position": "Poste",
     "salary": "Salaire",
     "totalDeduccionesAdicionales": "Total des déductions additionnelles",
-    "montoPorcentaje": "Montant / %"
+    "montoPorcentaje": "Montant / %",
+    "valorManualMensualHelp": "Les valeurs manuelles et déductions additionnelles s'inscrivent en MENSUEL. Pour les paies bimensuelles le système applique automatiquement la moitié par période."
   },
   "payroll": {
     "title": "Paie",

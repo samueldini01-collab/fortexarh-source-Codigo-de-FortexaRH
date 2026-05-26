@@ -1545,7 +1545,8 @@
     "position": "Cargo",
     "salary": "Salario",
     "totalDeduccionesAdicionales": "Total Deducciones Adicionales",
-    "montoPorcentaje": "Monto / %"
+    "montoPorcentaje": "Monto / %",
+    "valorManualMensualHelp": "Los valores manuales y descuentos adicionales se ingresan como montos MENSUALES. En nóminas quincenales el sistema aplica automáticamente la mitad por período."
   },
   "payroll": {
     "title": "Nómina",

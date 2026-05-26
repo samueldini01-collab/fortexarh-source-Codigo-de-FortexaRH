@@ -1,0 +1,47 @@
+{
+  "summary": "Iter247: Validated three FortexaRH changes — (1) i18n fix for employees.valorManualMensualHelp now renders translated text on EmployeeFormDialog → Deductions tab (no raw key visible). (2) Login latency dramatically improved by background-task offload — median 285ms across 3 logins (well under 700ms target). (3) MongoDB indexes for login_history and trusted_devices verified present. New-location email alert helper safely no-ops when RESEND_API_KEY is absent (try/except confirmed). All regression tests pass: test_login_audit.py 13/13 + test_2fa_totp.py 10/10 + new iter247 perf tests 5/5 = 28/28 (100%).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "EmployeeFormDialog → Deductions tab (English locale)", "issues": ["Action button '+ AGREGAR DESCUENTO' is hardcoded in Spanish — should be translated. Unrelated to current bug fix, minor i18n gap."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iter247_login_audit_perf.py",
+    "/app/test_reports/pytest/iter247_regression.xml",
+    "/app/test_reports/pytest/iter247_new.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "login_audit.py: log_login_attempt is now a sync wrapper that schedules _persist_login_attempt via BackgroundTasks — correctly removes the geo-lookup blocking from the auth path. Falls back to asyncio.create_task when BackgroundTasks is None (e.g., legacy call sites) — good defensive design.",
+    "login_audit.py: _send_new_location_alert correctly imports `resend` lazily inside try/except, early-returns when RESEND_API_KEY env var is missing, and the whole function is wrapped in try/except so failures only log warnings — safe in dev/test environments.",
+    "login_audit.py: new-location check uses (city, country_code) tuple and only fires for users who already have prior successful logins — protects against first-login false positives.",
+    "Indexes created idempotently on startup via setup_login_audit_indexes(); APScheduler purge job runs daily at 03:00 UTC.",
+    "i18n: employees.valorManualMensualHelp now present in all 4 locales (en, es, fr, pt); TRANSLATION_VERSION bumped to 3.7.9; locales endpoint serves the new key correctly."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iter247_login_audit_perf.py (new)"
+  ],
+  "success_rate": {
+    "backend": "100% (28/28 tests passed: 13 login_audit + 10 2fa_totp + 5 new iter247)",
+    "frontend": "100% (i18n hint banner renders correctly on Deductions tab)"
+  },
+  "test_credentials": {
+    "admin": "test_refactor@fortexa.com / test123"
+  },
+  "seed_data_creation": "None — used existing employee records and login_history",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iter247 backend regression test runners must export REACT_APP_BACKEND_URL and FORTEXA_RATE_LOGIN=1000/minute before running pytest. The new perf test file /app/backend/tests/test_iter247_login_audit_perf.py needs to be run with cwd=/app/backend so the `routes` module import resolves (it inserts ../../backend into sys.path but cwd matters for pytest rootdir). Verified MongoDB indexes via motor on live DB: login_history has user_id_1_created_at_-1 and created_at_-1; trusted_devices has user_id_1_revoked_1_expires_at_-1 and token_hash_1. Login median latency dropped to ~285ms (was multi-second when geo-lookup blocked). New-location alert path is code-review verified; no live email triggered because the test admin already has prior logins from his existing city, which is the correct behaviour.",
+  "measured_metrics": {
+    "login_latency_ms_median": 285,
+    "login_latency_ms_p_max": 290,
+    "background_task_propagation_delay_s": 2.0
+  },
+  "rca of the issue": "N/A — no bugs found this iteration"
+}

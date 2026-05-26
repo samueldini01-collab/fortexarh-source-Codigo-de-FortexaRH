@@ -2303,7 +2303,8 @@
     "valorManual": "Valor manual",
     "whatsapp": "WhatsApp",
     "whatsappOpcional": "WhatsApp (Opcional)",
-    "montoPorcentaje": "Valor / %"
+    "montoPorcentaje": "Valor / %",
+    "valorManualMensualHelp": "Os valores manuais e descontos adicionais são inseridos como valores MENSAIS. Em folhas quinzenais o sistema aplica automaticamente a metade por período."
   },
   "errors": {
     "forbidden": "Acesso negado",

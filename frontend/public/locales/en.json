@@ -1545,7 +1545,8 @@
     "position": "Position",
     "salary": "Salary",
     "totalDeduccionesAdicionales": "Total Additional Deductions",
-    "montoPorcentaje": "Amount / %"
+    "montoPorcentaje": "Amount / %",
+    "valorManualMensualHelp": "Manual values and additional deductions are entered as MONTHLY amounts. For biweekly payrolls the system automatically applies half per period."
   },
   "payroll": {
     "title": "Payroll",
