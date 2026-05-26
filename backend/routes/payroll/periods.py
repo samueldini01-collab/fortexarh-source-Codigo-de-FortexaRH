@@ -17,6 +17,7 @@ from config import db
 from models.payroll import ApprovalRequest, PaymentRequest, PayrollEntryCreate
 from routes.country_config import calculate_isr_dynamic, get_company_rates_flat
 from routes.fortexaerp import auto_sync_to_erp
+from routes.loans import loan_deduction_for_employee, register_loan_installment
 from services.employee_notifications import create_employee_notification
 from services.journal_entry_service import (
     delete_payroll_journal_entry,
@@ -365,22 +366,11 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
             else:
                 entry["isr"] = 0
             
-            # Get loan deductions
-            loan_deduction = 0
-            active_loans = await db.loans.find({
-                "employee_id": emp["employee_id"],
-                "company_id": company_id,
-                "status": "active",
-                "deduct_from_payroll": True
-            }, {"_id": 0}).to_list(10)
-            
-            for loan in active_loans:
-                monthly_payment = loan.get("monthly_payment", 0)
-                remaining = loan.get("remaining_balance", 0)
-                deduction = min(monthly_payment, remaining)
-                loan_deduction += deduction
-            
-            entry["loan_deduction"] = round(loan_deduction, 2)
+            # Get loan deductions — period-aware (respects schedule_type, halves for quincenal)
+            loan_deduction, _active_loans = await loan_deduction_for_employee(
+                emp["employee_id"], company_id, period.get("period_type")
+            )
+            entry["loan_deduction"] = loan_deduction
             
             entry["total_deductions"] = round(
                 entry["sfs_employee"] + entry["afp_employee"] + entry["isr"]

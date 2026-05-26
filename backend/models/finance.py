@@ -193,11 +193,18 @@ class LoanCreate(BaseModel):
     employee_id: str
     amount: float
     currency: str = "DOP"
-    interest_rate: float = 0
+    interest_rate: float = 0  # annual %
     term_months: int
     start_date: str
     description: Optional[str] = None
     deduct_from_payroll: bool = True
+    # "linear" → cuota = (capital + interés_simple_total) / num_cuotas
+    # "french" → amortización francesa (cuota fija, interés sobre saldo)
+    interest_method: str = "linear"
+    # "all_periods"            → descuenta en cada nómina (quincenal ÷ 2)
+    # "monthly_only"           → solo en nóminas mensuales (saltea quincenales)
+    # "biweekly_second_only"   → solo en la 2da quincena (cuota mensual entera)
+    schedule_type: str = "all_periods"
 
 
 class LoanPaymentCreate(BaseModel):

@@ -232,45 +232,47 @@ async def pay_period(period_id: str, data: PaymentRequest = None, current_user: 
         {"$set": {"status": "paid"}}
     )
     
-    # Update loan balances
+    # Register loan installments via the centralized helper (decrements
+    # remaining_balance, marks payment_schedule installments as paid,
+    # flips status to "paid" when fully settled, appends payments[]).
+    from routes.loans import loan_deduction_for_period, register_loan_installment
     entries = await db.payroll_entries.find(
         {"period_id": period_id, "company_id": company_id, "loan_deduction": {"$gt": 0}},
         {"_id": 0, "employee_id": 1, "loan_deduction": 1}
     ).to_list(1000)
-    
+
+    payment_date = now_iso()[:10]
     for entry in entries:
         employee_id = entry.get("employee_id")
-        deduction = entry.get("loan_deduction", 0)
-        
-        if deduction > 0:
-            active_loans = await db.loans.find(
-                {"employee_id": employee_id, "company_id": company_id, "status": "active", "deduct_from_payroll": True},
-                {"_id": 0, "loan_id": 1, "monthly_payment": 1, "remaining_balance": 1}
-            ).to_list(10)
-            
-            remaining_deduction = deduction
-            for loan in active_loans:
-                if remaining_deduction <= 0:
-                    break
-                    
-                loan_id = loan.get("loan_id")
-                remaining = loan.get("remaining_balance", 0)
-                payment = min(remaining_deduction, loan.get("monthly_payment", 0), remaining)
-                
-                new_remaining = max(0, remaining - payment)
-                new_status = "paid_off" if new_remaining <= 0 else "active"
-                
-                await db.loans.update_one(
-                    {"loan_id": loan_id},
-                    {"$set": {
-                        "remaining_balance": new_remaining,
-                        "status": new_status,
-                        "last_payment_date": now_iso(),
-                        "updated_at": now_iso()
-                    }}
-                )
-                
-                remaining_deduction -= payment
+        deduction = float(entry.get("loan_deduction", 0) or 0)
+        if deduction <= 0:
+            continue
+        active_loans = await db.loans.find(
+            {"employee_id": employee_id, "company_id": company_id, "status": "active",
+             "deduct_from_payroll": True, "remaining_balance": {"$gt": 0}},
+            {"_id": 0}
+        ).to_list(10)
+        # Distribute the entry's loan deduction across loans in the same
+        # proportion they were withheld (using each loan's expected
+        # period-aware installment). This keeps multi-loan employees
+        # working correctly.
+        for loan in active_loans:
+            if deduction <= 0:
+                break
+            expected = loan_deduction_for_period(loan, period.get("period_type"))
+            if expected <= 0:
+                continue
+            payment = min(expected, deduction, float(loan.get("remaining_balance", 0) or 0))
+            if payment <= 0:
+                continue
+            await register_loan_installment(
+                loan_id=loan["loan_id"],
+                company_id=company_id,
+                amount=payment,
+                period_id=period_id,
+                payment_date=payment_date,
+            )
+            deduction -= payment
     
     # Notify employees that payroll is paid
     all_entries = await db.payroll_entries.find(

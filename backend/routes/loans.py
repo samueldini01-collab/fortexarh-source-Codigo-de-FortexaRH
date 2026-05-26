@@ -107,46 +107,47 @@ async def create_loan(data: LoanCreate, request: Request):
     )
     if not employee:
         raise HTTPException(status_code=404, detail="Empleado no encontrado")
-    
-    # Check if employee has existing active loan
-    existing_loan = await db.loans.find_one({
-        "employee_id": data.employee_id,
-        "company_id": company_id,
-        "status": "active"
-    })
-    if existing_loan:
-        raise HTTPException(status_code=400, detail="El empleado ya tiene un préstamo activo")
-    
-    # Calculate monthly payment
-    if data.interest_rate > 0:
-        # With interest (amortization formula)
+
+    # Calculate monthly payment based on interest method
+    if data.interest_rate > 0 and data.interest_method == "french":
+        # French amortization (interest on outstanding balance, cuota fija)
         monthly_rate = data.interest_rate / 100 / 12
         monthly_payment = data.amount * (monthly_rate * (1 + monthly_rate) ** data.term_months) / ((1 + monthly_rate) ** data.term_months - 1)
         total_to_pay = monthly_payment * data.term_months
+    elif data.interest_rate > 0:
+        # Linear simple interest: total = capital + (capital × rate × months/12)
+        # Cuota = total / num_cuotas (flat, no recalculation)
+        total_interest = data.amount * (data.interest_rate / 100) * (data.term_months / 12)
+        total_to_pay = data.amount + total_interest
+        monthly_payment = total_to_pay / data.term_months
     else:
         # No interest (simple division)
         monthly_payment = data.amount / data.term_months
         total_to_pay = data.amount
-    
+
     loan_id = f"loan_{uuid.uuid4().hex[:12]}"
-    
+
     # Generate payment schedule
     schedule = []
     start = datetime.strptime(data.start_date, "%Y-%m-%d")
     remaining = data.amount
-    
+
     for i in range(data.term_months):
         payment_date = start + timedelta(days=30 * (i + 1))
-        
-        if data.interest_rate > 0:
+
+        if data.interest_rate > 0 and data.interest_method == "french":
             interest_payment = remaining * (data.interest_rate / 100 / 12)
             principal_payment = monthly_payment - interest_payment
+        elif data.interest_rate > 0:
+            # Linear: each installment carries equal principal + equal interest
+            interest_payment = (data.amount * (data.interest_rate / 100) * (data.term_months / 12)) / data.term_months
+            principal_payment = data.amount / data.term_months
         else:
             interest_payment = 0
             principal_payment = monthly_payment
-        
+
         remaining = max(0, remaining - principal_payment)
-        
+
         schedule.append({
             "installment_number": i + 1,
             "due_date": payment_date.strftime("%Y-%m-%d"),
@@ -158,7 +159,7 @@ async def create_loan(data: LoanCreate, request: Request):
             "paid_date": None,
             "paid_amount": 0
         })
-    
+
     loan = {
         "loan_id": loan_id,
         "company_id": company_id,
@@ -166,11 +167,13 @@ async def create_loan(data: LoanCreate, request: Request):
         "amount": data.amount,
         "currency": data.currency,
         "interest_rate": data.interest_rate,
+        "interest_method": data.interest_method,
+        "schedule_type": data.schedule_type,
         "term_months": data.term_months,
         "monthly_payment": round(monthly_payment, 2),
         "total_to_pay": round(total_to_pay, 2),
         "total_paid": 0,
-        "remaining_balance": data.amount,
+        "remaining_balance": round(total_to_pay, 2),
         "start_date": data.start_date,
         "description": data.description,
         "deduct_from_payroll": data.deduct_from_payroll,
@@ -181,15 +184,58 @@ async def create_loan(data: LoanCreate, request: Request):
         "created_at": datetime.now(timezone.utc).isoformat(),
         "updated_at": datetime.now(timezone.utc).isoformat()
     }
-    
+
     await db.loans.insert_one(loan)
-    
+
     return {
         "loan_id": loan_id,
         "monthly_payment": round(monthly_payment, 2),
         "total_to_pay": round(total_to_pay, 2),
         "message": "Préstamo creado exitosamente"
     }
+
+
+# ===================== STATUS TRANSITIONS =====================
+
+
+async def _set_loan_status(loan_id: str, company_id: str, new_status: str, expected_from: list[str]):
+    loan = await db.loans.find_one(
+        {"loan_id": loan_id, "company_id": company_id},
+        {"_id": 0}
+    )
+    if not loan:
+        raise HTTPException(status_code=404, detail="Préstamo no encontrado")
+    if loan.get("status") not in expected_from:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Transición inválida: estado actual '{loan.get('status')}', esperado {expected_from}"
+        )
+    await db.loans.update_one(
+        {"loan_id": loan_id, "company_id": company_id},
+        {"$set": {"status": new_status, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    return {"loan_id": loan_id, "status": new_status, "message": f"Préstamo {new_status}"}
+
+
+@router.post("/{loan_id}/pause")
+async def pause_loan(loan_id: str, request: Request):
+    """Pause an active loan — no automatic deductions until resumed."""
+    current_user = await get_user_from_request(request)
+    return await _set_loan_status(loan_id, current_user.get("company_id"), "paused", ["active"])
+
+
+@router.post("/{loan_id}/resume")
+async def resume_loan(loan_id: str, request: Request):
+    """Resume a paused loan."""
+    current_user = await get_user_from_request(request)
+    return await _set_loan_status(loan_id, current_user.get("company_id"), "active", ["paused"])
+
+
+@router.post("/{loan_id}/cancel")
+async def cancel_loan(loan_id: str, request: Request):
+    """Cancel a loan (forfeit remaining balance)."""
+    current_user = await get_user_from_request(request)
+    return await _set_loan_status(loan_id, current_user.get("company_id"), "cancelled", ["active", "paused"])
 
 
 @router.get("/{loan_id}")
@@ -308,6 +354,109 @@ async def delete_loan(loan_id: str, request: Request):
     await db.loans.delete_one({"loan_id": loan_id, "company_id": company_id})
     
     return {"message": "Préstamo eliminado"}
+
+
+# ===================== PAYROLL AUTO-DEDUCTION HELPERS =====================
+
+
+def loan_deduction_for_period(loan: dict, period_type: str | None) -> float:
+    """Return the deduction amount this single payroll period should withhold
+    from the given active loan, taking into account:
+      * ``schedule_type`` configured on the loan
+      * ``period_type`` (mensual / quincenal_1 / quincenal_2)
+      * Cap at ``remaining_balance`` so we never over-collect
+    """
+    if loan.get("status") != "active" or not loan.get("deduct_from_payroll", True):
+        return 0.0
+    monthly = float(loan.get("monthly_payment", 0) or 0)
+    remaining = float(loan.get("remaining_balance", 0) or 0)
+    if monthly <= 0 or remaining <= 0:
+        return 0.0
+
+    pt = (period_type or "mensual")
+    sched = loan.get("schedule_type", "all_periods")
+    is_quincenal = pt.startswith("quincenal")
+
+    if sched == "monthly_only":
+        # Only deduct on mensual periods
+        amt = monthly if not is_quincenal else 0.0
+    elif sched == "biweekly_second_only":
+        # Only on quincenal_2; nothing on quincenal_1 or mensual
+        amt = monthly if pt == "quincenal_2" else 0.0
+    else:
+        # all_periods: split evenly for quincenal, full for mensual
+        amt = monthly / 2 if is_quincenal else monthly
+
+    return round(min(amt, remaining), 2)
+
+
+async def loan_deduction_for_employee(employee_id: str, company_id: str, period_type: str | None) -> tuple[float, list[dict]]:
+    """Sum the period's loan deduction across ALL active loans for the employee.
+    Returns ``(total_deduction, active_loans)``.
+    """
+    active_loans = await db.loans.find(
+        {"employee_id": employee_id, "company_id": company_id, "status": "active",
+         "deduct_from_payroll": True, "remaining_balance": {"$gt": 0}},
+        {"_id": 0}
+    ).to_list(50)
+    total = sum(loan_deduction_for_period(l, period_type) for l in active_loans)
+    return round(total, 2), active_loans
+
+
+async def register_loan_installment(loan_id: str, company_id: str, amount: float, period_id: str, payment_date: str) -> dict:
+    """Register a payroll-driven installment payment on a loan.
+
+    Decrements ``remaining_balance``, marks the next pending installment
+    as paid in ``payment_schedule``, and auto-flips status to ``paid``
+    when balance reaches 0.
+
+    Idempotency note: callers should avoid double-calling this for the
+    same (loan_id, period_id). The payroll ``pay_period`` flow only runs
+    once per period when transitioning to paid status.
+    """
+    loan = await db.loans.find_one({"loan_id": loan_id, "company_id": company_id}, {"_id": 0})
+    if not loan:
+        return {"ok": False, "error": "loan_not_found"}
+    if loan.get("status") != "active" or amount <= 0:
+        return {"ok": False, "error": "loan_not_active_or_zero_amount"}
+
+    new_total_paid = float(loan.get("total_paid", 0) or 0) + amount
+    new_remaining = max(0.0, float(loan.get("remaining_balance", 0) or 0) - amount)
+
+    schedule = loan.get("payment_schedule") or []
+    for inst in schedule:
+        if inst.get("status") == "pending":
+            inst["status"] = "paid"
+            inst["paid_date"] = payment_date
+            inst["paid_amount"] = round(amount, 2)
+            inst["period_id"] = period_id
+            break
+
+    payment = {
+        "payment_id": f"pay_{uuid.uuid4().hex[:8]}",
+        "amount": round(amount, 2),
+        "payment_date": payment_date,
+        "payment_type": "payroll",
+        "period_id": period_id,
+        "notes": f"Auto-deducción nómina {period_id}",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+    new_status = "paid" if new_remaining <= 0.01 else "active"
+    await db.loans.update_one(
+        {"loan_id": loan_id, "company_id": company_id},
+        {
+            "$set": {
+                "total_paid": round(new_total_paid, 2),
+                "remaining_balance": round(new_remaining, 2),
+                "status": new_status,
+                "payment_schedule": schedule,
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+            },
+            "$push": {"payments": payment},
+        }
+    )
+    return {"ok": True, "remaining_balance": new_remaining, "status": new_status}
 
 
 # ===================== EMPLOYEE-SPECIFIC LOAN ENDPOINT =====================

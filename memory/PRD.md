@@ -585,6 +585,45 @@
   - **Tests actualizados**: 10 tests de `test_payroll_dr.py` ajustados con los valores oficiales DGII. 76/76 ahora pasan.
   - **Migración para datos existentes**: el botón "Recalcular Período" en draft refresca todas las entradas con la nueva fórmula. Períodos pagados quedan intactos.
 
+- **P0 Sistema formal de Préstamos Automáticos completo (Feb 26, 2026)** — feature DONE:
+  - **Modelo extendido** (`models/finance.py::LoanCreate`):
+    - `interest_method`: "linear" (lineal con interés simple) o "french" (amortización francesa). Por defecto linear.
+    - `schedule_type`: "all_periods" (default, quincenal ÷ 2), "monthly_only" (saltea quincenales), "biweekly_second_only" (solo 2da quincena).
+  - **Cálculo de cuota** (`routes/loans.py::create_loan`):
+    - Sin interés: `cuota = capital / num_cuotas`
+    - Lineal: `total = capital + capital × tasa × meses/12; cuota = total / num_cuotas` (cuotas planas, intereses iguales)
+    - Francesa: amortización estándar con interés sobre saldo decreciente
+    - Genera schedule completo con # cuota, fecha, capital, interés, saldo restante
+  - **Removida la restricción** "un solo préstamo activo" — empleados pueden tener múltiples préstamos simultáneos.
+  - **Nuevos endpoints**:
+    - `POST /api/loans/{id}/pause` — pausa un préstamo activo (no descuenta hasta resume)
+    - `POST /api/loans/{id}/resume` — reactiva un préstamo pausado
+    - `POST /api/loans/{id}/cancel` — cancela (deja `cancelled`, no descuenta más, no reactivable)
+    - Endpoints existentes (GET list, GET detail, POST create, POST payment, DELETE) mantenidos.
+  - **Auto-deducción en nómina** (`routes/loans.py::loan_deduction_for_employee`):
+    - Helper que suma todas las cuotas de los préstamos activos del empleado según `schedule_type` + `period_type`.
+    - Integrado en `payroll/periods.py::add_employees_to_period` → `entry.loan_deduction` se llena automáticamente.
+    - Quincenal: cuota mensual ÷ 2 (si schedule=all_periods); 0 si schedule=monthly_only; cuota entera si schedule=biweekly_second_only Y period=quincenal_2.
+  - **Registro de pago al cobrar nómina** (`payroll/payment.py::pay_period`):
+    - Al transicionar a `paid`, itera entries con `loan_deduction>0`, distribuye el monto entre los préstamos del empleado proporcionalmente a la cuota esperada de cada uno.
+    - Usa `register_loan_installment` que: decrementa `remaining_balance`, marca el próximo `installment` como `paid`, anexa el `payment_id` a `loan.payments[]`, y auto-cambia status a `paid` cuando saldo llega a 0.
+  - **Frontend**:
+    - Nuevo componente `LoansTab.jsx`: lista de préstamos del empleado con estado, capital, cuota, pagado, saldo. Acciones Ver/Pausar/Reanudar/Cancelar.
+    - Modal `LoanFormDialog`: formulario para nuevo préstamo con preview en vivo de la cuota, interés total y total a pagar (recalcula al cambiar capital/tasa/método/plazo).
+    - Modal `LoanDetailDialog`: tabla completa de cuotas con # cuota, fecha, monto, capital, interés, saldo, estado (Pagada/Pendiente).
+    - Integrado como nuevo tab "Préstamos" en `EmployeeFormDialog.jsx` (visible solo cuando el empleado ya está guardado).
+  - **Tested e2e**:
+    - Creación de préstamo RD$12,000 / 12 cuotas / sin interés → cuota mensual = 1,000 ✅
+    - Auto-deducción en período quincenal: loan_deduction = 500 (1000/2) ✅
+    - Múltiples préstamos por empleado: ambos visibles en el tab ✅
+    - Pause/Resume/Cancel: transiciones funcionan ✅
+    - Backend tests 71/71 ✅, lint ✅.
+  - **Pendiente para v2** (NO incluido en este MVP, según user):
+    - Pago anticipado / abono extra a capital
+    - PDF del contrato del préstamo
+    - Aprobación admin antes de activar
+    - Tope automático de % del salario neto
+
 ## Architecture Notes
 - COUNTRY_PROFILES dict (country_config.py) is source of truth
 - `get_company_rates_flat(company_id)` is the ONLY function used inside payroll calc paths

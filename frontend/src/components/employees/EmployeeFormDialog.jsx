@@ -14,6 +14,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import LoansTab from "./LoansTab";
 import { 
   User, FileText, CreditCard, Camera, Percent, Phone, X, Lock, Calculator, Pencil, Check, Info
 } from "lucide-react";
@@ -185,7 +186,7 @@ export function EmployeeFormDialog({
               </div>
 
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid grid-cols-6 w-full mb-6">
+                <TabsList className={`grid ${editingEmployee ? 'grid-cols-8' : 'grid-cols-7'} w-full mb-6`}>
                   <TabsTrigger value="datos" className="text-xs" data-testid="tab-datos">
                     <User className="w-3 h-3 mr-1" />
                     {t('employees.tabs.mainData')}
@@ -201,6 +202,10 @@ export function EmployeeFormDialog({
                   <TabsTrigger value="descuentos" className="text-xs" data-testid="tab-descuentos">
                     <Percent className="w-3 h-3 mr-1" />
                     {t('employees.tabs.deductions')}
+                  </TabsTrigger>
+                  <TabsTrigger value="prestamos" className="text-xs" data-testid="tab-prestamos">
+                    <Calculator className="w-3 h-3 mr-1" />
+                    Préstamos
                   </TabsTrigger>
                   <TabsTrigger value="documentos" className="text-xs" data-testid="tab-documentos">
                     <FileText className="w-3 h-3 mr-1" />
@@ -1006,6 +1011,13 @@ export function EmployeeFormDialog({
                 </TabsContent>
 
                 {/* Tab 4: Documentos */}
+                <TabsContent value="prestamos" className="space-y-4">
+                  <LoansTab
+                    employeeId={editingEmployee?.employee_id || formData.employee_id}
+                    employeeName={`${formData.first_name || ''} ${formData.last_name || ''}`.trim() || 'Empleado'}
+                  />
+                </TabsContent>
+
                 <TabsContent value="documentos" className="space-y-4">
                   <div className="text-center py-12 bg-slate-50 rounded-lg border-2 border-dashed border-slate-300">
                     <FileText className="w-12 h-12 mx-auto mb-4 text-slate-400" />
