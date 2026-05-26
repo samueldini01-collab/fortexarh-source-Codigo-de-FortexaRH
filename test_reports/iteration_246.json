@@ -1,0 +1,30 @@
+{
+  "summary": "i18n fix validated. The 'security.*' namespace and 'auth.twoFactor.rememberDevice' key now resolve to translated labels in the running app. Logged in as test_refactor@fortexa.com, navigated to /settings → Mi cuenta, located the security-activity-card and confirmed all labels render in Spanish: 'Actividad y dispositivos', 'Revisa tus inicios de sesión recientes...', 'Dispositivos confiables', 'Historial de inicios', table headers ESTADO/FECHA/MÉTODO/DISPOSITIVO/UBICACIÓN/IP, badges 'Éxito'/'Fallido', method 'Contraseña' and 'Código de recuperación'. Direct fetch of /locales/es.json?v=3.7.8 also confirms 'auth.twoFactor.rememberDevice' returns 'Recordar este dispositivo por 30 días'. Verified the same security top-level key exists in all four public locale files (en, es, fr, pt). TRANSLATION_VERSION bump to 3.7.8 in /app/frontend/src/i18n/index.js is live. 2FA login screen not exercised (default user has no 2FA enabled) — verified the key resolves via fetch which is sufficient per request.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_245.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Locale drift risk persists: /app/frontend/src/i18n/locales/*.json and /app/frontend/public/locales/*.json are still two separate sources of truth. Recommend adding a build step (or git pre-commit hook) that copies src → public so future translation edits cannot silently miss the runtime bundle."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "n/a (skipped per request, previously 100% in iteration 245)",
+    "frontend": "100% (all i18n keys render as translated text)"
+  },
+  "test_credentials": "Admin: test_refactor@fortexa.com / test123 (used; logged in successfully)",
+  "seed_data_creation": "None this iteration. Used pre-existing login_history rows from iteration 245 (50 visible rows, both Éxito and Fallido entries, password and recovery code methods).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "i18n bug from iter245 is fixed. All security.* keys and auth.twoFactor.rememberDevice render correctly in Spanish public locale. Other locales (en/fr/pt) were not visually tested but the keys are present in their public JSON files at the same paths. If user reports issues in another language, hard-reload (?v=3.7.8 cache-busts) and verify the key exists in /app/frontend/public/locales/{lang}.json.",
+  "rca_of_the_issue": "Previous root cause (iter245): src locales were edited but runtime loaded from public locales. Mitigation applied in this iteration: keys mirrored into all four public locale files and TRANSLATION_VERSION bumped from 3.7.7 → 3.7.8 to force browser refetch. Validated by (1) direct fetch of /locales/es.json?v=3.7.8 returning the security object and rememberDevice key with translated values, and (2) DOM inspection of the rendered security-activity-card showing zero raw keys."
+}

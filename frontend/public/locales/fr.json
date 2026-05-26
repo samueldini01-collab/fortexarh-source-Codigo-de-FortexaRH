@@ -816,7 +816,8 @@
         "download": "Télécharger",
         "copied": "Codes copiés dans le presse-papiers",
         "downloadNote": "Chaque code ne peut être utilisé qu'une seule fois. Gardez-les en sécurité."
-      }
+      },
+      "rememberDevice": "Se souvenir de cet appareil pendant 30 jours"
     }
   },
   "dashboard": {
@@ -6612,5 +6613,38 @@
   },
   "navigation": {
     "brochureBuilder": "Brochure Builder"
+  },
+  "security": {
+    "title": "Activité et appareils",
+    "subtitle": "Consultez vos connexions récentes et gérez les appareils de confiance.",
+    "devicesTab": "Appareils de confiance",
+    "historyTab": "Historique de connexion",
+    "noDevices": "Aucun appareil de confiance. Cochez \"Se souvenir de cet appareil\" lors du prochain 2FA.",
+    "noHistory": "Aucune activité enregistrée pour le moment.",
+    "lastUsed": "Dernière utilisation",
+    "expires": "Expire",
+    "revoke": "Révoquer",
+    "revokeAll": "Tout révoquer",
+    "confirmRevoke": "Révoquer cet appareil ? Le 2FA sera demandé la prochaine fois.",
+    "confirmRevokeAll": "Révoquer TOUS les appareils de confiance ? Chaque connexion exigera le 2FA.",
+    "deviceRevoked": "Appareil révoqué",
+    "allDevicesRevoked": "Tous les appareils ont été révoqués",
+    "revokeError": "Impossible de révoquer l'appareil",
+    "loadError": "Impossible de charger l'activité",
+    "status": "État",
+    "date": "Date",
+    "method": {
+      "password": "Mot de passe",
+      "twoFactor": "2FA",
+      "recovery": "Code de récupération",
+      "trustedDevice": "Appareil de confiance"
+    },
+    "device": "Appareil",
+    "location": "Localisation",
+    "ip": "IP",
+    "success": "Succès",
+    "failed": "Échoué",
+    "historyNote": "Affichage des 50 dernières tentatives (réussies et échouées).",
+    "methodCol": "Méthode"
   }
 }

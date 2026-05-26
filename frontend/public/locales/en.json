@@ -816,7 +816,8 @@
         "download": "Download",
         "copied": "Codes copied to clipboard",
         "downloadNote": "Each code can only be used once. Keep them safe."
-      }
+      },
+      "rememberDevice": "Remember this device for 30 days"
     }
   },
   "dashboard": {
@@ -6612,5 +6613,38 @@
   },
   "navigation": {
     "brochureBuilder": "Brochure Builder"
+  },
+  "security": {
+    "title": "Activity & devices",
+    "subtitle": "Review your recent sign-ins and manage devices you trust.",
+    "devicesTab": "Trusted devices",
+    "historyTab": "Sign-in history",
+    "noDevices": "No trusted devices yet. Tick \"Remember this device\" on your next 2FA prompt.",
+    "noHistory": "No activity recorded yet.",
+    "lastUsed": "Last used",
+    "expires": "Expires",
+    "revoke": "Revoke",
+    "revokeAll": "Revoke all",
+    "confirmRevoke": "Revoke this device? 2FA will be required there next time.",
+    "confirmRevokeAll": "Revoke ALL trusted devices? Every next sign-in will require 2FA.",
+    "deviceRevoked": "Device revoked",
+    "allDevicesRevoked": "All devices revoked",
+    "revokeError": "Could not revoke the device",
+    "loadError": "Could not load activity",
+    "status": "Status",
+    "date": "Date",
+    "method": {
+      "password": "Password",
+      "twoFactor": "2FA",
+      "recovery": "Recovery code",
+      "trustedDevice": "Trusted device"
+    },
+    "device": "Device",
+    "location": "Location",
+    "ip": "IP",
+    "success": "Success",
+    "failed": "Failed",
+    "historyNote": "Showing the last 50 attempts (successful and failed).",
+    "methodCol": "Method"
   }
 }

@@ -591,7 +591,8 @@
       "subtitle": "Insira o código do seu aplicativo de autenticação",
       "title": "Verificação em duas etapas",
       "verify": "Verificar",
-      "verifyLabel": "Código de 6 dígitos"
+      "verifyLabel": "Código de 6 dígitos",
+      "rememberDevice": "Lembrar este dispositivo por 30 dias"
     }
   },
   "brochure": {
@@ -6612,5 +6613,38 @@
   },
   "navigation": {
     "brochureBuilder": "Brochure Builder"
+  },
+  "security": {
+    "title": "Atividade e dispositivos",
+    "subtitle": "Veja seus últimos acessos e gerencie os dispositivos confiáveis.",
+    "devicesTab": "Dispositivos confiáveis",
+    "historyTab": "Histórico de acessos",
+    "noDevices": "Nenhum dispositivo confiável. Marque \"Lembrar este dispositivo\" no próximo 2FA.",
+    "noHistory": "Nenhuma atividade registrada ainda.",
+    "lastUsed": "Último uso",
+    "expires": "Expira",
+    "revoke": "Revogar",
+    "revokeAll": "Revogar todos",
+    "confirmRevoke": "Revogar este dispositivo? O 2FA será exigido na próxima vez.",
+    "confirmRevokeAll": "Revogar TODOS os dispositivos confiáveis? O 2FA será pedido em todos os próximos acessos.",
+    "deviceRevoked": "Dispositivo revogado",
+    "allDevicesRevoked": "Todos os dispositivos revogados",
+    "revokeError": "Não foi possível revogar o dispositivo",
+    "loadError": "Não foi possível carregar a atividade",
+    "status": "Status",
+    "date": "Data",
+    "method": {
+      "password": "Senha",
+      "twoFactor": "2FA",
+      "recovery": "Código de recuperação",
+      "trustedDevice": "Dispositivo confiável"
+    },
+    "device": "Dispositivo",
+    "location": "Localização",
+    "ip": "IP",
+    "success": "Sucesso",
+    "failed": "Falhou",
+    "historyNote": "Mostrando as últimas 50 tentativas (com sucesso e falhas).",
+    "methodCol": "Método"
   }
 }
