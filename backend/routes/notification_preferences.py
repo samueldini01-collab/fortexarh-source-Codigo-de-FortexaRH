@@ -173,6 +173,14 @@ NOTIFICATION_EVENTS = {
         "label_fr": "Changement d'abonnement",
         "default": {"in_app": True, "email": True, "push": False},
         "roles": ["admin"]
+    },
+    "new_location_login": {
+        "category": "security",
+        "label": "Inicio de sesión desde nueva ubicación",
+        "label_en": "Sign-in from a new location",
+        "label_fr": "Connexion depuis un nouvel emplacement",
+        "default": {"in_app": True, "email": True, "push": False},
+        "roles": ["all"]
     }
 }
 
@@ -184,7 +192,8 @@ NOTIFICATION_CATEGORIES = {
     "employees": {"label": "Empleados", "label_en": "Employees", "label_fr": "Employés", "icon": "Users"},
     "attendance": {"label": "Asistencia", "label_en": "Attendance", "label_fr": "Présence", "icon": "Clock"},
     "partner": {"label": "Partner", "label_en": "Partner", "label_fr": "Partenaire", "icon": "Briefcase"},
-    "system": {"label": "Sistema", "label_en": "System", "label_fr": "Système", "icon": "Settings"}
+    "system": {"label": "Sistema", "label_en": "System", "label_fr": "Système", "icon": "Settings"},
+    "security": {"label": "Seguridad", "label_en": "Security", "label_fr": "Sécurité", "icon": "ShieldCheck"}
 }
 
 

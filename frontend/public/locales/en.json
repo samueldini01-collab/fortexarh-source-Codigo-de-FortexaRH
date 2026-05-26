@@ -6647,5 +6647,10 @@
     "failed": "Failed",
     "historyNote": "Showing the last 50 attempts (successful and failed).",
     "methodCol": "Method"
+  },
+  "onboardingChecklist": {
+    "title": "Getting started",
+    "subtitle": "{{completed}} of {{total}} steps completed — finish setup to unlock the full power of FortexaRH.",
+    "dismiss": "Hide checklist"
   }
 }

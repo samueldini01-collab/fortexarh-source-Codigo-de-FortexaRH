@@ -6647,5 +6647,10 @@
     "failed": "Falhou",
     "historyNote": "Mostrando as últimas 50 tentativas (com sucesso e falhas).",
     "methodCol": "Método"
+  },
+  "onboardingChecklist": {
+    "title": "Primeiros passos",
+    "subtitle": "{{completed}} de {{total}} passos concluídos — termine a configuração para extrair o máximo.",
+    "dismiss": "Ocultar checklist"
   }
 }

@@ -69,6 +69,7 @@ from routes.salary_history import router as salary_history_router
 from routes.admin_permissions import router as admin_permissions_router
 from routes.country_config import router as country_config_router, migrate_existing_companies
 from routes.login_audit import setup_login_audit_indexes, purge_old_login_history
+from routes.onboarding import router as onboarding_router
 from routes.multi_country_reports import router as multi_country_reports_router
 from routes.brochure_builder import router as brochure_builder_router
 from routes.exchange_rates import router as exchange_rates_router
@@ -185,6 +186,7 @@ for r in [
     templates_router, generated_docs_router, currency_router, stats_router,
     two_factor_router,
     login_audit_router,
+    onboarding_router,
     notification_preferences_router,
     super_admin_router,
     fortexaerp_router,

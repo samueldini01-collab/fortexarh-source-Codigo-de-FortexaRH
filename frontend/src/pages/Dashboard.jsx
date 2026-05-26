@@ -28,6 +28,7 @@ import {
 import { toast } from "sonner";
 import { DrillDownModal, DrillDownCard, EmployeeListDrillDown } from "@/components/DrillDown";
 import { HrAlertsPanel } from "@/components/HrAlertsPanel";
+import OnboardingChecklist from "@/components/OnboardingChecklist";
 
 export default function Dashboard() {
   const { t, i18n } = useTranslation();
@@ -336,6 +337,9 @@ export default function Dashboard() {
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">{new Date().toLocaleDateString(getDateLocale(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
           </div>
         </div>
+
+        {/* Onboarding Checklist (auto-hides when all done or dismissed) */}
+        <OnboardingChecklist />
         
         {/* Pro Plan Promotional Banner - For Basic and Trial users */}
         {shouldShowUpgradeBanner && showProBanner && (

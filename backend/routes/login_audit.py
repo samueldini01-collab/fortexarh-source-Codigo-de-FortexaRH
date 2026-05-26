@@ -231,12 +231,16 @@ async def _persist_login_attempt(
         if should_alert:
             user = await db.users.find_one(
                 {"user_id": user_id},
-                {"_id": 0, "email": 1, "name": 1, "notification_preferences": 1},
+                {"_id": 0, "email": 1, "name": 1},
             )
             if user:
-                prefs = (user.get("notification_preferences") or {}).get("security", {})
-                # default: enabled
-                if prefs.get("new_location_alert", True):
+                # Honor the user's notification preferences (defaults to enabled).
+                try:
+                    from routes.notification_preferences import should_notify_user
+                    allow = await should_notify_user(user_id, "new_location_login", "email")
+                except Exception:
+                    allow = True
+                if allow:
                     await _send_new_location_alert(
                         user["email"], user.get("name") or "",
                         geo, ua_parts, ip, now_dt.isoformat(),
