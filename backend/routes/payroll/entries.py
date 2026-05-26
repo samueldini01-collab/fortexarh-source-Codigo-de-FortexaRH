@@ -214,6 +214,198 @@ async def delete_payroll_entry(entry_id: str, current_user: dict = Depends(get_c
     return {"message": "Entrada eliminada"}
 
 
+@router.post("/entries/{entry_id}/reset-from-profile")
+async def reset_entry_from_profile(entry_id: str, current_user: dict = Depends(get_current_user)):
+    """Re-sync a payroll entry's profile-driven novelties with the employee's
+    CURRENT profile state.
+
+    Useful when HR updates the employee's ``additional_deductions`` (or the
+    SFS/AFP/ISR manual overrides) after a draft period is already populated,
+    and wants to refresh the entry without deleting and re-adding the
+    employee.
+
+    Behavior:
+      - Removes any deduction novelty with ``source == "employee_profile"``.
+      - Re-emits new novelties from the employee's current
+        ``additional_deductions`` (mapped to codes, scaled by period type).
+      - Re-applies SFS/AFP/ISR from the profile (manual override or auto).
+      - Recomputes ``total_deduction_novelties`` and the entry totals.
+      - Does NOT touch user-created novelties (commissions, bonuses,
+        manual deductions added during payroll editing).
+      - Blocked for ``paid``/``approved`` periods.
+    """
+    from uuid import uuid4
+
+    company_id = current_user.get("company_id")
+    entry = await db.payroll_entries.find_one(
+        {"entry_id": entry_id, "company_id": company_id},
+        {"_id": 0},
+    )
+    if not entry:
+        raise HTTPException(status_code=404, detail="Entrada no encontrada")
+
+    period = await db.payroll_periods.find_one(
+        {"period_id": entry["period_id"], "company_id": company_id},
+        {"_id": 0},
+    )
+    if not period:
+        raise HTTPException(status_code=404, detail="Período no encontrado")
+    if period.get("status") in {"paid", "approved"}:
+        raise HTTPException(status_code=400, detail="No se puede resetear una nómina aprobada/pagada")
+
+    emp = await db.employees.find_one(
+        {"employee_id": entry.get("employee_id"), "company_id": company_id},
+        {"_id": 0},
+    )
+    if not emp:
+        raise HTTPException(status_code=404, detail="Empleado no encontrado")
+
+    rates = await get_company_rates_flat(company_id)
+    period_type = period.get("period_type")
+    scale = period_scaling_factor(period_type)
+    base_salary = entry.get("base_salary", 0) or 0
+
+    DED_TYPE_TO_CODE = {
+        "Préstamo Empresa": "PREST", "Préstamo Cooperativa": "COOP", "Cooperativa": "COOP",
+        "Seguro Adicional": "SEG", "Pensión Alimenticia": "PENS", "Anticipo": "ANTIC",
+        "Embargo": "EMB", "Tardanzas": "TARD", "Ausencias": "AUS",
+        "Otro": "OTROSD", "Otros": "OTROSD",
+    }
+    CODE_TO_FULL = {
+        "ANTIC": "Anticipo", "COOP": "Cooperativa", "SEG": "Seguro Adicional",
+        "PENS": "Pensión Alimenticia", "EMB": "Embargo", "TARD": "Tardanzas",
+        "AUS": "Ausencias", "OTROSD": "Otros Descuentos", "PREST": "Préstamo Empresa",
+    }
+
+    # 1) Strip existing profile-sourced novelties; keep user-created ones
+    kept = [
+        n for n in (entry.get("novelties") or [])
+        if n.get("source") != "employee_profile"
+    ]
+
+    # 2) Re-emit deduction novelties from current profile state
+    now_str = now_iso()
+    fresh_profile_novelties = []
+    for d in emp.get("additional_deductions", []) or []:
+        code = DED_TYPE_TO_CODE.get(d.get("type"), "OTROSD")
+        raw_amt = float(d.get("amount", 0) or 0)
+        if d.get("is_percentage"):
+            scaled_amt = raw_amt
+        else:
+            scaled_amt = round(raw_amt * scale, 2)
+        fresh_profile_novelties.append({
+            "novelty_id": str(uuid4())[:12],
+            "novelty_type": "deduction",
+            "code": code,
+            "name": CODE_TO_FULL.get(code, d.get("type") or code),
+            "description": d.get("description", "") or d.get("type", ""),
+            "amount": scaled_amt,
+            "is_percentage": bool(d.get("is_percentage")),
+            "created_at": now_str,
+            "created_by": current_user.get("user_id"),
+            "source": "employee_profile",
+        })
+
+    new_novelties = kept + fresh_profile_novelties
+
+    # 3) Recompute totals for income/deduction novelties
+    inc_total = 0.0
+    ded_total = 0.0
+    for n in new_novelties:
+        amt = n.get("amount", 0) or 0
+        value = round(base_salary * amt / 100, 2) if n.get("is_percentage") else amt
+        if n.get("novelty_type") == "income":
+            inc_total += value
+        else:
+            ded_total += value
+
+    # 4) Refresh SFS / AFP / ISR honoring profile overrides + manual override flags on entry
+    overtime_total = (
+        (entry.get("overtime_day_amount", 0) or 0)
+        + (entry.get("overtime_night_amount", 0) or 0)
+        + (entry.get("overtime_weekend_amount", 0) or 0)
+        + (entry.get("overtime_holiday_amount", 0) or 0)
+    )
+    gross_salary = round(
+        base_salary + overtime_total
+        + (entry.get("bonuses", 0) or 0)
+        + (entry.get("commissions", 0) or 0)
+        + (entry.get("other_income", 0) or 0)
+        + inc_total,
+        2,
+    )
+
+    if entry.get("sfs_manual_override_entry"):
+        sfs_employee = round(entry.get("sfs_employee", 0) or 0, 2)
+    elif emp.get("sfs_discount", True):
+        sfs_employee = (
+            round(float(emp.get("sfs_manual_amount", 0)) * scale, 2)
+            if emp.get("sfs_manual_override")
+            else round(gross_salary * rates["sfs_employee_rate"], 2)
+        )
+    else:
+        sfs_employee = 0
+
+    if entry.get("afp_manual_override_entry"):
+        afp_employee = round(entry.get("afp_employee", 0) or 0, 2)
+    elif emp.get("afp_discount", True):
+        afp_employee = (
+            round(float(emp.get("afp_manual_amount", 0)) * scale, 2)
+            if emp.get("afp_manual_override")
+            else round(gross_salary * rates["afp_employee_rate"], 2)
+        )
+    else:
+        afp_employee = 0
+
+    if entry.get("isr_manual_override_entry"):
+        isr = round(entry.get("isr", 0) or 0, 2)
+    elif emp.get("isr_discount", True):
+        if emp.get("isr_manual_override"):
+            isr = round(float(emp.get("isr_manual_amount", 0)) * scale, 2)
+        else:
+            isr_result = await _compute_isr(company_id, gross_salary, rates, period_type=period_type)
+            isr = isr_result["isr_monthly"]
+    else:
+        isr = 0
+
+    loan_deduction = entry.get("loan_deduction", 0) or 0
+    total_additional = 0.0  # legacy field, always 0 after migration
+
+    total_deductions = round(
+        sfs_employee + afp_employee + isr + total_additional + ded_total + loan_deduction,
+        2,
+    )
+    net_salary = round(gross_salary - total_deductions, 2)
+
+    await db.payroll_entries.update_one(
+        {"entry_id": entry_id, "company_id": company_id},
+        {"$set": {
+            "novelties": new_novelties,
+            "total_income_novelties": round(inc_total, 2),
+            "total_deduction_novelties": round(ded_total, 2),
+            "additional_deductions": [],
+            "total_additional_deductions": 0.0,
+            "gross_salary": gross_salary,
+            "sfs_employee": sfs_employee,
+            "afp_employee": afp_employee,
+            "isr": isr,
+            "total_deductions": total_deductions,
+            "net_salary": net_salary,
+            "updated_at": now_iso(),
+        }},
+    )
+    await update_period_totals(entry["period_id"], company_id)
+
+    return {
+        "message": "Entrada re-sincronizada con el perfil del empleado",
+        "novelties_added": len(fresh_profile_novelties),
+        "novelties_kept": len(kept),
+    }
+
+
+
+
+
 # ===================== NOVELTY ENDPOINTS =====================
 
 

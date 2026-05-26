@@ -789,6 +789,24 @@ export default function PayrollPage() {
     }
   };
 
+  const handleResetEntryFromProfile = async (entry) => {
+    if (!confirm(t('payrollV2.resetFromProfileConfirm', { defaultValue: `¿Re-sincronizar las deducciones de ${entry.employee_name} con su perfil actual? Esto reemplazará las novedades creadas desde el perfil pero conservará las novedades manuales agregadas en la nómina.` }))) return;
+    try {
+      const res = await axios.post(
+        `${API}/payroll/entries/${entry.entry_id}/reset-from-profile`,
+        {},
+        { headers: getAuthHeaders(), withCredentials: true }
+      );
+      const added = res?.data?.novelties_added ?? 0;
+      const kept = res?.data?.novelties_kept ?? 0;
+      toast.success(t('payrollV2.resetFromProfileDone', { added, kept, defaultValue: `Sincronizado: ${added} desde perfil, ${kept} preservadas` }));
+      fetchPeriodDetails(entry.period_id);
+      fetchPeriods();
+    } catch (error) {
+      toast.error(error?.response?.data?.detail || t('common.error'));
+    }
+  };
+
   const handleDeleteEntry = async (entryId, periodId) => {
     if (!confirm("¿Eliminar esta entrada?")) return;
     try {
@@ -1902,6 +1920,9 @@ export default function PayrollPage() {
                                       <>
                                         <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => openNoveltyDialog(entry)} title="Agregar novedad">
                                           <PlusCircle className="w-3 h-3 text-blue-500" />
+                                        </Button>
+                                        <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => handleResetEntryFromProfile(entry)} title={t('payrollV2.resetFromProfileTitle', { defaultValue: 'Sincronizar con el perfil del empleado' })} data-testid={`reset-from-profile-${entry.entry_id}`}>
+                                          <RefreshCw className="w-3 h-3 text-amber-600" />
                                         </Button>
                                         <Button size="icon" variant="ghost" className="h-6 w-6 text-red-500" onClick={() => handleDeleteEntry(entry.entry_id, selectedPeriod.period_id)}>
                                           <Trash2 className="w-3 h-3" />
