@@ -94,6 +94,7 @@ PyJWT==2.10.1
 pymongo==4.5.0
 pyotp==2.9.0
 pyparsing==3.3.1
+pypdf==6.11.0
 pypdfium2==5.7.0
 pytest==9.0.2
 python-dateutil==2.9.0.post0
@@ -133,8 +134,11 @@ typing-inspection==0.4.2
 typing_extensions==4.15.0
 tzdata==2025.3
 tzlocal==5.3.1
+ua-parser==1.0.2
+ua-parser-builtins==202605
 uritemplate==4.2.0
 urllib3==2.6.2
+user-agents==2.2.0
 uvicorn==0.25.0
 watchfiles==1.1.1
 websockets==15.0.1

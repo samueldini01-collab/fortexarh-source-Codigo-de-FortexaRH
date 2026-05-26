@@ -14,6 +14,7 @@ class UserCreate(BaseModel):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+    device_token: Optional[str] = None
 
 
 class PasswordResetRequest(BaseModel):

@@ -1,0 +1,47 @@
+{
+  "summary": "Validated new login-audit & trusted-device endpoints (13/13 backend tests pass), Google buttons confirmed removed from /login and /register, and SecurityActivity component renders with real data on Settings → My Account. BUG FOUND: new i18n keys live in /app/frontend/src/i18n/locales/*.json but runtime loads /app/frontend/public/locales/*.json, so the UI shows raw keys (security.title, SECURITY.STATUS, security.success, security.method.password, etc.) instead of translated labels. Underlying data (rows, IP, city, browser, dates) renders correctly — only labels are broken.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "SecurityActivity + TwoFactorLogin",
+        "issue": "Raw i18n keys displayed in UI ('security.title', 'security.subtitle', 'security.devicesTab', 'security.historyTab', 'SECURITY.STATUS', 'SECURITY.DATE', 'SECURITY.METHODCOL', 'security.success', 'security.failed', 'security.method.password'). New keys were added to /app/frontend/src/i18n/locales/{en,es,fr,pt}.json but i18next loads from /app/frontend/public/locales/{lng}.json (loadPath: '/locales/{{lng}}.json') which does NOT contain the new 'security.*' namespace nor 'auth.twoFactor.rememberDevice'. Public en.json has 6616 lines vs src en.json 6650 lines.",
+        "selector": "[data-testid='security-activity-card']",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_login_audit.py",
+    "/app/test_reports/pytest/iter245_login_audit.xml"
+  ],
+  "action_items": [
+    "Add the new 'security.*' object AND 'auth.twoFactor.rememberDevice' key to all four public locale files: /app/frontend/public/locales/en.json, es.json, fr.json, pt.json (mirror what is in /app/frontend/src/i18n/locales/*.json). Increment TRANSLATION_VERSION in /app/frontend/src/i18n/index.js so browsers refetch.",
+    "OR alternatively: add a build step / sync script that copies /src/i18n/locales/*.json → /public/locales/*.json on each build to prevent this class of drift."
+  ],
+  "critical_code_review_comments": [
+    "i18n drift: two parallel locale sources (/src/i18n/locales vs /public/locales). The HttpBackend loads from public, but devs are editing src. Add a sync script or eliminate one source of truth.",
+    "/api/auth/login-history hard-codes limit clamp 1..200 — fine, but query param is not declared via Query() for OpenAPI docs.",
+    "verify_trusted_device mutates last_used_at synchronously inside the auth path; consider firing it as a background task to keep login latency low under load.",
+    "_geolocate calls ipwho.is on EVERY login (sync inside request). Even with 2s timeout, this adds latency. Consider an in-memory or Redis cache keyed by IP for short TTL.",
+    "login_audit doc stores raw user-agent (truncated to 500). OK, but no TTL index on login_history — collection will grow unbounded. Add an index { user_id:1, created_at:-1 } and consider a TTL on created_at (e.g., 365 days)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_login_audit.py (new)"
+  ],
+  "success_rate": {
+    "backend": "100% (13/13)",
+    "frontend": "75% — Google removal OK, endpoints wired OK, but UI labels untranslated"
+  },
+  "test_credentials": "Admin: test_refactor@fortexa.com / test123 (used as documented in /app/memory/test_credentials.md). Login works, returns token without 2FA challenge.",
+  "seed_data_creation": "Multiple login_history rows created by the backend test suite (both success and failure) — used as live data for frontend validation. Trusted-devices collection is empty (no 2FA flow exercised, per request).",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend endpoints are solid. Only remaining work is the i18n key bug in the four public locale files. After fix, re-run the frontend playwright snippet against /settings → My Account tab and confirm 'Activity & devices', 'Trusted devices', 'Sign-in history', 'Success'/'Failed', 'Password' all render as words. Also verify the 'Remember this device' checkbox label in TwoFactorLogin (requires enabling 2FA first — skip unless explicitly asked).",
+  "rca_of_the_issue": "Root cause of UI key leak: i18n HttpBackend in /app/frontend/src/i18n/index.js fetches translations from '/locales/{{lng}}.json' → resolves to /app/frontend/public/locales/{lng}.json. The session's edits to /app/frontend/src/i18n/locales/*.json never reach the running app. Verified by line-count diff (6650 vs 6616) and JSON.parse'ing both files. Reproduction: open /settings as test_refactor@fortexa.com, navigate to My Account, observe raw keys in the Activity & devices card. Mitigation: copy the security.* and auth.twoFactor.rememberDevice keys from src to public locales (4 files), or unify the locale source."
+}

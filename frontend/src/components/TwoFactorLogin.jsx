@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ShieldCheck, ArrowLeft, KeyRound } from "lucide-react";
 import axios from "axios";
 import { API } from "@/App";
@@ -14,6 +15,7 @@ export default function TwoFactorLogin({ userId, tempToken, onVerified, onBack }
   const [error, setError] = useState("");
   const [useRecovery, setUseRecovery] = useState(false);
   const [recoveryCode, setRecoveryCode] = useState("");
+  const [rememberDevice, setRememberDevice] = useState(false);
   const inputRefs = useRef([]);
 
   useEffect(() => {
@@ -67,7 +69,7 @@ export default function TwoFactorLogin({ userId, tempToken, onVerified, onBack }
     setLoading(true);
     setError("");
     try {
-      await onVerified(userId, tempToken, codeStr);
+      await onVerified(userId, tempToken, codeStr, rememberDevice);
     } catch (err) {
       setError(err?.response?.data?.detail || t("auth.twoFactor.invalidCode"));
       setCode(["", "", "", "", "", ""]);
@@ -90,11 +92,15 @@ export default function TwoFactorLogin({ userId, tempToken, onVerified, onBack }
       const response = await axios.post(`${API}/auth/2fa/verify-recovery`, {
         user_id: userId,
         temp_token: tempToken,
-        recovery_code: trimmed
+        recovery_code: trimmed,
+        remember_device: rememberDevice,
       });
-      const { token, user: userData } = response.data;
+      const { token, user: userData, trusted_device: trusted } = response.data;
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
+      if (trusted?.device_token) {
+        localStorage.setItem("fortexa_device_token", trusted.device_token);
+      }
       window.location.href = userData?.is_partner ? "/partner-dashboard" : "/dashboard";
     } catch (err) {
       setError(err?.response?.data?.detail || t("auth.twoFactor.recovery.invalidCode"));
@@ -161,6 +167,15 @@ export default function TwoFactorLogin({ userId, tempToken, onVerified, onBack }
                   <p className="text-sm text-red-600 text-center" data-testid="2fa-error">{error}</p>
                 )}
 
+                <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer select-none">
+                  <Checkbox
+                    checked={rememberDevice}
+                    onCheckedChange={(v) => setRememberDevice(!!v)}
+                    data-testid="remember-device-recovery"
+                  />
+                  {t("auth.twoFactor.rememberDevice")}
+                </label>
+
                 <Button
                   type="submit"
                   className="w-full bg-emerald-600 hover:bg-emerald-700"
@@ -215,6 +230,15 @@ export default function TwoFactorLogin({ userId, tempToken, onVerified, onBack }
                 {error && (
                   <p className="text-sm text-red-600 text-center" data-testid="2fa-error">{error}</p>
                 )}
+
+                <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer select-none">
+                  <Checkbox
+                    checked={rememberDevice}
+                    onCheckedChange={(v) => setRememberDevice(!!v)}
+                    data-testid="remember-device-totp"
+                  />
+                  {t("auth.twoFactor.rememberDevice")}
+                </label>
 
                 <Button
                   type="submit"

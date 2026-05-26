@@ -774,6 +774,7 @@
       "invalidCode": "Código incorrecto. Intenta de nuevo.",
       "verify": "Verificar",
       "backToLogin": "Volver al login",
+      "rememberDevice": "Recordar este dispositivo por 30 días",
       "settingsTitle": "Autenticación de dos factores (2FA)",
       "settingsDesc": "Agrega una capa extra de seguridad a tu cuenta usando Google Authenticator o Authy",
       "statusEnabled": "Protección activa con autenticación de dos factores",
@@ -6613,5 +6614,38 @@
   },
   "navigation": {
     "brochureBuilder": "Brochure Builder"
+  },
+  "security": {
+    "title": "Actividad y dispositivos",
+    "subtitle": "Revisa tus inicios de sesión recientes y gestiona los dispositivos en los que confías.",
+    "devicesTab": "Dispositivos confiables",
+    "historyTab": "Historial de inicios",
+    "noDevices": "No tienes dispositivos confiables. Activa \"Recordar este dispositivo\" en tu próximo 2FA.",
+    "noHistory": "Aún no hay actividad registrada.",
+    "lastUsed": "Último uso",
+    "expires": "Expira",
+    "revoke": "Revocar",
+    "revokeAll": "Revocar todos",
+    "confirmRevoke": "¿Revocar este dispositivo? La próxima vez se pedirá 2FA en él.",
+    "confirmRevokeAll": "¿Revocar TODOS los dispositivos confiables? Se pedirá 2FA en todos los próximos accesos.",
+    "deviceRevoked": "Dispositivo revocado",
+    "allDevicesRevoked": "Todos los dispositivos revocados",
+    "revokeError": "No se pudo revocar el dispositivo",
+    "loadError": "No se pudo cargar la actividad",
+    "status": "Estado",
+    "date": "Fecha",
+    "method": {
+      "password": "Contraseña",
+      "twoFactor": "2FA",
+      "recovery": "Código de recuperación",
+      "trustedDevice": "Dispositivo confiable"
+    },
+    "device": "Dispositivo",
+    "location": "Ubicación",
+    "ip": "IP",
+    "success": "Éxito",
+    "failed": "Fallido",
+    "historyNote": "Mostrando los últimos 50 intentos (éxitos y fallidos).",
+    "methodCol": "Método"
   }
 }

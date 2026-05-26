@@ -57,7 +57,13 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API}/auth/login`, { email, password });
+      // Send saved device_token to skip 2FA if it's still valid
+      const deviceToken = localStorage.getItem("fortexa_device_token") || undefined;
+      const response = await axios.post(
+        `${API}/auth/login`,
+        { email, password, device_token: deviceToken },
+        deviceToken ? { headers: { "X-Device-Token": deviceToken } } : {}
+      );
       
       // Check if 2FA is required
       if (response.data.requires_2fa) {
@@ -69,12 +75,16 @@ export default function LoginPage() {
         return;
       }
 
-      // Normal login (no 2FA)
+      // Normal login (no 2FA, or trusted device)
       const { token, user: userData } = response.data;
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
       window.location.href = userData?.is_partner ? "/partner-dashboard" : "/dashboard";
     } catch (err) {
+      // If the saved device_token was rejected (e.g. revoked), clear it
+      if (err.response?.status === 401) {
+        localStorage.removeItem("fortexa_device_token");
+      }
       const detail = err.response?.data?.detail;
       if (detail === "Invalid credentials") {
         setError(t('auth.login.invalidCredentials'));
@@ -86,15 +96,19 @@ export default function LoginPage() {
     }
   };
 
-  const handle2FAVerified = async (userId, tempToken, code) => {
+  const handle2FAVerified = async (userId, tempToken, code, rememberDevice = false) => {
     const response = await axios.post(`${API}/auth/2fa/verify-login`, {
       user_id: userId,
       temp_token: tempToken,
-      code
+      code,
+      remember_device: rememberDevice,
     });
-    const { token, user: userData } = response.data;
+    const { token, user: userData, trusted_device: trusted } = response.data;
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(userData));
+    if (trusted?.device_token) {
+      localStorage.setItem("fortexa_device_token", trusted.device_token);
+    }
     toast.success(t('common.welcome') + "!");
     window.location.href = userData?.is_partner ? "/partner-dashboard" : "/dashboard";
   };

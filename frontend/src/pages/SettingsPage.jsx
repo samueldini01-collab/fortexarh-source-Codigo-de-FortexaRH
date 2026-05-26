@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Building2, CreditCard, User, Check, Crown, Lock, Eye, EyeOff, AlertCircle, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import TwoFactorSetup from "@/components/TwoFactorSetup";
+import SecurityActivity from "@/components/SecurityActivity";
 
 export default function SettingsPage() {
   const { t } = useTranslation();
@@ -425,6 +426,9 @@ export default function SettingsPage() {
                 <TwoFactorSetup />
               </CardContent>
             </Card>
+
+            {/* Security Activity: Trusted Devices & Login History */}
+            <SecurityActivity />
           </TabsContent>
         </Tabs>
       </div>

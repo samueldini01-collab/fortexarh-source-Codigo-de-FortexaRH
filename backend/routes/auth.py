@@ -20,6 +20,7 @@ from slowapi.util import get_remote_address
 from config import db, SENDER_EMAIL, SUBSCRIPTION_PLANS
 from utils.auth import hash_password, verify_password, create_jwt_token, get_current_user
 from email_service import send_welcome_email
+from routes.login_audit import log_login_attempt, verify_trusted_device
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 security = HTTPBearer(auto_error=False)
@@ -215,20 +216,37 @@ async def check_partner(request: Request):
 async def login(request: Request, credentials: UserLogin, response: Response):
     user = await db.users.find_one({"email": credentials.email}, {"_id": 0})
     if not user or not verify_password(credentials.password, user.get("password_hash", "")):
+        await log_login_attempt(
+            request, user_id=(user or {}).get("user_id"),
+            email=credentials.email, success=False,
+            method="password", reason="invalid_credentials",
+        )
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     # Check if 2FA is enabled
     if user.get("totp_enabled"):
-        temp_token = uuid.uuid4().hex
-        await db.users.update_one(
-            {"user_id": user["user_id"]},
-            {"$set": {"temp_2fa_token": temp_token}}
-        )
-        return {
-            "requires_2fa": True,
-            "user_id": user["user_id"],
-            "temp_token": temp_token
-        }
+        # Allow skipping 2FA if device is trusted ("remember this device")
+        device_token = request.headers.get("x-device-token") or credentials.device_token
+        if device_token and await verify_trusted_device(user["user_id"], device_token):
+            # Skip 2FA, continue as a regular login below (method=trusted_device)
+            login_method = "trusted_device"
+        else:
+            temp_token = uuid.uuid4().hex
+            await db.users.update_one(
+                {"user_id": user["user_id"]},
+                {"$set": {"temp_2fa_token": temp_token}}
+            )
+            await log_login_attempt(
+                request, user_id=user["user_id"], email=user["email"],
+                success=True, method="password", reason="2fa_required",
+            )
+            return {
+                "requires_2fa": True,
+                "user_id": user["user_id"],
+                "temp_token": temp_token
+            }
+    else:
+        login_method = "password"
     
     token = create_jwt_token(user["user_id"], user["email"])
     
@@ -273,6 +291,11 @@ async def login(request: Request, credentials: UserLogin, response: Response):
             elif plan in ("free",) and sub_status not in ("active", "trialing"):
                 # Free plan without paid subscription - treat as expired trial
                 trial_info = {"on_trial": True, "trial_expired": True, "days_left": 0}
+
+    await log_login_attempt(
+        request, user_id=user["user_id"], email=user["email"],
+        success=True, method=login_method,
+    )
 
     return {
         "token": token,
