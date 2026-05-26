@@ -16,7 +16,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoansTab from "./LoansTab";
 import { 
-  User, FileText, CreditCard, Camera, Percent, Phone, X, Lock, Calculator, Pencil, Check, Info
+  User, FileText, CreditCard, Camera, Percent, Phone, X, Lock, Calculator, Pencil, Check, Info, Maximize2, Minimize2
 } from "lucide-react";
 
 const SFS_RATE = 0.0304;
@@ -159,13 +159,36 @@ export function EmployeeFormDialog({
     });
   };
 
+  // Maximize toggle for the dialog (full-screen vs default wider sizing)
+  const [isMaximized, setIsMaximized] = useState(false);
+
   return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogContent
+            className={
+              isMaximized
+                ? "w-screen h-screen max-w-none max-h-screen rounded-none p-6 overflow-y-auto"
+                : "max-w-[1280px] w-[95vw] max-h-[92vh] overflow-y-auto"
+            }
+            data-testid="employee-form-dialog"
+          >
             <DialogHeader>
-              <DialogTitle className="text-xl">
-                {editingEmployee ? t('employees.editEmployee') : t('employees.createEmployee')}
-              </DialogTitle>
+              <div className="flex items-center justify-between pr-8">
+                <DialogTitle className="text-xl">
+                  {editingEmployee ? t('employees.editEmployee') : t('employees.createEmployee')}
+                </DialogTitle>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => setIsMaximized(v => !v)}
+                  title={isMaximized ? t('common.minimize', { defaultValue: 'Restaurar' }) : t('common.maximize', { defaultValue: 'Pantalla completa' })}
+                  data-testid="toggle-maximize-employee-form"
+                >
+                  {isMaximized ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                </Button>
+              </div>
             </DialogHeader>
 
             <form onSubmit={onSubmit}>
@@ -186,38 +209,38 @@ export function EmployeeFormDialog({
               </div>
 
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className={`grid ${editingEmployee ? 'grid-cols-8' : 'grid-cols-7'} w-full mb-6`}>
-                  <TabsTrigger value="datos" className="text-xs" data-testid="tab-datos">
-                    <User className="w-3 h-3 mr-1" />
-                    {t('employees.tabs.mainData')}
+                <TabsList className={`grid ${editingEmployee ? 'grid-cols-8' : 'grid-cols-7'} w-full mb-6 gap-1`}>
+                  <TabsTrigger value="datos" className="text-xs px-2 flex items-center gap-1 whitespace-nowrap" data-testid="tab-datos">
+                    <User className="w-3 h-3 shrink-0" />
+                    <span className="truncate">{t('employees.tabs.mainData')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="contrato" className="text-xs" data-testid="tab-contrato">
-                    <FileText className="w-3 h-3 mr-1" />
-                    {t('employees.tabs.contract')}
+                  <TabsTrigger value="contrato" className="text-xs px-2 flex items-center gap-1 whitespace-nowrap" data-testid="tab-contrato">
+                    <FileText className="w-3 h-3 shrink-0" />
+                    <span className="truncate">{t('employees.tabs.contract')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="pago" className="text-xs" data-testid="tab-pago">
-                    <CreditCard className="w-3 h-3 mr-1" />
-                    {t('employees.tabs.paymentMethod')}
+                  <TabsTrigger value="pago" className="text-xs px-2 flex items-center gap-1 whitespace-nowrap" data-testid="tab-pago">
+                    <CreditCard className="w-3 h-3 shrink-0" />
+                    <span className="truncate">{t('employees.tabs.paymentMethod')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="descuentos" className="text-xs" data-testid="tab-descuentos">
-                    <Percent className="w-3 h-3 mr-1" />
-                    {t('employees.tabs.deductions')}
+                  <TabsTrigger value="descuentos" className="text-xs px-2 flex items-center gap-1 whitespace-nowrap" data-testid="tab-descuentos">
+                    <Percent className="w-3 h-3 shrink-0" />
+                    <span className="truncate">{t('employees.tabs.deductions')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="prestamos" className="text-xs" data-testid="tab-prestamos">
-                    <Calculator className="w-3 h-3 mr-1" />
-                    Préstamos
+                  <TabsTrigger value="prestamos" className="text-xs px-2 flex items-center gap-1 whitespace-nowrap" data-testid="tab-prestamos">
+                    <Calculator className="w-3 h-3 shrink-0" />
+                    <span className="truncate">Préstamos</span>
                   </TabsTrigger>
-                  <TabsTrigger value="documentos" className="text-xs" data-testid="tab-documentos">
-                    <FileText className="w-3 h-3 mr-1" />
-                    {t('employees.tabs.documents')}
+                  <TabsTrigger value="documentos" className="text-xs px-2 flex items-center gap-1 whitespace-nowrap" data-testid="tab-documentos">
+                    <FileText className="w-3 h-3 shrink-0" />
+                    <span className="truncate">{t('employees.tabs.documents')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="emergencia" className="text-xs" data-testid="tab-emergencia">
-                    <Phone className="w-3 h-3 mr-1" />
-                    {t('employees.tabs.emergencyContact')}
+                  <TabsTrigger value="emergencia" className="text-xs px-2 flex items-center gap-1 whitespace-nowrap" data-testid="tab-emergencia">
+                    <Phone className="w-3 h-3 shrink-0" />
+                    <span className="truncate">{t('employees.tabs.emergencyContact')}</span>
                   </TabsTrigger>
                   {editingEmployee && (
-                    <TabsTrigger value="historial" className="text-xs" data-testid="tab-historial">
-                      {t('employees.tabs.salaryHistory')}
+                    <TabsTrigger value="historial" className="text-xs px-2 whitespace-nowrap" data-testid="tab-historial">
+                      <span className="truncate">{t('employees.tabs.salaryHistory')}</span>
                     </TabsTrigger>
                   )}
                 </TabsList>
