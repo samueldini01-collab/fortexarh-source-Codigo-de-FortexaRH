@@ -624,6 +624,24 @@
     - Aprobación admin antes de activar
     - Tope automático de % del salario neto
 
+- **Mejoras al módulo `/loans` + Tab Préstamos slim (Feb 26, 2026)** — enhancement DONE:
+  - **5 KPIs en dashboard `/loans`**: Activos · Total Prestado · Total Cobrado · Pendiente (con sub-info "Cuota mensual") · **Empleados con préstamos** (nueva, con sub-info "X préstamos en total"). Las cards de Activos/Pagados siguen siendo clickeables para filtrar.
+  - **Backend `GET /loans/summary`** extendido: ahora incluye `total_paused_loans`, `total_cancelled_loans`, `total_loans`, `employees_with_loans` y `status_counts`. Cálculo corregido: `total_pending` ahora suma `remaining_balance` real (no `loaned - paid`).
+  - **Filtros pill mejorados**: Todos · Activos · Pausados · Pagados · Cancelados (5 estados) con badge de conteo por estado.
+  - **Search bar**: filtra por nombre del empleado, cédula o descripción (cliente).
+  - **Filtro por empleado vía URL**: `?employee_id=emp_xxx` aplica filtro server-side + muestra badge "Empleado filtrado: Nombre" con `×` para quitarlo.
+  - **Export XLSX nativo** (`GET /loans/export/xlsx`): genera archivo styled con `openpyxl`:
+    - Fila 1: título con fondo slate-800
+    - Fila 2: subtítulo con filtros aplicados (italic)
+    - Fila 3: banda KPI con totales (préstamos, activos, empleados, total prestado, cobrado, pendiente)
+    - Fila 5: header columna con bordes
+    - Datos: 15 columnas (ID, Empleado, Cédula, Descripción, Capital, Tasa, Método, Calendario, Plazo, Cuota, Total a Pagar, Pagado, Saldo, Estado, Inicio) con formato moneda
+    - Fila final TOTALES bold
+    - `freeze_panes` C6, anchos de columna heurísticos
+  - **Frontend `exportToExcel`**: descarga blob, lee filename de Content-Disposition. Mismos filtros aplicados al export (status + employee_id).
+  - **Tab Préstamos en perfil del empleado** refactorizado: ahora es una vista SLIM (resumen + cards mini-KPI) que vincula al módulo `/loans?employee_id={id}`. Sin CRUD interno: botón "Gestionar en módulo Préstamos" + cards clickeables que navegan a la página filtrada.
+  - **Tested e2e**: 2 préstamos creados → dashboard muestra "Activos: 2 · Pendiente: 39,600 · Empleados con préstamos: 1". Export XLSX descarga con 2 filas + totales. Backend tests 13/13 ✅, lint frontend ✅.
+
 ## Architecture Notes
 - COUNTRY_PROFILES dict (country_config.py) is source of truth
 - `get_company_rates_flat(company_id)` is the ONLY function used inside payroll calc paths

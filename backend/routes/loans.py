@@ -59,39 +59,235 @@ async def get_loans(
 
 @router.get("/summary")
 async def get_loans_summary(request: Request):
-    """Get loans summary for dashboard"""
+    """Get loans summary for dashboard.
+
+    Returns full KPIs across all statuses (active/paid/paused/cancelled)
+    plus the active aggregate amounts used by the ``/loans`` dashboard.
+    """
     current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
-    
-    # Get all active loans
-    active_loans = await db.loans.find(
-        {"company_id": company_id, "status": "active"},
-        {"_id": 0}
-    ).to_list(500)
-    
-    total_loaned = sum(loan.get("amount", 0) for loan in active_loans)
-    total_paid = sum(loan.get("total_paid", 0) for loan in active_loans)
-    total_pending = total_loaned - total_paid
-    
-    # Count by status
-    all_loans = await db.loans.find(
-        {"company_id": company_id},
-        {"_id": 0, "status": 1}
-    ).to_list(1000)
-    
+
+    all_loans = await db.loans.find({"company_id": company_id}, {"_id": 0}).to_list(2000)
+    active_loans = [l for l in all_loans if l.get("status") == "active"]
+    paid_loans = [l for l in all_loans if l.get("status") in ("paid", "paid_off")]
+    paused_loans = [l for l in all_loans if l.get("status") == "paused"]
+    cancelled_loans = [l for l in all_loans if l.get("status") == "cancelled"]
+
+    # Active = what's still owed by employees
+    total_pending = sum(loan.get("remaining_balance", 0) for loan in active_loans)
+    # Total paid across entire history (any status)
+    total_paid = sum(loan.get("total_paid", 0) for loan in all_loans)
+    # Total ever loaned (capital, any status)
+    total_loaned = sum(loan.get("amount", 0) for loan in all_loans)
+    # What gets withheld this month from payrolls (active only)
+    monthly_total = sum(loan.get("monthly_payment", 0) for loan in active_loans)
+
     status_counts = {}
     for loan in all_loans:
         status = loan.get("status", "unknown")
         status_counts[status] = status_counts.get(status, 0) + 1
-    
+
     return {
         "total_active_loans": len(active_loans),
+        "total_paid_loans": len(paid_loans),
+        "total_paused_loans": len(paused_loans),
+        "total_cancelled_loans": len(cancelled_loans),
+        "total_loans": len(all_loans),
         "total_loaned": round(total_loaned, 2),
         "total_paid": round(total_paid, 2),
         "total_pending": round(total_pending, 2),
+        "monthly_deduction_total": round(monthly_total, 2),
+        "employees_with_loans": len({loan.get("employee_id") for loan in active_loans}),
         "status_counts": status_counts,
-        "employees_with_loans": len(set(loan.get("employee_id") for loan in active_loans))
     }
+
+
+@router.get("/export/xlsx")
+async def export_loans_xlsx(
+    request: Request,
+    status: Optional[str] = None,
+    employee_id: Optional[str] = None,
+):
+    """Export loans to a styled XLSX file with KPIs and a totals row."""
+    import io
+    from openpyxl import Workbook
+    from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
+    from openpyxl.utils import get_column_letter
+    from fastapi.responses import StreamingResponse
+
+    current_user = await get_user_from_request(request)
+    company_id = current_user.get("company_id")
+
+    query = {"company_id": company_id}
+    if status:
+        query["status"] = status
+    if employee_id:
+        query["employee_id"] = employee_id
+
+    loans = await db.loans.find(query, {"_id": 0}).sort("created_at", -1).to_list(2000)
+
+    emp_map = {}
+    if loans:
+        emp_ids = list({l.get("employee_id") for l in loans})
+        emps = await db.employees.find(
+            {"employee_id": {"$in": emp_ids}, "company_id": company_id},
+            {"_id": 0, "employee_id": 1, "first_name": 1, "last_name": 1, "document_number": 1},
+        ).to_list(2000)
+        for e in emps:
+            emp_map[e["employee_id"]] = (
+                f"{e.get('first_name', '')} {e.get('last_name', '')}".strip(),
+                e.get("document_number", ""),
+            )
+
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0, "name": 1})
+    company_name = (company or {}).get("name", "FortexaRH")
+
+    STATUS_LABEL = {"active": "Activo", "paused": "Pausado", "paid": "Pagado",
+                    "paid_off": "Pagado", "cancelled": "Cancelado"}
+    METHOD_LABEL = {"linear": "Lineal", "french": "Francesa", None: "Sin interés", "": "Sin interés"}
+    SCHEDULE_LABEL = {"all_periods": "Todos los períodos",
+                      "monthly_only": "Solo mensual",
+                      "biweekly_second_only": "Solo 2da quincena"}
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Préstamos"
+
+    title_font = Font(bold=True, size=14, color="FFFFFF")
+    title_fill = PatternFill("solid", fgColor="1E293B")
+    header_font = Font(bold=True, size=10, color="FFFFFF")
+    header_fill = PatternFill("solid", fgColor="334155")
+    totals_font = Font(bold=True, size=10)
+    totals_fill = PatternFill("solid", fgColor="E2E8F0")
+    kpi_fill = PatternFill("solid", fgColor="F1F5F9")
+    center = Alignment(horizontal="center", vertical="center", wrap_text=True)
+    right = Alignment(horizontal="right", vertical="center")
+    left = Alignment(horizontal="left", vertical="center")
+    thin = Side(border_style="thin", color="CBD5E1")
+    border = Border(left=thin, right=thin, top=thin, bottom=thin)
+
+    columns = [
+        ("id", "ID Préstamo", 16, "left"),
+        ("employee_name", "Empleado", 28, "left"),
+        ("document", "Cédula", 14, "left"),
+        ("description", "Descripción", 24, "left"),
+        ("amount", "Capital", 14, "right"),
+        ("interest_rate", "Tasa %", 8, "right"),
+        ("interest_method", "Método", 12, "left"),
+        ("schedule_type", "Calendario", 18, "left"),
+        ("term_months", "Plazo (m)", 9, "right"),
+        ("monthly_payment", "Cuota Mensual", 14, "right"),
+        ("total_to_pay", "Total a Pagar", 14, "right"),
+        ("total_paid", "Total Pagado", 14, "right"),
+        ("remaining_balance", "Saldo Pendiente", 16, "right"),
+        ("status", "Estado", 11, "center"),
+        ("start_date", "Inicio", 12, "center"),
+    ]
+    n_cols = len(columns)
+    currency_fmt = '_-#,##0.00_-;[Red]-#,##0.00_-'
+
+    ws.cell(row=1, column=1, value=f"{company_name} — Préstamos a Empleados").font = title_font
+    ws.cell(row=1, column=1).fill = title_fill
+    ws.cell(row=1, column=1).alignment = center
+    ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=n_cols)
+    ws.row_dimensions[1].height = 24
+
+    filter_parts = []
+    if status:
+        filter_parts.append(f"Estado: {STATUS_LABEL.get(status, status)}")
+    if employee_id:
+        nm = emp_map.get(employee_id, ("", ""))[0]
+        filter_parts.append(f"Empleado: {nm or employee_id}")
+    ws.cell(row=2, column=1, value=" · ".join(filter_parts) or "Todos los préstamos").font = Font(italic=True, size=10, color="475569")
+    ws.merge_cells(start_row=2, start_column=1, end_row=2, end_column=n_cols)
+
+    total_loaned = sum(l.get("amount", 0) for l in loans)
+    total_paid = sum(l.get("total_paid", 0) for l in loans)
+    total_remaining = sum(l.get("remaining_balance", 0) for l in loans if l.get("status") == "active")
+    n_active = sum(1 for l in loans if l.get("status") == "active")
+    n_emps = len({l.get("employee_id") for l in loans if l.get("status") == "active"})
+    kpi_text = (
+        f"  KPIs:  Préstamos: {len(loans)}  ·  Activos: {n_active}  ·  "
+        f"Empleados con préstamos activos: {n_emps}  ·  "
+        f"Total prestado: RD${total_loaned:,.2f}  ·  "
+        f"Total cobrado: RD${total_paid:,.2f}  ·  "
+        f"Pendiente: RD${total_remaining:,.2f}"
+    )
+    ws.cell(row=3, column=1, value=kpi_text).font = Font(bold=True, size=10, color="1E293B")
+    ws.cell(row=3, column=1).fill = kpi_fill
+    ws.merge_cells(start_row=3, start_column=1, end_row=3, end_column=n_cols)
+    ws.row_dimensions[3].height = 22
+
+    HEADER_ROW = 5
+    for c_idx, (_, label, _w, _a) in enumerate(columns, start=1):
+        cell = ws.cell(row=HEADER_ROW, column=c_idx, value=label)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = center
+        cell.border = border
+    ws.row_dimensions[HEADER_ROW].height = 30
+    ws.freeze_panes = ws.cell(row=HEADER_ROW + 1, column=3)
+
+    for r_idx, loan in enumerate(loans, start=HEADER_ROW + 1):
+        emp_name, emp_doc = emp_map.get(loan.get("employee_id"), ("", ""))
+        row_values = {
+            "id": loan.get("loan_id", ""),
+            "employee_name": emp_name or "",
+            "document": emp_doc or "",
+            "description": loan.get("description", "") or "",
+            "amount": float(loan.get("amount", 0) or 0),
+            "interest_rate": float(loan.get("interest_rate", 0) or 0),
+            "interest_method": METHOD_LABEL.get(loan.get("interest_method"), loan.get("interest_method") or "—"),
+            "schedule_type": SCHEDULE_LABEL.get(loan.get("schedule_type"), loan.get("schedule_type") or "—"),
+            "term_months": int(loan.get("term_months", 0) or 0),
+            "monthly_payment": float(loan.get("monthly_payment", 0) or 0),
+            "total_to_pay": float(loan.get("total_to_pay", 0) or 0),
+            "total_paid": float(loan.get("total_paid", 0) or 0),
+            "remaining_balance": float(loan.get("remaining_balance", 0) or 0),
+            "status": STATUS_LABEL.get(loan.get("status"), loan.get("status") or ""),
+            "start_date": loan.get("start_date", "") or "",
+        }
+        for c_idx, (key, _label, _w, align) in enumerate(columns, start=1):
+            cell = ws.cell(row=r_idx, column=c_idx, value=row_values[key])
+            cell.border = border
+            cell.alignment = right if align == "right" else center if align == "center" else left
+            if key in {"amount", "monthly_payment", "total_to_pay", "total_paid", "remaining_balance"}:
+                cell.number_format = currency_fmt
+
+    totals_row = HEADER_ROW + 1 + len(loans)
+    totals_keys = {
+        "amount": total_loaned,
+        "total_paid": total_paid,
+        "remaining_balance": total_remaining,
+        "monthly_payment": sum(l.get("monthly_payment", 0) for l in loans if l.get("status") == "active"),
+        "total_to_pay": sum(l.get("total_to_pay", 0) for l in loans),
+    }
+    for c_idx, (key, _label, _w, _align) in enumerate(columns, start=1):
+        cell = ws.cell(row=totals_row, column=c_idx)
+        cell.font = totals_font
+        cell.fill = totals_fill
+        cell.border = border
+        if c_idx == 1:
+            cell.value = "TOTALES"
+            cell.alignment = center
+        elif key in totals_keys:
+            cell.value = totals_keys[key]
+            cell.alignment = right
+            cell.number_format = currency_fmt
+
+    for c_idx, (_k, _l, w, _a) in enumerate(columns, start=1):
+        ws.column_dimensions[get_column_letter(c_idx)].width = w
+
+    buf = io.BytesIO()
+    wb.save(buf)
+    buf.seek(0)
+
+    filename = f"prestamos_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
+    return StreamingResponse(
+        buf,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"', "Cache-Control": "no-cache"},
+    )
 
 
 @router.post("")

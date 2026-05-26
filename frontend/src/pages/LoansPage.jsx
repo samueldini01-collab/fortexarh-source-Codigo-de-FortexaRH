@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth, API } from "@/App";
@@ -47,6 +48,9 @@ export default function LoansPage() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedLoan, setSelectedLoan] = useState(null);
   const [filterStatus, setFilterStatus] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchParams] = useSearchParams();
+  const employeeFilter = searchParams.get("employee_id");
   const [expandedLoan, setExpandedLoan] = useState(null);
   
   // Drill-down for payment history
@@ -82,8 +86,13 @@ export default function LoansPage() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
+      const params = new URLSearchParams();
+      if (filterStatus !== 'all') params.set('status', filterStatus);
+      if (employeeFilter) params.set('employee_id', employeeFilter);
+      const qs = params.toString();
+
       const [loansRes, summaryRes, employeesRes] = await Promise.all([
-        axios.get(`${API}/loans${filterStatus !== 'all' ? `?status=${filterStatus}` : ''}`, {
+        axios.get(`${API}/loans${qs ? `?${qs}` : ''}`, {
           headers: getAuthHeaders(),
           withCredentials: true
         }),
@@ -106,37 +115,61 @@ export default function LoansPage() {
     } finally {
       setLoading(false);
     }
-  }, [filterStatus, getAuthHeaders]);
+  }, [filterStatus, employeeFilter, getAuthHeaders]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  // Export filtered loans to CSV
-  const exportToCSV = () => {
-    const headers = ['Empleado', 'Monto', 'Moneda', 'Tasa', 'Plazo', 'Pagado', 'Pendiente', 'Estado'];
-    const rows = loans.map(loan => {
-      const emp = employees.find(e => e.employee_id === loan.employee_id);
-      return [
-        emp ? `${emp.first_name} ${emp.last_name}` : loan.employee_name || 'N/A',
-        loan.amount,
-        loan.currency || 'DOP',
-        `${loan.interest_rate}%`,
-        `${loan.term_months} meses`,
-        loan.amount_paid || 0,
-        loan.remaining_balance || loan.amount,
-        loan.status
-      ];
+  // Memoized filtered loans (by search term over employee name)
+  const filteredLoans = useMemo(() => {
+    if (!searchTerm.trim()) return loans;
+    const q = searchTerm.toLowerCase().trim();
+    return loans.filter((loan) => {
+      const emp = employees.find((e) => e.employee_id === loan.employee_id);
+      const name = emp ? `${emp.first_name} ${emp.last_name}` : loan.employee_name || '';
+      const doc = emp?.document_number || '';
+      const desc = loan.description || '';
+      return name.toLowerCase().includes(q) || doc.toLowerCase().includes(q) || desc.toLowerCase().includes(q);
     });
-    const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `prestamos_${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast.success(t('loans.messages.exportSuccess'));
+  }, [loans, employees, searchTerm]);
+
+  // Export to native .xlsx via backend (styled, with KPIs + totals row)
+  const exportToExcel = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (filterStatus !== 'all') params.set('status', filterStatus);
+      if (employeeFilter) params.set('employee_id', employeeFilter);
+      const qs = params.toString();
+
+      const response = await axios.get(
+        `${API}/loans/export/xlsx${qs ? `?${qs}` : ''}`,
+        { headers: getAuthHeaders(), withCredentials: true, responseType: 'blob' }
+      );
+
+      let filename = `prestamos_${new Date().toISOString().split('T')[0]}.xlsx`;
+      const cd = response.headers?.['content-disposition'];
+      if (cd) {
+        const m = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(cd);
+        if (m && m[1]) filename = decodeURIComponent(m[1]);
+      }
+      const blob = new Blob([response.data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+      toast.success(t('loans.messages.exportSuccess'));
+    } catch (e) {
+      const detail = e.response?.data instanceof Blob
+        ? await e.response.data.text().catch(() => '')
+        : e.response?.data?.detail;
+      toast.error(detail || t('loans.messages.errorLoading'));
+    }
   };
 
   const handleCreateLoan = async () => {
@@ -327,7 +360,7 @@ export default function LoansPage() {
             <p className="text-slate-500 dark:text-slate-400">{t('loans.subtitle')}</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={exportToCSV} size="sm">
+            <Button variant="outline" onClick={exportToExcel} size="sm" data-testid="export-loans-xlsx">
               <Download className="w-4 h-4 mr-2" />
               {t('loans.export')}
             </Button>
@@ -340,10 +373,11 @@ export default function LoansPage() {
 
         {/* Summary Cards - Clickable for filtering */}
         {summary && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <Card 
               className={`cursor-pointer transition-all hover:shadow-md ${filterStatus === 'active' ? 'ring-2 ring-blue-400' : ''}`}
               onClick={() => setFilterStatus(filterStatus === 'active' ? 'all' : 'active')}
+              data-testid="kpi-active-loans"
             >
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
@@ -357,8 +391,8 @@ export default function LoansPage() {
                 </div>
               </CardContent>
             </Card>
-            
-            <Card>
+
+            <Card data-testid="kpi-total-loaned">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -371,10 +405,11 @@ export default function LoansPage() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card 
               className={`cursor-pointer transition-all hover:shadow-md ${filterStatus === 'paid' ? 'ring-2 ring-blue-400' : ''}`}
               onClick={() => setFilterStatus(filterStatus === 'paid' ? 'all' : 'paid')}
+              data-testid="kpi-total-paid"
             >
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
@@ -388,16 +423,16 @@ export default function LoansPage() {
                 </div>
               </CardContent>
             </Card>
-            
-            <Card 
-              className={`cursor-pointer transition-all hover:shadow-md ${filterStatus === 'defaulted' ? 'ring-2 ring-amber-400' : ''}`}
-              onClick={() => setFilterStatus(filterStatus === 'defaulted' ? 'all' : 'defaulted')}
-            >
+
+            <Card data-testid="kpi-pending">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">{t('loans.stats.inDefault')}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Pendiente por cobrar</p>
                     <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{formatCurrency(summary.total_pending)}</p>
+                    {summary.monthly_deduction_total > 0 && (
+                      <p className="text-[10px] text-slate-500 mt-0.5">Cuota mensual: {formatCurrency(summary.monthly_deduction_total)}</p>
+                    )}
                   </div>
                   <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
                     <AlertCircle className="w-6 h-6 text-amber-600 dark:text-amber-400" />
@@ -405,19 +440,62 @@ export default function LoansPage() {
                 </div>
               </CardContent>
             </Card>
+
+            <Card data-testid="kpi-employees-with-loans">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Empleados con préstamos</p>
+                    <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{summary.employees_with_loans || 0}</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">{summary.total_loans || 0} préstamos en total</p>
+                  </div>
+                  <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
+                    <Users className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         )}
 
-        {/* Filter indicator */}
-        {filterStatus !== 'all' && (
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="px-3 py-1">
-              Filtro: {filterStatus === 'active' ? 'Activos' : filterStatus === 'paid' ? 'Pagados' : 'En Mora'}
-              <button onClick={() => setFilterStatus('all')} className="ml-2 hover:text-red-500">×</button>
+        {/* Filters bar: status pills + search + per-employee filter */}
+        <div className="flex flex-wrap items-center gap-2">
+          {['all', 'active', 'paused', 'paid', 'cancelled'].map((s) => (
+            <Button
+              key={s}
+              size="sm"
+              variant={filterStatus === s ? "default" : "outline"}
+              onClick={() => setFilterStatus(s)}
+              data-testid={`filter-${s}`}
+              className="text-xs"
+            >
+              {s === 'all' ? 'Todos' : s === 'active' ? 'Activos' : s === 'paused' ? 'Pausados' : s === 'paid' ? 'Pagados' : 'Cancelados'}
+              {summary && s !== 'all' && (
+                <span className="ml-1 text-[10px] opacity-80">
+                  ({summary.status_counts?.[s] || (s === 'paid' ? (summary.status_counts?.paid || 0) + (summary.status_counts?.paid_off || 0) : 0)})
+                </span>
+              )}
+            </Button>
+          ))}
+          <Input
+            placeholder="Buscar por empleado, cédula o descripción..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="max-w-xs h-8 text-sm"
+            data-testid="search-loans"
+          />
+          {employeeFilter && (
+            <Badge variant="outline" className="px-2 py-1 text-xs">
+              Empleado filtrado: {(employees.find(e => e.employee_id === employeeFilter) || {}).first_name || employeeFilter}
+              <button
+                onClick={() => { window.history.replaceState({}, '', '/loans'); window.location.reload(); }}
+                className="ml-2 hover:text-red-500"
+                title="Quitar filtro de empleado"
+              >×</button>
             </Badge>
-            <span className="text-sm text-slate-500 dark:text-slate-400">{loans.length} préstamos</span>
-          </div>
-        )}
+          )}
+          <span className="text-xs text-slate-500 ml-auto">{filteredLoans.length} préstamo{filteredLoans.length === 1 ? '' : 's'}</span>
+        </div>
 
         {/* Loans Table */}
         <Card>
@@ -425,7 +503,7 @@ export default function LoansPage() {
             <CardTitle>{t('loans.listadoDePrestamos')}</CardTitle>
           </CardHeader>
           <CardContent>
-            {loans.length === 0 ? (
+            {filteredLoans.length === 0 ? (
               <div className="text-center py-12 text-slate-500 dark:text-slate-400">
                 <Wallet className="w-12 h-12 mx-auto text-slate-300 mb-3" />
                 <p className="font-medium">{t('loans.noHayPrestamosRegistrados')}</p>
@@ -445,7 +523,7 @@ export default function LoansPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {loans.map(loan => (
+                  {filteredLoans.map(loan => (
                     <TableRow key={loan.loan_id}>
                       <TableCell>
                         <div>
