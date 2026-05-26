@@ -26,6 +26,14 @@
 - Colecciones nuevas: `login_history`, `trusted_devices`. Token confiable expira a 30 días.
 - Tests: 13/13 backend (iteration_245), frontend 100% labels traducidos (iteration_246).
 
+## Feb 2026 — Login Audit Hardening + New-Location Alert
+- **Performance**: `log_login_attempt` ahora usa FastAPI `BackgroundTasks` → la latencia del login bajó a ~285 ms (antes bloqueaba en ipwho.is). Geo lookup cacheado en memoria 24h por IP.
+- **Índices BD**: `login_history` con `(user_id:1, created_at:-1)` y `(created_at:-1)`. `trusted_devices` con `(user_id:1, revoked:1, expires_at:-1)` y `(token_hash:1)`.
+- **Retención**: cron APScheduler diario a las 03:00 UTC purga `login_history` > 365 días.
+- **Alerta de nueva ubicación**: cuando un login exitoso proviene de un `(city, country_code)` nunca visto antes para el usuario (y existe ≥1 login previo), envía email HTML vía Resend con detalles del acceso y link a Settings. Respeta `user.notification_preferences.security.new_location_alert` (default: enabled). No-op silencioso si falta `RESEND_API_KEY`.
+- **Bug i18n fix**: `employees.valorManualMensualHelp` faltaba en `/public/locales/*.json` → copiado en 4 idiomas, `TRANSLATION_VERSION 3.7.9`.
+- Tests: 28/28 (13 login_audit + 10 2fa_totp + 5 nuevas pruebas de performance). 100% frontend.
+
 
 ## Implemented (Apr-May 2026)
 - Core: AI Search, ACH Bank, Approval Workflows, Contracts & E-Signature, Bank Config
