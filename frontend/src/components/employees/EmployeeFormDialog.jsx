@@ -15,8 +15,9 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoansTab from "./LoansTab";
+import EmployeePortalTab from "./EmployeePortalTab";
 import { 
-  User, FileText, CreditCard, Camera, Percent, Phone, X, Lock, Calculator, Pencil, Check, Info, Maximize2, Minimize2
+  User, FileText, CreditCard, Camera, Percent, Phone, X, Lock, Calculator, Pencil, Check, Info, Maximize2, Minimize2, Settings, UserCircle
 } from "lucide-react";
 
 const SFS_RATE = 0.0304;
@@ -162,6 +163,40 @@ export function EmployeeFormDialog({
   // Maximize toggle for the dialog (full-screen vs default wider sizing)
   const [isMaximized, setIsMaximized] = useState(false);
 
+  // Tab visibility: persist per-user in localStorage so HR can hide tabs
+  // they don't use (e.g. company without loans, or no employee portal).
+  // Keys mirror the tab `value` strings.
+  const ALL_TABS = [
+    { id: "datos", label: t('employees.tabs.mainData'), always: true },
+    { id: "contrato", label: t('employees.tabs.contract') },
+    { id: "pago", label: t('employees.tabs.paymentMethod') },
+    { id: "descuentos", label: t('employees.tabs.deductions') },
+    { id: "documentos", label: t('employees.tabs.documents') },
+    { id: "emergencia", label: t('employees.tabs.emergencyContact') },
+    { id: "portal", label: "Portal del Empleado" },
+    { id: "historial", label: t('employees.tabs.salaryHistory'), requiresEditing: true },
+    { id: "prestamos", label: "Préstamos" },
+  ];
+  const STORAGE_KEY = "employee-form-visible-tabs";
+  const [visibleTabs, setVisibleTabs] = useState(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch {}
+    return ALL_TABS.reduce((acc, tab) => ({ ...acc, [tab.id]: true }), {});
+  });
+  const [showTabSettings, setShowTabSettings] = useState(false);
+
+  const toggleTabVisibility = (id) => {
+    const next = { ...visibleTabs, [id]: !visibleTabs[id] };
+    setVisibleTabs(next);
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch {}
+  };
+
+  const visibleTabsList = ALL_TABS.filter(
+    (t) => (t.always || visibleTabs[t.id] !== false) && (!t.requiresEditing || editingEmployee)
+  );
+
   return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
           <DialogContent
@@ -177,17 +212,67 @@ export function EmployeeFormDialog({
                 <DialogTitle className="text-xl">
                   {editingEmployee ? t('employees.editEmployee') : t('employees.createEmployee')}
                 </DialogTitle>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => setIsMaximized(v => !v)}
-                  title={isMaximized ? t('common.minimize', { defaultValue: 'Restaurar' }) : t('common.maximize', { defaultValue: 'Pantalla completa' })}
-                  data-testid="toggle-maximize-employee-form"
-                >
-                  {isMaximized ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-                </Button>
+                <div className="flex items-center gap-1">
+                  <div className="relative">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => setShowTabSettings(v => !v)}
+                      title="Configurar pestañas visibles"
+                      data-testid="toggle-tab-settings"
+                    >
+                      <Settings className="w-4 h-4" />
+                    </Button>
+                    {showTabSettings && (
+                      <div
+                        className="absolute right-0 top-9 z-50 w-72 rounded-md border bg-white shadow-lg p-3 text-sm"
+                        data-testid="tab-settings-popover"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-semibold text-slate-700 text-xs">Pestañas visibles</h4>
+                          <button
+                            type="button"
+                            onClick={() => setShowTabSettings(false)}
+                            className="text-slate-400 hover:text-slate-600"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                        <p className="text-[10px] text-slate-500 mb-2">
+                          Oculta las pestañas que no usas. Se guarda para tu usuario.
+                        </p>
+                        <div className="space-y-1.5 max-h-64 overflow-y-auto">
+                          {ALL_TABS.filter((t) => !t.requiresEditing || editingEmployee).map((tab) => (
+                            <label key={tab.id} className="flex items-center justify-between gap-2 text-xs cursor-pointer hover:bg-slate-50 px-1 py-0.5 rounded">
+                              <span className={tab.always ? "text-slate-400" : ""}>{tab.label}{tab.always && " (siempre visible)"}</span>
+                              <input
+                                type="checkbox"
+                                disabled={tab.always}
+                                checked={tab.always || visibleTabs[tab.id] !== false}
+                                onChange={() => toggleTabVisibility(tab.id)}
+                                className="cursor-pointer"
+                                data-testid={`toggle-tab-${tab.id}`}
+                              />
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setIsMaximized(v => !v)}
+                    title={isMaximized ? t('common.minimize', { defaultValue: 'Restaurar' }) : t('common.maximize', { defaultValue: 'Pantalla completa' })}
+                    data-testid="toggle-maximize-employee-form"
+                  >
+                    {isMaximized ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                  </Button>
+                </div>
               </div>
             </DialogHeader>
 
@@ -209,40 +294,29 @@ export function EmployeeFormDialog({
               </div>
 
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className={`grid ${editingEmployee ? 'grid-cols-8' : 'grid-cols-7'} w-full mb-6 gap-1`}>
-                  <TabsTrigger value="datos" className="text-xs px-2 flex items-center gap-1 whitespace-nowrap" data-testid="tab-datos">
-                    <User className="w-3 h-3 shrink-0" />
-                    <span className="truncate">{t('employees.tabs.mainData')}</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="contrato" className="text-xs px-2 flex items-center gap-1 whitespace-nowrap" data-testid="tab-contrato">
-                    <FileText className="w-3 h-3 shrink-0" />
-                    <span className="truncate">{t('employees.tabs.contract')}</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="pago" className="text-xs px-2 flex items-center gap-1 whitespace-nowrap" data-testid="tab-pago">
-                    <CreditCard className="w-3 h-3 shrink-0" />
-                    <span className="truncate">{t('employees.tabs.paymentMethod')}</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="descuentos" className="text-xs px-2 flex items-center gap-1 whitespace-nowrap" data-testid="tab-descuentos">
-                    <Percent className="w-3 h-3 shrink-0" />
-                    <span className="truncate">{t('employees.tabs.deductions')}</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="documentos" className="text-xs px-2 flex items-center gap-1 whitespace-nowrap" data-testid="tab-documentos">
-                    <FileText className="w-3 h-3 shrink-0" />
-                    <span className="truncate">{t('employees.tabs.documents')}</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="emergencia" className="text-xs px-2 flex items-center gap-1 whitespace-nowrap" data-testid="tab-emergencia">
-                    <Phone className="w-3 h-3 shrink-0" />
-                    <span className="truncate">{t('employees.tabs.emergencyContact')}</span>
-                  </TabsTrigger>
-                  {editingEmployee && (
-                    <TabsTrigger value="historial" className="text-xs px-2 whitespace-nowrap" data-testid="tab-historial">
-                      <span className="truncate">{t('employees.tabs.salaryHistory')}</span>
-                    </TabsTrigger>
-                  )}
-                  <TabsTrigger value="prestamos" className="text-xs px-2 flex items-center gap-1 whitespace-nowrap" data-testid="tab-prestamos">
-                    <Calculator className="w-3 h-3 shrink-0" />
-                    <span className="truncate">Préstamos</span>
-                  </TabsTrigger>
+                <TabsList
+                  className="grid w-full mb-6 gap-1"
+                  style={{ gridTemplateColumns: `repeat(${visibleTabsList.length}, minmax(0, 1fr))` }}
+                >
+                  {visibleTabsList.map((tab) => {
+                    const ICONS = {
+                      datos: User, contrato: FileText, pago: CreditCard, descuentos: Percent,
+                      documentos: FileText, emergencia: Phone, portal: UserCircle,
+                      historial: null, prestamos: Calculator,
+                    };
+                    const Icon = ICONS[tab.id];
+                    return (
+                      <TabsTrigger
+                        key={tab.id}
+                        value={tab.id}
+                        className="text-xs px-2 flex items-center gap-1 whitespace-nowrap"
+                        data-testid={`tab-${tab.id}`}
+                      >
+                        {Icon && <Icon className="w-3 h-3 shrink-0" />}
+                        <span className="truncate">{tab.label}</span>
+                      </TabsTrigger>
+                    );
+                  })}
                 </TabsList>
 
                 {/* Tab 1: Datos Principales */}
@@ -1036,6 +1110,13 @@ export function EmployeeFormDialog({
                 {/* Tab 4: Documentos */}
                 <TabsContent value="prestamos" className="space-y-4">
                   <LoansTab
+                    employeeId={editingEmployee?.employee_id || formData.employee_id}
+                    employeeName={`${formData.first_name || ''} ${formData.last_name || ''}`.trim() || 'Empleado'}
+                  />
+                </TabsContent>
+
+                <TabsContent value="portal" className="space-y-4">
+                  <EmployeePortalTab
                     employeeId={editingEmployee?.employee_id || formData.employee_id}
                     employeeName={`${formData.first_name || ''} ${formData.last_name || ''}`.trim() || 'Empleado'}
                   />

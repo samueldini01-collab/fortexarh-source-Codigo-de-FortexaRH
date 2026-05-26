@@ -642,6 +642,25 @@
   - **Tab Préstamos en perfil del empleado** refactorizado: ahora es una vista SLIM (resumen + cards mini-KPI) que vincula al módulo `/loans?employee_id={id}`. Sin CRUD interno: botón "Gestionar en módulo Préstamos" + cards clickeables que navegan a la página filtrada.
   - **Tested e2e**: 2 préstamos creados → dashboard muestra "Activos: 2 · Pendiente: 39,600 · Empleados con préstamos: 1". Export XLSX descarga con 2 filas + totales. Backend tests 13/13 ✅, lint frontend ✅.
 
+- **Formulario unificado de empleados: pestaña Portal del Empleado + configurador de pestañas (Feb 26, 2026)** — feature DONE:
+  - **Pestaña Préstamos movida al final** (después de Historial) en el formulario unificado.
+  - **Nueva pestaña "Portal del Empleado"** con 4 sub-tabs internos:
+    - **Permisos**: lista de solicitudes (employee_permissions), aprobar/rechazar inline, botón "Nuevo permiso" para creación admin (auto-aprobado).
+    - **Licencias** (vacations): lista con balance de días disponibles/tomados/pendientes en card destacada; aprobar/rechazar.
+    - **Pagos**: tabla histórica de payroll_entries del empleado (Período, Bruto, SFS, AFP, ISR, Otros, Neto, Estado).
+    - **Ausencias**: reporte de asistencia con filtro por rango de fechas (mes actual por default).
+  - Endpoints nuevos en `admin_permissions.py`:
+    - `GET /api/permissions?employee_id=X` extiende el filtrado para incluir filtro por empleado.
+    - `POST /api/permissions` permite que admin/RH cree permisos directamente (auto-aprobados por default, status configurable).
+  - **Configurador de pestañas visibles** (gear icon ⚙️ junto al botón maximizar):
+    - Popover con checkboxes para mostrar/ocultar cada pestaña.
+    - Pestaña "Datos Principales" siempre visible (no se puede ocultar).
+    - Pestaña "Historial" solo aparece en edición (requiresEditing).
+    - Persistencia en `localStorage` (key: `employee-form-visible-tabs`) por usuario del navegador.
+  - **Layout dinámico**: `TabsList` ahora calcula `gridTemplateColumns` dinámicamente según pestañas visibles, evitando squishing.
+  - **Componente nuevo**: `EmployeePortalTab.jsx` (480 líneas) modular con sub-componentes `PermissionsPanel`, `VacationsPanel`, `PaymentsPanel`, `AttendancePanel`.
+  - Tested: Modal abre con 9 tabs sin traslape · click en "Portal del Empleado" muestra los 4 sub-tabs con UI completa · botones Nuevo permiso/licencia · empty states correctos. Lint frontend + backend ✅.
+
 ## Architecture Notes
 - COUNTRY_PROFILES dict (country_config.py) is source of truth
 - `get_company_rates_flat(company_id)` is the ONLY function used inside payroll calc paths
