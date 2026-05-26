@@ -558,6 +558,16 @@
   - **Tested**: empleado RD$50k mensual con 3 descuentos adicionales (Préstamo 1k, Seguro 1.5k, Pensión 3k) → en quincenal: ANTIC=500, SEG=750, PENS=1,500 (todos correctamente escalados ÷2). `total_deduction_novelties=2,750`. UI muestra las columnas con valores correctos. Backend lint ✅.
   - **Backwards-compat**: entradas existentes con `additional_deductions` plana siguen funcionando (no se migran retroactivamente). Para refrescar, eliminar y re-agregar la entrada, o usar "Recalcular Período" (no migra; solo recomputa cálculos).
 
+- **Fix: Préstamo Empresa ahora alimenta la columna "Préstamos" + tooltip traducido (Feb 26, 2026)** — bug fix DONE:
+  - **Bug 1**: Después del fix de mapeo automático, la columna "Préstamos" seguía vacía (0.00) cuando el empleado tenía "Préstamo Empresa" en su perfil. Causa: `Préstamo Empresa` se mapeaba al código `ANTIC`, pero la columna "Préstamos" leía solo de `entry.loan_deduction` (sistema formal de préstamos, otro módulo).
+  - **Fix**: nuevo código `PREST` (Préstamo Empresa) en el mapeo backend (`periods.py`). La columna `loan_deduction` en `payrollColumns.jsx` ahora:
+    - **Display**: `loan_deduction` (préstamo formal) + sumatoria de novedades código `PREST` (de descuentos adicionales del perfil)
+    - **Tooltip cuando hay ambos**: muestra el desglose ("Préstamo formal: X + Perfil: Y")
+    - **Editable inline**: si no hay préstamo formal, click → input → Enter crea/actualiza/elimina la novedad PREST. Si hay formal, es read-only (no permite editar el sistema formal desde la nómina).
+  - **Bug 2**: el tooltip informativo del perfil mostraba el texto literal `employees.valorManualMensualHelp` sin traducir. Faltaban las traducciones.
+  - **Fix**: agregada la clave `employees.valorManualMensualHelp` en los 4 idiomas (es/en/fr/pt).
+  - **Tested**: empleado RD$80k mensual (40k quincenal) con 3 descuentos del perfil → novelties: `PENS=500`, `PREST=500`, `SEG=500`. Columna Préstamos ahora muestra 500 (antes 0). UI verificada. Backend tests 13/13 ✅. Lint ✅.
+
 ## Architecture Notes
 - COUNTRY_PROFILES dict (country_config.py) is source of truth
 - `get_company_rates_flat(company_id)` is the ONLY function used inside payroll calc paths

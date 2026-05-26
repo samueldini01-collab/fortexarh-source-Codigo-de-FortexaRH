@@ -1540,6 +1540,7 @@
     "totalDeduccionesLey": "Total Legal Deductions",
     "salarioNeto": "Estimated Net Salary",
     "deduccionesDesc": "Enable or disable legal deductions. You can use automatic calculation or enter a manual amount.",
+    "valorManualMensualHelp": "Manual values and additional deductions are entered as MONTHLY amounts. For biweekly payrolls the system automatically applies half per period.",
     "deduccionesDesactivadasWarning": "Some legal deductions are disabled for this employee. Make sure to comply with applicable regulations.",
     "position": "Position",
     "salary": "Salary",

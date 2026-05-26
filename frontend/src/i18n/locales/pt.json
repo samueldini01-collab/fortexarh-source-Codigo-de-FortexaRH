@@ -2075,6 +2075,7 @@
     "deduccionesDeLey": "Deduções Legais",
     "deduccionesDesactivadasWarning": "Algumas deduções legais estão desativadas para este funcionário. Certifique-se de cumprir com as regulamentações aplicáveis.",
     "deduccionesDesc": "Ative ou desative as deduções legais. Você pode usar o cálculo automático ou inserir um valor manual.",
+    "valorManualMensualHelp": "Os valores manuais e descontos adicionais são inseridos como valores MENSAIS. Em folhas quinzenais o sistema aplica automaticamente a metade por período.",
     "deductions": {
       "add": "Adicionar",
       "addDeduction": "ADICIONAR DESCONTO",

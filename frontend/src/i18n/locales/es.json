@@ -1540,6 +1540,7 @@
     "totalDeduccionesLey": "Total Deducciones de Ley",
     "salarioNeto": "Salario Neto Estimado",
     "deduccionesDesc": "Active o desactive las deducciones de ley. Puede usar el calculo automatico o ingresar un monto manual.",
+    "valorManualMensualHelp": "Los valores manuales y descuentos adicionales se ingresan como montos MENSUALES. En nóminas quincenales el sistema aplica automáticamente la mitad por período.",
     "deduccionesDesactivadasWarning": "Algunas deducciones de ley estan desactivadas para este empleado. Asegurese de cumplir con las regulaciones aplicables.",
     "position": "Cargo",
     "salary": "Salario",

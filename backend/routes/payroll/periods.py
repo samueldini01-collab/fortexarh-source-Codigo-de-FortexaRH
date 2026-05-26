@@ -266,11 +266,12 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
             #   - Are scaled correctly for quincenal periods
             from uuid import uuid4
             DED_TYPE_TO_CODE = {
-                "Préstamo Empresa":      "ANTIC",
+                "Préstamo Empresa":      "PREST",
                 "Préstamo Cooperativa":  "COOP",
                 "Cooperativa":           "COOP",
                 "Seguro Adicional":      "SEG",
                 "Pensión Alimenticia":   "PENS",
+                "Anticipo":              "ANTIC",
                 "Embargo":               "EMB",
                 "Tardanzas":             "TARD",
                 "Ausencias":             "AUS",
@@ -281,6 +282,7 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
                 "ANTIC": "Anticipo", "COOP": "Cooperativa", "SEG": "Seguro Adicional",
                 "PENS": "Pensión Alimenticia", "EMB": "Embargo", "TARD": "Tardanzas",
                 "AUS": "Ausencias", "OTROSD": "Otros Descuentos",
+                "PREST": "Préstamo Empresa",
             }
             deduction_novelties = []
             total_ded_novelties_amount = 0.0

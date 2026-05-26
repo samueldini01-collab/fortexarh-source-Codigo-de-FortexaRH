@@ -315,10 +315,30 @@ export function buildPayrollColumns({ formatNumber, t, countryRates, renderEdita
       getValue: (e) => _num(e.total_additional_deductions),
     },
     {
-      id: "loan_deduction", label: "Préstamos", group: "deduction", defaultVisible: false,
+      id: "loan_deduction",
+      code: "PREST",
+      noveltyType: "deduction",
+      label: t("payrollV2.prestamos", { defaultValue: "Préstamos" }),
+      group: "deduction", defaultVisible: false,
       width: "w-20", align: "right", bgClass: "bg-orange-50/50",
-      render: (e) => FORMAT(e.loan_deduction, formatNumber),
-      getValue: (e) => _num(e.loan_deduction),
+      textClass: "text-orange-700 dark:text-orange-400",
+      render: (e) => {
+        const profileLoan = sumNoveltiesByCode(e, "PREST", "deduction");
+        const formalLoan = _num(e.loan_deduction);
+        // If there's a loan from the formal Loans system, show combined (read-only)
+        if (formalLoan > 0) {
+          return (
+            <span className="font-mono text-[10px]" title={`Préstamo formal: ${formatNumber(formalLoan)} + Perfil: ${formatNumber(profileLoan)}`}>
+              {formatNumber(formalLoan + profileLoan)}
+            </span>
+          );
+        }
+        // Otherwise allow inline edit on the PREST novelty (Préstamo Empresa from profile)
+        return renderEditableCodeCell
+          ? renderEditableCodeCell(e, "PREST", "deduction", "Préstamo Empresa", profileLoan)
+          : FORMAT(profileLoan, formatNumber);
+      },
+      getValue: (e) => _num(e.loan_deduction) + sumNoveltiesByCode(e, "PREST", "deduction"),
     },
 
     // ----- Total deductions / Net ------------------------------------------
