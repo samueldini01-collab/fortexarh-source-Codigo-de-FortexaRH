@@ -259,6 +259,57 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
             }
         else:
             # Regular payroll with full TSS deductions
+            # Convert the employee's recurring "additional_deductions" into
+            # first-class novelties on the entry so they:
+            #   - Populate the per-code columns (SEG / PENS / COOP / EMB / etc.)
+            #   - Are editable inline in the Payroll Sheet
+            #   - Are scaled correctly for quincenal periods
+            from uuid import uuid4
+            DED_TYPE_TO_CODE = {
+                "Préstamo Empresa":      "ANTIC",
+                "Préstamo Cooperativa":  "COOP",
+                "Cooperativa":           "COOP",
+                "Seguro Adicional":      "SEG",
+                "Pensión Alimenticia":   "PENS",
+                "Embargo":               "EMB",
+                "Tardanzas":             "TARD",
+                "Ausencias":             "AUS",
+                "Otro":                  "OTROSD",
+                "Otros":                 "OTROSD",
+            }
+            CODE_TO_FULL = {
+                "ANTIC": "Anticipo", "COOP": "Cooperativa", "SEG": "Seguro Adicional",
+                "PENS": "Pensión Alimenticia", "EMB": "Embargo", "TARD": "Tardanzas",
+                "AUS": "Ausencias", "OTROSD": "Otros Descuentos",
+            }
+            deduction_novelties = []
+            total_ded_novelties_amount = 0.0
+            now_str = now_iso()
+            for d in emp.get("additional_deductions", []) or []:
+                code = DED_TYPE_TO_CODE.get(d.get("type"), "OTROSD")
+                raw_amt = float(d.get("amount", 0) or 0)
+                # Manual monetary deductions are stored MONTHLY on the profile;
+                # percentage deductions apply against base_salary directly.
+                if d.get("is_percentage"):
+                    scaled_amt = raw_amt
+                    eff_value = round(salary * raw_amt / 100, 2)
+                else:
+                    scaled_amt = round(raw_amt * scale, 2)
+                    eff_value = scaled_amt
+                deduction_novelties.append({
+                    "novelty_id": str(uuid4())[:12],
+                    "novelty_type": "deduction",
+                    "code": code,
+                    "name": CODE_TO_FULL.get(code, d.get("type") or code),
+                    "description": d.get("description", "") or d.get("type", ""),
+                    "amount": scaled_amt,
+                    "is_percentage": bool(d.get("is_percentage")),
+                    "created_at": now_str,
+                    "created_by": current_user.get("user_id"),
+                    "source": "employee_profile",
+                })
+                total_ded_novelties_amount += eff_value
+
             entry = {
                 "entry_id": entry_id,
                 "period_id": period_id,
@@ -285,8 +336,13 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
                 "sfs_employee": round(salary * sfs_emp_rate, 2) if emp.get("sfs_discount", True) and not emp.get("sfs_manual_override") else (round(float(emp.get("sfs_manual_amount", 0)) * scale, 2) if emp.get("sfs_manual_override") and emp.get("sfs_discount", True) else 0),
                 "afp_employee": round(salary * afp_emp_rate, 2) if emp.get("afp_discount", True) and not emp.get("afp_manual_override") else (round(float(emp.get("afp_manual_amount", 0)) * scale, 2) if emp.get("afp_manual_override") and emp.get("afp_discount", True) else 0),
                 "isr": 0,
-                "additional_deductions": emp.get("additional_deductions", []),
-                "total_additional_deductions": sum(d.get("amount", 0) * scale for d in emp.get("additional_deductions", []) if not d.get("is_percentage")),
+                # Recurring deductions are now stored as novelties (see above).
+                # Keep these fields zero/empty for new entries to avoid double-counting.
+                "additional_deductions": [],
+                "total_additional_deductions": 0.0,
+                "novelties": deduction_novelties,
+                "total_income_novelties": 0.0,
+                "total_deduction_novelties": round(total_ded_novelties_amount, 2),
                 "total_deductions": 0,
                 "net_salary": 0,
                 "sfs_employer": round(salary * sfs_er_rate, 2),
@@ -325,7 +381,10 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
             entry["loan_deduction"] = round(loan_deduction, 2)
             
             entry["total_deductions"] = round(
-                entry["sfs_employee"] + entry["afp_employee"] + entry["isr"] + entry["total_additional_deductions"] + entry["loan_deduction"],
+                entry["sfs_employee"] + entry["afp_employee"] + entry["isr"]
+                + entry["total_additional_deductions"]
+                + entry.get("total_deduction_novelties", 0)
+                + entry["loan_deduction"],
                 2
             )
             entry["net_salary"] = round(entry["gross_salary"] - entry["total_deductions"], 2)

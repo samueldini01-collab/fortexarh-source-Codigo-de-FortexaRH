@@ -541,7 +541,22 @@
     - `routes/payroll/entries.py` (`update_payroll_entry`): mismas 3 partidas.
   - Los overrides almacenados en el `entry` (`*_manual_override_entry` y data inline desde edición de celda) NO se escalan — esos valores ya son del período.
   - Bug colateral arreglado: `novelties.py:delete_novelty` no cargaba el `period` antes de llamar `_compute_isr(..., period_type=...)`; agregado el fetch.
+  - Tooltip informativo agregado en `EmployeeFormDialog.jsx` (tab Descuentos): "Los valores manuales y descuentos adicionales se ingresan como montos MENSUALES. En nóminas quincenales el sistema aplica automáticamente la mitad por período."
   - **Tested**: empleado RD$50k mensual con `isr_manual_amount=7,500` en quincenal_1 → ISR = 3,750 ✅ (antes 7,500 ❌). Helper unit test: scale mensual=1.0, quincenal=0.5. Backend lint ✅.
+- **Fix: Columnas de códigos (SEG, PENS, ANTIC, COOP, EMB, OTROSD) ahora se alimentan del perfil + son editables (Feb 26, 2026)** — bug fix DONE:
+  - Bug reportado: los descuentos adicionales del perfil (Préstamo Empresa, Seguro Adicional, Pensión Alimenticia) se mostraban en la columna agregada "Deducciones Adicionales" pero las columnas drill-down individuales (SEG, PENS, ANTIC, etc.) aparecían vacías (0.00).
+  - **Root cause**: `additional_deductions` se almacenaban como lista plana sin código en el entry; las columnas drill-down miraban `entry.novelties` filtradas por `code` → no encontraban nada.
+  - **Fix**: en `routes/payroll/periods.py` (`add_employees_to_period`), los `additional_deductions` del perfil del empleado ahora se convierten automáticamente a `novelties` con `novelty_type='deduction'` y código mapeado:
+    - "Préstamo Empresa" → `ANTIC`
+    - "Préstamo Cooperativa" / "Cooperativa" → `COOP`
+    - "Seguro Adicional" → `SEG`
+    - "Pensión Alimenticia" → `PENS`
+    - "Embargo" → `EMB` · "Tardanzas" → `TARD` · "Ausencias" → `AUS` · "Otro" → `OTROSD`
+  - Cada novedad incluye `source: "employee_profile"` para rastreo. Montos escalan por período (×0.5 quincenal). Soporte para `is_percentage=true` (calcula contra `base_salary`).
+  - `entry.additional_deductions=[]` y `total_additional_deductions=0` para nuevas entradas → evita doble conteo. `total_deduction_novelties` ahora incluye estos montos. `total_deductions` actualizado para sumar el nuevo campo.
+  - **Edición inline** ya funciona automáticamente vía `renderEditableCodeCell` existente: click sobre la celda SEG/PENS/ANTIC → input → Enter → PATCH a la novedad.
+  - **Tested**: empleado RD$50k mensual con 3 descuentos adicionales (Préstamo 1k, Seguro 1.5k, Pensión 3k) → en quincenal: ANTIC=500, SEG=750, PENS=1,500 (todos correctamente escalados ÷2). `total_deduction_novelties=2,750`. UI muestra las columnas con valores correctos. Backend lint ✅.
+  - **Backwards-compat**: entradas existentes con `additional_deductions` plana siguen funcionando (no se migran retroactivamente). Para refrescar, eliminar y re-agregar la entrada, o usar "Recalcular Período" (no migra; solo recomputa cálculos).
 
 ## Architecture Notes
 - COUNTRY_PROFILES dict (country_config.py) is source of truth

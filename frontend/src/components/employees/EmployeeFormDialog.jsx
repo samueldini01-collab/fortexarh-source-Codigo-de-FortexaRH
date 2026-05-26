@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  User, FileText, CreditCard, Camera, Percent, Phone, X, Lock, Calculator, Pencil, Check
+  User, FileText, CreditCard, Camera, Percent, Phone, X, Lock, Calculator, Pencil, Check, Info
 } from "lucide-react";
 
 const SFS_RATE = 0.0304;
@@ -587,6 +587,12 @@ export function EmployeeFormDialog({
                     <p className="text-sm text-slate-500 mb-4">
                       {t('employees.deduccionesDesc') || "Active o desactive las deducciones de ley. Puede usar el calculo automatico o ingresar un monto manual."}
                     </p>
+                    <div className="mb-3 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2">
+                      <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                      <p className="text-xs text-amber-800">
+                        {t('employees.valorManualMensualHelp') || "Los valores manuales y descuentos adicionales se ingresan como montos MENSUALES. En nóminas quincenales el sistema aplica automáticamente la mitad por período."}
+                      </p>
+                    </div>
 
                     {/* Salary reference */}
                     {formData.salary ? (
