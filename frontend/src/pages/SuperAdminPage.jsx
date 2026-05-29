@@ -164,6 +164,8 @@ function SuperAdminDashboard({ token, onLogout }) {
   const [alerts, setAlerts] = useState([]);
   const [alertsLoading, setAlertsLoading] = useState(false);
   const [pendingInvoices, setPendingInvoices] = useState({ items: [], count: 0, total_amount: 0 });
+  const [supportActions, setSupportActions] = useState([]);
+  const [supportActionsLoading, setSupportActionsLoading] = useState(false);
   const [visibleCols, setVisibleCols] = useState(() => {
     const saved = localStorage.getItem("sa_columns");
     if (saved) try { return JSON.parse(saved); } catch {}
@@ -314,6 +316,19 @@ function SuperAdminDashboard({ token, onLogout }) {
     }
   };
 
+  const fetchSupportActions = useCallback(async () => {
+    setSupportActionsLoading(true);
+    try {
+      const res = await axios.get(`${API}/support-actions?limit=100`, { headers });
+      setSupportActions(res.data.items || []);
+    } catch {
+      toast.error("Error cargando acciones de soporte");
+    } finally {
+      setSupportActionsLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
   const toggleColumn = (key) => {
     const col = ALL_COLUMNS.find(c => c.key === key);
     if (col?.locked) return;
@@ -414,6 +429,9 @@ function SuperAdminDashboard({ token, onLogout }) {
             </TabsTrigger>
             <TabsTrigger value="invoices-pending" className="data-[state=active]:bg-red-600" data-testid="tab-invoices-pending">
               <FileWarning className="w-4 h-4 mr-1.5" /> Facturas pendientes {pendingInvoices.count > 0 && <Badge className="ml-1 bg-red-500/80 text-white text-[10px] px-1.5 py-0">{pendingInvoices.count}</Badge>}
+            </TabsTrigger>
+            <TabsTrigger value="support-actions" className="data-[state=active]:bg-orange-600" data-testid="tab-support-actions">
+              <LogIn className="w-4 h-4 mr-1.5" /> Acciones de soporte
             </TabsTrigger>
             <TabsTrigger value="support" className="data-[state=active]:bg-emerald-600" data-testid="tab-support">
               <Ticket className="w-4 h-4 mr-1.5" /> Soporte
@@ -912,6 +930,94 @@ function SuperAdminDashboard({ token, onLogout }) {
                               </Button>
                             </div>
                           </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Support Actions Tab */}
+          <TabsContent value="support-actions" className="space-y-4" data-testid="support-actions-tab">
+            <Card className="bg-slate-900 border-slate-800">
+              <CardHeader>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <LogIn className="w-5 h-5 text-orange-400" />
+                      Acciones de soporte
+                    </CardTitle>
+                    <CardDescription className="text-slate-400">
+                      Auditoría de todas las mutaciones (POST/PUT/PATCH/DELETE) realizadas durante una sesión de soporte impersonada.
+                    </CardDescription>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700"
+                    onClick={fetchSupportActions}
+                    disabled={supportActionsLoading}
+                    data-testid="support-actions-refresh-btn"
+                  >
+                    <Loader2 className={`w-4 h-4 mr-2 ${supportActionsLoading ? "animate-spin" : "hidden"}`} />
+                    Cargar
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {supportActions.length === 0 ? (
+                  <div className="text-center py-12 text-slate-500" data-testid="no-support-actions">
+                    <CheckCircle className="w-12 h-12 mx-auto mb-3 text-emerald-500/50" />
+                    <p className="text-lg font-medium text-emerald-400">Sin acciones registradas</p>
+                    <p className="text-sm mt-1">Haz click en "Cargar" para consultar el log más reciente.</p>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-slate-800 hover:bg-transparent">
+                        <TableHead className="text-slate-400">Fecha</TableHead>
+                        <TableHead className="text-slate-400">Soporte como</TableHead>
+                        <TableHead className="text-slate-400">Método</TableHead>
+                        <TableHead className="text-slate-400">Endpoint</TableHead>
+                        <TableHead className="text-slate-400 text-center">Estado</TableHead>
+                        <TableHead className="text-slate-400">IP</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {supportActions.map((row) => (
+                        <TableRow key={row.id} className="border-slate-800" data-testid={`support-action-${row.id}`}>
+                          <TableCell className="text-slate-300 text-sm whitespace-nowrap">{new Date(row.created_at).toLocaleString()}</TableCell>
+                          <TableCell className="text-indigo-400 text-sm">{row.email}</TableCell>
+                          <TableCell>
+                            <Badge
+                              className={`border-0 text-[10px] ${
+                                row.method === "DELETE"
+                                  ? "bg-red-500/20 text-red-400"
+                                  : row.method === "POST"
+                                  ? "bg-emerald-500/20 text-emerald-400"
+                                  : "bg-amber-500/20 text-amber-400"
+                              }`}
+                            >
+                              {row.method}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-slate-300 font-mono text-xs">{row.path}{row.query ? `?${row.query}` : ""}</TableCell>
+                          <TableCell className="text-center">
+                            <Badge
+                              className={`border-0 text-[10px] ${
+                                row.status_code < 300
+                                  ? "bg-emerald-500/20 text-emerald-400"
+                                  : row.status_code < 400
+                                  ? "bg-blue-500/20 text-blue-400"
+                                  : "bg-red-500/20 text-red-400"
+                              }`}
+                            >
+                              {row.status_code}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-slate-500 font-mono text-xs">{row.ip || "—"}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

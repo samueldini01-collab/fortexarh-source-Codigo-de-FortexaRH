@@ -1,0 +1,44 @@
+{
+  "summary": "Iteration 250 — Validated SupportActionsAuditMiddleware + GET /api/super-admin/support-actions + new 'Acciones de soporte' SA tab. All 9 backend pytest cases pass and the frontend Playwright run validated the tab, refresh button, table contents (3 rows, POST/200 with correct emerald badges) and column layout. One PRE-EXISTING regression unrelated to this iteration: test_login_audit.py::test_login_wrong_password_returns_401_and_logs — login_attempts list does not contain the invalid-credentials entry (likely IP-based rate limiting or list filter); test_2fa_totp.py and test_partner_login_flow.py all pass.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "/api/auth/login + /api/login-attempts",
+        "issue": "Pre-existing: wrong-password attempt is not surfaced in /api/login-attempts list during the test run (rate-limit or IP filter?) — UNRELATED to iter250 middleware. test_login_audit.py::TestLoginAttempts::test_login_wrong_password_returns_401_and_logs fails."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iter250_support_actions_audit.py",
+    "/app/test_reports/pytest/iter250_support_actions.xml"
+  ],
+  "action_items": [
+    "Investigate (separately) why /api/login-attempts no longer surfaces wrong-password rows — affects test_login_audit.py only; not introduced by iter250."
+  ],
+  "critical_code_review_comments": [
+    "support_actions_audit.py is clean: middleware never raises (try/except around insert), skips read-only and SA endpoints, decodes Bearer JWT with the same JWT_SECRET as the main app, and excludes _id when listing — good.",
+    "Minor: SupportActionsAuditMiddleware enriches the row with company_id via an extra db.users.find_one on every logged mutation. Consider embedding company_id directly in the impersonation JWT (issued in /super-admin/companies/{cid}/impersonate) to avoid the lookup hop per audited call.",
+    "Minor: user_agent is truncated to 300 chars but ip is not capped. Add a defensive cap (e.g., 64 chars) to avoid huge X-Forwarded-For chains being persisted.",
+    "list_support_actions sorts by created_at (string ISO) which works because all timestamps are now() UTC isoformat with the same length, but consider storing a datetime field for index-friendly sorting at scale.",
+    "SuperAdminPage.jsx already noted in iter249 as 1256 lines — still applies. Adding the new tab + state grew it further; consider splitting into <CompaniesTab/>, <SupportActionsTab/>, etc."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iter250_support_actions_audit.py (new)"
+  ],
+  "success_rate": {
+    "backend": "100% on iter250 suite (9/9). Regression suite: 30/31 = 96.8% (1 pre-existing failure in test_login_audit unrelated to iter250).",
+    "frontend": "100% — tab visible, panel renders, Cargar fetches, table shows expected rows and badge colors."
+  },
+  "test_credentials": "SA: fortexa2026rd / FortexaAdmin2026!  | Admin: test_refactor@fortexa.com / test123",
+  "seed_data_creation": "Several support_actions rows were inserted as a side-effect of the impersonated POST /api/onboarding/dismiss in tests. They are intentional audit rows; no cleanup performed (audit logs are append-only by design).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Backend pytest: REACT_APP_BACKEND_URL=https://company-config-debug.preview.emergentagent.com pytest backend/tests/test_iter250_support_actions_audit.py -v — runs in ~7s. Frontend: SA login at /admin uses a 2-input form (username/password) then redirects to the dashboard; new tab data-testid='tab-support-actions' is the 7th tab (between Facturas pendientes and Soporte). All 6 columns present. Method badge classes confirmed: emerald for POST, etc.",
+  "rca of the issue": "N/A — the iteration is feature-complete. The single failing regression test (test_login_audit wrong-password) was already not detected as part of this iteration's scope and produces 401s but the listing endpoint returns only success=True rows in this run; the middleware does not touch login endpoints (SKIP_PATH_PREFIXES includes /api/auth/login)."
+}

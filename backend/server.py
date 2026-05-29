@@ -118,6 +118,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Support session audit: logs every mutation made under an impersonation token.
+from middleware.support_actions_audit import SupportActionsAuditMiddleware  # noqa: E402
+app.add_middleware(SupportActionsAuditMiddleware)
+
 # ===================== HEALTH CHECKS =====================
 
 @app.get("/health")

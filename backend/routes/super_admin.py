@@ -809,3 +809,23 @@ async def impersonate_company_user(company_id: str, req: ImpersonateRequest, adm
             "support_session": True,
         },
     }
+
+
+@router.get("/support-actions")
+async def list_support_actions(
+    admin=Depends(get_super_admin),
+    company_id: Optional[str] = None,
+    user_id: Optional[str] = None,
+    limit: int = 100,
+):
+    """List support actions performed under an impersonation token.
+    Optionally filter by company_id or user_id. Most recent first."""
+    limit = max(1, min(limit, 500))
+    query: dict = {}
+    if company_id:
+        query["company_id"] = company_id
+    if user_id:
+        query["user_id"] = user_id
+    cursor = db.support_actions.find(query, {"_id": 0}).sort("created_at", -1).limit(limit)
+    items = await cursor.to_list(length=limit)
+    return {"items": items, "count": len(items)}
