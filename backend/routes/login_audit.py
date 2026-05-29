@@ -258,22 +258,20 @@ def log_login_attempt(
     method: str = "password",
     reason: str = "",
 ):
-    """Schedule an audit log entry. Synchronous wrapper that offloads to a
-    background task to keep the auth path fast. Never raises."""
+    """Schedule an audit log entry asynchronously. Never raises.
+
+    NOTE: We always use `asyncio.create_task` rather than FastAPI BackgroundTasks
+    because the latter does NOT run when the handler raises an HTTPException
+    (e.g. on a 401 invalid-credentials response). The `background_tasks` arg is
+    kept for API stability but is no longer used.
+    """
     try:
         ip = _get_client_ip(request)
         ua_string = request.headers.get("user-agent", "")
         ua_parts = _parse_user_agent(ua_string)
-        if background_tasks is not None:
-            background_tasks.add_task(
-                _persist_login_attempt,
-                user_id, email, ip, ua_string, ua_parts, success, method, reason,
-            )
-        else:
-            # Fire-and-forget for code paths without BackgroundTasks
-            asyncio.create_task(
-                _persist_login_attempt(user_id, email, ip, ua_string, ua_parts, success, method, reason)
-            )
+        asyncio.create_task(
+            _persist_login_attempt(user_id, email, ip, ua_string, ua_parts, success, method, reason)
+        )
     except Exception:
         pass
 
