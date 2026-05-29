@@ -70,6 +70,7 @@ from routes.admin_permissions import router as admin_permissions_router
 from routes.country_config import router as country_config_router, migrate_existing_companies
 from routes.login_audit import setup_login_audit_indexes, purge_old_login_history
 from routes.onboarding import router as onboarding_router
+from routes.billing_cycle import router as billing_router, run_billing_cycle
 from routes.multi_country_reports import router as multi_country_reports_router
 from routes.brochure_builder import router as brochure_builder_router
 from routes.exchange_rates import router as exchange_rates_router
@@ -191,6 +192,7 @@ for r in [
     two_factor_router,
     login_audit_router,
     onboarding_router,
+    billing_router,
     notification_preferences_router,
     super_admin_router,
     fortexaerp_router,
@@ -282,6 +284,17 @@ async def _scheduled_purge_login_history():
         logger.exception(f"login_history purge cron failed: {exc}")
 
 
+async def _scheduled_billing_cycle():
+    try:
+        result = await run_billing_cycle()
+        logger.info(
+            f"Billing cycle cron executed: invoices_created={result.get('invoices_created')} "
+            f"subscriptions_suspended={result.get('subscriptions_suspended')}"
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.exception(f"Billing cycle cron failed: {exc}")
+
+
 def _start_fiscal_reminders_scheduler():
     global _fiscal_scheduler
     if _fiscal_scheduler is not None:
@@ -311,6 +324,16 @@ def _start_fiscal_reminders_scheduler():
             _scheduled_purge_login_history,
             CronTrigger(hour=3, minute=0, timezone="UTC"),
             id="login_history_purge_daily",
+            replace_existing=True,
+            max_instances=1,
+            misfire_grace_time=3600,
+        )
+        # Billing cycle: generate pending invoices for overdue periods and
+        # suspend subscriptions past the grace window — daily at 06:00 UTC.
+        sched.add_job(
+            _scheduled_billing_cycle,
+            CronTrigger(hour=6, minute=0, timezone="UTC"),
+            id="billing_cycle_daily",
             replace_existing=True,
             max_instances=1,
             misfire_grace_time=3600,

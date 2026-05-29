@@ -63,6 +63,8 @@ export default function SubscriptionsPage() {
   const [subscription, setSubscription] = useState(null);
   const [plans, setPlans] = useState([]);
   const [invoices, setInvoices] = useState([]);
+  const [billingStatus, setBillingStatus] = useState(null);
+  const [payingPending, setPayingPending] = useState(false);
   const [showChangePlan, setShowChangePlan] = useState(false);
   const [showAdjustEmployees, setShowAdjustEmployees] = useState(false);
   const [showAddUsers, setShowAddUsers] = useState(false);
@@ -132,6 +134,33 @@ export default function SubscriptionsPage() {
       console.error("Error fetching invoices:", error);
     }
   }, [getAuthHeaders]);
+
+  const fetchBillingStatus = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API}/billing/status`, {
+        headers: getAuthHeaders(),
+        withCredentials: true,
+      });
+      setBillingStatus(res.data);
+    } catch {
+      setBillingStatus(null);
+    }
+  }, [getAuthHeaders]);
+
+  const handlePayPending = async (invoiceId) => {
+    setPayingPending(true);
+    try {
+      const res = await axios.post(
+        `${API}/billing/pay-pending`,
+        { invoice_id: invoiceId, origin_url: window.location.origin },
+        { headers: getAuthHeaders(), withCredentials: true }
+      );
+      window.location.href = res.data.checkout_url;
+    } catch (err) {
+      toast.error(err.response?.data?.detail || "No se pudo iniciar el pago");
+      setPayingPending(false);
+    }
+  };
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -216,9 +245,10 @@ export default function SubscriptionsPage() {
   useEffect(() => {
     fetchData();
     fetchInvoices();
+    fetchBillingStatus();
     fetchPaymentMethod();
     fetchPmHistory();
-  }, [fetchData, fetchInvoices, fetchPaymentMethod, fetchPmHistory]);
+  }, [fetchData, fetchInvoices, fetchPaymentMethod, fetchPmHistory, fetchBillingStatus]);
 
   // Handle payment method update callback (legacy redirect flow)
   useEffect(() => {
@@ -440,6 +470,43 @@ export default function SubscriptionsPage() {
   return (
     <DashboardLayout title={t('subscriptions.title')}>
       <div className="space-y-6" data-testid="subscriptions-page">
+        {/* Pending invoice banner */}
+        {billingStatus?.has_pending && billingStatus?.pending_invoice && (
+          <div
+            className={`rounded-xl p-4 flex items-center gap-4 border ${
+              billingStatus.is_blocked
+                ? "bg-red-50 border-red-200"
+                : "bg-amber-50 border-amber-200"
+            }`}
+            data-testid="pending-invoice-banner"
+          >
+            <AlertTriangle className={`w-8 h-8 ${billingStatus.is_blocked ? "text-red-500" : "text-amber-500"} shrink-0`} />
+            <div className="flex-1 min-w-0">
+              <h3 className={`font-semibold ${billingStatus.is_blocked ? "text-red-800" : "text-amber-800"}`}>
+                {billingStatus.is_blocked
+                  ? "Suscripción suspendida — pago requerido"
+                  : `Factura pendiente: ${billingStatus.pending_invoice.invoice_number}`}
+              </h3>
+              <p className={`text-sm ${billingStatus.is_blocked ? "text-red-600" : "text-amber-600"}`}>
+                Monto: <span className="font-bold">${Number(billingStatus.pending_invoice.total).toFixed(2)} {billingStatus.pending_invoice.currency}</span>
+                {" · "}Período {billingStatus.pending_invoice.period_start} → {billingStatus.pending_invoice.period_end}
+                {!billingStatus.is_blocked && billingStatus.grace_days_left > 0 && (
+                  <> · <b>{billingStatus.grace_days_left} día(s)</b> antes de la suspensión</>
+                )}
+              </p>
+            </div>
+            <Button
+              onClick={() => handlePayPending(billingStatus.pending_invoice.invoice_id)}
+              disabled={payingPending}
+              className={billingStatus.is_blocked ? "bg-red-600 hover:bg-red-700" : "bg-amber-600 hover:bg-amber-700"}
+              data-testid="pending-invoice-pay-btn"
+            >
+              <CreditCard className="w-4 h-4 mr-2" />
+              {payingPending ? "Redirigiendo..." : "Pagar ahora"}
+            </Button>
+          </div>
+        )}
+
         {/* Alert for trial/expired */}
         {subscription?.status === 'trial' && (
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center gap-4">
@@ -851,6 +918,8 @@ export default function SubscriptionsPage() {
           formatCurrency={formatCurrency}
           formatDate={formatDate}
           onDownloadInvoice={handleDownloadInvoice}
+          onPayInvoice={handlePayPending}
+          payingInvoiceId={payingPending ? billingStatus?.pending_invoice?.invoice_id : null}
         />
 
         {/* Change Plan Dialog - Shows all plans */}

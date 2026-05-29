@@ -5,9 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { FileText, Download, Receipt } from "lucide-react";
+import { FileText, Download, Receipt, CreditCard, Loader2 } from "lucide-react";
 
-export function InvoiceHistory({ invoices, formatCurrency, formatDate, onDownloadInvoice }) {
+export function InvoiceHistory({ invoices, formatCurrency, formatDate, onDownloadInvoice, onPayInvoice, payingInvoiceId }) {
   const { t } = useTranslation();
 
   return (
@@ -59,15 +59,32 @@ export function InvoiceHistory({ invoices, formatCurrency, formatDate, onDownloa
                     </Badge>
                   </TableCell>
                   <TableCell className="text-center">
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => onDownloadInvoice(invoice.invoice_id, invoice.invoice_number)}
-                      data-testid={`download-invoice-${invoice.invoice_id}`}
-                    >
-                      <Download className="w-4 h-4 mr-1" />
-                      PDF
-                    </Button>
+                    {invoice.status === "pending" && onPayInvoice ? (
+                      <Button
+                        size="sm"
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                        onClick={() => onPayInvoice(invoice.invoice_id)}
+                        disabled={payingInvoiceId === invoice.invoice_id}
+                        data-testid={`pay-invoice-${invoice.invoice_id}`}
+                      >
+                        {payingInvoiceId === invoice.invoice_id ? (
+                          <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                        ) : (
+                          <CreditCard className="w-4 h-4 mr-1" />
+                        )}
+                        Pagar
+                      </Button>
+                    ) : (
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => onDownloadInvoice(invoice.invoice_id, invoice.invoice_number)}
+                        data-testid={`download-invoice-${invoice.invoice_id}`}
+                      >
+                        <Download className="w-4 h-4 mr-1" />
+                        PDF
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}

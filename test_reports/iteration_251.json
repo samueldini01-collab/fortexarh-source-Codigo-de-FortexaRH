@@ -1,0 +1,51 @@
+{
+  "summary": "Full validation of FortexaRH Subscription module billing-cycle improvements: pending invoice auto-generation cron, idempotency, suspension after GRACE_DAYS=3, /billing/status + /billing/pay-pending endpoints, /api/invoices listing of pending, Stripe Checkout URL creation, payment_transactions.invoice_id contract for webhook, frontend banner + Pagar buttons on /subscriptions, /billing-required page, ProtectedRoute auto-redirect when suspended, and logout cleanup. 8/8 backend tests passed; all 4 frontend flows passed.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "/subscriptions invoice history table", "issues": ["Estado badge label shows in current UI language (e.g. 'Pending' when EN). Spec mentions 'Pagado / Pendiente' (Spanish); using i18n keys subscriptions.paid/pending is acceptable but verify Spanish translations are defined in es.json so users in ES locale see the Spanish labels"]},
+      {"screen": "/subscriptions current plan card", "issues": ["Plan status badge renders raw value 'past_due' instead of a localized friendly label like 'Vencido / Past due'"]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_billing_cycle_iter251.py",
+    "/app/test_reports/pytest/iter251_results.xml"
+  ],
+  "action_items": [
+    "(Optional) Localize the past_due / suspended badge labels in the Current Plan card on /subscriptions",
+    "(Optional) Confirm i18n keys subscriptions.paid and subscriptions.pending exist in es.json so Spanish locale renders 'Pagado'/'Pendiente'"
+  ],
+  "critical_code_review_comments": [
+    "billing_cycle.py uses next_period_start = period_end (good) and stores period_start_iso for idempotency check — works as long as period_end isn't mutated.",
+    "suspend_overdue_subscriptions uses string comparison on ISO timestamps which is correct only because both are UTC ISO 8601 with same offset format — safe but brittle if any record uses a different ISO offset.",
+    "BillingRequiredPage.jsx redirects loaded users back to /dashboard when has_pending=false AND is_blocked=false — good fallback so the page can't be accessed unnecessarily.",
+    "ProtectedRoute polls /billing/status on every protected route mount; consider caching the result in a context to avoid request bursts when navigating quickly across pages."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_billing_cycle_iter251.py (new)"
+  ],
+  "success_rate": {"backend": "100% (8/8)", "frontend": "100% (4/4 flows)"},
+  "test_credentials": "Admin: test_refactor@fortexa.com / test123 (company_id=comp_7bf9f34ab85e)",
+  "seed_data_creation": "Did NOT create new data. Temporarily set subscription.status='suspended' to verify ProtectedRoute redirect, then restored to status='past_due' with past_due_since=now. Pending invoice inv_da7bd3cd01e7 (FRH-202605-C7D4F4, $29.00) is preserved so subsequent runs still see the pending banner.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All billing-cycle features verified end-to-end. Subscription is restored to past_due with pending invoice intact. Stripe is in LIVE mode — never click through to actual payment; only validate that POST /api/billing/pay-pending returns a checkout_url starting with https://checkout.stripe.com. To re-test the suspend redirect, set subscriptions.status='suspended' via Mongo, log in, then restore to 'past_due'.",
+  "verified_flows": [
+    "GET /api/billing/status returns has_pending=true with full pending_invoice payload + subscription_status=past_due + grace_days_left",
+    "POST /api/billing/pay-pending returns a valid Stripe LIVE checkout URL and inserts payment_transactions with invoice_id + payment_status='initiated'",
+    "POST /api/billing/pay-pending returns 404 for unknown invoice_id",
+    "run_billing_cycle() is idempotent (two calls produce same pending invoice count)",
+    "suspend_overdue_subscriptions() flips past_due (>3 days) to suspended and sets suspended_at",
+    "GET /api/invoices includes pending invoice with status='pending'",
+    "Frontend /subscriptions shows pending-invoice-banner + pending-invoice-pay-btn; clicking redirects to Stripe (window.location navigates away)",
+    "InvoiceHistory pending row shows pay-invoice-inv_da7bd3cd01e7 green 'Pagar' button",
+    "/billing-required renders billing-required-card with invoice details ($29, FRH-202605-C7D4F4) and billing-pay-now-btn",
+    "ProtectedRoute: when subscription.status='suspended', /dashboard auto-redirects to /billing-required",
+    "billing-logout-btn clears localStorage token and navigates to /login"
+  ]
+}

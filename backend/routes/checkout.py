@@ -434,15 +434,41 @@ async def get_checkout_status(session_id: str, current_user: dict = Depends(get_
         user = await db.users.find_one({"company_id": transaction["company_id"]}, {"_id": 0, "email": 1, "name": 1})
         user_email = user.get("email") if user else None
         user_name = user.get("name") if user else None
-        
-        await activate_subscription(
-            company_id=transaction["company_id"],
-            plan_id=transaction["plan_id"],
-            employee_count=transaction.get("employee_count", 1),
-            session_id=session_id,
-            user_email=user_email,
-            user_name=user_name
-        )
+
+        # Settle a pending invoice if this checkout was created for one.
+        invoice_id = transaction.get("invoice_id")
+        if invoice_id:
+            now_iso = datetime.now(timezone.utc).isoformat()
+            await db.invoices.update_one(
+                {"invoice_id": invoice_id, "company_id": transaction["company_id"]},
+                {"$set": {
+                    "status": "paid",
+                    "paid_at": datetime.now(timezone.utc).strftime("%d/%m/%Y %H:%M"),
+                    "paid_at_iso": now_iso,
+                    "session_id": session_id,
+                }},
+            )
+            invoice = await db.invoices.find_one(
+                {"invoice_id": invoice_id},
+                {"_id": 0, "period_start_iso": 1, "period_end_iso": 1},
+            )
+            upd = {"status": "active", "updated_at": now_iso, "past_due_since": None, "suspended_at": None}
+            if invoice and invoice.get("period_end_iso"):
+                upd["current_period_start"] = invoice.get("period_start_iso", now_iso)
+                upd["current_period_end"] = invoice["period_end_iso"]
+            await db.subscriptions.update_one(
+                {"company_id": transaction["company_id"]},
+                {"$set": upd},
+            )
+        else:
+            await activate_subscription(
+                company_id=transaction["company_id"],
+                plan_id=transaction["plan_id"],
+                employee_count=transaction.get("employee_count", 1),
+                session_id=session_id,
+                user_email=user_email,
+                user_name=user_name
+            )
         
         return {
             "status": "complete",
@@ -506,13 +532,46 @@ async def stripe_webhook(request: Request):
                             "webhook_event_id": event["id"]
                         }}
                     )
-                    
-                    await activate_subscription(
-                        company_id=transaction["company_id"],
-                        plan_id=transaction["plan_id"],
-                        employee_count=transaction.get("employee_count", 1),
-                        session_id=session_id
-                    )
+
+                    # If this checkout was created to settle a pending invoice,
+                    # mark the invoice as paid and reactivate the subscription
+                    # period instead of creating a brand-new invoice.
+                    invoice_id = transaction.get("invoice_id")
+                    if invoice_id:
+                        now_iso = datetime.now(timezone.utc).isoformat()
+                        await db.invoices.update_one(
+                            {"invoice_id": invoice_id, "company_id": transaction["company_id"]},
+                            {"$set": {
+                                "status": "paid",
+                                "paid_at": datetime.now(timezone.utc).strftime("%d/%m/%Y %H:%M"),
+                                "paid_at_iso": now_iso,
+                                "session_id": session_id,
+                            }},
+                        )
+                        # Reactivate the subscription: advance the period to the
+                        # one that was just paid for.
+                        invoice = await db.invoices.find_one(
+                            {"invoice_id": invoice_id},
+                            {"_id": 0, "period_start_iso": 1, "period_end_iso": 1},
+                        )
+                        upd = {"status": "active", "updated_at": now_iso}
+                        if invoice and invoice.get("period_end_iso"):
+                            upd["current_period_start"] = invoice.get("period_start_iso", now_iso)
+                            upd["current_period_end"] = invoice["period_end_iso"]
+                        upd["past_due_since"] = None
+                        upd["suspended_at"] = None
+                        await db.subscriptions.update_one(
+                            {"company_id": transaction["company_id"]},
+                            {"$set": upd},
+                        )
+                        logger.info(f"Pending invoice {invoice_id} settled and subscription reactivated")
+                    else:
+                        await activate_subscription(
+                            company_id=transaction["company_id"],
+                            plan_id=transaction["plan_id"],
+                            employee_count=transaction.get("employee_count", 1),
+                            session_id=session_id
+                        )
         
         return {"status": "ok", "event_id": event["id"]}
     

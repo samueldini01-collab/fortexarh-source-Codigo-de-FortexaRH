@@ -105,6 +105,7 @@ import Dashboard from "@/pages/Dashboard";
 
 // Auth & Onboarding - Lazy loaded
 const TrialExpiredPage = lazy(() => import("@/pages/TrialExpiredPage"));
+const BillingRequiredPage = lazy(() => import("@/pages/BillingRequiredPage"));
 const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPasswordPage"));
 const RegisterPage = lazy(() => import("@/pages/RegisterPage"));
 const ResetPasswordPage = lazy(() => import("@/pages/ResetPasswordPage"));
@@ -245,8 +246,30 @@ const AuthCallback = () => {
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
+  const [billingBlocked, setBillingBlocked] = useState(null); // null=unknown, false=ok, true=blocked
 
-  if (loading) {
+  useEffect(() => {
+    if (!user) {
+      setBillingBlocked(false);
+      return;
+    }
+    // Skip the check if we're already on the billing page
+    if (location.pathname === "/billing-required") {
+      setBillingBlocked(false);
+      return;
+    }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setBillingBlocked(false);
+      return;
+    }
+    axios
+      .get(`${API}/billing/status`, { headers: { Authorization: `Bearer ${token}` } })
+      .then((r) => setBillingBlocked(!!r.data?.is_blocked))
+      .catch(() => setBillingBlocked(false));
+  }, [user, location.pathname]);
+
+  if (loading || billingBlocked === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
@@ -259,6 +282,10 @@ const ProtectedRoute = ({ children }) => {
 
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if (billingBlocked) {
+    return <Navigate to="/billing-required" replace />;
   }
 
   // Check trial expiration
@@ -467,6 +494,7 @@ function AppRouter() {
       
       {/* Auth routes - Lazy loaded */}
       <Route path="/trial-expired" element={<LazyRoute><TrialExpiredPage /></LazyRoute>} />
+      <Route path="/billing-required" element={<ProtectedRoute><LazyRoute><BillingRequiredPage /></LazyRoute></ProtectedRoute>} />
       <Route path="/register" element={<LazyRoute><RegisterPage /></LazyRoute>} />
       <Route path="/checkout" element={<LazyRoute><CheckoutPage /></LazyRoute>} />
       <Route path="/pricing" element={<LazyRoute><PricingPage /></LazyRoute>} />
