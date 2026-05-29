@@ -67,7 +67,7 @@ export default function SupportSessionBanner() {
     localStorage.removeItem("user");
     localStorage.removeItem("fortexa_support_session");
     localStorage.removeItem("fortexa_support_company");
-    window.location.href = "/super-admin";
+    window.location.href = "/admin";
   };
 
   return (
