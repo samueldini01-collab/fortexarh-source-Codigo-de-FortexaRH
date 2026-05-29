@@ -1,0 +1,61 @@
+{
+  "summary": "Verified Super Admin drilldown / pending invoices / mark-paid / impersonation + support session banner (iteration 249). All 10 backend tests passed and all UI flows behave as designed. Found one frontend bug: SupportSessionBanner 'Salir de soporte' redirects to /super-admin but the actual route is /admin, so the user lands on the catch-all instead of the SA console (localStorage cleanup still works but navigation target is wrong).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "SupportSessionBanner",
+        "issue": "Exit button calls window.location.href = '/super-admin' but the SA console route in App.js is '/admin' (Route path='/admin' element={<SuperAdminPage />}). This sends the support agent to the catch-all/home instead of back to the SA dashboard.",
+        "selector": "[data-testid=support-session-exit-btn]",
+        "priority": "MEDIUM",
+        "file": "/app/frontend/src/components/SupportSessionBanner.jsx (line 70)"
+      },
+      {
+        "component": "SuperAdminPage.handleImpersonate",
+        "issue": "Cross-check: handleImpersonate opens window.open('/dashboard','_blank') which is correct, but if you ever rename SA route, also update banner. Confirm whether the impersonate flow should redirect to /super-admin or /admin on Salir; currently the route is /admin.",
+        "selector": "n/a",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "/dashboard after impersonation",
+        "issues": [
+          "Onboarding 'Welcome to FortexaRH!' tutorial modal opens on top of the dashboard for the impersonated admin, which can intercept clicks on the support banner. Consider suppressing the onboarding modal when fortexa_support_session=1 so the support agent can act unobstructed."
+        ]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_super_admin_drilldown_impersonation.py",
+    "/app/test_reports/pytest/iter249_drilldown_impersonation.xml"
+  ],
+  "action_items": [
+    "Fix SupportSessionBanner exit redirect: change '/super-admin' -> '/admin' (or use REACT_APP_BACKEND_URL-agnostic React Router navigate('/admin')).",
+    "Optional: suppress onboarding tutorial modal when localStorage.fortexa_support_session==='1' to avoid click interception by the welcome modal."
+  ],
+  "critical_code_review_comments": [
+    "SupportSessionBanner uses window.location.href hard-coded path; prefer useNavigate() to avoid full-page reloads and keep route in sync with App.js.",
+    "JWT_SECRET is read from config; ensure impersonation tokens are revocable or at least logged. _log_event currently writes a platform_events row which is good, but there is no server-side blocklist if SA wants to terminate the session early.",
+    "_derive_invoice_from_sub: severity thresholds (7/30 days) are hard-coded; consider moving to PLAN_PRICES or a config block.",
+    "mark-paid endpoint accepts arbitrary amount in body without validation against the computed invoice; could be exploited internally to log inaccurate revenue. Add a sanity bound or fall back to derived amount when None.",
+    "Frontend SuperAdminPage.jsx is 1256 lines — exceeds the 700-line guideline; consider splitting (tabs/drill-dialog/companies-table) into subcomponents."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_super_admin_drilldown_impersonation.py (new)"
+  ],
+  "success_rate": {
+    "backend": "100% (10/10 pytest)",
+    "frontend": "~92% (drilldown + invoices + impersonation + banner all work; only the exit redirect target is wrong)"
+  },
+  "test_credentials": "SA: fortexa2026rd / FortexaAdmin2026!  | Admin: test_refactor@fortexa.com / test123",
+  "seed_data_creation": "Test 'TEST mark-paid' payment_transactions row inserted on first company via mark-paid endpoint; advanced its subscription.current_period_end by 30 days. Future runs of this test will keep advancing the period.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend pytest file at /app/backend/tests/test_super_admin_drilldown_impersonation.py — re-run with: pytest backend/tests/test_super_admin_drilldown_impersonation.py -v. UI tests rely on /admin (NOT /super-admin) route. Banner appears as soon as localStorage has fortexa_support_session=1 AND token has support_session=true claim. Onboarding modal currently overlays /dashboard on first visit for impersonated user — may need to skip-tutorial before testing banner exit.",
+  "rca of the issue": "SupportSessionBanner.handleExit hard-codes window.location.href='/super-admin'; App.js declares the SA dashboard at '/admin'. Reproduction: 1) impersonate from /admin, 2) on /dashboard click 'Salir de soporte', 3) browser tries /super-admin which is not a registered route, gets caught by the SPA catch-all and you land on the marketing home or a redirect target — NOT the SA console. Mitigation: replace with '/admin' or, better, use useNavigate('/admin') and avoid full reload."
+}

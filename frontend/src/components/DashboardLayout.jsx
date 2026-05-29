@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth, useSubscription } from "@/App";
 import { useKeyboardShortcuts } from "@/context/KeyboardShortcutsContext";
 import { useOnboarding } from "@/context/OnboardingContext";
+import SupportSessionBanner from "@/components/SupportSessionBanner";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
@@ -523,6 +524,8 @@ export default function DashboardLayout({ children, title }) {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      {/* Support session banner */}
+      <SupportSessionBanner />
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div 

@@ -7,8 +7,8 @@ import uuid
 from datetime import datetime, timezone, timedelta
 from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel
-from typing import Optional
-from config import db
+from typing import Optional, List
+from config import db, JWT_SECRET, JWT_ALGORITHM
 
 router = APIRouter(prefix="/super-admin", tags=["Super Admin"])
 
@@ -565,3 +565,247 @@ async def _log_event(company_id: str, event_type: str, description: str):
         "performed_by": "super_admin",
         "created_at": _now(),
     })
+
+
+# ==================== COMPANY DETAIL ====================
+
+@router.get("/companies/{company_id}/detail")
+async def get_company_detail(company_id: str, admin=Depends(get_super_admin)):
+    """Full snapshot of a single company for the Super Admin drilldown:
+    company info, subscription, recent transactions, computed invoices, contact user."""
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    if not company:
+        raise HTTPException(status_code=404, detail="Empresa no encontrada")
+
+    sub = await db.subscriptions.find_one({"company_id": company_id}, {"_id": 0}) or {}
+    plan_id = company.get("subscription_plan") or sub.get("plan_id") or "free"
+    plan_info = PLAN_PRICES.get(plan_id, {"name": plan_id, "monthly": 0, "per_employee": 0, "included_users": 99, "extra_user": 0})
+
+    users_cursor = db.users.find(
+        {"company_id": company_id},
+        {"_id": 0, "password": 0, "password_hash": 0, "totp_secret": 0, "recovery_codes": 0},
+    )
+    users = await users_cursor.to_list(200)
+    active_emp_count = await db.employees.count_documents({
+        "company_id": company_id,
+        "status": {"$nin": ["inactive", "terminated", "fired"]},
+    })
+
+    # Primary contact: first admin / owner
+    contact = next(
+        (u for u in users if u.get("role") in ("admin", "owner", "super_admin")),
+        users[0] if users else None,
+    )
+
+    txs = await db.payment_transactions.find(
+        {"company_id": company_id}, {"_id": 0},
+    ).sort("created_at", -1).to_list(20)
+
+    # Recent platform events for this company
+    events = await db.platform_events.find(
+        {"company_id": company_id}, {"_id": 0},
+    ).sort("created_at", -1).to_list(20)
+
+    # Compute monthly billing
+    per_emp = plan_info.get("per_employee", 0)
+    user_count = len(users)
+    extra_users = max(0, user_count - plan_info.get("included_users", 99))
+    monthly_billing = round(
+        plan_info.get("monthly", 0)
+        + (active_emp_count * per_emp)
+        + (extra_users * plan_info.get("extra_user", 0)),
+        2,
+    )
+
+    return {
+        "company": company,
+        "subscription": {
+            **sub,
+            "plan_id": plan_id,
+            "plan_name": plan_info.get("name", plan_id),
+            "monthly_base": plan_info.get("monthly", 0),
+            "monthly_billing": monthly_billing,
+            "per_employee_rate": per_emp,
+            "extra_users": extra_users,
+            "active_employee_count": active_emp_count,
+            "user_count": user_count,
+        },
+        "contact": contact,
+        "users": users,
+        "transactions": txs,
+        "events": events,
+    }
+
+
+# ==================== INVOICES / BILLING ====================
+
+def _derive_invoice_from_sub(company: dict, sub: dict, plan_info: dict, active_emp: int, user_count: int) -> Optional[dict]:
+    """Build a synthetic invoice from a subscription if it's overdue / past period end."""
+    if not sub:
+        return None
+    period_end = sub.get("current_period_end") or sub.get("next_payment_date")
+    if not period_end:
+        return None
+    try:
+        end_dt = datetime.fromisoformat(period_end.replace("Z", "+00:00"))
+    except Exception:
+        return None
+    now = datetime.now(timezone.utc)
+    days_overdue = (now - end_dt).days
+    if days_overdue <= 0:
+        return None
+    per_emp = plan_info.get("per_employee", 0)
+    extra_users = max(0, user_count - plan_info.get("included_users", 99))
+    amount = round(
+        plan_info.get("monthly", 0)
+        + (active_emp * per_emp)
+        + (extra_users * plan_info.get("extra_user", 0)),
+        2,
+    )
+    severity = "high" if days_overdue >= 30 else ("medium" if days_overdue >= 7 else "low")
+    return {
+        "invoice_id": f"inv_{sub.get('subscription_id', '')[:12]}_{end_dt.strftime('%Y%m')}",
+        "company_id": company.get("company_id"),
+        "company_name": company.get("name", ""),
+        "plan_id": plan_info.get("name", sub.get("plan_id")),
+        "amount": amount,
+        "currency": sub.get("currency", "USD"),
+        "period_end": period_end,
+        "days_overdue": days_overdue,
+        "severity": severity,
+        "status": "past_due",
+    }
+
+
+@router.get("/invoices/pending")
+async def list_pending_invoices(admin=Depends(get_super_admin)):
+    """List companies with overdue subscriptions (synthetic invoices)."""
+    companies = await db.companies.find({}, {"_id": 0}).to_list(500)
+    subs = await db.subscriptions.find({}, {"_id": 0}).to_list(500)
+    sub_map = {s["company_id"]: s for s in subs if "company_id" in s}
+
+    invoices = []
+    for c in companies:
+        cid = c.get("company_id")
+        sub = sub_map.get(cid, {})
+        plan_id = c.get("subscription_plan") or sub.get("plan_id") or "free"
+        plan_info = PLAN_PRICES.get(plan_id, {"name": plan_id, "monthly": 0, "per_employee": 0, "included_users": 99, "extra_user": 0})
+        if plan_info.get("monthly", 0) == 0:
+            continue  # skip free / trial
+        active_emp = await db.employees.count_documents({"company_id": cid, "status": {"$nin": ["inactive", "terminated", "fired"]}})
+        users = await db.users.count_documents({"company_id": cid})
+        inv = _derive_invoice_from_sub(c, sub, plan_info, active_emp, users)
+        if inv:
+            invoices.append(inv)
+    invoices.sort(key=lambda x: x["days_overdue"], reverse=True)
+    total_owed = round(sum(i["amount"] for i in invoices), 2)
+    return {"items": invoices, "count": len(invoices), "total_amount": total_owed}
+
+
+class MarkPaidRequest(BaseModel):
+    payment_method: str = "transferencia"
+    amount: Optional[float] = None
+    notes: Optional[str] = ""
+
+
+@router.post("/companies/{company_id}/invoices/mark-paid")
+async def mark_invoice_paid(company_id: str, req: MarkPaidRequest, admin=Depends(get_super_admin)):
+    """Mark the current period as paid: advance current_period_end by 1 month."""
+    sub = await db.subscriptions.find_one({"company_id": company_id}, {"_id": 0})
+    if not sub:
+        raise HTTPException(status_code=404, detail="Suscripción no encontrada")
+    try:
+        end_dt = datetime.fromisoformat((sub.get("current_period_end") or _now()).replace("Z", "+00:00"))
+    except Exception:
+        end_dt = datetime.now(timezone.utc)
+    new_end = (end_dt + timedelta(days=30)).isoformat()
+    new_start = end_dt.isoformat()
+    await db.subscriptions.update_one(
+        {"company_id": company_id},
+        {"$set": {
+            "current_period_start": new_start,
+            "current_period_end": new_end,
+            "status": "active",
+            "updated_at": _now(),
+        }},
+    )
+    await db.payment_transactions.insert_one({
+        "transaction_id": f"txn_{uuid.uuid4().hex[:12]}",
+        "company_id": company_id,
+        "amount": req.amount or sub.get("total_monthly", 0),
+        "currency": sub.get("currency", "USD"),
+        "payment_status": "completed",
+        "payment_method": req.payment_method,
+        "notes": req.notes,
+        "performed_by": "super_admin",
+        "created_at": _now(),
+    })
+    await _log_event(company_id, "invoice_marked_paid", f"Pago registrado via {req.payment_method}")
+    return {"message": "Factura marcada como pagada", "new_period_end": new_end}
+
+
+# ==================== SUPPORT IMPERSONATION ====================
+
+class ImpersonateRequest(BaseModel):
+    user_id: Optional[str] = None  # Specific user to impersonate; if None, picks the company's admin
+
+
+@router.post("/companies/{company_id}/impersonate")
+async def impersonate_company_user(company_id: str, req: ImpersonateRequest, admin=Depends(get_super_admin)):
+    """Issue a short-lived (1h) JWT for an admin user of the target company.
+    The token carries `support_session=true` so the UI can show a clear banner
+    and audit logs can flag any action performed under support context."""
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    if not company:
+        raise HTTPException(status_code=404, detail="Empresa no encontrada")
+
+    target = None
+    if req.user_id:
+        target = await db.users.find_one(
+            {"user_id": req.user_id, "company_id": company_id},
+            {"_id": 0, "password_hash": 0, "totp_secret": 0, "recovery_codes": 0},
+        )
+        if not target:
+            raise HTTPException(status_code=404, detail="Usuario destino no pertenece a esta empresa")
+    if not target:
+        target = await db.users.find_one(
+            {"company_id": company_id, "role": {"$in": ["admin", "owner"]}},
+            {"_id": 0, "password_hash": 0, "totp_secret": 0, "recovery_codes": 0},
+        )
+    if not target:
+        target = await db.users.find_one(
+            {"company_id": company_id},
+            {"_id": 0, "password_hash": 0, "totp_secret": 0, "recovery_codes": 0},
+        )
+    if not target:
+        raise HTTPException(status_code=404, detail="La empresa no tiene usuarios")
+
+    # 1-hour JWT with support flag, using the same secret as the regular app
+    payload = {
+        "user_id": target["user_id"],
+        "email": target["email"],
+        "support_session": True,
+        "support_actor": "super_admin",
+        "exp": datetime.now(timezone.utc) + timedelta(hours=1),
+        "iat": datetime.now(timezone.utc),
+    }
+    token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+    await _log_event(
+        company_id,
+        "support_impersonation",
+        f"Soporte inició sesión como {target.get('email')} (rol: {target.get('role', 'admin')})",
+    )
+
+    return {
+        "token": token,
+        "expires_in": 3600,
+        "user": {
+            "user_id": target["user_id"],
+            "email": target["email"],
+            "name": target.get("name"),
+            "company_id": target.get("company_id"),
+            "role": target.get("role", "admin"),
+            "support_session": True,
+        },
+    }

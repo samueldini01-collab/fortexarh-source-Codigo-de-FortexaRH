@@ -6,7 +6,7 @@ import {
   CheckCircle, XCircle, Activity, CreditCard, Banknote,
   Gift, ArrowUpDown, Eye, Power, PowerOff, Clock,
   TrendingUp, ChevronDown, RefreshCw, AlertTriangle,
-  Mail, Phone, Settings2, Columns3, ChevronRight, Loader2, Receipt, Ticket, Share2, ShoppingCart
+  Mail, Phone, Settings2, Columns3, ChevronRight, Loader2, Receipt, Ticket, Share2, ShoppingCart, LogIn, FileWarning
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
 import { Button } from "../components/ui/button";
@@ -163,6 +163,7 @@ function SuperAdminDashboard({ token, onLogout }) {
   const [syncLoading, setSyncLoading] = useState(false);
   const [alerts, setAlerts] = useState([]);
   const [alertsLoading, setAlertsLoading] = useState(false);
+  const [pendingInvoices, setPendingInvoices] = useState({ items: [], count: 0, total_amount: 0 });
   const [visibleCols, setVisibleCols] = useState(() => {
     const saved = localStorage.getItem("sa_columns");
     if (saved) try { return JSON.parse(saved); } catch {}
@@ -177,18 +178,20 @@ function SuperAdminDashboard({ token, onLogout }) {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [compRes, statsRes, eventsRes, revRes, alertsRes] = await Promise.all([
+      const [compRes, statsRes, eventsRes, revRes, alertsRes, invoicesRes] = await Promise.all([
         axios.get(`${API}/companies`, { headers }),
         axios.get(`${API}/stats`, { headers }),
         axios.get(`${API}/events?limit=50`, { headers }),
         axios.get(`${API}/revenue`, { headers }),
         axios.get(`${API}/alerts`, { headers }).catch(() => ({ data: [] })),
+        axios.get(`${API}/invoices/pending`, { headers }).catch(() => ({ data: { items: [], count: 0, total_amount: 0 } })),
       ]);
       setCompanies(compRes.data);
       setStats(statsRes.data);
       setEvents(eventsRes.data);
       setRevenue(revRes.data);
       setAlerts(alertsRes.data);
+      setPendingInvoices(invoicesRes.data);
     } catch (err) {
       if (err.response?.status === 401) onLogout();
       else toast.error("Error cargando datos");
@@ -262,12 +265,52 @@ function SuperAdminDashboard({ token, onLogout }) {
     setDrillLoading(true);
     setDrillData(null);
     try {
-      const res = await axios.get(`${API}/companies/${company.company_id}/users`, { headers });
+      const res = await axios.get(`${API}/companies/${company.company_id}/detail`, { headers });
       setDrillData(res.data);
     } catch (err) {
-      toast.error("Error cargando datos de la empresa");
+      // Fallback to the legacy users endpoint
+      try {
+        const res = await axios.get(`${API}/companies/${company.company_id}/users`, { headers });
+        setDrillData({ users: res.data.users, employees: res.data.employees });
+      } catch {
+        toast.error("Error cargando datos de la empresa");
+      }
     } finally {
       setDrillLoading(false);
+    }
+  };
+
+  const handleImpersonate = async (company) => {
+    if (!window.confirm(`Iniciarás sesión como soporte en "${company.name}". ¿Continuar?`)) return;
+    try {
+      const res = await axios.post(
+        `${API}/companies/${company.company_id}/impersonate`,
+        {},
+        { headers }
+      );
+      const { token: impToken, user } = res.data;
+      // Save real-app credentials (Bearer + user) and the support flag
+      localStorage.setItem("token", impToken);
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("fortexa_support_session", "1");
+      localStorage.setItem("fortexa_support_company", company.name || company.company_id);
+      // Navigate to the real app dashboard in a new tab so the SA keeps their session
+      window.open("/dashboard", "_blank");
+      toast.success("Sesión de soporte iniciada (1h)");
+    } catch (err) {
+      toast.error(err.response?.data?.detail || "No se pudo iniciar sesión de soporte");
+    }
+  };
+
+  const handleMarkInvoicePaid = async (companyId) => {
+    if (!window.confirm("¿Marcar la factura actual como pagada (avanzar el período 30 días)?")) return;
+    try {
+      await axios.post(`${API}/companies/${companyId}/invoices/mark-paid`, { payment_method: "transferencia" }, { headers });
+      toast.success("Factura marcada como pagada");
+      fetchData();
+      if (drillCompany?.company_id === companyId) handleDrillDown(drillCompany);
+    } catch (err) {
+      toast.error(err.response?.data?.detail || "Error al marcar como pagada");
     }
   };
 
@@ -368,6 +411,9 @@ function SuperAdminDashboard({ token, onLogout }) {
             </TabsTrigger>
             <TabsTrigger value="alerts" className="data-[state=active]:bg-amber-600" data-testid="tab-alerts">
               <AlertTriangle className="w-4 h-4 mr-1.5" /> Alertas {alerts.length > 0 && <Badge className="ml-1 bg-red-500/80 text-white text-[10px] px-1.5 py-0">{alerts.length}</Badge>}
+            </TabsTrigger>
+            <TabsTrigger value="invoices-pending" className="data-[state=active]:bg-red-600" data-testid="tab-invoices-pending">
+              <FileWarning className="w-4 h-4 mr-1.5" /> Facturas pendientes {pendingInvoices.count > 0 && <Badge className="ml-1 bg-red-500/80 text-white text-[10px] px-1.5 py-0">{pendingInvoices.count}</Badge>}
             </TabsTrigger>
             <TabsTrigger value="support" className="data-[state=active]:bg-emerald-600" data-testid="tab-support">
               <Ticket className="w-4 h-4 mr-1.5" /> Soporte
@@ -769,6 +815,112 @@ function SuperAdminDashboard({ token, onLogout }) {
             </Card>
           </TabsContent>
 
+          {/* Pending Invoices Tab */}
+          <TabsContent value="invoices-pending" className="space-y-4" data-testid="invoices-pending-tab">
+            <Card className="bg-slate-900 border-slate-800">
+              <CardHeader>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileWarning className="w-5 h-5 text-red-400" />
+                      Facturas pendientes
+                    </CardTitle>
+                    <CardDescription className="text-slate-400">
+                      Empresas con suscripción vencida — agrupadas por antigüedad de la deuda.
+                    </CardDescription>
+                  </div>
+                  {pendingInvoices.count > 0 && (
+                    <div className="flex gap-4 text-right">
+                      <div>
+                        <p className="text-[10px] uppercase text-slate-500">Facturas</p>
+                        <p className="text-2xl font-bold text-red-400">{pendingInvoices.count}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] uppercase text-slate-500">Monto total</p>
+                        <p className="text-2xl font-bold text-amber-400">${pendingInvoices.total_amount.toFixed(2)}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent>
+                {pendingInvoices.count === 0 ? (
+                  <div className="text-center py-12 text-slate-500" data-testid="no-pending-invoices">
+                    <CheckCircle className="w-12 h-12 mx-auto mb-3 text-emerald-500/50" />
+                    <p className="text-lg font-medium text-emerald-400">Sin facturas pendientes</p>
+                    <p className="text-sm mt-1">Todas las suscripciones están al día</p>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-slate-800 hover:bg-transparent">
+                        <TableHead className="text-slate-400">Empresa</TableHead>
+                        <TableHead className="text-slate-400">Plan</TableHead>
+                        <TableHead className="text-slate-400 text-right">Monto</TableHead>
+                        <TableHead className="text-slate-400">Fin período</TableHead>
+                        <TableHead className="text-slate-400">Vencida</TableHead>
+                        <TableHead className="text-slate-400 text-right">Acciones</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {pendingInvoices.items.map((inv) => (
+                        <TableRow key={inv.invoice_id} className="border-slate-800" data-testid={`invoice-row-${inv.invoice_id}`}>
+                          <TableCell>
+                            <div>
+                              <p className="font-medium">{inv.company_name}</p>
+                              <p className="text-xs text-slate-500 font-mono">{inv.invoice_id}</p>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-slate-300 text-sm">{inv.plan_id}</TableCell>
+                          <TableCell className="text-right text-emerald-400 font-bold">${inv.amount.toFixed(2)} {inv.currency}</TableCell>
+                          <TableCell className="text-sm text-slate-400">{new Date(inv.period_end).toLocaleDateString()}</TableCell>
+                          <TableCell>
+                            <Badge
+                              className={`border-0 ${
+                                inv.severity === "high"
+                                  ? "bg-red-500/20 text-red-400"
+                                  : inv.severity === "medium"
+                                  ? "bg-amber-500/20 text-amber-400"
+                                  : "bg-slate-500/20 text-slate-300"
+                              }`}
+                            >
+                              {inv.days_overdue}d
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-1">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
+                                onClick={() => handleMarkInvoicePaid(inv.company_id)}
+                                data-testid={`mark-paid-${inv.invoice_id}`}
+                              >
+                                <CheckCircle className="w-4 h-4 mr-1" /> Marcar pagada
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10"
+                                onClick={() => {
+                                  const c = companies.find(c => c.company_id === inv.company_id);
+                                  if (c) handleDrillDown(c);
+                                }}
+                                data-testid={`view-company-${inv.invoice_id}`}
+                              >
+                                <Eye className="w-4 h-4 mr-1" /> Ver
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Support Tab */}
           <TabsContent value="support" className="space-y-4" data-testid="support-tab">
             <SupportContent />
@@ -926,6 +1078,70 @@ function SuperAdminDashboard({ token, onLogout }) {
             </div>
           ) : drillData ? (
             <div className="space-y-4">
+              {/* Quick actions */}
+              <div className="flex flex-wrap gap-2 pb-3 border-b border-slate-800" data-testid="drill-quick-actions">
+                <Button
+                  size="sm"
+                  className="bg-orange-600/20 hover:bg-orange-600/30 text-orange-300 border border-orange-700/50"
+                  onClick={() => handleImpersonate(drillCompany)}
+                  data-testid="drill-impersonate-btn"
+                >
+                  <LogIn className="w-4 h-4 mr-2" /> Iniciar sesión como soporte
+                </Button>
+                <Button
+                  size="sm"
+                  className="bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-700/50"
+                  onClick={() => {
+                    setPlanDialog(drillCompany);
+                    setPlanForm({ plan_id: drillCompany.subscription_plan || "basico", custom_price: null });
+                  }}
+                  data-testid="drill-plan-btn"
+                >
+                  <ArrowUpDown className="w-4 h-4 mr-2" /> Suscripción
+                </Button>
+                {drillData.subscription?.status && drillData.subscription?.current_period_end && (() => {
+                  let overdue = 0;
+                  try {
+                    overdue = Math.floor((Date.now() - new Date(drillData.subscription.current_period_end).getTime()) / 86400000);
+                  } catch { overdue = 0; }
+                  if (overdue > 0) {
+                    return (
+                      <Button
+                        size="sm"
+                        className="bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-700/50"
+                        onClick={() => handleMarkInvoicePaid(drillCompany.company_id)}
+                        data-testid="drill-mark-paid-btn"
+                      >
+                        <CheckCircle className="w-4 h-4 mr-2" /> Marcar como pagada ({overdue}d vencida)
+                      </Button>
+                    );
+                  }
+                  return null;
+                })()}
+              </div>
+
+              {/* Subscription summary */}
+              {drillData.subscription && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm" data-testid="drill-subscription-summary">
+                  <div className="bg-slate-900/50 rounded p-2 border border-slate-800">
+                    <p className="text-[10px] uppercase text-slate-500">Plan</p>
+                    <p className="text-slate-200 font-medium">{drillData.subscription.plan_name || "—"}</p>
+                  </div>
+                  <div className="bg-slate-900/50 rounded p-2 border border-slate-800">
+                    <p className="text-[10px] uppercase text-slate-500">Facturación mes</p>
+                    <p className="text-emerald-400 font-bold">${(drillData.subscription.monthly_billing || 0).toFixed(2)}</p>
+                  </div>
+                  <div className="bg-slate-900/50 rounded p-2 border border-slate-800">
+                    <p className="text-[10px] uppercase text-slate-500">Próx. pago</p>
+                    <p className="text-slate-200">{drillData.subscription.current_period_end ? new Date(drillData.subscription.current_period_end).toLocaleDateString() : "—"}</p>
+                  </div>
+                  <div className="bg-slate-900/50 rounded p-2 border border-slate-800">
+                    <p className="text-[10px] uppercase text-slate-500">Estado sub.</p>
+                    <p className="text-slate-200 capitalize">{drillData.subscription.status || "—"}</p>
+                  </div>
+                </div>
+              )}
+
               <div>
                 <h3 className="text-sm font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
                   <Users className="w-4 h-4" /> Usuarios Registrados ({drillData.users?.length || 0})
@@ -953,11 +1169,40 @@ function SuperAdminDashboard({ token, onLogout }) {
                   </Table>
                 ) : <p className="text-sm text-slate-500 py-2">Sin usuarios registrados</p>}
               </div>
-              <div>
+
+              {drillData.transactions?.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
+                    <Receipt className="w-4 h-4" /> Últimas transacciones ({drillData.transactions.length})
+                  </h3>
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-slate-800 hover:bg-transparent">
+                        <TableHead className="text-slate-500">Fecha</TableHead>
+                        <TableHead className="text-slate-500">Plan</TableHead>
+                        <TableHead className="text-slate-500">Monto</TableHead>
+                        <TableHead className="text-slate-500">Estado</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {drillData.transactions.slice(0, 6).map((tx, i) => (
+                        <TableRow key={i} className="border-slate-800/50" data-testid={`drill-tx-${i}`}>
+                          <TableCell className="text-slate-400 text-sm">{tx.created_at ? new Date(tx.created_at).toLocaleDateString() : "—"}</TableCell>
+                          <TableCell className="text-slate-300 text-sm">{tx.plan_name || tx.plan_id || "—"}</TableCell>
+                          <TableCell className="text-emerald-400 text-sm font-mono">${(tx.amount || 0).toFixed(2)} {tx.currency?.toUpperCase()}</TableCell>
+                          <TableCell><Badge variant="outline" className={`text-[10px] ${tx.payment_status === "completed" ? "border-emerald-700 text-emerald-400" : "border-slate-700 text-slate-400"}`}>{tx.payment_status || "—"}</Badge></TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+
+              {drillData.employees?.length > 0 && (
+                <div>
                 <h3 className="text-sm font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
                   <Shield className="w-4 h-4" /> Empleados ({drillData.employees?.length || 0})
                 </h3>
-                {drillData.employees?.length > 0 ? (
                   <Table>
                     <TableHeader>
                       <TableRow className="border-slate-800 hover:bg-transparent">
@@ -986,8 +1231,8 @@ function SuperAdminDashboard({ token, onLogout }) {
                       ))}
                     </TableBody>
                   </Table>
-                ) : <p className="text-sm text-slate-500 py-2">Sin empleados registrados</p>}
-              </div>
+                </div>
+              )}
             </div>
           ) : null}
         </DialogContent>
