@@ -34,6 +34,12 @@
 - **Bug i18n fix**: `employees.valorManualMensualHelp` faltaba en `/public/locales/*.json` → copiado en 4 idiomas, `TRANSLATION_VERSION 3.7.9`.
 - Tests: 28/28 (13 login_audit + 10 2fa_totp + 5 nuevas pruebas de performance). 100% frontend.
 
+## Feb 2026 — Support Actions Audit (Enterprise Compliance)
+- **Middleware** `SupportActionsAuditMiddleware` (Starlette BaseHTTPMiddleware): decodifica el JWT en cada request y, si lleva `support_session=true` Y el método es POST/PUT/PATCH/DELETE Y el path es `/api/*` (excluidos `/api/super-admin`, `/api/health`, `/api/auth/login`, `/api/auth/2fa`), inserta un registro en `support_actions` con method, path, query, status_code, ip, email, user_id, company_id y created_at. Falla silencioso — nunca rompe la response.
+- **Endpoint** `GET /api/super-admin/support-actions?company_id=&user_id=&limit=` (default 100, max 500). Sorted desc.
+- **UI**: nuevo tab "Acciones de soporte" en consola SA (icono LogIn, color orange) con botón "Cargar", tabla con badges de color por método (DELETE=red, POST=emerald, PUT/PATCH=amber) y por status (2xx=emerald, 3xx=blue, 4xx+=red).
+- Tests: 9/9 backend (iter250) + 100% frontend.
+
 ## Feb 2026 — Super Admin Enhancements
 - **Gestión de suscripciones por cliente**: nuevo endpoint `GET /api/super-admin/companies/{id}/detail` (empresa + suscripción computada + usuarios + transacciones + eventos). Drilldown frontend rediseñado con header de acciones rápidas y resumen de suscripción (plan, facturación mes, próximo pago, estado).
 - **Facturas pendientes**: nuevo tab "Facturas pendientes" + endpoint `GET /api/super-admin/invoices/pending` que deriva facturas vencidas desde `subscriptions` (current_period_end < now). Cada item incluye `days_overdue`, `severity` (low/medium/high) y monto computado (plan + per_employee + extra_users). Acción "Marcar pagada" avanza el período 30 días e inserta registro en `payment_transactions`.
