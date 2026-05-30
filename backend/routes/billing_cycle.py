@@ -140,11 +140,221 @@ async def suspend_overdue_subscriptions() -> int:
     return res.modified_count
 
 
+# -------------------- DUNNING EMAILS --------------------
+
+REMINDER_UPCOMING_DAYS = 3  # warn N days before period_end (no invoice yet)
+
+
+def _build_reminder_html(kind: str, name: str, sub: dict, invoice: Optional[dict], company_name: str) -> tuple[str, str]:
+    """Return (subject, html) for the given dunning email kind."""
+    plan_name = (invoice or {}).get("plan_name") or sub.get("plan_id", "")
+    period_end = (invoice or {}).get("period_end") or sub.get("current_period_end", "")
+    amount = float((invoice or {}).get("total") or 0)
+    invoice_number = (invoice or {}).get("invoice_number", "")
+    cta_url = "https://fortexarh.com/subscriptions"
+
+    if kind == "upcoming":
+        subject = f"Tu suscripción de FortexaRH vence en {REMINDER_UPCOMING_DAYS} días"
+        title = f"Tu próxima factura vence en {REMINDER_UPCOMING_DAYS} días"
+        body = (
+            f"Hola {name},<br/><br/>"
+            f"Tu suscripción <b>{plan_name}</b> de <b>{company_name}</b> tiene su próximo cobro programado."
+            f" Asegúrate de tener una tarjeta válida o de iniciar el pago manualmente para no interrumpir el servicio."
+        )
+        color = "#0ea5e9"
+        cta = "Ver mi suscripción"
+    elif kind == "due":
+        subject = f"Factura {invoice_number} vencida — paga ahora para evitar la suspensión"
+        title = "Tu factura está vencida"
+        body = (
+            f"Hola {name},<br/><br/>"
+            f"La factura <b>{invoice_number}</b> de <b>{company_name}</b> por <b>${amount:.2f}</b> está vencida."
+            f" Para evitar que tu suscripción sea suspendida, paga ahora con cualquier tarjeta."
+        )
+        color = "#f59e0b"
+        cta = "Pagar ahora"
+    else:  # "final"
+        subject = f"Última oportunidad — la cuenta de {company_name} será suspendida mañana"
+        title = "Última oportunidad antes de la suspensión"
+        body = (
+            f"Hola {name},<br/><br/>"
+            f"Tu factura <b>{invoice_number}</b> por <b>${amount:.2f}</b> sigue sin pagarse."
+            f" Si no se completa el pago en las próximas 24 horas, la cuenta de <b>{company_name}</b> será"
+            f" <b>suspendida automáticamente</b> y perderás acceso al sistema hasta regularizar el pago."
+        )
+        color = "#dc2626"
+        cta = "Pagar ahora y mantener el servicio"
+
+    period_html = (
+        f"<tr><td style='padding:6px 0;color:#64748b;'>Período</td>"
+        f"<td style='padding:6px 0;color:#0f172a;text-align:right;font-weight:600;'>{period_end}</td></tr>"
+        if period_end else ""
+    )
+    invoice_html = (
+        f"<tr><td style='padding:6px 0;color:#64748b;'>Factura</td>"
+        f"<td style='padding:6px 0;color:#0f172a;text-align:right;font-family:monospace;'>{invoice_number}</td></tr>"
+        if invoice_number else ""
+    )
+    amount_html = (
+        f"<tr><td style='padding:6px 0;color:#64748b;'>Monto</td>"
+        f"<td style='padding:6px 0;color:#0f172a;text-align:right;font-weight:700;font-size:18px;'>${amount:.2f}</td></tr>"
+        if amount > 0 else ""
+    )
+
+    html = f"""
+    <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:560px;margin:0 auto;background:#fff;">
+      <div style="background:{color};padding:24px;text-align:center;border-radius:8px 8px 0 0;">
+        <h1 style="color:#fff;margin:0;font-size:20px;">FortexaRH</h1>
+        <p style="color:rgba(255,255,255,0.9);margin:4px 0 0;font-size:13px;">Recordatorio de facturación</p>
+      </div>
+      <div style="padding:28px;border:1px solid #e2e8f0;border-top:none;">
+        <h2 style="color:#0f172a;margin:0 0 14px;font-size:18px;">{title}</h2>
+        <p style="color:#475569;font-size:14px;line-height:1.6;">{body}</p>
+        <table style="width:100%;margin:18px 0;border-collapse:collapse;font-size:14px;">
+          <tr><td style="padding:6px 0;color:#64748b;">Plan</td><td style="padding:6px 0;color:#0f172a;text-align:right;font-weight:600;">{plan_name}</td></tr>
+          {period_html}{invoice_html}{amount_html}
+        </table>
+        <div style="text-align:center;margin:22px 0;">
+          <a href="{cta_url}" style="display:inline-block;background:{color};color:#fff;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:600;">{cta}</a>
+        </div>
+        <p style="color:#94a3b8;font-size:12px;line-height:1.5;">
+          Puedes pagar con cualquier tarjeta de crédito o débito desde la página de Suscripción.
+          Si ya pagaste, ignora este mensaje.
+        </p>
+      </div>
+      <div style="background:#f8fafc;padding:12px;text-align:center;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 8px 8px;">
+        <p style="color:#94a3b8;font-size:11px;margin:0;">Mensaje automático de FortexaRH · No respondas a este correo.</p>
+      </div>
+    </div>
+    """
+    return subject, html
+
+
+async def _send_dunning_email(kind: str, company_id: str, invoice: Optional[dict], sub: dict) -> bool:
+    """Send a dunning email. Honors notification preferences. Idempotent at caller."""
+    try:
+        import asyncio as _asyncio
+        import resend
+        if not os.environ.get("RESEND_API_KEY"):
+            return False
+        # Find the company's admin
+        user = await db.users.find_one(
+            {"company_id": company_id, "role": {"$in": ["admin", "owner"]}},
+            {"_id": 0, "email": 1, "name": 1, "user_id": 1},
+        ) or await db.users.find_one(
+            {"company_id": company_id},
+            {"_id": 0, "email": 1, "name": 1, "user_id": 1},
+        )
+        if not user:
+            return False
+        # Respect notification preferences
+        try:
+            from routes.notification_preferences import should_notify_user
+            allow = await should_notify_user(user["user_id"], "billing_reminder", "email")
+        except Exception:
+            allow = True
+        if not allow:
+            return False
+        company = await db.companies.find_one({"company_id": company_id}, {"_id": 0, "name": 1}) or {}
+        sender = os.environ.get("SENDER_EMAIL", "noreply@fortexaerp.com")
+        subject, html = _build_reminder_html(
+            kind, user.get("name") or user["email"], sub, invoice, company.get("name", "tu empresa")
+        )
+        params = {
+            "from": f"FortexaRH <{sender}>",
+            "to": [user["email"]],
+            "subject": subject,
+            "html": html,
+        }
+        await _asyncio.to_thread(resend.Emails.send, params)
+        logger.info(f"billing: '{kind}' reminder sent to {user['email']} (company={company_id})")
+        return True
+    except Exception as e:  # noqa: BLE001
+        logger.warning(f"dunning email '{kind}' failed for company {company_id}: {e}")
+        return False
+
+
+async def send_billing_reminders() -> dict:
+    """Send dunning emails:
+    - 'upcoming': D-3 before current_period_end for active subs (no invoice yet).
+    - 'due': pending invoice exists and hasn't been notified of due-date yet.
+    - 'final': past_due >= GRACE_DAYS-1 days (last call before suspension).
+    """
+    now = _now()
+    counts = {"upcoming": 0, "due": 0, "final": 0}
+
+    # 1) Upcoming (active subs, period_end in ~3 days)
+    target_low = (now + timedelta(days=REMINDER_UPCOMING_DAYS)).isoformat()
+    target_high = (now + timedelta(days=REMINDER_UPCOMING_DAYS + 1)).isoformat()
+    async for sub in db.subscriptions.find(
+        {
+            "status": "active",
+            "current_period_end": {"$gte": target_low, "$lt": target_high},
+            "reminder_upcoming_at": {"$exists": False},
+        },
+        {"_id": 0},
+    ):
+        if await _send_dunning_email("upcoming", sub["company_id"], None, sub):
+            await db.subscriptions.update_one(
+                {"company_id": sub["company_id"]},
+                {"$set": {"reminder_upcoming_at": now.isoformat()}},
+            )
+            counts["upcoming"] += 1
+
+    # 2) Due (pending invoice, no due reminder yet)
+    async for inv in db.invoices.find(
+        {"status": "pending", "reminder_due_at": {"$exists": False}},
+        {"_id": 0},
+    ):
+        sub = await db.subscriptions.find_one({"company_id": inv["company_id"]}, {"_id": 0}) or {}
+        if await _send_dunning_email("due", inv["company_id"], inv, sub):
+            await db.invoices.update_one(
+                {"invoice_id": inv["invoice_id"]},
+                {"$set": {"reminder_due_at": now.isoformat()}},
+            )
+            counts["due"] += 1
+
+    # 3) Final (past_due_since >= GRACE_DAYS-1, not yet sent)
+    final_cutoff = (now - timedelta(days=GRACE_DAYS - 1)).isoformat()
+    async for sub in db.subscriptions.find(
+        {
+            "status": "past_due",
+            "past_due_since": {"$lt": final_cutoff},
+            "reminder_final_at": {"$exists": False},
+        },
+        {"_id": 0},
+    ):
+        inv = await db.invoices.find_one(
+            {"company_id": sub["company_id"], "status": "pending"},
+            {"_id": 0},
+            sort=[("created_at", -1)],
+        )
+        if await _send_dunning_email("final", sub["company_id"], inv, sub):
+            await db.subscriptions.update_one(
+                {"company_id": sub["company_id"]},
+                {"$set": {"reminder_final_at": now.isoformat()}},
+            )
+            counts["final"] += 1
+
+    if any(counts.values()):
+        logger.info(f"billing reminders sent: {counts}")
+    return counts
+
+
 async def run_billing_cycle() -> dict:
-    """Run both daily tasks. Safe to call any time."""
+    """Run all daily billing tasks. Safe to call any time.
+
+    Order matters: reminders must run BEFORE suspension so that the final
+    warning email can be sent on the day BEFORE suspension kicks in.
+    """
     created = await generate_pending_invoices_for_overdue_subs()
+    reminders = await send_billing_reminders()
     suspended = await suspend_overdue_subscriptions()
-    return {"invoices_created": created, "subscriptions_suspended": suspended}
+    return {
+        "invoices_created": created,
+        "subscriptions_suspended": suspended,
+        "reminders_sent": reminders,
+    }
 
 
 # -------------------- ENDPOINTS --------------------

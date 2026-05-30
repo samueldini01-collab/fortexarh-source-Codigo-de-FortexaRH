@@ -181,6 +181,14 @@ NOTIFICATION_EVENTS = {
         "label_fr": "Connexion depuis un nouvel emplacement",
         "default": {"in_app": True, "email": True, "push": False},
         "roles": ["all"]
+    },
+    "billing_reminder": {
+        "category": "system",
+        "label": "Recordatorios de facturación",
+        "label_en": "Billing reminders",
+        "label_fr": "Rappels de facturation",
+        "default": {"in_app": True, "email": True, "push": False},
+        "roles": ["admin"]
     }
 }
 

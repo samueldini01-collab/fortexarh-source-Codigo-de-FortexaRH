@@ -34,19 +34,25 @@
 - **Bug i18n fix**: `employees.valorManualMensualHelp` faltaba en `/public/locales/*.json` → copiado en 4 idiomas, `TRANSLATION_VERSION 3.7.9`.
 - Tests: 28/28 (13 login_audit + 10 2fa_totp + 5 nuevas pruebas de performance). 100% frontend.
 
-## Feb 2026 — Billing Cycle Automation (P0 Recurring Billing)
+## Feb 2026 — Billing Cycle Automation + Dunning Emails (P0 Recurring Billing)
 - **Cron diario 06:00 UTC** (`routes/billing_cycle.py`):
   - `generate_pending_invoices_for_overdue_subs`: para cada suscripción activa/past_due con `current_period_end < now` crea una factura `status=pending` en `invoices` (idempotente, no duplica) y marca la suscripción como `past_due` con `past_due_since`.
-  - `suspend_overdue_subscriptions`: suscripciones `past_due` > 3 días pasan a `suspended`.
+  - `send_billing_reminders`: 3 emails idempotentes vía Resend:
+    - **upcoming** (D-3): aviso al admin 3 días antes de que el período termine (suscripciones aún activas).
+    - **due** (D-0): cuando se crea la factura pendiente, "factura vencida – paga ahora".
+    - **final** (D+2): última oportunidad un día antes de la suspensión.
+  - `suspend_overdue_subscriptions`: subs `past_due` > 3 días pasan a `suspended`. Corre DESPUÉS de los reminders para garantizar que el "final" se envía.
+- **Notification preferences**: nuevo evento `billing_reminder` (categoría system, rol admin). El usuario puede desactivar in_app/email/push desde `/notifications` y los reminders respetan el flag.
 - **Endpoints** auth-protegidos:
-  - `GET /api/billing/status` — devuelve `{has_pending, pending_invoice, is_blocked, subscription_status, grace_days_left, current_period_end}`.
-  - `POST /api/billing/pay-pending` — body `{invoice_id, origin_url}`. Crea Stripe Checkout Session (modo payment, cualquier tarjeta — no requiere PM guardado). Devuelve `{checkout_url}`. El webhook + polling de Stripe marcan la factura como `paid` y reactivan la suscripción con `current_period_end` avanzado al período cubierto.
+  - `GET /api/billing/status` — devuelve `{has_pending, pending_invoice, is_blocked, grace_days_left, ...}`.
+  - `POST /api/billing/pay-pending` — crea Stripe Checkout Session (cualquier tarjeta, sin requerir PM guardado). El webhook + polling marcan la factura como `paid` y reactivan la suscripción con el período avanzado.
   - `POST /api/billing/internal/run` — trigger manual con header `X-Internal-Token`.
 - **Frontend**:
-  - **/subscriptions**: banner ámbar/rojo con factura pendiente + botón "Pagar ahora" → Stripe Checkout. En la tabla "Historial de Facturas" las filas `pending` muestran botón "Pagar" en lugar del PDF.
-  - **/billing-required (nueva ruta protegida)**: pantalla bloqueante con detalles de la factura, botón "Pagar con tarjeta", "Cerrar sesión".
-  - **ProtectedRoute guard**: al entrar a cualquier ruta protegida consulta `/billing/status`; si `is_blocked=true`, redirige automáticamente a `/billing-required`.
-- Tests: 8/8 backend + 4/4 frontend flows (iter251). 100%.
+  - **/subscriptions**: banner ámbar/rojo con factura pendiente + "Pagar ahora". Filas `pending` en historial muestran botón "Pagar" (Stripe Checkout).
+  - **/billing-required (nueva ruta)**: pantalla bloqueante con detalles de la factura y CTA "Pagar con tarjeta".
+  - **ProtectedRoute guard**: si la suscripción está `suspended`, cualquier ruta redirige automáticamente a `/billing-required`.
+- Tracking idempotencia: `reminder_upcoming_at` y `reminder_final_at` en la suscripción; `reminder_due_at` en la factura.
+- Tests: 8/8 backend + 4/4 frontend (iter251) + regresión 31/31. 100%.
 
 ## Feb 2026 — Support Actions Audit (Enterprise Compliance)
 - **Middleware** `SupportActionsAuditMiddleware` (Starlette BaseHTTPMiddleware): decodifica el JWT en cada request y, si lleva `support_session=true` Y el método es POST/PUT/PATCH/DELETE Y el path es `/api/*` (excluidos `/api/super-admin`, `/api/health`, `/api/auth/login`, `/api/auth/2fa`), inserta un registro en `support_actions` con method, path, query, status_code, ip, email, user_id, company_id y created_at. Falla silencioso — nunca rompe la response.
