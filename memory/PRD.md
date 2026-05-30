@@ -34,6 +34,17 @@
 - **Bug i18n fix**: `employees.valorManualMensualHelp` faltaba en `/public/locales/*.json` → copiado en 4 idiomas, `TRANSLATION_VERSION 3.7.9`.
 - Tests: 28/28 (13 login_audit + 10 2fa_totp + 5 nuevas pruebas de performance). 100% frontend.
 
+## Feb 2026 — Collections Dashboard + User Invitation Email Bug Fix
+- **Bug fix (P0)**: `POST /api/system-users` ahora envía email de invitación al usuario invitado vía Resend con credenciales temporales y CTA "Iniciar sesión" (`send_user_invitation_email()` en `email_service.py`). Antes el usuario se creaba en silencio y nunca recibía notificación.
+- **Collections Dashboard** (nuevo tab "Cobranza" en `/admin`):
+  - Endpoint `GET /api/super-admin/collections/dashboard?days=N` (N: 7-365).
+  - KPIs: saldo pendiente, pendientes/morosos/suspendidos, recovery rate tras email "vencida", recovery rate tras "último aviso".
+  - Aging buckets: 0-7 / 8-15 / 16-30 / 30+ días (monto + cantidad).
+  - Curva diaria de facturas creadas vs cobradas (AreaChart con gradientes).
+  - Top 10 clientes con más recurrencia de impago (tabla con badge de estado).
+  - Selectores de ventana (30 / 90 / 180 / 365 días) + refresh.
+- Tests: 8/8 backend + 100% frontend (iter252). El testing agent encontró un wiring bug menor (URL faltaba `/super-admin/` prefix) y lo arregló.
+
 ## Feb 2026 — Billing Cycle Automation + Dunning Emails (P0 Recurring Billing)
 - **Cron diario 06:00 UTC** (`routes/billing_cycle.py`):
   - `generate_pending_invoices_for_overdue_subs`: para cada suscripción activa/past_due con `current_period_end < now` crea una factura `status=pending` en `invoices` (idempotente, no duplica) y marca la suscripción como `past_due` con `past_due_since`.
