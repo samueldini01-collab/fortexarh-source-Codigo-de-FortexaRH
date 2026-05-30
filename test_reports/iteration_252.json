@@ -1,0 +1,47 @@
+{
+  "summary": "Iter 252 — Tested invitation email on POST /api/system-users and the new Super Admin Collections (Cobranza) dashboard (backend + frontend). 8/8 backend tests passed. Frontend had a 404 wiring bug in CollectionsDashboard.jsx (missing /super-admin prefix in axios URL) — fixed by testing agent and re-validated end-to-end.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Super Admin → Cobranza tab",
+        "issue": "CollectionsDashboard.jsx called `${API}/collections/dashboard` (=> /api/collections/dashboard) instead of `${API}/super-admin/collections/dashboard`. Caused 404 and dashboard stuck on loading spinner. Fixed in this iteration.",
+        "affected_selectors": ["[data-testid='collections-dashboard']", "[data-testid='collections-kpis']"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iter252_collections_and_invite.py",
+    "/app/test_reports/pytest/iter252.xml"
+  ],
+  "action_items": [
+    "Confirm the URL fix in CollectionsDashboard.jsx is acceptable (testing agent applied it: line 29 now uses `${API}/super-admin/collections/dashboard`).",
+    "Consider centralising the SA base URL (e.g., `SA_API = `${API}/super-admin`) to avoid similar 404 wiring bugs in future SA components."
+  ],
+  "critical_code_review_comments": [
+    "CollectionsDashboard.jsx swallows fetch errors silently (`catch {}`). User sees an indefinite loader on failure. Surface a small error state / Badge so SA can tell when the endpoint is broken.",
+    "Hard-coded role labels and SEVERITY_COLORS could be moved to constants for reuse across SA dashboards.",
+    "super_admin.py:838 — `days: int = 90` is clamped (good) but doesn't reject `days<0` with 400; silently clamps to 7. Acceptable but document the behavior.",
+    "Top-offenders aggregation iterates per-row to look up company name and subscription (N+1). With 22 companies it's fine, but at scale prefer a single $lookup pipeline.",
+    "system_users.py:106 uses bare `except Exception: pass` for the email send — make sure the logger.error inside email_service still fires (it does). Consider re-logging at the route too for traceability."
+  ],
+  "updated_files": [
+    "/app/frontend/src/components/super-admin/CollectionsDashboard.jsx",
+    "/app/backend/tests/test_iter252_collections_and_invite.py"
+  ],
+  "success_rate": {
+    "backend": "100% (8/8)",
+    "frontend": "100% after fix (Cobranza dashboard renders, KPIs visible, all 4 window buttons + refresh work, regression tabs OK)"
+  },
+  "test_credentials": "SA: fortexa2026rd / FortexaAdmin2026!  •  Admin: test_refactor@fortexa.com / test123",
+  "seed_data_creation": "Created+deleted a temporary system user invitee_test_iter252_<ts>@example.com via the admin API; cleanup is part of the test.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "The Cobranza dashboard now correctly hits /api/super-admin/collections/dashboard. Verified KPIs: outstanding $42.00, 2 facturas, 0 suspendidos, recovery 0% (no due/final emails sent in seed). Invitation email confirmed in backend log: 'Invitation email sent to invitee_test_iter252_<ts>@example.com for FortexaRH Demo Corp'. SA login is at /admin and uses 2 inputs (Usuario/Clave) + 'Acceder' button (no email validation).",
+  "rca of the issue": "ROOT CAUSE: In /app/frontend/src/components/super-admin/CollectionsDashboard.jsx line 29, axios.get used `${API}/collections/dashboard` while the FastAPI router is mounted at prefix `/super-admin` (routes/super_admin.py line 13). Resulting URL was /api/collections/dashboard which is not registered → 404. UI swallowed the error and never set `data`, so the loader spinner stayed forever. FIX: prefix changed to `${API}/super-admin/collections/dashboard`. REPRO: open /admin → SA login → click Cobranza tab → before fix you see only a spinner + two 404s in console; after fix all KPIs, charts and ranking render."
+}

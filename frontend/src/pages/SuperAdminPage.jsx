@@ -23,6 +23,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMe
 import { SupportContent } from "./SupportAdminPage";
 import { BrochureBuilderPanel } from "./BrochureBuilderPage";
 import AbandonedCartsTab from "../components/super-admin/AbandonedCartsTab";
+import CollectionsDashboard from "../components/super-admin/CollectionsDashboard";
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api/super-admin";
 
@@ -429,6 +430,9 @@ function SuperAdminDashboard({ token, onLogout }) {
             </TabsTrigger>
             <TabsTrigger value="invoices-pending" className="data-[state=active]:bg-red-600" data-testid="tab-invoices-pending">
               <FileWarning className="w-4 h-4 mr-1.5" /> Facturas pendientes {pendingInvoices.count > 0 && <Badge className="ml-1 bg-red-500/80 text-white text-[10px] px-1.5 py-0">{pendingInvoices.count}</Badge>}
+            </TabsTrigger>
+            <TabsTrigger value="collections" className="data-[state=active]:bg-emerald-600" data-testid="tab-collections">
+              <DollarSign className="w-4 h-4 mr-1.5" /> Cobranza
             </TabsTrigger>
             <TabsTrigger value="support-actions" className="data-[state=active]:bg-orange-600" data-testid="tab-support-actions">
               <LogIn className="w-4 h-4 mr-1.5" /> Acciones de soporte
@@ -937,6 +941,11 @@ function SuperAdminDashboard({ token, onLogout }) {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Support Actions Tab */}
+          <TabsContent value="collections" className="space-y-4" data-testid="collections-tab">
+            <CollectionsDashboard token={token} />
           </TabsContent>
 
           {/* Support Actions Tab */}

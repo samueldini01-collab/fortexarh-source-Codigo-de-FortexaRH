@@ -42,6 +42,84 @@ def get_email_footer():
     </div>
     """
 
+async def send_user_invitation_email(
+    recipient_email: str,
+    recipient_name: str,
+    company_name: str,
+    inviter_name: str,
+    role: str,
+    temp_password: str | None = None,
+    login_url: str = "https://fortexarh.com/login",
+):
+    """Send an invitation email when a new user is added to a company.
+    If `temp_password` is provided, it is included in the email body so the
+    invitee can log in immediately."""
+    role_label = {
+        "admin": "Administrador",
+        "manager": "Gerente",
+        "user": "Usuario",
+        "viewer": "Consulta",
+    }.get(role, role.title() if role else "Usuario")
+
+    creds_block = ""
+    if temp_password:
+        creds_block = f"""
+        <div style="background:#fff7ed;border:1px solid #fdba74;border-radius:8px;padding:16px;margin:18px 0;">
+            <p style="color:#9a3412;font-size:13px;margin:0 0 6px;font-weight:600;">Tus credenciales temporales</p>
+            <table style="width:100%;font-size:14px;border-collapse:collapse;">
+                <tr><td style="padding:4px 0;color:#7c2d12;">Email</td><td style="padding:4px 0;color:#1e293b;text-align:right;font-family:monospace;">{recipient_email}</td></tr>
+                <tr><td style="padding:4px 0;color:#7c2d12;">Contraseña</td><td style="padding:4px 0;color:#1e293b;text-align:right;font-family:monospace;font-weight:700;">{temp_password}</td></tr>
+            </table>
+            <p style="color:#9a3412;font-size:11px;margin:10px 0 0;">Te recomendamos cambiarla después de iniciar sesión.</p>
+        </div>
+        """
+
+    html_content = f"""
+    <!DOCTYPE html>
+    <html><head><meta charset="utf-8"></head>
+    <body style="margin:0;padding:0;background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+      <div style="max-width:600px;margin:0 auto;padding:20px;">
+        {get_email_header()}
+        <div style="background:white;padding:30px;border-radius:0 0 8px 8px;box-shadow:0 4px 6px rgba(0,0,0,0.05);">
+          <h2 style="color:#1e293b;margin:0 0 14px;font-size:22px;">¡Te invitaron a FortexaRH!</h2>
+          <p style="color:#475569;font-size:15px;line-height:1.6;">Hola <b>{recipient_name}</b>,</p>
+          <p style="color:#475569;font-size:15px;line-height:1.6;">
+            <b>{inviter_name}</b> te ha agregado como <b>{role_label}</b> al espacio de
+            <b>{company_name}</b> en FortexaRH. Desde ahora puedes acceder al sistema de
+            Recursos Humanos y Nómina de tu empresa.
+          </p>
+          {creds_block}
+          <div style="text-align:center;margin:24px 0;">
+            <a href="{login_url}" style="display:inline-block;background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:white;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">
+              Iniciar sesión
+            </a>
+          </div>
+          <p style="color:#94a3b8;font-size:12px;text-align:center;margin:18px 0 0;">
+            Si no esperabas esta invitación, puedes ignorar este correo de forma segura.
+          </p>
+        </div>
+        {get_email_footer()}
+      </div>
+    </body></html>
+    """
+    try:
+        if not os.environ.get("RESEND_API_KEY"):
+            logger.warning("RESEND_API_KEY not configured; skipping invitation email")
+            return False
+        params = {
+            "from": f"FortexaRH <{SENDER_EMAIL}>",
+            "to": [recipient_email],
+            "subject": f"Te invitaron a unirte a {company_name} en FortexaRH",
+            "html": html_content,
+        }
+        await asyncio.to_thread(resend.Emails.send, params)
+        logger.info(f"Invitation email sent to {recipient_email} for {company_name}")
+        return True
+    except Exception as exc:  # noqa: BLE001
+        logger.error(f"Failed to send invitation email to {recipient_email}: {exc}")
+        return False
+
+
 async def send_payment_confirmation_email(
     recipient_email: str,
     recipient_name: str,

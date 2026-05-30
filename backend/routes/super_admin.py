@@ -829,3 +829,143 @@ async def list_support_actions(
     cursor = db.support_actions.find(query, {"_id": 0}).sort("created_at", -1).limit(limit)
     items = await cursor.to_list(length=limit)
     return {"items": items, "count": len(items)}
+
+
+
+# ==================== COLLECTIONS DASHBOARD ====================
+
+@router.get("/collections/dashboard")
+async def collections_dashboard(admin=Depends(get_super_admin), days: int = 90):
+    """KPIs and analytics for the Super Admin Collections (cobranza) dashboard.
+    - kpis: outstanding amount, pending count, suspended count, recovery rate
+    - aging_buckets: 0-7, 8-15, 16-30, 30+ days overdue (count + amount)
+    - daily_pending_curve: array of {date, amount, count} for the last N days
+    - dunning_funnel: how many invoices were emailed (due/final) and how many got paid after
+    - top_offenders: top 10 companies by historical past-due count
+    """
+    days = max(7, min(days, 365))
+    now = _now_dt()
+    since = now - timedelta(days=days)
+
+    # ---- Pending invoices (current state) ----
+    pending_cursor = db.invoices.find({"status": "pending"}, {"_id": 0})
+    pending: List[dict] = await pending_cursor.to_list(2000)
+    outstanding_amount = round(sum(float(p.get("total", 0)) for p in pending), 2)
+
+    suspended_count = await db.subscriptions.count_documents({"status": "suspended"})
+    past_due_count = await db.subscriptions.count_documents({"status": "past_due"})
+
+    # ---- Aging buckets ----
+    aging = {
+        "0_7":  {"count": 0, "amount": 0.0, "label": "0-7 días"},
+        "8_15": {"count": 0, "amount": 0.0, "label": "8-15 días"},
+        "16_30":{"count": 0, "amount": 0.0, "label": "16-30 días"},
+        "30_plus": {"count": 0, "amount": 0.0, "label": "30+ días"},
+    }
+    for inv in pending:
+        end_iso = inv.get("period_end_iso") or inv.get("due_at")
+        try:
+            end_dt = datetime.fromisoformat((end_iso or "").replace("Z", "+00:00"))
+            overdue = max(0, (now - end_dt).days)
+        except Exception:
+            overdue = 0
+        bucket = "0_7" if overdue <= 7 else "8_15" if overdue <= 15 else "16_30" if overdue <= 30 else "30_plus"
+        aging[bucket]["count"] += 1
+        aging[bucket]["amount"] = round(aging[bucket]["amount"] + float(inv.get("total", 0)), 2)
+
+    # ---- Daily pending curve (build from invoices created in window) ----
+    by_day: dict[str, dict] = {}
+    cursor = db.invoices.find(
+        {"created_at": {"$gte": since.isoformat()}},
+        {"_id": 0, "created_at": 1, "total": 1, "status": 1, "paid_at_iso": 1},
+    )
+    async for inv in cursor:
+        day = (inv.get("created_at") or "")[:10]
+        if not day:
+            continue
+        slot = by_day.setdefault(day, {"date": day, "created": 0, "created_amount": 0.0, "paid": 0, "paid_amount": 0.0})
+        slot["created"] += 1
+        slot["created_amount"] = round(slot["created_amount"] + float(inv.get("total", 0)), 2)
+        if inv.get("status") == "paid":
+            paid_day = (inv.get("paid_at_iso") or "")[:10]
+            if paid_day:
+                pslot = by_day.setdefault(paid_day, {"date": paid_day, "created": 0, "created_amount": 0.0, "paid": 0, "paid_amount": 0.0})
+                pslot["paid"] += 1
+                pslot["paid_amount"] = round(pslot["paid_amount"] + float(inv.get("total", 0)), 2)
+    curve = sorted(by_day.values(), key=lambda r: r["date"])
+
+    # ---- Dunning funnel + recovery rate ----
+    due_sent = await db.invoices.count_documents({"reminder_due_at": {"$exists": True}, "created_at": {"$gte": since.isoformat()}})
+    due_paid = await db.invoices.count_documents({"reminder_due_at": {"$exists": True}, "status": "paid", "created_at": {"$gte": since.isoformat()}})
+    final_sent = await db.subscriptions.count_documents({"reminder_final_at": {"$gte": since.isoformat()}})
+    # invoices paid after a final reminder (best-effort: those whose company had a final reminder and got paid_at after the reminder)
+    final_paid = 0
+    final_subs = db.subscriptions.find(
+        {"reminder_final_at": {"$gte": since.isoformat()}},
+        {"_id": 0, "company_id": 1, "reminder_final_at": 1},
+    )
+    async for fs in final_subs:
+        paid = await db.invoices.find_one({
+            "company_id": fs["company_id"],
+            "status": "paid",
+            "paid_at_iso": {"$gte": fs["reminder_final_at"]},
+        }, {"_id": 0, "invoice_id": 1})
+        if paid:
+            final_paid += 1
+
+    recovery_rate_due = round((due_paid / due_sent * 100), 1) if due_sent else 0.0
+    recovery_rate_final = round((final_paid / final_sent * 100), 1) if final_sent else 0.0
+
+    # ---- Top offenders: companies by past_due count over the window ----
+    pipeline = [
+        {"$match": {"created_at": {"$gte": since.isoformat()}}},
+        {"$group": {
+            "_id": "$company_id",
+            "count": {"$sum": 1},
+            "outstanding": {"$sum": {"$cond": [{"$eq": ["$status", "pending"]}, "$total", 0]}},
+            "paid_total": {"$sum": {"$cond": [{"$eq": ["$status", "paid"]}, "$total", 0]}},
+        }},
+        {"$sort": {"count": -1}},
+        {"$limit": 10},
+    ]
+    top_raw = await db.invoices.aggregate(pipeline).to_list(10)
+    top = []
+    for row in top_raw:
+        company_id = row["_id"]
+        if not company_id:
+            continue
+        company = await db.companies.find_one({"company_id": company_id}, {"_id": 0, "name": 1})
+        sub = await db.subscriptions.find_one({"company_id": company_id}, {"_id": 0, "status": 1})
+        top.append({
+            "company_id": company_id,
+            "company_name": (company or {}).get("name", ""),
+            "invoice_count": row["count"],
+            "outstanding": round(float(row.get("outstanding", 0)), 2),
+            "paid_total": round(float(row.get("paid_total", 0)), 2),
+            "subscription_status": (sub or {}).get("status", "unknown"),
+        })
+
+    return {
+        "kpis": {
+            "outstanding_amount": outstanding_amount,
+            "pending_count": len(pending),
+            "past_due_count": past_due_count,
+            "suspended_count": suspended_count,
+            "due_emails_sent": due_sent,
+            "due_emails_recovered": due_paid,
+            "recovery_rate_due": recovery_rate_due,
+            "final_emails_sent": final_sent,
+            "final_emails_recovered": final_paid,
+            "recovery_rate_final": recovery_rate_final,
+        },
+        "aging_buckets": [
+            {"key": k, **v} for k, v in aging.items()
+        ],
+        "daily_curve": curve,
+        "top_offenders": top,
+        "window_days": days,
+    }
+
+
+def _now_dt() -> datetime:
+    return datetime.now(timezone.utc)

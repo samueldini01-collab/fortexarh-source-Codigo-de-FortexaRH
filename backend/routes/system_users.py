@@ -90,6 +90,21 @@ async def create_system_user(data: SystemUserCreate, current_user: dict = Depend
     
     await db.users.insert_one(user)
     
+    # Send invitation email with credentials (best-effort, never blocks)
+    try:
+        from email_service import send_user_invitation_email
+        company_name = (company or {}).get("name", "tu empresa")
+        await send_user_invitation_email(
+            recipient_email=data.email,
+            recipient_name=data.name,
+            company_name=company_name,
+            inviter_name=current_user.get("name") or "El administrador",
+            role=data.role,
+            temp_password=data.password,
+        )
+    except Exception:
+        pass
+    
     # Log activity
     await db.user_activities.insert_one({
         "activity_id": f"act_{uuid.uuid4().hex[:12]}",
