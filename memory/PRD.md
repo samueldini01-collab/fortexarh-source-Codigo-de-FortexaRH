@@ -34,6 +34,13 @@
 - **Bug i18n fix**: `employees.valorManualMensualHelp` faltaba en `/public/locales/*.json` → copiado en 4 idiomas, `TRANSLATION_VERSION 3.7.9`.
 - Tests: 28/28 (13 login_audit + 10 2fa_totp + 5 nuevas pruebas de performance). 100% frontend.
 
+## Feb 2026 — ACH Drill-down: Quick-edit datos bancarios
+- En el dialog "Generar Archivo ACH", la sección "Empleados sin datos bancarios" ahora muestra **cada empleado como un botón clickeable**. Al click abre un mini-modal `EmployeeBankQuickEdit` con 3 campos (Banco, Tipo de cuenta CC/CA, Número de cuenta).
+- Nuevo endpoint ligero `PATCH /api/employees/{id}/bank-info` (modelo `BankInfoPatch`) que actualiza solo los 3 campos sin requerir el payload completo.
+- Al guardar, el modal cierra, el dialog ACH **se mantiene abierto** y `achPreview` se refresca automáticamente — el empleado pasa de "missing" a "ready" sin recargar la página.
+- Botón "Abrir perfil completo" como escape hatch (abre `/employees?focus={id}` en nueva pestaña).
+- Tests: 6/6 backend + 6/6 flujos frontend (iter254).
+
 ## Feb 2026 — BHD León ACH Format Fix
 - **Bug**: el formato BHD generado antes era fixed-width inventado (`account:<20amount:>15.2fname:<40doc:<15`), incompatible con el portal BHD.
 - **Fix**: alineado al spec oficial BHD León — archivo `.txt` delimitado por `;` con 5 columnas: `cuenta;nombre;referencia;monto_en_centavos;concepto`. El monto va como entero SIN punto decimal (los últimos 2 dígitos son centavos: `2117025` = $21,170.25).
