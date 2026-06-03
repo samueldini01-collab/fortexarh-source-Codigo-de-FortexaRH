@@ -71,9 +71,9 @@ async def get_available_banks(request: Request):
     """Get list of available banks for file generation"""
     await get_user_from_request(request)
     return [
-        {"id": "banreservas", "name": "Banreservas", "format": "CSV", "description": "Formato ACH Banreservas"},
-        {"id": "popular", "name": "Banco Popular Dominicano", "format": "TXT", "description": "Formato Nómina Popular"},
-        {"id": "bhd", "name": "BHD León", "format": "TXT", "description": "Formato ACH BHD"},
+        {"id": "banreservas", "name": "Banreservas", "format": "TXT", "description": "Formato ACH Banreservas (TXT delimitado o Excel oficial)", "formats": ["txt", "xlsx"]},
+        {"id": "popular", "name": "Banco Popular Dominicano", "format": "TXT", "description": "Formato Nómina Popular", "formats": ["txt"]},
+        {"id": "bhd", "name": "BHD León", "format": "TXT", "description": "Formato ACH BHD", "formats": ["txt"]},
     ]
 
 
@@ -121,8 +121,12 @@ async def save_company_bank_config(data: CompanyBankConfig, request: Request):
 
 
 @router.get("/generate/{period_id}/{bank_id}")
-async def generate_bank_file(period_id: str, bank_id: str, request: Request):
-    """Generate ACH bank payment file for a payroll period"""
+async def generate_bank_file(period_id: str, bank_id: str, request: Request, format: str = "txt"):
+    """Generate ACH bank payment file for a payroll period.
+
+    For Banreservas the caller may choose `format=txt` (default, official ACH
+    delimited file) or `format=xlsx` (official Banreservas Nómina Electrónica
+    Excel template, ready to upload via the bank portal)."""
     current_user = await get_user_from_request(request)
     company_id = current_user.get("company_id")
     
@@ -175,29 +179,144 @@ async def generate_bank_file(period_id: str, bank_id: str, request: Request):
     total_amount = 0.0
     
     if bank_id == "banreservas":
-        # Banreservas ACH format (verified from real template):
-        # CC,DOP,{CuentaEmpresa},CC,DOP,{CuentaEmpleado},{Monto},{Concepto}
+        # Banreservas: TXT (CSV-delimited ACH) or official XLSX template
+        bank_format = (format or "txt").lower()
+        if bank_format not in ("txt", "xlsx"):
+            bank_format = "txt"
+
+        # Map TXT codes (CC/CA) to human labels expected by the Excel template
+        type_label = {"CC": "Corriente", "CA": "Ahorro"}
+        currency_label = {"DOP": "Pesos", "USD": "Dólares"}
+        company_type_label = type_label.get(company_account_type, "Corriente")
+        currency_label_text = currency_label.get(company_currency, "Pesos")
+
+        rows: list[dict] = []
         for payroll in payrolls:
             emp = emp_map.get(payroll.get("employee_id"), {})
             emp_account = emp.get("account_number", "")
             emp_account_type = normalize_account_type(emp.get("account_type", "CC"))
             amount = payroll.get("net_salary", 0)
             concept = emp.get("position", payroll.get("position", "PAGO NOMINA"))
-            
+
             if not emp_account:
                 missing_bank.append(f"{emp.get('first_name', '')} {emp.get('last_name', '')}")
                 continue
-            
-            if amount > 0:
-                output.write(format_banreservas_line(
-                    company_account_type, company_currency, company_account,
-                    emp_account_type, company_currency, emp_account,
-                    amount, concept
-                ))
-                record_count += 1
-                total_amount += amount
-        
-        filename = f"ACH_Banreservas_{period.get('description', period_id).replace(' ', '_')}.csv"
+            if amount <= 0:
+                continue
+
+            full_name = f"{emp.get('last_name', '').upper()}, {emp.get('first_name', '').upper()}".strip(", ")
+            concept_clean = (concept or "PAGO NOMINA").upper().replace(",", " ").strip()[:50]
+
+            rows.append({
+                "name": full_name,
+                "company_account_type": company_account_type,
+                "company_type_label": company_type_label,
+                "currency": company_currency,
+                "currency_label": currency_label_text,
+                "company_account": company_account,
+                "emp_account_type": emp_account_type,
+                "emp_type_label": type_label.get(emp_account_type, "Corriente"),
+                "emp_account": emp_account,
+                "amount": amount,
+                "concept": concept_clean,
+            })
+            record_count += 1
+            total_amount += amount
+
+        if bank_format == "xlsx":
+            # Build the official Banreservas Excel template
+            from openpyxl import Workbook
+            from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "CONVERTIR NOMINA"
+
+            label_font = Font(bold=True, size=11)
+            value_font = Font(size=11)
+            header_fill = PatternFill("solid", fgColor="1F4E78")
+            header_font = Font(bold=True, color="FFFFFF", size=11)
+            thin = Side(border_style="thin", color="B7B7B7")
+            border = Border(left=thin, right=thin, top=thin, bottom=thin)
+
+            meta = [
+                ("TIPO CUENTA EMPRESA", company_type_label),
+                ("NUMERO DE CUENTA EMPRESA", company_account),
+                ("MONEDA A PAGAR", currency_label_text),
+                ("TOTAL DE NÓMINA", round(total_amount, 2)),
+                ("CANTIDAD DE EMPLEADOS", record_count),
+            ]
+            for i, (label, value) in enumerate(meta, 1):
+                ws.cell(row=i, column=1, value=label).font = label_font
+                ws.cell(row=i, column=5, value=value).font = value_font
+
+            headers = [
+                "Nombre de empleado", "TIPO CUENTA EMPRESA", "TIPO DE LA MONEDA",
+                "NUMERO DE CUENTA DE EMPRESA", "Tipo cuenta empleado", "MONEDA A PAGAR",
+                "Numero cuenta empleado", "Monto a pagar", "Concepto",
+            ]
+            for col, header in enumerate(headers, 1):
+                cell = ws.cell(row=8, column=col, value=header)
+                cell.font = header_font
+                cell.fill = header_fill
+                cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+                cell.border = border
+
+            for idx, r in enumerate(rows, start=9):
+                values = [
+                    r["name"], r["company_type_label"], r["currency_label"],
+                    r["company_account"], r["emp_type_label"], r["currency_label"],
+                    r["emp_account"], round(float(r["amount"]), 2), r["concept"],
+                ]
+                for col, v in enumerate(values, 1):
+                    cell = ws.cell(row=idx, column=col, value=v)
+                    cell.border = border
+                    cell.font = value_font
+                    if col == 8:
+                        cell.number_format = '#,##0.00'
+
+            for col, width in enumerate([34, 20, 18, 24, 20, 16, 22, 16, 32], 1):
+                ws.column_dimensions[chr(64 + col)].width = width
+            ws.freeze_panes = "A9"
+
+            xlsx_buf = io.BytesIO()
+            wb.save(xlsx_buf)
+            xlsx_bytes = xlsx_buf.getvalue()
+            xlsx_buf.close()
+
+            filename = f"Nomina_Banreservas_{period.get('description', period_id).replace(' ', '_')}.xlsx"
+            await db.bank_file_logs.insert_one({
+                "company_id": company_id, "period_id": period_id, "bank_id": bank_id,
+                "format": "xlsx", "record_count": record_count,
+                "missing_bank_info": missing_bank, "total_amount": round(total_amount, 2),
+                "generated_by": current_user.get("user_id"),
+                "generated_at": datetime.now(timezone.utc).isoformat(), "filename": filename,
+            })
+            if record_count == 0:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"No se generaron registros. {len(missing_bank)} empleados sin datos bancarios: {', '.join(missing_bank[:5])}",
+                )
+            return StreamingResponse(
+                io.BytesIO(xlsx_bytes),
+                media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                headers={
+                    "Content-Disposition": f"attachment; filename={filename}",
+                    "X-Record-Count": str(record_count),
+                    "X-Total-Amount": f"{total_amount:.2f}",
+                    "X-Missing-Bank": str(len(missing_bank)),
+                },
+            )
+
+        # Default: TXT format
+        for r in rows:
+            output.write(format_banreservas_line(
+                r["company_account_type"], r["currency"], r["company_account"],
+                r["emp_account_type"], r["currency"], r["emp_account"],
+                r["amount"], r["concept"],
+            ))
+
+        filename = f"ACH_Banreservas_{period.get('description', period_id).replace(' ', '_')}.txt"
         
     elif bank_id == "popular":
         output.write(f"H|{company_account}|{datetime.now().strftime('%Y%m%d')}|NOMINA\n")

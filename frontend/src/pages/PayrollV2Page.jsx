@@ -184,6 +184,7 @@ export default function PayrollPage() {
   // ACH Bank File states
   const [showAchDialog, setShowAchDialog] = useState(false);
   const [achBank, setAchBank] = useState("banreservas");
+  const [achFormat, setAchFormat] = useState("txt"); // 'txt' (default) | 'xlsx' (Banreservas only)
   const [achPreview, setAchPreview] = useState(null);
   const [achLoading, setAchLoading] = useState(false);
 
@@ -667,11 +668,12 @@ export default function PayrollPage() {
   const handleDownloadAch = async () => {
     if (!selectedPeriod) return;
     try {
+      const useXlsx = achBank === "banreservas" && achFormat === "xlsx";
       const response = await axios.get(
-        `${API}/bank-files/generate/${selectedPeriod.period_id}/${achBank}`,
+        `${API}/bank-files/generate/${selectedPeriod.period_id}/${achBank}${useXlsx ? "?format=xlsx" : ""}`,
         { headers: getAuthHeaders(), withCredentials: true, responseType: 'blob' }
       );
-      const ext = achBank === 'banreservas' ? 'csv' : 'txt';
+      const ext = useXlsx ? 'xlsx' : 'txt';
       const blob = new Blob([response.data]);
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -681,7 +683,7 @@ export default function PayrollPage() {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      toast.success(`Archivo ACH ${achBank} descargado`);
+      toast.success(`Archivo ACH ${achBank} (${ext.toUpperCase()}) descargado`);
       setShowAchDialog(false);
     } catch (error) {
       const detail = error.response?.data;
@@ -2553,6 +2555,40 @@ export default function PayrollPage() {
                   </SelectContent>
                 </Select>
               </div>
+
+              {achBank === "banreservas" && (
+                <div data-testid="ach-format-group">
+                  <Label>Formato</Label>
+                  <div className="grid grid-cols-2 gap-2 mt-1">
+                    <button
+                      type="button"
+                      onClick={() => setAchFormat("txt")}
+                      data-testid="ach-format-txt"
+                      className={`text-left rounded-lg border p-3 transition ${
+                        achFormat === "txt"
+                          ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 ring-2 ring-emerald-500/20"
+                          : "border-slate-200 dark:border-slate-700 hover:border-slate-300"
+                      }`}
+                    >
+                      <p className="text-sm font-semibold">TXT (ACH delimitado)</p>
+                      <p className="text-xs text-slate-500 mt-0.5">Formato clásico Banreservas, CC,DOP,...,Monto,Concepto</p>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAchFormat("xlsx")}
+                      data-testid="ach-format-xlsx"
+                      className={`text-left rounded-lg border p-3 transition ${
+                        achFormat === "xlsx"
+                          ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 ring-2 ring-emerald-500/20"
+                          : "border-slate-200 dark:border-slate-700 hover:border-slate-300"
+                      }`}
+                    >
+                      <p className="text-sm font-semibold">Excel oficial</p>
+                      <p className="text-xs text-slate-500 mt-0.5">Plantilla Nómina Electrónica V1.2 de Banreservas</p>
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {achLoading ? (
                 <div className="py-6 text-center text-sm text-slate-500">Cargando vista previa...</div>
