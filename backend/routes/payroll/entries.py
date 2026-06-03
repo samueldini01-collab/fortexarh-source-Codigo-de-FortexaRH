@@ -37,7 +37,7 @@ from utils.payroll_constants import (
 )
 
 from . import router
-from ._helpers import _compute_isr, period_scaling_factor, update_period_totals
+from ._helpers import _compute_isr, period_scaling_factor, recompute_sister_quincena_isr, update_period_totals
 
 
 @router.get("/entries/{entry_id}")
@@ -120,7 +120,14 @@ async def update_payroll_entry(entry_id: str, data: PayrollEntryCreate, current_
         afp_employee = 0
 
     # ISR: respect inline override first, then employee override, then calculation
-    isr_result = await _compute_isr(company_id, gross_salary, rates, period_type=(period or {}).get("period_type"))
+    isr_result = await _compute_isr(
+        company_id,
+        gross_salary,
+        rates,
+        period_type=(period or {}).get("period_type"),
+        period=period,
+        employee_id=entry.get("employee_id"),
+    )
     if data.isr_override is not None:
         isr = round(data.isr_override, 2)
     elif emp.get("isr_discount", True):
@@ -185,6 +192,9 @@ async def update_payroll_entry(entry_id: str, data: PayrollEntryCreate, current_
     )
     
     await update_period_totals(entry["period_id"], company_id)
+    # Cascade ISR recompute to the sister quincena (if any) when the
+    # entry's gross changes — keeps the monthly ISR distribution consistent.
+    await recompute_sister_quincena_isr(company_id, period, entry.get("employee_id"))
     
     return {"message": "Entrada actualizada", "net_salary": net_salary}
 
@@ -363,7 +373,14 @@ async def reset_entry_from_profile(entry_id: str, current_user: dict = Depends(g
         if emp.get("isr_manual_override"):
             isr = round(float(emp.get("isr_manual_amount", 0)) * scale, 2)
         else:
-            isr_result = await _compute_isr(company_id, gross_salary, rates, period_type=period_type)
+            isr_result = await _compute_isr(
+                company_id,
+                gross_salary,
+                rates,
+                period_type=period_type,
+                period=period,
+                employee_id=entry.get("employee_id"),
+            )
             isr = isr_result["isr_monthly"]
     else:
         isr = 0
@@ -395,6 +412,7 @@ async def reset_entry_from_profile(entry_id: str, current_user: dict = Depends(g
         }},
     )
     await update_period_totals(entry["period_id"], company_id)
+    await recompute_sister_quincena_isr(company_id, period, entry.get("employee_id"))
 
     return {
         "message": "Entrada re-sincronizada con el perfil del empleado",

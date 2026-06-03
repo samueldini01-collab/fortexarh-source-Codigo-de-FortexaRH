@@ -125,7 +125,14 @@ async def calculate_period(period_id: str, current_user: dict = Depends(get_curr
         elif emp.get("isr_discount", True) is False:
             isr = 0
         else:
-            isr_result = await _compute_isr(company_id, gross_salary, rates, period_type=period_type)
+            isr_result = await _compute_isr(
+                company_id,
+                gross_salary,
+                rates,
+                period_type=period_type,
+                period=period,
+                employee_id=entry.get("employee_id"),
+            )
             isr = isr_result["isr_monthly"]
 
         total_additional = entry.get("total_additional_deductions", 0) or 0

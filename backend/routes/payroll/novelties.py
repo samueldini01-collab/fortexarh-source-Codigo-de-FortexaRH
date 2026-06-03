@@ -37,7 +37,7 @@ from utils.payroll_constants import (
 )
 
 from . import router
-from ._helpers import _compute_isr, update_period_totals
+from ._helpers import _compute_isr, recompute_sister_quincena_isr, update_period_totals
 
 
 @router.post("/entries/{entry_id}/novelties")
@@ -110,7 +110,14 @@ async def add_novelty(entry_id: str, data: PayrollNoveltyCreate, current_user: d
     rates = await get_company_rates_flat(company_id)
     sfs_employee = round(gross_salary * rates["sfs_employee_rate"], 2)
     afp_employee = round(gross_salary * rates["afp_employee_rate"], 2)
-    isr_result = await _compute_isr(company_id, gross_salary, rates, period_type=(period or {}).get("period_type"))
+    isr_result = await _compute_isr(
+        company_id,
+        gross_salary,
+        rates,
+        period_type=(period or {}).get("period_type"),
+        period=period,
+        employee_id=entry.get("employee_id"),
+    )
     isr = isr_result["isr_monthly"]
     
     total_additional = entry.get("total_additional_deductions", 0)
@@ -144,6 +151,8 @@ async def add_novelty(entry_id: str, data: PayrollNoveltyCreate, current_user: d
     )
     
     await update_period_totals(entry["period_id"], company_id)
+    # Cascade: keep the sister quincena's ISR in sync with the new monthly accumulation
+    await recompute_sister_quincena_isr(company_id, period, entry.get("employee_id"))
     
     return {"message": "Novedad agregada", "novelty_id": novelty_id, "net_salary": net_salary}
 
@@ -223,7 +232,14 @@ async def update_novelty(
     rates = await get_company_rates_flat(company_id)
     sfs_employee = round(gross_salary * rates["sfs_employee_rate"], 2)
     afp_employee = round(gross_salary * rates["afp_employee_rate"], 2)
-    isr_result = await _compute_isr(company_id, gross_salary, rates, period_type=(period or {}).get("period_type"))
+    isr_result = await _compute_isr(
+        company_id,
+        gross_salary,
+        rates,
+        period_type=(period or {}).get("period_type"),
+        period=period,
+        employee_id=entry.get("employee_id"),
+    )
     isr = isr_result["isr_monthly"]
 
     total_additional = entry.get("total_additional_deductions", 0)
@@ -262,6 +278,7 @@ async def update_novelty(
     )
 
     await update_period_totals(entry["period_id"], company_id)
+    await recompute_sister_quincena_isr(company_id, period, entry.get("employee_id"))
 
     return {"message": "Novedad actualizada", "novelty_id": novelty_id, "net_salary": net_salary}
 
@@ -320,7 +337,14 @@ async def delete_novelty(entry_id: str, novelty_id: str, current_user: dict = De
     rates = await get_company_rates_flat(company_id)
     sfs_employee = round(gross_salary * rates["sfs_employee_rate"], 2)
     afp_employee = round(gross_salary * rates["afp_employee_rate"], 2)
-    isr_result = await _compute_isr(company_id, gross_salary, rates, period_type=(period or {}).get("period_type"))
+    isr_result = await _compute_isr(
+        company_id,
+        gross_salary,
+        rates,
+        period_type=(period or {}).get("period_type"),
+        period=period,
+        employee_id=entry.get("employee_id"),
+    )
     isr = isr_result["isr_monthly"]
     
     total_additional = entry.get("total_additional_deductions", 0)
@@ -354,6 +378,7 @@ async def delete_novelty(entry_id: str, novelty_id: str, current_user: dict = De
     )
     
     await update_period_totals(entry["period_id"], company_id)
+    await recompute_sister_quincena_isr(company_id, period, entry.get("employee_id"))
     
     return {"message": "Novedad eliminada", "net_salary": net_salary}
 

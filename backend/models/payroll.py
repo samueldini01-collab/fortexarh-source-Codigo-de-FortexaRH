@@ -66,6 +66,11 @@ class PayrollSettingsModel(BaseModel):
     isr_max_rate: float = 25
     isr_mid_fixed: float = 31216.00
     isr_max_fixed: float = 79776.00
+    # ISR Quincenal Distribution Policy:
+    #   "split_half" (default) — Mitad del ISR mensual en cada quincena.
+    #   "all_q1"               — Todo el ISR mensual se cobra en la 1ra quincena.
+    #   "all_q2"               — Todo el ISR mensual se cobra en la 2da quincena.
+    isr_quincenal_policy: str = "split_half"
 
 
 class PayrollConfigCreate(BaseModel):

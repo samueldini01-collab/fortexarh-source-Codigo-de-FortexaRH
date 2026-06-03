@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Clock, 
   DollarSign, 
@@ -61,7 +62,9 @@ export default function PayrollConfigPage() {
     isr_mid_rate: 20,
     isr_max_rate: 25,
     isr_mid_fixed: 31216.00,
-    isr_max_fixed: 79776.00
+    isr_max_fixed: 79776.00,
+    // ISR Quincenal Distribution Policy
+    isr_quincenal_policy: "split_half"
   });
 
   const [originalConfig, setOriginalConfig] = useState(null);
@@ -451,6 +454,54 @@ export default function PayrollConfigPage() {
                 value={config.isr_max_fixed}
                 tooltip={t('payrollConfig.isr.maxFixedTooltip')}
               />
+            </div>
+
+            {/* ISR Quincenal Policy */}
+            <Separator />
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Label className="text-sm font-semibold">
+                  {t('payrollConfig.isr.quincenalPolicy', { defaultValue: 'Política de ISR para nómina quincenal' })}
+                </Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <HelpCircle className="w-4 h-4 text-slate-400 cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-sm">
+                      {t('payrollConfig.isr.quincenalPolicyTooltip', {
+                        defaultValue:
+                          'El ISR se calcula sobre el salario mensual real (Q1 + Q2). Aquí defines cómo se distribuye la retención mensual entre las dos quincenas.',
+                      })}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <Select
+                value={config.isr_quincenal_policy || "split_half"}
+                onValueChange={(val) => setConfig(c => ({ ...c, isr_quincenal_policy: val }))}
+              >
+                <SelectTrigger data-testid="isr-quincenal-policy-selector">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="split_half">
+                    {t('payrollConfig.isr.policySplit', { defaultValue: 'Mitad y mitad — 50% en cada quincena (recomendado)' })}
+                  </SelectItem>
+                  <SelectItem value="all_q1">
+                    {t('payrollConfig.isr.policyAllQ1', { defaultValue: 'Todo el ISR en la 1ra quincena' })}
+                  </SelectItem>
+                  <SelectItem value="all_q2">
+                    {t('payrollConfig.isr.policyAllQ2', { defaultValue: 'Todo el ISR en la 2da quincena' })}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                {t('payrollConfig.isr.quincenalPolicyHint', {
+                  defaultValue:
+                    'Si la empresa paga mensual, esta configuración no aplica. El ISR mensual se calcula con la escala anual DGII (416,220 / 624,329 / 867,123).',
+                })}
+              </p>
             </div>
           </CardContent>
         </Card>

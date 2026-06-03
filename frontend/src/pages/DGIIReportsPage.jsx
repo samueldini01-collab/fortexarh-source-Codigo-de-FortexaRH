@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { 
   FileText, Download, Calendar, Building2, FileSpreadsheet, 
   AlertCircle, RefreshCw, CheckCircle2, Info, CalendarDays, ChevronRight
@@ -91,14 +92,21 @@ export default function DGIIReportsPage() {
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(null);
   const [periods, setPeriods] = useState([]);
-  const [selectedPeriod, setSelectedPeriod] = useState(null);
-  const [availableYears, setAvailableYears] = useState([]);
+  // Month-based selector (consolidates Q1+Q2 of the same month)
   const [selectedYear, setSelectedYear] = useState(null);
-  const [periodDetails, setPeriodDetails] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState(null);
+  const [monthSummary, setMonthSummary] = useState(null);
+  const [availableYears, setAvailableYears] = useState([]);
+  const [selectedAnnualYear, setSelectedAnnualYear] = useState(null);
   
   // Drill-down state for report breakdown
   const [drillDown, setDrillDown] = useState({ open: false, title: "", data: [], columns: [] });
   const [drillDownLoading, setDrillDownLoading] = useState(false);
+
+  // DGII Table validation modal
+  const [validationOpen, setValidationOpen] = useState(false);
+  const [validationData, setValidationData] = useState(null);
+  const [validationLoading, setValidationLoading] = useState(false);
 
   const fetchPeriods = useCallback(async () => {
     setLoading(true);
@@ -108,7 +116,6 @@ export default function DGIIReportsPage() {
         withCredentials: true
       });
       
-      // API returns array directly, not wrapped in {periods: [...]}
       const periodsData = Array.isArray(response.data) ? response.data : (response.data.periods || []);
       const sortedPeriods = periodsData.sort((a, b) => {
         if (b.year !== a.year) return b.year - a.year;
@@ -117,12 +124,11 @@ export default function DGIIReportsPage() {
       
       setPeriods(sortedPeriods);
       
-      // Auto-select most recent closed or paid period
-      const closedPeriod = sortedPeriods.find(p => p.status === 'closed' || p.status === 'paid');
-      if (closedPeriod) {
-        setSelectedPeriod(closedPeriod.period_id);
-      } else if (sortedPeriods.length > 0) {
-        setSelectedPeriod(sortedPeriods[0].period_id);
+      // Auto-select most recent month with data
+      const recent = sortedPeriods.find(p => p.status === 'closed' || p.status === 'paid') || sortedPeriods[0];
+      if (recent) {
+        setSelectedYear(recent.year);
+        setSelectedMonth(recent.month);
       }
     } catch (error) {
       console.error("Error fetching periods:", error);
@@ -130,19 +136,23 @@ export default function DGIIReportsPage() {
     } finally {
       setLoading(false);
     }
-  }, [getAuthHeaders]);
+  }, [getAuthHeaders, t]);
 
-  const fetchPeriodDetails = useCallback(async (periodId) => {
+  // Fetch the monthly consolidated summary (Q1+Q2 aggregated) for the
+  // selected year/month so the UI shows correct totals & period count.
+  const fetchMonthSummary = useCallback(async () => {
+    if (!selectedYear || !selectedMonth) return;
     try {
-      const response = await axios.get(`${API}/payroll/periods/${periodId}`, {
-        headers: getAuthHeaders(),
-        withCredentials: true
-      });
-      setPeriodDetails(response.data);
+      const response = await axios.get(
+        `${API}/dgii-reports/monthly/preview?year=${selectedYear}&month=${selectedMonth}`,
+        { headers: getAuthHeaders(), withCredentials: true }
+      );
+      setMonthSummary(response.data);
     } catch (error) {
-      console.error("Error fetching period details:", error);
+      console.error("Error fetching month summary:", error);
+      setMonthSummary(null);
     }
-  }, [getAuthHeaders]);
+  }, [selectedYear, selectedMonth, getAuthHeaders]);
 
   const fetchAvailableYears = useCallback(async () => {
     try {
@@ -154,54 +164,46 @@ export default function DGIIReportsPage() {
       const years = Array.isArray(response.data) ? response.data : [];
       setAvailableYears(years);
       
-      // Auto-select most recent year (response is array of numbers, not objects)
       if (years.length > 0) {
-        setSelectedYear(years[0]);
+        setSelectedAnnualYear(years[0]);
       }
     } catch (error) {
       console.error("Error fetching available years:", error);
     }
   }, [getAuthHeaders]);
 
-  // Drill-down for report totals
-  const handleReportDrillDown = async (reportType, reportData) => {
+  // Drill-down for report totals — uses consolidated monthly data
+  const handleReportDrillDown = async (reportType) => {
+    if (!selectedYear || !selectedMonth) {
+      toast.error(t('dgiiReports.selectValidPeriod', { defaultValue: 'Selecciona un mes válido' }));
+      return;
+    }
     setDrillDownLoading(true);
     setDrillDown({ open: true, title: "", data: [], columns: [] });
     
     try {
-      // Fetch period data which includes employee records
-      const period = periods.find(p => p.period_id === selectedPeriod);
-      if (!period) {
-        toast.error(t('dgiiReports.selectValidPeriod'));
-        setDrillDown({ open: false, title: "", data: [], columns: [] });
-        return;
-      }
-      
-      // Use existing endpoint that returns period with entries
-      const response = await axios.get(`${API}/payroll/periods/${selectedPeriod}`, {
-        headers: getAuthHeaders(),
-        withCredentials: true
-      });
-      
-      const employees = response.data?.entries || response.data?.employee_records || [];
+      const response = await axios.get(
+        `${API}/dgii-reports/monthly/preview?year=${selectedYear}&month=${selectedMonth}`,
+        { headers: getAuthHeaders(), withCredentials: true }
+      );
+      const rows = response.data?.rows || [];
       let title = "";
       let columns = [];
-      let data = employees;
+      const monthLabel = `${getMonthName(selectedMonth)} ${selectedYear}`;
       
       switch (reportType) {
         case "ir3":
         case "ir4":
-          title = `${t('dgiiReports.drillDown.isrBreakdown')} - ${period.description || `${period.month}/${period.year}`}`;
+          title = `${t('dgiiReports.drillDown.isrBreakdown')} — ${monthLabel}`;
           columns = [
             { header: t('dgiiReports.drillDown.employee'), accessor: "employee_name" },
             { header: t('dgiiReports.drillDown.cedula'), accessor: "employee_document" },
-            { header: t('dgiiReports.drillDown.grossSalary'), accessor: "gross_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
+            { header: t('dgiiReports.drillDown.grossSalary', { defaultValue: 'Salario Bruto Mensual' }), accessor: "gross_salary", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right" },
             { header: t('dgiiReports.drillDown.isrRetained'), accessor: "isr", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-red-600" }
           ];
           break;
-          
         case "tss-autodeterminacion":
-          title = `${t('dgiiReports.drillDown.tssBreakdown')} - ${period.description || `${period.month}/${period.year}`}`;
+          title = `${t('dgiiReports.drillDown.tssBreakdown')} — ${monthLabel}`;
           columns = [
             { header: t('dgiiReports.drillDown.employee'), accessor: "employee_name" },
             { header: t('dgiiReports.drillDown.cedula'), accessor: "employee_document" },
@@ -211,9 +213,8 @@ export default function DGIIReportsPage() {
             { header: "ISR", accessor: "isr", render: (val) => formatCurrency(val), className: "text-right", cellClassName: "text-right font-medium text-amber-600" }
           ];
           break;
-          
         default:
-          title = `${t('dgiiReports.drillDown.breakdown')} ${reportType.toUpperCase()} - ${period.description}`;
+          title = `${t('dgiiReports.drillDown.breakdown')} ${reportType.toUpperCase()} — ${monthLabel}`;
           columns = [
             { header: t('dgiiReports.drillDown.employee'), accessor: "employee_name" },
             { header: t('dgiiReports.drillDown.cedula'), accessor: "employee_document" },
@@ -221,7 +222,7 @@ export default function DGIIReportsPage() {
           ];
       }
       
-      setDrillDown({ open: true, title, data, columns });
+      setDrillDown({ open: true, title, data: rows, columns });
     } catch (error) {
       console.error("Error fetching report breakdown:", error);
       toast.error(t('dgiiReports.errorLoadingBreakdown'));
@@ -234,6 +235,28 @@ export default function DGIIReportsPage() {
   const closeDrillDown = () => {
     setDrillDown({ open: false, title: "", data: [], columns: [] });
   };
+
+  const handleValidateDGIITable = async () => {
+    if (!selectedYear || !selectedMonth) {
+      toast.error(t('dgiiReports.selectValidPeriod', { defaultValue: 'Selecciona un mes válido' }));
+      return;
+    }
+    setValidationLoading(true);
+    setValidationOpen(true);
+    try {
+      const response = await axios.get(
+        `${API}/dgii-reports/monthly/dgii-table-validation?year=${selectedYear}&month=${selectedMonth}`,
+        { headers: getAuthHeaders(), withCredentials: true }
+      );
+      setValidationData(response.data);
+    } catch (error) {
+      console.error("Error validating DGII table:", error);
+      toast.error(error.response?.data?.detail || t('dgiiReports.downloadError'));
+      setValidationOpen(false);
+    } finally {
+      setValidationLoading(false);
+    }
+  };
   
   useEffect(() => {
     fetchPeriods();
@@ -241,13 +264,13 @@ export default function DGIIReportsPage() {
   }, [fetchPeriods, fetchAvailableYears]);
 
   useEffect(() => {
-    if (selectedPeriod) {
-      fetchPeriodDetails(selectedPeriod);
+    if (selectedYear && selectedMonth) {
+      fetchMonthSummary();
     }
-  }, [selectedPeriod, fetchPeriodDetails]);
+  }, [selectedYear, selectedMonth, fetchMonthSummary]);
 
   const handleDownload = async (reportType) => {
-    if (!selectedPeriod) {
+    if (!selectedYear || !selectedMonth) {
       toast.error(t('dgiiReports.selectPeriodFirst'));
       return;
     }
@@ -258,31 +281,38 @@ export default function DGIIReportsPage() {
       let endpoint = "";
       let filename = "";
       
+      // Monthly consolidated endpoints (Q1+Q2 aggregated to a single line per employee).
+      const monthSuffix = `${selectedYear}${String(selectedMonth).padStart(2, '0')}`;
       switch (reportType) {
         case "ir3":
-          endpoint = `/payroll/periods/${selectedPeriod}/export/ir3`;
-          filename = "IR3_Retenciones.xls";
+          endpoint = `/dgii-reports/monthly/ir3?year=${selectedYear}&month=${selectedMonth}`;
+          filename = `IR3_${monthSuffix}.xls`;
           break;
         case "ir4":
-          endpoint = `/payroll/periods/${selectedPeriod}/export/ir4`;
-          filename = "IR4_Detalle_Retenciones.xls";
-          break;
-        case "ir17":
-          endpoint = `/payroll/periods/${selectedPeriod}/export/ir17`;
-          filename = "IR17_Otras_Retenciones.xls";
-          break;
-        case "ir6":
-          endpoint = `/payroll/periods/${selectedPeriod}/export/ir6`;
-          filename = "IR6_Anexo_Retenciones.xls";
+          endpoint = `/dgii-reports/monthly/ir4?year=${selectedYear}&month=${selectedMonth}`;
+          filename = `IR4_${monthSuffix}.xls`;
           break;
         case "tss-autodeterminacion":
-          endpoint = `/payroll/periods/${selectedPeriod}/export/tss-autodeterminacion`;
-          filename = "TSS_Autodeterminacion.xls";
+          endpoint = `/dgii-reports/monthly/tss-autodeterminacion?year=${selectedYear}&month=${selectedMonth}`;
+          filename = `TSS_Autodeterminacion_${monthSuffix}.xls`;
           break;
-        case "tss-novedades":
-          endpoint = `/payroll/periods/${selectedPeriod}/export/tss-novedades`;
-          filename = "TSS_Novedades.xls";
+        // The remaining reports are tied to a single period (IR-17/IR-6 read
+        // from expenses; TSS Novedades reflects hires/exits per period).
+        // Pick the first period of the selected month as anchor.
+        case "ir17":
+        case "ir6":
+        case "tss-novedades": {
+          const periodOfMonth = periods.find(p => p.year === selectedYear && p.month === selectedMonth);
+          if (!periodOfMonth) {
+            toast.error(t('dgiiReports.noPeriodForMonth', { defaultValue: 'No hay períodos de nómina para el mes seleccionado' }));
+            setDownloading(null);
+            return;
+          }
+          const sub = reportType === "ir17" ? "ir17" : (reportType === "ir6" ? "ir6" : "tss-novedades");
+          endpoint = `/payroll/periods/${periodOfMonth.period_id}/export/${sub}`;
+          filename = `${sub.toUpperCase()}_${monthSuffix}.xls`;
           break;
+        }
         default:
           throw new Error(t('dgiiReports.invalidReportType'));
       }
@@ -293,7 +323,6 @@ export default function DGIIReportsPage() {
         responseType: 'blob'
       });
 
-      // Create download
       const blob = new Blob([response.data], { type: 'application/vnd.ms-excel' });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -314,7 +343,7 @@ export default function DGIIReportsPage() {
   };
 
   const handleDownloadAnnual = async (reportType) => {
-    if (!selectedYear) {
+    if (!selectedAnnualYear) {
       toast.error(t('dgiiReports.selectYearFirst'));
       return;
     }
@@ -322,8 +351,8 @@ export default function DGIIReportsPage() {
     setDownloading(reportType);
     
     try {
-      const endpoint = `/payroll/annual-report/ir13/${selectedYear}`;
-      const filename = `IR13_Declaracion_Anual_${selectedYear}.xls`;
+      const endpoint = `/payroll/annual-report/ir13/${selectedAnnualYear}`;
+      const filename = `IR13_Declaracion_Anual_${selectedAnnualYear}.xls`;
 
       const response = await axios.get(`${API}${endpoint}`, {
         headers: getAuthHeaders(),
@@ -341,7 +370,7 @@ export default function DGIIReportsPage() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      toast.success(`IR-13 ${selectedYear} ${t('dgiiReports.downloadedSuccess')}`);
+      toast.success(`IR-13 ${selectedAnnualYear} ${t('dgiiReports.downloadedSuccess')}`);
     } catch (error) {
       console.error("Error downloading annual report:", error);
       toast.error(error.response?.data?.detail || t('dgiiReports.downloadError'));
@@ -438,15 +467,18 @@ export default function DGIIReportsPage() {
           </div>
         </div>
 
-        {/* Period Selector */}
+        {/* Period Selector — Month + Year */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calendar className="w-5 h-5" />
-              {t('dgiiReports.selectPeriod')}
+              {t('dgiiReports.selectMonth', { defaultValue: 'Seleccionar Mes' })}
             </CardTitle>
             <CardDescription>
-              {t('dgiiReports.selectPeriodDesc')}
+              {t('dgiiReports.selectMonthDesc', {
+                defaultValue:
+                  'Los reportes DGII y TSS son mensuales. Si la empresa paga quincenal, se consolidan automáticamente ambas quincenas (Q1 + Q2) en una sola línea por empleado.',
+              })}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -457,55 +489,105 @@ export default function DGIIReportsPage() {
                 <p className="text-sm">{t('dgiiReports.createPeriodFirst')}</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                 <div>
                   <label className="text-sm font-medium text-slate-700 mb-2 block">
-                    {t('dgiiReports.payrollPeriod')}
+                    {t('dgiiReports.year', { defaultValue: 'Año' })}
                   </label>
-                  <Select 
-                    value={selectedPeriod || ""} 
-                    onValueChange={setSelectedPeriod}
+                  <Select
+                    value={selectedYear?.toString() || ""}
+                    onValueChange={(val) => setSelectedYear(parseInt(val))}
                   >
-                    <SelectTrigger data-testid="period-selector">
-                      <SelectValue placeholder={t('dgiiReports.selectPeriodPlaceholder')} />
+                    <SelectTrigger data-testid="monthly-year-selector">
+                      <SelectValue placeholder={t('dgiiReports.selectYearPlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
-                      {periods.map(period => (
-                        <SelectItem key={period.period_id} value={period.period_id}>
-                          {getMonthName(period.month)} {period.year} - {period.name || t('dgiiReports.noName')}
+                      {Array.from(new Set(periods.map(p => p.year))).sort((a, b) => b - a).map(year => (
+                        <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-slate-700 mb-2 block">
+                    {t('dgiiReports.month', { defaultValue: 'Mes' })}
+                  </label>
+                  <Select
+                    value={selectedMonth?.toString() || ""}
+                    onValueChange={(val) => setSelectedMonth(parseInt(val))}
+                  >
+                    <SelectTrigger data-testid="monthly-month-selector">
+                      <SelectValue placeholder={t('dgiiReports.selectMonthPlaceholder', { defaultValue: 'Mes' })} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                        <SelectItem key={m} value={m.toString()}>
+                          {getMonthName(m)}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
+                <div>
+                  <Button
+                    variant="outline"
+                    onClick={handleValidateDGIITable}
+                    disabled={!selectedYear || !selectedMonth || validationLoading}
+                    className="w-full gap-2"
+                    data-testid="validate-dgii-table-btn"
+                  >
+                    {validationLoading ? (
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    )}
+                    {t('dgiiReports.validateDGIITable', { defaultValue: 'Validar contra tabla DGII' })}
+                  </Button>
+                </div>
+              </div>
+            )}
 
-                {periodDetails && (
-                  <div className="bg-slate-50 rounded-xl p-4">
-                    <h4 className="font-medium text-slate-800 mb-3">{t('dgiiReports.periodSummary')}</h4>
-                    <div className="grid grid-cols-2 gap-3 text-sm">
-                      <div>
-                        <span className="text-slate-500 dark:text-slate-400">{t('dgiiReports.status')}:</span>
-                        <span className="ml-2">{getStatusBadge(periodDetails.status)}</span>
-                      </div>
-                      <div>
-                        <span className="text-slate-500 dark:text-slate-400">{t('dgiiReports.employees')}:</span>
-                        <span className="ml-2 font-medium">{periodDetails.employee_count || 0}</span>
-                      </div>
-                      <div>
-                        <span className="text-slate-500 dark:text-slate-400">{t('dgiiReports.totalGross')}:</span>
-                        <span className="ml-2 font-medium text-emerald-600 dark:text-emerald-400">
-                          ${(periodDetails.total_gross || 0).toLocaleString('es-DO', { minimumFractionDigits: 2 })}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-slate-500 dark:text-slate-400">{t('dgiiReports.totalISR')}:</span>
-                        <span className="ml-2 font-medium text-blue-600 dark:text-blue-400">
-                          ${(periodDetails.total_isr || 0).toLocaleString('es-DO', { minimumFractionDigits: 2 })}
-                        </span>
-                      </div>
-                    </div>
+            {/* Monthly Consolidated Summary */}
+            {monthSummary && monthSummary.employee_count > 0 && (
+              <div className="mt-6 bg-slate-50 dark:bg-slate-800/40 rounded-xl p-4">
+                <h4 className="font-medium text-slate-800 dark:text-slate-100 mb-3 flex items-center gap-2">
+                  {t('dgiiReports.monthSummary', { defaultValue: 'Resumen consolidado del mes' })}
+                  <Badge className="bg-blue-100 text-blue-700 text-xs">
+                    {monthSummary.periods?.length || 0} {t('dgiiReports.periodsInMonth', { defaultValue: 'período(s)' })}
+                  </Badge>
+                </h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                  <div>
+                    <span className="text-slate-500 dark:text-slate-400 block text-xs">
+                      {t('dgiiReports.employees')}
+                    </span>
+                    <span className="font-bold text-slate-800 dark:text-slate-100">{monthSummary.employee_count}</span>
                   </div>
-                )}
+                  <div>
+                    <span className="text-slate-500 dark:text-slate-400 block text-xs">
+                      {t('dgiiReports.totalGross')}
+                    </span>
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                      {formatCurrency(monthSummary.totals?.gross_salary)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 dark:text-slate-400 block text-xs">
+                      {t('dgiiReports.totalISR')}
+                    </span>
+                    <span className="font-bold text-blue-600 dark:text-blue-400">
+                      {formatCurrency(monthSummary.totals?.isr)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 dark:text-slate-400 block text-xs">
+                      {t('dgiiReports.totalTSS', { defaultValue: 'TSS Empleado' })}
+                    </span>
+                    <span className="font-bold text-amber-600 dark:text-amber-400">
+                      {formatCurrency((monthSummary.totals?.sfs_employee || 0) + (monthSummary.totals?.afp_employee || 0))}
+                    </span>
+                  </div>
+                </div>
               </div>
             )}
           </CardContent>
@@ -550,8 +632,8 @@ export default function DGIIReportsPage() {
                 return (
                   <Card 
                     key={report.id}
-                    className={`border-2 ${selectedPeriod ? 'hover:shadow-md transition-shadow cursor-pointer' : 'opacity-60'}`}
-                    onClick={() => selectedPeriod && handleReportDrillDown(report.id)}
+                    className={`border-2 ${selectedYear && selectedMonth ? 'hover:shadow-md transition-shadow cursor-pointer' : 'opacity-60'}`}
+                    onClick={() => selectedYear && selectedMonth && handleReportDrillDown(report.id)}
                   >
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between">
@@ -563,10 +645,15 @@ export default function DGIIReportsPage() {
                             <div className="flex items-center gap-2 mb-1">
                               <h3 className="font-bold text-lg text-slate-800 dark:text-slate-100">{t(report.nameKey)}</h3>
                               <Badge variant="outline" className="text-xs">Excel</Badge>
+                              {["ir3", "ir4", "tss-autodeterminacion"].includes(report.id) && (
+                                <Badge className="bg-emerald-100 text-emerald-700 text-xs">
+                                  {t('dgiiReports.monthlyConsolidated', { defaultValue: 'Mensual consolidado' })}
+                                </Badge>
+                              )}
                             </div>
                             <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{t(report.titleKey)}</p>
                             <p className="text-sm text-slate-500 mt-1">{t(report.descriptionKey)}</p>
-                            {selectedPeriod && (
+                            {selectedYear && selectedMonth && (
                               <p className="text-xs text-slate-400 mt-2 flex items-center">
                                 <ChevronRight className="w-3 h-3 mr-1" />
                                 {t('dgiiReports.clickToViewBreakdown')}
@@ -579,7 +666,7 @@ export default function DGIIReportsPage() {
                       <div className="mt-4 flex justify-end" onClick={(e) => e.stopPropagation()}>
                         <Button
                           onClick={() => handleDownload(report.id)}
-                          disabled={!selectedPeriod || downloading === report.id}
+                          disabled={!selectedYear || !selectedMonth || downloading === report.id}
                           className="gap-2"
                           data-testid={`download-${report.id}`}
                         >
@@ -628,8 +715,8 @@ export default function DGIIReportsPage() {
                       {t('dgiiReports.fiscalYear')}
                     </label>
                     <Select 
-                      value={selectedYear?.toString() || ""} 
-                      onValueChange={(val) => setSelectedYear(parseInt(val))}
+                      value={selectedAnnualYear?.toString() || ""} 
+                      onValueChange={(val) => setSelectedAnnualYear(parseInt(val))}
                     >
                       <SelectTrigger data-testid="year-selector">
                         <SelectValue placeholder={t('dgiiReports.selectYearPlaceholder')} />
@@ -653,7 +740,7 @@ export default function DGIIReportsPage() {
               return (
                 <Card 
                   key={report.id}
-                  className={`border-2 border-rose-200 ${selectedYear ? 'hover:shadow-md transition-shadow' : 'opacity-60'}`}
+                  className={`border-2 border-rose-200 ${selectedAnnualYear ? 'hover:shadow-md transition-shadow' : 'opacity-60'}`}
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between">
@@ -670,10 +757,10 @@ export default function DGIIReportsPage() {
                           <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{t(report.titleKey)}</p>
                           <p className="text-sm text-slate-500 mt-1 max-w-lg">{t(report.descriptionKey)}</p>
                           
-                          {selectedYear && (
+                          {selectedAnnualYear && (
                             <div className="mt-3 bg-slate-50 rounded-lg p-3">
                               <p className="text-sm text-slate-600 dark:text-slate-300">
-                                <strong>{t('dgiiReports.selectedYear')}:</strong> {selectedYear}
+                                <strong>{t('dgiiReports.selectedYear')}:</strong> {selectedAnnualYear}
                               </p>
                               <p className="text-xs text-slate-500 mt-1">
                                 {t('dgiiReports.annualReportIncludes')}
@@ -687,7 +774,7 @@ export default function DGIIReportsPage() {
                     <div className="mt-4 flex justify-end">
                       <Button
                         onClick={() => handleDownloadAnnual(report.id)}
-                        disabled={!selectedYear || downloading === report.id}
+                        disabled={!selectedAnnualYear || downloading === report.id}
                         className="gap-2 bg-rose-600 hover:bg-rose-700"
                         data-testid={`download-${report.id}`}
                       >
@@ -699,7 +786,7 @@ export default function DGIIReportsPage() {
                         ) : (
                           <>
                             <Download className="w-4 h-4" />
-                            {t('dgiiReports.download')} {t(report.nameKey)} - {selectedYear || t('dgiiReports.selectYear')}
+                            {t('dgiiReports.download')} {t(report.nameKey)} - {selectedAnnualYear || t('dgiiReports.selectYear')}
                           </>
                         )}
                       </Button>
@@ -762,6 +849,92 @@ export default function DGIIReportsPage() {
           columns={drillDown.columns}
           loading={drillDownLoading}
         />
+
+        {/* DGII Table Validation Modal */}
+        <Dialog open={validationOpen} onOpenChange={setValidationOpen}>
+          <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto" data-testid="dgii-validation-modal">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                {t('dgiiReports.validationTitle', { defaultValue: 'Validación contra tabla oficial DGII' })}
+              </DialogTitle>
+              <DialogDescription>
+                {t('dgiiReports.validationDesc', {
+                  defaultValue:
+                    'Compara el ISR calculado por FortexaRH (escala anual 416k/624k/867k) contra la tabla DGII 2023. La fórmula es matemáticamente idéntica a la tabla; las diferencias menores a RD$0.50 son aceptables.',
+                })}
+              </DialogDescription>
+            </DialogHeader>
+
+            {validationLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
+              </div>
+            ) : validationData ? (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-3 text-center">
+                    <div className="text-xs text-slate-500">{t('dgiiReports.employees')}</div>
+                    <div className="text-lg font-bold text-slate-800 dark:text-slate-100">{validationData.summary?.employees}</div>
+                  </div>
+                  <div className="bg-emerald-50 dark:bg-emerald-900/30 rounded-lg p-3 text-center">
+                    <div className="text-xs text-emerald-700 dark:text-emerald-300">{t('dgiiReports.matches', { defaultValue: 'Coincidencias' })}</div>
+                    <div className="text-lg font-bold text-emerald-700 dark:text-emerald-300">{validationData.summary?.matches}</div>
+                  </div>
+                  <div className={`${validationData.summary?.discrepancies > 0 ? 'bg-amber-50 dark:bg-amber-900/30' : 'bg-slate-50 dark:bg-slate-800'} rounded-lg p-3 text-center`}>
+                    <div className={`text-xs ${validationData.summary?.discrepancies > 0 ? 'text-amber-700 dark:text-amber-300' : 'text-slate-500'}`}>
+                      {t('dgiiReports.discrepancies', { defaultValue: 'Discrepancias' })}
+                    </div>
+                    <div className={`text-lg font-bold ${validationData.summary?.discrepancies > 0 ? 'text-amber-700 dark:text-amber-300' : 'text-slate-800 dark:text-slate-100'}`}>
+                      {validationData.summary?.discrepancies}
+                    </div>
+                  </div>
+                  <div className="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-3 text-center">
+                    <div className="text-xs text-blue-700 dark:text-blue-300">{t('dgiiReports.totalISRDelta', { defaultValue: 'Δ Total' })}</div>
+                    <div className="text-lg font-bold text-blue-700 dark:text-blue-300">
+                      {formatCurrency((validationData.summary?.total_calculated_isr || 0) - (validationData.summary?.total_dgii_isr || 0))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border rounded-lg overflow-hidden">
+                  <table className="w-full text-sm" data-testid="dgii-validation-table">
+                    <thead className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200">
+                      <tr>
+                        <th className="px-3 py-2 text-left">{t('dgiiReports.drillDown.employee')}</th>
+                        <th className="px-3 py-2 text-right">{t('dgiiReports.drillDown.grossSalary')}</th>
+                        <th className="px-3 py-2 text-right">{t('dgiiReports.tableDGII', { defaultValue: 'Tabla DGII' })}</th>
+                        <th className="px-3 py-2 text-right">{t('dgiiReports.calculated', { defaultValue: 'Calculado' })}</th>
+                        <th className="px-3 py-2 text-right">Δ</th>
+                        <th className="px-3 py-2 text-center">{t('dgiiReports.status')}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {validationData.results?.map(r => (
+                        <tr key={r.employee_id} className="border-t border-slate-200 dark:border-slate-700">
+                          <td className="px-3 py-2">{r.employee_name}</td>
+                          <td className="px-3 py-2 text-right">{formatCurrency(r.gross_salary)}</td>
+                          <td className="px-3 py-2 text-right">{formatCurrency(r.dgii_table_isr)}</td>
+                          <td className="px-3 py-2 text-right">{formatCurrency(r.calculated_isr)}</td>
+                          <td className={`px-3 py-2 text-right font-mono ${Math.abs(r.delta) > 0.5 ? 'text-amber-600' : 'text-emerald-600'}`}>
+                            {r.delta >= 0 ? '+' : ''}{r.delta.toFixed(2)}
+                          </td>
+                          <td className="px-3 py-2 text-center">
+                            {r.match ? (
+                              <Badge className="bg-emerald-100 text-emerald-700">OK</Badge>
+                            ) : (
+                              <Badge className="bg-amber-100 text-amber-700">Δ</Badge>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ) : null}
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );

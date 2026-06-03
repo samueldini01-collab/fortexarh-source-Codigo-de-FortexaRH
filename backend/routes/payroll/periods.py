@@ -38,7 +38,7 @@ from utils.payroll_constants import (
 )
 
 from . import router
-from ._helpers import _compute_isr, period_scaling_factor, update_period_totals
+from ._helpers import _compute_isr, period_scaling_factor, recompute_sister_quincena_isr, update_period_totals
 
 
 @router.get("/periods")
@@ -357,7 +357,14 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
                 "created_at": now_iso()
             }
             
-            isr_result = await _compute_isr(company_id, salary, rates, period_type=period.get("period_type"))
+            isr_result = await _compute_isr(
+                company_id,
+                salary,
+                rates,
+                period_type=period.get("period_type"),
+                period=period,
+                employee_id=emp["employee_id"],
+            )
             if emp.get("isr_discount", True):
                 if emp.get("isr_manual_override"):
                     entry["isr"] = round(float(emp.get("isr_manual_amount", 0)) * scale, 2)
@@ -387,6 +394,11 @@ async def add_employees_to_period(period_id: str, current_user: dict = Depends(g
         
         await db.payroll_entries.insert_one(entry)
         added_count += 1
+        # Cascade: when seeding Q2 of a month whose Q1 already exists,
+        # the sister Q1 ISR was previously computed with the doubling
+        # fallback. Now that we have the true monthly accumulation,
+        # recompute the sister's ISR so both halves are consistent.
+        await recompute_sister_quincena_isr(company_id, period, emp["employee_id"])
     
     await update_period_totals(period_id, company_id)
     
