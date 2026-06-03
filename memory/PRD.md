@@ -12,6 +12,23 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — Refactor Continuado: Dialogs Payroll + Tabs SuperAdmin (P1)
+- **PayrollV2Page.jsx** ahora 2610 líneas (de 2803) — extraídos 3 dialogs grandes a `/components/payroll/`:
+  - `AchBankDialog.jsx` — diálogo de generación ACH (Banreservas TXT/XLSX, BHD León, Banco Popular) con preview de empleados listos/sin banco/totales y drill-down al quick edit bancario.
+  - `NoveltyDialog.jsx` — diálogo unificado de novedades (ingresos/deducciones) con toggle visual, selector de tipo desde catálogos y modo edición.
+  - `DeductionsDialog.jsx` — diálogo de deducciones detalladas (SFS/AFP/ISR overrides + deducciones adicionales como préstamos, adelantos, pensión alimenticia, etc.).
+- **SuperAdminPage.jsx** ahora 975 líneas (de 1158) — extraídos 3 tabs adicionales a `/components/super-admin/`:
+  - `EventsTab.jsx` — feed global de eventos del sistema con badges de empresa y timestamps.
+  - `AlertsTab.jsx` — tabla de empresas inactivas (+30 días) con badges de riesgo y plan.
+  - `SupportActionsTab.jsx` — log de auditoría de mutaciones realizadas durante impersonación de soporte.
+- **Acumulado del refactor** en esta sesión:
+  - SuperAdminPage: **1371 → 975 (-396 líneas, -29%)**
+  - PayrollV2Page: **2940 → 2610 (-330 líneas, -11%)**
+  - Total: **-726 líneas** distribuidas en 9 componentes nuevos modulares y testeables independientemente.
+- **Comportamiento neutro**: ESLint 0 issues. Backend 5/5 smoke regression PASS. Todos los `data-testid` preservados. Hot reload funcional. (iteration_258).
+
+
+
 ## Feb 2026 — TSS Novedades v5.1 + Bonificación v1.4 (XLSX nativo) + Refactor Pages (P1)
 - **TSS Novedades v5.1 nativo** (`GET /api/dgii-reports/native/tss-novedades-v51?year=&month=`):
   - XLSX oficial SUIR+ con sheet "Plantilla de archivo novedades" — 23 columnas, group banners TRABAJADORES/SDSS/DGII/INFOTEP.
