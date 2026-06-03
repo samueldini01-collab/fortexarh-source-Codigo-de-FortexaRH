@@ -37,6 +37,7 @@ from routes.accounting import router as accounting_router
 from routes.system_users import router as system_users_router
 from routes.dgii_reports import router as dgii_reports_router
 from routes.dgii_monthly import router as dgii_monthly_router
+from routes.dgii_native_templates import router as dgii_native_templates_router
 from routes.notifications import router as notifications_router
 from routes.reports import router as reports_router
 from routes.expenses import router as expenses_router
@@ -184,7 +185,7 @@ for r in [
     support_router, employees_router, attendance_router, vacations_router,
     dashboard_router, company_router, organigrama_router, evaluations_router,
     recruitment_router, payroll_router, payroll_exports_router, checkout_router, invoices_router,
-    accounting_router, system_users_router, dgii_reports_router, dgii_monthly_router,
+    accounting_router, system_users_router, dgii_reports_router, dgii_monthly_router, dgii_native_templates_router,
     notifications_router, reports_router, expenses_router, projects_router,
     metrics_router, notifications_system_router, reports_advanced_router,
     reports_system_router, quickbooks_router, cdc_audit_router,

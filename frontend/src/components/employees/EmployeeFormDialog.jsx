@@ -16,6 +16,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoansTab from "./LoansTab";
 import EmployeePortalTab from "./EmployeePortalTab";
+import BankCombobox from "./BankCombobox";
+import useCompanyCountry from "@/hooks/useCompanyCountry";
 import { 
   User, FileText, CreditCard, Camera, Percent, Phone, X, Lock, Calculator, Pencil, Check, Info, Maximize2, Minimize2, Settings, UserCircle
 } from "lucide-react";
@@ -69,6 +71,7 @@ export function EmployeeFormDialog({
   employees,
 }) {
   const { t } = useTranslation();
+  const { countryCode: companyCountry } = useCompanyCountry();
 
   const addDeduction = () => {
     if (!newDeduction.amount) {
@@ -1206,11 +1209,11 @@ export function EmployeeFormDialog({
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label>{t('employees.banco')}</Label>
-                          <Input
+                          <BankCombobox
                             value={formData.bank_name}
-                            onChange={(e) => setFormData({...formData, bank_name: e.target.value})}
-                            placeholder="Nombre del banco"
-                            className="bg-slate-50 border-slate-200 focus:bg-white"
+                            onChange={(val) => setFormData({...formData, bank_name: val})}
+                            countryCode={companyCountry}
+                            testId="employee-form-bank"
                           />
                         </div>
                         <div className="space-y-2">

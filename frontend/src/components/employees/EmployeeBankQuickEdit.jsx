@@ -8,26 +8,13 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Landmark, Loader2, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
+import BankCombobox from "./BankCombobox";
+import useCompanyCountry from "@/hooks/useCompanyCountry";
 
 function authHeaders() {
   const t = localStorage.getItem("token");
   return t ? { Authorization: `Bearer ${t}` } : {};
 }
-
-const BANKS_DR = [
-  "Banreservas",
-  "Banco Popular Dominicano",
-  "BHD León",
-  "Banco Santa Cruz",
-  "Asociación Cibao",
-  "Asociación Popular",
-  "Scotiabank",
-  "Banco BDI",
-  "Banco Caribe",
-  "APAP",
-  "ALAVER",
-  "Otro",
-];
 
 /**
  * Lightweight drill-down to add/edit bank information for one employee from the
@@ -36,6 +23,7 @@ const BANKS_DR = [
  * refresh the ACH preview.
  */
 export default function EmployeeBankQuickEdit({ open, onOpenChange, employee, onSaved }) {
+  const { countryCode: companyCountry } = useCompanyCountry();
   const [bankName, setBankName] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
   const [accountType, setAccountType] = useState("CC");
@@ -109,12 +97,13 @@ export default function EmployeeBankQuickEdit({ open, onOpenChange, employee, on
           <div className="space-y-3 py-2">
             <div>
               <Label>Banco</Label>
-              <Select value={bankName} onValueChange={setBankName}>
-                <SelectTrigger data-testid="bank-quick-bankname"><SelectValue placeholder="Selecciona el banco" /></SelectTrigger>
-                <SelectContent>
-                  {BANKS_DR.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
-                </SelectContent>
-              </Select>
+              <BankCombobox
+                value={bankName}
+                onChange={setBankName}
+                countryCode={companyCountry}
+                testId="bank-quick-bankname"
+                placeholder="Selecciona el banco"
+              />
             </div>
             <div>
               <Label>Tipo de cuenta</Label>

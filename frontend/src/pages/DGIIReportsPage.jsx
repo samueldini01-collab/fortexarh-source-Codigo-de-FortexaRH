@@ -289,12 +289,14 @@ export default function DGIIReportsPage() {
           filename = `IR3_${monthSuffix}.xls`;
           break;
         case "ir4":
-          endpoint = `/dgii-reports/monthly/ir4?year=${selectedYear}&month=${selectedMonth}`;
-          filename = `IR4_${monthSuffix}.xls`;
+          // Official DGII IR-4 native XLSX template (mirrors official format)
+          endpoint = `/dgii-reports/native/ir4-official?year=${selectedYear}&month=${selectedMonth}`;
+          filename = `IR4_Oficial_${monthSuffix}.xlsx`;
           break;
         case "tss-autodeterminacion":
-          endpoint = `/dgii-reports/monthly/tss-autodeterminacion?year=${selectedYear}&month=${selectedMonth}`;
-          filename = `TSS_Autodeterminacion_${monthSuffix}.xls`;
+          // Official SUIR+ Autodeterminación v5.3 native XLSX template
+          endpoint = `/dgii-reports/native/tss-autodeterminacion-v53?year=${selectedYear}&month=${selectedMonth}`;
+          filename = `TSS_Autodeterminacion_v53_${monthSuffix}.xlsx`;
           break;
         // The remaining reports are tied to a single period (IR-17/IR-6 read
         // from expenses; TSS Novedades reflects hires/exits per period).
@@ -323,7 +325,12 @@ export default function DGIIReportsPage() {
         responseType: 'blob'
       });
 
-      const blob = new Blob([response.data], { type: 'application/vnd.ms-excel' });
+      const isNativeXlsx = ["ir4", "tss-autodeterminacion"].includes(reportType);
+      const blob = new Blob([response.data], {
+        type: isNativeXlsx
+          ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          : 'application/vnd.ms-excel'
+      });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -645,9 +652,14 @@ export default function DGIIReportsPage() {
                             <div className="flex items-center gap-2 mb-1">
                               <h3 className="font-bold text-lg text-slate-800 dark:text-slate-100">{t(report.nameKey)}</h3>
                               <Badge variant="outline" className="text-xs">Excel</Badge>
-                              {["ir3", "ir4", "tss-autodeterminacion"].includes(report.id) && (
+                              {["ir3"].includes(report.id) && (
                                 <Badge className="bg-emerald-100 text-emerald-700 text-xs">
                                   {t('dgiiReports.monthlyConsolidated', { defaultValue: 'Mensual consolidado' })}
+                                </Badge>
+                              )}
+                              {["ir4", "tss-autodeterminacion"].includes(report.id) && (
+                                <Badge className="bg-blue-100 text-blue-700 text-xs">
+                                  {t('dgiiReports.officialTemplate', { defaultValue: 'Plantilla oficial XLSX' })}
                                 </Badge>
                               )}
                             </div>
