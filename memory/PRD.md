@@ -12,6 +12,14 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — Recuperación de Frontend tras Corrupción de node_modules (P0)
+- **Síntoma**: Tras instalar `@testing-library` en sesión previa, el árbol de `node_modules` quedó en estado inconsistente. Webpack fallaba con `ENOENT` para varios archivos de `@babel/runtime` (regenerator, asyncToGenerator, defineProperty) en `babel-preset-react-app` y `canvg`.
+- **Fix aplicado**: `rm -rf /app/frontend/node_modules /app/frontend/yarn.lock` + `yarn install` (regeneró `yarn.lock` con árbol coherente, deduped). `sudo supervisorctl restart frontend`.
+- **Resultado**: Webpack compila sin errores. Solo quedan 2 warnings de ESLint preexistentes en hooks (`PayrollV2Page` y `SuperAdminPage`, dependencias faltantes en useCallback/useEffect — no bloqueantes).
+- **Regresión verificada**: 95/95 tests RTL pasan en 12 suites (`yarn test --watchAll=false`, 7.88s). Smoke screenshot de landing page OK.
+
+
+
 ## Feb 2026 — Cobertura Completa de Tests RTL para Componentes Refactorizados (P1)
 - **6 nuevas suites de tests** completando los 12 componentes extraídos:
   - **Payroll**:
