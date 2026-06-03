@@ -34,6 +34,12 @@
 - **Bug i18n fix**: `employees.valorManualMensualHelp` faltaba en `/public/locales/*.json` → copiado en 4 idiomas, `TRANSLATION_VERSION 3.7.9`.
 - Tests: 28/28 (13 login_audit + 10 2fa_totp + 5 nuevas pruebas de performance). 100% frontend.
 
+## Feb 2026 — BHD León ACH Format Fix
+- **Bug**: el formato BHD generado antes era fixed-width inventado (`account:<20amount:>15.2fname:<40doc:<15`), incompatible con el portal BHD.
+- **Fix**: alineado al spec oficial BHD León — archivo `.txt` delimitado por `;` con 5 columnas: `cuenta;nombre;referencia;monto_en_centavos;concepto`. El monto va como entero SIN punto decimal (los últimos 2 dígitos son centavos: `2117025` = $21,170.25).
+- Nombre limitado a 50 chars, referencia 20 numéricos, concepto 60 chars. Caracteres `;` se sustituyen por espacio para evitar romper el parser del banco.
+- Nombre del archivo: `Nomina_BHD_<descripción_periodo>.txt`.
+
 ## Feb 2026 — Banreservas Dual ACH Format (TXT + Excel oficial)
 - **TXT**: formato CSV-delimitado oficial Banreservas — extensión corregida de `.csv` a `.txt`. Estructura: `{CC|CA},DOP,{cuenta_empresa},{CC|CA},DOP,{cuenta_empleado},{monto},{concepto}`.
 - **XLSX** (nuevo): plantilla "Nómina Electrónica V1.2" generada con `openpyxl`. Hoja `CONVERTIR NOMINA` con metadata empresa (rows 1-5: tipo cuenta, número, moneda, total, cantidad), headers en row 8, datos desde row 9. Tabla con 9 columnas (Nombre, Tipo cuenta empresa, Moneda, Cuenta empresa, Tipo cuenta empleado, Moneda, Cuenta empleado, Monto, Concepto). Listo para subir directamente al portal Banreservas.

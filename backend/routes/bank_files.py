@@ -61,9 +61,20 @@ def format_popular_line(seq: int, account: str, amount: float, name: str, doc_ty
     return f"{seq:06d}|22|{account}|{amount:.2f}|{name[:40]}|{doc_type}|{doc_number}|\n"
 
 
-def format_bhd_line(account: str, amount: float, name: str, doc_number: str) -> str:
-    """Format a line for BHD León file"""
-    return f"{account:<20}{amount:>15.2f}{name:<40}{doc_number:<15}\n"
+def format_bhd_line(account: str, amount: float, name: str, reference: str, concept: str = "Pago Nómina") -> str:
+    """Format a line for BHD León payroll import (Pagos de Nómina con Crédito a Cuenta).
+
+    Official BHD spec (semicolon-delimited .txt):
+        cuenta;nombre;referencia;monto;concepto
+    where `monto` is the amount as an integer WITHOUT decimal point — the last
+    two digits represent the cents (e.g. 800050 = $8,000.50, 1000000 = $10,000.00).
+    `nombre` <= 50 chars, `referencia` <= 20 numeric chars, `concepto` <= 60 chars.
+    """
+    cents = int(round(float(amount) * 100))
+    name_clean = (name or "").replace(";", " ").strip()[:50]
+    ref = "".join(c for c in (reference or "") if c.isdigit())[:20] or "0"
+    concept_clean = (concept or "Pago Nómina").replace(";", " ").strip()[:60]
+    return f"{account};{name_clean};{ref};{cents};{concept_clean}\n"
 
 
 @router.get("/banks")
@@ -73,7 +84,7 @@ async def get_available_banks(request: Request):
     return [
         {"id": "banreservas", "name": "Banreservas", "format": "TXT", "description": "Formato ACH Banreservas (TXT delimitado o Excel oficial)", "formats": ["txt", "xlsx"]},
         {"id": "popular", "name": "Banco Popular Dominicano", "format": "TXT", "description": "Formato Nómina Popular", "formats": ["txt"]},
-        {"id": "bhd", "name": "BHD León", "format": "TXT", "description": "Formato ACH BHD", "formats": ["txt"]},
+        {"id": "bhd", "name": "BHD León", "format": "TXT", "description": "Formato Pagos de Nómina BHD (TXT delimitado)", "formats": ["txt"]},
     ]
 
 
@@ -340,23 +351,29 @@ async def generate_bank_file(period_id: str, bank_id: str, request: Request, for
         filename = f"ACH_Popular_{period.get('description', period_id).replace(' ', '_')}.txt"
         
     elif bank_id == "bhd":
-        for payroll in payrolls:
+        # BHD León: cuenta;nombre;referencia;monto_centavos;concepto
+        for i, payroll in enumerate(payrolls, 1):
             emp = emp_map.get(payroll.get("employee_id"), {})
             account = emp.get("account_number", "")
-            name = f"{emp.get('last_name', '')},{emp.get('first_name', '')}".strip()
-            doc = emp.get("document_number", "")
+            first_name = (emp.get("first_name") or "").strip()
+            last_name = (emp.get("last_name") or "").strip()
+            full_name = (f"{first_name} {last_name}").strip().upper() or (emp.get("name") or "")
+            # Use employee_id digits as reference if cedula not available
+            ref_source = emp.get("document_number") or emp.get("cedula") or emp.get("employee_id", "")
+            reference = str(ref_source) if ref_source else str(i).zfill(6)
             amount = payroll.get("net_salary", 0)
-            
+            concept = f"Pago Nomina {period.get('description', '')}".strip() or "Pago Nomina"
+
             if not account:
-                missing_bank.append(f"{emp.get('first_name', '')} {emp.get('last_name', '')}")
+                missing_bank.append(f"{first_name} {last_name}")
                 continue
-            
+
             if amount > 0:
-                output.write(format_bhd_line(account, amount, name, doc))
+                output.write(format_bhd_line(account, amount, full_name, reference, concept))
                 record_count += 1
                 total_amount += amount
-        
-        filename = f"ACH_BHD_{period.get('description', period_id).replace(' ', '_')}.txt"
+
+        filename = f"Nomina_BHD_{period.get('description', period_id).replace(' ', '_')}.txt"
     else:
         raise HTTPException(status_code=400, detail="Banco no soportado")
     
