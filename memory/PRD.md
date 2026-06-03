@@ -12,6 +12,17 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — Tests RTL para Componentes Críticos de Revenue (P1)
+- **3 nuevas suites de tests** sobre los componentes que tocan el flujo de ingresos:
+  - `RevenueTab.test.jsx` (9 tests): KPIs MRR/ARR/Partners formato moneda, alertas de vencidos (con datos y empty state), distribución por plan (count + MRR + badge Partner), historial de pagos con badge de método, fallback a "sin_definir" cuando no hay método.
+  - `InvoicesPendingTab.test.jsx` (8 tests): empty state, KPIs facturas+monto, rendering de filas, severity badges (high/medium/low), callbacks `onMarkPaid(company_id)` y `onViewCompany(company_id)`, formato de fechas, invoice_id en mono.
+  - `CompaniesTab.test.jsx` (11 tests): search forwarding, contador "X de N", skeletons en loading, empty state, status badges (Activa/Inactiva), botones condicionales deactivate/activate, drill-down vía click en fila, plan dialog con `stopPropagation` (no dispara drill-down), columna locked.
+- **Suite total: 49 tests, 6 suites, 100% PASS en 5.2s** (`yarn test --watchAll=false src/components/`).
+  - 21 anteriores (AchBank/Deductions/Novelty) + 28 nuevos.
+- **Red de seguridad sobre flujo financiero**: cualquier regresión en MRR/ARR/cobranza/activación de tenants se detecta antes de mergear.
+
+
+
 ## Feb 2026 — Refactor Closeout + RTL Unit Tests (P1)
 - **3 componentes adicionales extraídos**:
   - `payroll/NewPeriodDialog.jsx` — diálogo de creación de nuevo período (5 secciones: tipo nómina, periodo, departamento, año/mes, fechas, descripción).
