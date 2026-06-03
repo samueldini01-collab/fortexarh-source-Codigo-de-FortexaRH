@@ -12,6 +12,21 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — Cobertura Completa de Tests RTL para Componentes Refactorizados (P1)
+- **6 nuevas suites de tests** completando los 12 componentes extraídos:
+  - **Payroll**:
+    - `NewPeriodDialog.test.jsx` (7): render con tipos de nómina, selección via setForm, fechas, descripción, onCreate/onCancel, highlight activo.
+    - `BankWarningDialog.test.jsx` (7): counts missing/total, lista empleados con montos formateados, ocultar tabla cuando vacío, onApproveAnyway, onCancel, null-safe, helper text.
+    - `TssPreviewDialog.test.jsx` (10): company info + RNC + período + empleados, spinner, error state, filas SFS/AFP/SRL/INFOTEP, totales sumados, download, filename, total a pagar = empleado + patronal.
+  - **Super Admin**:
+    - `EventsTab.test.jsx` (6): empty state, header, eventos con company badge, fallback "evento", formato timestamp (T→espacio, 19 chars), sin badge cuando no hay company.
+    - `AlertsTab.test.jsx` (7): empty state, header, filas con empleados/usuarios, badges Alto/Medio, color rojo cuando ≥60d, em-dash para last_activity null, fallback "free" plan.
+    - `SupportActionsTab.test.jsx` (9): empty state, refresh button, onRefresh, disabled durante loading, rows por id, badges método (POST/DELETE/PATCH), query string appending, em-dash sin IP, status code.
+- **Suite total: 95 tests, 12 suites, 100% PASS en 7.8s**.
+- **Cobertura completa post-refactor**: cada uno de los 12 componentes extraídos en esta sesión tiene su propio archivo de tests con casos para empty state, callbacks, edge cases y formatting.
+
+
+
 ## Feb 2026 — Tests RTL para Componentes Críticos de Revenue (P1)
 - **3 nuevas suites de tests** sobre los componentes que tocan el flujo de ingresos:
   - `RevenueTab.test.jsx` (9 tests): KPIs MRR/ARR/Partners formato moneda, alertas de vencidos (con datos y empty state), distribución por plan (count + MRR + badge Partner), historial de pagos con badge de método, fallback a "sin_definir" cuando no hay método.
