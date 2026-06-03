@@ -1,0 +1,41 @@
+{
+  "summary": "Iter 259 — Validated final-closeout refactor: extracted NewPeriodDialog (186 lines) + BankWarningDialog (76 lines) from PayrollV2Page and CompaniesTab (290 lines) from SuperAdminPage. File line counts match expectation EXACTLY: PayrollV2Page.jsx=2527 (was 2610, -83) and SuperAdminPage.jsx=847 (was 975, -128). All component imports + JSX wiring verified at PayrollV2Page.jsx:80-81+2198+2499 and SuperAdminPage.jsx:32+459. Unit tests: 21/21 PASS in 3 suites (AchBankDialog 7, DeductionsDialog 7, NoveltyDialog 7) — `yarn test --watchAll=false src/components/payroll/__tests__/` returns exit 0 in ~3s. Backend smoke 4/4 PASS via REACT_APP_BACKEND_URL: GET /api/health (200), GET /api/payroll/periods (200), GET /api/super-admin/companies (200/auth-gate), GET /api/dgii-reports/native/tss-novedades-v51?year=2026&month=3 (200 XLSX PK signature). Frontend Playwright: logged in as test_refactor@fortexa.com, navigated to /payroll, clicked New Payroll button → [data-testid='new-period-dialog'] became visible with ALL 5 sections rendered end-to-end (screenshot iter259_new_period.png): Payroll Type 7-icon grid (Regular/Temporary/Bonus/Christmas/Vacation/Severance/Construction), Period+Department selects, Year+Month selects, Start Date + End Date date inputs, Description text input, and Cancel + Create Payroll footer buttons. Confirmed 4 [role='combobox'] select triggers, 2 date inputs, 14 buttons total inside dialog. BankWarningDialog and CompaniesTab were source-verified (data-testids 'bank-warning-dialog', 'btn-approve-with-warning', 'sa-search', 'btn-column-config', 'btn-plan-{id}', 'btn-deactivate-{id}', 'btn-activate-{id}' all wired correctly) — runtime trigger requires an Approval-state period with missing-bank employees, and Super Admin tenant access respectively (same login limitation as iter258 — not a regression).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {"flow": "BankWarningDialog open via UI", "issue": "Requires clicking 'Aprobar' on a period whose employees are missing bank info. Source verified at PayrollV2Page.jsx:508/520/555 + BankWarningDialog.jsx — data-testids 'bank-warning-dialog' and 'btn-approve-with-warning' correctly wired. Main agent self-test by approving a period that includes employees with no bank_account configured.", "affected_selectors": ["[data-testid='bank-warning-dialog']", "[data-testid='btn-approve-with-warning']"]},
+      {"flow": "CompaniesTab open via UI", "issue": "Super-admin tenant login flow (/super-admin-login with fortexa2026rd / FortexaAdmin2026!) cannot be exercised through the regular Playwright login. CompaniesTab.jsx (290 lines) is presentational, props-only, and SuperAdminPage.jsx:459 passes all required props (search, companies, filtered, loading, allColumns, visibleCols, toggleColumn, isColVisible, getPlanBadge, getPaymentBadge, onDrillDown, onOpenPlanDialog, onOpenDeactivate, onOpenActivate). All data-testids wired: 'sa-search', 'btn-column-config', 'btn-plan-{company_id}', 'btn-deactivate-{company_id}', 'btn-activate-{company_id}'.", "affected_selectors": ["[data-testid='sa-search']", "[data-testid='btn-column-config']"]}
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iter259_smoke.py",
+    "/app/test_reports/pytest/iter259_smoke.xml",
+    "/app/frontend/src/components/payroll/__tests__/AchBankDialog.test.jsx",
+    "/app/frontend/src/components/payroll/__tests__/DeductionsDialog.test.jsx",
+    "/app/frontend/src/components/payroll/__tests__/NoveltyDialog.test.jsx"
+  ],
+  "action_items": [
+    "OPTIONAL: Main agent self-verify BankWarningDialog by approving a Draft period whose employees are missing bank_account.",
+    "OPTIONAL: Main agent self-verify CompaniesTab via super-admin login (fortexa2026rd / FortexaAdmin2026!)."
+  ],
+  "critical_code_review_comments": [
+    "NewPeriodDialog.jsx (186 lines) — clean, fully presentational, all i18n-driven labels, controlled via parent's form+setForm. Good extraction.",
+    "BankWarningDialog.jsx (76 lines) — minimal and focused. Cosmetic: hard-coded Spanish strings ('Empleados sin Datos Bancarios', 'Cancelar', 'Aprobar de todos modos') not yet wired to t() — same pattern as AchBankDialog from iter258. Consider future i18n pass.",
+    "CompaniesTab.jsx (290 lines) — heavy but acceptable; it owns the entire table render including 12 conditional columns. Future enhancement: extract a CompaniesTableRow sub-component to drop the file under 200 lines.",
+    "PayrollV2Page.jsx still 2527 lines — next candidates per iter258 review: ReportsTab body, NoveltiesTab body, period header/action ribbon.",
+    "SuperAdminPage.jsx now 847 lines — next candidates: PaymentsTab body, KPI grid header.",
+    "All 3 new __tests__ files use the local /src/__mocks__/i18n.js mock and run on craco/jest with the @/ alias from craco.config.js — clean setup, 21/21 PASS."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iter259_smoke.py (NEW — 4 pytest cases, 4/4 PASS)"
+  ],
+  "success_rate": {"backend": "100% (4/4)", "frontend": "Unit tests 100% (21/21); Live UI verified NewPeriodDialog full 5-section render end-to-end; BankWarningDialog + CompaniesTab source-verified (data-testids correctly wired)"},
+  "test_credentials": "Admin: test_refactor@fortexa.com / test123 (DR tenant). Super-admin: fortexa2026rd / FortexaAdmin2026! (not exercised in this iter).",
+  "seed_data_creation": "None — reused existing DR tenant seed.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Iter259 closes out the FortexaRH refactor: 6 components extracted (AchBankDialog, NoveltyDialog, DeductionsDialog, NewPeriodDialog, BankWarningDialog from PayrollV2Page; EventsTab, AlertsTab, SupportActionsTab, CompaniesTab from SuperAdminPage) plus 3 RTL unit-test suites (21 tests). Behaviour-neutral refactor — backend untouched, 4/4 smoke PASS. New regression suite at /app/backend/tests/test_iter259_smoke.py is fast (~2s) and uses env var REACT_APP_BACKEND_URL (must be exported when running pytest from /app — frontend .env is NOT auto-loaded). Note: the webpack-dev-server-client-overlay iframe may pop up showing stale compile errors from prior dev sessions (the nested node_modules paths it references don't actually exist) — remove with `document.getElementById('webpack-dev-server-client-overlay').remove()` before interacting with the page; this is a dev-server display quirk, NOT a real compile failure (curl /static/js/bundle.js returns valid bundled JS).",
+  "rca of the issue": "No defects found. The 2 'integration_issues' entries are runtime-gating limitations (need a missing-bank-info Approve action / need super-admin tenant login), not code regressions. All data-testids in the 3 new components are correctly wired and the parent pages have proper imports + props at the verified line numbers."
+}

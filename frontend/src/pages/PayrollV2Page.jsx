@@ -77,6 +77,8 @@ import TssPreviewDialog from "@/components/payroll/TssPreviewDialog";
 import AchBankDialog from "@/components/payroll/AchBankDialog";
 import NoveltyDialog from "@/components/payroll/NoveltyDialog";
 import DeductionsDialog from "@/components/payroll/DeductionsDialog";
+import NewPeriodDialog from "@/components/payroll/NewPeriodDialog";
+import BankWarningDialog from "@/components/payroll/BankWarningDialog";
 
 // These will be populated inside the component with translations
 const MONTH_KEYS = [
@@ -2193,61 +2195,17 @@ export default function PayrollPage() {
         </Tabs>
 
         {/* New Period Dialog */}
-        <Dialog open={showNewPeriod} onOpenChange={setShowNewPeriod}>
-          <DialogContent className="max-w-lg">
-            <DialogHeader><DialogTitle>{t('payrollV2.crearNuevaNomina')}</DialogTitle><DialogDescription>{t('payrollV2.defineElTipoY')}</DialogDescription></DialogHeader>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>{t('payrollV2.tipoDeNomina')}</Label>
-                <div className="grid grid-cols-3 gap-2">
-                  {payrollTypes.map(pt => (
-                    <Button key={pt.value} variant={newPeriodForm.payroll_type === pt.value ? "default" : "outline"}
-                      className={`h-auto py-2 flex flex-col items-center ${newPeriodForm.payroll_type === pt.value ? '' : 'hover:bg-slate-50'}`}
-                      onClick={() => setNewPeriodForm({...newPeriodForm, payroll_type: pt.value})}>
-                      <pt.icon className="w-4 h-4 mb-1" /><span className="text-xs">{pt.label}</span>
-                    </Button>
-                  ))}
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2"><Label>{t('payrollV2.periodo')}</Label>
-                  <Select value={newPeriodForm.period_type} onValueChange={(v) => setNewPeriodForm({...newPeriodForm, period_type: v})}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>{periodTypes.map(type => (<SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>))}</SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2"><Label>{t('payrollV2.departamentoOpcional')}</Label>
-                  <Select value={newPeriodForm.department_filter} onValueChange={(v) => setNewPeriodForm({...newPeriodForm, department_filter: v})}>
-                    <SelectTrigger><SelectValue placeholder="Todos" /></SelectTrigger>
-                    <SelectContent><SelectItem value="all">{t('payrollV2.todosLosDepartamentos')}</SelectItem>
-                      {departments.map(d => (<SelectItem key={d} value={d}>{d}</SelectItem>))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2"><Label>{t('payrollV2.ano')}</Label>
-                  <Select value={String(newPeriodForm.year)} onValueChange={(v) => setNewPeriodForm({...newPeriodForm, year: parseInt(v)})}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>{[2024, 2025, 2026, 2027].map(year => (<SelectItem key={year} value={String(year)}>{year}</SelectItem>))}</SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2"><Label>{t('payrollV2.mes')}</Label>
-                  <Select value={String(newPeriodForm.month)} onValueChange={(v) => setNewPeriodForm({...newPeriodForm, month: parseInt(v)})}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>{months.map(m => (<SelectItem key={m.value} value={String(m.value)}>{m.label}</SelectItem>))}</SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2"><Label>{t('payrollV2.fechaInicio')}</Label><Input type="date" value={newPeriodForm.start_date} onChange={(e) => setNewPeriodForm({...newPeriodForm, start_date: e.target.value})} /></div>
-                <div className="space-y-2"><Label>{t('payrollV2.fechaFin')}</Label><Input type="date" value={newPeriodForm.end_date} onChange={(e) => setNewPeriodForm({...newPeriodForm, end_date: e.target.value})} /></div>
-              </div>
-              <div className="space-y-2"><Label>{t('payrollV2.descripcion')}</Label><Input value={newPeriodForm.description} onChange={(e) => setNewPeriodForm({...newPeriodForm, description: e.target.value})} placeholder="Ej: Nómina Quincenal Enero 2026" /></div>
-            </div>
-            <DialogFooter><Button variant="outline" onClick={() => setShowNewPeriod(false)}>{t('payrollV2.cancelar')}</Button><Button onClick={handleCreatePeriod}>{t('payrollV2.crearNomina')}</Button></DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <NewPeriodDialog
+          open={showNewPeriod}
+          onOpenChange={setShowNewPeriod}
+          form={newPeriodForm}
+          setForm={setNewPeriodForm}
+          payrollTypes={payrollTypes}
+          periodTypes={periodTypes}
+          departments={departments}
+          months={months}
+          onCreate={handleCreatePeriod}
+        />
 
         {/* Pay Dialog */}
         <Dialog open={showPayDialog} onOpenChange={setShowPayDialog}>
@@ -2538,53 +2496,12 @@ export default function PayrollPage() {
         />
 
         {/* Bank Info Warning Dialog */}
-        <Dialog open={showBankWarningDialog} onOpenChange={setShowBankWarningDialog}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-amber-700">
-                <AlertCircle className="w-5 h-5" /> Empleados sin Datos Bancarios
-              </DialogTitle>
-              <DialogDescription>
-                {bankCheckWarning?.missing_count} de {bankCheckWarning?.total} empleados no tienen cuenta bancaria configurada. No se podrá generar archivo ACH para estos empleados.
-              </DialogDescription>
-            </DialogHeader>
-            {bankCheckWarning?.missing?.length > 0 && (
-              <div className="max-h-[200px] overflow-y-auto border rounded-lg">
-                <table className="w-full text-xs">
-                  <thead className="bg-amber-50 sticky top-0">
-                    <tr>
-                      <th className="text-left px-3 py-2 font-medium text-amber-800">Empleado</th>
-                      <th className="text-right px-3 py-2 font-medium text-amber-800">Neto a Pagar</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {bankCheckWarning.missing.map((emp, i) => (
-                      <tr key={i} className="border-t border-amber-100">
-                        <td className="px-3 py-1.5 text-slate-700">{emp.name}</td>
-                        <td className="px-3 py-1.5 text-right font-medium text-slate-700">
-                          RD${emp.amount?.toLocaleString('es-DO', {minimumFractionDigits: 2})}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-            <p className="text-xs text-slate-500">
-              Puedes configurar los datos bancarios en el perfil de cada empleado (sección Datos Bancarios).
-            </p>
-            <DialogFooter className="gap-2">
-              <Button variant="outline" onClick={() => setShowBankWarningDialog(false)}>Cancelar</Button>
-              <Button
-                onClick={() => executeApproval(pendingApprovalPeriodId)}
-                className="bg-amber-600 hover:bg-amber-700 text-white"
-                data-testid="btn-approve-with-warning"
-              >
-                <Check className="w-4 h-4 mr-1" /> Aprobar de todos modos
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <BankWarningDialog
+          open={showBankWarningDialog}
+          onOpenChange={setShowBankWarningDialog}
+          warning={bankCheckWarning}
+          onApproveAnyway={() => executeApproval(pendingApprovalPeriodId)}
+        />
       </div>
 
       {/* Deductions Detail Dialog */}

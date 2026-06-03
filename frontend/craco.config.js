@@ -68,6 +68,14 @@ const webpackConfig = {
       return webpackConfig;
     },
   },
+  jest: {
+    configure: {
+      moduleNameMapper: {
+        // Match the webpack alias so Jest can resolve "@/..." imports.
+        "^@/(.*)$": "<rootDir>/src/$1",
+      },
+    },
+  },
 };
 
 // Only add babel metadata plugin during dev server
