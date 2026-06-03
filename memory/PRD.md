@@ -12,6 +12,28 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — ISR Quincenal Fix (DGII-Compliant) + Reportes DGII Mensuales Consolidados (P0)
+- **ISR fix (correctness)**: El cálculo de ISR para nómina quincenal ahora usa el ACUMULADO MENSUAL REAL (Q1 + Q2 base + comisiones + ingresos), no `quincena × 2`. Esto evita inflar el ISR cuando hay comisiones/bonificaciones puntuales en una sola quincena.
+  - `routes/payroll/_helpers.py`: `_compute_isr` reescrito; `_monthly_gross_for_isr` busca la quincena hermana del mismo año/mes y suma su gross. Si no existe, cae al fallback `current × 2` (seguro para seeding inicial).
+  - **Cascada bidireccional**: `recompute_sister_quincena_isr` recalcula la quincena hermana cuando se modifica una entry o se agrega/edita/elimina novedad. Respeta overrides manuales y períodos `paid`/`approved` (no muta).
+  - Llamado desde: `periods.add-employees`, `entries.update`, `entries.reset-from-profile`, `novelties.add/update/delete`, `payment.recalculate-all`.
+- **Política ISR quincenal configurable**: nuevo campo `isr_quincenal_policy` en `PayrollSettingsModel` (`models/payroll.py`) — valores: `split_half` (50/50, default), `all_q1` (todo en Q1), `all_q2` (todo en Q2). UI en `PayrollConfigPage.jsx` (data-testid: `isr-quincenal-policy-selector`).
+- **Reportes DGII Mensuales Consolidados** — nuevo módulo `routes/dgii_monthly.py`:
+  - `GET /api/dgii-reports/monthly/preview?year=&month=` → JSON consolidado: 1 línea por empleado sumando Q1+Q2.
+  - `GET /api/dgii-reports/monthly/ir3?year=&month=` → IR-3 mensual.
+  - `GET /api/dgii-reports/monthly/ir4?year=&month=` → IR-4 detalle mensual.
+  - `GET /api/dgii-reports/monthly/tss-autodeterminacion?year=&month=` → TSS Autodeterminación SIEMPRE mensual.
+  - `GET /api/dgii-reports/monthly/dgii-table-validation?year=&month=` → JSON comparando ISR calculado vs tabla DGII oficial (tolerancia RD$0.50).
+- **Frontend `DGIIReportsPage.jsx`** refactorizado:
+  - Reemplazado selector "Período" por **Mes + Año** (data-testid: `monthly-year-selector`, `monthly-month-selector`).
+  - Cards IR-3/IR-4/TSS-Auto muestran badge verde **"Mensual consolidado"**.
+  - Botón **"Validar contra tabla DGII"** abre modal con tabla comparativa (delta por empleado, badges OK/Δ, tolerancia 0.50).
+  - Resumen consolidado: empleados, gross total, ISR total, TSS total, número de períodos del mes.
+  - IR-17, IR-6, TSS-Novedades siguen usando el endpoint per-period anclado al primer período del mes.
+- **Tests**: 23/23 backend pytest pass + 7/7 flujos frontend (iteration_255). Fórmula DGII validada: 40k→442.65, 60k→3,486.65, 80k→7,400.94. La fórmula matemática es idéntica a la tabla DGII 2023.
+
+
+
 ## Feb 2026 — Removed Google SSO
 - Eliminada por completo la opción "Continuar con Google" / "Registrarse con Google" del sistema en todos los países.
 - Cambios: `LoginPage.jsx` y `RegisterPage.jsx` — botón Google, divisor "O continuar con" y handlers (`handleGoogleLogin`, `handleGoogleSignup`) removidos. Strings i18n quedan inactivas (no referenciadas).
