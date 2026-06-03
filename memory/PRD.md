@@ -34,6 +34,13 @@
 - **Bug i18n fix**: `employees.valorManualMensualHelp` faltaba en `/public/locales/*.json` → copiado en 4 idiomas, `TRANSLATION_VERSION 3.7.9`.
 - Tests: 28/28 (13 login_audit + 10 2fa_totp + 5 nuevas pruebas de performance). 100% frontend.
 
+## Feb 2026 — Banreservas Dual ACH Format (TXT + Excel oficial)
+- **TXT**: formato CSV-delimitado oficial Banreservas — extensión corregida de `.csv` a `.txt`. Estructura: `{CC|CA},DOP,{cuenta_empresa},{CC|CA},DOP,{cuenta_empleado},{monto},{concepto}`.
+- **XLSX** (nuevo): plantilla "Nómina Electrónica V1.2" generada con `openpyxl`. Hoja `CONVERTIR NOMINA` con metadata empresa (rows 1-5: tipo cuenta, número, moneda, total, cantidad), headers en row 8, datos desde row 9. Tabla con 9 columnas (Nombre, Tipo cuenta empresa, Moneda, Cuenta empresa, Tipo cuenta empleado, Moneda, Cuenta empleado, Monto, Concepto). Listo para subir directamente al portal Banreservas.
+- **API**: `GET /api/bank-files/generate/{period_id}/banreservas?format=txt|xlsx` — default `txt`. Los demás bancos (Popular, BHD) ignoran el parámetro.
+- **Frontend**: dialog "Generar Archivo ACH" muestra selector de formato (card buttons con borde emerald al seleccionar) SOLO cuando se elige Banreservas. Para otros bancos el selector no aparece.
+- Tests: 6/6 backend + 100% frontend (iter253).
+
 ## Feb 2026 — Collections Dashboard + User Invitation Email Bug Fix
 - **Bug fix (P0)**: `POST /api/system-users` ahora envía email de invitación al usuario invitado vía Resend con credenciales temporales y CTA "Iniciar sesión" (`send_user_invitation_email()` en `email_service.py`). Antes el usuario se creaba en silencio y nunca recibía notificación.
 - **Collections Dashboard** (nuevo tab "Cobranza" en `/admin`):
