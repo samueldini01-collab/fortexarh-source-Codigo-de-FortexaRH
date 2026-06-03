@@ -12,6 +12,28 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — Plantillas Oficiales TSS/DGII (XLSX nativo) + Combobox de Bancos LATAM (P0)
+- **TSS Autodeterminación v5.3 nativo** (`routes/dgii_native_templates.py` → `GET /api/dgii-reports/native/tss-autodeterminacion-v53?year=&month=`):
+  - XLSX real (no más .xls tab-delimited) que SUIR+ importa directamente.
+  - Hoja "Plantilla de Autodeterminación" con 21 columnas oficiales (Clave Nómina, Tipo Doc, Número Documento, Nombres, 1er/2do Apellido, Sexo, Fecha Nacimiento, Salario Cotizable, Aporte Voluntario, Salario ISR, Tipo Ingreso, Otras Remuneraciones, RNC/Cédula Agente Ret, Remuneración Otros, Saldo a favor del período, Regalía Pascual, Preaviso/Cesantía, Retención Pensión Alimenticia, Salario INFOTEP).
+  - Cabecera oficial: Tipo de Archivo (AM), RNC, Período MMAAAA, # Empleados.
+  - Hoja auxiliar "Catalogos" con TARCHIVO / TDOC / SEXO / TINGRESO.
+- **IR-4 oficial DGII nativo** (`GET /api/dgii-reports/native/ir4-official?year=&month=`):
+  - XLSX que sigue el layout horizontal oficial de la DGII (No., Apellidos y Nombres, Cédula/RNC, columnas C-L: Sueldos / Otras Remun / Otros Empleadores / Total / Ret Seg Social / Sujetos / Liquidación / Saldo Favor / Nuevo Saldo / Diferencia).
+  - Header con "AGENTE DE RETENCIÓN" / RNC / DESDE / HASTA y banners de sección IDENTIFICACIÓN y REMUNERACIONES.
+  - Fila TOTALES al final.
+- **Combobox de bancos LATAM** (`frontend/src/lib/banks.js` + `components/employees/BankCombobox.jsx`):
+  - Listas oficiales por país: 28 bancos DR (Banreservas, BHD, Popular, Scotiabank, APAP, Asociaciones Cibao/Nacional/Romana, etc.), 22 MX, 16 CO, 50 AR, 15 PE, 17 CL, 14 PA, 14 EC.
+  - Buscador en vivo por nombre o código.
+  - Fallback automático a Input libre si el país de la empresa no tiene lista curada.
+  - Opción "Usar 'X' como nombre personalizado" cuando el buscador no halla coincidencias.
+  - Integrado en `EmployeeFormDialog.jsx` (sección Forma de Pago) y `EmployeeBankQuickEdit.jsx` (modal ACH).
+- **Frontend `DGIIReportsPage.jsx`**: IR-4 y TSS Auto ahora muestran badge azul **"Plantilla oficial XLSX"** (vs IR-3 que sigue como "Mensual consolidado"). Descarga usa MIME `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`.
+- **Endpoints legacy** mantenidos por compat (`/api/dgii-reports/monthly/ir4`, `/tss-autodeterminacion`).
+- **Tests**: 32/32 backend pytest + 100% frontend (iteration_256). XLSX firma ZIP/PK verificada.
+
+
+
 ## Feb 2026 — ISR Quincenal Fix (DGII-Compliant) + Reportes DGII Mensuales Consolidados (P0)
 - **ISR fix (correctness)**: El cálculo de ISR para nómina quincenal ahora usa el ACUMULADO MENSUAL REAL (Q1 + Q2 base + comisiones + ingresos), no `quincena × 2`. Esto evita inflar el ISR cuando hay comisiones/bonificaciones puntuales en una sola quincena.
   - `routes/payroll/_helpers.py`: `_compute_isr` reescrito; `_monthly_gross_for_isr` busca la quincena hermana del mismo año/mes y suma su gross. Si no existe, cae al fallback `current × 2` (seguro para seeding inicial).
