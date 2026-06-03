@@ -12,6 +12,27 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — Refactor Closeout + RTL Unit Tests (P1)
+- **3 componentes adicionales extraídos**:
+  - `payroll/NewPeriodDialog.jsx` — diálogo de creación de nuevo período (5 secciones: tipo nómina, periodo, departamento, año/mes, fechas, descripción).
+  - `payroll/BankWarningDialog.jsx` — alerta pre-aprobación cuando hay empleados sin datos bancarios.
+  - `super-admin/CompaniesTab.jsx` — tab de empresas (search, column config, tabla con acciones plan/activar/inactivar).
+- **Tamaños finales** (acumulado de esta sesión):
+  - PayrollV2Page: 2940 → **2527 (-413, -14%)**
+  - SuperAdminPage: 1371 → **847 (-524, -38%)**
+  - Total: **-937 líneas extraídas a 12 componentes modulares**.
+- **Unit Tests (React Testing Library)** — primera suite de pruebas frontend:
+  - Instalado: `@testing-library/react@14`, `@testing-library/jest-dom@6`, `@testing-library/user-event@14`.
+  - Configurado: `setupTests.js` con polyfills (matchMedia, ResizeObserver, hasPointerCapture, scrollIntoView), mock `__mocks__/i18n.js` para `react-i18next`, `craco.config.js` con `jest.moduleNameMapper` para alias `@/`.
+  - **3 suites, 21 tests, todos PASS**:
+    - `AchBankDialog.test.jsx` (7): render, format toggle solo banreservas, callbacks, disabled state, fix-bank-missing, warning sin cuenta empresa.
+    - `DeductionsDialog.test.jsx` (7): render, inputs override, subtotal/grand total, lista de deducciones, save.
+    - `NoveltyDialog.test.jsx` (7): render, toggle income/deduction, amount/description, save label edit vs create.
+  - Comando: `cd /app/frontend && yarn test --watchAll=false src/components/payroll/__tests__/`.
+- **Tests**: 4/4 backend smoke + 21/21 unit + NewPeriodDialog UI E2E verificado (iteration_259). ESLint 0 issues.
+
+
+
 ## Feb 2026 — Refactor Continuado: Dialogs Payroll + Tabs SuperAdmin (P1)
 - **PayrollV2Page.jsx** ahora 2610 líneas (de 2803) — extraídos 3 dialogs grandes a `/components/payroll/`:
   - `AchBankDialog.jsx` — diálogo de generación ACH (Banreservas TXT/XLSX, BHD León, Banco Popular) con preview de empleados listos/sin banco/totales y drill-down al quick edit bancario.
