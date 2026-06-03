@@ -85,6 +85,34 @@ async def update_employee(employee_id: str, data: EmployeeCreate, current_user: 
     return {"message": "Employee updated successfully"}
 
 
+class BankInfoPatch(BaseModel):
+    bank_name: Optional[str] = None
+    account_number: Optional[str] = None
+    account_type: Optional[str] = None  # 'CC'|'CA'|'Corriente'|'Ahorro'
+
+
+@router.patch("/{employee_id}/bank-info")
+async def patch_employee_bank_info(
+    employee_id: str,
+    data: BankInfoPatch,
+    current_user: dict = Depends(get_current_user),
+):
+    """Lightweight update for the employee's bank fields only.
+
+    Used by the ACH drill-down so the admin can fill missing bank data
+    without sending the entire employee payload."""
+    update = {k: v for k, v in data.model_dump(exclude_none=True).items()}
+    if not update:
+        raise HTTPException(status_code=400, detail="Nada que actualizar")
+    result = await db.employees.update_one(
+        {"employee_id": employee_id, "company_id": current_user.get("company_id")},
+        {"$set": update},
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    return {"message": "Datos bancarios actualizados", "updated": update}
+
+
 @router.delete("/{employee_id}")
 async def delete_employee(employee_id: str, current_user: dict = Depends(get_current_user)):
     result = await db.employees.delete_one(

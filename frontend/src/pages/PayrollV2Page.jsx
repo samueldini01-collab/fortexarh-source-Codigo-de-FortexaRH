@@ -72,6 +72,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { DrillDownModal } from "@/components/DrillDown";
+import EmployeeBankQuickEdit from "@/components/employees/EmployeeBankQuickEdit";
 
 // These will be populated inside the component with translations
 const MONTH_KEYS = [
@@ -185,6 +186,7 @@ export default function PayrollPage() {
   const [showAchDialog, setShowAchDialog] = useState(false);
   const [achBank, setAchBank] = useState("banreservas");
   const [achFormat, setAchFormat] = useState("txt"); // 'txt' (default) | 'xlsx' (Banreservas only)
+  const [quickBankEmployee, setQuickBankEmployee] = useState(null);
   const [achPreview, setAchPreview] = useState(null);
   const [achLoading, setAchLoading] = useState(false);
 
@@ -2617,14 +2619,26 @@ export default function PayrollPage() {
                         <AlertCircle className="w-3.5 h-3.5" /> Empleados sin datos bancarios:
                       </p>
                       <div className="space-y-0.5">
-                        {achPreview.missing?.slice(0, 5).map((m, i) => (
-                          <p key={i} className="text-xs text-amber-700">
-                            {m.employee_name} - RD${m.amount?.toLocaleString('es-DO', {minimumFractionDigits: 2})}
-                          </p>
+                        {achPreview.missing?.slice(0, 8).map((m, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            onClick={() => setQuickBankEmployee(m)}
+                            data-testid={`fix-bank-${m.employee_id}`}
+                            className="w-full text-left text-xs text-amber-700 hover:bg-amber-100 rounded px-2 py-1 flex items-center justify-between group transition"
+                          >
+                            <span>
+                              <span className="font-medium underline-offset-2 group-hover:underline">{m.employee_name}</span>
+                              <span className="text-amber-600"> · RD${m.amount?.toLocaleString('es-DO', {minimumFractionDigits: 2})}</span>
+                            </span>
+                            <span className="text-amber-600 group-hover:text-amber-800 text-[10px] font-semibold opacity-70 group-hover:opacity-100">
+                              Agregar cuenta →
+                            </span>
+                          </button>
                         ))}
                       </div>
                       <p className="text-[10px] text-amber-600 mt-1">
-                        Configura los datos bancarios en el perfil de cada empleado
+                        Haz click en un empleado para añadir su cuenta sin salir de esta pantalla.
                       </p>
                     </div>
                   )}
@@ -2680,6 +2694,17 @@ export default function PayrollPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Quick bank info editor (drill-down from ACH dialog) */}
+        <EmployeeBankQuickEdit
+          open={!!quickBankEmployee}
+          onOpenChange={(v) => { if (!v) setQuickBankEmployee(null); }}
+          employee={quickBankEmployee || {}}
+          onSaved={() => {
+            // Refresh ACH preview so the just-fixed employee moves to "ready"
+            if (selectedPeriod && achBank) handleAchBankChange(achBank);
+          }}
+        />
 
         {/* Bank Info Warning Dialog */}
         <Dialog open={showBankWarningDialog} onOpenChange={setShowBankWarningDialog}>
