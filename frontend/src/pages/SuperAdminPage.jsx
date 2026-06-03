@@ -26,6 +26,9 @@ import AbandonedCartsTab from "../components/super-admin/AbandonedCartsTab";
 import CollectionsDashboard from "../components/super-admin/CollectionsDashboard";
 import RevenueTab from "../components/super-admin/RevenueTab";
 import InvoicesPendingTab from "../components/super-admin/InvoicesPendingTab";
+import EventsTab from "../components/super-admin/EventsTab";
+import AlertsTab from "../components/super-admin/AlertsTab";
+import SupportActionsTab from "../components/super-admin/SupportActionsTab";
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api/super-admin";
 
@@ -607,114 +610,12 @@ function SuperAdminDashboard({ token, onLogout }) {
 
           {/* Events Tab */}
           <TabsContent value="events" className="space-y-4">
-            <Card className="bg-slate-900 border-slate-800">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base text-white flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-indigo-400" /> Eventos del Sistema
-                </CardTitle>
-                <CardDescription className="text-slate-500">Actividad reciente de todas las empresas</CardDescription>
-              </CardHeader>
-              <CardContent className="p-0">
-                {events.length === 0 ? (
-                  <div className="text-center py-12 text-slate-500">
-                    <Activity className="w-10 h-10 mx-auto mb-3 text-slate-700" />
-                    <p>No hay eventos registrados</p>
-                  </div>
-                ) : (
-                  <div className="divide-y divide-slate-800">
-                    {events.map((evt, i) => (
-                      <div key={evt.event_id || i} className="px-4 py-3 hover:bg-slate-800/30 transition-colors flex items-start gap-3">
-                        <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Activity className="w-4 h-4 text-indigo-400" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-sm font-medium text-white">{evt.event_type || evt.action || "evento"}</span>
-                            {evt.company_name && (
-                              <Badge variant="outline" className="text-xs border-slate-700 text-slate-400">{evt.company_name}</Badge>
-                            )}
-                          </div>
-                          <p className="text-xs text-slate-500 mt-0.5 truncate">{evt.description || evt.details || ""}</p>
-                          <p className="text-[10px] text-slate-600 mt-1">
-                            <Clock className="w-3 h-3 inline mr-1" />
-                            {(evt.created_at || evt.timestamp || "").replace("T", " ").substring(0, 19)}
-                            {evt.user_email && ` - ${evt.user_email}`}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <EventsTab events={events} />
           </TabsContent>
 
           {/* Alerts Tab */}
           <TabsContent value="alerts" className="space-y-4">
-            <Card className="bg-slate-900 border-slate-800">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <AlertTriangle className="w-5 h-5 text-amber-400" />
-                  Empresas Inactivas (+30 días)
-                </CardTitle>
-                <CardDescription className="text-slate-400">
-                  Empresas sin actividad reciente que podrían necesitar seguimiento comercial
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {alerts.length === 0 ? (
-                  <div className="text-center py-12 text-slate-500">
-                    <CheckCircle className="w-12 h-12 mx-auto mb-3 text-emerald-500/50" />
-                    <p className="text-lg font-medium text-emerald-400">Sin alertas</p>
-                    <p className="text-sm mt-1">Todas las empresas tienen actividad reciente</p>
-                  </div>
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="border-slate-800 hover:bg-transparent">
-                        <TableHead className="text-slate-400">Empresa</TableHead>
-                        <TableHead className="text-slate-400">Plan</TableHead>
-                        <TableHead className="text-slate-400 text-center">Empleados</TableHead>
-                        <TableHead className="text-slate-400 text-center">Usuarios</TableHead>
-                        <TableHead className="text-slate-400">Días Inactivo</TableHead>
-                        <TableHead className="text-slate-400">Riesgo</TableHead>
-                        <TableHead className="text-slate-400">Última Actividad</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {alerts.map((a, idx) => (
-                        <TableRow key={idx} className="border-slate-800" data-testid={`alert-row-${idx}`}>
-                          <TableCell>
-                            <div>
-                              <p className="font-medium">{a.name}</p>
-                              <p className="text-xs text-slate-500 font-mono">{a.company_id}</p>
-                            </div>
-                          </TableCell>
-                          <TableCell>{getPlanBadge(a.subscription_plan || "free", 0)}</TableCell>
-                          <TableCell className="text-center">{a.employee_count}</TableCell>
-                          <TableCell className="text-center">{a.user_count}</TableCell>
-                          <TableCell>
-                            <span className={`text-lg font-bold ${a.days_inactive >= 60 ? 'text-red-400' : 'text-amber-400'}`}>
-                              {a.days_inactive}d
-                            </span>
-                          </TableCell>
-                          <TableCell>
-                            {a.risk === "high" ? (
-                              <Badge className="bg-red-500/20 text-red-400 border-0">Alto</Badge>
-                            ) : (
-                              <Badge className="bg-amber-500/20 text-amber-400 border-0">Medio</Badge>
-                            )}
-                          </TableCell>
-                          <TableCell className="text-sm text-slate-400">
-                            {a.last_activity ? new Date(a.last_activity).toLocaleDateString() : "—"}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
-              </CardContent>
-            </Card>
+            <AlertsTab alerts={alerts} getPlanBadge={getPlanBadge} />
           </TabsContent>
 
           {/* Pending Invoices Tab */}
@@ -736,90 +637,7 @@ function SuperAdminDashboard({ token, onLogout }) {
 
           {/* Support Actions Tab */}
           <TabsContent value="support-actions" className="space-y-4" data-testid="support-actions-tab">
-            <Card className="bg-slate-900 border-slate-800">
-              <CardHeader>
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <LogIn className="w-5 h-5 text-orange-400" />
-                      Acciones de soporte
-                    </CardTitle>
-                    <CardDescription className="text-slate-400">
-                      Auditoría de todas las mutaciones (POST/PUT/PATCH/DELETE) realizadas durante una sesión de soporte impersonada.
-                    </CardDescription>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700"
-                    onClick={fetchSupportActions}
-                    disabled={supportActionsLoading}
-                    data-testid="support-actions-refresh-btn"
-                  >
-                    <Loader2 className={`w-4 h-4 mr-2 ${supportActionsLoading ? "animate-spin" : "hidden"}`} />
-                    Cargar
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {supportActions.length === 0 ? (
-                  <div className="text-center py-12 text-slate-500" data-testid="no-support-actions">
-                    <CheckCircle className="w-12 h-12 mx-auto mb-3 text-emerald-500/50" />
-                    <p className="text-lg font-medium text-emerald-400">Sin acciones registradas</p>
-                    <p className="text-sm mt-1">Haz click en "Cargar" para consultar el log más reciente.</p>
-                  </div>
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="border-slate-800 hover:bg-transparent">
-                        <TableHead className="text-slate-400">Fecha</TableHead>
-                        <TableHead className="text-slate-400">Soporte como</TableHead>
-                        <TableHead className="text-slate-400">Método</TableHead>
-                        <TableHead className="text-slate-400">Endpoint</TableHead>
-                        <TableHead className="text-slate-400 text-center">Estado</TableHead>
-                        <TableHead className="text-slate-400">IP</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {supportActions.map((row) => (
-                        <TableRow key={row.id} className="border-slate-800" data-testid={`support-action-${row.id}`}>
-                          <TableCell className="text-slate-300 text-sm whitespace-nowrap">{new Date(row.created_at).toLocaleString()}</TableCell>
-                          <TableCell className="text-indigo-400 text-sm">{row.email}</TableCell>
-                          <TableCell>
-                            <Badge
-                              className={`border-0 text-[10px] ${
-                                row.method === "DELETE"
-                                  ? "bg-red-500/20 text-red-400"
-                                  : row.method === "POST"
-                                  ? "bg-emerald-500/20 text-emerald-400"
-                                  : "bg-amber-500/20 text-amber-400"
-                              }`}
-                            >
-                              {row.method}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-slate-300 font-mono text-xs">{row.path}{row.query ? `?${row.query}` : ""}</TableCell>
-                          <TableCell className="text-center">
-                            <Badge
-                              className={`border-0 text-[10px] ${
-                                row.status_code < 300
-                                  ? "bg-emerald-500/20 text-emerald-400"
-                                  : row.status_code < 400
-                                  ? "bg-blue-500/20 text-blue-400"
-                                  : "bg-red-500/20 text-red-400"
-                              }`}
-                            >
-                              {row.status_code}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-slate-500 font-mono text-xs">{row.ip || "—"}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
-              </CardContent>
-            </Card>
+            <SupportActionsTab actions={supportActions} loading={supportActionsLoading} onRefresh={fetchSupportActions} />
           </TabsContent>
 
           {/* Support Tab */}
