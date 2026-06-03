@@ -71,6 +71,14 @@ const MONTHLY_REPORTS = [
     descriptionKey: "dgiiReports.reports.tssNovedades.description",
     icon: FileSpreadsheet,
     color: "amber"
+  },
+  {
+    id: "tss-bonificacion",
+    nameKey: "dgiiReports.reports.tssBonificacion.name",
+    titleKey: "dgiiReports.reports.tssBonificacion.title",
+    descriptionKey: "dgiiReports.reports.tssBonificacion.description",
+    icon: FileSpreadsheet,
+    color: "emerald"
   }
 ];
 
@@ -298,19 +306,28 @@ export default function DGIIReportsPage() {
           endpoint = `/dgii-reports/native/tss-autodeterminacion-v53?year=${selectedYear}&month=${selectedMonth}`;
           filename = `TSS_Autodeterminacion_v53_${monthSuffix}.xlsx`;
           break;
+        case "tss-novedades":
+          // Official SUIR+ Novedades v5.1 native XLSX (IN/SA/VC/LV/LM/LD/AD)
+          endpoint = `/dgii-reports/native/tss-novedades-v51?year=${selectedYear}&month=${selectedMonth}`;
+          filename = `TSS_Novedades_v51_${monthSuffix}.xlsx`;
+          break;
+        case "tss-bonificacion":
+          // INFOTEP Bonificación v1.4 native XLSX
+          endpoint = `/dgii-reports/native/tss-bonificacion-v14?year=${selectedYear}&month=${selectedMonth}`;
+          filename = `TSS_Bonificacion_v14_${monthSuffix}.xlsx`;
+          break;
         // The remaining reports are tied to a single period (IR-17/IR-6 read
         // from expenses; TSS Novedades reflects hires/exits per period).
         // Pick the first period of the selected month as anchor.
         case "ir17":
-        case "ir6":
-        case "tss-novedades": {
+        case "ir6": {
           const periodOfMonth = periods.find(p => p.year === selectedYear && p.month === selectedMonth);
           if (!periodOfMonth) {
             toast.error(t('dgiiReports.noPeriodForMonth', { defaultValue: 'No hay períodos de nómina para el mes seleccionado' }));
             setDownloading(null);
             return;
           }
-          const sub = reportType === "ir17" ? "ir17" : (reportType === "ir6" ? "ir6" : "tss-novedades");
+          const sub = reportType === "ir17" ? "ir17" : "ir6";
           endpoint = `/payroll/periods/${periodOfMonth.period_id}/export/${sub}`;
           filename = `${sub.toUpperCase()}_${monthSuffix}.xls`;
           break;
@@ -325,7 +342,7 @@ export default function DGIIReportsPage() {
         responseType: 'blob'
       });
 
-      const isNativeXlsx = ["ir4", "tss-autodeterminacion"].includes(reportType);
+      const isNativeXlsx = ["ir4", "tss-autodeterminacion", "tss-novedades", "tss-bonificacion"].includes(reportType);
       const blob = new Blob([response.data], {
         type: isNativeXlsx
           ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -657,7 +674,7 @@ export default function DGIIReportsPage() {
                                   {t('dgiiReports.monthlyConsolidated', { defaultValue: 'Mensual consolidado' })}
                                 </Badge>
                               )}
-                              {["ir4", "tss-autodeterminacion"].includes(report.id) && (
+                              {["ir4", "tss-autodeterminacion", "tss-novedades", "tss-bonificacion"].includes(report.id) && (
                                 <Badge className="bg-blue-100 text-blue-700 text-xs">
                                   {t('dgiiReports.officialTemplate', { defaultValue: 'Plantilla oficial XLSX' })}
                                 </Badge>

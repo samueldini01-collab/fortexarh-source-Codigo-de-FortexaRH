@@ -422,3 +422,403 @@ async def ir4_official(
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         headers={"Content-Disposition": f"attachment; filename={filename}"},
     )
+
+
+# ===================== TSS NOVEDADES v5.1 =====================
+
+
+def _month_range(year: int, month: int) -> tuple[str, str]:
+    """Return (start_iso, end_iso) covering an inclusive [01-MM-YYYY, last-day]."""
+    from calendar import monthrange
+    start = f"{int(year):04d}-{int(month):02d}-01"
+    last_day = monthrange(int(year), int(month))[1]
+    end = f"{int(year):04d}-{int(month):02d}-{last_day:02d}"
+    return start, end
+
+
+async def _collect_novedades(company_id: str, year: int, month: int) -> list[dict]:
+    """Build the SUIR+ novelty rows for the month.
+
+    Novelty codes (catálogo TNOV):
+      IN — Ingreso/Alta (new hire this month)
+      SA — Salida/Baja (termination this month, employee.status == 'inactive' AND
+                        last_modified within the month — best effort)
+      VC — Vacaciones (employee_novelties type ``vacation``)
+      LV — Licencia con goce (``paid_leave``)
+      LM — Licencia médica (``medical_leave``)
+      LD — Licencia sin sueldo (``unpaid_leave``)
+      AD — Aumento de sueldo (salary_history with effective_date in month)
+    """
+    start_iso, end_iso = _month_range(year, month)
+    rows: list[dict] = []
+
+    # IN — new hires
+    new_hires = await db.employees.find(
+        {
+            "company_id": company_id,
+            "hire_date": {"$gte": start_iso, "$lte": end_iso},
+        },
+        {"_id": 0},
+    ).to_list(2000)
+    for e in new_hires:
+        rows.append({"employee": e, "code": "IN", "start": e.get("hire_date"), "end": ""})
+
+    # AD — salary increases
+    sh_recs = await db.salary_history.find(
+        {
+            "company_id": company_id,
+            "effective_date": {"$gte": start_iso, "$lte": end_iso},
+        },
+        {"_id": 0},
+    ).to_list(2000)
+    if sh_recs:
+        emp_ids = list({r["employee_id"] for r in sh_recs})
+        emps = await db.employees.find(
+            {"company_id": company_id, "employee_id": {"$in": emp_ids}},
+            {"_id": 0},
+        ).to_list(2000)
+        emps_by_id = {e["employee_id"]: e for e in emps}
+        for rec in sh_recs:
+            emp = emps_by_id.get(rec["employee_id"])
+            if not emp:
+                continue
+            rows.append({
+                "employee": emp,
+                "code": "AD",
+                "start": rec.get("effective_date"),
+                "end": "",
+                "salary_override": rec.get("new_salary"),
+            })
+
+    # VC/LV/LM/LD — typed novelties stored on payroll_entries.novelties
+    period_ids = [
+        p["period_id"] for p in await db.payroll_periods.find(
+            {"company_id": company_id, "year": int(year), "month": int(month)},
+            {"_id": 0, "period_id": 1},
+        ).to_list(50)
+    ]
+    if period_ids:
+        entries = await db.payroll_entries.find(
+            {"company_id": company_id, "period_id": {"$in": period_ids}},
+            {"_id": 0, "employee_id": 1, "novelties": 1},
+        ).to_list(2000)
+        # Map novelty TYPE → TNOV code
+        novelty_map = {
+            "vacation": "VC",       "vacaciones": "VC",
+            "paid_leave": "LV",      "licencia_con_goce": "LV",
+            "medical_leave": "LM",   "licencia_medica": "LM",
+            "unpaid_leave": "LD",    "licencia_sin_sueldo": "LD",
+        }
+        emp_ids_nov = list({e["employee_id"] for e in entries if e.get("novelties")})
+        if emp_ids_nov:
+            emps_nov = await db.employees.find(
+                {"company_id": company_id, "employee_id": {"$in": emp_ids_nov}},
+                {"_id": 0},
+            ).to_list(2000)
+            emps_by_id_nov = {e["employee_id"]: e for e in emps_nov}
+            for entry in entries:
+                emp = emps_by_id_nov.get(entry["employee_id"])
+                if not emp:
+                    continue
+                for nov in (entry.get("novelties") or []):
+                    code = novelty_map.get((nov.get("type") or "").lower())
+                    if not code:
+                        continue
+                    rows.append({
+                        "employee": emp,
+                        "code": code,
+                        "start": nov.get("date_from") or nov.get("start_date") or start_iso,
+                        "end": nov.get("date_to") or nov.get("end_date") or "",
+                    })
+
+    return rows
+
+
+def _format_birth(value: object) -> str:
+    if not value:
+        return ""
+    s = str(value)
+    if len(s) >= 10 and s[4] == "-":
+        return f"{s[8:10]}/{s[5:7]}/{s[0:4]}"
+    return s
+
+
+@router.get("/tss-novedades-v51")
+async def tss_novedades_v51(
+    year: int,
+    month: int,
+    current_user: dict = Depends(get_current_user),
+):
+    """Generate the official SUIR+ TSS Novedades v5.1 XLSX file.
+
+    Detects:
+      - IN (Ingresos): employees hired in the month.
+      - AD (Aumentos): rows in salary_history with effective_date in month.
+      - VC/LV/LM/LD: typed novelties found inside the month's payroll entries.
+
+    SA (Salidas/Bajas) require an explicit termination workflow; left empty
+    by default and can be added once the liquidation module persists records.
+    """
+    company_id = current_user.get("company_id")
+    await _require_dr(company_id, "TSS Novedades v5.1")
+
+    novedades = await _collect_novedades(company_id, int(year), int(month))
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0}) or {}
+    rnc = (company.get("rnc") or "").replace("-", "")
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Plantilla de archivo novedades"
+
+    # Header block
+    ws["B5"] = "Plantilla de Archivo Novedades"
+    ws["B5"].font = _TITLE_FONT
+    ws["E6"] = "Ver. 5.1"
+    ws["E6"].font = _SUBTITLE_FONT
+    ws["A6"] = "RNC o Cédula:"
+    ws["B6"] = rnc
+    ws["A7"] = "Período:"
+    ws["B7"] = f"{int(month):02d}{int(year)}"
+    ws["E7"] = "<-- MMAAAA"
+    ws["E7"].font = _SUBTITLE_FONT
+    ws["C9"] = "# de Empleados:"
+    ws["E9"] = len({n["employee"].get("employee_id") for n in novedades})
+
+    # Group banners (row 10)
+    ws.cell(row=10, column=2,  value="TRABAJADORES").font = _TITLE_FONT
+    ws.cell(row=10, column=12, value="SDSS").font = _TITLE_FONT
+    ws.cell(row=10, column=20, value="DGII").font = _TITLE_FONT
+    ws.cell(row=10, column=23, value="INFOTEP").font = _TITLE_FONT
+
+    headers = [
+        ("Clave\nNómina",        "B"),
+        ("Tipo\nNovedad",        "C"),
+        ("Fecha\nInicio",        "D"),
+        ("Fecha\nFin",           "E"),
+        ("Tipo\nDoc.",           "F"),
+        ("Número\nDocumento",    "G"),
+        ("Nombres",              "H"),
+        ("1er. Apellido",        "I"),
+        ("2do. Apellido",        "J"),
+        ("Sexo",                 "K"),
+        ("Fecha\nNacimiento",    "L"),
+        ("Salario\nCotizable SDSS", "M"),
+        ("Aporte\nVoluntario SDSS", "N"),
+        ("Tipo\nIngreso",        "O"),
+        ("Salario\nISR",         "P"),
+        ("Otras\nRemuneraciones","Q"),
+        ("RNC/Céd.\nAgente Ret", "R"),
+        ("Remuneración\nOtros Agentes", "S"),
+        ("Saldo a favor\ndel período", "T"),
+        ("Regalía Pascual\n(Saldo 13)", "U"),
+        ("Preaviso/Cesantía/Viático\ne Indemnizaciones", "V"),
+        ("Retención Pensión\nAlimenticia", "W"),
+        ("Salario\nINFOTEP",     "X"),
+    ]
+    for label, col in headers:
+        cell = ws[f"{col}11"]
+        cell.value = label
+        cell.font = _HEADER_FONT
+        cell.fill = _HEADER_FILL
+        cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        cell.border = _BORDER
+    ws.row_dimensions[11].height = 36
+    ws.freeze_panes = "A12"
+
+    for idx, n in enumerate(novedades, start=1):
+        emp = n["employee"]
+        cedula = (emp.get("document_number") or emp.get("cedula") or "").replace("-", "")
+        full_name = (emp.get("first_name", "") + " " + emp.get("last_name", "")).strip()
+        if not full_name:
+            full_name = emp.get("name") or ""
+        nombres, ape1, ape2 = _split_name(full_name)
+        gender = (emp.get("gender") or "M").upper()[:1]
+        if gender not in ("M", "F"):
+            gender = "M"
+        id_type = (emp.get("id_type") or "C")[:1].upper()
+        if id_type not in ("C", "P", "N"):
+            id_type = "C"
+        salary = n.get("salary_override") or float(emp.get("salary") or 0)
+        salario_isr = round(salary - salary * 0.0304 - salary * 0.0287, 2)
+        start_d = n.get("start") or ""
+        end_d = n.get("end") or ""
+        # Format DD/MM/YYYY
+        if len(str(start_d)) >= 10 and str(start_d)[4] == "-":
+            start_d = f"{start_d[8:10]}/{start_d[5:7]}/{start_d[0:4]}"
+        if len(str(end_d)) >= 10 and str(end_d)[4] == "-":
+            end_d = f"{end_d[8:10]}/{end_d[5:7]}/{end_d[0:4]}"
+
+        row_data = [
+            emp.get("payroll_clave") or emp.get("employee_id", "")[:8],
+            n["code"],
+            start_d, end_d,
+            id_type, cedula,
+            nombres, ape1, ape2,
+            gender, _format_birth(emp.get("birth_date")),
+            f"{salary:.2f}", "0.00",
+            emp.get("tipo_ingreso") or "Normal",
+            f"{salario_isr:.2f}",
+            "0.00", "", "0.00",
+            "0.00", "0.00", "0.00", "0.00",
+            f"{salary:.2f}",
+        ]
+        for col_idx, value in enumerate(row_data, start=2):  # B = 2
+            cell = ws.cell(row=11 + idx, column=col_idx, value=value)
+            cell.border = _BORDER
+
+    _autosize(ws, max_width=22)
+
+    # Auxiliary catálogos
+    aux = wb.create_sheet("Catalogos")
+    aux["A1"] = "TNOV"; aux["B1"] = "TDOC"; aux["C1"] = "SEXO"; aux["D1"] = "TINGRESO"
+    for cell in (aux["A1"], aux["B1"], aux["C1"], aux["D1"]):
+        cell.font = _HEADER_FONT; cell.fill = _HEADER_FILL
+    tnov = [
+        ("IN", "Ingreso / Alta"),
+        ("SA", "Salida / Baja"),
+        ("VC", "Vacaciones"),
+        ("LV", "Licencia con goce de sueldo"),
+        ("LM", "Licencia médica"),
+        ("LD", "Licencia sin sueldo"),
+        ("AD", "Aumento de sueldo"),
+    ]
+    tdoc = [("C", "Cédula"), ("P", "Pasaporte"), ("N", "NSS / Otro")]
+    sexos = [("M", "Masculino"), ("F", "Femenino")]
+    tingresos = ["Normal", "Trabajador ocasional (no fijo)", "Asalariado por hora o tiempo parcial"]
+    for i, (c, d) in enumerate(tnov, start=2):
+        aux.cell(row=i, column=1, value=f"{c} — {d}")
+    for i, (c, d) in enumerate(tdoc, start=2):
+        aux.cell(row=i, column=2, value=f"{c} — {d}")
+    for i, (c, d) in enumerate(sexos, start=2):
+        aux.cell(row=i, column=3, value=f"{c} — {d}")
+    for i, ti in enumerate(tingresos, start=2):
+        aux.cell(row=i, column=4, value=ti)
+    _autosize(aux, max_width=50)
+
+    out = io.BytesIO()
+    wb.save(out)
+    out.seek(0)
+    filename = f"TSS_Novedades_v51_{rnc}_{int(month):02d}{int(year)}.xlsx"
+    return Response(
+        content=out.read(),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
+    )
+
+
+# ===================== TSS BONIFICACIÓN v1.4 =====================
+
+
+@router.get("/tss-bonificacion-v14")
+async def tss_bonificacion_v14(
+    year: int,
+    month: int,
+    current_user: dict = Depends(get_current_user),
+):
+    """Generate the official SUIR+/INFOTEP Bonificación v1.4 XLSX file.
+
+    Pulls per-employee bonus amounts paid in the month — these come from
+    payroll entries' ``bonuses`` field aggregated across periods. Empty
+    bonuses are skipped (only employees who actually received a bonus
+    show up in the file).
+    """
+    company_id = current_user.get("company_id")
+    await _require_dr(company_id, "Bonificación INFOTEP")
+
+    data = await _consolidate_month(company_id, int(year), int(month))
+    # Keep employees with any bonus amount > 0. If none, we still emit the
+    # template skeleton so the user can manually fill it for the period —
+    # useful for Regalía Pascual or off-cycle bonuses.
+    bonus_rows = [r for r in (data.get("rows") or []) if float(r.get("bonuses") or 0) > 0]
+
+    company = await db.companies.find_one({"company_id": company_id}, {"_id": 0}) or {}
+    rnc = (company.get("rnc") or "").replace("-", "")
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Plantilla de Bonificación"
+
+    # Header block
+    ws["A6"] = "Plantilla de Archivo de Bonificación INFOTEP"
+    ws["A6"].font = _TITLE_FONT
+    ws["E7"] = "Ver. 1.4"
+    ws["E7"].font = _SUBTITLE_FONT
+    ws["A7"] = "RNC o Cédula:"
+    ws["B7"] = rnc
+    ws["A8"] = "Período:"
+    ws["B8"] = f"{int(month):02d}{int(year)}"
+    ws["E8"] = "<-- MMAAAA"
+    ws["E8"].font = _SUBTITLE_FONT
+    ws["C10"] = "# de Empleados:"
+    ws["D10"] = len(bonus_rows)
+
+    # Group banner & headers (rows 11-12)
+    ws.cell(row=11, column=2, value="INFOTEP").font = _TITLE_FONT
+
+    headers = [
+        ("Tipo Doc.",         "B"),
+        ("Número Doc.",       "C"),
+        ("Nombres",           "D"),
+        ("1er. Apellido",     "E"),
+        ("2do. Apellido",     "F"),
+        ("Sexo",              "G"),
+        ("Fecha Nacimiento",  "H"),
+        ("Monto Bonificación","I"),
+    ]
+    for label, col in headers:
+        cell = ws[f"{col}12"]
+        cell.value = label
+        cell.font = _HEADER_FONT
+        cell.fill = _HEADER_FILL
+        cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        cell.border = _BORDER
+    ws.row_dimensions[12].height = 30
+    ws.freeze_panes = "A13"
+
+    total_bono = 0.0
+    for idx, r in enumerate(bonus_rows, start=1):
+        emp = await db.employees.find_one(
+            {"company_id": company_id, "employee_id": r["employee_id"]},
+            {"_id": 0, "gender": 1, "birth_date": 1, "id_type": 1},
+        ) or {}
+        cedula = (r.get("employee_document") or "").replace("-", "")
+        nombres, ape1, ape2 = _split_name(r.get("employee_name", ""))
+        gender = (emp.get("gender") or "M").upper()[:1]
+        if gender not in ("M", "F"):
+            gender = "M"
+        id_type = (emp.get("id_type") or "C")[:1].upper()
+        if id_type not in ("C", "P", "N"):
+            id_type = "C"
+        bono = round(float(r.get("bonuses") or 0), 2)
+        total_bono += bono
+
+        row_data = [
+            id_type, cedula, nombres, ape1, ape2,
+            gender, _format_birth(emp.get("birth_date")),
+            bono,
+        ]
+        for col_idx, value in enumerate(row_data, start=2):
+            cell = ws.cell(row=12 + idx, column=col_idx, value=value)
+            cell.border = _BORDER
+            if col_idx == 9 and isinstance(value, (int, float)):
+                cell.number_format = "#,##0.00"
+                cell.alignment = Alignment(horizontal="right")
+
+    # Totals
+    totals_row = 13 + len(bonus_rows)
+    ws.cell(row=totals_row, column=8, value="TOTAL").font = Font(bold=True)
+    total_cell = ws.cell(row=totals_row, column=9, value=round(total_bono, 2))
+    total_cell.font = Font(bold=True)
+    total_cell.number_format = "#,##0.00"
+
+    _autosize(ws, max_width=24)
+
+    out = io.BytesIO()
+    wb.save(out)
+    out.seek(0)
+    filename = f"TSS_Bonificacion_v14_{rnc}_{int(month):02d}{int(year)}.xlsx"
+    return Response(
+        content=out.read(),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
+    )

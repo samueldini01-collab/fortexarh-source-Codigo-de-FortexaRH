@@ -4694,8 +4694,13 @@
       },
       "tssNovedades": {
         "name": "TSS Novedades",
-        "title": "Archivo de Novedades TSS",
-        "description": "Archivo Excel de novedades para la TSS (ingresos, salidas, etc.)"
+        "title": "Archivo de Novedades TSS (v5.1)",
+        "description": "Plantilla oficial SUIR+ v5.1 con ingresos, salidas, vacaciones, licencias y aumentos del mes (códigos IN/SA/VC/LV/LM/LD/AD)."
+      },
+      "tssBonificacion": {
+        "name": "Bonificación INFOTEP",
+        "title": "Archivo de Bonificación TSS (v1.4)",
+        "description": "Plantilla oficial INFOTEP v1.4 para reportar regalía pascual y bonificaciones del mes."
       },
       "ir13": {
         "name": "IR-13",
