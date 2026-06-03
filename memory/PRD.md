@@ -12,6 +12,26 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — TSS Novedades v5.1 + Bonificación v1.4 (XLSX nativo) + Refactor Pages (P1)
+- **TSS Novedades v5.1 nativo** (`GET /api/dgii-reports/native/tss-novedades-v51?year=&month=`):
+  - XLSX oficial SUIR+ con sheet "Plantilla de archivo novedades" — 23 columnas, group banners TRABAJADORES/SDSS/DGII/INFOTEP.
+  - Detecta automáticamente: **IN** (nuevos hires del mes), **AD** (cambios salariales de `salary_history`), **VC/LV/LM/LD** (vacaciones, licencias con/sin goce, licencia médica desde novedades en `payroll_entries`).
+  - SA (salidas/bajas) preparado para futuro cuando se implemente flujo de liquidación con persistencia.
+  - Hoja "Catalogos" con TNOV (IN/SA/VC/LV/LM/LD/AD), TDOC, SEXO, TINGRESO.
+- **TSS Bonificación v1.4 nativo** (`GET /api/dgii-reports/native/tss-bonificacion-v14?year=&month=`):
+  - XLSX oficial INFOTEP/SUIR+ con sheet "Plantilla de Bonificación" — 8 columnas, banner INFOTEP.
+  - Auto-rellena con bonificaciones (`bonuses`) registradas en payroll del mes.
+  - Si no hay bonificaciones, devuelve el template skeleton (no 404) para que el usuario llene manualmente (caso regalía pascual).
+- **Frontend `DGIIReportsPage.jsx`**: 2 nuevas cards de descarga con badge azul "Plantilla oficial XLSX" — TSS Novedades + Bonificación INFOTEP.
+- **Refactor SuperAdminPage.jsx** (1371 → 1157 líneas, -214):
+  - Extraído `RevenueTab.jsx` (KPIs MRR/ARR/Partners + distribución por plan + payment history).
+  - Extraído `InvoicesPendingTab.jsx` (tabla de facturas vencidas + acciones Marcar Pagada / Ver).
+- **Refactor PayrollV2Page.jsx** (2940 → 2803 líneas, -137):
+  - Extraído `TssPreviewDialog.jsx` (vista previa SUIR+ con employee table + totales + summary cards).
+- **Tests**: 9/9 backend pytest pasaron en endpoints nuevos + 90/100 regression (10 errores pre-existentes en `test_dgii_exports.py` por `BASE_URL` sin scheme — no relacionados con esta iteración). 100% frontend DGII Reports page (iteration_257).
+
+
+
 ## Feb 2026 — Plantillas Oficiales TSS/DGII (XLSX nativo) + Combobox de Bancos LATAM (P0)
 - **TSS Autodeterminación v5.3 nativo** (`routes/dgii_native_templates.py` → `GET /api/dgii-reports/native/tss-autodeterminacion-v53?year=&month=`):
   - XLSX real (no más .xls tab-delimited) que SUIR+ importa directamente.
