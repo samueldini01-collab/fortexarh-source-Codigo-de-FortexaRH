@@ -388,12 +388,50 @@ function EmployeeDashboard() {
     }
   };
 
+  // Get GPS position (returns null if unavailable / denied)
+  const getCurrentPosition = () => {
+    return new Promise((resolve) => {
+      if (!("geolocation" in navigator)) {
+        resolve(null);
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => resolve({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+          accuracy: pos.coords.accuracy,
+        }),
+        () => resolve(null),
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+      );
+    });
+  };
+
   // Attendance check-in
   const handleCheckIn = async () => {
     setCheckingIn(true);
     try {
-      const response = await axios.post(`${API}/employee-portal/attendance/check-in`, {}, { headers: getAuthHeaders() });
+      // If company has geofence configured, ask for GPS before posting
+      const needsGeo = todayAttendance?.geofence?.required;
+      let body = {};
+      if (needsGeo) {
+        const pos = await getCurrentPosition();
+        if (!pos) {
+          toast.error("Activa el permiso de ubicación para ponchar.");
+          setCheckingIn(false);
+          return;
+        }
+        body = pos;
+      }
+      const response = await axios.post(
+        `${API}/employee-portal/attendance/check-in`,
+        body,
+        { headers: getAuthHeaders() }
+      );
       toast.success(response.data.message || t('employeePortal.messages.clockedIn'));
+      if (response.data.location) {
+        toast.success(`📍 ${response.data.location.name} (${response.data.location.distance_m} m)`);
+      }
       setTodayAttendance(prev => ({ ...prev, attendance: { ...prev?.attendance, check_in: response.data.check_in }, can_check_in: false, can_check_out: true }));
     } catch (error) {
       toast.error(error.response?.data?.detail || t('employeePortal.messages.errorClockin'));
@@ -406,8 +444,26 @@ function EmployeeDashboard() {
   const handleCheckOut = async () => {
     setCheckingOut(true);
     try {
-      const response = await axios.post(`${API}/employee-portal/attendance/check-out`, {}, { headers: getAuthHeaders() });
+      const needsGeo = todayAttendance?.geofence?.required;
+      let body = {};
+      if (needsGeo) {
+        const pos = await getCurrentPosition();
+        if (!pos) {
+          toast.error("Activa el permiso de ubicación para ponchar.");
+          setCheckingOut(false);
+          return;
+        }
+        body = pos;
+      }
+      const response = await axios.post(
+        `${API}/employee-portal/attendance/check-out`,
+        body,
+        { headers: getAuthHeaders() }
+      );
       toast.success(response.data.message || t('employeePortal.messages.clockedOut'));
+      if (response.data.location) {
+        toast.success(`📍 ${response.data.location.name} (${response.data.location.distance_m} m)`);
+      }
       setTodayAttendance(prev => ({ ...prev, attendance: { ...prev?.attendance, check_out: response.data.check_out, hours_worked: response.data.hours_worked }, can_check_out: false }));
     } catch (error) {
       toast.error(error.response?.data?.detail || t('employeePortal.messages.errorClockout'));
@@ -750,7 +806,23 @@ function EmployeeDashboard() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col gap-2">
+                    {todayAttendance?.geofence?.required && (
+                      <div className="text-xs text-slate-600 flex items-center gap-1" data-testid="geofence-badge">
+                        <MapPin className="w-3 h-3 text-blue-600" />
+                        {todayAttendance.geofence.assigned_locations?.length > 0 ? (
+                          <span>
+                            Geo activa: <strong>{todayAttendance.geofence.assigned_locations[0].name}</strong>
+                            {" "}({todayAttendance.geofence.assigned_locations[0].radius} m)
+                          </span>
+                        ) : (
+                          <span className="text-amber-700">
+                            ⚠️ Sin ubicación asignada — pídele a RH que te asigne una para poder ponchar.
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    <div className="flex gap-2">
                     <Button
                       onClick={handleCheckIn}
                       disabled={!todayAttendance?.can_check_in || checkingIn}
@@ -768,6 +840,7 @@ function EmployeeDashboard() {
                       {checkingOut ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <StopCircle className="w-4 h-4 mr-2" />}
                       {t('employeePortal.attendance.exit')}
                     </Button>
+                    </div>
                   </div>
                 </div>
               </CardContent>

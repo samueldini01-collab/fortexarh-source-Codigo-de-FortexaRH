@@ -12,6 +12,37 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — Geofence Enforcement en el Portal del Empleado (P0 - Bug crítico)
+- **Bug reportado/auditoría**: El "Ponchar" del Portal del Empleado NO validaba geolocalización. El frontend llamaba a `/employee-portal/attendance/check-in` SIN GPS, y el backend no lo pedía ni lo validaba. Las `geo_locations` configuradas por el admin no se usaban para los empleados del portal — un empleado podía ponchar desde cualquier lugar (incluso desde su casa) aunque la empresa tuviera oficinas con radio configurado. Existían 2 sistemas paralelos: `/employee-portal/attendance/*` (sin geo) y `/geolocation-attendance/mark` (con geofence, solo admin token).
+- **Decisión de producto del usuario**:
+  - Empresa con geo_locations + empleado SIN asignación → **bloqueo estricto (403)** (no permisivo).
+  - Fuera del radio → **bloqueo duro (403)** (no `pending_review`).
+- **Backend** (`/app/backend/routes/employee_portal.py`):
+  - Nuevo helper `_validate_geofence_for_portal(company_id, employee_id, lat, lon)`:
+    - Si la empresa NO tiene `geo_locations` activas → enforcement OFF (retrocompatible).
+    - Si tiene → GPS obligatorio en el request (403 si falta).
+    - Empleado DEBE tener `employee_locations` asignados (403 strict si no).
+    - Calcula `haversine_meters` contra ubicaciones asignadas activas; si fuera del radio → 403 con `Estás a X m de {nombre} (radio permitido: Y m)`.
+    - Retorna info de la ubicación matched para guardar en el registro.
+  - `POST /attendance/check-in` y `check-out` ahora aceptan `AttendanceCheckRequest{latitude, longitude, accuracy}` opcional. Llama al helper antes de procesar. Guarda en la attendance record: `check_in_latitude`, `check_in_longitude`, `check_in_accuracy`, `check_in_location_id`, `check_in_location_name`, `check_in_distance_m` (idem para check_out).
+  - `GET /attendance/today` ahora retorna `geofence: { required: bool, assigned_locations: [...] }` para que el frontend sepa si pedir GPS y muestre badge.
+- **Frontend** (`EmployeeDashboard.jsx`):
+  - Helper `getCurrentPosition()` con `navigator.geolocation` (timeout 10s, alta precisión).
+  - `handleCheckIn`/`handleCheckOut` consultan `todayAttendance.geofence.required`. Si true, piden GPS antes del POST. Si el navegador rechaza → toast "Activa el permiso de ubicación".
+  - Tras éxito muestran toast secundario `📍 {nombre ubicación} ({metros} m)`.
+  - Nuevo badge bajo el card de Asistencia: `Geo activa: {nombre} ({radio} m)` o `⚠️ Sin ubicación asignada — pídele a RH que te asigne una para poder ponchar.` (data-testid: `geofence-badge`).
+- **Tests** (`/app/backend/tests/test_employee_portal_geofence.py`): 6/6 PASS
+  - `test_no_geo_locations_allows_checkin_without_gps`: back-compat.
+  - `test_geo_required_no_gps_blocks`: 403 si falta GPS.
+  - `test_geo_required_no_assignment_blocks`: 403 strict si no hay asignación.
+  - `test_geo_inside_radius_allows`: 200 con `location.name` + `distance_m`.
+  - `test_geo_outside_radius_blocks_with_distance`: 403 con mensaje de distancia.
+  - `test_today_endpoint_exposes_geofence_state`: `/attendance/today` retorna `geofence.required` y `assigned_locations`.
+- **Regresión completa**: 26/26 tests backend del portal (geofence + reset + lang + fixes) + 95/95 RTL. Cero rupturas.
+- **E2E verificado en preview** (Playwright): admin crea ubicación + asigna empleado → empleado loguea → badge "Geo activa: Oficina Central (150 m)" visible.
+
+
+
 ## Feb 2026 — Forzar Cambio de Contraseña en Próximo Login Post-Reset (P1)
 - **Mejora de seguridad**: tras el reset admin, el empleado entra con su cédula pero el portal le **obliga inmediatamente** a definir una clave nueva antes de mostrar el dashboard.
 - **Backend**:

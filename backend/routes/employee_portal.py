@@ -12,6 +12,7 @@ from datetime import datetime, timezone, timedelta
 import asyncio
 import uuid
 import logging
+import math
 import jwt
 import bcrypt
 import io
@@ -911,23 +912,176 @@ async def get_today_attendance(request: Request):
             {"shift_id": employee["shift_id"]},
             {"_id": 0}
         )
-    
+
+    # Geofence info for the portal UI: is enforcement active? which locations?
+    company_id = emp_data["company_id"]
+    has_locations = await db.geo_locations.find_one(
+        {"company_id": company_id, "is_active": True},
+        {"_id": 0, "location_id": 1},
+    )
+    geofence = {"required": bool(has_locations), "assigned_locations": []}
+    if has_locations:
+        assignments = await db.employee_locations.find(
+            {"company_id": company_id, "employee_id": emp_data["employee_id"]},
+            {"_id": 0, "location_id": 1},
+        ).to_list(50)
+        assigned_ids = [a["location_id"] for a in assignments]
+        if assigned_ids:
+            locs = await db.geo_locations.find(
+                {
+                    "company_id": company_id,
+                    "location_id": {"$in": assigned_ids},
+                    "is_active": True,
+                },
+                {"_id": 0, "location_id": 1, "name": 1, "address": 1,
+                 "latitude": 1, "longitude": 1, "radius": 1},
+            ).to_list(50)
+            geofence["assigned_locations"] = locs
+
     return {
         "date": today,
         "attendance": attendance,
         "shift": shift,
         "can_check_in": attendance is None or not attendance.get("check_in"),
-        "can_check_out": attendance is not None and attendance.get("check_in") and not attendance.get("check_out")
+        "can_check_out": attendance is not None and attendance.get("check_in") and not attendance.get("check_out"),
+        "geofence": geofence,
     }
 
 
+def _haversine_meters(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """Great-circle distance between two GPS coordinates, in meters."""
+    R = 6371000  # Earth's radius in meters
+    phi1 = math.radians(lat1)
+    phi2 = math.radians(lat2)
+    delta_phi = math.radians(lat2 - lat1)
+    delta_lambda = math.radians(lon2 - lon1)
+    a = math.sin(delta_phi / 2) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(delta_lambda / 2) ** 2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    return R * c
+
+
+async def _validate_geofence_for_portal(
+    company_id: str,
+    employee_id: str,
+    latitude: Optional[float],
+    longitude: Optional[float],
+):
+    """Validate that the employee is within an allowed geofence.
+
+    Strict policy (per product decision):
+    - If the company has ANY active geo_locations, the employee MUST be assigned
+      to at least one of them and MUST be inside its radius.
+    - Without GPS coordinates from the client when enforcement applies, reject.
+    - If the company has NO geo_locations at all, enforcement is OFF (back-compat).
+
+    Returns: dict with location info ready to merge into the attendance record,
+    or None if no enforcement applies.
+
+    Raises HTTPException(403) with a clear message when validation fails.
+    """
+    has_locations = await db.geo_locations.find_one(
+        {"company_id": company_id, "is_active": True},
+        {"_id": 0, "location_id": 1},
+    )
+    if not has_locations:
+        # Back-compat: company has not configured geofencing; allow.
+        return None
+
+    # GPS is required when enforcement applies
+    if latitude is None or longitude is None:
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "Tu empresa requiere ponchar con geolocalización activada. "
+                "Habilita el permiso de ubicación en tu navegador o dispositivo."
+            ),
+        )
+
+    # Employee MUST have at least one assignment (strict mode)
+    assignments = await db.employee_locations.find(
+        {"company_id": company_id, "employee_id": employee_id},
+        {"_id": 0, "location_id": 1},
+    ).to_list(50)
+    assigned_ids = [a["location_id"] for a in assignments]
+
+    if not assigned_ids:
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "No tienes una ubicación de trabajo asignada. "
+                "Pídele a tu administrador que te asigne una ubicación para poder ponchar."
+            ),
+        )
+
+    locations = await db.geo_locations.find(
+        {
+            "company_id": company_id,
+            "location_id": {"$in": assigned_ids},
+            "is_active": True,
+        },
+        {"_id": 0},
+    ).to_list(50)
+
+    if not locations:
+        # All assigned locations are inactive or deleted
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "Tus ubicaciones asignadas no están activas. "
+                "Contacta a tu administrador."
+            ),
+        )
+
+    closest = None
+    closest_distance = float("inf")
+    for loc in locations:
+        d = _haversine_meters(latitude, longitude, loc["latitude"], loc["longitude"])
+        if d < closest_distance:
+            closest_distance = d
+            closest = loc
+        if d <= loc.get("radius", 100):
+            return {
+                "latitude": latitude,
+                "longitude": longitude,
+                "geofence_location_id": loc["location_id"],
+                "geofence_location_name": loc.get("name", ""),
+                "geofence_distance_m": round(d, 2),
+                "geofence_status": "within",
+            }
+
+    # Outside all assigned radii — hard block
+    name = closest.get("name", "tu ubicación asignada") if closest else "tu ubicación asignada"
+    radius = closest.get("radius", 0) if closest else 0
+    raise HTTPException(
+        status_code=403,
+        detail=(
+            f"Estás a {int(closest_distance)} m de {name} (radio permitido: {radius} m). "
+            "Acércate a tu ubicación de trabajo para ponchar."
+        ),
+    )
+
+
+class AttendanceCheckRequest(BaseModel):
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    accuracy: Optional[float] = None
+
+
 @router.post("/attendance/check-in")
-async def employee_check_in(request: Request):
-    """Register employee check-in"""
+async def employee_check_in(request: Request, data: Optional[AttendanceCheckRequest] = None):
+    """Register employee check-in. Enforces geofence if the company has configured locations."""
     emp_data = await get_employee_from_token(request)
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     now_time = datetime.now(timezone.utc).strftime("%H:%M:%S")
-    
+
+    payload = data or AttendanceCheckRequest()
+    geo_info = await _validate_geofence_for_portal(
+        emp_data["company_id"],
+        emp_data["employee_id"],
+        payload.latitude,
+        payload.longitude,
+    )
+
     # Check if already checked in
     existing = await db.attendances.find_one({
         "employee_id": emp_data["employee_id"],
@@ -958,17 +1112,28 @@ async def employee_check_in(request: Request):
                 status = "late"
     
     attendance_id = f"att_{uuid.uuid4().hex[:8]}"
-    
+
+    base_update = {
+        "check_in": now_time,
+        "check_in_source": "employee_portal",
+        "status": status,
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+    }
+    if geo_info:
+        base_update.update({
+            "check_in_latitude": geo_info["latitude"],
+            "check_in_longitude": geo_info["longitude"],
+            "check_in_accuracy": payload.accuracy,
+            "check_in_location_id": geo_info["geofence_location_id"],
+            "check_in_location_name": geo_info["geofence_location_name"],
+            "check_in_distance_m": geo_info["geofence_distance_m"],
+        })
+
     if existing:
         # Update existing record
         await db.attendances.update_one(
             {"attendance_id": existing["attendance_id"]},
-            {"$set": {
-                "check_in": now_time,
-                "check_in_source": "employee_portal",
-                "status": status,
-                "updated_at": datetime.now(timezone.utc).isoformat()
-            }}
+            {"$set": base_update}
         )
         attendance_id = existing["attendance_id"]
     else:
@@ -978,29 +1143,41 @@ async def employee_check_in(request: Request):
             "employee_id": emp_data["employee_id"],
             "company_id": emp_data["company_id"],
             "date": today,
-            "check_in": now_time,
-            "check_in_source": "employee_portal",
-            "status": status,
-            "created_at": datetime.now(timezone.utc).isoformat()
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            **base_update,
         }
         await db.attendances.insert_one(attendance)
     
-    return {
+    response = {
         "attendance_id": attendance_id,
         "message": "Entrada registrada correctamente",
         "check_in": now_time,
         "status": status,
-        "status_message": "A tiempo" if status == "on_time" else "Tardanza registrada"
+        "status_message": "A tiempo" if status == "on_time" else "Tardanza registrada",
     }
+    if geo_info:
+        response["location"] = {
+            "name": geo_info["geofence_location_name"],
+            "distance_m": geo_info["geofence_distance_m"],
+        }
+    return response
 
 
 @router.post("/attendance/check-out")
-async def employee_check_out(request: Request):
-    """Register employee check-out"""
+async def employee_check_out(request: Request, data: Optional[AttendanceCheckRequest] = None):
+    """Register employee check-out. Enforces geofence if the company has configured locations."""
     emp_data = await get_employee_from_token(request)
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     now_time = datetime.now(timezone.utc).strftime("%H:%M:%S")
-    
+
+    payload = data or AttendanceCheckRequest()
+    geo_info = await _validate_geofence_for_portal(
+        emp_data["company_id"],
+        emp_data["employee_id"],
+        payload.latitude,
+        payload.longitude,
+    )
+
     # Find today's attendance record
     attendance = await db.attendances.find_one({
         "employee_id": emp_data["employee_id"],
@@ -1021,25 +1198,42 @@ async def employee_check_out(request: Request):
     
     # Calculate overtime (assuming 8 hour workday)
     overtime_hours = max(0, hours_worked - 8)
-    
+
+    update_doc = {
+        "check_out": now_time,
+        "check_out_source": "employee_portal",
+        "hours_worked": round(hours_worked, 2),
+        "overtime_hours": round(overtime_hours, 2),
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+    }
+    if geo_info:
+        update_doc.update({
+            "check_out_latitude": geo_info["latitude"],
+            "check_out_longitude": geo_info["longitude"],
+            "check_out_accuracy": payload.accuracy,
+            "check_out_location_id": geo_info["geofence_location_id"],
+            "check_out_location_name": geo_info["geofence_location_name"],
+            "check_out_distance_m": geo_info["geofence_distance_m"],
+        })
+
     await db.attendances.update_one(
         {"attendance_id": attendance["attendance_id"]},
-        {"$set": {
-            "check_out": now_time,
-            "check_out_source": "employee_portal",
-            "hours_worked": round(hours_worked, 2),
-            "overtime_hours": round(overtime_hours, 2),
-            "updated_at": datetime.now(timezone.utc).isoformat()
-        }}
+        {"$set": update_doc}
     )
     
-    return {
+    response = {
         "attendance_id": attendance["attendance_id"],
         "message": "Salida registrada correctamente",
         "check_out": now_time,
         "hours_worked": round(hours_worked, 2),
-        "overtime_hours": round(overtime_hours, 2)
+        "overtime_hours": round(overtime_hours, 2),
     }
+    if geo_info:
+        response["location"] = {
+            "name": geo_info["geofence_location_name"],
+            "distance_m": geo_info["geofence_distance_m"],
+        }
+    return response
 
 
 @router.get("/attendance/history")
