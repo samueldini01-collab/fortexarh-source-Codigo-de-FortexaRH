@@ -25,7 +25,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
 import { useAuth } from "@/App";
-import { Check, X, Plus, AlertCircle, Receipt, Calendar, Clock, FileWarning } from "lucide-react";
+import { Check, X, Plus, AlertCircle, Receipt, Calendar, Clock, FileWarning, KeyRound, Copy } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -44,7 +44,7 @@ const STATUS_COLORS = {
 const fmt = (n) =>
   new Intl.NumberFormat("es-DO", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n || 0);
 
-export default function EmployeePortalTab({ employeeId, employeeName }) {
+export default function EmployeePortalTab({ employeeId, employeeName, documentNumber }) {
   const [activeSub, setActiveSub] = useState("permisos");
 
   if (!employeeId) {
@@ -64,6 +64,11 @@ export default function EmployeePortalTab({ employeeId, employeeName }) {
           Permisos, licencias, pagos y ausencias del empleado en el portal. Puedes crear y aprobar desde aquí.
         </p>
       </div>
+      <PortalSecurityPanel
+        employeeId={employeeId}
+        employeeName={employeeName}
+        documentNumber={documentNumber}
+      />
       <Tabs value={activeSub} onValueChange={setActiveSub} className="w-full">
         <TabsList className="grid grid-cols-4 w-full mb-4">
           <TabsTrigger value="permisos" className="text-xs flex items-center gap-1" data-testid="sub-tab-permisos">
@@ -483,5 +488,138 @@ function AttendancePanel({ employeeId, employeeName }) {
         </div>
       )}
     </div>
+  );
+}
+
+
+// ----------------------------- Seguridad del Portal --------------------------------
+
+function PortalSecurityPanel({ employeeId, employeeName, documentNumber }) {
+  const { getAuthHeaders } = useAuth();
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [resetting, setResetting] = useState(false);
+  const [result, setResult] = useState(null); // { temporary_password, reset_at }
+
+  const handleReset = async () => {
+    setResetting(true);
+    try {
+      const res = await axios.post(
+        `${API}/employees/${employeeId}/reset-portal-password`,
+        {},
+        { headers: getAuthHeaders(), withCredentials: true }
+      );
+      setResult(res.data);
+      toast.success("Contraseña del portal reiniciada");
+      setShowConfirm(false);
+    } catch (e) {
+      toast.error(e?.response?.data?.detail || "Error al reiniciar la contraseña");
+    } finally {
+      setResetting(false);
+    }
+  };
+
+  const copyToClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success("Copiado al portapapeles");
+    } catch {
+      toast.error("No se pudo copiar");
+    }
+  };
+
+  return (
+    <Card className="p-3 bg-amber-50/40 border-amber-200" data-testid="portal-security-panel">
+      <div className="flex items-start justify-between gap-3 flex-wrap">
+        <div className="flex items-start gap-2">
+          <KeyRound className="w-4 h-4 text-amber-600 mt-0.5" />
+          <div>
+            <div className="font-semibold text-sm text-slate-700">Acceso al Portal del Empleado</div>
+            <div className="text-xs text-slate-600">
+              Si el empleado olvidó su contraseña, puedes reiniciarla a su cédula/pasaporte.
+              El empleado iniciará sesión con ese valor y podrá cambiarla desde el portal.
+            </div>
+          </div>
+        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          className="border-amber-400 text-amber-700 hover:bg-amber-100"
+          onClick={() => setShowConfirm(true)}
+          data-testid="reset-portal-password-btn"
+        >
+          <KeyRound className="w-4 h-4 mr-1" /> Reiniciar contraseña
+        </Button>
+      </div>
+
+      {result && (
+        <div
+          className="mt-3 p-3 rounded border border-emerald-300 bg-emerald-50"
+          data-testid="reset-portal-password-result"
+        >
+          <div className="text-xs text-emerald-800 font-semibold mb-1">
+            Contraseña reiniciada correctamente
+          </div>
+          <div className="text-xs text-slate-700">
+            Comunica al empleado que su contraseña temporal ahora es su cédula/pasaporte:
+          </div>
+          <div className="flex items-center gap-2 mt-2">
+            <code className="flex-1 px-2 py-1 rounded bg-white border text-sm font-mono">
+              {result.temporary_password}
+            </code>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => copyToClipboard(result.temporary_password)}
+              data-testid="copy-temporary-password-btn"
+            >
+              <Copy className="w-3 h-3 mr-1" /> Copiar
+            </Button>
+          </div>
+          <div className="text-[10px] text-slate-500 mt-1">
+            Recomienda al empleado cambiarla desde el portal tras iniciar sesión.
+          </div>
+        </div>
+      )}
+
+      {showConfirm && (
+        <Dialog open onOpenChange={(o) => !o && setShowConfirm(false)}>
+          <DialogContent className="max-w-md" data-testid="reset-portal-password-dialog">
+            <DialogHeader>
+              <DialogTitle>Reiniciar contraseña del portal</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-2 text-sm text-slate-700">
+              <p>
+                Vas a reiniciar la contraseña del Portal del Empleado de{" "}
+                <span className="font-semibold">{employeeName}</span>.
+              </p>
+              <p>
+                La nueva contraseña temporal será la cédula/pasaporte del empleado
+                {documentNumber ? (
+                  <>
+                    {" "}(<code className="px-1 bg-slate-100 rounded">{documentNumber}</code>)
+                  </>
+                ) : null}
+                . El empleado deberá cambiarla luego de iniciar sesión.
+              </p>
+              <p className="text-xs text-amber-700">
+                Esta acción invalidará la contraseña actual del empleado.
+              </p>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowConfirm(false)} disabled={resetting}>
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleReset}
+                disabled={resetting}
+                data-testid="confirm-reset-portal-password-btn"
+              >
+                {resetting ? "Reiniciando..." : "Sí, reiniciar"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+    </Card>
   );
 }

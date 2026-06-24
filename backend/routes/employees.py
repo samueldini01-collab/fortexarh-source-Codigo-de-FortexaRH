@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 import uuid
 import io
 import logging
+import bcrypt
 
 router = APIRouter(prefix="/employees", tags=["Employees"])
 from config import db, SUBSCRIPTION_PLANS
@@ -137,6 +138,56 @@ async def get_employee_loans(employee_id: str, current_user: dict = Depends(get_
         {"_id": 0}
     ).to_list(100)
     return loans
+
+
+@router.post("/{employee_id}/reset-portal-password")
+async def reset_employee_portal_password(
+    employee_id: str,
+    current_user: dict = Depends(get_current_user),
+):
+    """Reset the Employee Portal password back to the employee's document number.
+
+    Intended for company admins when an employee forgets their portal password.
+    The employee will be able to log in again using their cédula/pasaporte as
+    password and can change it from the portal afterwards.
+    """
+    company_id = current_user.get("company_id")
+    employee = await db.employees.find_one(
+        {"employee_id": employee_id, "company_id": company_id},
+        {"_id": 0, "document_number": 1, "first_name": 1, "last_name": 1},
+    )
+    if not employee:
+        raise HTTPException(status_code=404, detail="Empleado no encontrado")
+
+    document_number = (employee.get("document_number") or "").strip()
+    if not document_number:
+        raise HTTPException(
+            status_code=400,
+            detail="El empleado no tiene cédula/pasaporte registrado. Actualízalo antes de reiniciar la contraseña.",
+        )
+
+    hashed = bcrypt.hashpw(document_number.encode(), bcrypt.gensalt()).decode()
+    now_iso = datetime.now(timezone.utc).isoformat()
+    await db.employees.update_one(
+        {"employee_id": employee_id, "company_id": company_id},
+        {
+            "$set": {
+                "portal_password": hashed,
+                "portal_enabled": True,
+                "portal_password_reset_at": now_iso,
+                "portal_password_reset_by": current_user.get("user_id") or current_user.get("email"),
+            }
+        },
+    )
+
+    full_name = f"{employee.get('first_name', '')} {employee.get('last_name', '')}".strip()
+    return {
+        "message": "Contraseña del portal reiniciada",
+        "employee_id": employee_id,
+        "employee_name": full_name,
+        "temporary_password": document_number,
+        "reset_at": now_iso,
+    }
 
 
 # ===================== EXCEL IMPORT/EXPORT =====================

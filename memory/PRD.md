@@ -12,6 +12,30 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — Reseteo de Contraseña del Portal del Empleado por el Admin (P1)
+- **Motivación**: Antes, si un empleado olvidaba su contraseña del portal, no había forma de recuperarla. Ahora el administrador puede reiniciarla desde el perfil del empleado.
+- **Backend** (`/app/backend/routes/employees.py`):
+  - Nuevo endpoint `POST /api/employees/{employee_id}/reset-portal-password`.
+  - Valida que el empleado pertenece a la empresa del admin (`company_id` scoped).
+  - Reinicia `portal_password` a un `bcrypt` hash del `document_number` del empleado.
+  - Setea `portal_enabled=True`, registra `portal_password_reset_at` (ISO) y `portal_password_reset_by`.
+  - Rechaza con 400 si el empleado no tiene `document_number`.
+  - Retorna `{ message, employee_id, employee_name, temporary_password, reset_at }`.
+- **Frontend** (`/app/frontend/src/components/employees/EmployeePortalTab.jsx`):
+  - Nuevo componente interno `PortalSecurityPanel` renderizado al tope de la pestaña Portal del Empleado.
+  - Card amber con botón **"Reiniciar contraseña"** y descripción.
+  - Diálogo de confirmación (muestra nombre del empleado + cédula como referencia) antes de ejecutar.
+  - Tras éxito, muestra panel verde con la contraseña temporal en `<code>` + botón "Copiar al portapapeles".
+  - `documentNumber` se pasa como prop desde `EmployeeFormDialog` para mostrarse en la confirmación.
+- **data-testids agregados**: `portal-security-panel`, `reset-portal-password-btn`, `reset-portal-password-dialog`, `confirm-reset-portal-password-btn`, `reset-portal-password-result`, `copy-temporary-password-btn`.
+- **Tests** (`/app/backend/tests/test_employee_portal_password_reset.py`): 3/3 PASS
+  - `test_admin_can_reset_employee_portal_password`: valida endpoint + persistencia DB + verificación bcrypt vs document_number.
+  - `test_reset_requires_authentication`: 401/403 sin token.
+  - `test_reset_rejects_unknown_employee`: 404 para employee_id inexistente.
+- **Smoke screenshot UI verificada**: el panel "Acceso al Portal del Empleado" aparece correctamente al abrir un empleado en la pestaña "Portal del Empleado".
+
+
+
 ## Feb 2026 — Recuperación de Frontend tras Corrupción de node_modules (P0)
 - **Síntoma**: Tras instalar `@testing-library` en sesión previa, el árbol de `node_modules` quedó en estado inconsistente. Webpack fallaba con `ENOENT` para varios archivos de `@babel/runtime` (regenerator, asyncToGenerator, defineProperty) en `babel-preset-react-app` y `canvg`.
 - **Fix aplicado**: `rm -rf /app/frontend/node_modules /app/frontend/yarn.lock` + `yarn install` (regeneró `yarn.lock` con árbol coherente, deduped). `sudo supervisorctl restart frontend`.

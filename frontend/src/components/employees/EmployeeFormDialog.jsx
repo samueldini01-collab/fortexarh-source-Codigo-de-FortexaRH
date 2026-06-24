@@ -1122,6 +1122,7 @@ export function EmployeeFormDialog({
                   <EmployeePortalTab
                     employeeId={editingEmployee?.employee_id || formData.employee_id}
                     employeeName={`${formData.first_name || ''} ${formData.last_name || ''}`.trim() || 'Empleado'}
+                    documentNumber={formData.document_number || editingEmployee?.document_number || ''}
                   />
                 </TabsContent>
 
