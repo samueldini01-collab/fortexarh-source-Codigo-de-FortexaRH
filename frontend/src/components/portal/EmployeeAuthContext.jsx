@@ -16,18 +16,29 @@ export function EmployeeAuthProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem("employee_portal_token"));
   const [loading, setLoading] = useState(true);
 
+  const logout = useCallback(() => {
+    localStorage.removeItem("employee_portal_token");
+    setToken(null);
+    setEmployee(null);
+  }, []);
+
   const fetchProfile = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/employee-portal/profile`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setEmployee(response.data.employee);
+      const emp = response.data.employee || {};
+      // Normalize the flag name to a single canonical key on the client
+      emp.must_change_password = Boolean(
+        emp.must_change_password ?? emp.portal_must_change_password ?? false
+      );
+      setEmployee(emp);
     } catch (error) {
       logout();
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, logout]);
 
   useEffect(() => {
     if (token) {
@@ -44,20 +55,23 @@ export function EmployeeAuthProvider({ children }) {
     });
     localStorage.setItem("employee_portal_token", response.data.token);
     setToken(response.data.token);
-    setEmployee(response.data.employee);
+    const emp = response.data.employee || {};
+    emp.must_change_password = Boolean(emp.must_change_password ?? false);
+    setEmployee(emp);
     return response.data;
   };
 
-  const logout = () => {
-    localStorage.removeItem("employee_portal_token");
-    setToken(null);
-    setEmployee(null);
-  };
+  const refreshProfile = useCallback(async () => {
+    if (!token) return;
+    await fetchProfile();
+  }, [token, fetchProfile]);
 
   const getAuthHeaders = () => ({ Authorization: `Bearer ${token}` });
 
   return (
-    <EmployeeAuthContext.Provider value={{ employee, token, login, logout, loading, getAuthHeaders }}>
+    <EmployeeAuthContext.Provider
+      value={{ employee, token, login, logout, loading, getAuthHeaders, refreshProfile }}
+    >
       {children}
     </EmployeeAuthContext.Provider>
   );

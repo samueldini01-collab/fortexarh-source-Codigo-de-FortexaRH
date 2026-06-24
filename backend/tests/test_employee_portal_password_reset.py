@@ -97,6 +97,10 @@ class TestPortalPasswordReset:
         """E2E regression: after admin resets, the employee MUST be able to log
         into the portal using their document number as password, even when the
         same cédula exists in multiple companies (the prod bug scenario).
+
+        Also validates:
+        - login response includes must_change_password=True post-reset
+        - change-password clears the must_change_password flag
         """
         token = _admin_login()
         employee_id, _ = _find_employee_for_admin(token, EMPLOYEE_DOCUMENT)
@@ -118,8 +122,10 @@ class TestPortalPasswordReset:
         body = login_res.json()
         assert "token" in body
         assert "employee" in body
+        assert body["employee"].get("must_change_password") is True, \
+            "Login after reset should flag must_change_password=True"
 
-        # Restore baseline password for other test suites that assume EMPLOYEE_PASSWORD
+        # Restore baseline password — change-password also clears the flag
         portal_token = body["token"]
         restore = requests.post(
             f"{BASE_URL}/api/employee-portal/change-password",
@@ -128,6 +134,16 @@ class TestPortalPasswordReset:
             timeout=15,
         )
         assert restore.status_code == 200, f"Baseline restore failed: {restore.text}"
+
+        # Login again with new password — flag must now be False
+        login2 = requests.post(
+            f"{BASE_URL}/api/employee-portal/login",
+            json={"document_number": EMPLOYEE_DOCUMENT, "password": "portal123"},
+            timeout=15,
+        )
+        assert login2.status_code == 200, login2.text
+        assert login2.json()["employee"].get("must_change_password") is False, \
+            "must_change_password should be cleared after change-password"
 
     def test_reset_requires_authentication(self):
         res = requests.post(

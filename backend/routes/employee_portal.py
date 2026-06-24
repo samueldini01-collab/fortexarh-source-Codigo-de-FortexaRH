@@ -132,7 +132,8 @@ async def employee_login(data: EmployeeLoginRequest):
             "employee_id": employee["employee_id"],
             "name": f"{employee.get('first_name', '')} {employee.get('last_name', '')}",
             "position": employee.get("position", ""),
-            "department": employee.get("department", "")
+            "department": employee.get("department", ""),
+            "must_change_password": bool(employee.get("portal_must_change_password", False)),
         }
     }
 
@@ -164,7 +165,7 @@ async def change_employee_password(request: Request, data: ChangePasswordRequest
     hashed = bcrypt.hashpw(data.new_password.encode(), bcrypt.gensalt()).decode()
     await db.employees.update_one(
         {"employee_id": emp_data["employee_id"]},
-        {"$set": {"portal_password": hashed}}
+        {"$set": {"portal_password": hashed, "portal_must_change_password": False}}
     )
     
     return {"message": "Contrasena actualizada"}

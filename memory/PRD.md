@@ -12,6 +12,25 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — Forzar Cambio de Contraseña en Próximo Login Post-Reset (P1)
+- **Mejora de seguridad**: tras el reset admin, el empleado entra con su cédula pero el portal le **obliga inmediatamente** a definir una clave nueva antes de mostrar el dashboard.
+- **Backend**:
+  - `POST /api/employees/{id}/reset-portal-password` ahora setea `portal_must_change_password: True` además de los campos previos.
+  - `POST /api/employee-portal/login` devuelve `must_change_password` en el objeto `employee` de la respuesta.
+  - `POST /api/employee-portal/change-password` ahora limpia `portal_must_change_password: False` al actualizar exitosamente.
+  - `GET /api/employee-portal/profile` ya devolvía todo el documento, incluye el flag automáticamente.
+- **Frontend**:
+  - Nuevo componente `ForcePasswordChange.jsx` con UI dedicada: ícono de escudo ámbar, formulario con contraseña actual (temporal) + nueva (mínimo 6) + confirmación, validaciones cliente (`nueva ≠ actual`, `nueva == confirmación`), botones "Cancelar" (= logout) y "Cambiar contraseña".
+  - `EmployeeAuthContext` normaliza la flag (`must_change_password` o `portal_must_change_password`), expone `refreshProfile()` para releer tras cambio exitoso.
+  - `EmployeePortalPage` ahora hace ramificación: `loading` → spinner, `!employee` → `EmployeeLogin`, `employee.must_change_password` → `ForcePasswordChange`, default → `EmployeeDashboard`.
+  - data-testids: `force-password-change-screen`, `force-current-password-input`, `force-new-password-input`, `force-confirm-password-input`, `force-password-submit-btn`, `force-password-logout-btn`.
+- **Verificado E2E** (Playwright): admin resetea → empleado loguea con cédula → pantalla forzada aparece con saludo personalizado "Hola, Juan Carlos. Por seguridad, antes de continuar al portal, define una nueva contraseña personal" (en lugar del dashboard).
+- **Tests**:
+  - Backend pytest agregado al ciclo: valida `must_change_password=True` después de reset y `False` después de change-password. **12/12 PASS**.
+  - 95/95 RTL siguen verdes.
+
+
+
 ## Feb 2026 — Notificación por Email al Empleado tras Reset de Contraseña (P1)
 - **Mejora solicitada por usuario**: tras reiniciar la contraseña desde el panel admin, enviar automáticamente un email al empleado con las credenciales temporales.
 - **Backend** (`/app/backend/routes/employees.py::reset_employee_portal_password`):

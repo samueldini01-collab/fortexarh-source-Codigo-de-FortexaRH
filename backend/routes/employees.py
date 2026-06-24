@@ -184,6 +184,7 @@ async def reset_employee_portal_password(
             "$set": {
                 "portal_password": hashed,
                 "portal_enabled": True,
+                "portal_must_change_password": True,
                 "portal_password_reset_at": now_iso,
                 "portal_password_reset_by": current_user.get("user_id") or current_user.get("email"),
             }

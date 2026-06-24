@@ -3,6 +3,7 @@ import { Toaster } from "sonner";
 import { EmployeeAuthProvider, useEmployeeAuth } from "@/components/portal/EmployeeAuthContext";
 import { EmployeeLogin } from "@/components/portal/EmployeeLogin";
 import { EmployeeDashboard } from "@/components/portal/EmployeeDashboard";
+import { ForcePasswordChange } from "@/components/portal/ForcePasswordChange";
 
 export default function EmployeePortalPage() {
   return (
@@ -24,5 +25,7 @@ function EmployeePortalContent() {
     );
   }
   
-  return employee ? <EmployeeDashboard /> : <EmployeeLogin />;
+  if (!employee) return <EmployeeLogin />;
+  if (employee.must_change_password) return <ForcePasswordChange />;
+  return <EmployeeDashboard />;
 }
