@@ -150,11 +150,21 @@ async def reset_employee_portal_password(
     Intended for company admins when an employee forgets their portal password.
     The employee will be able to log in again using their cédula/pasaporte as
     password and can change it from the portal afterwards.
+
+    Also sends a best-effort notification email to the employee (using Resend
+    if configured) with the temporary credentials and a link to the portal.
     """
+    import os
+    import resend  # noqa: F401  (configured globally in config.py)
+    from config import SENDER_EMAIL
+
     company_id = current_user.get("company_id")
     employee = await db.employees.find_one(
         {"employee_id": employee_id, "company_id": company_id},
-        {"_id": 0, "document_number": 1, "first_name": 1, "last_name": 1},
+        {
+            "_id": 0, "document_number": 1, "first_name": 1, "last_name": 1,
+            "email": 1, "personal_email": 1,
+        },
     )
     if not employee:
         raise HTTPException(status_code=404, detail="Empleado no encontrado")
@@ -181,12 +191,76 @@ async def reset_employee_portal_password(
     )
 
     full_name = f"{employee.get('first_name', '')} {employee.get('last_name', '')}".strip()
+
+    # Resolve recipient email and company name for the notification
+    recipient_email = (employee.get("personal_email") or employee.get("email") or "").strip()
+    company = await db.companies.find_one(
+        {"company_id": company_id},
+        {"_id": 0, "name": 1, "company_name": 1},
+    )
+    company_name = (company or {}).get("company_name") or (company or {}).get("name") or "FortexaRH"
+
+    # Best-effort: send notification email via Resend
+    email_sent = False
+    if recipient_email and resend.api_key:
+        try:
+            frontend_url = os.environ.get("FRONTEND_URL", "https://fortexarh.com")
+            portal_link = f"{frontend_url}/employee-portal"
+            params = {
+                "from": SENDER_EMAIL,
+                "to": [recipient_email],
+                "subject": f"Tu contraseña del Portal del Empleado fue reiniciada - {company_name}",
+                "html": f"""
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; text-align: center;">
+                            <h1 style="color: white; margin: 0;">FortexaRH</h1>
+                            <p style="color: rgba(255,255,255,0.9); margin: 6px 0 0 0; font-size: 14px;">Portal del Empleado</p>
+                        </div>
+                        <div style="padding: 30px; background: #f9fafb;">
+                            <h2 style="color: #1e3a5f; margin-top:0;">Tu contraseña fue reiniciada</h2>
+                            <p style="color: #4b5563;">Hola <strong>{full_name or 'colaborador/a'}</strong>,</p>
+                            <p style="color: #4b5563;">
+                                El administrador de <strong>{company_name}</strong> reinició tu contraseña del Portal del Empleado.
+                            </p>
+                            <p style="color: #4b5563;">Para iniciar sesión usa estas credenciales temporales:</p>
+                            <div style="background: white; border: 1px solid #d1d5db; border-radius: 8px; padding: 16px; margin: 16px 0;">
+                                <div style="margin-bottom: 8px;">
+                                    <span style="color: #6b7280; font-size: 12px;">Usuario (cédula/pasaporte)</span><br/>
+                                    <code style="font-size: 16px; color: #111827;">{document_number}</code>
+                                </div>
+                                <div>
+                                    <span style="color: #6b7280; font-size: 12px;">Contraseña temporal</span><br/>
+                                    <code style="font-size: 16px; color: #111827;">{document_number}</code>
+                                </div>
+                            </div>
+                            <div style="text-align: center; margin: 24px 0;">
+                                <a href="{portal_link}" style="background-color: #10b981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Ir al Portal del Empleado</a>
+                            </div>
+                            <p style="color: #b45309; background:#fef3c7; padding:10px 14px; border-radius:6px; font-size: 14px;">
+                                <strong>Importante:</strong> por seguridad, cambia tu contraseña inmediatamente después de iniciar sesión, desde el menú de perfil del portal.
+                            </p>
+                            <p style="color: #6b7280; font-size: 13px;">Si no solicitaste este cambio, comunícate de inmediato con el área de Recursos Humanos de tu empresa.</p>
+                        </div>
+                        <div style="background: #e5e7eb; padding: 20px; text-align: center;">
+                            <p style="color: #6b7280; font-size: 12px; margin: 0;">Este correo fue enviado automáticamente. No respondas a este mensaje.</p>
+                        </div>
+                    </div>
+                """,
+            }
+            resend.Emails.send(params)
+            email_sent = True
+            logger.info(f"Portal password reset email sent to employee {employee_id} <{recipient_email}>")
+        except Exception as e:
+            logger.error(f"Error sending portal reset email to {recipient_email}: {e}")
+
     return {
         "message": "Contraseña del portal reiniciada",
         "employee_id": employee_id,
         "employee_name": full_name,
         "temporary_password": document_number,
         "reset_at": now_iso,
+        "email_sent": email_sent,
+        "email_recipient": recipient_email if email_sent else None,
     }
 
 

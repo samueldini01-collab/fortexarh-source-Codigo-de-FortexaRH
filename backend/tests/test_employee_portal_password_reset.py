@@ -80,6 +80,8 @@ class TestPortalPasswordReset:
         assert payload.get("employee_id") == employee_id
         assert "reset_at" in payload
         assert payload.get("message")
+        # email_sent is a best-effort flag — present in response either way
+        assert "email_sent" in payload, "email_sent flag missing from response"
 
         # Validate DB state: portal_enabled True and stored hash matches the document number
         stored = _get_stored_password_hash(employee_id, company_id)

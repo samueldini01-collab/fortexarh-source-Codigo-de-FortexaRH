@@ -624,6 +624,23 @@ function PortalSecurityPanel({ employeeId, employeeName, documentNumber }) {
                   <Copy className="w-3 h-3 mr-1" /> Copiar
                 </Button>
               </div>
+              {result.email_sent ? (
+                <div
+                  className="text-[11px] text-emerald-700 mt-2 flex items-center gap-1"
+                  data-testid="reset-email-sent-info"
+                >
+                  <Check className="w-3 h-3" />
+                  Notificación enviada por email a {result.email_recipient}
+                </div>
+              ) : (
+                <div
+                  className="text-[11px] text-amber-700 mt-2 flex items-center gap-1"
+                  data-testid="reset-email-not-sent-info"
+                >
+                  <AlertCircle className="w-3 h-3" />
+                  No se pudo enviar el email automático. Comunica la contraseña al empleado manualmente.
+                </div>
+              )}
               <div className="text-[10px] text-slate-500 mt-1">
                 Recomienda al empleado cambiarla desde el portal tras iniciar sesión.
               </div>

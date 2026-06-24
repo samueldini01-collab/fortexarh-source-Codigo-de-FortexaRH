@@ -12,6 +12,24 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — Notificación por Email al Empleado tras Reset de Contraseña (P1)
+- **Mejora solicitada por usuario**: tras reiniciar la contraseña desde el panel admin, enviar automáticamente un email al empleado con las credenciales temporales.
+- **Backend** (`/app/backend/routes/employees.py::reset_employee_portal_password`):
+  - Tras hashear y persistir la nueva clave, intenta enviar email via **Resend** (best-effort, no bloquea respuesta si falla).
+  - Resuelve destinatario buscando `personal_email` → fallback `email` del empleado.
+  - Resuelve nombre de empresa (`company_name` → `name`) para personalizar el asunto.
+  - Plantilla HTML con: branding FortexaRH (verde), nombre del empleado, nombre de la empresa, credenciales en bloque (usuario + contraseña temporal = cédula), CTA al portal, banner ámbar de seguridad recomendando cambio inmediato.
+  - Response ahora incluye `email_sent: bool` y `email_recipient: str | null` para que el frontend pueda mostrar feedback.
+- **Frontend** (`PortalSecurityPanel`):
+  - Panel verde post-reset muestra:
+    - ✓ verde: `Notificación enviada por email a {destinatario}` cuando se envió.
+    - ⚠️ ámbar: `No se pudo enviar el email automático. Comunica la contraseña al empleado manualmente.` cuando falló.
+  - data-testids: `reset-email-sent-info`, `reset-email-not-sent-info`.
+- **Verificación E2E**: Resend confirmó envío en logs (`INFO: Portal password reset email sent to employee emp_7d20680627a9 <juan.perez@ejemplo.com>`). UI muestra correctamente el ✓ verde con dirección.
+- **Tests**: 4/4 pytest del reset incluyen assertion sobre el campo `email_sent`. 95/95 RTL siguen verdes.
+
+
+
 ## Feb 2026 — Fix UX: Diálogo de Confirmación de Reset se Cerraba Demasiado Rápido (P0)
 - **Bug reportado por usuario**: al hacer clic en "Reiniciar contraseña" desde el perfil del empleado, el diálogo de confirmación se cerraba inmediatamente, impidiendo darle a "Sí, reiniciar".
 - **Causa raíz**: el componente `PortalSecurityPanel` renderizaba un `Dialog` (Radix UI) **anidado dentro del Dialog padre** `EmployeeFormDialog`. Radix UI no maneja bien dos modales superpuestos: el focus-trap y los handlers de `pointerDownOutside`/`escapeKeyDown` del modal padre interceptaban los eventos del modal hijo y disparaban su `onOpenChange(false)`, cerrándolo antes de que el usuario pudiera interactuar.
