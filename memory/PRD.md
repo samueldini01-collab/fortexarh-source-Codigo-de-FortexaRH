@@ -12,6 +12,16 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — Fix UX: Diálogo de Confirmación de Reset se Cerraba Demasiado Rápido (P0)
+- **Bug reportado por usuario**: al hacer clic en "Reiniciar contraseña" desde el perfil del empleado, el diálogo de confirmación se cerraba inmediatamente, impidiendo darle a "Sí, reiniciar".
+- **Causa raíz**: el componente `PortalSecurityPanel` renderizaba un `Dialog` (Radix UI) **anidado dentro del Dialog padre** `EmployeeFormDialog`. Radix UI no maneja bien dos modales superpuestos: el focus-trap y los handlers de `pointerDownOutside`/`escapeKeyDown` del modal padre interceptaban los eventos del modal hijo y disparaban su `onOpenChange(false)`, cerrándolo antes de que el usuario pudiera interactuar.
+- **Fix aplicado**: reemplazar el `Dialog` anidado por una **confirmación inline** dentro del mismo card amber. El estado pasa por idle → confirming → result, todo dentro del componente sin abrir un modal nuevo. Sin Radix anidado = sin conflictos. Mejor UX además porque el resto del formulario sigue visible.
+- **Verificado vía Playwright end-to-end** en preview: click → confirm panel persiste → click "Sí, reiniciar" → API responde → panel verde con cédula como contraseña temporal y botón "Copiar".
+- **Regresión**: 95/95 RTL tests + 12/12 tests backend portal+reset siguen verdes.
+- **Próximo paso del usuario**: redeployar a producción para que llegue a `fortexarh.com`.
+
+
+
 ## Feb 2026 — Fix: Login del Portal del Empleado tras Reset Falla con Duplicados de Cédula (P0 - Producción)
 - **Bug reportado por usuario en producción** (`fortexarh.com`): tras reiniciar la contraseña desde el perfil del empleado, al intentar iniciar sesión en el Portal con la cédula como contraseña, el sistema responde "Cédula o contraseña incorrecta".
 - **Causa raíz**: `POST /api/employee-portal/login` hacía `db.employees.find_one({"document_number": ...})` sin filtrar por empresa. Cuando existían múltiples empleados con la misma cédula en diferentes empresas (escenario real en el SaaS multi-tenant), Mongo devolvía un match arbitrario que no era el que el admin acababa de resetear. Bcrypt validaba contra el hash equivocado → 401.

@@ -496,7 +496,7 @@ function AttendancePanel({ employeeId, employeeName }) {
 
 function PortalSecurityPanel({ employeeId, employeeName, documentNumber }) {
   const { getAuthHeaders } = useAuth();
-  const [showConfirm, setShowConfirm] = useState(false);
+  const [confirming, setConfirming] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [result, setResult] = useState(null); // { temporary_password, reset_at }
 
@@ -510,7 +510,7 @@ function PortalSecurityPanel({ employeeId, employeeName, documentNumber }) {
       );
       setResult(res.data);
       toast.success("Contraseña del portal reiniciada");
-      setShowConfirm(false);
+      setConfirming(false);
     } catch (e) {
       toast.error(e?.response?.data?.detail || "Error al reiniciar la contraseña");
     } finally {
@@ -540,85 +540,105 @@ function PortalSecurityPanel({ employeeId, employeeName, documentNumber }) {
             </div>
           </div>
         </div>
-        <Button
-          size="sm"
-          variant="outline"
-          className="border-amber-400 text-amber-700 hover:bg-amber-100"
-          onClick={() => setShowConfirm(true)}
-          data-testid="reset-portal-password-btn"
-        >
-          <KeyRound className="w-4 h-4 mr-1" /> Reiniciar contraseña
-        </Button>
+        {!confirming && !result && (
+          <Button
+            size="sm"
+            variant="outline"
+            className="border-amber-400 text-amber-700 hover:bg-amber-100"
+            onClick={() => setConfirming(true)}
+            data-testid="reset-portal-password-btn"
+          >
+            <KeyRound className="w-4 h-4 mr-1" /> Reiniciar contraseña
+          </Button>
+        )}
       </div>
+
+      {confirming && (
+        <div
+          className="mt-3 p-3 rounded border border-amber-300 bg-white"
+          data-testid="reset-portal-password-confirm"
+        >
+          <div className="text-sm text-slate-700 space-y-1">
+            <p>
+              Vas a reiniciar la contraseña del Portal del Empleado de{" "}
+              <span className="font-semibold">{employeeName}</span>.
+            </p>
+            <p>
+              La nueva contraseña temporal será la cédula/pasaporte del empleado
+              {documentNumber ? (
+                <>
+                  {" "}
+                  (<code className="px-1 bg-slate-100 rounded">{documentNumber}</code>)
+                </>
+              ) : null}
+              . El empleado deberá cambiarla luego de iniciar sesión.
+            </p>
+            <p className="text-xs text-amber-700">
+              Esta acción invalidará la contraseña actual del empleado.
+            </p>
+          </div>
+          <div className="flex justify-end gap-2 mt-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setConfirming(false)}
+              disabled={resetting}
+            >
+              Cancelar
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleReset}
+              disabled={resetting}
+              data-testid="confirm-reset-portal-password-btn"
+            >
+              {resetting ? "Reiniciando..." : "Sí, reiniciar"}
+            </Button>
+          </div>
+        </div>
+      )}
 
       {result && (
         <div
           className="mt-3 p-3 rounded border border-emerald-300 bg-emerald-50"
           data-testid="reset-portal-password-result"
         >
-          <div className="text-xs text-emerald-800 font-semibold mb-1">
-            Contraseña reiniciada correctamente
-          </div>
-          <div className="text-xs text-slate-700">
-            Comunica al empleado que su contraseña temporal ahora es su cédula/pasaporte:
-          </div>
-          <div className="flex items-center gap-2 mt-2">
-            <code className="flex-1 px-2 py-1 rounded bg-white border text-sm font-mono">
-              {result.temporary_password}
-            </code>
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex-1">
+              <div className="text-xs text-emerald-800 font-semibold mb-1">
+                Contraseña reiniciada correctamente
+              </div>
+              <div className="text-xs text-slate-700">
+                Comunica al empleado que su contraseña temporal ahora es su cédula/pasaporte:
+              </div>
+              <div className="flex items-center gap-2 mt-2">
+                <code className="flex-1 px-2 py-1 rounded bg-white border text-sm font-mono">
+                  {result.temporary_password}
+                </code>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => copyToClipboard(result.temporary_password)}
+                  data-testid="copy-temporary-password-btn"
+                >
+                  <Copy className="w-3 h-3 mr-1" /> Copiar
+                </Button>
+              </div>
+              <div className="text-[10px] text-slate-500 mt-1">
+                Recomienda al empleado cambiarla desde el portal tras iniciar sesión.
+              </div>
+            </div>
             <Button
+              variant="ghost"
               size="sm"
-              variant="outline"
-              onClick={() => copyToClipboard(result.temporary_password)}
-              data-testid="copy-temporary-password-btn"
+              onClick={() => setResult(null)}
+              className="text-slate-500 hover:text-slate-700"
+              data-testid="close-reset-result-btn"
             >
-              <Copy className="w-3 h-3 mr-1" /> Copiar
+              <X className="w-4 h-4" />
             </Button>
           </div>
-          <div className="text-[10px] text-slate-500 mt-1">
-            Recomienda al empleado cambiarla desde el portal tras iniciar sesión.
-          </div>
         </div>
-      )}
-
-      {showConfirm && (
-        <Dialog open onOpenChange={(o) => !o && setShowConfirm(false)}>
-          <DialogContent className="max-w-md" data-testid="reset-portal-password-dialog">
-            <DialogHeader>
-              <DialogTitle>Reiniciar contraseña del portal</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-2 text-sm text-slate-700">
-              <p>
-                Vas a reiniciar la contraseña del Portal del Empleado de{" "}
-                <span className="font-semibold">{employeeName}</span>.
-              </p>
-              <p>
-                La nueva contraseña temporal será la cédula/pasaporte del empleado
-                {documentNumber ? (
-                  <>
-                    {" "}(<code className="px-1 bg-slate-100 rounded">{documentNumber}</code>)
-                  </>
-                ) : null}
-                . El empleado deberá cambiarla luego de iniciar sesión.
-              </p>
-              <p className="text-xs text-amber-700">
-                Esta acción invalidará la contraseña actual del empleado.
-              </p>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setShowConfirm(false)} disabled={resetting}>
-                Cancelar
-              </Button>
-              <Button
-                onClick={handleReset}
-                disabled={resetting}
-                data-testid="confirm-reset-portal-password-btn"
-              >
-                {resetting ? "Reiniciando..." : "Sí, reiniciar"}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       )}
     </Card>
   );
