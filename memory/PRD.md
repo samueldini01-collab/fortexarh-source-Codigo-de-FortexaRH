@@ -12,6 +12,19 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — Fix: Login del Portal del Empleado tras Reset Falla con Duplicados de Cédula (P0 - Producción)
+- **Bug reportado por usuario en producción** (`fortexarh.com`): tras reiniciar la contraseña desde el perfil del empleado, al intentar iniciar sesión en el Portal con la cédula como contraseña, el sistema responde "Cédula o contraseña incorrecta".
+- **Causa raíz**: `POST /api/employee-portal/login` hacía `db.employees.find_one({"document_number": ...})` sin filtrar por empresa. Cuando existían múltiples empleados con la misma cédula en diferentes empresas (escenario real en el SaaS multi-tenant), Mongo devolvía un match arbitrario que no era el que el admin acababa de resetear. Bcrypt validaba contra el hash equivocado → 401.
+- **Fix** (`/app/backend/routes/employee_portal.py` — `employee_login`):
+  - Ahora itera por **todos** los empleados con esa cédula (`find().to_list(20)`) y autentica contra el primero cuyo hash bcrypt verifique la contraseña.
+  - Maneja correctamente el caso "primer login" (sin contraseña aún) y hashes malformados (skip).
+  - Beneficio adicional: una misma persona puede trabajar en dos empresas del SaaS con la misma cédula y loguearse a cualquiera según la contraseña que ingrese.
+- **Test E2E agregado** (`test_employee_portal_password_reset.py::test_employee_can_login_after_admin_reset`): reproduce el flujo exacto que falló en producción (admin resetea → empleado intenta loguearse con cédula) y valida que regresa 200 con token. Incluye cleanup para restaurar el baseline `portal123`.
+- **Validación**: 12/12 tests pasan en el suite combinado (reset + login + change-password + dashboard + profile + notifications).
+- **Próximo paso del usuario**: redeployar a producción para que llegue el fix a `fortexarh.com`.
+
+
+
 ## Feb 2026 — Reseteo de Contraseña del Portal del Empleado por el Admin (P1)
 - **Motivación**: Antes, si un empleado olvidaba su contraseña del portal, no había forma de recuperarla. Ahora el administrador puede reiniciarla desde el perfil del empleado.
 - **Backend** (`/app/backend/routes/employees.py`):

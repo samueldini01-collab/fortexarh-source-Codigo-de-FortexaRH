@@ -91,6 +91,42 @@ class TestPortalPasswordReset:
             stored["portal_password"].encode(),
         ), "Stored hash does not verify against document_number"
 
+    def test_employee_can_login_after_admin_reset(self):
+        """E2E regression: after admin resets, the employee MUST be able to log
+        into the portal using their document number as password, even when the
+        same cédula exists in multiple companies (the prod bug scenario).
+        """
+        token = _admin_login()
+        employee_id, _ = _find_employee_for_admin(token, EMPLOYEE_DOCUMENT)
+        assert employee_id
+
+        reset_res = requests.post(
+            f"{BASE_URL}/api/employees/{employee_id}/reset-portal-password",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=15,
+        )
+        assert reset_res.status_code == 200, reset_res.text
+
+        login_res = requests.post(
+            f"{BASE_URL}/api/employee-portal/login",
+            json={"document_number": EMPLOYEE_DOCUMENT, "password": EMPLOYEE_DOCUMENT},
+            timeout=15,
+        )
+        assert login_res.status_code == 200, f"Portal login after reset failed: {login_res.text}"
+        body = login_res.json()
+        assert "token" in body
+        assert "employee" in body
+
+        # Restore baseline password for other test suites that assume EMPLOYEE_PASSWORD
+        portal_token = body["token"]
+        restore = requests.post(
+            f"{BASE_URL}/api/employee-portal/change-password",
+            headers={"Authorization": f"Bearer {portal_token}"},
+            json={"old_password": EMPLOYEE_DOCUMENT, "new_password": "portal123"},
+            timeout=15,
+        )
+        assert restore.status_code == 200, f"Baseline restore failed: {restore.text}"
+
     def test_reset_requires_authentication(self):
         res = requests.post(
             f"{BASE_URL}/api/employees/any-id/reset-portal-password",

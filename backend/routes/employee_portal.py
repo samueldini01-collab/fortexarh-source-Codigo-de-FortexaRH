@@ -67,41 +67,53 @@ async def get_employee_from_token(request: Request):
 
 @router.post("/login")
 async def employee_login(data: EmployeeLoginRequest):
-    """Login for employees using document number and password"""
-    # Find employee by document number
-    employee = await db.employees.find_one(
+    """Login for employees using document number and password.
+
+    Since the same document_number can exist across multiple companies
+    (different tenants), iterate through all matches and authenticate against
+    the one whose stored password verifies. This avoids the case where Mongo
+    returns a non-matching duplicate first.
+    """
+    candidates = await db.employees.find(
         {"document_number": data.document_number},
         {"_id": 0}
-    )
-    
+    ).to_list(20)
+
+    if not candidates:
+        raise HTTPException(status_code=401, detail="Cédula o contraseña incorrecta")
+
+    employee = None
+    for emp in candidates:
+        stored = emp.get("portal_password") or ""
+        # First-login case (no password yet): allow if password equals the document_number
+        if not stored:
+            if data.password == data.document_number:
+                hashed = bcrypt.hashpw(data.password.encode(), bcrypt.gensalt()).decode()
+                await db.employees.update_one(
+                    {"employee_id": emp["employee_id"], "company_id": emp["company_id"]},
+                    {"$set": {"portal_password": hashed, "portal_enabled": True}}
+                )
+                employee = emp
+                break
+            continue
+        # Existing password — check bcrypt
+        try:
+            if bcrypt.checkpw(data.password.encode(), stored.encode()):
+                employee = emp
+                break
+        except (ValueError, TypeError):
+            # Malformed hash — skip this candidate
+            continue
+
     if not employee:
         raise HTTPException(status_code=401, detail="Cédula o contraseña incorrecta")
-    
-    # Check if employee has portal access
+
+    # Ensure portal_enabled for the matched employee
     if not employee.get("portal_enabled", False):
-        # Auto-enable and set default password (document number)
-        default_password = bcrypt.hashpw(data.document_number.encode(), bcrypt.gensalt()).decode()
         await db.employees.update_one(
-            {"employee_id": employee["employee_id"]},
-            {"$set": {"portal_enabled": True, "portal_password": default_password}}
+            {"employee_id": employee["employee_id"], "company_id": employee["company_id"]},
+            {"$set": {"portal_enabled": True}}
         )
-        employee["portal_password"] = default_password
-    
-    # Verify password
-    stored_password = employee.get("portal_password", "")
-    if not stored_password:
-        # First login - password is document number
-        if data.password != data.document_number:
-            raise HTTPException(status_code=401, detail="Cédula o contraseña incorrecta")
-        # Set password
-        hashed = bcrypt.hashpw(data.password.encode(), bcrypt.gensalt()).decode()
-        await db.employees.update_one(
-            {"employee_id": employee["employee_id"]},
-            {"$set": {"portal_password": hashed, "portal_enabled": True}}
-        )
-    else:
-        if not bcrypt.checkpw(data.password.encode(), stored_password.encode()):
-            raise HTTPException(status_code=401, detail="Cédula o contraseña incorrecta")
     
     # Generate token
     token_payload = {
