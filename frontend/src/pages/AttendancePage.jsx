@@ -32,6 +32,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AttendanceSelfieCell } from "@/components/attendance/AttendanceSelfieCell";
 import { Progress } from "@/components/ui/progress";
 import { 
   Plus, Clock, UserCheck, UserX, AlertCircle, Users, Calendar,
@@ -698,6 +699,7 @@ export default function AttendancePage() {
                         <TableHead className="dark:text-slate-300">{t('attendance.horas')}</TableHead>
                         <TableHead className="dark:text-slate-300">{t('attendance.hExtra')}</TableHead>
                         <TableHead className="dark:text-slate-300">{t('attendance.estado')}</TableHead>
+                        <TableHead className="dark:text-slate-300">Selfie</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -717,6 +719,13 @@ export default function AttendancePage() {
                             ) : "-"}
                           </TableCell>
                           <TableCell>{getStatusBadge(att.status)}</TableCell>
+                          <TableCell>
+                            <AttendanceSelfieCell
+                              checkInSelfieId={att.check_in_selfie_id}
+                              checkOutSelfieId={att.check_out_selfie_id}
+                              authHeaders={getAuthHeaders()}
+                            />
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

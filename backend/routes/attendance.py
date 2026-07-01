@@ -174,21 +174,44 @@ async def get_attendances(
 ):
     """Get attendance records with filters"""
     query = {"company_id": current_user.get("company_id")}
-    
+
     if date:
         query["date"] = date
     elif start_date and end_date:
         query["date"] = {"$gte": start_date, "$lte": end_date}
-    
+
     if employee_id:
         query["employee_id"] = employee_id
     if department:
         query["department"] = department
     if status:
         query["status"] = status
-    
+
     attendances = await db.attendances.find(query, {"_id": 0}).sort("date", -1).to_list(1000)
     return attendances
+
+
+@router.get("/selfies/{selfie_id}")
+async def get_attendance_selfie(
+    selfie_id: str,
+    current_user: dict = Depends(get_current_user),
+):
+    """Serve a stored attendance selfie as a PNG/JPEG stream.
+
+    Scoped to the admin's company for tenant isolation.
+    """
+    import base64
+    selfie = await db.attendance_selfies.find_one(
+        {"selfie_id": selfie_id, "company_id": current_user.get("company_id")},
+        {"_id": 0, "image_data": 1},
+    )
+    if not selfie or not selfie.get("image_data"):
+        raise HTTPException(status_code=404, detail="Selfie no encontrada")
+    try:
+        raw = base64.b64decode(selfie["image_data"])
+    except Exception:
+        raise HTTPException(status_code=500, detail="Selfie corrupta")
+    return StreamingResponse(BytesIO(raw), media_type="image/jpeg")
 
 
 @router.get("/today")

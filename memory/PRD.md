@@ -12,6 +12,32 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — Vista Admin de Selfies de Asistencia (P1)
+- **Cierre del ciclo anti-fraude**: los admins ahora pueden auditar visualmente las selfies capturadas por empleados al ponchar.
+- **Backend** (`/app/backend/routes/attendance.py`):
+  - Nuevo endpoint `GET /api/attendance/selfies/{selfie_id}` — sirve la imagen como `StreamingResponse(media_type="image/jpeg")` decodificando el `image_data` base64 de `attendance_selfies`.
+  - Scoped por `company_id` del admin (tenant isolation): 404 si el selfie pertenece a otra empresa.
+  - 404 si no existe, 500 si el base64 está corrupto.
+  - El endpoint `GET /api/attendance` ya devolvía todo el documento (incluyendo `check_in_selfie_id`, `check_out_selfie_id`), no requirió cambios.
+- **Frontend**:
+  - Nuevo componente `AttendanceSelfieCell.jsx` (`/app/frontend/src/components/attendance/`):
+    - Renderiza mini-thumbs 32×32 para check-in (E) y check-out (S).
+    - **Lazy loading**: solo pide la imagen al hacer hover/focus/click (evita 100+ requests upfront en tablas grandes).
+    - Convierte el blob a `URL.createObjectURL` y muestra thumbnail.
+    - Click → `Dialog` de preview ampliado con `data-testid="selfie-preview-dialog"`.
+    - Estado vacío cuando no hay selfie: ícono `ImageOff` + guión.
+    - data-testids: `selfie-thumb-{selfie_id}`, `selfie-preview-dialog`, `selfie-preview-image-full`, `attendance-selfie-cell`, `attendance-selfie-cell-empty`.
+  - `AttendancePage.jsx` (tab **History**): columna "Selfie" agregada al final de la tabla, alimentada por `<AttendanceSelfieCell />` con `authHeaders={getAuthHeaders()}`.
+- **Tests** (`test_attendance_selfies_admin.py`): 4/4 PASS
+  - `test_requires_authentication`: 401 sin token.
+  - `test_returns_image_bytes_for_own_company`: 200 + `Content-Type: image/*` + bytes exactos decodificados.
+  - `test_returns_404_for_unknown_id`.
+  - `test_tenant_isolation`: selfie de otro `company_id` → 404 (no leak).
+- **E2E verificado** (Playwright): seed de attendance con selfie → columna "Selfie" visible → click thumbnail → diálogo "Selfie — Entrada" abre con la imagen ampliada.
+- **Regresión total**: 32/32 tests backend del portal + selfies + geofence + reset + fixes + 95/95 RTL. Sin rupturas.
+
+
+
 ## Feb 2026 — Selfie Opcional al Ponchar desde el Portal del Empleado (P1)
 - **Mejora de anti-fraude**: al ponchar entrada/salida, el empleado puede capturar una selfie con la cámara del dispositivo. Se persiste en `attendance_selfies` y se referencia en el `attendance` record vía `check_in_selfie_id` / `check_out_selfie_id`.
 - **Backend** (`/app/backend/routes/employee_portal.py`):
