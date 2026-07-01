@@ -1065,6 +1065,33 @@ class AttendanceCheckRequest(BaseModel):
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     accuracy: Optional[float] = None
+    selfie_base64: Optional[str] = None
+
+
+async def _save_attendance_selfie(
+    company_id: str,
+    employee_id: str,
+    mark_type: str,
+    selfie_base64: Optional[str],
+) -> Optional[str]:
+    """Store the selfie in attendance_selfies collection. Returns selfie_id or None."""
+    if not selfie_base64:
+        return None
+    # Basic sanity guard: reject payloads > ~4MB (base64 inflated)
+    if len(selfie_base64) > 6_000_000:
+        raise HTTPException(status_code=413, detail="La foto es demasiado grande. Intenta con una menor resolución.")
+    selfie_id = f"selfie_{uuid.uuid4().hex[:12]}"
+    await db.attendance_selfies.insert_one({
+        "selfie_id": selfie_id,
+        "company_id": company_id,
+        "employee_id": employee_id,
+        "mark_type": mark_type,
+        "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        "image_data": selfie_base64,
+        "source": "employee_portal",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+    return selfie_id
 
 
 @router.post("/attendance/check-in")
@@ -1128,6 +1155,12 @@ async def employee_check_in(request: Request, data: Optional[AttendanceCheckRequ
             "check_in_location_name": geo_info["geofence_location_name"],
             "check_in_distance_m": geo_info["geofence_distance_m"],
         })
+
+    selfie_id = await _save_attendance_selfie(
+        emp_data["company_id"], emp_data["employee_id"], "entry", payload.selfie_base64,
+    )
+    if selfie_id:
+        base_update["check_in_selfie_id"] = selfie_id
 
     if existing:
         # Update existing record
@@ -1215,6 +1248,12 @@ async def employee_check_out(request: Request, data: Optional[AttendanceCheckReq
             "check_out_location_name": geo_info["geofence_location_name"],
             "check_out_distance_m": geo_info["geofence_distance_m"],
         })
+
+    selfie_id = await _save_attendance_selfie(
+        emp_data["company_id"], emp_data["employee_id"], "exit", payload.selfie_base64,
+    )
+    if selfie_id:
+        update_doc["check_out_selfie_id"] = selfie_id
 
     await db.attendances.update_one(
         {"attendance_id": attendance["attendance_id"]},

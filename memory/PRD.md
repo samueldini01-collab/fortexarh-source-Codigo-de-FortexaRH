@@ -12,6 +12,28 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — Selfie Opcional al Ponchar desde el Portal del Empleado (P1)
+- **Mejora de anti-fraude**: al ponchar entrada/salida, el empleado puede capturar una selfie con la cámara del dispositivo. Se persiste en `attendance_selfies` y se referencia en el `attendance` record vía `check_in_selfie_id` / `check_out_selfie_id`.
+- **Backend** (`/app/backend/routes/employee_portal.py`):
+  - `AttendanceCheckRequest` extendido con `selfie_base64: Optional[str]`.
+  - Nuevo helper `_save_attendance_selfie(company_id, employee_id, mark_type, selfie_base64)`:
+    - Guard de tamaño 6MB (base64 inflado, ~4MB reales).
+    - Inserta doc en `attendance_selfies` con `selfie_id`, `company_id`, `employee_id`, `mark_type` ("entry"/"exit"), `date`, `image_data`, `source: "employee_portal"`, `created_at`.
+  - Check-in y check-out lo invocan tras la validación de geofence y agregan la referencia al `attendance` doc (`check_in_selfie_id` o `check_out_selfie_id`).
+- **Frontend**:
+  - Nuevo componente `SelfieCaptureDialog.jsx` con `getUserMedia({facingMode: "user"})`, preview `<video>`, captura via canvas + `toDataURL("image/jpeg", 0.75)`, retake y confirm.
+  - Botones: `Cancelar`, `Omitir` (procede sin foto), `Tomar foto` → `Repetir` / `Usar esta foto`.
+  - Maneja `NotAllowedError` con mensaje amigable.
+  - data-testids: `selfie-capture-dialog`, `selfie-video-preview`, `selfie-preview-image`, `selfie-cancel-btn`, `selfie-skip-btn`, `selfie-take-btn`, `selfie-retake-btn`, `selfie-confirm-btn`.
+  - `EmployeeDashboard.jsx` refactorizado: `handleCheckIn`/`handleCheckOut` → `startAttendance(kind)` → GPS resolvido → abre `SelfieCaptureDialog` → tras `onCapture(base64)`/`onSkip()` → `finishAttendance(selfieBase64|null)` postea al backend con `{lat, lng, accuracy, selfie_base64?}`.
+- **Selfie estrictamente opcional**: el empleado siempre puede "Omitir". Backend NO exige selfie (el admin puede añadir política más adelante).
+- **Tests** (`tests/test_employee_portal_geofence.py`): 8/8 PASS (6 previos + 2 nuevos):
+  - `test_selfie_persisted_when_provided`: 200 + registro en `attendance_selfies` + `check_in_selfie_id` linkeado.
+  - `test_selfie_optional_check_in_still_works_without_it`: 200 sin selfie, ningún registro en `attendance_selfies`.
+- **Regresión total**: 28/28 tests backend del portal + 95/95 RTL sin rupturas.
+
+
+
 ## Feb 2026 — Geofence Enforcement en el Portal del Empleado (P0 - Bug crítico)
 - **Bug reportado/auditoría**: El "Ponchar" del Portal del Empleado NO validaba geolocalización. El frontend llamaba a `/employee-portal/attendance/check-in` SIN GPS, y el backend no lo pedía ni lo validaba. Las `geo_locations` configuradas por el admin no se usaban para los empleados del portal — un empleado podía ponchar desde cualquier lugar (incluso desde su casa) aunque la empresa tuviera oficinas con radio configurado. Existían 2 sistemas paralelos: `/employee-portal/attendance/*` (sin geo) y `/geolocation-attendance/mark` (con geofence, solo admin token).
 - **Decisión de producto del usuario**:

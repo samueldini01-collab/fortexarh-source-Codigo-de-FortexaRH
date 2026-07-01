@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { useEmployeeAuth } from "./EmployeeAuthContext";
 import { EmployeeNotificationBell } from "./EmployeeNotificationBell";
 import { EmployeeNotificationCenter } from "./EmployeeNotificationCenter";
+import { SelfieCaptureDialog } from "./SelfieCaptureDialog";
 import LanguageSelector from "@/components/LanguageSelector";
 
 const API = process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND_URL}/api` : '/api';
@@ -407,42 +408,50 @@ function EmployeeDashboard() {
     });
   };
 
-  // Attendance check-in
-  const handleCheckIn = async () => {
-    setCheckingIn(true);
-    try {
-      // If company has geofence configured, ask for GPS before posting
-      const needsGeo = todayAttendance?.geofence?.required;
-      let body = {};
-      if (needsGeo) {
-        const pos = await getCurrentPosition();
-        if (!pos) {
-          toast.error("Activa el permiso de ubicación para ponchar.");
-          setCheckingIn(false);
-          return;
-        }
-        body = pos;
-      }
-      const response = await axios.post(
-        `${API}/employee-portal/attendance/check-in`,
-        body,
-        { headers: getAuthHeaders() }
-      );
-      toast.success(response.data.message || t('employeePortal.messages.clockedIn'));
-      if (response.data.location) {
-        toast.success(`📍 ${response.data.location.name} (${response.data.location.distance_m} m)`);
-      }
-      setTodayAttendance(prev => ({ ...prev, attendance: { ...prev?.attendance, check_in: response.data.check_in }, can_check_in: false, can_check_out: true }));
-    } catch (error) {
-      toast.error(error.response?.data?.detail || t('employeePortal.messages.errorClockin'));
-    } finally {
-      setCheckingIn(false);
+  // ---- Attendance ponchar flow with optional selfie ----
+  // pendingCheck: 'in' | 'out' | null   — indicates what action is waiting for selfie
+  // pendingCoords: coords resolved before opening the selfie dialog
+  const [pendingCheck, setPendingCheck] = useState(null);
+  const [pendingCoords, setPendingCoords] = useState(null);
+  const [selfieOpen, setSelfieOpen] = useState(false);
+
+  const submitAttendance = async (kind, body) => {
+    const url = kind === "in"
+      ? `${API}/employee-portal/attendance/check-in`
+      : `${API}/employee-portal/attendance/check-out`;
+    const response = await axios.post(url, body, { headers: getAuthHeaders() });
+    toast.success(
+      response.data.message ||
+        (kind === "in"
+          ? t("employeePortal.messages.clockedIn")
+          : t("employeePortal.messages.clockedOut"))
+    );
+    if (response.data.location) {
+      toast.success(`📍 ${response.data.location.name} (${response.data.location.distance_m} m)`);
+    }
+    if (kind === "in") {
+      setTodayAttendance((prev) => ({
+        ...prev,
+        attendance: { ...prev?.attendance, check_in: response.data.check_in },
+        can_check_in: false,
+        can_check_out: true,
+      }));
+    } else {
+      setTodayAttendance((prev) => ({
+        ...prev,
+        attendance: {
+          ...prev?.attendance,
+          check_out: response.data.check_out,
+          hours_worked: response.data.hours_worked,
+        },
+        can_check_out: false,
+      }));
     }
   };
 
-  // Attendance check-out
-  const handleCheckOut = async () => {
-    setCheckingOut(true);
+  const startAttendance = async (kind) => {
+    if (kind === "in") setCheckingIn(true);
+    else setCheckingOut(true);
     try {
       const needsGeo = todayAttendance?.geofence?.required;
       let body = {};
@@ -450,27 +459,57 @@ function EmployeeDashboard() {
         const pos = await getCurrentPosition();
         if (!pos) {
           toast.error("Activa el permiso de ubicación para ponchar.");
-          setCheckingOut(false);
           return;
         }
         body = pos;
       }
-      const response = await axios.post(
-        `${API}/employee-portal/attendance/check-out`,
-        body,
-        { headers: getAuthHeaders() }
-      );
-      toast.success(response.data.message || t('employeePortal.messages.clockedOut'));
-      if (response.data.location) {
-        toast.success(`📍 ${response.data.location.name} (${response.data.location.distance_m} m)`);
-      }
-      setTodayAttendance(prev => ({ ...prev, attendance: { ...prev?.attendance, check_out: response.data.check_out, hours_worked: response.data.hours_worked }, can_check_out: false }));
+      // Open selfie dialog — employee can Take, Skip, or Cancel
+      setPendingCoords(body);
+      setPendingCheck(kind);
+      setSelfieOpen(true);
     } catch (error) {
-      toast.error(error.response?.data?.detail || t('employeePortal.messages.errorClockout'));
+      toast.error(
+        error.response?.data?.detail ||
+          (kind === "in"
+            ? t("employeePortal.messages.errorClockin")
+            : t("employeePortal.messages.errorClockout"))
+      );
     } finally {
+      // spinners stay ON until the selfie flow completes; toggled in finishAttendance
+    }
+  };
+
+  const finishAttendance = async (selfieBase64 /* nullable */) => {
+    const kind = pendingCheck;
+    const coords = pendingCoords || {};
+    setSelfieOpen(false);
+    setPendingCheck(null);
+    setPendingCoords(null);
+    try {
+      await submitAttendance(kind, { ...coords, ...(selfieBase64 ? { selfie_base64: selfieBase64 } : {}) });
+    } catch (error) {
+      toast.error(
+        error.response?.data?.detail ||
+          (kind === "in"
+            ? t("employeePortal.messages.errorClockin")
+            : t("employeePortal.messages.errorClockout"))
+      );
+    } finally {
+      setCheckingIn(false);
       setCheckingOut(false);
     }
   };
+
+  const cancelAttendance = () => {
+    setSelfieOpen(false);
+    setPendingCheck(null);
+    setPendingCoords(null);
+    setCheckingIn(false);
+    setCheckingOut(false);
+  };
+
+  const handleCheckIn = () => startAttendance("in");
+  const handleCheckOut = () => startAttendance("out");
 
   // Fetch attendance history
   const fetchAttendanceHistory = async (month) => {
@@ -1657,6 +1696,15 @@ function EmployeeDashboard() {
         </Tabs>
         </main>
       </div>
+
+      {/* Selfie Capture Dialog (attendance ponchar) */}
+      <SelfieCaptureDialog
+        open={selfieOpen}
+        onCancel={cancelAttendance}
+        onSkip={() => finishAttendance(null)}
+        onCapture={(base64) => finishAttendance(base64)}
+        title={pendingCheck === "in" ? "Selfie para registrar entrada" : "Selfie para registrar salida"}
+      />
 
       {/* Vacation Request Dialog */}
       <Dialog open={showVacationRequest} onOpenChange={setShowVacationRequest}>

@@ -187,6 +187,70 @@ class TestGeofenceEnforcement:
         # Should mention meters
         assert "m" in detail
 
+    def test_selfie_persisted_when_provided(self):
+        """When employee sends selfie_base64, backend stores it in attendance_selfies
+        and references it via check_in_selfie_id on the attendance record."""
+        loc_id = asyncio.run(_seed_location(self.company_id, "Oficina", TEST_LAT, TEST_LON, TEST_RADIUS))
+        asyncio.run(_assign_employee_to_location(self.company_id, self.employee_id, loc_id))
+        portal_token, _ = _portal_login()
+        # 1x1 transparent PNG in base64 (valid image payload for the test)
+        tiny_b64 = (
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+        )
+        res = _check_in(portal_token, {
+            "latitude": TEST_LAT,
+            "longitude": TEST_LON,
+            "accuracy": 5,
+            "selfie_base64": tiny_b64,
+        })
+        assert res.status_code == 200, res.text
+
+        # Verify DB state
+        async def _q():
+            client, db = await _db()
+            att = await db.attendances.find_one(
+                {"employee_id": self.employee_id, "company_id": self.company_id},
+                {"_id": 0, "check_in_selfie_id": 1},
+            )
+            selfie_id = att.get("check_in_selfie_id") if att else None
+            selfie = None
+            if selfie_id:
+                selfie = await db.attendance_selfies.find_one(
+                    {"selfie_id": selfie_id},
+                    {"_id": 0, "image_data": 1, "source": 1, "employee_id": 1, "company_id": 1},
+                )
+            client.close()
+            return selfie_id, selfie
+
+        selfie_id, selfie = asyncio.run(_q())
+        assert selfie_id, "check_in_selfie_id not persisted on attendance record"
+        assert selfie is not None, "attendance_selfies document not created"
+        assert selfie["image_data"] == tiny_b64
+        assert selfie["source"] == "employee_portal"
+        assert selfie["employee_id"] == self.employee_id
+        assert selfie["company_id"] == self.company_id
+
+    def test_selfie_optional_check_in_still_works_without_it(self):
+        """Selfie is optional: check-in must still succeed when no selfie is sent."""
+        loc_id = asyncio.run(_seed_location(self.company_id, "Oficina", TEST_LAT, TEST_LON, TEST_RADIUS))
+        asyncio.run(_assign_employee_to_location(self.company_id, self.employee_id, loc_id))
+        portal_token, _ = _portal_login()
+        res = _check_in(portal_token, {"latitude": TEST_LAT, "longitude": TEST_LON, "accuracy": 5})
+        assert res.status_code == 200, res.text
+
+        async def _q():
+            client, db = await _db()
+            att = await db.attendances.find_one(
+                {"employee_id": self.employee_id, "company_id": self.company_id},
+                {"_id": 0, "check_in_selfie_id": 1},
+            )
+            client.close()
+            return att
+
+        att = asyncio.run(_q())
+        assert att is not None
+        assert att.get("check_in_selfie_id") is None
+
 
 class TestAttendanceTodayGeofenceInfo:
     def test_today_endpoint_exposes_geofence_state(self):
