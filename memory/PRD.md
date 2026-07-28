@@ -12,6 +12,34 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — Portal de Gestión de Método de Pago + Email de Falla de Renovación (P1)
+
+### Portal de gestión de método de pago
+- **Backend** (`/app/backend/routes/billing_cycle.py`):
+  - `POST /api/billing/customer-portal`: crea `stripe.billing_portal.Session` para el `stripe_customer_id` de la empresa. El usuario puede cambiar tarjeta, ver facturas, cancelar suscripción — todo en la UI hosted de Stripe. Retorna `portal_url`. 400 si no hay `stripe_customer_id`.
+  - `GET /api/billing/renewal-history`: retorna las últimas 24 facturas pagadas de la empresa, con campos `plan_name`, `total`, `currency`, `paid_at`, `paid_at_iso`, `source`, `invoice_number`, `stripe_invoice_id`. Ordenado desc por `paid_at_iso`.
+  - `GET /api/checkout/payment-method` ya existía (retorna brand/last4/exp).
+- **Frontend** (`/app/frontend/src/components/billing/PaymentMethodPanel.jsx` — nuevo):
+  - Carga en paralelo: método de pago actual + historial de renovaciones.
+  - Muestra tarjeta con estilo credit-card dark (brand + `•••• •••• •••• {last4}` + expiración).
+  - Botón "Cambiar tarjeta" → abre `POST /billing/customer-portal` → redirige a la URL hosted de Stripe.
+  - Empty states para ambas secciones.
+  - Historial en lista con badge "Auto" verde para renovaciones automáticas.
+  - data-testids: `payment-method-panel`, `current-payment-method`, `open-stripe-portal-btn`, `renewal-history-list`, `renewal-row-{invoice_id}`.
+  - Montado en `SubscriptionsPage.jsx` entre el grid superior y el "Plan Comparison".
+
+### Email automático de falla de renovación
+- **Backend** (`/app/backend/routes/checkout.py`):
+  - Nuevo helper `_send_renewal_failed_email(company_id, invoice_obj)`:
+    - Resuelve todos los admins de la empresa (`role in [admin, owner, company_admin]`).
+    - Envía email HTML rojo alarmante con: monto rechazado, motivos comunes (tarjeta expirada, fondos, límite), CTA "Actualizar método de pago" hacia `/subscriptions`, link a la factura en Stripe si está disponible, aviso de reintentos automáticos por Stripe.
+    - Best-effort: si Resend falla, se logea pero no rompe el webhook.
+  - El webhook `invoice.payment_failed` ahora invoca el helper después de marcar `past_due`.
+- **Regresión completa** — Tests: 10/10 pytest billing (auto-renewal + payment method + history + cleanup) + 95/95 RTL sin rupturas.
+- **E2E verificado** (Playwright): la sección de "Método de pago" y "Historial de renovaciones" se rendea correctamente con empty states en `/subscriptions`.
+
+
+
 ## Feb 2026 — Auto-Renovación Recurrente Stripe + Consentimiento Explícito (P0)
 - **Bug de negocio reportado**: empresas con facturas pendientes tenían que pagar manualmente cada mes. `pay-pending` creaba Stripe Checkout en `mode="payment"` (cargo único), sin guardar el método de pago para recurrencia. Cuando el cliente abandonaba el checkout, la transacción quedaba en `initiated` para siempre (ej. $76 del 23/7 de BWTelecom).
 - **Fix arquitectónico**:

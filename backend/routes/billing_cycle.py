@@ -638,6 +638,69 @@ async def cleanup_abandoned_transactions(current_user: dict = Depends(get_curren
     return {"abandoned_count": result.modified_count}
 
 
+class CustomerPortalRequest(BaseModel):
+    return_url: str
+
+
+@router.post("/customer-portal")
+async def create_customer_portal_session(
+    data: CustomerPortalRequest, current_user: dict = Depends(get_current_user)
+):
+    """Create a Stripe Customer Portal session so the user can update card,
+    view invoices, or cancel their subscription from Stripe's hosted UI."""
+    company_id = current_user.get("company_id")
+    subscription = await db.subscriptions.find_one(
+        {"company_id": company_id},
+        {"_id": 0, "stripe_customer_id": 1},
+    )
+    if not subscription or not subscription.get("stripe_customer_id"):
+        raise HTTPException(
+            status_code=400,
+            detail="No hay método de pago guardado todavía. Activa la renovación automática primero.",
+        )
+
+    api_key = os.environ.get("STRIPE_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Stripe no configurado")
+    stripe.api_key = api_key
+
+    try:
+        session = stripe.billing_portal.Session.create(
+            customer=subscription["stripe_customer_id"],
+            return_url=data.return_url,
+        )
+    except Exception as e:  # noqa: BLE001
+        logger.error(f"Stripe billing_portal error: {e}")
+        raise HTTPException(status_code=500, detail="No se pudo abrir el portal de Stripe") from e
+
+    return {"portal_url": session.url}
+
+
+@router.get("/renewal-history")
+async def get_renewal_history(current_user: dict = Depends(get_current_user)):
+    """Return the last 24 paid renewals (auto-renewal + manual) for the company."""
+    company_id = current_user.get("company_id")
+    invoices = await db.invoices.find(
+        {"company_id": company_id, "status": "paid"},
+        {
+            "_id": 0,
+            "invoice_id": 1,
+            "invoice_number": 1,
+            "plan_name": 1,
+            "total": 1,
+            "currency": 1,
+            "period_start_iso": 1,
+            "period_end_iso": 1,
+            "paid_at": 1,
+            "paid_at_iso": 1,
+            "source": 1,
+            "stripe_invoice_id": 1,
+        },
+    ).sort("paid_at_iso", -1).limit(24).to_list(24)
+
+    return {"items": invoices, "count": len(invoices)}
+
+
 @router.post("/internal/run")
 async def manual_run_billing(request: Request):
     """Manual trigger of the daily billing cycle. Requires the

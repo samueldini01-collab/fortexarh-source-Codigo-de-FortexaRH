@@ -5,6 +5,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth, useSubscription, API } from "@/App";
 import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { PaymentMethodPanel } from "@/components/billing/PaymentMethodPanel";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -843,6 +844,9 @@ export default function SubscriptionsPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Auto-renewal management: card + renewal history */}
+        <PaymentMethodPanel />
 
         {/* Plan Comparison */}
         <Card>

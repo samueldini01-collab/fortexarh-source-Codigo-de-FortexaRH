@@ -28,6 +28,79 @@ from models.finance import (
 )
 
 
+async def _send_renewal_failed_email(company_id: str, invoice_obj: dict):
+    """Notify company admins by email when a recurring Stripe charge fails."""
+    import resend
+    from config import SENDER_EMAIL
+
+    if not resend.api_key:
+        logger.warning("Resend API key missing — skipping renewal-failed email")
+        return
+
+    # Resolve admins to notify (company owners/admins)
+    admins = await db.users.find(
+        {"company_id": company_id, "role": {"$in": ["admin", "owner", "company_admin"]}},
+        {"_id": 0, "email": 1, "first_name": 1, "last_name": 1},
+    ).to_list(20)
+    recipients = [a["email"] for a in admins if a.get("email")]
+    if not recipients:
+        logger.warning(f"No admin emails for company {company_id} — cannot notify")
+        return
+
+    company = await db.companies.find_one(
+        {"company_id": company_id},
+        {"_id": 0, "name": 1, "company_name": 1},
+    ) or {}
+    company_name = company.get("company_name") or company.get("name") or "FortexaRH"
+
+    amount_due = (invoice_obj.get("amount_due") or 0) / 100.0
+    currency = (invoice_obj.get("currency") or "usd").upper()
+    hosted_invoice_url = invoice_obj.get("hosted_invoice_url")
+    frontend_url = os.environ.get("FRONTEND_URL", "https://fortexarh.com")
+
+    try:
+        resend.Emails.send({
+            "from": SENDER_EMAIL,
+            "to": recipients,
+            "subject": f"⚠️ Falló el cobro automático — {company_name}",
+            "html": f"""
+                <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+                    <div style="background:linear-gradient(135deg,#dc2626 0%,#b91c1c 100%);padding:30px;text-align:center;">
+                        <h1 style="color:#fff;margin:0;">FortexaRH</h1>
+                        <p style="color:rgba(255,255,255,0.9);margin:6px 0 0 0;font-size:14px;">Cobro automático fallido</p>
+                    </div>
+                    <div style="padding:30px;background:#f9fafb;">
+                        <h2 style="color:#1e3a5f;margin-top:0;">No pudimos procesar tu pago mensual</h2>
+                        <p style="color:#4b5563;">Hola equipo de <strong>{company_name}</strong>,</p>
+                        <p style="color:#4b5563;">
+                            El cobro automático de tu suscripción por <strong>${amount_due:.2f} {currency}</strong> fue rechazado por tu banco/tarjeta.
+                        </p>
+                        <p style="color:#4b5563;">Motivos comunes: tarjeta expirada, fondos insuficientes o límite de compra en línea.</p>
+                        <div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:12px 16px;margin:16px 0;">
+                            <strong style="color:#92400e;">Acción necesaria:</strong>
+                            <p style="color:#78350f;font-size:14px;margin:6px 0 0 0;">
+                                Actualiza tu método de pago desde el portal para reactivar tu servicio antes de que sea suspendido.
+                            </p>
+                        </div>
+                        <div style="text-align:center;margin:24px 0;">
+                            <a href="{frontend_url}/subscriptions" style="background-color:#10b981;color:#fff;padding:12px 30px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;">
+                                Actualizar método de pago
+                            </a>
+                        </div>
+                        {"<p style='text-align:center;'><a href='" + hosted_invoice_url + "' style='color:#3b82f6;'>Ver factura en Stripe</a></p>" if hosted_invoice_url else ""}
+                        <p style="color:#6b7280;font-size:13px;">Stripe reintentará el cobro automáticamente en las próximas 24-72 horas. Si necesitas ayuda, contacta a nuestro equipo.</p>
+                    </div>
+                    <div style="background:#e5e7eb;padding:20px;text-align:center;">
+                        <p style="color:#6b7280;font-size:12px;margin:0;">Este correo fue enviado automáticamente cuando Stripe rechazó el cobro.</p>
+                    </div>
+                </div>
+            """,
+        })
+        logger.info(f"Renewal-failed email sent to {len(recipients)} admin(s) of company {company_id}")
+    except Exception as e:  # noqa: BLE001
+        logger.error(f"resend.Emails.send failed: {e}")
+
+
 # ===================== HELPER FUNCTIONS =====================
 
 async def activate_subscription(company_id: str, plan_id: str, employee_count: int, session_id: str, user_email: str = None, user_name: str = None):
@@ -654,6 +727,15 @@ async def stripe_webhook(request: Request):
                         }},
                     )
                     logger.warning(f"Auto-renewal FAILED for company {subscription['company_id']}")
+
+                    # Notify company admins via Resend (best-effort)
+                    try:
+                        await _send_renewal_failed_email(
+                            company_id=subscription["company_id"],
+                            invoice_obj=invoice_obj,
+                        )
+                    except Exception as em_err:  # noqa: BLE001
+                        logger.error(f"Failed to send renewal-failed email: {em_err}")
 
         elif event['type'] == 'customer.subscription.deleted':
             sub_obj = event['data']['object']
