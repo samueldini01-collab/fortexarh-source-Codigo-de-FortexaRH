@@ -1,4 +1,4 @@
-import { CheckCircle, Eye, FileWarning } from "lucide-react";
+import { CheckCircle, Eye, FileWarning, RefreshCw, Hand } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -59,6 +59,7 @@ export default function InvoicesPendingTab({
                   <TableHead className="text-slate-400 text-right">Monto</TableHead>
                   <TableHead className="text-slate-400">Fin período</TableHead>
                   <TableHead className="text-slate-400">Vencida</TableHead>
+                  <TableHead className="text-slate-400">Renovación</TableHead>
                   <TableHead className="text-slate-400 text-right">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
@@ -86,6 +87,23 @@ export default function InvoicesPendingTab({
                       >
                         {inv.days_overdue}d
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {inv.auto_renewal_active ? (
+                        <Badge
+                          className="border-0 bg-emerald-500/20 text-emerald-300 gap-1"
+                          data-testid={`auto-renew-badge-${inv.invoice_id}`}
+                        >
+                          <RefreshCw className="w-3 h-3" /> Auto
+                        </Badge>
+                      ) : (
+                        <Badge
+                          className="border-0 bg-slate-500/20 text-slate-400 gap-1"
+                          data-testid={`manual-renew-badge-${inv.invoice_id}`}
+                        >
+                          <Hand className="w-3 h-3" /> Manual
+                        </Badge>
+                      )}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">

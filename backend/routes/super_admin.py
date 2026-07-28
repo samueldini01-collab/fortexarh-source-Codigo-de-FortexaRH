@@ -674,6 +674,8 @@ def _derive_invoice_from_sub(company: dict, sub: dict, plan_info: dict, active_e
         "days_overdue": days_overdue,
         "severity": severity,
         "status": "past_due",
+        "auto_renewal_active": bool(sub.get("auto_renewal_active")),
+        "stripe_subscription_id": sub.get("stripe_subscription_id"),
     }
 
 

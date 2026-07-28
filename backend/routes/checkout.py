@@ -516,6 +516,9 @@ async def stripe_webhook(request: Request):
             session = event['data']['object']
             session_id = session['id']
             payment_status = session.get('payment_status', '')
+            session_mode = session.get('mode', 'payment')
+            stripe_subscription_id = session.get('subscription')
+            stripe_customer_id = session.get('customer')
             
             if payment_status == "paid":
                 transaction = await db.payment_transactions.find_one(
@@ -524,13 +527,18 @@ async def stripe_webhook(request: Request):
                 )
                 
                 if transaction and transaction.get("payment_status") != "paid":
+                    upd_txn = {
+                        "payment_status": "paid",
+                        "paid_at": datetime.now(timezone.utc).isoformat(),
+                        "webhook_event_id": event["id"],
+                    }
+                    if stripe_subscription_id:
+                        upd_txn["stripe_subscription_id"] = stripe_subscription_id
+                    if stripe_customer_id:
+                        upd_txn["stripe_customer_id"] = stripe_customer_id
                     await db.payment_transactions.update_one(
                         {"session_id": session_id},
-                        {"$set": {
-                            "payment_status": "paid", 
-                            "paid_at": datetime.now(timezone.utc).isoformat(),
-                            "webhook_event_id": event["id"]
-                        }}
+                        {"$set": upd_txn}
                     )
 
                     # If this checkout was created to settle a pending invoice,
@@ -560,11 +568,18 @@ async def stripe_webhook(request: Request):
                             upd["current_period_end"] = invoice["period_end_iso"]
                         upd["past_due_since"] = None
                         upd["suspended_at"] = None
+                        # Persist Stripe linkage for auto-renewal flow
+                        if session_mode == "subscription" and stripe_subscription_id:
+                            upd["stripe_subscription_id"] = stripe_subscription_id
+                            upd["auto_renewal_active"] = True
+                            upd["auto_renewal_activated_at"] = now_iso
+                        if stripe_customer_id:
+                            upd["stripe_customer_id"] = stripe_customer_id
                         await db.subscriptions.update_one(
                             {"company_id": transaction["company_id"]},
                             {"$set": upd},
                         )
-                        logger.info(f"Pending invoice {invoice_id} settled and subscription reactivated")
+                        logger.info(f"Pending invoice {invoice_id} settled and subscription reactivated (mode={session_mode})")
                     else:
                         await activate_subscription(
                             company_id=transaction["company_id"],
@@ -572,6 +587,94 @@ async def stripe_webhook(request: Request):
                             employee_count=transaction.get("employee_count", 1),
                             session_id=session_id
                         )
+
+        elif event['type'] == 'invoice.paid':
+            # Recurring monthly renewal succeeded — extend subscription period
+            invoice_obj = event['data']['object']
+            stripe_sub_id = invoice_obj.get('subscription')
+            if stripe_sub_id:
+                subscription = await db.subscriptions.find_one(
+                    {"stripe_subscription_id": stripe_sub_id},
+                    {"_id": 0, "company_id": 1, "plan_id": 1, "plan_name": 1},
+                )
+                if subscription:
+                    period_start_ts = invoice_obj.get('period_start') or invoice_obj.get('lines', {}).get('data', [{}])[0].get('period', {}).get('start')
+                    period_end_ts = invoice_obj.get('period_end') or invoice_obj.get('lines', {}).get('data', [{}])[0].get('period', {}).get('end')
+                    amount_paid = (invoice_obj.get('amount_paid') or 0) / 100.0
+                    currency = (invoice_obj.get('currency') or 'usd').upper()
+                    now_iso = datetime.now(timezone.utc).isoformat()
+                    upd = {"status": "active", "past_due_since": None, "suspended_at": None, "updated_at": now_iso}
+                    if period_start_ts:
+                        upd["current_period_start"] = datetime.fromtimestamp(period_start_ts, tz=timezone.utc).isoformat()
+                    if period_end_ts:
+                        upd["current_period_end"] = datetime.fromtimestamp(period_end_ts, tz=timezone.utc).isoformat()
+                    await db.subscriptions.update_one(
+                        {"company_id": subscription["company_id"]},
+                        {"$set": upd},
+                    )
+                    # Create a paid invoice record locally for audit
+                    inv_id = f"inv_sub_{uuid.uuid4().hex[:8]}"
+                    await db.invoices.insert_one({
+                        "invoice_id": inv_id,
+                        "invoice_number": f"AUTO-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M')}",
+                        "company_id": subscription["company_id"],
+                        "plan_id": subscription.get("plan_id"),
+                        "plan_name": subscription.get("plan_name"),
+                        "total": amount_paid,
+                        "currency": currency,
+                        "status": "paid",
+                        "period_start_iso": upd.get("current_period_start"),
+                        "period_end_iso": upd.get("current_period_end"),
+                        "paid_at": datetime.now(timezone.utc).strftime("%d/%m/%Y %H:%M"),
+                        "paid_at_iso": now_iso,
+                        "created_at": now_iso,
+                        "stripe_invoice_id": invoice_obj.get("id"),
+                        "source": "stripe_auto_renewal",
+                    })
+                    logger.info(f"Auto-renewal success for company {subscription['company_id']} — ${amount_paid} {currency}")
+
+        elif event['type'] == 'invoice.payment_failed':
+            invoice_obj = event['data']['object']
+            stripe_sub_id = invoice_obj.get('subscription')
+            if stripe_sub_id:
+                subscription = await db.subscriptions.find_one(
+                    {"stripe_subscription_id": stripe_sub_id},
+                    {"_id": 0, "company_id": 1},
+                )
+                if subscription:
+                    now_iso = datetime.now(timezone.utc).isoformat()
+                    await db.subscriptions.update_one(
+                        {"company_id": subscription["company_id"]},
+                        {"$set": {
+                            "status": "past_due",
+                            "past_due_since": now_iso,
+                            "auto_renewal_last_failure_at": now_iso,
+                            "auto_renewal_last_failure_reason": invoice_obj.get("last_finalization_error", {}).get("message") or "payment_failed",
+                            "updated_at": now_iso,
+                        }},
+                    )
+                    logger.warning(f"Auto-renewal FAILED for company {subscription['company_id']}")
+
+        elif event['type'] == 'customer.subscription.deleted':
+            sub_obj = event['data']['object']
+            stripe_sub_id = sub_obj.get('id')
+            if stripe_sub_id:
+                subscription = await db.subscriptions.find_one(
+                    {"stripe_subscription_id": stripe_sub_id},
+                    {"_id": 0, "company_id": 1},
+                )
+                if subscription:
+                    now_iso = datetime.now(timezone.utc).isoformat()
+                    await db.subscriptions.update_one(
+                        {"company_id": subscription["company_id"]},
+                        {"$set": {
+                            "status": "canceled",
+                            "auto_renewal_active": False,
+                            "canceled_at": now_iso,
+                            "updated_at": now_iso,
+                        }},
+                    )
+                    logger.info(f"Subscription {stripe_sub_id} deleted at Stripe — company {subscription['company_id']} marked canceled")
         
         return {"status": "ok", "event_id": event["id"]}
     

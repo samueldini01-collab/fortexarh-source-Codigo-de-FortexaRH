@@ -148,11 +148,20 @@ export default function SubscriptionsPage() {
   }, [getAuthHeaders]);
 
   const handlePayPending = async (invoiceId) => {
+    // Explicit recurring-charges consent required (fallback for the secondary
+    // flow entered from the subscription page rather than BillingRequiredPage).
+    const confirmed = window.confirm(
+      "Al continuar, activarás la RENOVACIÓN AUTOMÁTICA de tu suscripción.\n\n" +
+      "Tu tarjeta será cobrada hoy por el monto pendiente y quedará guardada de forma segura por Stripe para cobros mensuales futuros.\n\n" +
+      "Puedes cancelar en cualquier momento desde el portal.\n\n" +
+      "¿Autorizas los cargos periódicos?"
+    );
+    if (!confirmed) return;
     setPayingPending(true);
     try {
       const res = await axios.post(
-        `${API}/billing/pay-pending`,
-        { invoice_id: invoiceId, origin_url: window.location.origin },
+        `${API}/billing/setup-auto-renewal`,
+        { invoice_id: invoiceId, origin_url: window.location.origin, authorized_recurring: true },
         { headers: getAuthHeaders(), withCredentials: true }
       );
       window.location.href = res.data.checkout_url;

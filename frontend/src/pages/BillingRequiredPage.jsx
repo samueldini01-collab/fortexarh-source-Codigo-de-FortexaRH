@@ -4,7 +4,8 @@ import axios from "axios";
 import { API } from "@/App";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, AlertCircle, LogOut, ShieldCheck, Loader2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { CreditCard, AlertCircle, LogOut, ShieldCheck, Loader2, RefreshCw, Calendar, Info } from "lucide-react";
 import { toast } from "sonner";
 
 function authHeaders() {
@@ -17,6 +18,7 @@ export default function BillingRequiredPage() {
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [paying, setPaying] = useState(false);
+  const [authorizedRecurring, setAuthorizedRecurring] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -36,15 +38,20 @@ export default function BillingRequiredPage() {
     load();
   }, [navigate]);
 
-  const handlePay = async () => {
+  const handleActivateAutoRenewal = async () => {
     if (!status?.pending_invoice?.invoice_id) return;
+    if (!authorizedRecurring) {
+      toast.error("Debes autorizar los cargos periódicos para continuar.");
+      return;
+    }
     setPaying(true);
     try {
       const res = await axios.post(
-        `${API}/billing/pay-pending`,
+        `${API}/billing/setup-auto-renewal`,
         {
           invoice_id: status.pending_invoice.invoice_id,
           origin_url: window.location.origin,
+          authorized_recurring: true,
         },
         { headers: authHeaders() }
       );
@@ -72,6 +79,8 @@ export default function BillingRequiredPage() {
   const inv = status?.pending_invoice;
   const blocked = status?.is_blocked;
   const grace = status?.grace_days_left ?? 0;
+  const monthlyAmount = inv ? Number(inv.total).toFixed(2) : "0.00";
+  const currency = inv?.currency || "USD";
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-900 dark:to-slate-950 px-4 py-10">
@@ -86,9 +95,7 @@ export default function BillingRequiredPage() {
             </div>
             <div>
               <CardTitle className="text-xl">
-                {blocked
-                  ? "Suscripción suspendida"
-                  : "Pago pendiente"}
+                {blocked ? "Suscripción suspendida" : "Pago pendiente"}
               </CardTitle>
               <CardDescription>
                 {blocked
@@ -121,17 +128,78 @@ export default function BillingRequiredPage() {
                 <div>
                   <p className="text-xs text-slate-500">Monto</p>
                   <p className="text-xl font-bold text-emerald-600">
-                    ${Number(inv.total).toFixed(2)} <span className="text-xs text-slate-400">{inv.currency}</span>
+                    ${monthlyAmount} <span className="text-xs text-slate-400">{currency}</span>
                   </p>
                 </div>
               </div>
             </div>
           )}
 
+          {/* Auto-renewal consent panel */}
+          <div
+            className="rounded-lg border-2 border-blue-300 bg-blue-50 dark:bg-blue-950/40 p-4 space-y-3"
+            data-testid="auto-renewal-consent-panel"
+          >
+            <div className="flex items-start gap-2">
+              <RefreshCw className="w-5 h-5 text-blue-600 mt-0.5" />
+              <div className="flex-1">
+                <p className="font-semibold text-slate-800 dark:text-slate-100 text-sm">
+                  Activación de renovación automática
+                </p>
+                <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">
+                  Al continuar, tu tarjeta será cobrada hoy por el monto pendiente y
+                  quedará guardada de forma segura por Stripe para cobros mensuales
+                  futuros. Ya no tendrás que ingresar manualmente al pagar cada mes.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 text-xs bg-white dark:bg-slate-800 rounded p-3">
+              <div className="flex items-center gap-2">
+                <CreditCard className="w-4 h-4 text-slate-500" />
+                <div>
+                  <p className="text-slate-500">Monto recurrente</p>
+                  <p className="font-semibold text-slate-800 dark:text-slate-100">
+                    ${monthlyAmount} {currency}/mes
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-slate-500" />
+                <div>
+                  <p className="text-slate-500">Frecuencia</p>
+                  <p className="font-semibold text-slate-800 dark:text-slate-100">Mensual</p>
+                </div>
+              </div>
+            </div>
+
+            <label className="flex items-start gap-2 cursor-pointer" data-testid="auto-renewal-consent-label">
+              <Checkbox
+                checked={authorizedRecurring}
+                onCheckedChange={(v) => setAuthorizedRecurring(Boolean(v))}
+                data-testid="auto-renewal-consent-checkbox"
+                className="mt-0.5"
+              />
+              <span className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
+                <strong>Autorizo a FortexaRH</strong> a cobrar{" "}
+                <strong>${monthlyAmount} {currency}</strong> mensualmente en mi método de pago
+                a partir de hoy, hasta que cancele la suscripción desde el portal.
+              </span>
+            </label>
+
+            <div className="flex items-start gap-1 text-[10px] text-slate-500">
+              <Info className="w-3 h-3 mt-0.5 flex-shrink-0" />
+              <span>
+                Puedes cancelar la suscripción en cualquier momento desde
+                <em> Suscripción → Cancelar</em>. No hay penalidades.
+              </span>
+            </div>
+          </div>
+
           <Button
             className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-6 text-base"
-            onClick={handlePay}
-            disabled={paying || !inv}
+            onClick={handleActivateAutoRenewal}
+            disabled={paying || !inv || !authorizedRecurring}
             data-testid="billing-pay-now-btn"
           >
             {paying ? (
@@ -139,7 +207,7 @@ export default function BillingRequiredPage() {
             ) : (
               <CreditCard className="w-5 h-5 mr-2" />
             )}
-            Pagar con tarjeta
+            Pagar y activar renovación automática
           </Button>
 
           <div className="flex items-center justify-center gap-2 text-xs text-slate-500">

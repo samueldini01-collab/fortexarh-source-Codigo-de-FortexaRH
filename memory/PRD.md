@@ -12,6 +12,40 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — Auto-Renovación Recurrente Stripe + Consentimiento Explícito (P0)
+- **Bug de negocio reportado**: empresas con facturas pendientes tenían que pagar manualmente cada mes. `pay-pending` creaba Stripe Checkout en `mode="payment"` (cargo único), sin guardar el método de pago para recurrencia. Cuando el cliente abandonaba el checkout, la transacción quedaba en `initiated` para siempre (ej. $76 del 23/7 de BWTelecom).
+- **Fix arquitectónico**:
+  - 🆕 **Nuevo endpoint** `POST /api/billing/setup-auto-renewal` en `billing_cycle.py`:
+    - Rechaza con 400 si `authorized_recurring != true` (consentimiento explícito obligatorio).
+    - Crea (o reusa) `stripe.Customer` linkeado al `company_id`.
+    - Crea `stripe.checkout.Session` en **`mode="subscription"`** con `price_data.recurring.interval="month"` — Stripe guarda el `payment_method` y hace cargos automáticos futuros.
+    - Persiste audit trail en `subscriptions`: `auto_renewal_consent`, `auto_renewal_consent_at`, `auto_renewal_consent_by_user_id`, `auto_renewal_consent_amount`, `auto_renewal_consent_currency`.
+    - `payment_transactions` marcado con `flow: "auto_renewal_setup"`, `authorized_recurring: true`, `authorized_at`, `authorized_by_user_id`.
+  - 🪝 **Webhook extendido** (`/api/webhook/stripe` en `checkout.py`) — maneja 4 eventos:
+    - `checkout.session.completed`: guarda `stripe_subscription_id`, `stripe_customer_id`, `auto_renewal_active=true` en `subscriptions` cuando `mode="subscription"`.
+    - `invoice.paid`: **cargos recurrentes exitosos** — extiende el período, crea invoice paid local con `source: "stripe_auto_renewal"`.
+    - `invoice.payment_failed`: marca `status="past_due"`, `auto_renewal_last_failure_at/reason`.
+    - `customer.subscription.deleted`: marca `status="canceled"`, `auto_renewal_active=false`.
+  - 🧹 **Cleanup** `POST /api/billing/cleanup-abandoned-transactions`: marca `initiated` > 24h como `abandoned`.
+  - 📊 **Super admin**: `/super-admin/invoices/pending` ahora retorna `auto_renewal_active` + `stripe_subscription_id` en cada item.
+- **Frontend**:
+  - `BillingRequiredPage.jsx`:
+    - Nuevo panel azul de consentimiento con: monto recurrente, frecuencia mensual, checkbox obligatorio "Autorizo a FortexaRH a cobrar $X USD mensualmente… hasta que cancele la suscripción", nota de cancelación libre.
+    - Botón "Pagar y activar renovación automática" solo se habilita al marcar el checkbox.
+    - data-testids: `auto-renewal-consent-panel`, `auto-renewal-consent-checkbox`, `auto-renewal-consent-label`, `billing-pay-now-btn`.
+  - `SubscriptionsPage.jsx`: `handlePayPending` ahora muestra `window.confirm` con el texto de autorización recurrente antes de redirigir a Stripe. Llama a `/setup-auto-renewal` en vez de `/pay-pending`.
+  - `InvoicesPendingTab.jsx` (super admin): nueva columna "Renovación" con badges "Auto" (verde con RefreshCw icon) o "Manual" (gris con Hand icon). data-testids: `auto-renew-badge-{invoice_id}`, `manual-renew-badge-{invoice_id}`.
+- **Tests** (`test_billing_auto_renewal.py`): 6/6 PASS
+  - `test_requires_authorized_recurring_true`: 400 sin consentimiento.
+  - `test_rejects_unknown_invoice`: 404.
+  - `test_creates_subscription_checkout_and_persists_consent`: 200 + Stripe real crea checkout con URL válida `https://checkout.stripe.com/...` + audit persistido en DB.
+  - `test_unauthenticated_rejected`: 401.
+  - `test_marks_stale_initiated_as_abandoned`: cleanup funciona.
+  - `test_endpoint_returns_auto_renewal_field`: `/invoices/pending` incluye el flag.
+- **Regresión completa**: 95/95 RTL + tests portal/geofence/reset/selfies sin rupturas.
+
+
+
 ## Feb 2026 — Vista Admin de Selfies de Asistencia (P1)
 - **Cierre del ciclo anti-fraude**: los admins ahora pueden auditar visualmente las selfies capturadas por empleados al ponchar.
 - **Backend** (`/app/backend/routes/attendance.py`):

@@ -472,6 +472,172 @@ async def pay_pending_invoice(data: PayPendingRequest, current_user: dict = Depe
     return {"checkout_url": session.url, "session_id": session.id}
 
 
+class SetupAutoRenewalRequest(BaseModel):
+    invoice_id: str
+    origin_url: str
+    authorized_recurring: bool
+
+
+@router.post("/setup-auto-renewal")
+async def setup_auto_renewal(data: SetupAutoRenewalRequest, current_user: dict = Depends(get_current_user)):
+    """Create a Stripe Checkout Session in SUBSCRIPTION mode to pay the pending
+    invoice AND enroll the company in automatic monthly recurring charges.
+
+    Requires explicit consent via `authorized_recurring: true` (proof stored in
+    payment_transactions and in the subscription record for audit).
+    """
+    if not data.authorized_recurring:
+        raise HTTPException(
+            status_code=400,
+            detail="Debes autorizar los cargos periódicos para activar la renovación automática.",
+        )
+
+    company_id = current_user.get("company_id")
+    invoice = await db.invoices.find_one(
+        {"invoice_id": data.invoice_id, "company_id": company_id, "status": "pending"},
+        {"_id": 0},
+    )
+    if not invoice:
+        raise HTTPException(status_code=404, detail="Factura pendiente no encontrada")
+
+    api_key = os.environ.get("STRIPE_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Stripe no configurado")
+    stripe.api_key = api_key
+
+    amount = float(invoice.get("total", 0))
+    if amount <= 0:
+        raise HTTPException(status_code=400, detail="Monto inválido")
+
+    currency = (invoice.get("currency") or "usd").lower()
+    plan_id = invoice.get("plan_id") or "fortexarh_pro"
+    plan_name = invoice.get("plan_name") or plan_id
+
+    host_url = data.origin_url.rstrip("/")
+    success_url = f"{host_url}/subscriptions?session_id={{CHECKOUT_SESSION_ID}}&status=success&auto_renew=1"
+    cancel_url = f"{host_url}/billing-required?status=cancelled"
+
+    # Ensure a Stripe customer exists for this company (create-or-reuse)
+    subscription = await db.subscriptions.find_one(
+        {"company_id": company_id},
+        {"_id": 0, "stripe_customer_id": 1},
+    )
+    stripe_customer_id = subscription.get("stripe_customer_id") if subscription else None
+    if not stripe_customer_id:
+        try:
+            company = await db.companies.find_one({"company_id": company_id}, {"_id": 0, "company_name": 1, "name": 1})
+            customer = stripe.Customer.create(
+                name=(company or {}).get("company_name") or (company or {}).get("name") or "FortexaRH Client",
+                email=current_user.get("email"),
+                metadata={"company_id": company_id},
+            )
+            stripe_customer_id = customer.id
+            await db.subscriptions.update_one(
+                {"company_id": company_id},
+                {"$set": {"stripe_customer_id": stripe_customer_id}},
+                upsert=True,
+            )
+        except Exception as e:  # noqa: BLE001
+            logger.error(f"Stripe create customer error: {e}")
+            raise HTTPException(status_code=500, detail="No se pudo crear el cliente Stripe") from e
+
+    try:
+        session = stripe.checkout.Session.create(
+            mode="subscription",
+            customer=stripe_customer_id,
+            payment_method_types=["card"],
+            line_items=[{
+                "price_data": {
+                    "currency": currency,
+                    "unit_amount": int(round(amount * 100)),
+                    "recurring": {"interval": "month"},
+                    "product_data": {
+                        "name": f"{plan_name} — Suscripción mensual",
+                    },
+                },
+                "quantity": 1,
+            }],
+            success_url=success_url,
+            cancel_url=cancel_url,
+            metadata={
+                "company_id": company_id,
+                "user_id": current_user.get("user_id") or "",
+                "plan_id": plan_id,
+                "plan_name": plan_name,
+                "employee_count": str(invoice.get("employee_count", 0)),
+                "invoice_id": invoice.get("invoice_id"),
+                "flow": "auto_renewal_setup",
+                "settle_pending_invoice": "1",
+                "authorized_recurring": "1",
+            },
+            subscription_data={
+                "metadata": {
+                    "company_id": company_id,
+                    "plan_id": plan_id,
+                    "plan_name": plan_name,
+                    "authorized_recurring": "1",
+                },
+            },
+        )
+    except Exception as e:  # noqa: BLE001
+        logger.error(f"Stripe setup-auto-renewal error: {e}")
+        raise HTTPException(status_code=500, detail="No se pudo crear la sesión de pago") from e
+
+    now_iso = _now().isoformat()
+    await db.payment_transactions.insert_one({
+        "transaction_id": f"txn_{uuid.uuid4().hex[:12]}",
+        "session_id": session.id,
+        "company_id": company_id,
+        "user_id": current_user.get("user_id"),
+        "plan_id": plan_id,
+        "plan_name": plan_name,
+        "employee_count": invoice.get("employee_count"),
+        "amount": amount,
+        "currency": invoice.get("currency", "USD"),
+        "payment_status": "initiated",
+        "invoice_id": invoice.get("invoice_id"),
+        "flow": "auto_renewal_setup",
+        "authorized_recurring": True,
+        "authorized_at": now_iso,
+        "authorized_by_user_id": current_user.get("user_id"),
+        "created_at": now_iso,
+    })
+
+    # Persist consent audit record on the subscription document
+    await db.subscriptions.update_one(
+        {"company_id": company_id},
+        {"$set": {
+            "auto_renewal_consent": True,
+            "auto_renewal_consent_at": now_iso,
+            "auto_renewal_consent_by_user_id": current_user.get("user_id"),
+            "auto_renewal_consent_amount": amount,
+            "auto_renewal_consent_currency": invoice.get("currency", "USD"),
+        }},
+        upsert=True,
+    )
+
+    return {"checkout_url": session.url, "session_id": session.id}
+
+
+@router.post("/cleanup-abandoned-transactions")
+async def cleanup_abandoned_transactions(current_user: dict = Depends(get_current_user)):
+    """Mark payment_transactions still `initiated` after 24h as `abandoned`.
+    Callable by any authenticated user for their own company; super_admin can
+    call it globally via /billing/internal/run.
+    """
+    company_id = current_user.get("company_id")
+    cutoff = (_now() - timedelta(hours=24)).isoformat()
+    result = await db.payment_transactions.update_many(
+        {
+            "company_id": company_id,
+            "payment_status": "initiated",
+            "created_at": {"$lt": cutoff},
+        },
+        {"$set": {"payment_status": "abandoned", "abandoned_at": _now().isoformat()}},
+    )
+    return {"abandoned_count": result.modified_count}
+
+
 @router.post("/internal/run")
 async def manual_run_billing(request: Request):
     """Manual trigger of the daily billing cycle. Requires the
