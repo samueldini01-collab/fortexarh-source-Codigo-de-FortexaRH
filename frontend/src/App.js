@@ -4,6 +4,27 @@ import "@/i18n"; // Initialize i18n
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
 import axios from "axios";
 import { Toaster } from "@/components/ui/sonner";
+
+// Global axios interceptor: when the backend billing gate returns 402, redirect
+// the user to the billing-required page. Idempotent — safe to run once at import time.
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error?.response?.status === 402 && error?.response?.data?.billing_required) {
+      const loc = window.location;
+      if (
+        loc.pathname !== "/billing-required" &&
+        !loc.pathname.startsWith("/subscriptions") &&
+        !loc.pathname.startsWith("/login") &&
+        !loc.pathname.startsWith("/employee-portal")
+      ) {
+        window.location.href = "/billing-required";
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 import { ThemeProvider } from "@/context/ThemeContext";
 import { AccessibilityIndicator } from "@/components/ThemeToggle";
 import { KeyboardShortcutsProvider } from "@/context/KeyboardShortcutsContext";
@@ -253,8 +274,10 @@ const ProtectedRoute = ({ children }) => {
       setBillingBlocked(false);
       return;
     }
-    // Skip the check if we're already on the billing page
-    if (location.pathname === "/billing-required") {
+    // Skip the check if we're already on an allowed page while blocked.
+    // Allowed: /billing-required (pay pending invoice) and /subscriptions
+    // (open Stripe portal to change the card / cancel).
+    if (location.pathname === "/billing-required" || location.pathname.startsWith("/subscriptions")) {
       setBillingBlocked(false);
       return;
     }

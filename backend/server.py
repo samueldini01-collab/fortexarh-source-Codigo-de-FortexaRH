@@ -125,6 +125,11 @@ app.add_middleware(
 from middleware.support_actions_audit import SupportActionsAuditMiddleware  # noqa: E402
 app.add_middleware(SupportActionsAuditMiddleware)
 
+# Billing gate: block every API request when the company's subscription is
+# suspended or past_due, except billing/auth/payment endpoints. Returns 402.
+from middleware.billing_gate import BillingGateMiddleware  # noqa: E402
+app.add_middleware(BillingGateMiddleware)
+
 # ===================== HEALTH CHECKS =====================
 
 @app.get("/health")

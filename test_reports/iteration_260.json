@@ -1,0 +1,60 @@
+{
+  "summary": "Verified the P0 BillingGateMiddleware fix end-to-end (backend + frontend). Core requirement WORKS: with subscription status suspended or past_due, business endpoints (/api/employees, /api/dashboard/stats, /api/payroll/periods, /api/notifications, /api/hr-alerts, /api/country-config/company, etc.) return 402 with {billing_required:true, subscription_status}, allowlisted billing/payment/auth/health endpoints stay reachable, unauthenticated/invalid-token requests still get 401/403 (never 402), super_admin token is exempt, and flipping back to active fully restores access. Frontend: suspended user is redirected to /billing-required on login and on every direct navigation to /employees, /dashboard, /payroll, /settings; /subscriptions is reachable without redirect loop. HOWEVER two real gaps remain: (a) the endpoints the /subscriptions page needs (/api/subscription, /api/plans, /api/invoices, /api/subscription/cancellation-info) are themselves 402-blocked, so the user CANNOT actually see plans / pay / change the card there; (b) on /billing-required the pay button is permanently disabled when there is no pending invoice and there is no link to /subscriptions. Also /api/billing/status returns is_blocked only for 'suspended' (not 'past_due'), so with past_due the frontend lets the user into /dashboard with all-empty data. DB status restored to 'active' at the end (verified).",
+  "backend_issues": {
+    "critical": [
+      {"endpoint": "/api/subscription, /api/plans, /api/invoices, /api/subscription/cancellation-info", "issue": "Blocked with 402 while suspended, but these are exactly the calls SubscriptionsPage (/subscriptions — the page the product requires to stay usable to pay / change card) makes. Page renders misleading fallback data ('Prueba Gratuita', $0.00, 'Period actual N/A - N/A') and empty plan comparison. Add these to ALLOWLIST_PREFIXES (or expose read-only billing variants).", "priority": "HIGH"},
+      {"endpoint": "/api/billing/status", "issue": "is_blocked = (status == 'suspended') only. Product decision blocks past_due too, so FE gate (ProtectedRoute uses is_blocked) is inconsistent with the middleware: with past_due the user reaches /dashboard and the whole UI renders with zeros while every data call fails 402. Should be is_blocked = status in {'suspended','past_due'}.", "priority": "HIGH"}
+    ],
+    "minor": [
+      {"endpoint": "/api/checkout/payment-method", "issue": "Returns 404 (called twice from SubscriptionsPage) — pre-existing dead endpoint/wrong path"},
+      {"endpoint": "/api/super-admin/login", "issue": "Not in ALLOWLIST_PREFIXES; works today only because unauthenticated requests bypass the gate. Recommend adding it explicitly for robustness"}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "BillingRequiredPage", "issue": "Pay button stays disabled (disabled={!inv}) when the suspended company has no pending invoice → dead end: user cannot pay and there is no link/button to /subscriptions to change the card, which the user requirement explicitly asks for. Reproduced with company comp_7bf9f34ab85e (suspended, no pending invoice): checkbox checked, button still disabled.", "selector": "[data-testid=\"billing-pay-now-btn\"]", "priority": "HIGH"},
+      {"component": "SubscriptionsPage", "issue": "While suspended, all data calls 402 and the page silently shows stale/fallback values instead of an error state; no loading/error handling for 402", "selector": "n/a", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [
+      {"flow": "past_due company navigation", "issue": "After login the user lands on /billing-required, but navigating to /employees ends on /dashboard with full UI rendered and every API call 402 (interceptor does not redirect because it only fires per-request and the dashboard swallows errors). Root cause: /api/billing/status is_blocked ignores past_due.", "affected_selectors": []},
+      {"flow": "Pay / change card while suspended", "issue": "402 on /api/plans + /api/subscription + /api/invoices makes the allowed /subscriptions page non-functional for its purpose", "affected_selectors": []}
+    ],
+    "design_issues": [
+      {"screen": "/subscriptions while suspended", "issues": ["Full app shell/sidebar shown with locked menu items — acceptable, but page content shows $0.00 / 'Prueba Gratuita' placeholders that misrepresent the real subscription state"]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iter260_billing_gate.py",
+    "/app/backend/tests/test_iter260_billing_pages_access.py",
+    "/app/backend/tests/test_billing_gate_middleware.py",
+    "/app/test_reports/pytest/iter260_billing_gate.xml",
+    "/app/test_reports/pytest/iter260_pages.xml",
+    "/app/test_reports/pytest/iter260_existing_gate.xml",
+    "/app/test_reports/pytest/iter260_regression.xml"
+  ],
+  "action_items": [
+    "Allowlist the read endpoints needed to pay/change card: /api/subscription, /api/plans, /api/invoices (and /api/subscription/cancellation-info) — otherwise the suspended user has no working payment path",
+    "Make /api/billing/status is_blocked cover 'past_due' so ProtectedRoute blocks past_due consistently with the middleware",
+    "BillingRequiredPage: when there is no pending invoice but the sub is suspended, offer a way forward (create/fetch the invoice, or a 'Actualizar tarjeta / Ver planes' link to /subscriptions); currently the pay button is permanently disabled",
+    "Fix or remove the 404 /api/checkout/payment-method call in SubscriptionsPage",
+    "Add explicit 402/error UI states so blocked pages don't render misleading zeros"
+  ],
+  "critical_code_review_comments": [
+    "middleware/billing_gate.py performs 1-2 Mongo queries on EVERY authenticated API request (users + subscriptions) with no caching — add a short TTL cache keyed by company_id to avoid per-request latency on hot endpoints",
+    "The allowlist is path-prefix based and duplicates knowledge held by the frontend pages; keep a single source of truth or the /subscriptions page will keep breaking when new billing endpoints are added",
+    "billing_cycle.get_billing_status hardcodes the blocked status ('suspended') instead of importing BLOCKED_STATUSES from the middleware — duplicate logic that already drifted"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_billing_gate_middleware.py (BASE_URL fallback to /app/frontend/.env — file previously errored on collection with KeyError/empty BASE_URL)",
+    "/app/backend/tests/test_iter260_billing_gate.py (new)",
+    "/app/backend/tests/test_iter260_billing_pages_access.py (new)",
+    "/app/scripts/set_sub_status.py (new helper to toggle subscription status)"
+  ],
+  "success_rate": {"backend": "88% (17/17 gate-spec tests pass; 4/6 billing-page-access tests fail by design gap)", "frontend": "80%"},
+  "seed_data_creation": "None. Only toggled db.subscriptions.status for comp_7bf9f34ab85e (suspended/past_due) and RESTORED it to 'active' — verified via script and by a final Playwright login showing /dashboard + /employees loading with zero 402s.",
+  "should_call_test_agent_after_fix": true,
+  "should_main_agent_self_test": false,
+  "test_credentials": "admin: test_refactor@fortexa.com / test123 (company comp_7bf9f34ab85e); super admin via POST /api/super-admin/login {username: fortexa2026rd, password: FortexaAdmin2026!} (NOT /api/auth/login — that returns 422)",
+  "context_for_next_testing_agent": "Use /app/scripts/set_sub_status.py <status> to toggle comp_7bf9f34ab85e subscription status; ALWAYS restore to active. Backend gate spec fully covered by /app/backend/tests/test_iter260_billing_gate.py (10 tests) and test_billing_gate_middleware.py (7 tests). /app/backend/tests/test_iter260_billing_pages_access.py encodes the outstanding gap: /api/subscription, /api/plans, /api/invoices, /api/subscription/cancellation-info must NOT be 402 while suspended — re-run after the allowlist fix. Note many test files read REACT_APP_BACKEND_URL from the process env only, so export it before running pytest.",
+  "rca_of_the_issue": "BillingGateMiddleware correctly blocks all non-allowlisted /api paths for suspended/past_due, but the allowlist was built around /api/billing/* and /api/payment-method* only. The SubscriptionsPage (which both the interceptor and ProtectedRoute deliberately keep reachable so the user can pay / change the card) fetches /api/subscription, /api/plans and /api/invoices, which are NOT allowlisted → 402 → page renders placeholder data and offers no working payment path. Separately, /api/billing/status computes is_blocked only for 'suspended', so the ProtectedRoute pre-check does not fire for 'past_due' and the user can browse the UI shell while every request 402s."
+}
