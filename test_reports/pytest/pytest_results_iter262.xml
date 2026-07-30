@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="17" time="5.508" timestamp="2026-07-30T23:15:57.221017+00:00" hostname="agent-env-32aa9cba-1bb2-449d-9bd5-262ae79a9250"><testcase classname="tests.test_billing_reminders_and_retries.TestReminders" name="test_d3_reminder_sends_once_and_marks_field" time="0.037" /><testcase classname="tests.test_billing_reminders_and_retries.TestReminders" name="test_d1_reminder_sends_once_and_marks_field" time="0.007" /><testcase classname="tests.test_billing_reminders_and_retries.TestReminders" name="test_in_app_notification_created" time="0.005" /><testcase classname="tests.test_billing_reminders_and_retries.TestPaymentRetries" name="test_single_failed_retry_bumps_count_but_does_not_suspend" time="0.008" /><testcase classname="tests.test_billing_reminders_and_retries.TestPaymentRetries" name="test_slot_idempotency_same_day" time="0.008" /><testcase classname="tests.test_billing_reminders_and_retries.TestPaymentRetries" name="test_three_failures_suspend_subscription" time="0.011" /><testcase classname="tests.test_billing_reminders_and_retries.TestPaymentRetries" name="test_successful_retry_reactivates_and_marks_invoice_paid" time="0.009" /><testcase classname="tests.test_billing_gate_middleware.TestBillingGate" name="test_active_status_does_not_block_normal_endpoints" time="0.491" /><testcase classname="tests.test_billing_gate_middleware.TestBillingGate" name="test_suspended_blocks_arbitrary_endpoints_with_402" time="0.661" /><testcase classname="tests.test_billing_gate_middleware.TestBillingGate" name="test_past_due_blocks_arbitrary_endpoints_with_402" time="0.461" /><testcase classname="tests.test_billing_gate_middleware.TestBillingGate" name="test_allowlist_paths_pass_when_blocked" time="0.777" /><testcase classname="tests.test_billing_gate_middleware.TestBillingGate" name="test_auth_login_works_when_blocked" time="0.679" /><testcase classname="tests.test_billing_gate_middleware.TestBillingGate" name="test_missing_token_is_not_blocked_by_gate" time="0.445" /><testcase classname="tests.test_billing_gate_middleware.TestBillingGate" name="test_status_change_to_active_unblocks" time="0.571" /><testcase classname="tests.test_billing_p1_features.TestSuperAdminChargeNowAccessControl" name="test_regular_admin_forbidden" time="0.444" /><testcase classname="tests.test_billing_p1_features.TestSuperAdminChargeNowAccessControl" name="test_unauthenticated_rejected" time="0.463" /><testcase classname="tests.test_billing_p1_features.TestBackfillHelper" name="test_backfill_runs_and_returns_int" time="0.001"><failure message="RuntimeError: Task &lt;Task pending name='Task-77' coro=&lt;backfill_auto_renewal_from_saved_cards() running at /app/backend/routes/billing_cycle.py:732&gt; cb=[_run_until_complete_cb() at /usr/local/lib/python3.11/asyncio/base_events.py:181]&gt; got Future &lt;Future pending cb=[_chain_future.&lt;locals&gt;._call_check_cancel() at /usr/local/lib/python3.11/asyncio/futures.py:387]&gt; attached to a different loop">self = &lt;test_billing_p1_features.TestBackfillHelper object at 0xfcdd3047a4d0&gt;
+
+    def test_backfill_runs_and_returns_int(self):
+        import sys
+        sys.path.insert(0, "/app/backend")
+        from routes.billing_cycle import backfill_auto_renewal_from_saved_cards
+    
+&gt;       count = asyncio.run(backfill_auto_renewal_from_saved_cards())
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_billing_p1_features.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.11/asyncio/runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+routes/billing_cycle.py:732: in backfill_auto_renewal_from_saved_cards
+    async for sub in cursor:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = AsyncIOMotorCursor(&lt;pymongo.cursor.Cursor object at 0xfcdd2e1a28d0&gt;)
+
+    async def next(self):
+        """Advance the cursor.
+    
+        .. versionadded:: 2.2
+        """
+&gt;       if self.alive and (self._buffer_size() or await self._get_more()):
+                                                  ^^^^^^^^^^^^^^^^^^^^^^
+E       RuntimeError: Task &lt;Task pending name='Task-77' coro=&lt;backfill_auto_renewal_from_saved_cards() running at /app/backend/routes/billing_cycle.py:732&gt; cb=[_run_until_complete_cb() at /usr/local/lib/python3.11/asyncio/base_events.py:181]&gt; got Future &lt;Future pending cb=[_chain_future.&lt;locals&gt;._call_check_cancel() at /usr/local/lib/python3.11/asyncio/futures.py:387]&gt; attached to a different loop
+
+/root/.venv/lib/python3.11/site-packages/motor/core.py:1390: RuntimeError</failure></testcase></testsuite></testsuites>

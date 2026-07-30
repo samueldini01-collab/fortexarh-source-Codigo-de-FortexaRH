@@ -72,7 +72,7 @@ from routes.admin_permissions import router as admin_permissions_router
 from routes.country_config import router as country_config_router, migrate_existing_companies
 from routes.login_audit import setup_login_audit_indexes, purge_old_login_history
 from routes.onboarding import router as onboarding_router
-from routes.billing_cycle import router as billing_router, run_billing_cycle
+from routes.billing_cycle import router as billing_router, run_billing_cycle, retry_failed_payments
 from routes.multi_country_reports import router as multi_country_reports_router
 from routes.brochure_builder import router as brochure_builder_router
 from routes.exchange_rates import router as exchange_rates_router
@@ -302,6 +302,30 @@ async def _scheduled_billing_cycle():
         logger.exception(f"Billing cycle cron failed: {exc}")
 
 
+async def _scheduled_payment_retry_slot_1():
+    try:
+        result = await retry_failed_payments(current_slot=1)
+        logger.info(f"Payment retry slot 1 (08:00 DR): {result}")
+    except Exception as exc:  # noqa: BLE001
+        logger.exception(f"Payment retry slot 1 failed: {exc}")
+
+
+async def _scheduled_payment_retry_slot_2():
+    try:
+        result = await retry_failed_payments(current_slot=2)
+        logger.info(f"Payment retry slot 2 (09:00 DR): {result}")
+    except Exception as exc:  # noqa: BLE001
+        logger.exception(f"Payment retry slot 2 failed: {exc}")
+
+
+async def _scheduled_payment_retry_slot_3():
+    try:
+        result = await retry_failed_payments(current_slot=3)
+        logger.info(f"Payment retry slot 3 (10:00 DR): {result}")
+    except Exception as exc:  # noqa: BLE001
+        logger.exception(f"Payment retry slot 3 failed: {exc}")
+
+
 def _start_fiscal_reminders_scheduler():
     global _fiscal_scheduler
     if _fiscal_scheduler is not None:
@@ -345,9 +369,34 @@ def _start_fiscal_reminders_scheduler():
             max_instances=1,
             misfire_grace_time=3600,
         )
+        # Payment retry: 3 attempts at 08:00, 09:00, 10:00 AM America/Santo_Domingo (UTC-4).
+        sched.add_job(
+            _scheduled_payment_retry_slot_1,
+            CronTrigger(hour=8, minute=0, timezone="America/Santo_Domingo"),
+            id="payment_retry_slot_1",
+            replace_existing=True,
+            max_instances=1,
+            misfire_grace_time=1800,
+        )
+        sched.add_job(
+            _scheduled_payment_retry_slot_2,
+            CronTrigger(hour=9, minute=0, timezone="America/Santo_Domingo"),
+            id="payment_retry_slot_2",
+            replace_existing=True,
+            max_instances=1,
+            misfire_grace_time=1800,
+        )
+        sched.add_job(
+            _scheduled_payment_retry_slot_3,
+            CronTrigger(hour=10, minute=0, timezone="America/Santo_Domingo"),
+            id="payment_retry_slot_3",
+            replace_existing=True,
+            max_instances=1,
+            misfire_grace_time=1800,
+        )
         sched.start()
         _fiscal_scheduler = sched
-        logger.info("APScheduler started: fiscal_reminders_daily @ 08:00 UTC + abandoned_cart_recovery every 30m")
+        logger.info("APScheduler started: fiscal_reminders_daily @ 08:00 UTC + abandoned_cart_recovery every 30m + billing retries @ 08/09/10 AM DR")
     except Exception as exc:  # noqa: BLE001
         logger.warning(f"Could not start APScheduler: {exc}")
 

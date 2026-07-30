@@ -1,0 +1,64 @@
+{
+  "summary": "Backend-only verification of P0 billing work (pre-billing reminders D-3/D-1 + 3 payment retries at 08/09/10 AM America/Santo_Domingo). NEW SUITE PASSES 7/7 (/app/backend/tests/test_billing_reminders_and_retries.py): D-3 and D-1 reminders are idempotent and persist reminder_3d_sent_at / reminder_1d_sent_at (+legacy reminder_upcoming_at), in-app notification type=billing_reminder with metadata.kind=pre_bill_3d is created, retry bumps failed_retry_count, slot idempotency same-day works (no second PaymentIntent), 3 failures -> status=suspended + suspended_at + suspended_reason ('3 intentos...'), successful retry reactivates sub (status=active, failed_retry_count=0, past_due_since cleared), settles the pending invoice and creates a paid invoice with source=retry_cron and receipt_number RT-*. Scheduler: backend started cleanly; APScheduler logs confirm _scheduled_payment_retry_slot_1/2/3 added to the job store and server.py registers ids payment_retry_slot_1/2/3 with CronTrigger(hour=8/9/10, timezone='America/Santo_Domingo'). run_billing_cycle (06:00 UTC daily) invokes send_billing_reminders, so reminders are actually scheduled. Regression: 61/67 billing tests pass. test_billing_gate_middleware.py (402 gate for suspended/past_due), test_billing_p1_features.py (super_admin charge-now role enforcement), test_billing_auto_renewal.py, test_billing_payment_method_history.py, test_iter260_billing_gate.py and test_iter261_billing_gate_retest.py: ALL PASS. GET /api/billing/status verified live for admin (test_refactor@fortexa.com): 200, is_blocked=true/subscription_status=past_due while blocked and is_blocked=false/active after restore; /api/employees correctly returned 402 while past_due and 200 when active. The 6 failures are all in the pre-existing test_billing_cycle_iter251.py and are test-environment/state issues, NOT regressions of the new code (details below).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "send_billing_reminders (D-3 branch)",
+        "issue": "The D-3 query requires BOTH reminder_3d_sent_at AND legacy reminder_upcoming_at to be absent/null. Any subscription that already has the legacy reminder_upcoming_at set (from the old pre-P0 logic) will NEVER get the new D-3 reminder nor the new email/in-app notification, and reminder_3d_sent_at stays unset forever. Consider a one-off backfill (copy reminder_upcoming_at -> reminder_3d_sent_at) or drop the legacy condition."
+      },
+      {
+        "endpoint": "retry_failed_payments",
+        "issue": "failed_retry_count is never reset per-day/per-cycle (only on a successful charge). Comment at line 568 says 'Already exhausted attempts today?' but the check is lifetime-scoped. Today this is masked because the 3rd failure suspends the sub, but if a suspended sub is manually reactivated to past_due without zeroing failed_retry_count, the retry cron will skip it silently forever."
+      },
+      {
+        "endpoint": "retry_failed_payments",
+        "issue": "Only subscriptions with a stripe_customer_id are considered; past_due subs without a Stripe customer are never retried nor notified by this cron (they only get suspended later by suspend_overdue_subscriptions after GRACE_DAYS). Acceptable but worth documenting."
+      },
+      {
+        "endpoint": "tests/test_billing_cycle_iter251.py",
+        "issue": "4 failures (test_status_returns_pending_invoice, test_invoices_contains_pending, test_pay_pending_creates_checkout_session, test_payment_transaction_has_invoice_id_for_webhook_lookup) because the tests assume a pending invoice exists for the fixed TEST_COMPANY_ID comp_7bf9f34ab85e. DB check: all its invoices are 'paid', pending count = 0 and current_period_end is 2026-08-02 (future) so run_billing_cycle will not generate one. Pre-existing state dependency, unrelated to the P0 change - these tests should seed their own pending invoice."
+      },
+      {
+        "endpoint": "tests/test_billing_cycle_iter251.py::TestCronSuspend",
+        "issue": "This test deliberately leaves the shared admin company comp_7bf9f34ab85e in status=past_due ('restore to past_due so subsequent UI tests behave as expected'). Result: after any run of the billing suite the main admin account is billing-blocked (402 on /api/employees, redirect to /billing-required), which breaks every unrelated test/manual check afterwards. I restored the subscription to status=active (verified /api/billing/status is_blocked=false, /api/employees=200). This teardown should be changed to restore 'active'."
+      },
+      {
+        "endpoint": "test isolation (event loops)",
+        "issue": "test_billing_reminders_and_retries.py installs a module-level shared event loop (asyncio.set_event_loop) to keep Motor bound; when it runs in the SAME pytest session as sibling files that use asyncio.run() (test_billing_p1_features.py backfill test, test_billing_cycle_iter251.py crons) the Motor client ends up attached to a different/closed loop and those tests error out. Recommend running test_billing_reminders_and_retries.py in its own pytest invocation, or add a shared conftest.py providing one session-wide loop + run_async helper for all DB-driving tests. Standalone the new file is 7/7 green."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_billing_reminders_and_retries.py",
+    "/app/backend/tests/test_billing_cycle_iter251.py",
+    "/app/test_reports/pytest/iter262_new_feature.xml",
+    "/app/test_reports/pytest/iter262_billing_regression.xml"
+  ],
+  "action_items": [
+    "Decide on backfill/relaxation of the legacy reminder_upcoming_at condition so existing subscriptions still receive the new D-3 reminder + in-app notification.",
+    "Fix test_billing_cycle_iter251.py teardown to restore comp_7bf9f34ab85e to status='active' instead of leaving it 'past_due' (it billing-blocks the main test admin for all later tests).",
+    "Make test_billing_cycle_iter251.py seed its own pending invoice instead of depending on pre-existing DB state (4 failures).",
+    "Optional: reset failed_retry_count when a subscription re-enters past_due so the retry cron does not permanently skip it."
+  ],
+  "critical_code_review_comments": [
+    "billing_cycle.py is now 1397 lines - split into billing_reminders.py / billing_retries.py / billing_routes.py per the <700 line guideline.",
+    "retry_failed_payments correctly wraps all Stripe calls (CardError / StripeError / generic Exception) so the cron cannot crash the scheduler; suspension update + notification + email are all executed inside the failure branch. Verified by tests.",
+    "All new DB reads use projection {_id: 0}; no ObjectId leakage observed in /api/billing/status or /api/subscription payloads."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_billing_cycle_iter251.py (test-only: replaced asyncio.get_event_loop() with a loop-tolerant _loop() helper so the 2 cron tests no longer RuntimeError when run alongside the new test module)"
+  ],
+  "success_rate": {"backend": "91% (68/74 across new feature suite + 6 billing regression suites; new feature suite 7/7 = 100%)", "frontend": "not tested (backend-only request)"},
+  "seed_data_creation": "New suite creates isolated comp_test_* companies/subs/invoices/notifications and cleans them up (verified 0 leftovers). Restored comp_7bf9f34ab85e subscription to status=active, failed_retry_count=0, unset past_due_since/suspended_at/suspended_reason/retry_slot_*_at.",
+  "should_call_test_agent_after_fix": false,
+  "should_main_agent_self_test": true,
+  "test_credentials": "Admin test_refactor@fortexa.com / test123 (company comp_7bf9f34ab85e, restored to active). Super admin fortexa2026rd / FortexaAdmin2026!",
+  "context_for_next_testing_agent": "Run `python -m pytest tests/test_billing_reminders_and_retries.py` in its OWN invocation (shared-event-loop module; mixing it with files that call asyncio.run() causes Motor loop errors). After running any billing suite, check that comp_7bf9f34ab85e subscription status is 'active' again - test_billing_cycle_iter251.py::TestCronSuspend leaves it past_due and the BillingGateMiddleware then 402s every business endpoint for the main admin. The 4 remaining iter251 failures are purely due to no pending invoice existing for that company.",
+  "rca_of_the_issue": "No defect found in the new P0 code. (1) iter251 pending-invoice failures: company comp_7bf9f34ab85e has 0 pending invoices and a future current_period_end, so the assertions on has_pending/pending_invoice cannot hold - test data assumption, pre-existing. (2) iter251/p1 event-loop errors only appear when the new shared-loop test module runs in the same session as asyncio.run()-based modules: the global Motor client (config.db) gets bound to one loop and later run in another - test infrastructure, fixed for iter251 via a loop-tolerant helper. (3) Admin account being billing-blocked traced to TestCronSuspend's intentional teardown into past_due; state restored to active."
+}

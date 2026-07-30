@@ -143,6 +143,7 @@ async def suspend_overdue_subscriptions() -> int:
 # -------------------- DUNNING EMAILS --------------------
 
 REMINDER_UPCOMING_DAYS = 3  # warn N days before period_end (no invoice yet)
+MAX_RETRY_ATTEMPTS = 3  # payment retries before final suspension
 
 
 def _build_reminder_html(kind: str, name: str, sub: dict, invoice: Optional[dict], company_name: str) -> tuple[str, str]:
@@ -153,15 +154,27 @@ def _build_reminder_html(kind: str, name: str, sub: dict, invoice: Optional[dict
     invoice_number = (invoice or {}).get("invoice_number", "")
     cta_url = "https://fortexarh.com/subscriptions"
 
-    if kind == "upcoming":
-        subject = f"Tu suscripción de FortexaRH vence en {REMINDER_UPCOMING_DAYS} días"
-        title = f"Tu próxima factura vence en {REMINDER_UPCOMING_DAYS} días"
+    if kind in ("upcoming", "pre_bill_3d"):
+        days = 3
+        subject = f"Tu suscripción de FortexaRH vence en {days} días"
+        title = f"Tu próxima factura vence en {days} días"
         body = (
             f"Hola {name},<br/><br/>"
-            f"Tu suscripción <b>{plan_name}</b> de <b>{company_name}</b> tiene su próximo cobro programado."
-            f" Asegúrate de tener una tarjeta válida o de iniciar el pago manualmente para no interrumpir el servicio."
+            f"Tu suscripción <b>{plan_name}</b> de <b>{company_name}</b> tiene su próximo cobro programado en <b>{days} días</b>."
+            f" Asegúrate de tener una tarjeta válida o de actualizar tu método de pago para no interrumpir el servicio."
         )
         color = "#0ea5e9"
+        cta = "Ver mi suscripción"
+    elif kind == "pre_bill_1d":
+        subject = f"Tu suscripción de FortexaRH vence mañana"
+        title = "Tu próxima factura vence mañana"
+        body = (
+            f"Hola {name},<br/><br/>"
+            f"Tu suscripción <b>{plan_name}</b> de <b>{company_name}</b> tiene su próximo cobro programado para <b>mañana</b>."
+            f" Si tienes renovación automática activada, se cobrará a tu tarjeta guardada."
+            f" De lo contrario, actualiza tu método de pago hoy mismo para evitar interrupciones."
+        )
+        color = "#f59e0b"
         cta = "Ver mi suscripción"
     elif kind == "due":
         subject = f"Factura {invoice_number} vencida — paga ahora para evitar la suspensión"
@@ -274,34 +287,102 @@ async def _send_dunning_email(kind: str, company_id: str, invoice: Optional[dict
         return False
 
 
+async def _create_in_app_billing_notification(company_id: str, kind: str, sub: dict, invoice: Optional[dict]) -> None:
+    """Best-effort in-app notification for admins about billing events."""
+    try:
+        from routes.notifications_system import create_notification  # local import to avoid cycles
+    except Exception:  # noqa: BLE001
+        return
+    plan_name = (invoice or {}).get("plan_name") or sub.get("plan_id", "")
+    if kind == "pre_bill_3d":
+        title = "Tu suscripción vence en 3 días"
+        message = f"El plan {plan_name} tiene su próximo cobro en 3 días. Revisa tu método de pago."
+        priority = "normal"
+    elif kind == "pre_bill_1d":
+        title = "Tu suscripción vence mañana"
+        message = f"El plan {plan_name} será cobrado mañana. Verifica que tu tarjeta esté vigente."
+        priority = "high"
+    elif kind == "retry_failed_final":
+        title = "Suscripción suspendida"
+        message = f"No pudimos cobrar el plan {plan_name} tras 3 intentos. La cuenta ha sido suspendida."
+        priority = "high"
+    elif kind == "retry_failed":
+        title = "Intento de cobro fallido"
+        message = f"El cobro automático del plan {plan_name} falló. Reintentaremos en la próxima ventana."
+        priority = "high"
+    else:
+        return
+    try:
+        await create_notification(
+            company_id=company_id,
+            title=title,
+            message=message,
+            notification_type="billing_reminder",
+            priority=priority,
+            link="/subscriptions",
+            target_role="admin",
+            metadata={"kind": kind, "invoice_id": (invoice or {}).get("invoice_id")},
+        )
+    except Exception as e:  # noqa: BLE001
+        logger.warning(f"in-app billing notification failed ({kind}): {e}")
+
+
 async def send_billing_reminders() -> dict:
-    """Send dunning emails:
-    - 'upcoming': D-3 before current_period_end for active subs (no invoice yet).
+    """Send dunning emails + in-app notifications:
+    - 'pre_bill_3d': D-3 before current_period_end (idempotent via reminder_3d_sent_at).
+    - 'pre_bill_1d': D-1 before current_period_end (idempotent via reminder_1d_sent_at).
     - 'due': pending invoice exists and hasn't been notified of due-date yet.
     - 'final': past_due >= GRACE_DAYS-1 days (last call before suspension).
     """
     now = _now()
-    counts = {"upcoming": 0, "due": 0, "final": 0}
+    counts = {"pre_bill_3d": 0, "pre_bill_1d": 0, "due": 0, "final": 0}
 
-    # 1) Upcoming (active subs, period_end in ~3 days)
-    target_low = (now + timedelta(days=REMINDER_UPCOMING_DAYS)).isoformat()
-    target_high = (now + timedelta(days=REMINDER_UPCOMING_DAYS + 1)).isoformat()
+    # 1) Pre-bill D-3 (active subs, period_end in ~3 days) — idempotent
+    target_low_3 = (now + timedelta(days=3)).isoformat()
+    target_high_3 = (now + timedelta(days=4)).isoformat()
     async for sub in db.subscriptions.find(
         {
             "status": "active",
-            "current_period_end": {"$gte": target_low, "$lt": target_high},
-            "reminder_upcoming_at": {"$exists": False},
+            "current_period_end": {"$gte": target_low_3, "$lt": target_high_3},
+            "$and": [
+                {"$or": [{"reminder_3d_sent_at": {"$exists": False}}, {"reminder_3d_sent_at": None}]},
+                # legacy field name kept for backwards compatibility with existing subs
+                {"$or": [{"reminder_upcoming_at": {"$exists": False}}, {"reminder_upcoming_at": None}]},
+            ],
         },
         {"_id": 0},
     ):
-        if await _send_dunning_email("upcoming", sub["company_id"], None, sub):
+        if await _send_dunning_email("pre_bill_3d", sub["company_id"], None, sub):
             await db.subscriptions.update_one(
                 {"company_id": sub["company_id"]},
-                {"$set": {"reminder_upcoming_at": now.isoformat()}},
+                {"$set": {
+                    "reminder_3d_sent_at": now.isoformat(),
+                    "reminder_upcoming_at": now.isoformat(),  # legacy alias
+                }},
             )
-            counts["upcoming"] += 1
+            await _create_in_app_billing_notification(sub["company_id"], "pre_bill_3d", sub, None)
+            counts["pre_bill_3d"] += 1
 
-    # 2) Due (pending invoice, no due reminder yet)
+    # 2) Pre-bill D-1 (active subs, period_end within next ~1 day) — idempotent
+    target_low_1 = (now + timedelta(hours=12)).isoformat()
+    target_high_1 = (now + timedelta(days=1, hours=12)).isoformat()
+    async for sub in db.subscriptions.find(
+        {
+            "status": "active",
+            "current_period_end": {"$gte": target_low_1, "$lt": target_high_1},
+            "$or": [{"reminder_1d_sent_at": {"$exists": False}}, {"reminder_1d_sent_at": None}],
+        },
+        {"_id": 0},
+    ):
+        if await _send_dunning_email("pre_bill_1d", sub["company_id"], None, sub):
+            await db.subscriptions.update_one(
+                {"company_id": sub["company_id"]},
+                {"$set": {"reminder_1d_sent_at": now.isoformat()}},
+            )
+            await _create_in_app_billing_notification(sub["company_id"], "pre_bill_1d", sub, None)
+            counts["pre_bill_1d"] += 1
+
+    # 3) Due (pending invoice, no due reminder yet)
     async for inv in db.invoices.find(
         {"status": "pending", "reminder_due_at": {"$exists": False}},
         {"_id": 0},
@@ -314,7 +395,7 @@ async def send_billing_reminders() -> dict:
             )
             counts["due"] += 1
 
-    # 3) Final (past_due_since >= GRACE_DAYS-1, not yet sent)
+    # 4) Final (past_due_since >= GRACE_DAYS-1, not yet sent)
     final_cutoff = (now - timedelta(days=GRACE_DAYS - 1)).isoformat()
     async for sub in db.subscriptions.find(
         {
@@ -339,6 +420,288 @@ async def send_billing_reminders() -> dict:
     if any(counts.values()):
         logger.info(f"billing reminders sent: {counts}")
     return counts
+
+
+# -------------------- PAYMENT RETRIES (8/9/10 AM DR TIME) --------------------
+
+async def _mark_invoice_paid_from_retry(company_id: str, plan_id: Optional[str], amount: float, currency: str,
+                                        payment_intent_id: Optional[str], invoice_stripe_id: Optional[str]) -> None:
+    """Persist a paid invoice locally after a successful retry, and reactivate the subscription."""
+    now_iso = _now().isoformat()
+    receipt_number = f"RT-{_now().strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}"
+
+    # Prefer settling an existing pending invoice
+    pending = await db.invoices.find_one(
+        {"company_id": company_id, "status": "pending"},
+        {"_id": 0},
+        sort=[("created_at", 1)],
+    )
+    if pending:
+        await db.invoices.update_one(
+            {"invoice_id": pending["invoice_id"]},
+            {"$set": {
+                "status": "paid",
+                "paid_at": _now().strftime("%d/%m/%Y %H:%M"),
+                "paid_at_iso": now_iso,
+                "receipt_number": receipt_number,
+                "stripe_payment_intent_id": payment_intent_id,
+                "stripe_invoice_id": invoice_stripe_id,
+                "source": "retry_cron",
+            }},
+        )
+    else:
+        await db.invoices.insert_one({
+            "invoice_id": f"inv_rt_{uuid.uuid4().hex[:8]}",
+            "invoice_number": receipt_number,
+            "company_id": company_id,
+            "plan_id": plan_id,
+            "total": amount,
+            "currency": (currency or "USD").upper(),
+            "status": "paid",
+            "paid_at": _now().strftime("%d/%m/%Y %H:%M"),
+            "paid_at_iso": now_iso,
+            "created_at": now_iso,
+            "receipt_number": receipt_number,
+            "stripe_payment_intent_id": payment_intent_id,
+            "stripe_invoice_id": invoice_stripe_id,
+            "source": "retry_cron",
+        })
+
+    await db.subscriptions.update_one(
+        {"company_id": company_id},
+        {"$set": {
+            "status": "active",
+            "past_due_since": None,
+            "suspended_at": None,
+            "failed_retry_count": 0,
+            "last_retry_at": now_iso,
+            "last_retry_result": "succeeded",
+            "updated_at": now_iso,
+        }},
+    )
+
+
+async def _send_retry_failed_final_email(company_id: str, sub: dict, reason: str) -> None:
+    """Best-effort notification email when the subscription gets suspended after 3 failed retries."""
+    try:
+        import asyncio as _asyncio
+        import resend
+        if not os.environ.get("RESEND_API_KEY"):
+            return
+        user = await db.users.find_one(
+            {"company_id": company_id, "role": {"$in": ["admin", "owner", "company_admin"]}},
+            {"_id": 0, "email": 1, "name": 1},
+        )
+        if not user:
+            return
+        company = await db.companies.find_one({"company_id": company_id}, {"_id": 0, "name": 1}) or {}
+        plan_name = sub.get("plan_name") or sub.get("plan_id", "")
+        sender = os.environ.get("SENDER_EMAIL", "noreply@fortexaerp.com")
+        html = f"""
+        <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:560px;margin:0 auto;">
+          <div style="background:#dc2626;padding:24px;text-align:center;border-radius:8px 8px 0 0;">
+            <h1 style="color:#fff;margin:0;font-size:20px;">FortexaRH</h1>
+            <p style="color:rgba(255,255,255,0.9);margin:4px 0 0;">Cuenta suspendida</p>
+          </div>
+          <div style="padding:28px;border:1px solid #e2e8f0;border-top:none;">
+            <h2 style="color:#0f172a;margin:0 0 14px;font-size:18px;">Suscripción suspendida tras 3 intentos fallidos</h2>
+            <p style="color:#475569;font-size:14px;line-height:1.6;">
+              Hola {user.get('name') or user['email']},<br/><br/>
+              Intentamos cobrar tu plan <b>{plan_name}</b> de <b>{company.get('name','tu empresa')}</b> en 3 ocasiones
+              (8:00, 9:00 y 10:00 AM hora RD) y todos los intentos fallaron. Motivo del último intento:
+              <br/><br/><b>{reason}</b><br/><br/>
+              Tu cuenta ha sido <b>suspendida</b>. Para reactivarla, actualiza tu método de pago
+              y realiza el pago pendiente desde la página de suscripción.
+            </p>
+            <div style="text-align:center;margin:22px 0;">
+              <a href="https://fortexarh.com/billing-required" style="display:inline-block;background:#dc2626;color:#fff;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:600;">Actualizar y pagar</a>
+            </div>
+          </div>
+        </div>
+        """
+        await _asyncio.to_thread(
+            resend.Emails.send,
+            {
+                "from": f"FortexaRH <{sender}>",
+                "to": [user["email"]],
+                "subject": f"⛔ Cuenta suspendida — 3 intentos fallidos de cobro ({company.get('name','')})",
+                "html": html,
+            },
+        )
+    except Exception as e:  # noqa: BLE001
+        logger.warning(f"suspension email failed for {company_id}: {e}")
+
+
+async def retry_failed_payments(current_slot: Optional[int] = None) -> dict:
+    """Retry failed Stripe payments for subscriptions in past_due.
+
+    Runs at 8:00, 9:00 and 10:00 AM DR time (UTC-4). Each subscription gets up to
+    3 attempts in total (one per slot). After the 3rd failure the subscription is
+    suspended.
+
+    `current_slot`: 1|2|3 — which retry window this run represents. Used for
+    idempotency inside the same day (won't re-run the same slot).
+    """
+    api_key = os.environ.get("STRIPE_API_KEY")
+    if not api_key:
+        return {"attempted": 0, "succeeded": 0, "failed": 0, "suspended": 0}
+    stripe.api_key = api_key
+
+    stats = {"attempted": 0, "succeeded": 0, "failed": 0, "suspended": 0}
+    today = _now().date().isoformat()
+
+    cursor = db.subscriptions.find(
+        {"status": "past_due", "stripe_customer_id": {"$exists": True, "$nin": [None, ""]}},
+        {"_id": 0},
+    )
+    async for sub in cursor:
+        company_id = sub["company_id"]
+
+        # Idempotency: don't run the same slot twice in the same day
+        if current_slot is not None:
+            slot_key = f"retry_slot_{current_slot}_at"
+            last_ran = sub.get(slot_key)
+            if last_ran and str(last_ran).startswith(today):
+                continue
+
+        # Already exhausted attempts today?
+        if int(sub.get("failed_retry_count", 0)) >= MAX_RETRY_ATTEMPTS:
+            continue
+
+        stats["attempted"] += 1
+        now_iso = _now().isoformat()
+        succeeded = False
+        failure_reason = ""
+        stripe_intent_id = None
+        stripe_invoice_id = None
+
+        try:
+            customer_id = sub["stripe_customer_id"]
+            stripe_sub_id = sub.get("stripe_subscription_id")
+
+            # Preferred path: use the Stripe subscription's latest open invoice
+            open_invoice = None
+            if stripe_sub_id:
+                invs = stripe.Invoice.list(
+                    subscription=stripe_sub_id,
+                    status="open",
+                    limit=1,
+                )
+                if invs.data:
+                    open_invoice = invs.data[0]
+
+            if open_invoice:
+                paid_invoice = stripe.Invoice.pay(open_invoice.id)
+                if paid_invoice.get("status") == "paid":
+                    succeeded = True
+                    stripe_intent_id = paid_invoice.get("payment_intent")
+                    stripe_invoice_id = paid_invoice.id
+                else:
+                    failure_reason = f"Invoice status after pay: {paid_invoice.get('status')}"
+            else:
+                # Fallback: off-session PaymentIntent against the default card
+                customer = stripe.Customer.retrieve(customer_id)
+                pm_id = (customer.get("invoice_settings") or {}).get("default_payment_method")
+                if not pm_id:
+                    pms = stripe.PaymentMethod.list(customer=customer_id, type="card", limit=1)
+                    if pms.data:
+                        pm_id = pms.data[0].id
+                if not pm_id:
+                    failure_reason = "no_payment_method"
+                else:
+                    pending_local = await db.invoices.find_one(
+                        {"company_id": company_id, "status": "pending"},
+                        {"_id": 0}, sort=[("created_at", 1)],
+                    ) or {}
+                    plan_id = sub.get("plan_id")
+                    if pending_local.get("total"):
+                        amount = float(pending_local["total"])
+                        currency = (pending_local.get("currency") or "USD").lower()
+                    else:
+                        _, _, amount, _ = await _compute_invoice_amount(company_id, plan_id or "")
+                        currency = (sub.get("currency") or "USD").lower()
+                    if amount <= 0:
+                        failure_reason = "invalid_amount"
+                    else:
+                        intent = stripe.PaymentIntent.create(
+                            amount=int(round(amount * 100)),
+                            currency=currency,
+                            customer=customer_id,
+                            payment_method=pm_id,
+                            off_session=True,
+                            confirm=True,
+                            description=f"FortexaRH — retry cron ({sub.get('plan_name') or plan_id})",
+                            metadata={
+                                "company_id": company_id,
+                                "plan_id": plan_id or "",
+                                "source": "retry_cron",
+                                "slot": str(current_slot) if current_slot else "",
+                            },
+                        )
+                        if intent.status == "succeeded":
+                            succeeded = True
+                            stripe_intent_id = intent.id
+                        else:
+                            failure_reason = f"payment_intent_status:{intent.status}"
+        except stripe.error.CardError as e:
+            failure_reason = getattr(e, "user_message", None) or getattr(e, "code", None) or str(e)
+        except stripe.error.StripeError as e:  # noqa: BLE001
+            failure_reason = f"stripe_error:{str(e)[:200]}"
+        except Exception as e:  # noqa: BLE001
+            failure_reason = f"unexpected:{str(e)[:200]}"
+
+        slot_update = {}
+        if current_slot is not None:
+            slot_update[f"retry_slot_{current_slot}_at"] = now_iso
+
+        if succeeded:
+            plan_id = sub.get("plan_id")
+            currency = sub.get("currency") or "USD"
+            # Resolve amount for local invoice
+            pending_local = await db.invoices.find_one(
+                {"company_id": company_id, "status": "pending"},
+                {"_id": 0}, sort=[("created_at", 1)],
+            ) or {}
+            amount = float(pending_local.get("total") or 0)
+            if amount <= 0:
+                _, _, amount, _ = await _compute_invoice_amount(company_id, plan_id or "")
+            await _mark_invoice_paid_from_retry(
+                company_id, plan_id, amount, currency, stripe_intent_id, stripe_invoice_id
+            )
+            stats["succeeded"] += 1
+            logger.info(f"retry cron: succeeded for {company_id} (slot={current_slot})")
+            continue
+
+        # Failure path — bump the counter and evaluate suspension
+        new_count = int(sub.get("failed_retry_count", 0)) + 1
+        update = {
+            "failed_retry_count": new_count,
+            "last_retry_at": now_iso,
+            "last_retry_result": "failed",
+            "last_retry_reason": failure_reason,
+            "auto_renewal_last_failure_at": now_iso,
+            "auto_renewal_last_failure_reason": failure_reason,
+            **slot_update,
+        }
+        if new_count >= MAX_RETRY_ATTEMPTS:
+            update["status"] = "suspended"
+            update["suspended_at"] = now_iso
+            update["suspended_reason"] = f"3 intentos de cobro fallidos: {failure_reason}"
+            stats["suspended"] += 1
+            await db.subscriptions.update_one({"company_id": company_id}, {"$set": update})
+            await _create_in_app_billing_notification(company_id, "retry_failed_final", sub, None)
+            await _send_retry_failed_final_email(company_id, sub, failure_reason)
+            logger.warning(f"retry cron: SUSPENDED {company_id} after {new_count} failures")
+        else:
+            await db.subscriptions.update_one({"company_id": company_id}, {"$set": update})
+            await _create_in_app_billing_notification(company_id, "retry_failed", sub, None)
+            logger.info(f"retry cron: failed for {company_id} (count={new_count}, slot={current_slot}): {failure_reason}")
+
+        stats["failed"] += 1
+
+    if any(stats.values()):
+        logger.info(f"retry_failed_payments slot={current_slot} → {stats}")
+    return stats
 
 
 async def backfill_auto_renewal_from_saved_cards() -> int:

@@ -27,6 +27,20 @@ ADMIN_PASSWORD = "test123"
 TEST_COMPANY_ID = "comp_7bf9f34ab85e"
 
 
+def _loop():
+    """Return a usable event loop (pytest-asyncio / other test modules may close
+    or unset the thread's default loop, so create one if needed)."""
+    try:
+        loop = asyncio.get_event_loop_policy().get_event_loop()
+        if loop.is_closed():
+            raise RuntimeError("closed")
+        return loop
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        return loop
+
+
 @pytest.fixture(scope="session")
 def token():
     r = requests.post(f"{API}/auth/login", json={"email": ADMIN_EMAIL, "password": ADMIN_PASSWORD}, timeout=20)
@@ -106,7 +120,7 @@ class TestPayPending:
                 {"session_id": d["session_id"]}, {"_id": 0}
             )
             return doc
-        doc = asyncio.get_event_loop().run_until_complete(_check())
+        doc = _loop().run_until_complete(_check())
         assert doc is not None, "payment_transactions row not inserted"
         assert doc.get("invoice_id") == invoice_id
         assert doc.get("payment_status") == "initiated"
@@ -132,7 +146,7 @@ class TestCronBillingCycle:
             })
             return before, r1, after1, r2, after2
 
-        before, r1, after1, r2, after2 = asyncio.get_event_loop().run_until_complete(_go())
+        before, r1, after1, r2, after2 = _loop().run_until_complete(_go())
         # second run should not create additional pending invoices for same period
         assert after2 == after1, f"cron not idempotent: {after1} -> {after2}"
         assert isinstance(r1.get("invoices_created"), int)
@@ -164,7 +178,7 @@ class TestCronSuspend:
             )
             return n, sub
 
-        n, sub = asyncio.get_event_loop().run_until_complete(_go())
+        n, sub = _loop().run_until_complete(_go())
         assert sub is not None
         assert sub.get("status") == "suspended", f"expected suspended, got {sub.get('status')}"
         assert sub.get("suspended_at"), "suspended_at not set"
@@ -187,7 +201,7 @@ class TestCheckoutStatusIntegrationContract:
         from config import db
         async def _fetch():
             return await db.payment_transactions.find_one({"session_id": session_id}, {"_id": 0})
-        doc = asyncio.get_event_loop().run_until_complete(_fetch())
+        doc = _loop().run_until_complete(_fetch())
         assert doc and doc.get("invoice_id") == invoice_id, (
             "checkout.py webhook depends on transaction.invoice_id to advance "
             "the subscription period; missing field"
