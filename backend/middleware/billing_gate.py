@@ -33,6 +33,11 @@ ALLOWLIST_PREFIXES = (
     "/api/payment-method",       # GET, POST update, DELETE, /history
     "/api/create-setup-intent",
     "/api/confirm-setup-intent",
+    # Subscription management pages the user needs to unblock themselves
+    "/api/subscription",         # GET current subscription, POST /subscription/reactivate, cancellation-info
+    "/api/subscriptions",        # legacy plural alias if any
+    "/api/plans",                # list of plans
+    "/api/invoices",             # invoice list on /subscriptions
     "/api/health",
     "/health",
 )

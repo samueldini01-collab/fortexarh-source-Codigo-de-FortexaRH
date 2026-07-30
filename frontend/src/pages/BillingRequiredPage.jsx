@@ -210,6 +210,19 @@ export default function BillingRequiredPage() {
             Pagar y activar renovación automática
           </Button>
 
+          {/* Escape hatch: if there's no pending invoice OR the user wants to
+              change the payment card first, take them to the subscription
+              management page (which is also in the billing-gate allowlist). */}
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => navigate("/subscriptions")}
+            data-testid="go-to-subscriptions-btn"
+          >
+            <RefreshCw className="w-4 h-4 mr-2" />
+            {inv ? "Cambiar tarjeta / Ver plan" : "Ir a mi suscripción"}
+          </Button>
+
           <div className="flex items-center justify-center gap-2 text-xs text-slate-500">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
             <span>Pago seguro procesado por Stripe. No guardamos tus datos de tarjeta.</span>

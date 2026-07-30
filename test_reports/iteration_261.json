@@ -1,0 +1,45 @@
+{
+  "summary": "Retest (iter261) of the P0 billing-gate fixes for suspended/past_due companies. ALL 3 previously reported gaps are FIXED and verified end-to-end. Backend: 29/29 pytest tests pass in /app/backend/tests/test_iter261_billing_gate_retest.py — (a) /api/subscription, /api/plans, /api/invoices, /api/subscription/cancellation-info, /api/billing/renewal-history, /api/payment-method, /api/payment-method/history, /api/billing/status are all reachable (200, no 402) for BOTH suspended and past_due; (b) GET /api/billing/status now returns is_blocked=true for past_due AND suspended, and false for active; (c) business endpoints (/api/employees, /api/dashboard/stats, /api/notifications, /api/payroll/periods) still return 402 with {billing_required:true, subscription_status} for both blocked statuses; /api/subscription payload carries the real status (suspended/past_due) and no Mongo _id; /api/plans returns the 3 real plans. Frontend (Playwright, both suspended and past_due): login redirects to /billing-required; the card shows the blocked variant; the new secondary button data-testid='go-to-subscriptions-btn' is visible and navigates to /subscriptions; /subscriptions renders REAL data now (badge 'suspended'/'past_due', plan Pro, period, usage, plans comparison, Payment Method card, Historial de renovaciones); clicking Add/Update card opens the Stripe card dialog successfully (setup-intent path works) so the auto-recovery flow (change card) is functional; direct navigation to /employees, /dashboard, /payroll while past_due still redirects to /billing-required. DB status RESTORED to 'active' and verified (employees 200, is_blocked=false).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/checkout/payment-method", "issue": "Still 404 — called twice by SubscriptionsPage on every load (pre-existing dead endpoint/wrong path). Remove the call or implement the route."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "BillingRequiredPage", "issue": "With status=past_due the copy says 'Suscripción suspendida / Tu suscripción fue suspendida por falta de pago'. Since is_blocked now covers past_due, the grace-period message (grace_days_left) is never shown. Consider differentiating past_due (grace) vs suspended copy using subscription_status instead of only is_blocked.", "selector": "[data-testid=\"billing-required-card\"]", "priority": "MEDIUM"},
+      {"component": "BillingRequiredPage", "issue": "Pay button still permanently disabled when the blocked company has no pending invoice (billing-pay-now-btn shows $0.00/mes). Mitigated by the new escape hatch to /subscriptions, but the primary CTA is still a dead control — consider hiding it or generating/fetching the pending invoice.", "selector": "[data-testid=\"billing-pay-now-btn\"]", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [
+      {"flow": "/subscriptions while blocked", "issue": "The app shell still fires non-allowlisted calls that 402 on every render (/api/notifications, /api/notifications/count, /api/hr-alerts, /api/dashboard/stats, /api/onboarding/checklist, /api/country-config/company, /api/search/suggestions). Functionally harmless (page content is correct) but produces ~15 console errors per load and repeated polling; consider suppressing shell fetches when billing.is_blocked.", "affected_selectors": []}
+    ],
+    "design_issues": [
+      {"screen": "/subscriptions (blocked company)", "issues": ["'Monthly total' shows $0.00 while base is $20.00 + 6 employees x $1.50 — total_monthly=0 in the subscription document (data/legacy issue, not caused by the gate)", "Sidebar shows the full menu (greyed) while every item is gated — acceptable but slightly confusing"]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iter261_billing_gate_retest.py",
+    "/app/test_reports/pytest/iter261_retest.xml",
+    "/app/backend/tests/test_iter260_billing_pages_access.py",
+    "/app/backend/tests/test_iter260_billing_gate.py"
+  ],
+  "action_items": [
+    "Optional: differentiate past_due vs suspended messaging on /billing-required (show grace_days_left for past_due)",
+    "Optional: hide/replace the disabled 'Pagar y activar renovación automática' CTA when there is no pending invoice",
+    "Remove or implement the 404 /api/checkout/payment-method call in SubscriptionsPage",
+    "Optional: skip app-shell polling calls (notifications, hr-alerts, dashboard/stats, onboarding, country-config, search suggestions) when billing.is_blocked to stop the 402 console noise"
+  ],
+  "critical_code_review_comments": [
+    "billing_cycle.get_billing_status now duplicates the blocked-status set literal ('suspended','past_due'); import BLOCKED_STATUSES from middleware/billing_gate.py to keep a single source of truth (this exact duplication caused the past_due drift found in iter260)",
+    "BillingGateMiddleware still performs 1-2 Mongo queries per authenticated API request with no TTL cache — the blocked /subscriptions page fires ~20 requests per load, all paying that cost"
+  ],
+  "updated_files": ["/app/backend/tests/test_iter261_billing_gate_retest.py"],
+  "success_rate": {"backend": "100% (29/29)", "frontend": "100% of the 3 fix scenarios + business-block scenario passed"},
+  "seed_data_creation": "None. Only toggled db.subscriptions.status for comp_7bf9f34ab85e (suspended → past_due → active). RESTORED to 'active' and verified.",
+  "should_call_test_agent_after_fix": false,
+  "should_main_agent_self_test": true,
+  "test_credentials": "admin: test_refactor@fortexa.com / test123 (company comp_7bf9f34ab85e)",
+  "context_for_next_testing_agent": "P0 billing-gate is fully verified. Use `python /app/scripts/set_sub_status.py <suspended|past_due|active>` to toggle comp_7bf9f34ab85e and ALWAYS restore to active. Regression suite: /app/backend/tests/test_iter261_billing_gate_retest.py (export REACT_APP_BACKEND_URL before pytest). Remaining items are cosmetic/minor: past_due copy on /billing-required, disabled pay CTA with no pending invoice, 404 /api/checkout/payment-method, 402 console noise from app-shell polling.",
+  "rca_of_the_issue": "Previously the allowlist covered only /api/billing/* and /api/payment-method*, and get_billing_status hardcoded 'suspended'. Fix adds /api/subscription(s), /api/plans, /api/invoices to ALLOWLIST_PREFIXES, sets is_blocked = status in ('suspended','past_due'), and adds the /subscriptions escape hatch on /billing-required. All three verified working; no new regressions found."
+}

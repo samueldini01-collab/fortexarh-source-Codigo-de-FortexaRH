@@ -384,7 +384,7 @@ async def get_billing_status(current_user: dict = Depends(get_current_user)):
     return {
         "has_pending": bool(pending),
         "pending_invoice": pending,
-        "is_blocked": sub.get("status") == "suspended",
+        "is_blocked": sub.get("status") in ("suspended", "past_due"),
         "subscription_status": sub.get("status"),
         "grace_days_left": grace_days_left,
         "current_period_end": sub.get("current_period_end"),
