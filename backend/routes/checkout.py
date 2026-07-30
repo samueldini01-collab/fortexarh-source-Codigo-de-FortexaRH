@@ -753,6 +753,10 @@ async def stripe_webhook(request: Request):
                             "past_due_since": now_iso,
                             "auto_renewal_last_failure_at": now_iso,
                             "auto_renewal_last_failure_reason": invoice_obj.get("last_finalization_error", {}).get("message") or "payment_failed",
+                            "failed_retry_count": 0,
+                            "retry_slot_1_at": None,
+                            "retry_slot_2_at": None,
+                            "retry_slot_3_at": None,
                             "updated_at": now_iso,
                         }},
                     )

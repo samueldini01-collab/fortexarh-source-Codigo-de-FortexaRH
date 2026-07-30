@@ -12,6 +12,34 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — P0 Completado: Recordatorios Pre-facturación (D-3/D-1) + Reintentos Automáticos de Cobro (3 intentos a las 08/09/10 AM RD)
+- **Recordatorios pre-facturación** (`/app/backend/routes/billing_cycle.py::send_billing_reminders`):
+  - **D-3** (3 días antes de `current_period_end`): email + notificación in-app tipo `billing_reminder`; idempotente vía `reminder_3d_sent_at` (y alias legacy `reminder_upcoming_at`).
+  - **D-1** (1 día antes): email de mayor urgencia (naranja) + notificación in-app `high` priority; idempotente vía `reminder_1d_sent_at`.
+  - Se disparan como parte del cron diario `run_billing_cycle` (06:00 UTC), reutilizando el filtro de `notification_preferences` (evento `billing_reminder`).
+  - Nuevos kinds `pre_bill_3d` / `pre_bill_1d` en `_build_reminder_html` con templates específicos.
+  - Helper `_create_in_app_billing_notification` crea notificación via `create_notification` (persistida en `db.notifications` con `target_role=admin` y `link=/subscriptions`).
+- **Reintentos automáticos de cobro fallidos** (`retry_failed_payments`):
+  - 3 slots diarios: **08:00, 09:00, 10:00 AM hora Rep. Dominicana** (`America/Santo_Domingo`, UTC-4) mediante APScheduler `CronTrigger(timezone="America/Santo_Domingo")`.
+  - Para cada suscripción `past_due` con `stripe_customer_id`: intenta primero `stripe.Invoice.pay()` sobre la última factura open del `stripe_subscription_id`; si no hay, cae a un `PaymentIntent.create(off_session=True, confirm=True)` contra la tarjeta default del customer.
+  - Idempotencia por slot/día: campo `retry_slot_{1,2,3}_at` con la fecha del último intento. No re-corre el mismo slot dos veces el mismo día.
+  - Al 1er/2do fallo → `failed_retry_count++`, in-app notification `retry_failed`, sub sigue `past_due`.
+  - Al **3er fallo** → `status="suspended"` + `suspended_at` + `suspended_reason="3 intentos de cobro fallidos: <motivo>"` + email rojo al admin ("Cuenta suspendida tras 3 intentos") + in-app `retry_failed_final`.
+  - Al **éxito** → `_mark_invoice_paid_from_retry`: settle de la factura pendiente (o crea `inv_rt_*`), `receipt_number=RT-YYYYMMDD-XXXXXX`, `status="active"`, `failed_retry_count=0`, `past_due_since=None`.
+  - Todas las llamadas a Stripe están envueltas en try/except (CardError/StripeError/Exception) — el cron nunca crashea el scheduler.
+- **Reset de contador en webhook `invoice.payment_failed`** (`/app/backend/routes/checkout.py`): al entrar a `past_due` por primera vez tras un fallo de auto-renovación se resetea `failed_retry_count=0` y los `retry_slot_*_at=None`, evitando que un ciclo previo bloquee futuros reintentos.
+- **Scheduler** (`server.py`): 4 nuevos jobs registrados en `AsyncIOScheduler`: `billing_cycle_daily` (06:00 UTC), `payment_retry_slot_1/2/3` (08:00/09:00/10:00 America/Santo_Domingo). Log de arranque: `"APScheduler started: fiscal_reminders_daily @ 08:00 UTC + abandoned_cart_recovery every 30m + billing retries @ 08/09/10 AM DR"`.
+- **Tests** (`/app/backend/tests/test_billing_reminders_and_retries.py`): **7/7 PASS**
+  - `test_d3_reminder_sends_once_and_marks_field`: envía una vez + persiste `reminder_3d_sent_at`; segunda corrida es no-op para la misma empresa.
+  - `test_d1_reminder_sends_once_and_marks_field`: idem para D-1.
+  - `test_in_app_notification_created`: crea notificación con `type=billing_reminder`, `metadata.kind=pre_bill_3d`.
+  - `test_single_failed_retry_bumps_count_but_does_not_suspend`: `failed_retry_count=1`, sub sigue `past_due`.
+  - `test_slot_idempotency_same_day`: reintentar slot 1 el mismo día NO invoca Stripe una segunda vez.
+  - `test_three_failures_suspend_subscription`: tras 3 slots fallidos → `status=suspended`, `suspended_reason` empieza con `"3 intentos"`.
+  - `test_successful_retry_reactivates_and_marks_invoice_paid`: sub → `active`, factura pending → `paid` con `source=retry_cron` y `receipt_number=RT-*`.
+- **Regresión** (`testing_agent` iter262): 10/10 tests billing (gate middleware + P1 charge-now + backfill) siguen verdes; sin regresiones en `/api/billing/status`, `/api/employees` (402 cuando bloqueado, 200 cuando activo).
+
+
 ## Feb 2026 — P1 Completado: Auto-renewal Automatización + Cobro Admin + Email Comprobante
 - **Task 1 — Limpieza .env**: verificado; `/app/backend/.env` no tiene `PREVIEW_MODE` ni `DEVELOPMENT_MODE`, cada variable en línea propia.
 - **Task 2 — Auto-renewal on save-card + backfill cron** (`/app/backend/routes/checkout.py`, `billing_cycle.py`):

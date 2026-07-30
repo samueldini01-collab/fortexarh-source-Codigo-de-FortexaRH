@@ -337,18 +337,14 @@ async def send_billing_reminders() -> dict:
     now = _now()
     counts = {"pre_bill_3d": 0, "pre_bill_1d": 0, "due": 0, "final": 0}
 
-    # 1) Pre-bill D-3 (active subs, period_end in ~3 days) — idempotent
+    # 1) Pre-bill D-3 (active subs, period_end in ~3 days) — idempotent via reminder_3d_sent_at
     target_low_3 = (now + timedelta(days=3)).isoformat()
     target_high_3 = (now + timedelta(days=4)).isoformat()
     async for sub in db.subscriptions.find(
         {
             "status": "active",
             "current_period_end": {"$gte": target_low_3, "$lt": target_high_3},
-            "$and": [
-                {"$or": [{"reminder_3d_sent_at": {"$exists": False}}, {"reminder_3d_sent_at": None}]},
-                # legacy field name kept for backwards compatibility with existing subs
-                {"$or": [{"reminder_upcoming_at": {"$exists": False}}, {"reminder_upcoming_at": None}]},
-            ],
+            "$or": [{"reminder_3d_sent_at": {"$exists": False}}, {"reminder_3d_sent_at": None}],
         },
         {"_id": 0},
     ):
