@@ -12,6 +12,36 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — P1 Completado: Auto-renewal Automatización + Cobro Admin + Email Comprobante
+- **Task 1 — Limpieza .env**: verificado; `/app/backend/.env` no tiene `PREVIEW_MODE` ni `DEVELOPMENT_MODE`, cada variable en línea propia.
+- **Task 2 — Auto-renewal on save-card + backfill cron** (`/app/backend/routes/checkout.py`, `billing_cycle.py`):
+  - `POST /api/confirm-setup-intent` ahora setea `auto_renewal_active=True` en `subscriptions` al guardar la tarjeta (con audit fields `auto_renewal_activated_at` / `auto_renewal_activated_via`).
+  - `DELETE /api/payment-method/{id}`: si el customer se queda sin tarjetas, desactiva `auto_renewal_active=False` + registra `auto_renewal_deactivated_reason: "payment_method_removed"` + escribe en `payment_method_history`.
+  - Nueva función `backfill_auto_renewal_from_saved_cards()` en `run_billing_cycle`:
+    - Recorre subscriptions con `stripe_customer_id` set pero sin `auto_renewal_active=True`.
+    - Consulta Stripe `PaymentMethod.list(customer, type="card")`; si tiene al menos una tarjeta → activa auto-renewal automáticamente.
+    - Corre en el cron diario junto a facturas + recordatorios + suspensiones.
+    - Idempotente y tolerante a errores de Stripe (log warning, continúa).
+- **Task 3 — Email de comprobante tras cobro exitoso** (`billing_cycle.py::_send_payment_receipt_email`):
+  - Helper Resend con plantilla HTML verde: No. de comprobante, fecha, plan, tarjeta usada (brand + ••••1234), referencia (payment_intent_id o stripe_invoice_id), crédito de referidos aplicado (si > 0), total, nueva vigencia.
+  - Se invoca desde el webhook `invoice.paid` (con datos de la charge para obtener card_brand/last4) y desde `super_admin_charge_now`.
+  - Los receipts persisten `receipt_number` en el `invoice` local.
+- **Task 4 — Cobro Manual Admin** (`POST /api/billing/super-admin/charge-now/{company_id}`):
+  - Requiere `role="super_admin"` (403 para admins regulares, verificado en test).
+  - Recupera default payment method del customer Stripe (fallback: primera tarjeta).
+  - Calcula monto desde la factura pendiente (si existe) o desde el plan actual.
+  - Crea `stripe.PaymentIntent` con `off_session=True, confirm=True`.
+  - En éxito: persiste factura paid con `receipt_number` formato `CN-YYYYMMDD-XXXXXX`, activa `auto_renewal_active=True`, envía email de comprobante.
+  - En `stripe.error.CardError`: marca `status="past_due"`, guarda `auto_renewal_last_failure_reason`, retorna 402 con detail del error.
+  - Frontend: nuevo botón "⚡ Cobrar ahora" (color ámbar, icono Zap) en cada fila de `InvoicesPendingTab`. Handler `handleChargeNow` en `SuperAdminPage.jsx` con confirm modal + toast de progreso; muestra `receipt_number` al éxito.
+- **Tests** (`/app/backend/tests/test_billing_p1_features.py`): 3/3 PASS
+  - `test_regular_admin_forbidden`: 403 si el rol no es super_admin.
+  - `test_unauthenticated_rejected`: 401/403 sin token.
+  - `test_backfill_runs_and_returns_int`: helper ejecuta sin excepciones, retorna int, maneja errores de Stripe.
+- **Regresión completa**: 95/95 RTL + tests billing gate + P1 features todos verdes.
+
+
+
 ## Feb 2026 — Bloqueo de Acceso por Suscripción Vencida (P0)
 - **Bug reportado**: empresas con `subscription.status="suspended"` o `"past_due"` podían seguir usando el sistema completo. Solo había un guard cosmético en el frontend; el backend no validaba nada. Un cliente astuto (o el frontend con caché stale) podía hacer requests directas.
 - **Decisiones del usuario**: bloqueo aplica a `suspended` + `past_due`; retorna HTTP **402 Payment Required**; permite acceso solo a las páginas de pagar/cambiar tarjeta.

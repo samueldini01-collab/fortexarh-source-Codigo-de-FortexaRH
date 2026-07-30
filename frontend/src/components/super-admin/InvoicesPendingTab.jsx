@@ -1,4 +1,4 @@
-import { CheckCircle, Eye, FileWarning, RefreshCw, Hand } from "lucide-react";
+import { CheckCircle, Eye, FileWarning, RefreshCw, Hand, Zap } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -115,6 +115,16 @@ export default function InvoicesPendingTab({
                           data-testid={`mark-paid-${inv.invoice_id}`}
                         >
                           <CheckCircle className="w-4 h-4 mr-1" /> Marcar pagada
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
+                          onClick={() => onChargeNow?.(inv.company_id)}
+                          data-testid={`charge-now-${inv.invoice_id}`}
+                          title="Cobrar ahora usando la tarjeta guardada + activar auto-renovación"
+                        >
+                          <Zap className="w-4 h-4 mr-1" /> Cobrar ahora
                         </Button>
                         <Button
                           size="sm"

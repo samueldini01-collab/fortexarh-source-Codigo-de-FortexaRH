@@ -323,6 +323,29 @@ function SuperAdminDashboard({ token, onLogout }) {
     }
   };
 
+  const handleChargeNow = async (companyId) => {
+    if (!window.confirm(
+      "¿Cobrar ahora usando la tarjeta guardada de la empresa?\n\n" +
+      "Se disparará un cobro inmediato con Stripe y se activará la renovación automática. " +
+      "El cliente recibirá un comprobante por email."
+    )) return;
+    const toastId = toast.loading("Procesando cobro con Stripe...");
+    try {
+      const res = await axios.post(
+        `${(process.env.REACT_APP_BACKEND_URL || "")}/api/billing/super-admin/charge-now/${companyId}`,
+        {},
+        { headers }
+      );
+      toast.dismiss(toastId);
+      toast.success(`Cobro exitoso — Comprobante ${res.data.receipt_number}`);
+      fetchData();
+      if (drillCompany?.company_id === companyId) handleDrillDown(drillCompany);
+    } catch (err) {
+      toast.dismiss(toastId);
+      toast.error(err.response?.data?.detail || "Error al cobrar");
+    }
+  };
+
   const fetchSupportActions = useCallback(async () => {
     setSupportActionsLoading(true);
     try {
@@ -495,6 +518,7 @@ function SuperAdminDashboard({ token, onLogout }) {
             <InvoicesPendingTab
               pendingInvoices={pendingInvoices}
               onMarkPaid={handleMarkInvoicePaid}
+              onChargeNow={handleChargeNow}
               onViewCompany={(companyId) => {
                 const c = companies.find(c => c.company_id === companyId);
                 if (c) handleDrillDown(c);

@@ -687,9 +687,11 @@ async def stripe_webhook(request: Request):
                     )
                     # Create a paid invoice record locally for audit
                     inv_id = f"inv_sub_{uuid.uuid4().hex[:8]}"
+                    receipt_number = f"AR-{datetime.now(timezone.utc).strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}"
                     await db.invoices.insert_one({
                         "invoice_id": inv_id,
-                        "invoice_number": f"AUTO-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M')}",
+                        "invoice_number": receipt_number,
+                        "receipt_number": receipt_number,
                         "company_id": subscription["company_id"],
                         "plan_id": subscription.get("plan_id"),
                         "plan_name": subscription.get("plan_name"),
@@ -705,6 +707,34 @@ async def stripe_webhook(request: Request):
                         "source": "stripe_auto_renewal",
                     })
                     logger.info(f"Auto-renewal success for company {subscription['company_id']} — ${amount_paid} {currency}")
+
+                    # Send receipt email (best-effort)
+                    try:
+                        # Get card details from the invoice/charge if available
+                        card_brand, card_last4 = None, None
+                        try:
+                            charge_id = invoice_obj.get("charge")
+                            if charge_id:
+                                charge = stripe.Charge.retrieve(charge_id)
+                                pm_details = (charge.get("payment_method_details") or {}).get("card") or {}
+                                card_brand = (pm_details.get("brand") or "").upper() or None
+                                card_last4 = pm_details.get("last4")
+                        except Exception:  # noqa: BLE001
+                            pass
+                        from routes.billing_cycle import _send_payment_receipt_email
+                        await _send_payment_receipt_email(
+                            company_id=subscription["company_id"],
+                            amount=amount_paid,
+                            currency=currency,
+                            plan_name=subscription.get("plan_name", "FortexaRH"),
+                            receipt_number=receipt_number,
+                            card_brand=card_brand,
+                            card_last4=card_last4,
+                            reference=invoice_obj.get("id", ""),
+                            period_end_iso=upd.get("current_period_end"),
+                        )
+                    except Exception as em:  # noqa: BLE001
+                        logger.error(f"Receipt email failed: {em}")
 
         elif event['type'] == 'invoice.payment_failed':
             invoice_obj = event['data']['object']
@@ -923,7 +953,41 @@ async def remove_payment_method(
     try:
         # Detach the payment method
         stripe.PaymentMethod.detach(payment_method_id)
-        return {"status": "success", "message": "Payment method removed"}
+
+        # If the customer no longer has any card attached, disable auto-renewal
+        subscription = await db.subscriptions.find_one(
+            {"company_id": company_id},
+            {"_id": 0, "stripe_customer_id": 1},
+        )
+        stripe_customer_id = subscription.get("stripe_customer_id") if subscription else None
+        remaining = 0
+        if stripe_customer_id:
+            try:
+                methods = stripe.PaymentMethod.list(
+                    customer=stripe_customer_id, type="card", limit=5
+                )
+                remaining = len(methods.data)
+            except Exception:  # noqa: BLE001
+                pass
+        if remaining == 0:
+            await db.subscriptions.update_one(
+                {"company_id": company_id},
+                {"$set": {
+                    "auto_renewal_active": False,
+                    "auto_renewal_deactivated_at": datetime.now(timezone.utc).isoformat(),
+                    "auto_renewal_deactivated_reason": "payment_method_removed",
+                }},
+            )
+            await db.payment_method_history.insert_one({
+                "company_id": company_id,
+                "changed_by": user.get("user_id"),
+                "changed_by_email": user.get("email", ""),
+                "change_type": "removed",
+                "previous_card": None,
+                "new_card": None,
+                "changed_at": datetime.now(timezone.utc).isoformat(),
+            })
+        return {"status": "success", "message": "Payment method removed", "auto_renewal_disabled": remaining == 0}
         
     except stripe.error.StripeError as e:
         logger.error(f"Error removing payment method: {e}")
@@ -1057,6 +1121,16 @@ async def confirm_setup_intent(
             "new_card": new_card_info,
             "changed_at": now.isoformat(),
         })
+
+        # Automatically enable auto-renewal now that a card is on file.
+        await db.subscriptions.update_one(
+            {"company_id": company_id},
+            {"$set": {
+                "auto_renewal_active": True,
+                "auto_renewal_activated_at": now.isoformat(),
+                "auto_renewal_activated_via": change_type,
+            }},
+        )
 
         return {
             "status": "success",

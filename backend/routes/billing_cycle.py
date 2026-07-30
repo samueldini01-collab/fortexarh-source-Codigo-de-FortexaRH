@@ -341,6 +341,154 @@ async def send_billing_reminders() -> dict:
     return counts
 
 
+async def backfill_auto_renewal_from_saved_cards() -> int:
+    """Enable auto_renewal_active=True for subscriptions that already have a
+    Stripe customer WITH a card attached but were never flagged as auto-renew.
+
+    Fixes the retro-active bug: clients whose card was saved before the
+    auto-renewal feature existed were not being auto-charged.
+
+    Returns the number of subscriptions updated.
+    """
+    api_key = os.environ.get("STRIPE_API_KEY")
+    if not api_key:
+        return 0
+    stripe.api_key = api_key
+
+    updated = 0
+    cursor = db.subscriptions.find(
+        {
+            "stripe_customer_id": {"$exists": True, "$ne": None, "$ne": ""},
+            "$or": [
+                {"auto_renewal_active": {"$exists": False}},
+                {"auto_renewal_active": False},
+            ],
+        },
+        {"_id": 0, "company_id": 1, "stripe_customer_id": 1},
+    )
+    async for sub in cursor:
+        cust_id = sub.get("stripe_customer_id")
+        if not cust_id:
+            continue
+        try:
+            pms = stripe.PaymentMethod.list(customer=cust_id, type="card", limit=1)
+            if pms.data:
+                await db.subscriptions.update_one(
+                    {"company_id": sub["company_id"]},
+                    {"$set": {
+                        "auto_renewal_active": True,
+                        "auto_renewal_activated_at": _now().isoformat(),
+                        "auto_renewal_activated_via": "backfill_cron",
+                    }},
+                )
+                updated += 1
+        except Exception as e:  # noqa: BLE001
+            logger.warning(f"Backfill check failed for {sub['company_id']}: {e}")
+
+    if updated:
+        logger.info(f"Backfill: enabled auto_renewal on {updated} subscriptions")
+    return updated
+
+
+async def _send_payment_receipt_email(
+    company_id: str,
+    amount: float,
+    currency: str,
+    plan_name: str,
+    receipt_number: str,
+    card_brand: Optional[str],
+    card_last4: Optional[str],
+    reference: str,
+    period_end_iso: Optional[str],
+    referral_credit_applied: float = 0.0,
+) -> bool:
+    """Send a payment receipt via Resend. Best-effort — logs but never raises."""
+    import resend
+    from config import SENDER_EMAIL
+
+    if not resend.api_key:
+        return False
+
+    admins = await db.users.find(
+        {"company_id": company_id, "role": {"$in": ["admin", "owner", "company_admin"]}},
+        {"_id": 0, "email": 1},
+    ).to_list(20)
+    recipients = [a["email"] for a in admins if a.get("email")]
+    if not recipients:
+        return False
+
+    company = await db.companies.find_one(
+        {"company_id": company_id},
+        {"_id": 0, "name": 1, "company_name": 1},
+    ) or {}
+    company_name = company.get("company_name") or company.get("name") or "FortexaRH"
+
+    valid_until = ""
+    if period_end_iso:
+        try:
+            valid_until = datetime.fromisoformat(period_end_iso.replace("Z", "+00:00")).strftime("%d/%m/%Y")
+        except Exception:
+            pass
+
+    card_line = f"{card_brand or 'Tarjeta'} •••• {card_last4}" if card_last4 else "Tarjeta guardada"
+    credit_row = ""
+    if referral_credit_applied and referral_credit_applied > 0:
+        credit_row = f"""
+            <tr><td style='color:#4b5563;padding:4px 0;'>Crédito por referidos:</td>
+                <td style='text-align:right;padding:4px 0;color:#10b981;'>-${referral_credit_applied:.2f}</td></tr>
+        """
+
+    try:
+        resend.Emails.send({
+            "from": SENDER_EMAIL,
+            "to": recipients,
+            "subject": f"✅ Comprobante de pago #{receipt_number} — {company_name}",
+            "html": f"""
+                <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+                    <div style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);padding:30px;text-align:center;">
+                        <h1 style="color:#fff;margin:0;">FortexaRH</h1>
+                        <p style="color:rgba(255,255,255,0.9);margin:6px 0 0 0;font-size:14px;">Comprobante de pago</p>
+                    </div>
+                    <div style="padding:30px;background:#f9fafb;">
+                        <h2 style="color:#1e3a5f;margin-top:0;">Pago recibido correctamente</h2>
+                        <p style="color:#4b5563;">Hola equipo de <strong>{company_name}</strong>,</p>
+                        <p style="color:#4b5563;">Gracias, hemos procesado exitosamente el cobro automático de tu suscripción.</p>
+
+                        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin:16px 0;">
+                            <table style="width:100%;font-size:14px;">
+                                <tr><td style='color:#6b7280;padding:4px 0;'>No. de comprobante:</td>
+                                    <td style='text-align:right;padding:4px 0;font-family:monospace;color:#111827;'>{receipt_number}</td></tr>
+                                <tr><td style='color:#6b7280;padding:4px 0;'>Fecha:</td>
+                                    <td style='text-align:right;padding:4px 0;color:#111827;'>{_now().strftime('%d/%m/%Y %H:%M UTC')}</td></tr>
+                                <tr><td style='color:#6b7280;padding:4px 0;'>Plan:</td>
+                                    <td style='text-align:right;padding:4px 0;color:#111827;'>{plan_name}</td></tr>
+                                <tr><td style='color:#6b7280;padding:4px 0;'>Tarjeta usada:</td>
+                                    <td style='text-align:right;padding:4px 0;color:#111827;font-family:monospace;'>{card_line}</td></tr>
+                                <tr><td style='color:#6b7280;padding:4px 0;'>Referencia:</td>
+                                    <td style='text-align:right;padding:4px 0;font-family:monospace;color:#111827;font-size:11px;'>{reference}</td></tr>
+                                {credit_row}
+                                <tr><td colspan='2'><hr style='border:none;border-top:1px solid #e5e7eb;margin:8px 0;'></td></tr>
+                                <tr><td style='color:#111827;font-weight:bold;padding:4px 0;'>Total cobrado:</td>
+                                    <td style='text-align:right;padding:4px 0;color:#10b981;font-size:18px;font-weight:bold;'>${amount:.2f} {currency}</td></tr>
+                                {"<tr><td style='color:#6b7280;padding:4px 0;'>Nueva vigencia hasta:</td><td style='text-align:right;padding:4px 0;color:#111827;'>" + valid_until + "</td></tr>" if valid_until else ""}
+                            </table>
+                        </div>
+
+                        <p style="color:#6b7280;font-size:13px;">Este comprobante también quedó registrado en tu historial de renovaciones dentro del portal.</p>
+                    </div>
+                    <div style="background:#e5e7eb;padding:20px;text-align:center;">
+                        <p style="color:#6b7280;font-size:12px;margin:0;">FortexaRH — Sistema de RRHH y Nómina</p>
+                    </div>
+                </div>
+            """,
+        })
+        logger.info(f"Receipt email sent to {len(recipients)} admin(s) for company {company_id}")
+        return True
+    except Exception as e:  # noqa: BLE001
+        logger.error(f"Receipt email failed: {e}")
+        return False
+
+
 async def run_billing_cycle() -> dict:
     """Run all daily billing tasks. Safe to call any time.
 
@@ -350,10 +498,12 @@ async def run_billing_cycle() -> dict:
     created = await generate_pending_invoices_for_overdue_subs()
     reminders = await send_billing_reminders()
     suspended = await suspend_overdue_subscriptions()
+    backfilled = await backfill_auto_renewal_from_saved_cards()
     return {
         "invoices_created": created,
         "subscriptions_suspended": suspended,
         "reminders_sent": reminders,
+        "auto_renewal_backfilled": backfilled,
     }
 
 
@@ -710,3 +860,175 @@ async def manual_run_billing(request: Request):
         raise HTTPException(status_code=403, detail="Forbidden")
     result = await run_billing_cycle()
     return {"ok": True, **result}
+
+
+@router.post("/super-admin/charge-now/{company_id}")
+async def super_admin_charge_now(company_id: str, current_user: dict = Depends(get_current_user)):
+    """Super admin: trigger an immediate off-session charge for a company that
+    already has a saved payment method, and enable auto-renewal going forward.
+
+    Uses the customer's default card and creates a one-off PaymentIntent with
+    `off_session=True`, then persists the payment locally and activates
+    `auto_renewal_active=True` so future renewals happen automatically.
+    """
+    if current_user.get("role") not in ("super_admin", "superadmin"):
+        raise HTTPException(status_code=403, detail="Solo super_admin puede ejecutar cobros manuales")
+
+    api_key = os.environ.get("STRIPE_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Stripe no configurado")
+    stripe.api_key = api_key
+
+    subscription = await db.subscriptions.find_one(
+        {"company_id": company_id},
+        {"_id": 0},
+    )
+    if not subscription or not subscription.get("stripe_customer_id"):
+        raise HTTPException(status_code=400, detail="La empresa no tiene un cliente Stripe con tarjeta guardada")
+
+    stripe_customer_id = subscription["stripe_customer_id"]
+
+    # Pick the default PaymentMethod (or the first card if no default set)
+    try:
+        customer = stripe.Customer.retrieve(stripe_customer_id)
+        default_pm = (customer.get("invoice_settings") or {}).get("default_payment_method")
+        if not default_pm:
+            pms = stripe.PaymentMethod.list(customer=stripe_customer_id, type="card", limit=1)
+            if not pms.data:
+                raise HTTPException(status_code=400, detail="La empresa no tiene tarjeta guardada")
+            default_pm = pms.data[0].id
+    except stripe.error.StripeError as e:
+        raise HTTPException(status_code=500, detail=f"Stripe error: {e}") from e
+
+    # Resolve amount from the pending invoice or plan
+    pending = await db.invoices.find_one(
+        {"company_id": company_id, "status": "pending"},
+        {"_id": 0},
+        sort=[("created_at", 1)],
+    )
+    if pending:
+        amount = float(pending["total"])
+        currency = (pending.get("currency") or "USD").lower()
+        plan_id = pending.get("plan_id") or subscription.get("plan_id")
+        plan_name = pending.get("plan_name") or subscription.get("plan_name") or plan_id
+    else:
+        plan_id = subscription.get("plan_id")
+        _, _, amount, _ = await _compute_invoice_amount(company_id, plan_id)
+        currency = (subscription.get("currency") or "USD").lower()
+        plan_name = subscription.get("plan_name") or plan_id
+
+    if amount <= 0:
+        raise HTTPException(status_code=400, detail="Monto inválido")
+
+    try:
+        intent = stripe.PaymentIntent.create(
+            amount=int(round(amount * 100)),
+            currency=currency,
+            customer=stripe_customer_id,
+            payment_method=default_pm,
+            off_session=True,
+            confirm=True,
+            description=f"FortexaRH — cobro manual admin ({plan_name})",
+            metadata={
+                "company_id": company_id,
+                "plan_id": plan_id or "",
+                "source": "super_admin_charge_now",
+                "triggered_by": current_user.get("user_id") or "",
+            },
+        )
+    except stripe.error.CardError as e:
+        detail = getattr(e, "user_message", None) or getattr(e, "code", None) or str(e)
+        # Mark the subscription as past_due so the customer gets prompted to fix it
+        await db.subscriptions.update_one(
+            {"company_id": company_id},
+            {"$set": {
+                "status": "past_due",
+                "past_due_since": _now().isoformat(),
+                "auto_renewal_last_failure_at": _now().isoformat(),
+                "auto_renewal_last_failure_reason": detail,
+            }},
+        )
+        raise HTTPException(status_code=402, detail=f"Tarjeta rechazada: {detail}") from e
+    except stripe.error.StripeError as e:
+        raise HTTPException(status_code=500, detail=f"Stripe error: {e}") from e
+
+    # Charge succeeded — persist paid invoice + activate auto-renewal
+    now_iso = _now().isoformat()
+    receipt_number = f"CN-{_now().strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}"
+    period_end_iso = subscription.get("current_period_end")
+
+    if pending:
+        await db.invoices.update_one(
+            {"invoice_id": pending["invoice_id"]},
+            {"$set": {
+                "status": "paid",
+                "paid_at": _now().strftime("%d/%m/%Y %H:%M"),
+                "paid_at_iso": now_iso,
+                "receipt_number": receipt_number,
+                "stripe_payment_intent_id": intent.id,
+                "source": "super_admin_charge_now",
+            }},
+        )
+        invoice_id = pending["invoice_id"]
+        period_end_iso = pending.get("period_end_iso") or period_end_iso
+    else:
+        invoice_id = f"inv_cn_{uuid.uuid4().hex[:8]}"
+        await db.invoices.insert_one({
+            "invoice_id": invoice_id,
+            "invoice_number": receipt_number,
+            "company_id": company_id,
+            "plan_id": plan_id,
+            "plan_name": plan_name,
+            "total": amount,
+            "currency": currency.upper(),
+            "status": "paid",
+            "paid_at": _now().strftime("%d/%m/%Y %H:%M"),
+            "paid_at_iso": now_iso,
+            "created_at": now_iso,
+            "receipt_number": receipt_number,
+            "stripe_payment_intent_id": intent.id,
+            "source": "super_admin_charge_now",
+        })
+
+    await db.subscriptions.update_one(
+        {"company_id": company_id},
+        {"$set": {
+            "status": "active",
+            "past_due_since": None,
+            "suspended_at": None,
+            "auto_renewal_active": True,
+            "auto_renewal_activated_at": now_iso,
+            "auto_renewal_activated_via": "super_admin_charge_now",
+            "updated_at": now_iso,
+        }},
+    )
+
+    # Resolve card info for the receipt email
+    try:
+        pm_obj = stripe.PaymentMethod.retrieve(default_pm)
+        card_brand = pm_obj.card.brand.upper() if pm_obj and pm_obj.card else None
+        card_last4 = pm_obj.card.last4 if pm_obj and pm_obj.card else None
+    except Exception:
+        card_brand, card_last4 = None, None
+
+    await _send_payment_receipt_email(
+        company_id=company_id,
+        amount=amount,
+        currency=currency.upper(),
+        plan_name=plan_name,
+        receipt_number=receipt_number,
+        card_brand=card_brand,
+        card_last4=card_last4,
+        reference=intent.id,
+        period_end_iso=period_end_iso,
+    )
+
+    return {
+        "ok": True,
+        "receipt_number": receipt_number,
+        "invoice_id": invoice_id,
+        "amount": amount,
+        "currency": currency.upper(),
+        "payment_intent_id": intent.id,
+        "auto_renewal_active": True,
+    }
