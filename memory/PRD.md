@@ -12,6 +12,32 @@
 - Employee Portal: 001-0000001-1 / portal123
 
 
+## Feb 2026 — Bloqueo de Acceso por Suscripción Vencida (P0)
+- **Bug reportado**: empresas con `subscription.status="suspended"` o `"past_due"` podían seguir usando el sistema completo. Solo había un guard cosmético en el frontend; el backend no validaba nada. Un cliente astuto (o el frontend con caché stale) podía hacer requests directas.
+- **Decisiones del usuario**: bloqueo aplica a `suspended` + `past_due`; retorna HTTP **402 Payment Required**; permite acceso solo a las páginas de pagar/cambiar tarjeta.
+- **Fix aplicado**:
+  - **Nuevo `BillingGateMiddleware`** (`/app/backend/middleware/billing_gate.py`):
+    - Se registra en `server.py` inmediatamente después de `SupportActionsAuditMiddleware`.
+    - Decodifica el JWT con `JWT_SECRET`/`JWT_ALGORITHM` de `config.py`. Como el JWT solo trae `user_id`, resuelve `company_id` + `role` desde `db.users`.
+    - Consulta `db.subscriptions` para el `company_id`; si `status ∈ {"suspended", "past_due"}` responde **402** con `{"detail": "Suscripción vencida...", "billing_required": true, "subscription_status": <status>}`.
+    - **Super admin** (`role="super_admin"`) siempre exento.
+    - **Allowlist** de prefijos siempre permitidos: `/api/auth/`, `/api/billing/`, `/api/webhook/`, `/api/checkout`, `/api/public/checkout`, `/api/payment-method`, `/api/create-setup-intent`, `/api/confirm-setup-intent`, `/api/subscription`, `/api/subscriptions`, `/api/plans`, `/api/invoices`, `/api/health`.
+    - Sin token → no bloquea (deja al layer de auth retornar 401).
+  - **`/api/billing/status`**: `is_blocked` ahora se activa con `status in ("suspended", "past_due")` (antes solo `suspended`).
+  - **Frontend**:
+    - Nuevo axios interceptor global en `App.js` que redirige a `/billing-required` al recibir 402 con `billing_required=true`, salvo si el usuario ya está en `/billing-required`, `/subscriptions`, `/login` o `/employee-portal`.
+    - `ProtectedRoute` extendido: cuando `isBlocked`, permite navegar a `/billing-required` y `/subscriptions`.
+    - `BillingRequiredPage`: nuevo botón secundario `data-testid="go-to-subscriptions-btn"` que navega a `/subscriptions` para permitir cambio de tarjeta cuando no hay factura pendiente o el usuario prefiere ese flujo.
+- **Verificación completa por `testing_agent`** (iter261 — 29/29 pytest + Playwright):
+  - `/api/employees`, `/api/dashboard/stats`, `/api/notifications`, `/api/payroll/periods` → 402 (suspended y past_due).
+  - `/api/subscription`, `/api/plans`, `/api/invoices`, `/api/subscription/cancellation-info`, `/api/billing/renewal-history`, `/api/payment-method`, `/api/payment-method/history`, `/api/billing/status` → 200 (accesibles bajo cualquier status).
+  - Frontend Playwright: login suspendido → redirige a `/billing-required` → botón secundario navega a `/subscriptions` → página carga real data (badge status, plan actual, Add/Update card dialog vía Stripe setup-intent). Flujo de recuperación funcional.
+  - Sin token → 401/403, nunca 402.
+  - Cambio a `active` restaura el acceso completo.
+- **Tests locales** (`/app/backend/tests/test_billing_gate_middleware.py`): 7/7 PASS.
+
+
+
 ## Feb 2026 — Portal de Gestión de Método de Pago + Email de Falla de Renovación (P1)
 
 ### Portal de gestión de método de pago
